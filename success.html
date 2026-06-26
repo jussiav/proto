@@ -336,28 +336,21 @@
       if (emailToastTimer) { clearTimeout(emailToastTimer); emailToastTimer = null; }
       var toast = document.getElementById('email-toast');
       if (!toast) return;
-      toast.style.transition = 'none';
+      toast.style.animation = 'none';
       toast.style.opacity = '0';
-      toast.style.transform = 'translateY(16px)';
       toast.style.display = 'none';
     }
 
     function showEmailToast() {
       var toast = document.getElementById('email-toast');
       if (!toast) return;
-      // Reset so animation replays on every page show
-      if (emailToastTimer) clearTimeout(emailToastTimer);
-      toast.style.transition = 'none';
+      if (emailToastTimer) { clearTimeout(emailToastTimer); emailToastTimer = null; }
+      // Reset
+      toast.style.animation = 'none';
       toast.style.opacity = '0';
-      toast.style.transform = 'translateY(16px)';
       toast.style.display = 'none';
       emailToastTimer = setTimeout(function () {
         emailToastTimer = null;
-        toast.style.display = 'flex';
-        toast.offsetHeight; // force reflow
-        toast.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
-        toast.style.opacity = '1';
-        toast.style.transform = 'translateY(0)';
         // Apply current language
         var titleEl = document.getElementById('email-toast-title');
         var nowEl   = document.getElementById('email-toast-now');
@@ -365,22 +358,44 @@
         if (titleEl) titleEl.textContent = t('success.emailToastTitle');
         if (nowEl)   nowEl.textContent   = t('success.emailToastNow');
         if (viewEl)  viewEl.textContent  = t('success.emailToastView');
-      }, 1500);
+        toast.style.display = 'flex';
+        toast.offsetHeight; // force reflow
+        toast.style.opacity = '';
+        toast.style.animation = 'toastIn 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards';
+        // Attention pulse after entry settles
+        emailToastTimer = setTimeout(function() {
+          emailToastTimer = null;
+          toast.style.animation = 'toastPulse 0.7s ease-in-out';
+        }, 620);
+      }, 1200);
     }
   </script>
+
+  <style>
+    @keyframes toastIn {
+      0%   { opacity:0; transform:translateY(56px) scale(0.88); }
+      60%  { opacity:1; transform:translateY(-8px) scale(1.03); }
+      80%  { transform:translateY(4px) scale(0.99); }
+      100% { opacity:1; transform:translateY(0) scale(1); }
+    }
+    @keyframes toastPulse {
+      0%   { transform:scale(1);     box-shadow:0 16px 56px rgba(0,0,0,0.20),0 4px 16px rgba(0,0,0,0.10),0 0 0 1.5px rgba(11,109,255,0.12); }
+      45%  { transform:scale(1.03);  box-shadow:0 20px 64px rgba(11,109,255,0.28),0 6px 24px rgba(11,109,255,0.18),0 0 0 2px rgba(11,109,255,0.40); }
+      100% { transform:scale(1);     box-shadow:0 16px 56px rgba(0,0,0,0.20),0 4px 16px rgba(0,0,0,0.10),0 0 0 1.5px rgba(11,109,255,0.12); }
+    }
+  </style>
 
   <!-- OS-style email notification toast -->
   <div id="email-toast" style="
     position:fixed;bottom:24px;right:24px;z-index:8000;
     width:320px;max-width:calc(100vw - 32px);
-    background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    background:rgba(255,255,255,0.97);
+    backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
     border-radius:16px;
-    box-shadow:0 8px 40px rgba(0,0,0,0.16),0 2px 8px rgba(0,0,0,0.08),0 0 0 1px rgba(0,0,0,0.05);
+    box-shadow:0 16px 56px rgba(0,0,0,0.20),0 4px 16px rgba(0,0,0,0.10),0 0 0 1.5px rgba(11,109,255,0.12);
     padding:14px 14px 14px 16px;
     display:none;flex-direction:column;gap:5px;
-    opacity:0;transform:translateY(16px);
-    transition:opacity 0.35s ease,transform 0.35s ease;
+    opacity:0;
     font-family:'DM Sans',sans-serif;">
     <div style="display:flex;align-items:center;gap:8px;">
       <div style="width:32px;height:32px;background:#0B6DFF;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">

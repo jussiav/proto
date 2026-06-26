@@ -368,7 +368,7 @@
     var BASE = {
       id: 1001, make: merkki, model: malli, year: parseInt(vuosi) || 2020,
       fuel_type: fuel, driven: km, registration_number: plate,
-      asking_price: 12000, model_specification: '',
+      asking_price: parseInt(String(s.askingPrice || s.priceExpectation || '').replace(/\D/g, '')) || 12000, model_specification: '',
     };
 
     // ── Scenario data — matches offers.astro mock shapes ──
@@ -739,7 +739,7 @@
     var STATE_CFG = {
       auctionOngoing:  { label: 'Tarjouskauppa käynnissä',   icon: ICON_BROADCAST,  badge: 'bg-cyan-100 border-cyan-300 text-cyan-700',   primaryText: 'Muokkaa tietoja',              primaryHref: null,            ghostText: 'Avaa tiedot' },
       auctionEnded:    { label: 'Tarjouskauppa on päättynyt', icon: ICON_GAVEL,      badge: 'bg-lime-50 border-lime-400 text-lime-700',    primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
-      negotiations:    { label: 'Neuvottelut käynnissä',      icon: ICON_CHATS,      badge: 'bg-amber-50 border-amber-400 text-amber-700', primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: null,            ghostText: 'Avaa tiedot' },
+      negotiations:    { label: 'Neuvottelut käynnissä',      icon: ICON_CHATS,      badge: 'bg-amber-50 border-amber-400 text-amber-700', primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
       offerAccepted:   { label: 'Kauppa vahvistettu',         icon: ICON_SEAL_CHECK, badge: 'bg-lime-300 border-lime-400 text-lime-800',   primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
       offersRejected:  { label: 'Ei hyväksyttyjä tarjouksia', icon: ICON_PROHIBIT,   badge: 'bg-red-500 border-red-700 text-white',        primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
     };

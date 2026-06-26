@@ -244,9 +244,13 @@
     var PAST   = function() { return _now() - REACTION - 3600; };
     var ACTIVE = function() { return _now() - 3600; };
 
+    var _funnelAskingPrice = (function() {
+      try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return parseInt(String(f.askingPrice || f.priceExpectation || '').replace(/\D/g, '')) || 12000; } catch(e) { return 12000; }
+    })();
+
     var BASE = {
       id: 1001, make: 'Toyota', model: 'Corolla', year: 2019,
-      registration_number: 'ABC-123', asking_price: 12000, price_estimation: 11800,
+      registration_number: 'ABC-123', asking_price: _funnelAskingPrice, price_estimation: _funnelAskingPrice,
       published_at: _now() - 8 * 86400,
       auction_ends_at: _now() - REACTION - 7200,
     };
@@ -365,15 +369,15 @@
       'dealer-replied': function() { return {
         request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
         offers: [
-          { id: 301, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true, dealer_replied: true },
-          { id: 302, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true, dealer_replied: true },
+          { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
         ],
       }; },
       'negotiation-stopped': function() { return {
         request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
         offers: [
-          { id: 301, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true },
-          { id: 302, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true },
+          { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
         ],
       }; },
       'offers-auto-rejected': function() { return {
@@ -1209,8 +1213,9 @@
         cur.messages = cur.messages || [];
         cur.messages.push({ sender: 'seller', amount: amount, message: message, created_at: new Date().toISOString() });
         NEGOTIATIONS[MODAL.offerId] = cur;
-        SCENARIO = 'counter-offer-sent'; saveState(); closeModal();
-        window.location.href = 'decision.html?scenario=counter-offer-sent';
+        SCENARIO = 'counter-offer-sent'; saveState();
+        renderPage();
+        openModal('Negotiate', MODAL.offerId);
       });
     }
 
@@ -1397,7 +1402,7 @@
       grp.items.forEach(function(sc) {
         var a = document.createElement('a');
         var cur = sc.id === SCENARIO;
-        var q = new URLSearchParams(window.location.search);
+        var q = new URLSearchParams();
         q.set('scenario', sc.id);
         a.href = 'decision.html?' + q.toString();
         a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
@@ -1437,7 +1442,7 @@
     }
 
     var curData = (SCENARIOS[SCENARIO] || SCENARIOS['new-offers'])();
-    drawer.appendChild(makeInput('Asking price €', 'asking',  '', OV_ASKING  !== null && OV_ASKING  !== undefined ? OV_ASKING  : curData.request.asking_price));
+    drawer.appendChild(makeInput('Asking price €', 'asking', '', OV_ASKING !== null && OV_ASKING !== undefined ? OV_ASKING : _funnelAskingPrice));
     drawer.appendChild(makeInput('Highest offer €', 'highest', '', OV_HIGHEST !== null && OV_HIGHEST !== undefined ? OV_HIGHEST : (curData.offers[0] ? curData.offers[0].amount : '')));
     drawer.appendChild(makeInput('2nd highest € (empty = 1 offer)', 'second', 'Empty = single offer',
       OV_SECOND === null ? '' : (OV_SECOND !== undefined ? OV_SECOND : (curData.offers[1] ? curData.offers[1].amount : ''))));
@@ -1485,7 +1490,9 @@
         created_at: new Date().toISOString()
       });
       NEGOTIATIONS[_h.id] = _neg;
+      SCENARIO = 'dealer-replied'; saveState();
       open = false; drawer.style.display = 'none';
+      renderPage();
       openModal('Negotiate', _h.id);
     });
     drawer.appendChild(simBtn);
