@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hinta-arvio – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Focus ring — on input wrapper so the € suffix is included */
+    input:focus { outline: none; }
+    .price-input-wrapper:focus-within { border-color: #0B6DFF; box-shadow: 0 0 0 2px rgba(11,109,255,0.15); }
+    /* Field validation error */
+    @keyframes av-error-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      60%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+    .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
+    .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+  </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+</head>
+<body class="font-dm bg-white min-h-screen">
+
+  <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
+    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 max-md:flex-col max-md:px-0 max-md:gap-0">
+
+      <!-- ── Left column ── -->
+      <div class="flex-1 flex flex-col items-start gap-6 max-w-[512px] max-md:max-w-full max-md:w-full max-md:gap-10 max-md:px-5 max-md:pt-5 max-md:pb-8">
+
+        <!-- Logo -->
+        <a href="index.html" aria-label="Takaisin etusivulle">
+          <img src="assets/474ac962-2072-4176-9367-f62c20fadb0f.svg"
+               alt="AutoVex"
+               class="w-[88px] h-[18px] object-contain block" />
+        </a>
+
+        <!-- Step navigation -->
+        <nav aria-label="Vaiheet" class="w-full flex items-start pb-3">
+          <div data-step="details" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.details">Varusteet</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="services" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.service">Huollot<br>&amp; kunto</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="photos" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.photos">Kuvat</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="price" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.price">Hinta</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="contact" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.contact">Yhteys</span>
+          </div>
+        </nav>
+
+        <!-- Illustration + headline + subtext -->
+        <div class="w-full flex flex-col items-center gap-3 text-center">
+          <div class="flex items-center justify-center h-[170px]">
+            <img src="assets/price-illustration.svg" alt="" class="w-[217px] h-[154px] object-contain" />
+          </div>
+          <h1 id="price-headline" class="font-dm font-bold text-black text-2xl leading-[28px]" data-i18n="price.title">
+            Onko sinulla tavoitehinta?
+          </h1>
+          <p id="price-subtext" class="font-dm text-base leading-5 text-black max-w-[432px]" data-i18n="price.subtitle">
+            Säästät aikaa turhien tarjouksien kanssa. Voit jatkaa myös ilman tavoitehintaa.
+          </p>
+        </div>
+
+        <!-- Treatment A: Optional price expectation -->
+        <div id="treatment-a" class="w-full flex flex-col gap-4">
+          <div class="flex flex-col gap-2">
+            <label for="price-expectation" class="font-dm font-medium text-base text-slate-900" data-i18n="price.targetLabel">Tavoitehinta (valinnainen)</label>
+            <div class="price-input-wrapper w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
+              <input id="price-expectation" type="text" inputmode="numeric" placeholder="esim. 12 500" data-i18n-placeholder="price.targetPlaceholder"
+                class="flex-1 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
+              <span class="font-dm font-medium text-base text-slate-400 flex-shrink-0">€</span>
+            </div>
+            <div id="price-expectation-error" class="items-center gap-1.5" style="display:none;">
+              <p class="av-error-msg">Anna hinta numeroina, esim. 12 500.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+            <p class="font-dm text-base leading-5 text-slate-700" data-i18n="price.targetNote">Et sitoudu myymään tavoitehinnallasi.</p>
+          </div>
+        </div>
+
+        <!-- Treatment B: Mandatory asking price (ASK plates) -->
+        <div id="treatment-b" class="w-full flex flex-col gap-4" style="display:none;">
+          <div class="flex flex-col gap-2">
+            <label for="asking-price" class="font-dm font-medium text-base text-slate-900" data-i18n="price.askingLabel">Pyyntihintasi <span class="text-red-500">*</span></label>
+            <div class="price-input-wrapper w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
+              <input id="asking-price" type="text" inputmode="numeric" placeholder="esim. 12 500" data-i18n-placeholder="price.askingPlaceholder"
+                class="flex-1 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
+              <span class="font-dm font-medium text-base text-slate-400 flex-shrink-0">€</span>
+            </div>
+            <div id="asking-price-error" class="items-center gap-1.5" style="display:none;">
+              <p id="asking-price-error-msg" class="av-error-msg">Syötä pyyntihinta jatkaaksesi.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-2">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+            <p class="font-dm text-base leading-5 text-slate-700" data-i18n="price.askingNote">Auttaa ostajia ymmärtämään, millaista hintaa toivot. Tarjoukset usein ylittävät pyyntihinnan.</p>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <button onclick="continueNext()"
+          class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
+          <span data-i18n="btn.continue">Jatka</span>
+          <img src="assets/faffcfa0-49b2-4740-9fff-3edecf20e750.svg" class="w-6 h-6" alt="" />
+        </button>
+
+        <!-- Back -->
+        <div class="flex items-center justify-center w-full">
+          <a href="photos.html" class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a>
+        </div>
+
+      </div>
+
+      <!-- ── Right column (cream) ── -->
+      <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+
+        <h2 class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="nextSteps.title">Mitä tapahtuu seuraavaksi?</h2>
+
+        <div class="flex flex-col gap-5">
+          <div class="flex gap-2 items-start">
+            <img src="assets/cf9ed64c-e015-4129-a683-516894e443b4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
+            <div>
+              <p id="step1-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step1Title">Ilmoituksesi tarkistetaan</p>
+              <p id="step1-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step1Body">Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.</p>
+            </div>
+          </div>
+          <div class="flex gap-2 items-start">
+            <img src="assets/7cb7ddce-86cc-457f-be2d-f44485a7e101.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="2" />
+            <div>
+              <p id="step2-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step2Title">Tarjouskilpailu käynnissä</p>
+              <p id="step2-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step2Body">Tarjouskilpailu kestää tyypillisesti 36 tuntia. Tarkkailethan sähköpostiasi.</p>
+            </div>
+          </div>
+          <div class="flex gap-2 items-start">
+            <img src="assets/d7dbeec3-32bb-407c-a234-273ace9af998.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="3" />
+            <div>
+              <p id="step3-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step3Title">Tarjouskilpailu päättynyt – katso tulokset!</p>
+              <p id="step3-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step3Body">Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save draft / Jatka myöhemmin -->
+        <div class="mt-auto">
+          <div id="save-draft-target" style="display:none"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
+    function setStore(data) { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {} }
+
+    function initStepNav(currentStep) {
+      const s = getStore();
+      const URLS = { details:'details.html', services:'services.html', photos:'photos.html', price:'price.html', contact:'contact.html' };
+      const LOCKED          = '<img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const COMPLETE        = '<img src="assets/step-completed.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const WARNING         = '<img src="assets/step-incomplete.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const ACTIVE_EMPTY    = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-default-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_COMPLETE = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-completed.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_WARNING  = '<div class="w-7 h-7 rounded-full border-2 border-[#f59e0b] flex items-center justify-center flex-shrink-0"><img src="assets/step-incomplete-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      function isStarted(step) {
+        switch(step) {
+          case 'details':  return !!(s.details && s.details.merkki);
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; return rg.some(v=>v!=null)||!!sv.vaurio_naky||!!sv.vaurio_kolari||!!sv.korjaukset; }
+          case 'photos':   return !!(s.photosVisited||Object.values(s.photos||{}).some(a=>a&&a.length>0)||s.priceVisited||s.successVisited);
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi||c.sahkoposti||c.puhelin); }
+          default: return false;
+        }
+      }
+      function isComplete(step) {
+        switch(step) {
+          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
+          case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
+          default: return false;
+        }
+      }
+      function hasPreviouslyLeft(step) {
+        switch(step) {
+          case 'details':  return !!s.detailsLeft;
+          case 'services': return !!s.servicesLeft;
+          case 'photos':   return !!s.priceVisited;
+          default: return false;
+        }
+      }
+      document.querySelectorAll('[data-step]').forEach(el => {
+        const step     = el.dataset.step;
+        const isActive = step === currentStep;
+        const started  = isStarted(step);
+        const complete = isComplete(step);
+        const dot = el.firstElementChild;
+        if (dot) {
+          let indicator;
+          if (isActive) {
+            indicator = complete ? ACTIVE_COMPLETE : (started && hasPreviouslyLeft(step)) ? ACTIVE_WARNING : ACTIVE_EMPTY;
+          } else {
+            indicator = !started ? LOCKED : complete ? COMPLETE : WARNING;
+          }
+          dot.insertAdjacentHTML('beforebegin', indicator);
+          dot.remove();
+        }
+        const label = el.querySelector('span');
+        if (label) {
+          if (isActive) {
+            label.style.color      = '#080808';
+            label.style.fontWeight = '700';
+          } else {
+            label.style.color      = started ? '#080808' : '#475569';
+            label.style.fontWeight = '';
+          }
+        }
+        if (!isActive) {
+          if (started) {
+            el.style.cursor = 'pointer';
+            if (el.tagName === 'A') { el.href = URLS[step]; }
+            else { el.onclick = () => window.location.href = URLS[step]; }
+          } else {
+            el.style.cursor = 'default';
+            if (el.tagName === 'A') { el.removeAttribute('href'); el.onclick = e => e.preventDefault(); }
+            else { el.onclick = null; }
+          }
+        }
+      });
+    }
+
+    function scrollAndPulse(el) {
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('av-error-pulse');
+      void el.offsetWidth;
+      el.classList.add('av-error-pulse');
+      el.addEventListener('animationend', () => el.classList.remove('av-error-pulse'), { once: true });
+    }
+
+    // Strip anything that isn't a digit, space, comma or period.
+    function filterPriceInput(input) {
+      const before = input.value;
+      const filtered = before.replace(/[^\d\s,.]/g, '');
+      if (filtered !== before) {
+        const pos = Math.max(0, (input.selectionStart || 0) - (before.length - filtered.length));
+        input.value = filtered;
+        input.setSelectionRange(pos, pos);
+      }
+    }
+
+    // Returns the numeric value or null (empty) or false (non-numeric content).
+    function parsePriceValue(inputId) {
+      const raw = document.getElementById(inputId).value.trim();
+      if (!raw) return null;
+      const cleaned = raw.replace(/\s/g, '').replace(',', '.').replace('€', '');
+      const n = parseFloat(cleaned);
+      if (isNaN(n) || n <= 0) return false;
+      return n;
+    }
+
+    function showPriceError(errId, msgId, message) {
+      const err = document.getElementById(errId);
+      if (msgId) document.getElementById(msgId).textContent = message;
+      if (err) {
+        err.style.display = 'flex';
+        const wrapper = document.getElementById(errId.replace('-error', ''))?.parentNode;
+        if (wrapper) { wrapper.style.outline = '2px solid #ef4444'; wrapper.style.outlineOffset = '-2px'; }
+      }
+    }
+
+    function clearPriceError(errId, inputId) {
+      const err = document.getElementById(errId);
+      if (err) err.style.display = 'none';
+      const wrapper = document.getElementById(inputId)?.parentNode;
+      if (wrapper) { wrapper.style.outline = ''; wrapper.style.outlineOffset = ''; }
+    }
+
+    function continueNext() {
+      const s = getStore();
+      s.priceVisited = true;
+
+      if (s._treatmentB) {
+        const val = parsePriceValue('asking-price');
+        if (val === null) {
+          showPriceError('asking-price-error', 'asking-price-error-msg', t('price.askingError'));
+          scrollAndPulse(document.getElementById('asking-price')?.parentNode);
+          setStore(s); return;
+        }
+        if (val === false) {
+          showPriceError('asking-price-error', 'asking-price-error-msg', t('price.targetError'));
+          scrollAndPulse(document.getElementById('asking-price')?.parentNode);
+          setStore(s); return;
+        }
+        clearPriceError('asking-price-error', 'asking-price');
+        s.priceMode = 'asking';
+        s.askingPrice = val.toString();
+        delete s.priceExpectation;
+      } else {
+        const val = parsePriceValue('price-expectation');
+        if (val === false) {
+          showPriceError('price-expectation-error', null, '');
+          scrollAndPulse(document.getElementById('price-expectation')?.parentNode);
+          setStore(s); return;
+        }
+        clearPriceError('price-expectation-error', 'price-expectation');
+        delete s.priceMode;
+        delete s.askingPrice;
+        if (val !== null) {
+          s.priceExpectation = val.toString();
+        } else {
+          delete s.priceExpectation;
+        }
+      }
+
+      setStore(s);
+      window.location = 'contact.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const s = getStore();
+      s.priceVisited = true;
+
+      const plate = ((s.hero && s.hero.plate) || '').toUpperCase();
+      const isTreatmentB = plate.startsWith('ASK');
+      s._treatmentB = isTreatmentB;
+      setStore(s);
+
+      initStepNav('price');
+
+      // Real-time numeric filtering and error clearing
+      document.getElementById('price-expectation').addEventListener('input', function() {
+        filterPriceInput(this);
+        clearPriceError('price-expectation-error', 'price-expectation');
+      });
+      document.getElementById('asking-price').addEventListener('input', function() {
+        filterPriceInput(this);
+        clearPriceError('asking-price-error', 'asking-price');
+      });
+
+      if (isTreatmentB) {
+        document.getElementById('treatment-a').style.display = 'none';
+        document.getElementById('treatment-b').style.display = 'flex';
+        document.getElementById('price-headline').textContent = t('price.askVariantTitle');
+        document.getElementById('price-subtext').textContent = t('price.askVariantSubtitle');
+        document.getElementById('step1-title').textContent = t('nextSteps.step1TitleAsk');
+        document.getElementById('step1-body').textContent = t('nextSteps.step1BodyAsk');
+        document.getElementById('step2-title').textContent = t('nextSteps.step2TitleAsk');
+        document.getElementById('step2-body').textContent = t('nextSteps.step2BodyAsk');
+        document.getElementById('step3-title').textContent = t('nextSteps.step3TitleAsk');
+        document.getElementById('step3-body').textContent = t('nextSteps.step3BodyAsk');
+        if (s.askingPrice) {
+          document.getElementById('asking-price').value = Number(s.askingPrice).toLocaleString('fi-FI');
+        }
+      } else {
+        if (s.priceExpectation) {
+          document.getElementById('price-expectation').value =
+            Number(s.priceExpectation).toLocaleString('fi-FI');
+        }
+      }
+    });
+
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) initStepNav('price');
+    });
+  </script>
+  <script src="layout.js"></script>
+</body>
+</html>

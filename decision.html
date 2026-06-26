@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="fi" class="bg-blue-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarjouspäätös – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA', 100: '#D7EDFF', 200: '#B9E0FF', 300: '#88CFFF',
+              400: '#50B2FF', 500: '#2890FF', 600: '#0B6DFF', 700: '#0A59EB',
+              800: '#0F47BE', 900: '#134195', 950: '#11285A',
+            },
+            'av-blue': '#0B6DFF', 'av-blue-dark': '#0050C8',
+            'av-dark': '#08234D', 'av-turquoise': '#00F0DC',
+            'av-sky': '#DAF0F5', 'av-peach': '#F5AB84', 'av-cream': '#FAEADA',
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body class="font-body bg-blue-50 min-h-screen">
+  <!-- Confetti canvas — mirrors AConfetti.vue: fixed inset-0, pointer-events-none -->
+  <canvas id="confetti-canvas" class="fixed inset-0 h-full w-full pointer-events-none" style="display:none;z-index:9998"></canvas>
+
+  <!-- Nav -->
+  <header class="fixed top-0 left-0 right-0 h-20 bg-white z-50">
+    <nav class="h-full max-w-screen-xxl mx-auto px-6 flex items-center justify-between gap-4">
+      <a href="index.html" aria-label="AutoVex etusivu">
+        <img src="assets/0ee90a56-efbf-4799-9249-76f362c9facf.svg" alt="AutoVex" class="w-[108px] h-[22px] object-contain block" />
+      </a>
+      <div class="flex items-center gap-1">
+        <a href="index.html" class="hidden lg:inline-flex items-center px-5 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]" style="text-decoration:none">
+          Aloita kilpailutus
+        </a>
+        <div class="flex flex-col items-center justify-center px-4 py-3 min-w-[50px] cursor-pointer">
+          <svg width="30" height="30" viewBox="0 -960 960 960" fill="#0B6DFF" aria-hidden="true">
+            <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+          </svg>
+          <p id="nav-login-label" class="text-blue-600 text-xs font-semibold">Kirjaudu</p>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="h-20 bg-blue-50"></div>
+
+  <main class="max-w-[768px] mx-auto p-6 sm:py-14">
+
+    <!-- WARMUP STATE -->
+    <div id="state-warmup" class="hidden flex flex-col justify-center md:min-h-[700px] my-auto">
+      <div class="relative bg-white px-4 pt-4 pb-[20px] shadow-md rounded-xl">
+        <div class="w-full flex flex-col md:flex-row items-center md:items-stretch md:gap-4">
+
+          <!-- Image half -->
+          <div class="w-full md:w-1/2 h-[270px] md:h-full px-5 md:px-0 flex justify-center items-center mb-6 md:mb-0 py-4">
+            <img id="warmup-img" src="" alt="Tarjouskaupan tulokset" class="max-h-full object-contain" />
+          </div>
+
+          <!-- Content half -->
+          <div class="w-full md:w-1/2 flex flex-col items-center justify-center text-center px-2.5">
+            <!-- UiBadge color="light_lime": rounded border bg-lime-50 border-lime-400 text-lime-700 -->
+            <div class="inline-flex items-center space-x-2 px-2 py-1 text-xs rounded border bg-lime-50 border-lime-400">
+              <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor" class="text-lime-700" aria-hidden="true"><path d="m246.14 113.86-16-16a20 20 0 0 0-23.06-3.75l-45.2-45.2a20 20 0 0 0-3.74-23.06l-16-16a20 20 0 0 0-28.28 0l-64 64a20 20 0 0 0 0 28.28l16 16a20 20 0 0 0 23 3.79l-59.5 59.46a32 32 0 0 0 45.26 45.26L134 167.21a20 20 0 0 0 3.81 22.94l16 16a20 20 0 0 0 28.29 0l64-64a20 20 0 0 0 0-28.29ZM80 98.34 69.64 88 128 29.65 138.34 40ZM57.64 209.67a8 8 0 0 1-11.31-11.32l59.52-59.52 11.31 11.32Zm92.7-60.29-43.72-43.72 39-39 43.72 43.72Zm17.65 37L157.65 176 216 117.66 226.34 128Z"/></svg>
+              <span class="text-lime-700">Tarjouskilpailu on päättynyt</span>
+            </div>
+
+            <h2 id="warmup-heading" class="font-display text-3xl font-bold mt-2"></h2>
+            <p id="warmup-message" class="text-black text-base px-2.5 mb-16 md:mb-6 mt-1"></p>
+
+            <button onclick="revealOffers()" class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">
+              Katso tulokset
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN STATE -->
+    <div id="state-main" class="hidden grid gap-y-12 relative z-10">
+
+      <!-- Section 1: Hero + OfferCards (no section heading) -->
+      <!-- DecisionHero and each OfferCard are direct grid children — injected by JS -->
+      <section>
+        <div id="offers-grid" class="grid items-start gap-y-7 md:grid-cols-2 md:gap-12"></div>
+      </section>
+
+      <!-- Section 2: Top BannerHelperCard (if allRejected || hasAccepted) -->
+      <section id="section-banner-top" class="hidden">
+        <div id="banner-top-content"></div>
+      </section>
+
+      <!-- Section 3: AuctionInsights -->
+      <section id="section-insights" class="hidden">
+        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="m199 125.31-49.89-18.38L130.69 57a19.92 19.92 0 0 0-37.38 0l-18.38 49.93L25 125.31a19.92 19.92 0 0 0 0 37.38l49.89 18.38L93.31 231a19.92 19.92 0 0 0 37.38 0l18.38-49.89L199 162.69a19.92 19.92 0 0 0 0-37.38m-60 33.9a19.89 19.89 0 0 0-11.8 11.8L112 212.28 96.79 171A19.89 19.89 0 0 0 85 159.21L43.72 144 85 128.79A19.89 19.89 0 0 0 96.79 117L112 75.72 127.21 117a19.89 19.89 0 0 0 11.8 11.8l41.27 15.2ZM140 40a12 12 0 0 1 12-12h12V16a12 12 0 0 1 24 0v12h12a12 12 0 0 1 0 24h-12v12a12 12 0 0 1-24 0V52h-12a12 12 0 0 1-12-12m112 48a12 12 0 0 1-12 12h-4v4a12 12 0 0 1-24 0v-4h-4a12 12 0 0 1 0-24h4v-4a12 12 0 0 1 24 0v4h4a12 12 0 0 1 12 12"/></svg>
+          <span class="text-blue-900">Tarjouskilpailun tiedot</span>
+        </h2>
+        <div class="w-full p-5 bg-white rounded-xl">
+          <div id="insights-content"></div>
+        </div>
+      </section>
+
+      <!-- Section 4: Bottom BannerHelperCard (decline all / helper) -->
+      <section id="section-banner-bottom" class="hidden">
+        <div id="banner-bottom-content"></div>
+      </section>
+
+      <!-- Section 5: FAQ -->
+      <section>
+        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M140 180a12 12 0 1 1-12-12 12 12 0 0 1 12 12Zm-12-108c-22.06 0-40 16.15-40 36v4a12 12 0 0 0 24 0v-4c0-6.63 7.17-12 16-12s16 5.37 16 12-7.17 12-16 12a12 12 0 0 0-12 12v8a12 12 0 0 0 24 0v-.73C159.48 131.11 172 116.38 172 100c0-19.85-17.94-36-40-36Zm88-52H40a20 20 0 0 0-20 20v160a20 20 0 0 0 20 20h168a20 20 0 0 0 20-20V40a20 20 0 0 0-20-20Zm-4 176H44V44h168Z"/></svg>
+          <span class="text-blue-900">Usein kysytyt kysymykset</span>
+        </h2>
+        <div id="faq-list" class="space-y-2.5"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-av-blue flex flex-col items-center gap-[38px] pt-14 pb-14">
+    <div class="flex flex-col gap-3.5 w-full max-w-[1388px] px-5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <div class="flex gap-3.5 font-body font-bold flex-wrap">
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Käyttöehdot</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Tietosuojakäytäntö</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Evästekäytäntö</a>
+        </div>
+        <div class="flex items-center gap-4 font-body text-sm text-white">
+          <span>Kieli</span>
+          <select class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
+            <option value="fi">Suomi</option><option value="en">English</option>
+          </select>
+          <span class="font-body font-normal">© 2025 All rights reserved</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-full max-w-[1388px] px-5">
+      <img src="assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+  </footer>
+
+  <script>
+  (function() {
+    var _now = function() { return Math.floor(Date.now() / 1000); };
+    var REACTION = 7200;
+    var _params  = new URLSearchParams(window.location.search);
+
+    // ── Persistent state (localStorage) ──
+    var _STATE_KEY = 'autovex_decision';
+    function _loadState() { try { return JSON.parse(localStorage.getItem(_STATE_KEY) || 'null') || {}; } catch(e) { return {}; } }
+    function saveState() {
+      try {
+        localStorage.setItem(_STATE_KEY, JSON.stringify({ scenario: SCENARIO, negotiations: NEGOTIATIONS, acceptedOffer: ACCEPTED_OFFER, acceptedOffersSnapshot: ACCEPTED_OFFERS_SNAPSHOT }));
+        localStorage.setItem('autovex_offers', JSON.stringify({ scenario: SCENARIO }));
+      } catch(e) {}
+    }
+    var _savedState = _loadState();
+
+    var SCENARIO = _params.get('scenario') || _savedState.scenario || 'new-offers';
+    // All decision scenarios are post-auction — ensure funnel flags reflect that
+    (function() {
+      try {
+        var fs = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
+        fs.emailVerified = true; fs.successVisited = true; fs.offersVisited = true;
+        localStorage.setItem('autovex_funnel', JSON.stringify(fs));
+      } catch(e) {}
+    })();
+    // Price overrides — set via scenario panel inputs, persisted in URL
+    var OV_ASKING  = _params.get('asking')  ? parseInt(_params.get('asking'),  10) : null;
+    var OV_HIGHEST = _params.get('highest') ? parseInt(_params.get('highest'), 10) : null;
+    var OV_SECOND  = _params.has('second')  ? (_params.get('second') !== '' ? parseInt(_params.get('second'), 10) : null) : undefined;
+    // OV_SECOND === undefined  → use scenario default (may show 2 offers)
+    // OV_SECOND === null       → param present but empty → force single offer
+    // OV_SECOND === number     → override second offer amount
+
+    // ── Icon strings ──
+    var ICO_TROPHY    = '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M232 64h-24V48a8 8 0 0 0-8-8H56a8 8 0 0 0-8 8v16H24A16 16 0 0 0 8 80v16a40 40 0 0 0 40 40h3.65A80.13 80.13 0 0 0 120 191.61V216H96a8 8 0 0 0 0 16h64a8 8 0 0 0 0-16h-24v-24.42c31.94-3.23 58.44-25.64 68.08-55.58H208a40 40 0 0 0 40-40V80a16 16 0 0 0-16-16ZM48 120a24 24 0 0 1-24-24V80h24v32q0 4 .39 8Zm184-24a24 24 0 0 1-24 24h-.5a81.81 81.81 0 0 0 .5-8.9V80h24Z"/></svg>';
+    var ICO_CHECKMARK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.285 2 9 13.567 3.714 8.556 0 12.272 9 21 24 5.715z"/></svg>';
+    var ICO_WARN_FILL = '<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>';
+    var ICO_HG_HIGH   = '<svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M184 20H72a20 20 0 0 0-20 20v36a20.1 20.1 0 0 0 8 16l48 36-48 36a20.1 20.1 0 0 0-8 16v36a20 20 0 0 0 20 20h112a20 20 0 0 0 20-20v-35.64a20.13 20.13 0 0 0-7.94-16L147.9 128l48.16-36.4a20.13 20.13 0 0 0 7.94-16V40a20 20 0 0 0-20-20m-4 24v16H76V44Zm-52 69L89.33 84h77Zm52 99H76v-30l52-39 52 39.33Z"/></svg>';
+    var ICO_HG_LOW    = '<svg width="20" height="20" viewBox="0 0 12 17" fill="currentColor"><path d="M11.418 4.818V2.313A1.406 1.406 0 0 0 10.012.905H2.137A1.406 1.406 0 0 0 .73 2.312v2.532a1.413 1.413 0 0 0 .563 1.125L4.668 8.5l-3.375 2.531a1.413 1.413 0 0 0-.563 1.125v2.531a1.406 1.406 0 0 0 1.407 1.407h7.875a1.406 1.406 0 0 0 1.406-1.407v-2.505a1.414 1.414 0 0 0-.558-1.125L7.473 8.5l3.387-2.56a1.415 1.415 0 0 0 .558-1.122Zm-2.65 6.776H3.354l2.72-2.04 2.694 2.04Zm-6.35 2.812v-1.125H9.73v1.125H2.418ZM9.73 4.68 6.074 7.445 2.418 4.703v-2.11H9.73V4.68Z"/></svg>';
+    var ICO_X_CIRCLE  = '<svg width="20" height="20" viewBox="0 0 19 19" fill="currentColor"><path d="M12.28 7.847 10.63 9.5l1.654 1.653a.845.845 0 0 1-1.196 1.195l-1.653-1.653L7.78 12.35a.845.845 0 0 1-1.196-1.195L8.238 9.5 6.587 7.847a.845.845 0 0 1 1.195-1.195l1.652 1.653 1.653-1.654a.845.845 0 0 1 1.195 1.195h-.001ZM17.028 9.5a7.594 7.594 0 1 1-7.593-7.594A7.602 7.602 0 0 1 17.027 9.5Zm-1.687 0a5.906 5.906 0 1 0-11.812 0 5.906 5.906 0 0 0 11.812 0Z"/></svg>';
+    var ICO_SEAL_CHK  = '<svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><path d="M228.75 100.05c-3.52-3.67-7.15-7.46-8.34-10.33-1.06-2.56-1.14-7.83-1.21-12.47-.15-10-.34-22.44-9.18-31.27s-21.27-9-31.27-9.18c-4.64-.07-9.91-.15-12.47-1.21-2.87-1.19-6.66-4.82-10.33-8.34C148.87 20.46 140.05 12 128 12s-20.87 8.46-27.95 15.25c-3.67 3.52-7.46 7.15-10.33 8.34-2.56 1.06-7.83 1.14-12.47 1.21-10 .2-22.44.34-31.25 9.2s-9 21.25-9.2 31.25c-.07 4.64-.15 9.91-1.21 12.47-1.19 2.87-4.82 6.66-8.34 10.33C20.46 107.13 12 116 12 128s8.46 20.87 15.25 28c3.52 3.67 7.15 7.46 8.34 10.33 1.06 2.56 1.14 7.83 1.21 12.47.15 10 .34 22.44 9.18 31.27s21.27 9 31.27 9.18c4.64.07 9.91.15 12.47 1.21 2.87 1.19 6.66 4.82 10.33 8.34C107.13 235.54 116 244 128 244s20.87-8.46 27.95-15.25c3.67-3.52 7.46-7.15 10.33-8.34 2.56-1.06 7.83-1.14 12.47-1.21 10-.15 22.44-.34 31.27-9.18s9-21.27 9.18-31.27c.07-4.64.15-9.91 1.21-12.47 1.19-2.87 4.82-6.66 8.34-10.33 6.79-7.08 15.25-15.9 15.25-27.95s-8.46-20.87-15.25-27.95m-17.32 39.29c-4.82 5-10.28 10.72-13.19 17.76-2.82 6.8-2.93 14.16-3 21.29-.08 5.36-.19 12.71-2.15 14.66s-9.3 2.07-14.66 2.15c-7.13.11-14.49.22-21.29 3-7 2.91-12.73 8.37-17.76 13.19-3.6 3.45-8.98 8.61-11.38 8.61s-7.78-5.16-11.34-8.57c-5-4.82-10.72-10.28-17.76-13.19-6.8-2.82-14.16-2.93-21.29-3-5.36-.08-12.71-.19-14.66-2.15s-2.07-9.3-2.15-14.66c-.11-7.13-.22-14.49-3-21.29-2.91-7-8.37-12.73-13.19-17.76C41.16 135.78 36 130.4 36 128s5.16-7.78 8.57-11.34c4.82-5 10.28-10.72 13.19-17.76 2.82-6.8 2.93-14.16 3-21.29C60.88 72.25 61 64.9 63 63s9.3-2.07 14.66-2.15c7.13-.11 14.49-.22 21.29-3 7-2.91 12.73-8.37 17.76-13.19C120.22 41.16 125.6 36 128 36s7.78 5.16 11.34 8.57c5 4.82 10.72 10.28 17.76 13.19 6.8 2.82 14.16 2.93 21.29 3 5.36.08 12.71.19 14.66 2.15s2.07 9.3 2.15 14.66c.11 7.13.22 14.49 3 21.29 2.91 7 8.37 12.73 13.19 17.76 3.41 3.56 8.57 8.94 8.57 11.34s-5.12 7.82-8.53 11.38m-34.94-43.83a12 12 0 0 1 0 17l-56 56a12 12 0 0 1-17 0l-24-24a12 12 0 1 1 17-17L112 143l47.51-47.52a12 12 0 0 1 16.98.03"/></svg>';
+    var ICO_MAP_PIN   = '<svg width="22" height="22" viewBox="0 0 16 17" fill="currentColor"><path d="M6.75 5.5a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0Zm-3 0a4.25 4.25 0 0 1 8.5 0c0 3.89-3.72 6.063-3.878 6.151a.75.75 0 0 1-.744 0C7.47 11.563 3.75 9.391 3.75 5.5Zm1.5 0c0 2.388 1.92 4.012 2.75 4.602.826-.593 2.75-2.227 2.75-4.602a2.75 2.75 0 1 0-5.5 0Zm7.786 4.1a.75.75 0 1 0-.572 1.387c.883.364 1.286.78 1.286 1.013 0 .25-.446.692-1.423 1.068-1.144.437-2.68.682-4.327.682-1.646 0-3.183-.242-4.327-.682C2.695 12.692 2.25 12.25 2.25 12c0-.233.402-.65 1.286-1.013A.75.75 0 1 0 2.964 9.6C1.954 10.016.75 10.77.75 12c0 2.134 3.647 3.25 7.25 3.25 1.826 0 3.554-.277 4.866-.783.89-.342 2.384-1.118 2.384-2.467 0-1.23-1.204-1.984-2.214-2.4Z"/></svg>';
+    var ICO_CLOCK_USR = '<svg width="20" height="20" viewBox="0 0 19 18" fill="currentColor"><path d="M12.9 8.067 9.525 9.754A.844.844 0 0 1 8.304 9V5.062a.844.844 0 1 1 1.687 0v2.573l2.154-1.077a.844.844 0 1 1 .755 1.509Zm3.214 8.498a.844.844 0 0 1-1.032-.598c-.169-.625-.756-1.06-1.434-1.06-.679 0-1.266.435-1.435 1.06a.844.844 0 1 1-1.632-.434 3.076 3.076 0 0 1 1.06-1.617 2.532 2.532 0 1 1 4.008 0c.519.41.89.978 1.06 1.617a.843.843 0 0 1-.595 1.032Zm-3.31-4.19a.844.844 0 1 0 1.688 0 .844.844 0 0 0-1.688 0Zm-4.396 2.486a5.905 5.905 0 1 1 6.6-6.6.845.845 0 0 0 1.259.636.844.844 0 0 0 .415-.848A7.594 7.594 0 1 0 8.2 16.535a.843.843 0 1 0 .209-1.674Z"/></svg>';
+    var ICO_CHATS     = '<svg width="20" height="20" viewBox="0 0 30 31" fill="currentColor"><path d="M27.188 11.916a1.875 1.875 0 0 0-1.875-1.875h-3.75v-3.75a1.875 1.875 0 0 0-1.875-1.875h-15a1.875 1.875 0 0 0-1.875 1.875v15a.938.938 0 0 0 1.523.729l4.101-3.307v3.515a1.875 1.875 0 0 0 1.876 1.875H21.28l4.384 3.542a.937.937 0 0 0 1.249-.066.937.937 0 0 0 .274-.663v-15ZM22.2 22.437a.937.937 0 0 0-.586-.209H10.313v-3.75h9.374a1.875 1.875 0 0 0 1.875-1.875v-4.687h3.75v13.037l-3.11-2.516Z"/></svg>';
+    var ICO_BUILDINGS = '<svg width="30" height="30" viewBox="0 0 256 256" fill="currentColor"><path d="M240 208h-16V96a16 16 0 0 0-16-16h-64V32a16 16 0 0 0-24.88-13.32L39.12 72A16 16 0 0 0 32 85.34V208H16a8 8 0 0 0 0 16h224a8 8 0 0 0 0-16ZM208 96v112h-64V96ZM48 85.34 128 32v176H48ZM112 112v16a8 8 0 0 1-16 0v-16a8 8 0 1 1 16 0Zm-32 0v16a8 8 0 0 1-16 0v-16a8 8 0 1 1 16 0Zm0 56v16a8 8 0 0 1-16 0v-16a8 8 0 0 1 16 0Zm32 0v16a8 8 0 0 1-16 0v-16a8 8 0 0 1 16 0Z"/></svg>';
+    var ICO_INFO_SM   = '<svg width="18" height="18" viewBox="0 0 100 100" fill="currentColor"><path fill-rule="evenodd" d="M50 100c27.614 0 50-22.386 50-50S77.614 0 50 0 0 22.386 0 50s22.386 50 50 50Zm-4.775-68.73c1.257 1.127 2.86 1.69 4.81 1.69 1.907 0 3.467-.563 4.68-1.69 1.257-1.17 1.885-2.6 1.885-4.29 0-1.733-.628-3.163-1.885-4.29-1.213-1.17-2.773-1.755-4.68-1.755-1.95 0-3.553.585-4.81 1.755-1.213 1.127-1.82 2.557-1.82 4.29 0 1.69.607 3.12 1.82 4.29ZM55.56 73V36.73H44.445V73H55.56Z" clip-rule="evenodd"/></svg>';
+    var ICO_MDI_HOME  = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 8 6v12h-5v-7H9v7H4V9z"/></svg>';
+    var ICO_CAR       = '<svg width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-8h96v8a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM80 152H56a8 8 0 0 1 0-16h24a8 8 0 0 1 0 16Zm120 0h-24a8 8 0 0 1 0-16h24a8 8 0 0 1 0 16ZM44.31 104 69.2 48h117.6l24.89 56Z"/></svg>';
+    var ICO_PHONE     = '<svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M798-120q-125 0-247-54.5T329-329Q229-429 174.5-551T120-798q0-18 12-30t30-12h162q14 0 25 9.5t13 22.5l26 140q2 16-1 27t-11 19l-97 98q20 37 47.5 71.5T387-386q31 31 65 57.5t72 48.5l94-94q9-9 23.5-13.5T670-390l138 28q14 4 23 14.5t9 23.5v162q0 18-12 30t-30 12Z"/></svg>';
+    var ICO_CAR_SIMPLE = '<svg width="160" height="160" viewBox="0 0 256 256" fill="currentColor"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/></svg>';
+
+    // ── Formatters ──
+    function fmtCurrency(n) { return n ? n.toLocaleString('fi-FI') + ' €' : '—'; }
+    function fmtKm(n)       { return Math.round(n || 0); }
+    var SALES_THRESHOLDS = [20,30,40,50,60,70,80,90,100,200,300,400,500,1000];
+    function fmtSales(n) {
+      for (var i = 0; i < SALES_THRESHOLDS.length; i++) {
+        if (n >= SALES_THRESHOLDS[i] && n < (SALES_THRESHOLDS[i+1] || Infinity)) return SALES_THRESHOLDS[i];
+      }
+      return null;
+    }
+    function fmtTime(secs)  {
+      var s = Math.max(0, secs);
+      var d = Math.floor(s / 86400); s -= d * 86400;
+      var h = Math.floor(s / 3600);  s -= h * 3600;
+      var m = Math.floor(s / 60);    s -= m * 60;
+      if (d > 0) return d + ' d ' + h + ' h ' + m + ' min';
+      if (h > 0) return h + ' h ' + m + ' min';
+      return m + ' min ' + s + ' sec';
+    }
+    function fmtRelativeTime(isoStr) {
+      if (!isoStr) return '';
+      var diff = Math.round((_now() - new Date(isoStr).getTime() / 1000) / 60);
+      if (diff < 1) return 'juuri äsken';
+      if (diff < 60) return diff + ' min sitten';
+      var hrs = Math.floor(diff / 60);
+      if (hrs < 24) return hrs + ' t sitten';
+      return Math.floor(hrs / 24) + ' pv sitten';
+    }
+
+    // ── Mock data ──
+    var PAST   = function() { return _now() - REACTION - 3600; };
+    var ACTIVE = function() { return _now() - 3600; };
+
+    var BASE = {
+      id: 1001, make: 'Toyota', model: 'Corolla', year: 2019,
+      registration_number: 'ABC-123', asking_price: 12000, price_estimation: 11800,
+      published_at: _now() - 8 * 86400,
+      auction_ends_at: _now() - REACTION - 7200,
+    };
+
+    var DEALERS = {
+      501: { name: 'Auto Helsinki Oy', city: 'Helsinki', total_sales: 120 },
+      502: { name: 'Espoon Autoliike',  city: 'Espoo',    total_sales: 85  },
+      503: { name: 'Vantaan Auto',      city: 'Vantaa',   total_sales: 200 },
+    };
+
+    var SCENARIOS = {
+      'new-offers': function() { return {
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: null, highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        offers: [
+          { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 0, amount: 10600, car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+          { id: 204, status: 0, amount: 10200, car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
+          { id: 205, status: 0, amount: 9900,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
+          { id: 206, status: 0, amount: 9500,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
+          { id: 207, status: 0, amount: 9100,  car_pickup: false, distance: 120, city: 'Jyväskylä',total_sales: 45,  office_id: 507, auto_rejected: false },
+          { id: 208, status: 0, amount: 8700,  car_pickup: true,  distance: 150, city: 'Lahti',    total_sales: 70,  office_id: 508, auto_rejected: false },
+        ],
+      }; },
+      'seen-offers': function() { return {
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-1800)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        offers: [
+          { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 0, amount: 10600, car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+          { id: 204, status: 0, amount: 10200, car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
+          { id: 205, status: 0, amount: 9900,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
+          { id: 206, status: 0, amount: 9500,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
+          { id: 207, status: 0, amount: 9100,  car_pickup: false, distance: 120, city: 'Jyväskylä',total_sales: 45,  office_id: 507, auto_rejected: false },
+          { id: 208, status: 0, amount: 8700,  car_pickup: true,  distance: 150, city: 'Lahti',    total_sales: 70,  office_id: 508, auto_rejected: false },
+        ],
+      }; },
+      'final-offer': function() { return {
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11200, has_final_offer: true, insights_data: genInsights(25, 11200) }),
+        offers: [
+          { id: 201, status: 3, amount: 11200, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 0, amount: 10800, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 0, amount: 10300, car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+          { id: 204, status: 0, amount: 9900,  car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
+          { id: 205, status: 0, amount: 9400,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
+          { id: 206, status: 0, amount: 8900,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
+        ],
+      }; },
+      'accepted': function() {
+        var acceptedAmt = ACCEPTED_OFFER ? ACCEPTED_OFFER.amount : 11500;
+        return {
+          request: Object.assign({}, BASE, { status: 2, expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-7200)*1000).toISOString(), highest_offer: acceptedAmt, has_final_offer: false, accepted_at: new Date((_now()-3600)*1000).toISOString(), has_an_accepted_offer: true, insights_data: genInsights(25, acceptedAmt) }),
+          offers: ACCEPTED_OFFERS_SNAPSHOT || [
+            { id: 201, status: 1, amount: 11500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+            { id: 202, status: 2, amount: 11100, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+            { id: 203, status: 2, amount: 10700, car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+            { id: 204, status: 2, amount: 10300, car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
+            { id: 205, status: 2, amount: 9950,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
+            { id: 206, status: 2, amount: 9600,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
+            { id: 207, status: 2, amount: 9250,  car_pickup: false, distance: 120, city: 'Jyväskylä',total_sales: 45,  office_id: 507, auto_rejected: false },
+            { id: 208, status: 2, amount: 8900,  car_pickup: true,  distance: 150, city: 'Lahti',    total_sales: 70,  office_id: 508, auto_rejected: false },
+            { id: 209, status: 2, amount: 8550,  car_pickup: false, distance: 180, city: 'Kuopio',   total_sales: 35,  office_id: 509, auto_rejected: false },
+            { id: 210, status: 2, amount: 8200,  car_pickup: false, distance: 220, city: 'Joensuu',  total_sales: 25,  office_id: 510, auto_rejected: false },
+          ],
+        };
+      },
+      'deal-completed': function() { return {
+        request: Object.assign({}, BASE, { status: 4, expires_at: PAST(), offer_count: 3, buyers: 3, offers_seen_at: new Date((_now()-2*86400)*1000).toISOString(), highest_offer: 11500, second_highest_offer: 11000, has_final_offer: false, accepted_at: new Date((_now()-2*86400)*1000).toISOString(), has_an_accepted_offer: true, is_expired: true, insights_data: genInsights(3, 11500) }),
+        offers: [
+          { id: 201, status: 1, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 2, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 2, amount: 10500, car_pickup: false, distance: 40, city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+        ],
+      }; },
+      'deal-failed': function() { return {
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3*86400)*1000).toISOString(), highest_offer: 9500, has_final_offer: false, insights_data: genInsights(25, 9500) }),
+        offers: [
+          { id: 201, status: 2, amount: 9500,  car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 2, amount: 9100,  car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 2, amount: 8700,  car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+          { id: 204, status: 2, amount: 8300,  car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
+          { id: 205, status: 2, amount: 7900,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
+          { id: 206, status: 2, amount: 7500,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
+        ],
+      }; },
+      'all-rejected': function() { return {
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3*86400)*1000).toISOString(), highest_offer: 9500, has_final_offer: false, insights_data: genInsights(25, 9500) }),
+        offers: [
+          { id: 201, status: 2, amount: 9500,  car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 2, amount: 9100,  car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 2, amount: 8700,  car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+          { id: 204, status: 2, amount: 8300,  car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
+          { id: 205, status: 2, amount: 7900,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
+          { id: 206, status: 2, amount: 7500,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
+        ],
+      }; },
+      'no-offers': function() { return {
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 0, buyers: 0, offers_seen_at: null, highest_offer: null, has_final_offer: false }),
+        offers: [],
+      }; },
+      'offers-expired-unseen': function() { return {
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 3, buyers: 3, offers_seen_at: null, highest_offer: 11500, second_highest_offer: 11000, has_final_offer: false, is_expired: true, insights_data: genInsights(3, 11500) }),
+        offers: [
+          { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 0, amount: 10500, car_pickup: false, distance: 40, city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+        ],
+      }; },
+      'counter-offer-sent': function() { return {
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        offers: [
+          { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true },
+          { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+        ],
+      }; },
+      'dealer-replied': function() { return {
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        offers: [
+          { id: 301, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true, dealer_replied: true },
+          { id: 302, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+        ],
+      }; },
+      'negotiation-stopped': function() { return {
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        offers: [
+          { id: 301, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true },
+          { id: 302, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+        ],
+      }; },
+      'offers-auto-rejected': function() { return {
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: null, highest_offer: 9500, has_final_offer: false }),
+        offers: [
+          { id: 201, status: 0, amount: 9500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: true },
+          { id: 202, status: 0, amount: 9100, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: true },
+          { id: 203, status: 0, amount: 8700, car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: true },
+        ],
+      }; },
+      'dac7': function() { return {
+        request: Object.assign({}, BASE, { status: 4, expires_at: PAST(), offer_count: 3, buyers: 3, offers_seen_at: new Date((_now()-2*86400)*1000).toISOString(), highest_offer: 11500, second_highest_offer: 11000, has_final_offer: false, accepted_at: new Date((_now()-2*86400)*1000).toISOString(), has_an_accepted_offer: true, is_expired: true, insights_data: genInsights(3, 11500) }),
+        offers: [
+          { id: 201, status: 1, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
+          { id: 202, status: 2, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 2, amount: 10500, car_pickup: false, distance: 40, city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+        ],
+      }; },
+    };
+
+    function getData() {
+      var d = (SCENARIOS[SCENARIO] || SCENARIOS['new-offers'])();
+      // Apply price overrides from URL params
+      if (OV_ASKING  !== null && OV_ASKING  !== undefined) {
+        d.request.asking_price    = OV_ASKING;
+        d.request.price_estimation = OV_ASKING;
+      }
+      if (OV_HIGHEST !== null && OV_HIGHEST !== undefined && d.offers.length > 0) {
+        d.offers[0].amount      = OV_HIGHEST;
+        d.request.highest_offer = OV_HIGHEST;
+        d.request.insights_data = genInsights(d.request.offer_count, OV_HIGHEST);
+      }
+      if (OV_SECOND === null) {
+        // param present but empty → single offer only
+        d.offers = d.offers.slice(0, 1);
+      } else if (OV_SECOND !== undefined && d.offers.length > 1) {
+        d.offers[1].amount = OV_SECOND;
+      }
+      return d;
+    }
+
+    // ── Offer selection (mirrors useDecisionPageOfferMapping.selectOffers) ──
+    function selectOffers(offers) {
+      var accepted = offers.filter(function(o) { return o.status === 1; });
+      if (accepted.length) return accepted;
+      var highest = offers[0];
+      if (highest && highest.car_pickup) return [highest];
+      return offers.slice(0, 2);
+    }
+
+    // ── Display status per offer ──
+    function offerDisplayProps(offer, allOffers, expiryTs) {
+      var timeToReact = expiryTs - _now();
+      var pos = allOffers.indexOf(offer);
+      var status = pos === 0 ? 'firstPlace' : pos === 1 ? 'secondPlace' : 'thirdPlace';
+      var theme  = pos === 0 ? 'blue' : 'light';
+
+      if (offer.auto_rejected)         { status = 'expired'; }
+      else if (offer.status === 1)     { status = 'accepted';     theme = 'lime'; }
+      else if (offer.status === 2)     { status = 'rejected'; }
+      else if (offer.status === 3)     { status = 'finalOffer';   theme = 'amber'; }
+      else if (offer.negotiation_pending) { status = 'negotiation'; }
+      else if (timeToReact <= 0)       { status = 'expired'; }
+
+      var expired = offer.status !== 1 && (
+        offer.auto_rejected || offer.status === 2 ||
+        (offer.status !== 3 && timeToReact <= 0)
+      );
+
+      return { status: status, theme: theme, expired: expired, timeToReact: timeToReact };
+    }
+
+    // ── Post-auction quality ──
+    function postAuctionStatus(req, offers) {
+      if (!offers.length) return 'no_offers';
+      if (offers.every(function(o) { return o.auto_rejected; })) return 'offers_expired';
+      if (req.status === 2 || req.status === 4 || req.status === 6 || offers.some(function(o) { return o.status === 1; })) return 'offer_accepted';
+      if (offers[0] && offers[0].status === 3) return 'final_offer';
+      if (offers.every(function(o) { return o.status === 2; })) return 'offer_rejected';
+      var highest = req.highest_offer || (offers[0] ? offers[0].amount : 0);
+      var asking  = req.asking_price || 0;
+      if (highest > asking)        return 'excellent_auction';
+      if (highest === asking)      return 'matches_expectations';
+      if (highest >= asking * 0.8) return 'good_auction';
+      return 'not_great_auction';
+    }
+
+    // ── Bid progression generator — mirrors offers.astro insightsData formula ──
+    // steps = max(3, offerCount) so chart joints == offer_count shown in stats
+    function genInsights(count, highest) {
+      if (!count || !highest) return [];
+      var base  = Math.round(highest * 0.65 / 100) * 100;
+      var steps = Math.max(3, count);
+      var out   = [];
+      for (var i = 1; i <= steps; i++) {
+        out.push(Math.round((base + (highest - base) * i / steps) / 100) * 100);
+      }
+      out[out.length - 1] = highest;
+      return out;
+    }
+
+    // ── Confetti — mirrors AConfetti.vue ──
+    // Fires for excellent_auction, good_auction, matches_expectations
+    var CONFETTI_STATUSES = ['excellent_auction', 'good_auction', 'matches_expectations'];
+    var CONFETTI_COLORS   = ['#00F0DC', '#0B6DFF', '#F5AB84', '#FFD24A', '#FFFFFF'];
+    function fireConfetti() {
+      var canvas = document.getElementById('confetti-canvas');
+      if (!canvas || typeof confetti === 'undefined') return;
+      canvas.style.display = 'block';
+      var fire = confetti.create(canvas, { resize: true, useWorker: true, disableForReducedMotion: true });
+      var count = 6;
+      function burst() {
+        if (count <= 0) return;
+        fire({
+          colors: CONFETTI_COLORS,
+          particleCount: 100,
+          spread: 160,
+          startVelocity: 80,
+          scalar: 1.5,
+          ticks: 100,
+          origin: { x: (count % 3) / 2, y: 1 }
+        });
+        count--;
+        setTimeout(burst, 300);
+      }
+      burst();
+    }
+
+    var HERO_COPY = {
+      excellent_auction:    { title: 'Sait yli odotusten!',             desc: 'Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.' },
+      matches_expectations: { title: 'Odotustesi mukainen tarjous',     desc: 'Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.' },
+      good_auction:         { title: 'Nyt ollaan hyvissä asemissa!',    desc: 'Tuloksena oli vahva suoritus. Hyväksy tarjous ja liike on sinuun yhteydessä tai ehdota parempaa hintaa.' },
+      not_great_auction:    { title: 'Peli ei ole vielä pelattu',       desc: 'Voit hyväksyä, neuvotella tai jatkaa myyntiä yhdessä meidän kanssa.' },
+      offers_expired:       { title: 'Tarjoukset ovat umpeutuneet',     desc: 'Voimme todennäköisesti edelleen auttaa myymään autosi. Ota meihin yhteyttä, niin yritämme palauttaa tarjoukset – tai uusitaan tarjouskilpailu.' },
+      no_offers:            { title: 'Tarjouksia ei tullut',            desc: 'Yleisimpiä syitä ovat puutteellinen ilmoitus, epäedullinen markkinatilanne tai liian korkea hintaodotus.' },
+      offer_accepted:       { title: 'Onneksi olkoon!',                 desc: 'Autoliike ottaa sinuun yhteyttä mahdollisimman pian kaupan viimeistelyä varten.' },
+      offer_rejected:       { title: 'Tarjoukset hylätty',             desc: 'Tarjoukset eivät olleet sinulle sopivia. Me ymmärrämme – parannellaan ilmoitusta yhdessä tai kokeillaan uudelleen paremmalla hetkellä.' },
+      final_offer:          { title: 'Lopullinen tarjous',             desc: 'Pidämme tätä reiluna hintana, joka vastaa tämänhetkisiä markkinoita. Hyväksy, niin liike ottaa sinuun yhteyttä.' },
+    };
+
+    var WARMUP_COPY = {
+      excellent_auction:    { heading: 'Mahtavia uutisia!',              message: 'Korkea kysyntä autostasi nosti sen hintaa! Kurkataan tarkemmin.', image: 'excellent_auction.png' },
+      matches_expectations: { heading: 'Mahtavia uutisia!',              message: 'Korkea kysyntä autostasi nosti sen hintaa! Kurkataan tarkemmin.', image: 'excellent_auction.png' },
+      good_auction:         { heading: 'Hyvä tarjouskilpailu takana!',   message: 'Autosi kävi läpi koko tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.', image: 'excellent_auction.png' },
+      not_great_auction:    { heading: 'Aina ei päädytä ilotulitukseen', message: 'Tulos jäi odotettua alemmas, mutta autosi oli mukana oikeassa kisassa.', image: 'ok_auction.png' },
+      no_offers:            { heading: 'Ei tarjouksia tällä kertaa',     message: 'Tällä kertaa kysyntää ei ollut tarpeeksi. Katsotaanpa, miten sinun kannattaa toimia seuraavaksi.', image: 'not_great_auction.png' },
+    };
+
+    // ── Component builders ──
+
+    function buildHero(hc, carPhoto) {
+      var imgHtml;
+      if (carPhoto) {
+        imgHtml = '<div class="p-1 bg-white rounded-full"><img src="' + carPhoto + '" alt="" class="rounded-full object-cover w-28 h-28 md:w-44 md:h-44"></div>';
+      } else {
+        imgHtml = '<div class="p-1 rounded-full bg-blue-300">' +
+          '<svg width="160" height="160" viewBox="0 0 256 256" fill="white" class="rounded-full object-cover w-28 h-28 md:w-44 md:h-44"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/></svg>' +
+        '</div>';
+      }
+      return '<div class="flex flex-col rounded-lg max-w-3xl mx-auto items-center justify-center text-center">' +
+        '<div class="mb-4">' + imgHtml + '</div>' +
+        '<div class="px-4">' +
+          '<h2 class="font-display text-3xl font-bold text-black mb-2 leading-snug">' + hc.title + '</h2>' +
+          '<p class="text-gray-600 text-base">' + hc.desc + '</p>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // Ribbon: mirrors OfferCardRibbon.vue exactly
+    var RIBBON = {
+      blue:  { bg: 'bg-blue',      border: 'border-blue',      text: 'text-white',    weight: 'font-bold' },
+      light: { bg: 'bg-blue-100',  border: 'border-blue-100',  text: 'text-blue-800', weight: 'font-medium text-sm' },
+      amber: { bg: 'bg-amber-500', border: 'border-amber-500', text: 'text-white',    weight: 'font-bold' },
+      lime:  { bg: 'bg-lime-600',  border: 'border-lime-600',  text: 'text-white',    weight: 'font-bold' },
+    };
+    var RIBBON_LABEL = { firstPlace: 'Korkein tarjous', secondPlace: 'Toiseksi korkein', thirdPlace: 'Kolmanneksi korkein', finalOffer: 'Lopullinen tarjous', accepted: 'Tarjous hyväksytty', negotiation: 'Korkein tarjous', negotiation_stopped: 'Korkein tarjous' };
+    var RIBBON_ICON  = { firstPlace: ICO_TROPHY, finalOffer: ICO_WARN_FILL, accepted: ICO_CHECKMARK, negotiation: ICO_TROPHY, negotiation_stopped: ICO_TROPHY };
+
+    function buildRibbon(status, theme) {
+      var t = RIBBON[theme] || RIBBON.light;
+      var label = RIBBON_LABEL[status] || '';
+      var icon  = RIBBON_ICON[status] || '';
+      return '<div class="flex">' +
+        '<div class="inline-flex items-center space-x-2 px-2 py-1 text-sm rounded-tl-lg border ' + t.bg + ' ' + t.border + '">' +
+          (icon ? '<span class="-mt-0.5 ' + t.text + '">' + icon + '</span>' : '') +
+          '<span class="' + t.text + ' ' + t.weight + '">' + label + '</span>' +
+        '</div>' +
+        '<span class="flex items-end text-white ' + t.bg + '">' +
+          '<svg width="11" height="32" viewBox="0 0 11 32" fill="none"><path d="M0 16L11 32V0L0 16Z" fill="currentColor"/></svg>' +
+        '</span>' +
+      '</div>';
+    }
+
+    // Status badge (mirrors OfferCard.vue status indicators)
+    function buildStatusBadge(status, timeToReact, dealerReplied) {
+      if (status === 'accepted')  return '';
+      if (status === 'rejected')  return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' + ICO_X_CIRCLE + '<span>Hylätty</span></div>';
+      if (status === 'expired')   return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' + ICO_HG_LOW + '<span>Umpeutunut</span></div>';
+      if (status === 'negotiation') {
+        if (dealerReplied) return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-lime-700 text-center">' + ICO_CHATS + '<span>Liikkeeltä on tullut vastaus</span></div>';
+        return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-amber-600 text-center">' + ICO_CLOCK_USR + '<span>Odotetaan liikkeen vastausta</span></div>';
+      }
+      // active: firstPlace / secondPlace / thirdPlace / finalOffer / negotiation_stopped
+      return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' +
+        '<span class="mt-0.5">' + ICO_HG_HIGH + '</span><span>Umpeutuu:</span><span class="font-mono">' + fmtTime(timeToReact) + '</span></div>';
+    }
+
+    function buildChatThread(msgs) {
+      if (!msgs || msgs.length === 0) return '';
+      var html = '<div class="bg-gray-100 rounded-lg overflow-hidden py-1 mb-4">';
+      msgs.forEach(function(msg) {
+        var isSeller = msg.sender === 'seller';
+        html += '<div class="px-2 py-1 flex">';
+        html += '<div class="' + (isSeller ? 'ml-auto bg-blue-600 text-white' : 'mr-auto bg-white border border-gray-200') + ' p-2 rounded shadow-sm text-sm" style="max-width:75%">';
+        html += '<div class="font-bold">' + fmtCurrency(msg.amount) + '</div>';
+        if (msg.message) {
+          html += '<div class="mt-1 break-words">' + (msg.message + '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+        }
+        html += '<div class="mt-2 text-xs text-right ' + (isSeller ? 'text-blue-200' : 'text-gray-400') + '">' + fmtRelativeTime(msg.created_at) + '</div>';
+        html += '</div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function buildOfferCard(offer, status, theme, expired, timeToReact) {
+      var dealer = DEALERS[offer.office_id] || {};
+      var border = (expired || status === 'rejected') ? 'border-slate-300' : ({
+        blue: 'border-blue-500', light: 'border-blue-100', amber: 'border-amber-500', lime: 'border-lime-500'
+      }[theme] || 'border-blue-100');
+      var footerBg = { amber: 'bg-amber-100', lime: 'bg-lime-100' }[theme] || 'bg-slate-100';
+      var showRibbon  = !expired && status !== 'rejected';
+      var amtColor    = (expired || status === 'rejected') ? 'text-slate-400' : 'text-slate-900';
+      var showAccept  = !expired && ['firstPlace','secondPlace','thirdPlace','finalOffer','negotiation_stopped','negotiation'].indexOf(status) !== -1;
+      var showNeg     = !expired && ['firstPlace','negotiation','negotiation_stopped'].indexOf(status) !== -1;
+      var isAccepted  = status === 'accepted';
+      var negBtnLabel = (status === 'negotiation' && offer.dealer_replied) ? 'Näytä vastaus' : status === 'negotiation' ? 'Vastatarjous lähetetty' : status === 'negotiation_stopped' ? 'Näytä vastaus' : 'Tee vastatarjous';
+      var acceptText  = status === 'finalOffer' ? 'Hyväksy lopullinen tarjous' : (status === 'firstPlace' || status === 'negotiation' || status === 'negotiation_stopped') ? 'Hyväksy korkein tarjous' : 'Hyväksy alhaisempi tarjous';
+
+      var html = '<div class="w-full flex justify-center">' +
+        '<div class="w-full transition-all rounded-xl border-2 bg-white shadow-sm ' + border + '">' +
+          '<div class="flex flex-col">';
+
+      if (showRibbon) html += buildRibbon(status, theme);
+
+      html += '<div class="flex flex-col gap-1 px-5 py-5">';
+
+      // Delivery
+      if (!expired) {
+        html += '<div class="flex items-center gap-1 leading-tight text-blue-600 justify-center text-center">';
+        html += offer.car_pickup
+          ? '<span class="-mt-0.5 mr-2">' + ICO_MDI_HOME + '</span><span class="font-bold text-xs">Nouto pihasta</span>'
+          : '<span class="-mt-0.5 mr-2">' + ICO_CAR + '</span><span class="font-bold text-xs">Toimita liikkeeseen (' + fmtKm(offer.distance) + ' km)</span>';
+        html += '</div>';
+      }
+
+      // Amount
+      html += '<div class="text-5xl font-bold font-display text-center ' + amtColor + '">' + fmtCurrency(offer.amount) + '</div>';
+
+      // Status badge
+      if (!isAccepted) html += buildStatusBadge(status, timeToReact, offer.dealer_replied);
+
+      // Accept button
+      if (showAccept) {
+        html += '<div>' +
+          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]" data-action="accept-offer" data-offer-id="' + offer.id + '">' + acceptText + '</button>' +
+          '<div class="flex text-xs mt-2 mb-2 space-x-2 text-left">' +
+            '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>' +
+            '<span class="text-slate-700">Autoliike ottaa sinuun yhteyttä kaupan viimeistelyä varten.</span>' +
+          '</div>' +
+        '</div>';
+      }
+
+      // Negotiate button
+      if (showNeg) {
+        html += '<div class="relative">' +
+          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' + negBtnLabel + '</button>' +
+          (offer.dealer_replied ? '<div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 bg-lime-600 rounded-full text-xs text-black animate-pulse">1</div>' : '') +
+          '<div class="flex text-xs mt-2 mb-2 space-x-2 text-left">' +
+            '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>' +
+            '<span class="text-slate-700">Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen.</span>' +
+          '</div>' +
+        '</div>';
+      }
+
+      html += '</div>'; // main content
+
+      // Footer: mirrors OfferCard.vue footer
+      html += '<div class="px-5 rounded-b-lg text-xs text-slate-600 ' + footerBg + '">';
+      if (isAccepted) {
+        // isAccepted branch: show dealer roundel + name + city
+        html += '<div class="mt-2 mb-2">' +
+          '<div class="flex items-center space-x-4">' +
+            '<div class="w-14 h-14 rounded-full overflow-hidden border border-gray-300 flex items-center justify-center bg-white">' +
+              '<span class="text-blue-600">' + ICO_BUILDINGS + '</span>' +
+            '</div>' +
+            '<div class="flex flex-col text-sm">' +
+              '<span class="font-bold text-sm text-slate-700">' + (dealer.name || '—') + '</span>' +
+              '<span class="text-sm text-slate-700">' + (offer.city || '') + '</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      } else {
+        // else branch (dealerInfo=false): NO roundel, NO name — only sales count + distance
+        if (offer.total_sales && offer.total_sales >= 20) {
+          html += '<div class="flex text-xs mt-2 gap-2 text-left pt-2">' +
+            '<span class="flex items-center text-blue-600">' + ICO_SEAL_CHK + '</span>' +
+            '<span class="text-slate-600 mt-0.5">' + fmtSales(offer.total_sales) + '+ kauppaa AutoVexissä</span>' +
+          '</div>';
+        }
+        html += '<div class="flex text-xs mt-2 gap-2 text-left mb-4">' +
+          '<span class="flex items-center text-blue-600">' + ICO_MAP_PIN + '</span>' +
+          '<span class="text-slate-600 mt-0.5">' + fmtKm(offer.distance) + ' km (' + (offer.city || '') + ')</span>' +
+        '</div>';
+      }
+      html += '</div>';
+
+      html += '</div></div></div>';
+      return html;
+    }
+
+    // BannerHelperCard — mirrors OBannerHelperCard.vue
+    // variant: 'actionable' (default phone) or 'actionable_inline_destructive' (decline)
+    function buildBannerHelper(opts) {
+      // opts: { title, message, btnText, btnHref, destructive, subTextWarning }
+      var cardBg  = opts.destructive ? 'bg-orange-50 outline-orange-400' : 'bg-slate-50 outline-blue-400';
+      var actBg   = opts.destructive ? 'bg-orange-100' : 'bg-blue-100';
+      // ACTIONABLE_INLINE (destructive) → always visible, flex row on lg
+      // ACTIONABLE (non-destructive) → action section hidden on lg (lg:hidden)
+      var rowCls  = opts.destructive ? 'lg:flex lg:flex-row lg:justify-between' : '';
+      var actHide = opts.destructive ? '' : ' lg:hidden';
+      var btnCls  = opts.destructive
+        ? 'w-full inline-flex items-center justify-center px-5 h-10 rounded-lg bg-red-200 hover:bg-red-300 text-red-700 text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.25)]'
+        : 'w-full inline-flex items-center justify-center gap-2 px-5 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
+      var tag  = opts.btnHref ? 'a' : 'button';
+      var href = opts.btnHref ? ' href="' + opts.btnHref + '"' : '';
+      var phoneIcon = opts.btnHref && opts.btnHref.indexOf('tel:') === 0
+        ? '<span class="mr-1">' + ICO_PHONE + '</span>' : '';
+
+      return '<div class="w-full outline outline-offset-[-2px] rounded-xl overflow-hidden ' + cardBg + ' ' + rowCls + '">' +
+        // Thumbnail section — kasper.png avatar (AThumbnailImage pattern)
+        '<div class="self-stretch inline-flex justify-start items-center p-4">' +
+          '<div class="flex items-center gap-3">' +
+            '<div class="w-[50px] h-[50px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-gray-200 flex items-center justify-center shrink-0 bg-white">' +
+              '<img src="assets/kasper.png" alt="Kasper" class="w-full h-full object-cover">' +
+            '</div>' +
+            '<div>' +
+              '<h5 class="font-semibold text-slate-800 text-sm leading-snug">' + opts.title + '</h5>' +
+              '<p class="text-slate-600 text-sm mt-0.5">' + opts.message + '</p>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        // Action section — hidden on lg for non-destructive (ACTIONABLE variant)
+        '<div class="self-stretch flex justify-start items-center gap-1 p-4 w-full lg:w-4/6' + actHide + ' ' + actBg + '">' +
+          '<div class="w-full">' +
+            '<' + tag + href + (opts.dataAction ? ' data-action="' + opts.dataAction + '"' : '') + ' class="' + btnCls + '">' + phoneIcon + opts.btnText + '</' + tag + '>' +
+            (opts.subTextWarning ? '<p class="flex items-start gap-1.5 text-xs text-slate-600 mt-3 font-normal">' + ICO_WARN_FILL + ' ' + opts.subTextWarning + '</p>' : '') +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    // AuctionInsights — mirrors AuctionInsights.vue structure (dl + chart area + dates)
+    function buildInsights(req, offers) {
+      var offerCount = req.offer_count || offers.length;
+      var buyers     = req.buyers || 0;
+      var askingFmt  = fmtCurrency(req.asking_price);
+      var startFmt   = new Date(req.published_at * 1000).toLocaleDateString('fi-FI', { day: 'numeric', month: 'long', year: 'numeric' });
+      var endFmt     = new Date(req.auction_ends_at * 1000).toLocaleDateString('fi-FI', { day: 'numeric', month: 'long', year: 'numeric' });
+
+      // Stats row — mirrors <dl class="flex flex-row divide-x divide-slate-200 text-center">
+      var html = '<dl class="flex flex-row divide-x divide-slate-200 text-center">';
+      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Tarjousta</dt><dd class="font-bold text-slate-800">' + offerCount + '</dd></div>';
+      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Autoliikettä</dt><dd class="font-bold text-slate-800">' + buyers + '</dd></div>';
+      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Pyyntihinta</dt><dd class="font-bold text-slate-800">' + askingFmt + '</dd></div>';
+      html += '</dl>';
+
+      // Chart — uses req.insights_data (pre-generated bid progression, mirrors offers.astro formula)
+      // data = [0, ...insights_data], chart starts at 0 bottom-left and rises to highest bid
+      var ascending = (req.insights_data && req.insights_data.length) ? req.insights_data : [];
+      if (ascending.length) {
+        var asking = req.asking_price || 12000;
+        var highestBidVal = ascending[ascending.length - 1] || 0;
+        var chartData = [0].concat(ascending);  // leading 0, then bids
+        var n = chartData.length;
+        var W = 600, CHART_H = 200, TOP_PAD = 35, BOT_PAD = 10, SIDE_PAD = 12;
+        var TOTAL_H = TOP_PAD + CHART_H + BOT_PAD; // 245
+        // Use max(asking, highest) + 5% headroom so the bid progression fills the chart vertically
+        var yMax = Math.max(asking, highestBidVal) * 1.05;
+
+        function yC(v) { return TOP_PAD + CHART_H - (v / yMax) * CHART_H; }
+        function xC(i) { return n > 1 ? SIDE_PAD + (i / (n - 1)) * (W - 2 * SIDE_PAD) : W / 2; }
+
+        var askY = Math.round(yC(asking));
+        var pts = chartData.map(function(v, i) { return Math.round(xC(i)) + ',' + Math.round(yC(v)); });
+
+        // Fill polygon: bid line + bottom baseline
+        var botY = TOP_PAD + CHART_H;
+        var fillPts = pts.join(' ') + ' ' + Math.round(xC(n-1)) + ',' + botY + ' ' + Math.round(xC(0)) + ',' + botY;
+
+        // Labels — asking price at left, highest bid at right — both in boxes above the line
+        var askLabelX = SIDE_PAD;
+        var askLabelY = Math.max(askY - 6, TOP_PAD - 2); // clamp within SVG
+        var highestBid = highestBidVal;
+        var highY = Math.round(yC(highestBid));
+        var highLabelX = W - SIDE_PAD;
+        var highLabelY = Math.max(highY - 6, TOP_PAD - 2);
+        var LW = 74, LH = 18, LR = 3;
+
+        html += '<div class="my-3 py-3 border-y border-slate-200 overflow-visible">' +
+          '<svg viewBox="0 0 ' + W + ' ' + TOTAL_H + '" class="w-full" style="height:auto;display:block">' +
+            // Fill area under bid line
+            '<polygon points="' + fillPts + '" fill="#EEF6FA" opacity="0.8"/>' +
+            // Asking price dashed line
+            '<line x1="' + SIDE_PAD + '" y1="' + askY + '" x2="' + (W-SIDE_PAD) + '" y2="' + askY + '" stroke="#0B6DFF" stroke-dasharray="5,5" stroke-width="1.5"/>' +
+            // Bid line — always render when we have at least one offer (n >= 2 means [0, bid])
+            '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#2890FF" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
+            // Asking price label box — left-anchored
+            '<rect x="' + askLabelX + '" y="' + (askLabelY - LH + 4) + '" width="' + LW + '" height="' + LH + '" rx="' + LR + '" fill="white" stroke="black" stroke-width="0.8"/>' +
+            '<text x="' + (askLabelX + LW/2) + '" y="' + (askLabelY - 1) + '" text-anchor="middle" font-size="9" fill="black" font-family="system-ui,sans-serif">' + fmtCurrency(asking) + '</text>' +
+            // Highest bid label box — right-anchored
+            '<rect x="' + (highLabelX - LW) + '" y="' + (highLabelY - LH + 4) + '" width="' + LW + '" height="' + LH + '" rx="' + LR + '" fill="white" stroke="black" stroke-width="0.8"/>' +
+            '<text x="' + (highLabelX - LW/2) + '" y="' + (highLabelY - 1) + '" text-anchor="middle" font-size="9" fill="black" font-family="system-ui,sans-serif">' + fmtCurrency(highestBid) + '</text>' +
+          '</svg>' +
+        '</div>';
+      } else {
+        html += '<div class="my-3 py-3 border-y border-slate-200 flex items-center justify-center text-slate-400 text-sm" style="height:245px">Ei dataa</div>';
+      }
+
+      // Start/end dates
+      html += '<div class="flex flex-row justify-between text-xs text-slate-500"><div>' + startFmt + '</div><div>' + endFmt + '</div></div>';
+      return html;
+    }
+
+    // FAQ — all 16 from faq.sellers_profile_faqs (identical to offers.html)
+    var CS_EMAIL = 'tiimi@autovex.fi';
+    var FAQS = [
+      { q: 'Miksi en näe autoliikkeiden nimiä ja tarjousten summia?',
+        a: '<p>Saamasi tarjoukset pääset näkemään heti tarjouskilpailun päätyttyä. Tarjouksen tehneen autoliikkeen tiedot näytetään, kun hyväksyt tarjouksen. Syy tähän on se, että jos autoliikkeiden tiedot paljastetaan, tarjouskilpailua ja vastatarjouksia ei välttämättä hoideta palvelumme sisällä.</p>' },
+      { q: 'Haittaako auton loppuvelka auton myyntiä?',
+        a: '<p>Ei haittaa! Autoliike maksaa loppuvelan kokonaisuudessaan rahoitusyhtiölle. Mikäli velka ylinttää auton arvon, veloittaa liike ylijäävän summan auton myyjltä.</p>' },
+      { q: 'Kuinka kauan auton myynnin kilpailutus kestää?',
+        a: '<p>AutoVex on tehokas tapa myydä auto. Kun olet täyttänyt autosi tiedot ja ilmoituksesi on julkaistu, sadat autoliikkeet ympäri Suomen näkevät autosi heti ja voivat tehdä siitä tarjouksia.</p><p>Tarjouskilpailun kesto on tyypillisesti 36 tuntia. Saat sähköpostiisi tietoja kilpailutuksen etenemisestä ja näet lopuksi parhaan tarjouksen. Sinulla on 24 tuntia aikaa hyväksyä tarjous tai tehdä vastatarjous. Mikäli hyväksyt tarjouksen, olethan valmis luopumaan autostasi noin viikon kuluessa.</p>' },
+      { q: 'Onko tarjouskilpailussa lähtöhintaa?',
+        a: '<p>Tarjouskilpailussa ei ole lähtö- tai pohjahintaa. Autoliikkeet näkevät pyyntihintasi, mutta voivat tarjota autosta yli tai alle tämän hinnan.</p>' },
+      { q: 'Voinko myydä autoa samanaikaisesti muualla?',
+        a: '<p>Voit, mutta emme suosittele sitä. Palvelumme idea perustuu siihen, että autoliikkeet kilpailevat keskenään autostasi. Mitä useampi liike osallistuu tarjouskilpailuun juuri AutoVexin kautta, sitä todennäköisemmin tarjottu summa nousee korkeammaksi. Auton myyminen muualla samaan aikaan vähentää kilpailua ja voi vaikuttaa negatiivisesti lopputulokseen.</p><p>AutoVexiä käyttävät sadat autoliikkeet ympäri Suomen – mukana ovat kaikki alan tunnetut toimijat. Yhdellä ilmoituksella tavoitat siis jo käytännössä koko markkinan ilman ylimääräistä vaivannäköä.</p>' },
+      { q: 'Mikä on tarjouksen hyväksymisen ja vastatarjouksen ero?',
+        a: '<p>Tarjouksen hyväksymällä näet, mikä autoliike on kyseessä ja kaupoista sovitaan suoraan liikkeen kanssa. Mikäli tarjotussa hinnassa olisi vielä parannettavaa, tee autoliikkeelle vastatarjous. Voit tehdä yhteensä kaksi vastatarjousta, minkä jälkeen hyväksyt tai hylkäät lopullisen hinnan.</p>' },
+      { q: 'Mitä jos en ole tyytyväinen tarjouksiin?',
+        a: '<p>Myyntivelvoitetta palvelun käytössä ei ole. Suosittelemme kuitenkin aina tekmään vastatarjouksen korkeimmalle tarjoajalle ennen tarjouksen hylkäämistä. Vastatarjouksen avulla päästään usein kauppoihin!</p>' },
+      { q: 'Onko AutoVex ilmainen palvelu?',
+        a: '<p>Kyllä, palvelu on myyjlle täysin ilmainen eikä piilokuluja ole.</p><p>Liiketoimintamallimme perustuu autoliikkeiden maksamaan välityspalkkioon toteutuneista kaupoista. Toimimme autoliikkeille tehokkaana hankintakanavana ja yhteistyökumppanina, joka auttaa heitä löytämään laadukkaita käytetyssä autoja – ja samalla sinä saat kilpailutettua autosi helposti.</p>' },
+      { q: 'Miten toimin, kun autoliike ei ole reagoinut vastatarjoukseeni ja muut tarjoukset ovat vanhenemassa?',
+        a: '<p>Vastatarjouksen tehtyäsi aika ei voi loppua kesken autoliikkeen vastausta odotellessa. Mikäli et kuitenkaan jostain syystä pääse korkeimman tarjoajan kanssa kauppoihin ja olisit valmis hyväksymään jonkin aiemmista tarjouksista, voit olla meihin yhteydessä kauppojen sopimiseksi. <a class="underline font-medium text-blue-600" href="mailto:' + CS_EMAIL + '">' + CS_EMAIL + '</a></p>' },
+      { q: 'Mitä tapahtuu, kun hyväksyn tarjouksen?',
+        a: '<p>Kun hyväksyt tarjouksen, autoliike on sinuun yhteydessä noin yhden arkipäivän kuluttua ja pääsette sopimaan auton luovutukseen liittyvistä käytännön asioista, kuten aikataulu, luovutuspaikka, ostosopimus, maksu sekä mahdollinen loppuvelan lunastaminen.</p>' },
+      { q: 'Voiko autoliike perua kaupat?',
+        a: '<p>Jos ilmenee, että autossa on isoja piileviä vikoja tai muuta vastaavaa mistä ei ole ilmoitettu ilmoituksessa, autoliike voi perua kaupat. Tämä kuitenkin tapahtuu erittmäin harvoin (jos tiedossa olevia selkeitä virheitä autosta on jätetty kertomatta). Jos näin pääsee käymään, meidän tiimimme on sinuun sekä autoliikkeeseen yhteydessä ja auttaa sinua saamaan haluamasi kaupat tehtyä toisen autoliikkeen kanssa.</p>' },
+      { q: 'Voiko tarjoukset hylyätä?',
+        a: '<p>Kyllä, tarjouskilpailun päätyttyä voit hylyätä tarjoukset profiilissasi. Suosittelemme kuitenkin aina tekmään vastatarjouksen korkeimmalle tarjoajalle ennen tarjouksen hylkäämistä. Vastatarjouksen avulla päästään usein kauppoihin!</p>' },
+      { q: 'Mitkä autoliikkeet käyttävät AutoVexiä?',
+        a: '<p>Mukana ovat kaikki suurimmat autoliikeketjut sekä satoja keskisuuria ja paikallisia autoliikkeiä ympäri Suomen.</p><p>Kaikki palvelussa toimivat ostajat ovat luotettavia ja ammattimaisia toimijoita. Olemme Suomen ensimmäinen ja suurin autoliikkeiden kilpailutuspalvelu, ja kauttamme on tehty jo kymmeniä tuhansia onnistuneita autokauppoja.</p>' },
+      { q: 'Mitä eroa on osto- ja vaihtotarjouksella?',
+        a: '<p>Autoliikkeen antamaa vaihtotarjousta ja ostotarjousta ei voi verrata keskenään. Autokaupoilla ollessa tärkeintä on kiinnittää huomiota välirahaan.</p>' },
+      { q: 'Miksi auton myynti AutoVexin kautta kannattaa?',
+        a: '<p>Vaivattomuus: Voit myydä autosi vaikka kotisohvalta. Yhdellä myynti-ilmoituksella tavoitat kerralla sadat autoliikkeet ympäri Suomen. Sinä voit helposti hyväksyä parhaan tarjouksen ja kaupat toteutuvat suoraan autoliikkeen kanssa.</p><p>Paras tarjous: Kaikki palvelussa mukana olevat autoliikkeet näkevät autosi tiedot ja käyvät tarjouskilpailua toisiaan vastaan. Näin varmistetaan, että saat autostasi markkinoiden parhaan tarjouksen.</p><p>Luotettavuus: Palvelussa ovat mukana sadat tunnetut ja turvalliset autoliikkeet. Kauttamme on myyty autoliikkeille jo yli 70 000 autoa.</p><p>Palvelu on sinulle täysin ilmainen! Jos et ole tyytyväinen tarjouksiin, et sitoudu myymään autoasi.</p>' },
+      { q: 'Miten saan autoliikkeet kiinnostumaan autostani?',
+        a: '<p>Tärkeintä on laatia mahdollisimman kattava ja selvä ilmoitus. Lisää autostasi kuvat sisältä ja ulkoa, kuvaa mahdolliset vauriot avoimesti ja liitä mukaan huoltohistoria. Erityisesti huoltokirjan merkinnät ja dokumentoidut huollot lisäävät autoliikkeiden luottamusta ja kiinnostusta.</p><p>Myös realistisen pyyntihinnan asettaminen on tärkeää ja me tuemme sinua tässä. Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta.</p>' },
+    ];
+    var ICO_CARET_DOWN = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg>';
+    var ICO_CARET_UP   = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 165.66a8 8 0 0 1-11.32 0L128 91.31l-74.34 74.35a8 8 0 0 1-11.32-11.32l80-80a8 8 0 0 1 11.32 0l80 80a8 8 0 0 1 0 11.32Z"/></svg>';
+
+    function buildFaqs() {
+      var el = document.getElementById('faq-list');
+      FAQS.forEach(function(faq) {
+        var wrap = document.createElement('div');
+        wrap.className = 'w-full bg-white p-3 rounded-md';
+        var det = document.createElement('details');
+        det.className = 'group peer';
+        var sum = document.createElement('summary');
+        sum.className = 'block cursor-pointer [&::-webkit-details-marker]:hidden';
+        sum.innerHTML = '<div class="flex items-center justify-between gap-1">' +
+          '<span class="inline-flex flex-1 leading-snug text-sm text-gray-700 group-open:font-bold">' + faq.q + '</span>' +
+          '<span class="inline-flex text-slate-500 group-open:hidden ml-2 flex-shrink-0">' + ICO_CARET_DOWN + '</span>' +
+          '<span class="hidden text-slate-500 group-open:inline-flex ml-2 flex-shrink-0">' + ICO_CARET_UP + '</span>' +
+        '</div>';
+        det.appendChild(sum);
+        var cw = document.createElement('div');
+        cw.className = 'grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity] ease-in-out';
+        var ci = document.createElement('div');
+        ci.className = 'overflow-hidden';
+        ci.innerHTML = '<div class="pt-4 text-sm text-gray-600 space-y-2">' + faq.a + '</div>';
+        cw.appendChild(ci);
+        wrap.appendChild(det);
+        wrap.appendChild(cw);
+        el.appendChild(wrap);
+      });
+    }
+
+    // ── Main render ──
+    function renderPage() {
+      var data  = getData();
+      var req   = data.request;
+      var offers = data.offers || [];
+      var pas   = postAuctionStatus(req, offers);
+
+      var showWarmup = !req.offers_seen_at && (SCENARIO === 'new-offers' || SCENARIO === 'no-offers');
+
+      var warmupEl = document.getElementById('state-warmup');
+      var mainEl   = document.getElementById('state-main');
+
+      if (showWarmup) {
+        var wc = WARMUP_COPY[pas] || WARMUP_COPY.good_auction;
+        document.getElementById('warmup-heading').textContent = wc.heading;
+        document.getElementById('warmup-message').textContent = wc.message;
+        document.getElementById('warmup-img').src = 'assets/' + wc.image;
+        warmupEl.classList.remove('hidden');
+        warmupEl.classList.add('flex');
+      } else {
+        warmupEl.classList.add('hidden');
+        renderMain(req, offers, pas);
+      }
+
+      buildFaqs();
+    }
+
+    function revealOffers() {
+      var data = getData();
+      document.getElementById('state-warmup').classList.add('hidden');
+      document.getElementById('state-warmup').classList.remove('flex');
+      renderMain(data.request, data.offers || [], postAuctionStatus(data.request, data.offers || []));
+    }
+    window.revealOffers = revealOffers;
+
+    function renderMain(req, offers, pas) {
+      var mainEl = document.getElementById('state-main');
+      mainEl.classList.remove('hidden');
+
+      // Nav login state
+      (function () {
+        try {
+          var _s = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
+          var raw = ((_s.contact || {}).kokoNimi || '').trim();
+          var name = raw ? raw.split(' ')[0] : null;
+          if (name) { var el = document.getElementById('nav-login-label'); if (el) el.textContent = name; }
+        } catch (e) {}
+      })();
+
+      // Car photo from localStorage (same key/logic as offers.html)
+      var carPhoto = null;
+      try {
+        var s = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
+        var photos = s.photos || {}, photoMap = s.photoMap || {};
+        ['ulkopuoli','sisatilat','huoltokirja','renkaat','naarmut','tuulilasi'].forEach(function(sec) {
+          if (!carPhoto && photos[sec] && photos[sec].length) carPhoto = photos[sec][0];
+        });
+        if (!carPhoto) { var keys = Object.keys(photoMap); if (keys.length) carPhoto = photoMap[keys[0]]; }
+      } catch(e) {}
+
+      // Confetti — fire for positive auction statuses (mirrors AConfetti.vue v-if in index.vue)
+      if (CONFETTI_STATUSES.indexOf(pas) !== -1) fireConfetti();
+
+      // Hero + offer cards — all direct children of #offers-grid
+      var grid     = document.getElementById('offers-grid');
+      var selected = selectOffers(offers);
+      var expiryTs = (req.expires_at || 0) + REACTION;
+      var hc       = HERO_COPY[pas] || HERO_COPY.good_auction;
+
+      grid.innerHTML = '';
+
+      // Hero as direct grid child
+      var heroEl = document.createElement('div');
+      heroEl.className = 'mb-auto' + (selected.length === 0 || selected.length === 2 ? ' md:col-span-2' : '');
+      heroEl.innerHTML = buildHero(hc, carPhoto);
+      grid.appendChild(heroEl);
+
+      // Each card as direct grid child (mirrors v-for in index.vue)
+      selected.forEach(function(offer) {
+        var d  = offerDisplayProps(offer, offers, expiryTs);
+        var el = document.createElement('div');
+        el.innerHTML = buildOfferCard(offer, d.status, d.theme, d.expired, d.timeToReact);
+        grid.appendChild(el.firstChild);
+      });
+
+      // Banner logic
+      var allRejected = offers.length > 0 && offers.every(function(o) { return o.status === 2; });
+      var hasAccepted = offers.some(function(o) { return o.status === 1; });
+      var highestIsNegotiating = selected.length > 0 && offerDisplayProps(selected[0], offers, expiryTs).status === 'negotiation';
+      var dealerRepliedOnHighest = selected.length > 0 && !!selected[0].dealer_replied;
+
+      var bannerTopSec = document.getElementById('section-banner-top');
+      var bannerBotSec = document.getElementById('section-banner-bottom');
+      var bannerTopEl  = document.getElementById('banner-top-content');
+      var bannerBotEl  = document.getElementById('banner-bottom-content');
+
+      if (allRejected || hasAccepted) {
+        // Top banner: phone CTA (ACTIONABLE/DEFAULT)
+        bannerTopEl.innerHTML = buildBannerHelper({
+          title:    hasAccepted ? 'Tarvitsetko apua?' : 'Muutitko mielesi?',
+          message:  hasAccepted
+            ? 'Jos sinuun ei ole otettu yhteyttä yhden arkipäivän kuluessa, soita meille numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)'
+            : 'Asiantuntijamme ovat valmiina auttamaan. Soita numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
+          btnText:  'Soita meille',
+          btnHref:  'tel:+358400407002',
+          destructive: false,
+        });
+        bannerTopSec.classList.remove('hidden');
+        bannerBotSec.classList.add('hidden');
+      } else if (highestIsNegotiating && !dealerRepliedOnHighest) {
+        bannerTopSec.classList.add('hidden');
+        bannerBotSec.classList.add('hidden');
+      } else {
+        bannerTopSec.classList.add('hidden');
+        // Bottom banner
+        var isHelperScenario = (pas === 'no_offers' || pas === 'offers_expired');
+        bannerBotEl.innerHTML = buildBannerHelper(isHelperScenario ? {
+          title:    'Me voimme auttaa!',
+          message:  'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
+          btnText:  'Soita meille',
+          btnHref:  'tel:+358400407002',
+          destructive: false,
+        } : {
+          title:       'Eikö hinta miellytä?',
+          message:     'Asiantuntijamme auttavat mielellään! Soita numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
+          btnText:     'Hylkää tarjouskilpailu',
+          btnHref:     null,
+          destructive: true,
+          dataAction:  'reject-all',
+          subTextWarning: 'Hylättyäsi tuloksen et voi enää hyväksyä sitä myöhemmin.',
+        });
+        bannerBotSec.classList.remove('hidden');
+      }
+
+      // Insights
+      var insightsSec = document.getElementById('section-insights');
+      if (req.insights_data && req.insights_data.length > 0) {
+        document.getElementById('insights-content').innerHTML = buildInsights(req, offers);
+        insightsSec.classList.remove('hidden');
+      } else {
+        insightsSec.classList.add('hidden');
+      }
+    }
+
+    // ── Interactive modal state ──
+    var MODAL = { action: null, offerId: null };
+    var NEGOTIATIONS = {};
+    var ACCEPTED_OFFER          = _savedState.acceptedOffer          || null;
+    var ACCEPTED_OFFERS_SNAPSHOT = _savedState.acceptedOffersSnapshot || null;
+    // Restore negotiations from localStorage
+    if (_savedState.negotiations) {
+      Object.keys(_savedState.negotiations).forEach(function(k) {
+        NEGOTIATIONS[parseInt(k, 10)] = _savedState.negotiations[k];
+      });
+    }
+    var rejectFormState = { reason: null, starRating: 0 };
+
+    var ICO_STAR_EMPTY = '<svg width="32" height="32" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m234.5 114.38-45.1 39.36 13.51 58.6a16 16 0 0 1-23.84 17.34l-51.11-31-51 31a16 16 0 0 1-23.84-17.34l13.49-58.54-45.11-39.42a16 16 0 0 1 9.21-28.06l59.46-5.15 23.21-55.36a15.95 15.95 0 0 1 29.44 0L166.81 81l59.44 5.14a16 16 0 0 1 9.25 28.24Zm-16.83 6.22-59.46-5.14a8 8 0 0 1-6.67-4.88L128 55.71l-23.55 55.46a8 8 0 0 1-6.67 4.88l-59.46 5.14 45.11 39.42a8 8 0 0 1 2.55 7.91L72.49 227l51.11-31a7.94 7.94 0 0 1 8.12 0l51 31-13.47-58.41a8 8 0 0 1 2.53-7.83Z"/></svg>';
+    var ICO_STAR_FILL  = '<svg width="32" height="32" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m234.5 114.38-45.1 39.36 13.51 58.6a16 16 0 0 1-23.84 17.34l-51.11-31-51 31a16 16 0 0 1-23.84-17.34l13.49-58.54-45.11-39.42a16 16 0 0 1 9.21-28.06l59.46-5.15 23.21-55.36a15.95 15.95 0 0 1 29.44 0L166.81 81l59.44 5.14a16 16 0 0 1 9.25 28.24Z"/></svg>';
+    var ICO_INFO_FILL  = '<svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>';
+
+    var REJECT_REASONS = [
+      { value: 'I_AM_NOT_SURE_THIS_OFFER_IS_RIGHT',        label: 'Olen epävarma siitä, onko tarjous tarpeeksi hyvä.' },
+      { value: 'I_DONT_WANT_TO_SELL_AT_THE_PRICE_OFFERED', label: 'En halua myydä tarjotulla hinnalla.' },
+      { value: 'I_HAVE_A_BETTER_OFFER_FROM_ANOTHER_SOURCE',label: 'Sain paremman tarjouksen muualta.' },
+      { value: 'I_HAVE_ALREADY_SOLD_MY_CAR',               label: 'Olen jo myynyt autoni.' },
+      { value: 'I_CANT_SELL_THE_CAR_RIGHT_NOW',            label: 'En voi myydä autoani juuri nyt.' },
+      { value: 'I_WAS_NOT_INTERESTED_IN_SELLING_MY_CAR',   label: 'En ollut myymässä autoani.' },
+      { value: 'OTHER',                                    label: 'Muu syy' }
+    ];
+
+    function openModal(action, offerId) {
+      MODAL.action = action;
+      MODAL.offerId = offerId;
+      renderModal();
+      document.getElementById('offer-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('offer-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+      MODAL.action = null;
+    }
+
+    function renderModal() {
+      var action  = MODAL.action;
+      var offerId = MODAL.offerId;
+      var data    = getData();
+      var offer   = (data.offers || []).find(function(o) { return o.id === offerId; }) || (data.offers || [])[0];
+      var neg     = NEGOTIATIONS[offerId] || { messages: [], isStopped: false };
+      var body    = document.getElementById('modal-body');
+      var footer  = document.getElementById('modal-footer');
+      var fWrap   = document.getElementById('modal-footer-wrap');
+      fWrap.style.display = '';
+      if (action === 'Accept')             { renderAcceptModal(body, footer, offer); }
+      else if (action === 'Negotiate')     { renderNegotiateModal(body, footer, fWrap, offer, neg, false); }
+      else if (action === 'QuickNegotiate'){ renderNegotiateModal(body, footer, fWrap, offer, neg, true); }
+      else if (action === 'Reject')        { renderRejectModal(body, footer, offer, neg); }
+      else if (action === 'RejectConfirm') { renderRejectConfirmModal(body, footer, offer); }
+      else if (action === 'RejectConfirmThanks') { renderRejectThanksModal(body, fWrap); }
+    }
+
+    function renderAcceptModal(body, footer, offer) {
+      body.innerHTML = '<p class="text-base text-slate-700">Mahtavaa, olet nyt hyväksymässä autoliikkeen tarjouksen!</p>';
+      footer.innerHTML =
+        '<div class="flex justify-end">' +
+          '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Hyväksy tarjous</button>' +
+        '</div>';
+      document.getElementById('modal-btn-accept').addEventListener('click', function() {
+        ACCEPTED_OFFER = offer;
+        var _snap = getData().offers || [];
+        ACCEPTED_OFFERS_SNAPSHOT = _snap.map(function(o) {
+          return Object.assign({}, o, { status: o.id === offer.id ? 1 : 2, negotiation_pending: false, dealer_replied: false });
+        });
+        SCENARIO = 'accepted'; saveState(); closeModal();
+        window.location.href = 'decision.html?scenario=accepted';
+      });
+    }
+
+    function renderNegotiateModal(body, footer, fWrap, offer, neg, isQuick) {
+      var data        = getData();
+      var offersCount = (data.offers || []).length;
+      var msgs        = (neg && neg.messages) || [];
+      var sellerRounds = msgs.filter(function(m) { return m.sender === 'seller'; }).length;
+      var lastMsg     = msgs[msgs.length - 1];
+      var isStopped   = !!(neg && neg.isStopped);
+      var sellerCanSend = sellerRounds < 2 && (!lastMsg || lastMsg.sender !== 'seller') && !isStopped;
+      var hasNegotiation = msgs.length > 0;
+
+      var html = '';
+
+      if (isStopped) {
+        // Negotiation stopped — seller accepts or closes
+        html += '<h2 class="text-sm leading-4 mb-3">Voit hyväksyä tarjouksen</h2>';
+        html += buildChatThread(msgs);
+
+      } else if (sellerCanSend) {
+        // Seller's turn to send
+        if (isQuick) {
+          html += '<div class="text-lg leading-4">';
+          html += '<h2 class="text-lg leading-4">Tee vielä vastatarjous autoliikkeelle</h2>';
+          html += '<p class="mt-2">' + (offersCount === 1
+            ? 'Autostasi ei valitettavasti syntynyt tarjouskilpailua. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.'
+            : 'Korkein tarjoaja haluaa ostaa autosi, älä jätä peliä vielä kesken. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.') + '</p>';
+          html += '</div>';
+        } else {
+          html += '<h2 class="text-lg leading-4">' + (hasNegotiation ? 'Tee uusi vastatarjous' : 'Tee vastatarjous') + '</h2>';
+          html += '<ul class="list-disc list-inside mt-2 mb-4 text-sm">';
+          html += '<li>' + (hasNegotiation ? 'Tee uusi vastatarjous eniten tarjonneelle' : 'Tee vastatarjous eniten tarjonneelle') + '</li>';
+          html += '<li>Et menetä jo saamaasi tarjousta.</li>';
+          html += '<li>Vastatarjouksen avulla päästään usein kauppoihin.</li>';
+          html += '</ul>';
+        }
+        if (hasNegotiation) {
+          html += buildChatThread(msgs);
+          html += '<p class="mt-4 mb-4 p-4 flex items-center gap-2 text-white bg-blue-600 rounded-lg">';
+          html += '<span class="mr-2 flex items-center text-white flex-shrink-0">' + ICO_INFO_FILL + '</span>';
+          html += '<span class="text-base leading-normal">Vastatarjouksia ei tämän jälkeen tehdä enempää.</span>';
+          html += '</p>';
+        }
+        html += '<div class="my-4">';
+        html += '<label class="block text-sm font-medium text-slate-700 mb-1">Vastatarjous <span class="font-normal text-slate-500">€</span></label>';
+        html += '<input type="number" id="modal-neg-amount" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />';
+        html += '</div>';
+        if (!isQuick) {
+          html += '<div class="my-4">';
+          html += '<label class="block text-sm font-medium text-slate-700 mb-1">Viesti</label>';
+          html += '<textarea id="modal-neg-message" rows="3" maxlength="2500" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>';
+          html += '</div>';
+          html += '<p class="text-sm text-gray-700">Ethän kirjoita puhelinnumeroasi tai sähköpostiosoitettasi viestikenttään.</p>';
+        }
+
+      } else {
+        // Waiting for dealer
+        if (isQuick && sellerRounds === 1) {
+          html += '<h2 class="text-lg leading-4">Eikö autoliike ole ollut yhteydessä?</h2>';
+          html += '<ul class="list-disc list-inside mt-2 mb-4 text-sm">';
+          html += '<li>Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä).</li>';
+          html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
+          html += '</ul>';
+        } else if (sellerRounds === 1) {
+          html += '<div class="mb-4">';
+          html += '<h2 class="text-lg leading-4">Hyvä! Nyt odotellaan autoliikkeen vastausta.</h2>';
+          html += '<ul class="list-disc list-inside mt-2 mb-4 text-sm">';
+          html += '<li>Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä).</li>';
+          html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
+          html += '</ul>';
+          html += '</div>';
+        } else if (sellerRounds >= 2) {
+          html += '<p class="text-sm text-slate-700">Nyt odotellaan taas autoliikkeen vastausta. Tämän jälkeen voit hyväksyä tai hylätä autoliikkeen tarjouksen, vastatarjouksia ei tehdä enempää. Toivottavasti pääsette kauppoihin!</p>';
+        }
+        html += buildChatThread(msgs);
+      }
+
+      body.innerHTML = html;
+
+      // Footer
+      var showAccept = hasNegotiation;
+      var showSend   = sellerCanSend;
+      var showClose  = !sellerCanSend || isStopped;
+
+      var fRight = '';
+      if (showAccept) {
+        fRight += '<button id="modal-btn-accept-from-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Hyväksy tarjous</button>';
+      }
+      if (showSend) {
+        fRight += '<button id="modal-btn-send-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Lähetä</button>';
+      }
+      if (showClose) {
+        fRight += '<button id="modal-btn-close" class="inline-flex items-center justify-center px-6 h-10 rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 text-sm font-medium">Sulje</button>';
+      }
+
+      footer.innerHTML = '<div class="flex justify-end items-center gap-1">' + fRight + '</div>';
+
+      var closeBtn       = document.getElementById('modal-btn-close');
+      var acceptFromNeg  = document.getElementById('modal-btn-accept-from-neg');
+      var sendBtn        = document.getElementById('modal-btn-send-neg');
+
+      if (closeBtn)      closeBtn.addEventListener('click', closeModal);
+      if (acceptFromNeg) acceptFromNeg.addEventListener('click', function() { openModal('Accept', MODAL.offerId); });
+      if (sendBtn) sendBtn.addEventListener('click', function() {
+        var amountEl  = document.getElementById('modal-neg-amount');
+        var messageEl = document.getElementById('modal-neg-message');
+        var amount = amountEl ? parseFloat(amountEl.value) || null : null;
+        if (!amount) { if (amountEl) amountEl.focus(); return; }
+        var message = messageEl ? (messageEl.value || '')
+          : (offersCount === 1
+              ? 'Hei! Autostani ei syntynyt hintakilpailua. Millä hinnalla olette valmiita kauppoihin?'
+              : 'Moi! Tällä hinnalla olisin valmis myymään autoni.');
+        var cur = NEGOTIATIONS[MODAL.offerId] || { messages: [], isStopped: false };
+        cur.messages = cur.messages || [];
+        cur.messages.push({ sender: 'seller', amount: amount, message: message, created_at: new Date().toISOString() });
+        NEGOTIATIONS[MODAL.offerId] = cur;
+        SCENARIO = 'counter-offer-sent'; saveState(); closeModal();
+        window.location.href = 'decision.html?scenario=counter-offer-sent';
+      });
+    }
+
+    function renderRejectModal(body, footer, offer, neg) {
+      var data       = getData();
+      var highest    = (data.offers || [])[0];
+      var isHighest  = offer && highest && offer.id === highest.id;
+      var hasNeg     = neg && neg.messages && neg.messages.length > 0;
+      var isFinal    = offer && offer.status === 3;
+      var showNeg    = !hasNeg && isHighest && !isFinal;
+
+      body.innerHTML =
+        '<p class="text-sm text-slate-700">' +
+          (hasNeg
+            ? 'Oletko varma että haluat hylätä tarjouksen?'
+            : 'Oletko varma että haluat hylätä tarjouksen? Suosittelemme tekemään vastatarjouksen autoliikkeelle jos haluat autollesi noudon, paremman hinnan tai muuta lisätietoa. Asiakaspalvelumme auttaa myös mielellään tarvittaessa.') +
+        '</p>';
+
+      var fHtml = '<div class="flex justify-between items-center">';
+      if (showNeg) {
+        fHtml += '<button id="modal-btn-to-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Tee vastatarjous</button>';
+      } else {
+        fHtml += '<span></span>';
+      }
+      fHtml += '<button id="modal-btn-reject-confirm" class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium">Hylkää tarjous</button>';
+      fHtml += '</div>';
+      footer.innerHTML = fHtml;
+
+      if (showNeg) {
+        document.getElementById('modal-btn-to-neg').addEventListener('click', function() {
+          MODAL.action = 'Negotiate';
+          renderModal();
+        });
+      }
+      document.getElementById('modal-btn-reject-confirm').addEventListener('click', function() {
+        MODAL.action = 'RejectConfirm';
+        renderModal();
+      });
+    }
+
+    function renderRejectConfirmModal(body, footer, offer) {
+      rejectFormState = { reason: null, starRating: 0 };
+      var starColors = ['text-red-500', 'text-red-400', 'text-yellow-400', 'text-green-500', 'text-green-700'];
+
+      var html = '';
+      html += '<div class="font-bold text-xl mb-1">Olet hylkäämässä tarjouksen autostasi.</div>';
+      html += '<div class="text-sm text-slate-600 mb-4">Ennen kuin vahvistat hylkäyksen, vastaisitko alla olevaan kysymykseen:</div>';
+      html += '<div class="border-t border-gray-300 mb-5"></div>';
+      html += '<div class="mb-6"><label class="block text-base font-medium text-black mb-3">Miksi haluat hylätä tämän tarjouksen? <span class="text-red-500">*</span></label><ol class="space-y-2">';
+      REJECT_REASONS.forEach(function(opt, i) {
+        html += '<li class="ml-2 text-slate-700"><input type="radio" id="rej-r-' + i + '" name="rej-reason" value="' + opt.value + '" class="mr-2 cursor-pointer"><label for="rej-r-' + i + '" class="cursor-pointer">' + opt.label + '</label></li>';
+      });
+      html += '</ol></div>';
+      html += '<div id="rej-star-section" class="hidden mb-4">';
+      html += '<label class="block text-base font-medium text-black mb-3">Mitä pidit palvelustamme? <span class="text-red-500">*</span></label>';
+      html += '<div class="flex items-center justify-center bg-gray-100 border border-gray-300 p-4 rounded h-24"><div class="flex justify-between gap-4">';
+      for (var s = 1; s <= 5; s++) {
+        html += '<button type="button" data-star="' + s + '" class="star-btn ' + starColors[s-1] + ' opacity-30 hover:opacity-80 transition-opacity" style="width:32px;height:32px;">' + ICO_STAR_EMPTY + '</button>';
+      }
+      html += '</div></div></div>';
+      body.innerHTML = html;
+
+      body.querySelectorAll('input[name="rej-reason"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+          rejectFormState.reason = this.value;
+          document.getElementById('rej-star-section').classList.remove('hidden');
+          updateRejectFooter(footer);
+        });
+      });
+      body.querySelectorAll('.star-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var rating = parseInt(this.getAttribute('data-star'));
+          rejectFormState.starRating = rating;
+          body.querySelectorAll('.star-btn').forEach(function(b, idx) {
+            var filled = (idx + 1) <= rating;
+            b.innerHTML = filled ? ICO_STAR_FILL : ICO_STAR_EMPTY;
+            b.className = 'star-btn ' + starColors[idx] + (filled ? ' opacity-100' : ' opacity-30 hover:opacity-80') + ' transition-opacity';
+          });
+          updateRejectFooter(footer);
+        });
+      });
+
+      footer.innerHTML = '<div class="flex justify-end"><button id="modal-btn-do-reject" disabled class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 text-white text-sm font-medium opacity-40 cursor-not-allowed">Hylkää tarjous</button></div>';
+    }
+
+    function updateRejectFooter(footer) {
+      var enabled = !!(rejectFormState.reason && rejectFormState.starRating);
+      footer.innerHTML =
+        '<div class="flex justify-end"><button id="modal-btn-do-reject"' + (enabled ? '' : ' disabled') + ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' + (enabled ? '' : ' opacity-40 cursor-not-allowed') + '">Hylkää tarjous</button></div>';
+      if (enabled) {
+        document.getElementById('modal-btn-do-reject').addEventListener('click', function() {
+          MODAL.action = 'RejectConfirmThanks';
+          renderModal();
+        });
+      }
+    }
+
+    function renderRejectThanksModal(body, fWrap) {
+      fWrap.style.display = 'none';
+      body.innerHTML =
+        '<div class="rounded-lg overflow-hidden border-2 border-red-50 bg-white -mx-4 -mt-12 -mb-4">' +
+          '<div class="bg-[rgb(250,234,218)] p-6 flex items-center justify-center">' +
+            '<img src="assets/kasper.png" alt="" class="w-[50px] h-[50px] md:w-[76px] md:h-[76px] rounded-full object-cover border border-gray-200">' +
+          '</div>' +
+          '<div class="p-5">' +
+            '<h2 class="font-bold text-lg md:text-xl mb-2">Kiitos kun käytit palveluamme!</h2>' +
+            '<div class="text-sm text-slate-700">' +
+              '<p>Saat asiantuntijamme kiinni sähköpostitse <a href="mailto:tiimi@autovex.fi" class="text-blue-600 underline">tiimi@autovex.fi</a> tai puhelimitse <a href="tel:+358449015285" class="text-blue-600">+358 44 901 5285</a>. Voimme vielä saada kaupat maaliin.</p>' +
+              '<p class="text-slate-500 mt-1">Ark. klo 10–16</p>' +
+            '</div>' +
+            '<button id="modal-btn-thanks-close" class="mt-5 w-full inline-flex items-center justify-center px-6 h-10 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-medium">Sulje</button>' +
+          '</div>' +
+        '</div>';
+      document.getElementById('modal-btn-thanks-close').addEventListener('click', function() {
+        SCENARIO = 'all-rejected'; saveState(); closeModal();
+        window.location.href = 'decision.html?scenario=all-rejected';
+      });
+    }
+
+    // ── Event delegation for offer card & banner buttons ──
+    document.addEventListener('click', function(e) {
+      if (document.getElementById('offer-modal') && !document.getElementById('offer-modal').classList.contains('hidden')) return;
+      var acceptBtn = e.target.closest('[data-action="accept-offer"]');
+      var negBtn    = e.target.closest('[data-action="negotiate-offer"]');
+      var rejectBtn = e.target.closest('[data-action="reject-all"]');
+      if (acceptBtn) {
+        openModal('Accept', parseInt(acceptBtn.getAttribute('data-offer-id')));
+        return;
+      }
+      if (negBtn) {
+        openModal('Negotiate', parseInt(negBtn.getAttribute('data-offer-id')));
+        return;
+      }
+      if (rejectBtn) {
+        var data     = getData();
+        var highest  = (data.offers || [])[0];
+        var highNeg  = highest && NEGOTIATIONS[highest.id];
+        var hasNeg   = !!(highNeg && highNeg.messages && highNeg.messages.length > 0);
+        var isFinal  = !!(highest && highest.status === 3);
+        var req      = data.request;
+        var negThres = !!(highest && req && highest.amount > req.asking_price * 0.75);
+        openModal(!hasNeg && !isFinal && negThres ? 'QuickNegotiate' : 'Reject', highest ? highest.id : null);
+        return;
+      }
+    });
+
+    // ── Scenario tester panel ──
+    var SCENARIO_GROUPS = [
+      { group: 'Auction ended', items: [
+        { id: 'new-offers',            label: 'Ended, new offers' },
+        { id: 'seen-offers',           label: 'Ended, offers seen' },
+        { id: 'final-offer',           label: 'Final offer' },
+        { id: 'no-offers',             label: 'No offers' },
+        { id: 'offers-expired-unseen', label: 'Expired, unseen' },
+        { id: 'counter-offer-sent',    label: 'Counter-offer sent' },
+        { id: 'dealer-replied',        label: 'Dealer replied' },
+        { id: 'all-rejected',          label: 'All rejected' },
+      ]},
+      { group: 'Deal completed', items: [
+        { id: 'accepted',       label: 'Offer accepted' },
+        { id: 'deal-completed', label: 'Deal completed' },
+        { id: 'deal-failed',    label: 'Deal failed' },
+      ]},
+    ];
+    var panel = document.createElement('div');
+    panel.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;font-family:system-ui,sans-serif;';
+    var toggle = document.createElement('button');
+    toggle.style.cssText = 'display:flex;align-items:center;gap:6px;padding:8px 12px;background:#0B6DFF;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);';
+    toggle.textContent = 'Scenario';
+    var drawer = document.createElement('div');
+    drawer.style.cssText = 'display:none;position:absolute;bottom:44px;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);width:260px;max-height:80vh;overflow-y:auto;padding:8px 0;';
+
+    // Section: scenarios
+    SCENARIO_GROUPS.forEach(function(grp, gi) {
+      if (gi > 0) {
+        var sep0 = document.createElement('div');
+        sep0.style.cssText = 'height:1px;background:#e2e8f0;margin:4px 0;';
+        drawer.appendChild(sep0);
+      }
+      var ghdr = document.createElement('div');
+      ghdr.style.cssText = 'padding:6px 14px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+      ghdr.textContent = grp.group;
+      drawer.appendChild(ghdr);
+      grp.items.forEach(function(sc) {
+        var a = document.createElement('a');
+        var cur = sc.id === SCENARIO;
+        var q = new URLSearchParams(window.location.search);
+        q.set('scenario', sc.id);
+        a.href = 'decision.html?' + q.toString();
+        a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
+        a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;
+        a.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
+        a.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
+        drawer.appendChild(a);
+      });
+    });
+
+    // Separator
+    var sep = document.createElement('div');
+    sep.style.cssText = 'height:1px;background:#e2e8f0;margin:8px 0;';
+    drawer.appendChild(sep);
+
+    // Section: price inputs
+    var priceHdr = document.createElement('div');
+    priceHdr.style.cssText = 'padding:4px 14px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+    priceHdr.textContent = 'Price overrides';
+    drawer.appendChild(priceHdr);
+
+    function makeInput(labelText, paramKey, placeholder, defaultVal) {
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'padding:2px 14px 6px;';
+      var lbl = document.createElement('label');
+      lbl.style.cssText = 'display:block;font-size:10px;color:#64748b;margin-bottom:2px;';
+      lbl.textContent = labelText;
+      var inp = document.createElement('input');
+      inp.type = 'number';
+      inp.id = 'ov-' + paramKey;
+      inp.placeholder = placeholder || '';
+      inp.value = _params.has(paramKey) ? (_params.get(paramKey) || '') : (defaultVal !== undefined ? defaultVal : '');
+      inp.style.cssText = 'width:100%;border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;color:#334155;box-sizing:border-box;';
+      wrap.appendChild(lbl);
+      wrap.appendChild(inp);
+      return wrap;
+    }
+
+    var curData = (SCENARIOS[SCENARIO] || SCENARIOS['new-offers'])();
+    drawer.appendChild(makeInput('Asking price €', 'asking',  '', OV_ASKING  !== null && OV_ASKING  !== undefined ? OV_ASKING  : curData.request.asking_price));
+    drawer.appendChild(makeInput('Highest offer €', 'highest', '', OV_HIGHEST !== null && OV_HIGHEST !== undefined ? OV_HIGHEST : (curData.offers[0] ? curData.offers[0].amount : '')));
+    drawer.appendChild(makeInput('2nd highest € (empty = 1 offer)', 'second', 'Empty = single offer',
+      OV_SECOND === null ? '' : (OV_SECOND !== undefined ? OV_SECOND : (curData.offers[1] ? curData.offers[1].amount : ''))));
+
+    var applyBtn = document.createElement('button');
+    applyBtn.textContent = 'Apply';
+    applyBtn.style.cssText = 'display:block;margin:6px 14px 10px;width:calc(100% - 28px);background:#0B6DFF;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
+    applyBtn.addEventListener('click', function() {
+      var q = new URLSearchParams(window.location.search);
+      var askVal     = document.getElementById('ov-asking').value.trim();
+      var highestVal = document.getElementById('ov-highest').value.trim();
+      var secondVal  = document.getElementById('ov-second').value.trim();
+      if (askVal)     q.set('asking', askVal);   else q.delete('asking');
+      if (highestVal) q.set('highest', highestVal); else q.delete('highest');
+      // Always set 'second' param so we can distinguish "empty = single offer"
+      q.set('second', secondVal); // empty string → single offer
+      window.location.href = 'decision.html?' + q.toString();
+    });
+    drawer.appendChild(applyBtn);
+
+    // Section: negotiation simulator
+    var negSepEl = document.createElement('div');
+    negSepEl.style.cssText = 'height:1px;background:#e2e8f0;margin:8px 0;';
+    drawer.appendChild(negSepEl);
+    var negHdrEl = document.createElement('div');
+    negHdrEl.style.cssText = 'padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+    negHdrEl.textContent = 'Negotiation';
+    drawer.appendChild(negHdrEl);
+    var simBtn = document.createElement('button');
+    simBtn.textContent = 'Simulate dealer reply';
+    simBtn.style.cssText = 'display:block;margin:4px 14px 10px;width:calc(100% - 28px);background:#6366f1;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
+    simBtn.addEventListener('click', function() {
+      var _d = getData();
+      var _h = (_d.offers || [])[0];
+      if (!_h) return;
+      var _neg  = NEGOTIATIONS[_h.id] || { messages: [], isStopped: false };
+      var _msgs = _neg.messages || [];
+      var _lastSellerMsg = _msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+      if (!_lastSellerMsg) { alert('Send a counter-offer first'); return; }
+      var _dealerAmount = Math.round(_lastSellerMsg.amount * 0.97);
+      _neg.messages.push({
+        sender: 'dealer',
+        amount: _dealerAmount,
+        message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!',
+        created_at: new Date().toISOString()
+      });
+      NEGOTIATIONS[_h.id] = _neg;
+      open = false; drawer.style.display = 'none';
+      openModal('Negotiate', _h.id);
+    });
+    drawer.appendChild(simBtn);
+
+    var open = false;
+    toggle.addEventListener('click', function() { open = !open; drawer.style.display = open ? 'block' : 'none'; });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
+    document.addEventListener('click', function(e) { if (open && !panel.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
+    panel.appendChild(drawer);
+    panel.appendChild(toggle);
+    document.body.appendChild(panel);
+
+    // Create modal element (must exist before wiring)
+    var modalEl = document.createElement('div');
+    modalEl.id = 'offer-modal';
+    modalEl.className = 'hidden fixed inset-0 z-50 overflow-y-auto';
+    modalEl.style.background = 'rgba(30,41,59,0.5)';
+    modalEl.innerHTML =
+      '<div class="min-h-full px-4 py-8 flex items-start justify-center">' +
+        '<div id="offer-modal-panel" class="relative bg-white rounded-lg w-full max-w-2xl">' +
+          '<button id="modal-close-btn" class="absolute top-0 right-0 p-4 h-12 w-12 flex items-center justify-center text-2xl leading-none text-black hover:text-slate-600 z-10" aria-label="Sulje">&times;</button>' +
+          '<div id="modal-body" class="p-4 lg:p-6 pt-12"></div>' +
+          '<div id="modal-footer-wrap"><div id="modal-footer" class="p-4 border-t border-gray-300"></div></div>' +
+        '</div>' +
+      '</div>';
+    document.body.appendChild(modalEl);
+
+    // Pre-populate negotiation state for counter-offer-sent scenario
+    if (SCENARIO === 'counter-offer-sent') {
+      var _coData = getData();
+      (_coData.offers || []).forEach(function(o) {
+        if (o.negotiation_pending && !NEGOTIATIONS[o.id]) {
+          NEGOTIATIONS[o.id] = {
+            messages: [
+              { sender: 'seller', amount: 11700, message: 'Hei! Haluaisin tästä hieman enemmän. Minkä verran joustoa teillä on?', created_at: new Date((_now()-2*3600)*1000).toISOString() }
+            ],
+            isStopped: false
+          };
+        }
+      });
+    }
+
+    // Pre-populate negotiation state for dealer-replied scenario
+    if (SCENARIO === 'dealer-replied') {
+      var _drData = getData();
+      (_drData.offers || []).forEach(function(o) {
+        if (o.dealer_replied && !NEGOTIATIONS[o.id]) {
+          NEGOTIATIONS[o.id] = {
+            messages: [
+              { sender: 'seller', amount: 11700, message: 'Hei! Haluaisin tästä hieman enemmän. Minkä verran joustoa teillä on?', created_at: new Date((_now()-5*3600)*1000).toISOString() },
+              { sender: 'dealer', amount: 11300, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date((_now()-1*3600)*1000).toISOString() }
+            ],
+            isStopped: false
+          };
+        }
+      });
+    }
+
+    // Pre-populate negotiation state for negotiation-stopped scenario
+    if (SCENARIO === 'negotiation-stopped') {
+      var _nsData = getData();
+      (_nsData.offers || []).forEach(function(o) {
+        if (o.negotiation_pending && !NEGOTIATIONS[o.id]) {
+          NEGOTIATIONS[o.id] = {
+            messages: [
+              { sender: 'seller', amount: 11700, message: 'Hei! Haluaisin tästä hieman enemmän. Minkä verran joustoa teillä on?', created_at: new Date((_now()-5*3600)*1000).toISOString() },
+              { sender: 'dealer', amount: 11300, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date((_now()-3*3600)*1000).toISOString() },
+              { sender: 'seller', amount: 11500, message: 'Okei, voisiko 11 500 € onnistua?', created_at: new Date((_now()-1*3600)*1000).toISOString() }
+            ],
+            isStopped: true
+          };
+        }
+      });
+    }
+
+    // Wire modal close
+    document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+    document.getElementById('offer-modal').addEventListener('click', function(e) {
+      if (!document.getElementById('offer-modal-panel').contains(e.target)) closeModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !document.getElementById('offer-modal').classList.contains('hidden')) closeModal();
+    });
+
+    // Boot
+    saveState();
+    renderPage();
+  })();
+  </script>
+
+
+</body>
+</html>

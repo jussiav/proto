@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="fi" class="bg-blue-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarjoukseni – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body class="font-body bg-blue-50 min-h-screen">
+
+  <!-- Fixed white nav — ONavigationBar color="white", h-20 -->
+  <header class="fixed top-0 left-0 right-0 h-20 bg-white z-50">
+    <nav class="h-full max-w-screen-xxl mx-auto px-6 flex items-center justify-between gap-4">
+      <a href="index.html" aria-label="AutoVex etusivu">
+        <img src="assets/0ee90a56-efbf-4799-9249-76f362c9facf.svg"
+             alt="AutoVex"
+             class="w-[108px] h-[22px] object-contain block" />
+      </a>
+      <div class="flex items-center gap-1">
+        <a href="index.html"
+           class="hidden lg:inline-flex items-center px-5 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]"
+           style="text-decoration:none">
+          Aloita kilpailutus
+        </a>
+        <div class="flex flex-col items-center justify-center px-4 py-3 min-w-[50px] cursor-pointer">
+          <svg width="30" height="30" viewBox="0 -960 960 960" fill="#0B6DFF" aria-hidden="true">
+            <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+          </svg>
+          <p id="nav-login-label" class="text-blue-600 text-xs font-semibold">Kirjaudu</p>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="h-20 bg-blue-50"></div>
+
+  <main class="max-w-[768px] mx-auto p-6 sm:py-14 grid gap-y-16">
+    <div class="flex flex-col gap-y-16">
+
+      <!-- AuctionsProgress section — shown when auction is live -->
+      <section id="section-live" class="hidden">
+        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+          <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path d="M236 137A108.13 108.13 0 1 1 119 20a12 12 0 0 1 2 24 84.12 84.12 0 1 0 91 91 12 12 0 1 1 24 2ZM116 76v52a12 12 0 0 0 12 12h52a12 12 0 0 0 0-24h-40V76a12 12 0 0 0-24 0Zm92 20a16 16 0 1 0-16-16 16 16 0 0 0 16 16Zm-32-32a16 16 0 1 0-16-16 16 16 0 0 0 16 16Z"/>
+          </svg>
+          <span class="text-blue-900 leading-3">Tarjouskauppa käynnissä</span>
+        </h2>
+
+        <!-- Timer.vue: bg-white border border-gray-200 shadow-sm rounded-xl p-4 space-y-4 -->
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl p-4 space-y-4">
+
+          <!-- hideProgressBar=true: info text (no bids yet) -->
+          <div id="timer-info" class="text-center text-slate-900 sm:text-lg font-medium leading-7">
+            Odotetaan tarjouskilpailun alkamista
+          </div>
+
+          <!-- hideProgressBar=false: progress bar + countdown (has bids) -->
+          <div id="timer-progress-wrap" class="hidden flex items-center justify-between space-x-4">
+            <div class="relative w-full bg-blue-100 rounded-lg h-7 overflow-hidden">
+              <div id="timer-progress-bar" class="relative h-full bg-blue-600 transition-all duration-300 ease-in-out" style="width:0%"></div>
+            </div>
+            <span id="timer-time-left" class="font-mono text-sm text-nowrap text-right font-medium text-slate-900">--:--:--</span>
+          </div>
+
+          <!-- Stats grid -->
+          <div class="grid grid-cols-2 gap-2 border border-slate-200 rounded-lg divide-x">
+            <div class="flex flex-col p-2.5">
+              <span class="text-slate-500 text-xs sm:text-sm truncate">Tarjouksia yhteensä</span>
+              <div class="mt-auto w-full flex justify-between items-baseline">
+                <span id="timer-offers" class="text-slate-800 text-sm sm:text-base">_</span>
+                <svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true">
+                  <path d="M16.416 14.063h-.281V3.092a.844.844 0 0 0-.844-.843h-3.938a.844.844 0 0 0-.843.844v2.531H7.416a.844.844 0 0 0-.844.844V9H4.041a.844.844 0 0 0-.844.844v4.219h-.281a.844.844 0 0 0 0 1.687h13.5a.844.844 0 1 0 0-1.688ZM12.197 3.937h2.25v10.126h-2.25V3.937ZM8.26 7.313h2.25v6.75H8.26v-6.75Zm-3.375 2.531h2.25V14.063h-2.25v-4.22Z"/>
+                </svg>
+              </div>
+            </div>
+            <div class="flex flex-col p-2.5">
+              <span class="text-slate-500 text-xs sm:text-sm truncate">Tarjoajat</span>
+              <div class="mt-auto w-full flex justify-between items-baseline">
+                <span id="timer-bidders" class="text-slate-800 text-sm sm:text-base">_</span>
+                <svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true">
+                  <clipPath id="fia-offers"><path transform="translate(.332)" d="M0 0h18v18H0z"/></clipPath>
+                  <g clip-path="url(#fia-offers)"><path d="M11.89 12.734a3.655 3.655 0 1 0-5.116 0 5.337 5.337 0 0 0-2.109 2.031.844.844 0 0 0 1.461.844 3.726 3.726 0 0 1 6.414 0 .846.846 0 0 0 1.16.322.843.843 0 0 0 .301-1.166 5.336 5.336 0 0 0-2.11-2.03Zm-4.526-2.608a1.969 1.969 0 1 1 3.937 0 1.969 1.969 0 0 1-3.937 0Zm10.35.674a.844.844 0 0 1-1.181-.168c-.586-.78-1.396-1.378-2.063-1.522a.844.844 0 0 1-.128-1.61A1.407 1.407 0 1 0 12.6 5.51a.844.844 0 1 1-1.477-.816 3.094 3.094 0 1 1 5.153 3.4c.619.412 1.162.928 1.607 1.525a.844.844 0 0 1-.169 1.18ZM4.194 9.112c-.666.144-1.476.742-2.062 1.522A.844.844 0 1 1 .783 9.62 6.497 6.497 0 0 1 2.39 8.093a3.094 3.094 0 1 1 5.152-3.4.844.844 0 1 1-1.476.816A1.406 1.406 0 1 0 4.323 7.5a.844.844 0 0 1-.128 1.611v.002Z"/></g>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer: date label + reg badge -->
+          <div class="flex justify-between items-baseline">
+            <div class="text-xs sm:text-sm space-x-1">
+              <span id="timer-date-label" class="text-slate-400 hidden">Tarjouskilpailu päättyy:</span>
+              <span id="timer-date-text" class="text-slate-900 text-xs sm:text-base">
+                Tarjouskilpailu alkaa kun ensimmäinen tarjous on tehty
+              </span>
+            </div>
+            <div class="flex rounded-md flex-shrink-0 ml-3">
+              <div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>
+              <div id="timer-reg" class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 text-xs text-nowrap"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Updates/notifications section — shown when there's a notification -->
+      <section id="section-updates" class="hidden">
+        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+          <!-- ph-bold-bell, viewBox 0 0 256 256 -->
+          <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path d="M221.8 175.94C216.25 166.38 208 139.33 208 104a80 80 0 1 0-160 0c0 35.34-8.26 62.38-13.81 71.94A16 16 0 0 0 48 200h48a32 32 0 0 0 64 0h48a16 16 0 0 0 13.8-24.06ZM128 216a16 16 0 0 1-16-16h32a16 16 0 0 1-16 16Z"/>
+          </svg>
+          <span class="text-blue-900 leading-3">Ajankohtaista</span>
+        </h2>
+        <div id="notification-container"></div>
+      </section>
+
+      <!-- Drafts section — shown when there are draft listings -->
+      <section id="section-drafts" class="hidden">
+        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+          <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path d="M84 224a12 12 0 0 1-12 12H56a20 20 0 0 1-20-20v-32a12 12 0 0 1 24 0v28h12a12 12 0 0 1 12 12ZM220 88v48a12 12 0 0 1-24 0v-32h-48a12 12 0 0 1-12-12V44h-16a12 12 0 0 1 0-24h32a12 12 0 0 1 8.49 3.51l56 56A12 12 0 0 1 220 88Zm-60-8h23l-23-23ZM80 20H56a20 20 0 0 0-20 20v24a12 12 0 0 0 24 0V44h20a12 12 0 0 0 0-24Zm128 144a12 12 0 0 0-12 12v36h-4a12 12 0 0 0 0 24h8a20 20 0 0 0 20-20v-40a12 12 0 0 0-12-12Zm-160-8a12 12 0 0 0 12-12v-40a12 12 0 0 0-24 0v40a12 12 0 0 0 12 12Zm104 56h-40a12 12 0 0 0 0 24h40a12 12 0 0 0 0-24Z"/>
+          </svg>
+          <span class="text-blue-900 leading-3">Keskeneräiset ilmoituksesi</span>
+        </h2>
+        <div id="draft-cards-container" class="flex flex-col gap-y-5"></div>
+      </section>
+
+      <!-- TenderRequests section -->
+      <section id="section-requests">
+        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+          <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path d="M240 100h-8.2l-26.72-60.12A20 20 0 0 0 186.8 28H69.2a20 20 0 0 0-18.28 11.88L24.2 100H16a12 12 0 0 0 0 24h4v76a20 20 0 0 0 20 20h28a20 20 0 0 0 20-20v-20h80v20a20 20 0 0 0 20 20h28a20 20 0 0 0 20-20v-76h4a12 12 0 0 0 0-24ZM71.8 52h112.4l21.33 48H50.47ZM64 196H44v-16h20Zm128 0v-16h20v16Zm20-40H44v-32h168Z"/>
+          </svg>
+          <span class="text-blue-900 leading-3">Julkaistut ilmoituksesi</span>
+        </h2>
+
+        <div class="w-full h-auto lg:max-h-[250px] flex flex-col lg:flex-row rounded-xl bg-white space-y-1 lg:space-y-0 shadow-sm overflow-hidden">
+          <div id="photo-wrap" class="h-[220px] lg:h-auto lg:w-[250px] flex-shrink-0 bg-blue-300 flex items-center justify-center overflow-hidden">
+            <img id="car-img" src="" alt="" class="object-cover h-full w-full hidden" />
+            <svg id="car-placeholder" width="70" height="70" viewBox="0 0 256 256" fill="white" class="opacity-60" aria-hidden="true">
+              <path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/>
+            </svg>
+          </div>
+          <div class="w-full h-auto p-5 flex flex-col justify-between space-y-5">
+            <div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">
+              <div class="flex rounded-md">
+                <div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>
+                <div id="reg-number" class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 text-xs sm:text-sm"></div>
+              </div>
+              <div id="status-badge" class="inline-flex items-center space-x-2 px-2 py-1 text-xs sm:text-sm rounded border"></div>
+            </div>
+            <div class="space-y-3">
+              <div class="flex flex-col">
+                <span id="car-make-model" class="text-base font-bold text-slate-900"></span>
+              </div>
+              <div id="car-pills" class="flex flex-wrap self-stretch gap-1.5 text-sm items-center"></div>
+              <p id="car-accessories-text" class="text-sm text-slate-500 italic hidden"></p>
+            </div>
+            <div id="cta-row" class="w-full flex items-center md:justify-end flex-col sm:flex-row gap-y-4 sm:gap-y-0 sm:gap-x-2"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ section -->
+      <section>
+        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+          <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+            <path d="M144 180a16 16 0 1 1-16-16 16 16 0 0 1 16 16Zm92-52A108 108 0 1 1 128 20a108.12 108.12 0 0 1 108 108Zm-24 0a84 84 0 1 0-84 84 84.09 84.09 0 0 0 84-84Zm-84-64c-24.26 0-44 17.94-44 40v4a12 12 0 0 0 24 0v-4c0-8.82 9-16 20-16s20 7.18 20 16-9 16-20 16a12 12 0 0 0-12 12v8a12 12 0 0 0 23.73 2.56C158.31 137.88 172 122.37 172 104c0-22.06-19.74-40-44-40Z"/>
+          </svg>
+          <span class="text-blue-900 leading-3">Usein kysytyt kysymykset</span>
+        </h2>
+        <div id="faq-list" class="faq-section flex flex-col space-y-2.5"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Negotiation modal -->
+  <div id="neg-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background:rgba(30,41,59,0.5)">
+    <div class="min-h-full flex items-start justify-center py-8 px-4">
+      <div id="neg-modal-panel" class="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+        <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
+          <h2 class="text-lg font-bold text-slate-800">Neuvottelu</h2>
+          <button id="neg-modal-close-x" type="button" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+            <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>
+          </button>
+        </div>
+        <div id="neg-modal-body" class="px-6 py-6 space-y-4 overflow-y-auto" style="max-height:60vh"></div>
+        <div class="flex items-center justify-between px-6 py-4 border-t border-slate-100">
+          <button id="neg-modal-close-btn" type="button" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-50">Sulje</button>
+          <a id="neg-modal-decision-link" href="decision.html" class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium" style="text-decoration:none">Siirry päätössivulle</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit details modal -->
+  <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background:rgba(30,41,59,0.5)">
+    <div class="min-h-full flex items-start justify-center py-8 px-4">
+      <div id="edit-modal-panel" class="bg-white rounded-2xl shadow-xl w-full max-w-4xl">
+        <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
+          <h2 class="text-lg font-bold text-slate-800">Muokkaa tietoja</h2>
+          <button id="edit-modal-close-x" type="button" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+            <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>
+          </button>
+        </div>
+        <div class="px-6 py-6 space-y-8 overflow-y-auto" style="max-height:65vh">
+          <div>
+            <label class="block text-base font-medium text-slate-800 mb-2">Lisävarusteet</label>
+            <textarea id="edit-accessories" maxlength="1500" rows="3" placeholder="Vetokoukku, lasikatto, ratinlämmitin, mobiiliyhteys..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+            <p class="text-xs text-slate-400 text-right mt-1"><span id="edit-accessories-count">0</span> / 1500</p>
+          </div>
+          <div>
+            <label class="block text-base font-medium text-slate-800 mb-2">Viimeisimmän huollon km</label>
+            <input id="edit-last-service-km" type="number" min="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label class="block text-base font-medium text-slate-800 mb-2">Huollot ja vauriot</label>
+            <textarea id="edit-damage" maxlength="1500" rows="3" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+            <p class="text-xs text-slate-400 text-right mt-1"><span id="edit-damage-count">0</span> / 1500</p>
+          </div>
+          <div>
+            <label class="block text-base font-medium text-slate-800 mb-2">Viimeisin katsastus</label>
+            <input id="edit-tech-inspection" type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <fieldset>
+              <legend class="text-base font-medium text-slate-800 mb-3">Viimeisimmän huollon ajankohta <span class="text-red-500">*</span></legend>
+              <div id="edit-service-date-chips" class="flex flex-wrap gap-2"></div>
+            </fieldset>
+          </div>
+          <div>
+            <fieldset>
+              <legend class="text-base font-medium text-slate-800 mb-3">Auto huollettu viimeksi (vuosi)</legend>
+              <div id="edit-service-year-chips" class="flex flex-wrap gap-2"></div>
+            </fieldset>
+          </div>
+          <div id="edit-service-month-wrap" class="hidden">
+            <fieldset>
+              <legend class="text-base font-medium text-slate-800 mb-3">Auto huollettu viimeksi (kuukausi)</legend>
+              <div id="edit-service-month-chips" class="flex flex-wrap gap-2"></div>
+            </fieldset>
+          </div>
+          <div>
+            <p class="mb-1"><strong class="text-base font-semibold text-slate-800">Lisää 6-15 kuvaa</strong></p>
+            <p class="text-sm text-slate-600 mb-4">Ota kuva ulkoa, sisältä, virheistä sekä huoltokirjasta. Hyvillä kuvilla saat enemmän ja parempia tarjouksia. Varmista että pääkuvassa näkyy koko auto. Vaihdat kuvien järjestystä raahaamalla.</p>
+            <div id="edit-photo-grid"></div>
+          </div>
+        </div>
+        <div class="flex items-center justify-between px-6 py-4 border-t border-slate-100">
+          <button id="edit-modal-close-btn" type="button" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-50">Sulje</button>
+          <button id="edit-modal-save-btn" type="button" class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium">Tallenna</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="vehicle-card.js"></script>
+  <script>
+    // ── Helpers ──
+    function _now() { return Math.floor(Date.now() / 1000); }
+    function pad(n) { return n < 10 ? '0' + n : '' + n; }
+    function formatCountdown(secs) {
+      if (secs <= 0) return '0m 0s';
+      var d = Math.floor(secs / 86400);
+      var h = Math.floor((secs % 86400) / 3600);
+      var m = Math.floor((secs % 3600) / 60);
+      var s = Math.floor(secs % 60);
+      if (d > 0) return d + 'd ' + pad(h) + 'h ' + pad(m) + 'm ' + pad(s) + 's';
+      if (h > 0) return pad(h) + 'h ' + pad(m) + 'm ' + pad(s) + 's';
+      return pad(m) + 'm ' + pad(s) + 's';
+    }
+
+    var STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e) { return {}; } }
+    function setStore(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch(e) {} }
+
+    var s = getStore();
+
+    (function () {
+      var raw = ((s.contact || {}).kokoNimi || '').trim();
+      var name = raw ? raw.split(' ')[0] : null;
+      if (name) { var el = document.getElementById('nav-login-label'); if (el) el.textContent = name; }
+    })();
+
+    var _photos = s.photos || {}, _photoMap = s.photoMap || {}, firstPhoto = null;
+    ['ulkopuoli','sisatilat','huoltokirja','renkaat','naarmut','tuulilasi'].forEach(function(sec) {
+      if (!firstPhoto && _photos[sec] && _photos[sec].length) firstPhoto = _photos[sec][0];
+    });
+    if (!firstPhoto) { var _pk = Object.keys(_photoMap); if (_pk.length) firstPhoto = _photoMap[_pk[0]]; }
+
+    var plate  = (s.hero    || {}).plate      || 'ABC-123';
+    var rawKm  = String((s.hero || {}).km || '').replace(/\D/g, '');
+    var km     = parseInt(rawKm) || 82000;
+    var merkki = (s.details || {}).merkki     || 'Toyota';
+    var malli  = (s.details || {}).malli      || 'Corolla';
+    var vuosi  = (s.details || {}).vuosimalli || '2020';
+    var fuel   = (s.details || {}).polttoaine || '';
+
+    // ── Scenario param + persistent state ──
+    var _OFFERS_STATE_KEY = 'autovex_offers';
+    function _loadOffersState() { try { return JSON.parse(localStorage.getItem(_OFFERS_STATE_KEY) || 'null') || {}; } catch(e) { return {}; } }
+    var _offersParams = new URLSearchParams(window.location.search);
+    var _savedOffersState = _loadOffersState();
+    var SCENARIO = _offersParams.get('scenario') || _savedOffersState.scenario || 'new-offers';
+    try { localStorage.setItem(_OFFERS_STATE_KEY, JSON.stringify({ scenario: SCENARIO })); } catch(e) {}
+    try { var _ds = JSON.parse(localStorage.getItem('autovex_decision') || '{}'); _ds.scenario = SCENARIO; localStorage.setItem('autovex_decision', JSON.stringify(_ds)); } catch(e) {}
+    var _editState = { sd: null, sy: null, sm: null };
+    var _neg2ndCounter = false;
+    function decisionHref() { return 'decision.html?scenario=' + SCENARIO; }
+    // Sync funnel flags to match scenario — Skenaario panel is master state
+    (function() {
+      var _DRAFT_ONLY = ['draft-open', 'draft-rejected', 'draft-rejected-images', 'blank'];
+      var _IN_REVIEW  = ['draft-in-review', 'draft-queued'];
+      try {
+        var fs = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
+        if (_DRAFT_ONLY.indexOf(SCENARIO) !== -1) {
+          delete fs.emailVerified; delete fs.successVisited; delete fs.offersVisited;
+        } else if (_IN_REVIEW.indexOf(SCENARIO) !== -1) {
+          fs.emailVerified = true; fs.successVisited = true; delete fs.offersVisited;
+        } else {
+          fs.emailVerified = true; fs.successVisited = true; fs.offersVisited = true;
+        }
+        localStorage.setItem('autovex_funnel', JSON.stringify(fs));
+      } catch(e) {}
+    })();
+
+    var BASE = {
+      id: 1001, make: merkki, model: malli, year: parseInt(vuosi) || 2020,
+      fuel_type: fuel, driven: km, registration_number: plate,
+      asking_price: 12000, model_specification: '',
+    };
+
+    // ── Scenario data — matches offers.astro mock shapes ──
+    var SCENARIOS = {
+      'live-no-bids':   function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() + 18*3600, published_at: _now() - 18*3600,
+        offer_count: 0, buyers: 0, offers: [], offers_seen_at: null, has_final_offer: false,
+      })], negotiations: [] }; },
+      'auction-live':   function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() + 20*3600, published_at: _now() - 16*3600,
+        offer_count: 2, buyers: 2, offers: [{id:201,status:0},{id:202,status:0}], offers_seen_at: null, has_final_offer: false,
+      })], negotiations: [] }; },
+      'new-offers':     function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 4*3600,  published_at: _now() - 40*3600,
+        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offers_seen_at: null, has_final_offer: false,
+        expires_at: _now() - 4*3600 + 24*3600,
+      })], negotiations: [] }; },
+      'seen-offers':    function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 5*3600,  published_at: _now() - 41*3600,
+        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offers_seen_at: new Date((_now() - 3600) * 1000).toISOString(), has_final_offer: false,
+        expires_at: _now() - 5*3600 + 24*3600,
+      })], negotiations: [] }; },
+      'final-offer':    function() { return { requests: [Object.assign({}, BASE, {
+        status: 1,
+        auction_ends_at: _now() - 5*3600, published_at: _now() - 7*86400,
+        offer_count: 2, buyers: 2,
+        offers: [{id:201,status:3},{id:202,status:0}],
+        offers_seen_at: new Date((_now() - 3600) * 1000).toISOString(), has_final_offer: true,
+        highest_offer: 11200, second_highest_offer: 10800,
+        is_expired: false,
+        expires_at: _now() + 20*3600,
+      })], negotiations: [] }; },
+      'no-offers':      function() { return { requests: [Object.assign({}, BASE, {
+        status: 1,
+        auction_ends_at: _now() - 1800, published_at: _now() - 7*86400,
+        expires_at: _now() - 1800,
+        offer_count: 0, buyers: 0, offers: [], offers_seen_at: null,
+        highest_offer: null, second_highest_offer: null,
+        is_expired: false, has_final_offer: false,
+      })], negotiations: [] }; },
+      'all-rejected':   function() { return { requests: [Object.assign({}, BASE, {
+        status: 1,
+        auction_ends_at: _now() - 4*86400, published_at: _now() - 7*86400,
+        expires_at: _now() - 3*86400,
+        offer_count: 3, buyers: 3,
+        offers: [{id:201,status:2},{id:202,status:2},{id:203,status:2}],
+        offers_seen_at: new Date((_now() - 3*86400) * 1000).toISOString(), has_final_offer: false,
+        highest_offer: 9500, second_highest_offer: 9000,
+      })], negotiations: [] }; },
+      'accepted':       function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 2*86400, published_at: _now() - 2*86400 - 36*3600,
+        offer_count: 3, buyers: 3,
+        offers: [{id:201,status:1},{id:202,status:2},{id:203,status:2}],
+        offers_seen_at: new Date((_now() - 2*86400) * 1000).toISOString(), has_final_offer: false,
+      })], negotiations: [] }; },
+      'deal-completed': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
+        offer_count: 3, buyers: 3,
+        offers: [{id:201,status:1},{id:202,status:2},{id:203,status:2}],
+        offers_seen_at: new Date((_now() - 3*86400) * 1000).toISOString(), has_final_offer: false,
+      })], negotiations: [] }; },
+      'deal-failed':    function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
+        offer_count: 3, buyers: 3,
+        offers: [{id:201,status:2},{id:202,status:2},{id:203,status:2}],
+        offers_seen_at: new Date((_now() - 2*86400) * 1000).toISOString(), has_final_offer: false,
+      })], negotiations: [] }; },
+      'counter-offer-sent': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 5*3600, published_at: _now() - 41*3600,
+        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offers_seen_at: new Date((_now() - 2*3600) * 1000).toISOString(), has_final_offer: false,
+      })], negotiations: [{id:301,tender_id:1001,offer_id:201,status:0,seller_counter_amount:11200,dealer_original_amount:10500,updated_at:_now()-3600}] }; },
+      'dealer-replied': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 5*3600, published_at: _now() - 41*3600,
+        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offers_seen_at: new Date((_now() - 2*3600) * 1000).toISOString(), has_final_offer: false,
+      })], negotiations: [{id:301,tender_id:1001,offer_id:201,status:7,seller_counter_amount:11200,dealer_original_amount:10500,dealer_counter_amount:10800,updated_at:_now()-3600}] }; },
+      'negotiation-stopped': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 5*3600, published_at: _now() - 41*3600,
+        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offers_seen_at: new Date((_now() - 2*3600) * 1000).toISOString(), has_final_offer: false,
+        expires_at: _now() + 18*3600,
+      })], negotiations: [{id:301,tender_id:1001,offer_id:201,status:8,updated_at:_now()-2*3600}] }; },
+      'offers-expired-unseen': function() { return { requests: [Object.assign({}, BASE, {
+        status: 1,
+        auction_ends_at: _now() - 4*86400, published_at: _now() - 10*86400,
+        expires_at: _now() - 3*86400,
+        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offers_seen_at: null, has_final_offer: false,
+        highest_offer: 11500, second_highest_offer: 11000,
+        is_expired: true,
+      })], negotiations: [] }; },
+      'offers-auto-rejected': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 4*86400, published_at: _now() - 4*86400 - 36*3600,
+        offer_count: 3, buyers: 3,
+        offers: [{id:201,status:0,auto_rejected:true},{id:202,status:0,auto_rejected:true},{id:203,status:0,auto_rejected:true}],
+        offers_seen_at: null, has_final_offer: false,
+      })], negotiations: [] }; },
+      'dac7': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
+        offer_count: 0, buyers: 0, offers: [], offers_seen_at: null, has_final_offer: false,
+        needs_dac7: true,
+      })], negotiations: [] }; },
+      'blank': function() { return { requests: [], negotiations: [], drafts: [] }; },
+      'draft-open': function() { return { requests: [], negotiations: [], drafts: [{
+        id: 501, status: 'open', registration_number: 'XYZ-789',
+        missing_images: false, created_at: _now() - 3600,
+        make_name: 'Toyota', model_name: 'Corolla',
+        model_specification: 'Trendline 1,0 kk kW (75 hv)',
+        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
+        driven: 82000, asking_price: 12000,
+      }] }; },
+      'draft-in-review': function() { return { requests: [], negotiations: [], drafts: [{
+        id: 501, status: 'in_review', registration_number: 'XYZ-789',
+        review_comms_content: null, created_at: _now() - 86400,
+        make_name: 'Toyota', model_name: 'Corolla',
+        model_specification: 'Trendline 1,0 kk kW (75 hv)',
+        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
+        driven: 82000, asking_price: 12000,
+      }] }; },
+      'draft-rejected': function() { return { requests: [], negotiations: [], drafts: [{
+        id: 501, status: 'rejected', registration_number: 'XYZ-789',
+        missing_images: false, created_at: _now() - 2 * 86400,
+        make_name: 'Toyota', model_name: 'Corolla',
+        model_specification: 'Trendline 1,0 kk kW (75 hv)',
+        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
+        driven: 82000, asking_price: 12000,
+      }] }; },
+      'draft-rejected-images': function() { return { requests: [], negotiations: [], drafts: [{
+        id: 501, status: 'rejected', registration_number: 'XYZ-789',
+        missing_images: true, created_at: _now() - 2 * 86400,
+        make_name: 'Toyota', model_name: 'Corolla',
+        model_specification: 'Trendline 1,0 kk kW (75 hv)',
+        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
+        driven: 82000, asking_price: 12000,
+      }] }; },
+      'draft-queued': function() { return { requests: [], negotiations: [], drafts: [{
+        id: 501, status: 'queued_for_publishing_after_verification', registration_number: 'XYZ-789',
+        missing_images: false, created_at: _now() - 86400,
+        make_name: 'Toyota', model_name: 'Corolla',
+        model_specification: 'Trendline 1,0 kk kW (75 hv)',
+        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
+        driven: 82000, asking_price: 12000,
+      }] }; },
+    };
+
+    function getData() {
+      return SCENARIOS[SCENARIO] ? SCENARIOS[SCENARIO]() : SCENARIOS['new-offers']();
+    }
+
+    // ── State derivation — matches TenderRequests.vue computeRequestState ──
+    var OFFER_ACCEPTED = 1, OFFER_REJECTED = 2, OFFER_FINAL = 3;
+    var NEG_PENDING = 0, NEG_COUNTER_SENT = 7, NEG_STOPPED = 8;
+
+    function computeRequestState(req, negotiations) {
+      if (_now() <= req.auction_ends_at) return 'auctionOngoing';
+      if (req.needs_dac7) return 'offerAccepted';
+      var offers = req.offers || [];
+      if (offers.every(function(o) { return o.status === OFFER_REJECTED; })) return 'offersRejected';
+      if (offers.some(function(o) { return o.status === OFFER_ACCEPTED; })) return 'offerAccepted';
+      var neg = (negotiations || []).filter(function(n) { return n.tender_id === req.id; })[0];
+      if (neg && [NEG_PENDING, NEG_COUNTER_SENT, NEG_STOPPED].indexOf(neg.status) !== -1) return 'negotiations';
+      return 'auctionEnded';
+    }
+
+    // ── Icons ──
+    var ICON_BROADCAST    = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M7 4.594a2.406 2.406 0 1 0 0 4.813 2.406 2.406 0 0 0 0-4.813Zm0 3.5a1.094 1.094 0 1 1 0-2.187 1.094 1.094 0 0 1 0 2.187Zm4.232.695c-.197.466-.47.897-.808 1.274a.657.657 0 0 1-.978-.875 3.277 3.277 0 0 0 0-4.375.656.656 0 0 1 .978-.875 4.598 4.598 0 0 1 .809 4.85Zm-6.677.399a.656.656 0 0 1-.979.875 4.59 4.59 0 0 1 0-6.125.656.656 0 1 1 .979.875 3.277 3.277 0 0 0 0 4.375ZM13.78 7a6.761 6.761 0 0 1-1.937 4.746.655.655 0 0 1-1.14-.447.655.655 0 0 1 .203-.47 5.462 5.462 0 0 0 0-7.657.657.657 0 0 1 .937-.918A6.76 6.76 0 0 1 13.782 7ZM3.094 10.83a.656.656 0 0 1-.937.918 6.775 6.775 0 0 1 0-9.491.656.656 0 0 1 .937.916 5.462 5.462 0 0 0 0 7.656Z"/></svg>';
+    var ICON_GAVEL        = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="m13.46 6.227-.874-.875a1.094 1.094 0 0 0-1.261-.205L8.853 2.675a1.094 1.094 0 0 0-.205-1.261L7.773.539a1.094 1.094 0 0 0-1.547 0l-3.5 3.5a1.094 1.094 0 0 0 0 1.547l.875.875a1.094 1.094 0 0 0 1.258.207L1.605 9.92a1.75 1.75 0 0 0 2.476 2.475l3.247-3.25a1.094 1.094 0 0 0 .208 1.254l.875.875a1.093 1.093 0 0 0 1.547 0l3.5-3.5a1.094 1.094 0 0 0 0-1.547h.003Zm-9.085-.849-.567-.565L7 1.622l.565.566-3.19 3.19Zm-1.223 6.089a.438.438 0 1 1-.619-.62l3.255-3.254.619.619-3.255 3.255Zm5.07-3.297L5.83 5.779l2.132-2.133 2.391 2.39L8.221 8.17Zm.965 2.023-.566-.568 3.191-3.19.566.565-3.191 3.193Z"/></svg>';
+    var ICON_CHATS        = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M12.924 10.231a4.594 4.594 0 0 0-3.502-6.463 4.594 4.594 0 0 0-8.347 3.838L.7 8.878a1.094 1.094 0 0 0 1.358 1.358l1.272-.374c.395.181.814.305 1.244.369a4.597 4.597 0 0 0 6.094 2.256l1.272.374a1.093 1.093 0 0 0 1.357-1.358l-.374-1.272ZM3.39 8.504a.651.651 0 0 0-.185.026l-1.133.333.334-1.133a.656.656 0 0 0-.051-.492A3.281 3.281 0 1 1 3.702 8.58a.656.656 0 0 0-.312-.077Zm8.252 1.356a.656.656 0 0 0-.05.492l.332 1.134-1.131-.33a.656.656 0 0 0-.496.05 3.281 3.281 0 0 1-4.227-1 4.59 4.59 0 0 0 3.749-4.997 3.281 3.281 0 0 1 1.825 4.649l-.002.002Z"/></svg>';
+    var ICON_SEAL_CHECK   = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><defs><clipPath id="clip-seal-check"><path d="M0 0h14v14H0z"/></clipPath></defs><g clip-path="url(#clip-seal-check)"><path d="M12.51 5.471c-.193-.2-.391-.407-.456-.564-.058-.14-.063-.429-.066-.682-.009-.547-.02-1.228-.502-1.71-.484-.483-1.164-.493-1.71-.502-.254-.004-.543-.009-.683-.067-.157-.065-.364-.263-.564-.456C8.14 1.12 7.659.656 7 .656c-.659 0-1.141.463-1.529.834-.2.193-.407.391-.564.456-.14.058-.429.063-.682.067-.547.01-1.228.018-1.71.503-.481.484-.492 1.162-.502 1.709-.004.253-.009.542-.067.682-.065.157-.263.364-.456.564C1.12 5.86.656 6.344.656 7c0 .656.463 1.141.834 1.531.193.2.391.408.456.565.058.14.063.428.067.682.008.547.018 1.227.502 1.71.483.483 1.163.492 1.71.502.253.004.542.008.682.066.157.066.364.264.564.457.388.368.873.83 1.529.83.656 0 1.141-.462 1.529-.833.2-.193.407-.391.564-.456.14-.058.429-.063.682-.066.547-.009 1.228-.02 1.71-.502.483-.484.493-1.164.503-1.71.003-.254.008-.543.066-.683.065-.157.263-.364.456-.564.371-.388.834-.87.834-1.529 0-.659-.463-1.141-.834-1.529Zm-.947 2.15c-.264.273-.563.585-.722.97-.154.372-.16.775-.164 1.165-.004.293-.01.695-.117.801-.108.107-.509.114-.802.118-.39.006-.793.012-1.164.164-.383.16-.697.458-.972.721-.197.19-.49.471-.622.471-.131 0-.425-.282-.62-.468-.274-.264-.586-.563-.971-.722-.372-.154-.775-.16-1.165-.164-.293-.004-.695-.01-.801-.117-.107-.108-.114-.509-.118-.802-.006-.39-.012-.793-.164-1.164-.16-.383-.458-.697-.721-.972-.19-.197-.471-.49-.471-.622 0-.131.282-.425.468-.62.264-.274.563-.586.722-.971.154-.372.16-.775.164-1.165.006-.293.013-.695.122-.799.11-.104.509-.113.802-.117.39-.006.792-.012 1.164-.164.383-.16.697-.458.972-.722.192-.191.486-.473.617-.473s.425.282.62.468c.274.264.586.563.971.722.372.154.775.16 1.165.164.293.004.695.01.801.117.107.108.114.509.118.802.006.39.012.793.164 1.164.16.383.458.697.721.972.187.194.47.489.47.62s-.28.427-.467.622ZM9.652 5.222a.656.656 0 0 1 0 .93L6.589 9.215a.656.656 0 0 1-.93 0L4.348 7.903a.657.657 0 1 1 .93-.93l.848.847 2.598-2.598a.656.656 0 0 1 .929.001Z"/></g></svg>';
+    var ICON_PROHIBIT     = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M7 1.094A5.906 5.906 0 1 0 12.906 7 5.913 5.913 0 0 0 7 1.094ZM11.594 7c0 .992-.32 1.957-.916 2.75L4.25 3.322A4.594 4.594 0 0 1 11.594 7ZM2.406 7a4.572 4.572 0 0 1 .916-2.75l6.428 6.428A4.593 4.593 0 0 1 2.406 7Z"/></svg>';
+
+    var ICON_HOURGLASS_HIGH  = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M10.0625 1.09375H3.9375C3.64742 1.09375 3.36922 1.20898 3.1641 1.4141C2.95898 1.61922 2.84375 1.89742 2.84375 2.1875V4.15625C2.84417 4.32597 2.88389 4.4933 2.95979 4.6451C3.0357 4.79691 3.14572 4.92908 3.28125 5.03125L5.90625 7L3.28125 8.96875C3.14572 9.07092 3.0357 9.20309 2.95979 9.3549C2.88389 9.5067 2.84417 9.67403 2.84375 9.84375V11.8125C2.84375 12.1026 2.95898 12.3808 3.1641 12.5859C3.36922 12.791 3.64742 12.9062 3.9375 12.9062H10.0625C10.3526 12.9062 10.6308 12.791 10.8359 12.5859C11.041 12.3808 11.1562 12.1026 11.1562 11.8125V9.86344C11.1561 9.69401 11.1168 9.52691 11.0415 9.37514C10.9662 9.22337 10.8569 9.09104 10.722 8.98844L8.08828 7L10.722 5.00937C10.8569 4.90678 10.9662 4.77444 11.0415 4.62267C11.1168 4.47091 11.1561 4.3038 11.1562 4.13437V2.1875C11.1563 1.89742 11.041 1.61922 10.8359 1.4141C10.6308 1.20898 10.3526 1.09375 10.0625 1.09375ZM9.84375 2.40625V3.28125H4.15625V2.40625H9.84375ZM7 6.17969L4.88523 4.59375H9.09617L7 6.17969ZM9.84375 11.5938H4.15625V9.95312L7 7.82031L9.84375 9.97117V11.5938Z"/></svg>';
+    var ICON_WARNING_OCTAGON = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M6.34375 7.21875V4.375C6.34375 4.20095 6.41289 4.03403 6.53596 3.91096C6.65903 3.78789 6.82595 3.71875 7 3.71875C7.17405 3.71875 7.34097 3.78789 7.46404 3.91096C7.58711 4.03403 7.65625 4.20095 7.65625 4.375V7.21875C7.65625 7.3928 7.58711 7.55972 7.46404 7.68279C7.34097 7.80586 7.17405 7.875 7 7.875C6.82595 7.875 6.65903 7.80586 6.53596 7.68279C6.41289 7.55972 6.34375 7.3928 6.34375 7.21875ZM12.9063 5.00664V8.99336C12.9066 9.13704 12.8785 9.27938 12.8235 9.41211C12.7685 9.54485 12.6877 9.66535 12.5858 9.76664L9.76664 12.5858C9.66537 12.6877 9.54487 12.7685 9.41213 12.8235C9.27939 12.8786 9.13705 12.9067 8.99336 12.9063H5.00664C4.86295 12.9067 4.72061 12.8786 4.58787 12.8235C4.45513 12.7685 4.33463 12.6877 4.23336 12.5858L1.41422 9.76664C1.31231 9.66535 1.23151 9.54485 1.1765 9.41211C1.12149 9.27938 1.09336 9.13704 1.09375 8.99336V5.00664C1.09336 4.86296 1.12149 4.72062 1.1765 4.58789C1.23151 4.45515 1.31231 4.33465 1.41422 4.23336L4.23336 1.41422C4.33463 1.31228 4.45513 1.23147 4.58787 1.17645C4.72061 1.12144 4.86295 1.09333 5.00664 1.09375H8.99336C9.13705 1.09333 9.27939 1.12144 9.41213 1.17645C9.54487 1.23147 9.66537 1.31228 9.76664 1.41422L12.5858 4.23336C12.6877 4.33465 12.7685 4.45515 12.8235 4.58789C12.8785 4.72062 12.9066 4.86296 12.9063 5.00664ZM11.5938 5.09742L8.90258 2.40625H5.09742L2.40625 5.09742V8.90258L5.09742 11.5938H8.90258L11.5938 8.90258V5.09742ZM7 8.53125C6.82694 8.53125 6.65777 8.58257 6.51388 8.67871C6.36998 8.77486 6.25783 8.91152 6.19161 9.0714C6.12538 9.23129 6.10805 9.40722 6.14181 9.57695C6.17558 9.74669 6.25891 9.9026 6.38128 10.025C6.50365 10.1473 6.65956 10.2307 6.8293 10.2644C6.99903 10.2982 7.17496 10.2809 7.33485 10.2146C7.49473 10.1484 7.63139 10.0363 7.72754 9.89237C7.82368 9.74848 7.875 9.57931 7.875 9.40625C7.875 9.17419 7.78281 8.95163 7.61872 8.78753C7.45462 8.62344 7.23206 8.53125 7 8.53125Z"/></svg>';
+    var ICON_PAPERCLIP       = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="m11.62 7.464-4.487 4.484a3.282 3.282 0 0 1-4.64-4.642L7.86 1.953a2.188 2.188 0 1 1 3.093 3.095l-.01.008L5.707 10.1a.658.658 0 0 1-1.066-.234.656.656 0 0 1 .156-.712l5.234-5.038a.875.875 0 0 0-1.242-1.234L3.42 8.234a1.97 1.97 0 0 0 2.786 2.784l4.487-4.485a.659.659 0 0 1 1.123.465.656.656 0 0 1-.193.465h-.002Z"/></svg>';
+
+    // Notification icons — 30x30 matching spriteMap(icon, 30, 30) in production
+    var NICON_FLAG        = '<svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor" aria-hidden="true"><path d="M26.64 6.6a.938.938 0 0 0-1.004.147c-3.281 2.838-6.061 1.463-9.282-.132C13.015 4.96 9.232 3.09 5.01 6.747a.937.937 0 0 0-.324.703v19.688a.937.937 0 0 0 1.875 0v-5.184c3.14-2.48 5.845-1.142 8.96.4 1.921.95 3.99 1.975 6.21 1.975 1.633 0 3.345-.557 5.136-2.11a.936.936 0 0 0 .323-.703V7.45a.938.938 0 0 0-.552-.85Z"/></svg>';
+    var NICON_CLOCK       = '<svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor" aria-hidden="true"><path d="M24.376 11.36a1.407 1.407 0 1 1 2.813 0 1.407 1.407 0 0 1-2.813 0ZM22.97 8.549a1.406 1.406 0 1 0 0-2.812 1.406 1.406 0 0 0 0 2.812Zm3.358 6.563a.937.937 0 0 0-1.011.856 10.325 10.325 0 0 1-17.589 6.424 10.327 10.327 0 0 1 6.413-17.593.94.94 0 0 0-.155-1.875 12.202 12.202 0 1 0 13.202 13.202.937.937 0 0 0-.86-1.014ZM15.001 6.673a8.437 8.437 0 1 1-8.438 8.438 8.447 8.447 0 0 1 8.438-8.438Z"/></svg>';
+    var NICON_CHATS       = '<svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor" aria-hidden="true"><path d="M27.188 11.916a1.875 1.875 0 0 0-1.875-1.875h-3.75v-3.75a1.875 1.875 0 0 0-1.875-1.875h-15a1.875 1.875 0 0 0-1.875 1.875v15a.938.938 0 0 0 1.523.729l4.101-3.307v3.515a1.875 1.875 0 0 0 1.876 1.875H21.28l4.384 3.542a.937.937 0 0 0 1.249-.066.937.937 0 0 0 .274-.663v-15ZM22.2 22.437a.937.937 0 0 0-.586-.209H10.313v-3.75h9.374a1.875 1.875 0 0 0 1.875-1.875v-4.687h3.75v13.037l-3.11-2.516Z"/></svg>';
+    var NICON_SEAL_WARN   = '<svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor" aria-hidden="true"><path d="M26.468 12.827c-.442-.462-.899-.938-1.071-1.356-.16-.383-.169-1.019-.178-1.634-.018-1.144-.037-2.44-.938-3.34-.9-.902-2.197-.92-3.34-.938-.616-.01-1.251-.02-1.634-.179-.417-.172-.894-.629-1.356-1.07-.809-.778-1.728-1.658-2.951-1.658s-2.141.88-2.95 1.657c-.463.442-.938.9-1.357 1.071-.38.16-1.018.17-1.633.179-1.144.017-2.44.036-3.341.937-.901.901-.914 2.197-.938 3.341-.01.615-.018 1.25-.178 1.634-.165.417-.629.894-1.071 1.356C3.75 13.636 2.812 14.555 2.812 15c0 .445.938 1.364 1.657 2.173.442.462.906.939 1.071 1.356.16.384.169 1.02.178 1.634.024 1.144.037 2.44.938 3.341.9.9 2.197.913 3.341.937.615.01 1.25.019 1.633.179.418.165.894.629 1.357 1.071C13.796 26.062 14.777 27 15 27s1.204-.938 1.951-1.657c.462-.442.939-.906 1.356-1.071.383-.16 1.018-.169 1.634-.179 1.143-.024 2.44-.037 3.34-.937.901-.9.92-2.197.938-3.341.009-.614.018-1.25.178-1.634.172-.417.629-.894 1.071-1.356C27.188 16.364 27.188 15.445 27.188 15c0-.445-.938-1.364-1.72-2.173ZM15 20.625a1.406 1.406 0 1 1 0-2.813 1.406 1.406 0 0 1 0 2.813Zm.937-6.094a.937.937 0 1 1-1.875 0V10.78a.937.937 0 0 1 1.875 0v3.75Z"/></svg>';
+    var NICON_HEADSET     = '<svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor" aria-hidden="true"><path d="M23.992 6.076A12.665 12.665 0 0 0 2.344 15v6.562a3.281 3.281 0 0 0 3.281 3.281H7.5a3.281 3.281 0 0 0 3.281-3.28v-4.688A3.282 3.282 0 0 0 7.5 13.593H5.255A9.85 9.85 0 0 1 15 5.156h.075a9.809 9.809 0 0 1 9.67 8.437H22.5a3.282 3.282 0 0 0-3.281 3.282v4.687a3.281 3.281 0 0 0 3.281 3.281h2.297a2.343 2.343 0 0 1-2.297 1.875h-6.563a1.406 1.406 0 1 0 0 2.813H22.5a5.162 5.162 0 0 0 5.156-5.156V15a12.647 12.647 0 0 0-3.664-8.924Z"/></svg>';
+    // ph-hand-palm-fill (not in local sprite) — official phosphor path at 256x256
+    var NICON_HAND_PALM   = '<svg width="30" height="30" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,104v48a88,88,0,0,1-176,0V64a16,16,0,0,1,32,0v56a8,8,0,0,0,16,0V32a16,16,0,0,1,32,0v80a8,8,0,0,0,16,0V48a16,16,0,0,1,32,0v80.67A48.08,48.08,0,0,0,128,176a8,8,0,0,0,16,0,32,32,0,0,1,32-32,8,8,0,0,0,8-8V104a16,16,0,0,1,32,0Z"/></svg>';
+    // ph-fill-info (from sprite.svg) for DAC7 notice
+    var NICON_INFO_FILL   = '<svg width="30" height="30" viewBox="0 0 30 31" fill="currentColor" aria-hidden="true"><path d="M15 3.146a12.187 12.187 0 1 0 12.188 12.188A12.2 12.2 0 0 0 15 3.146Zm-.469 5.625a1.406 1.406 0 1 1 0 2.812 1.406 1.406 0 0 1 0-2.812Zm1.406 13.125a1.875 1.875 0 0 1-1.874-1.875v-4.687a.938.938 0 0 1 0-1.875 1.875 1.875 0 0 1 1.874 1.875v4.688a.938.938 0 0 1 0 1.875Z"/></svg>';
+
+    var NICON_FILL_CAR         = '<svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor" aria-hidden="true"><path d="M28.125 12.188h-1.266l-3.255-7.325A1.875 1.875 0 0 0 21.89 3.75H8.109a1.875 1.875 0 0 0-1.713 1.113l-3.255 7.324H1.875a.938.938 0 0 0 0 1.876h.938v9.374a1.875 1.875 0 0 0 1.874 1.875H7.5a1.875 1.875 0 0 0 1.875-1.875V22.5h11.25v.938a1.875 1.875 0 0 0 1.875 1.875h2.813a1.875 1.875 0 0 0 1.875-1.875v-9.375h.937a.938.938 0 0 0 0-1.876Zm-18.75 5.624H6.562a.938.938 0 0 1 0-1.875h2.813a.938.938 0 0 1 0 1.876Zm14.063 0h-2.813a.938.938 0 0 1 0-1.875h2.813a.938.938 0 0 1 0 1.876ZM5.192 12.188l2.916-6.562h13.782l2.916 6.563H5.193Z"/></svg>';
+    var NICON_FILL_FILE_DASHED = '<svg width="30" height="30" viewBox="0 0 30 31" fill="currentColor" aria-hidden="true"><path d="M9.375 26.473a.937.937 0 0 1-.938.937H6.563a1.875 1.875 0 0 1-1.875-1.875v-3.75a.938.938 0 0 1 1.875 0v3.75h1.875a.937.937 0 0 1 .937.938ZM25.038 9.872l-6.562-6.563a.937.937 0 0 0-.663-.274h-3.75a.938.938 0 0 0 0 1.875h2.812v5.625a.938.938 0 0 0 .938.938h5.625v4.687a.938.938 0 0 0 1.875 0v-5.625a.939.939 0 0 0-.275-.663ZM9.375 3.035H6.562A1.875 1.875 0 0 0 4.688 4.91v2.813a.937.937 0 1 0 1.875 0V4.91h2.813a.937.937 0 0 0 0-1.875Zm15 16.875a.937.937 0 0 0-.938.938v4.687H22.5a.937.937 0 1 0 0 1.875h.938a1.875 1.875 0 0 0 1.875-1.875v-4.687a.938.938 0 0 0-.938-.938Zm-18.75-1.875a.938.938 0 0 0 .938-.937V12.41a.938.938 0 0 0-1.875 0v4.688a.937.937 0 0 0 .937.937Zm12.188 7.5h-4.688a.937.937 0 1 0 0 1.875h4.688a.938.938 0 0 0 0-1.875Z"/></svg>';
+    var NICON_FILL_HEADSET     = '<svg width="30" height="30" viewBox="0 0 30 31" fill="currentColor" aria-hidden="true"><path d="M27.188 15.445v9.375a4.688 4.688 0 0 1-4.688 4.687h-6.563a.937.937 0 1 1 0-1.875H22.5a2.813 2.813 0 0 0 2.813-2.812H22.5a2.813 2.813 0 0 1-2.813-2.813V17.32a2.812 2.812 0 0 1 2.813-2.813h2.771A10.312 10.312 0 0 0 7.735 8.125a10.23 10.23 0 0 0-3.004 6.382H7.5a2.812 2.812 0 0 1 2.813 2.813v4.687A2.813 2.813 0 0 1 7.5 24.82H5.625a2.813 2.813 0 0 1-2.813-2.813v-6.562A12.2 12.2 0 0 1 23.66 6.85a12.118 12.118 0 0 1 3.529 8.595Z"/></svg>';
+    var NICON_FILL_WARN_OCT    = '<svg width="30" height="30" viewBox="0 0 30 31" fill="currentColor" aria-hidden="true"><path d="m26.638 9.957-6.04-6.04a1.89 1.89 0 0 0-1.326-.55h-8.543a1.89 1.89 0 0 0-1.327.55l-6.04 6.04a1.89 1.89 0 0 0-.55 1.326v8.543c.002.497.2.974.55 1.327l6.04 6.04c.353.35.83.548 1.327.55h8.543a1.89 1.89 0 0 0 1.326-.55l6.04-6.04c.35-.353.548-.83.55-1.327v-8.543a1.89 1.89 0 0 0-.55-1.326ZM14.062 9.93a.938.938 0 0 1 1.876 0v6.562a.938.938 0 0 1-1.876 0V9.93ZM15 22.117a1.407 1.407 0 1 1 0-2.813 1.407 1.407 0 0 1 0 2.813Z"/></svg>';
+
+    // ── CarCard badge state config ──
+    var BTN_SEC     = 'w-full md:w-auto px-4 py-2 text-xs sm:text-sm font-medium rounded-lg bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 sm:order-2 text-center';
+    var BTN_GHOST   = 'w-full md:w-auto px-4 py-2 text-xs sm:text-sm font-medium rounded-lg bg-transparent hover:bg-blue-50 active:bg-blue-100 text-blue-600';
+    var BTN_PRIMARY = 'inline-flex items-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium w-full sm:w-auto';
+
+    function buildDraftNotifHtml(icon, iconColor, border, bg, regNo, title, content, ctaHtml) {
+      var regNoHtml = regNo
+        ? '<div class="flex rounded-md">' +
+            '<div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>' +
+            '<div class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 text-sm">' + regNo + '</div>' +
+          '</div>'
+        : '';
+      return '<div class="p-6 flex flex-col space-y-4 rounded-xl border-2 overflow-auto ' + bg + ' ' + border + '">' +
+        '<div class="flex justify-between items-center">' +
+          '<div class="flex justify-start items-center gap-x-1.5">' +
+            '<span class="' + iconColor + '">' + icon + '</span>' +
+          '</div>' +
+          regNoHtml +
+        '</div>' +
+        '<div class="flex flex-col space-y-2.5">' +
+          '<span class="text-xl text-slate-800 font-bold">' + title + '</span>' +
+          (content ? '<span class="text-slate-600">' + content + '</span>' : '') +
+        '</div>' +
+        (ctaHtml ? '<div class="pt-2.5">' + ctaHtml + '</div>' : '') +
+      '</div>';
+    }
+
+    function renderDraftNotification(drafts, isBlank) {
+      var sectionUpdates = document.getElementById('section-updates');
+      var container = document.getElementById('notification-container');
+      container.innerHTML = '';
+      var html = '';
+
+      if (isBlank) {
+        html = buildDraftNotifHtml(
+          NICON_FILL_CAR, 'text-blue-500', 'border-blue-500', 'bg-white', null,
+          'Valmiina myymään autosi? Aloita tästä!',
+          'Luo tarjouspyyntö nyt ja saat tarjouksia autoliikkeiltä ympäri maan. Mitä nopeammin aloitat, sitä nopeammin tarjouksia alkaa tulla!',
+          '<a href="index.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Luo tarjouspyyntö</a>'
+        );
+      } else if (drafts.length) {
+        var d = drafts[0];
+        if (d.status === 'open') {
+          html = buildDraftNotifHtml(
+            NICON_FILL_FILE_DASHED, 'text-amber-500', 'border-amber-400', 'bg-white', d.registration_number,
+            'Täydennä puuttuvat tiedot saadaksesi tarjouksia.',
+            'Tarjouspyynnöstäsi puuttuu tärkeitä tietoja. Täydennä tiedot, jotta voimme käynnistää tarjouskilpailun autoliikkeiden kanssa ympäri maan.',
+            '<a href="photos.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lisää puuttuvat tiedot</a>'
+          );
+        } else if (d.status === 'in_review') {
+          html = buildDraftNotifHtml(
+            NICON_FILL_HEADSET, 'text-blue-500', 'border-blue-500', 'bg-white', d.registration_number,
+            'Tarjouspyyntösi on vastaanotettu - Tarkastus on käynnissä!',
+            'Kiitos tarjouspyynnöstäsi! Soitamme sinulle pian varmistaaksemme, että kaikki on kunnossa parhaan mahdollisen myyntikokemuksen takaamiseksi.',
+            ''
+          );
+        } else if (d.status === 'rejected') {
+          if (d.missing_images) {
+            html = buildDraftNotifHtml(
+              NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
+              'Lataa kuvat jatkaaksesi',
+              'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia voidakseen tehdä parhaat tarjouksensa.',
+              '<a href="photos.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lataa kuvat</a>'
+            );
+          } else {
+            html = buildDraftNotifHtml(
+              NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
+              'Autoasi ei hyväksytty - tällä kertaa.',
+              'Syynä saattoi olla ajoitus, puuttuvat tiedot tai hintatoiveet. Ei hätää - voit aina palata myöhemmin.',
+              '<a href="index.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Muokkaa tarjouspyyntöäsi</a>'
+            );
+          }
+        }
+        // 'queued_for_publishing_after_verification' → no notification per production
+      }
+
+      if (html) {
+        container.innerHTML = html;
+        sectionUpdates.classList.remove('hidden');
+      } else {
+        sectionUpdates.classList.add('hidden');
+      }
+    }
+
+    var DRAFT_STATUS_CFG = {
+      'open': {
+        text: 'Keskeneräinen', icon: ICON_PAPERCLIP,
+        badge: 'bg-slate-50 border-slate-200 text-slate-500',
+        primaryText: 'Muokkaa tietoja', secondaryText: 'Poista tarjouspyyntö',
+      },
+      'in_review': {
+        text: 'Tarkastus käynnissä', icon: ICON_HOURGLASS_HIGH,
+        badge: 'bg-slate-200 border-gray-300 text-gray-500',
+        primaryText: null, secondaryText: 'Avaa tiedot',
+      },
+      'rejected': {
+        text: 'Tietoja tarvitaan', icon: ICON_WARNING_OCTAGON,
+        badge: 'bg-transparent border-red-300 text-red-700',
+        primaryText: 'Muokkaa tietoja', secondaryText: null,
+      },
+      'queued_for_publishing_after_verification': {
+        text: 'Vaatii toimenpiteitä', icon: ICON_WARNING_OCTAGON,
+        badge: 'bg-amber-50 border-amber-400 text-amber-700',
+        primaryText: null, secondaryText: 'Avaa tiedot',
+      },
+    };
+
+    var ICON_CAR_PLACEHOLDER = '<svg width="70" height="70" viewBox="0 0 256 256" fill="white" class="opacity-60" aria-hidden="true"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/></svg>';
+
+    function buildDraftCard(draft) {
+      var cfg = DRAFT_STATUS_CFG[draft.status] || DRAFT_STATUS_CFG['open'];
+
+      var imageHtml = firstPhoto
+        ? '<img loading="eager" class="object-cover h-full w-full" src="' + firstPhoto + '" alt="" />'
+        : ICON_CAR_PLACEHOLDER;
+
+      var pills = [
+        draft.year,
+        draft.driven ? draft.driven.toLocaleString('fi-FI') + ' km' : null,
+        draft.drive_type,
+        draft.fuel_type,
+      ].filter(Boolean).map(function(t) {
+        return '<span class="px-1.5 py-0.5 text-xs text-slate-500 rounded border border-slate-200">' + t + '</span>';
+      }).join('');
+
+      var primaryBtn = cfg.primaryText
+        ? '<a href="photos.html" class="' + BTN_SEC + '" style="text-decoration:none">' + cfg.primaryText + '</a>'
+        : '';
+      var secondaryBtn = cfg.secondaryText
+        ? '<button class="' + BTN_GHOST + ' cursor-pointer border-0"' + (cfg.secondaryText === 'Avaa tiedot' ? ' data-action="open-modal"' : '') + '>' + cfg.secondaryText + '</button>'
+        : '';
+
+      return '<div class="w-full h-auto lg:max-h-[250px] flex flex-col lg:flex-row rounded-xl bg-white space-y-1 lg:space-y-0 shadow-sm overflow-hidden">' +
+        '<div class="h-[220px] lg:h-auto lg:w-[250px] flex-shrink-0 bg-blue-300 flex items-center justify-center overflow-hidden">' +
+          imageHtml +
+        '</div>' +
+        '<div class="w-full h-auto p-5 flex flex-col justify-between space-y-5">' +
+          '<div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">' +
+            '<div class="flex rounded-md">' +
+              '<div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>' +
+              '<div class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 text-xs sm:text-sm">' + (draft.registration_number || '') + '</div>' +
+            '</div>' +
+            '<div class="inline-flex items-center space-x-2 px-2 py-1 text-xs sm:text-sm rounded border ' + cfg.badge + '">' +
+              cfg.icon + '<span>' + cfg.text + '</span>' +
+            '</div>' +
+          '</div>' +
+          '<div class="space-y-3">' +
+            '<div class="flex flex-col">' +
+              '<span class="text-base font-bold text-slate-900">' +
+                (draft.make_name ? '<span class="mr-1">' + draft.make_name + '</span>' : '') +
+                (draft.model_name ? '<span>' + draft.model_name + '</span>' : '') +
+              '</span>' +
+              (draft.model_specification ? '<span class="text-sm text-slate-500 text-wrap">' + draft.model_specification + '</span>' : '') +
+            '</div>' +
+            '<div class="flex flex-wrap self-stretch gap-1.5 text-sm items-center">' + pills + '</div>' +
+          '</div>' +
+          '<div class="w-full flex items-center md:justify-end flex-col sm:flex-row gap-y-4 sm:gap-y-0 sm:gap-x-2">' +
+            primaryBtn + secondaryBtn +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function renderDrafts(drafts) {
+      var section = document.getElementById('section-drafts');
+      var container = document.getElementById('draft-cards-container');
+      if (!drafts || !drafts.length) {
+        section.classList.add('hidden');
+        return;
+      }
+      container.innerHTML = drafts.map(buildDraftCard).join('');
+      section.classList.remove('hidden');
+    }
+    var STATE_CFG = {
+      auctionOngoing:  { label: 'Tarjouskauppa käynnissä',   icon: ICON_BROADCAST,  badge: 'bg-cyan-100 border-cyan-300 text-cyan-700',   primaryText: 'Muokkaa tietoja',              primaryHref: null,            ghostText: 'Avaa tiedot' },
+      auctionEnded:    { label: 'Tarjouskauppa on päättynyt', icon: ICON_GAVEL,      badge: 'bg-lime-50 border-lime-400 text-lime-700',    primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
+      negotiations:    { label: 'Neuvottelut käynnissä',      icon: ICON_CHATS,      badge: 'bg-amber-50 border-amber-400 text-amber-700', primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: null,            ghostText: 'Avaa tiedot' },
+      offerAccepted:   { label: 'Kauppa vahvistettu',         icon: ICON_SEAL_CHECK, badge: 'bg-lime-300 border-lime-400 text-lime-800',   primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
+      offersRejected:  { label: 'Ei hyväksyttyjä tarjouksia', icon: ICON_PROHIBIT,   badge: 'bg-red-500 border-red-700 text-white',        primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
+    };
+
+    // ── Notification config — matches updates/main.vue + Notification.vue themes ──
+    // Themes: info=border-blue-500 bg-white | success=border-lime-400 bg-white
+    //         important_info=border-blue-400 bg-blue-100 | important_warning=border-orange-300 bg-orange-100
+    //         notice=border-amber-400 bg-white
+    // regNoPlate class: border-slate-200 for info/success/notice | bg-white border-none for important_*
+    var NOTIF_CFG = {
+      auctionCompleted: {
+        themeBase: 'border-lime-400 bg-white', iconColor: 'text-lime-500', regNoPlate: 'border-slate-200',
+        icon: NICON_FLAG,
+        title: 'Tarjouskauppa päättyi - Katso tarjouksesi!',
+        content: 'Tarjouskauppa on päättynyt onnistuneesti! Katso miten autosi pärjäsi, ja minkälaisia tarjouksia sait autoliikkeiltä.',
+        ctaText: 'Näytä tarjouskaupan tulokset', ctaHref: 'decision.html',
+        timeLeftTitle: 'Tarjous umpeutuu',
+      },
+      offersValidity: {
+        themeBase: 'border-blue-400 bg-blue-100', iconColor: 'text-blue-500', regNoPlate: 'bg-white border-none',
+        icon: NICON_CLOCK,
+        title: 'Toimi nyt! Viimeistele kaupat',
+        content: 'Korkein tarjous ei ole voimassa ikuisesti! Jos sinulla on kysyttävää tai tarvitset apua päätöksenteossa, olemme täällä auttamassa. Tarkista tulokset ja tee päätöksesi ennen kuin tarjous vanhenee.',
+        ctaText: 'Tee päätös', ctaHref: 'decision.html',
+        timeLeftTitle: 'Tarjous umpeutuu',
+      },
+      counterOfferResponse: {
+        themeBase: 'border-blue-500 bg-white', iconColor: 'text-blue-500', regNoPlate: 'border-slate-200',
+        icon: NICON_CHATS,
+        title: 'Autoliike on vastannut vastatarjoukseesi',
+        content: null,
+        ctaText: 'Näytä vastatarjous', ctaHref: 'decision.html',
+        timeLeftTitle: 'Tarjous umpeutuu',
+      },
+      negotiationStopped: {
+        themeBase: 'border-blue-400 bg-blue-100', iconColor: 'text-blue-500', regNoPlate: 'bg-white border-none',
+        icon: NICON_HAND_PALM,
+        title: 'Neuvottelu päättynyt',
+        content: 'Tarjous odottaa hyväksyntääsi',
+        ctaText: 'Tee päätös', ctaHref: 'decision.html',
+        timeLeftTitle: 'Tarjous umpeutuu',
+      },
+      finalOffer: {
+        themeBase: 'border-blue-500 bg-white', iconColor: 'text-blue-500', regNoPlate: 'border-slate-200',
+        icon: NICON_SEAL_WARN,
+        title: 'Viimeinen mahdollisuus! Korkein tarjoaja on korottanut tarjoustaan!',
+        content: 'Hylkäsit aiemmat tarjoukset, mutta korkein tarjoaja on tehnyt viimeisen tarjouksensa. Tämä on viimeinen mahdollisuutesi myydä. Tarkista tarjous ennen kuin se umpeutuu!',
+        ctaText: 'Katso viimeinen tarjous', ctaHref: 'decision.html',
+        timeLeftTitle: 'Tarjous umpeutuu',
+      },
+      postRejection: {
+        themeBase: 'border-orange-300 bg-orange-100', iconColor: 'text-blue-500', regNoPlate: 'bg-white border-none',
+        icon: NICON_HEADSET,
+        title: 'Vieläkö mietit? Me autamme sinua viemään kaupat maaliin!',
+        content: 'On täysin normaalia, että päätöksen tekeminen vie hetken. Itse asiassa moni myyjä muuttaa mielensä ja useat heistä päätyvät lopulta onnistuneeseen kauppaan. Jos olet yhä kahden vaiheilla, autamme mielellämme:',
+        ctaText: 'Ota yhteyttä', ctaHref: null,
+        timeLeftTitle: '',
+      },
+      personalDataRequest: {
+        themeBase: 'border-amber-400 bg-white', iconColor: 'text-amber-500', regNoPlate: 'border-slate-200',
+        icon: NICON_INFO_FILL,
+        title: 'Toimenpiteitä vaaditaan: Lisää henkilötiedot',
+        content: 'EU-direktiivin 2021/514 (DAC7) mukaisesti tarvitsemme lisätietoja henkilötiedoistasi. Tämä on lakisääteinen vaatimus, joka edistää kaupankäynnin läpinäkyvyyttä. <a class="text-blue-600 underline" target="_blank" href="https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/209369/raportoivan-alustaoperaattorin-tiedonantovelvollisuus-dac7/">Lue lisää DAC7-direktiivistä</a>',
+        ctaText: 'Täytä henkilötiedot', ctaHref: 'dac7.html',
+        timeLeftTitle: null,
+      },
+    };
+
+    function computeNotificationType(req, negs, state) {
+      if (req.is_expired) return null;
+      if (req.needs_dac7) return 'personalDataRequest';
+      if (req.has_final_offer) return 'finalOffer';
+      if (state === 'offersRejected') return (req.offers && req.offers.length > 0) ? 'postRejection' : null;
+      if (state === 'auctionEnded') {
+        return req.offers_seen_at ? 'offersValidity' : 'auctionCompleted';
+      }
+      if (state === 'negotiations') {
+        var neg = negs.filter(function(n) { return n.tender_id === req.id; })[0];
+        if (neg && neg.status === NEG_STOPPED)       return 'negotiationStopped';
+        if (neg && neg.status === NEG_COUNTER_SENT)  return 'counterOfferResponse';
+        // NEG_PENDING = we sent counter, waiting for dealer — no notification
+        return null;
+      }
+      return null;
+    }
+
+    // ── Intervals (cleared on re-render) ──
+    var timerInterval = null, notifIntervals = [];
+
+    function startCountdown(expiresAt, elId) {
+      var el = document.getElementById(elId);
+      if (!el) return null;
+      function tick() { el.textContent = formatCountdown(Math.max(0, expiresAt - _now())); }
+      tick();
+      return setInterval(tick, 1000);
+    }
+
+    // ── Render notifications (updates/main.vue) ──
+    // Layout: mobile TimeLeft above button | desktop TimeLeft right of button (hidden sm:block ml-auto)
+    function renderNotification(req, negs, state) {
+      var notifType = computeNotificationType(req, negs, state);
+      var sectionUpdates = document.getElementById('section-updates');
+      var container = document.getElementById('notification-container');
+      container.innerHTML = '';
+
+      if (!notifType) {
+        sectionUpdates.classList.add('hidden');
+        return;
+      }
+
+      var cfg = NOTIF_CFG[notifType];
+      sectionUpdates.classList.remove('hidden');
+
+      // All notifications use request.expires_at + reactionTimeForOffers (24h in mock)
+      var expiresAt = req.expires_at || (req.auction_ends_at + 24*3600);
+      if (notifType === 'postRejection') { expiresAt = expiresAt + 86400 + 7*86400; }
+
+      var showTimeLeft = cfg.timeLeftTitle !== null && expiresAt > _now();
+      var ts = Date.now();
+      var idM = 'notif-tl-m-' + ts; // mobile
+      var idD = 'notif-tl-d-' + ts; // desktop
+
+      function makeTimeLeftHtml(id) {
+        return '<div class="flex flex-col text-sm space-y-1.5">' +
+          '<span class="font-normal text-slate-500">' + cfg.timeLeftTitle + '</span>' +
+          '<span id="' + id + '" class="font-mono text-slate-900 font-medium leading-none text-3xl">--h --m</span>' +
+        '</div>';
+      }
+
+      var ctaHtml = '';
+      if (cfg.ctaHref) {
+        var _notifHref = cfg.ctaHref === 'decision.html' ? decisionHref() : cfg.ctaHref;
+        ctaHtml = '<a href="' + _notifHref + '" class="inline-flex items-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium w-full sm:w-auto" style="text-decoration:none">' + cfg.ctaText + '</a>';
+      }
+      var prToggleId = '', prRevealId = '';
+      if (notifType === 'postRejection') {
+        prToggleId = 'pr-toggle-' + ts;
+        prRevealId = 'pr-reveal-' + ts;
+        var _phoneSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M140.41,44.9a12,12,0,0,1,14.69-8.49,90.12,90.12,0,0,1,64.49,64.49,12,12,0,1,1-23.18,6.2A66.42,66.42,0,0,0,148.9,59.59,12,12,0,0,1,140.41,44.9Zm87.44,138.68A60.27,60.27,0,0,1,168,236C86.39,236,20,169.61,20,88A60.27,60.27,0,0,1,72.42,28.15,20.05,20.05,0,0,1,93.2,40l21.11,47.13a1.42,1.42,0,0,0,.08.18,20,20,0,0,1-1.66,18.83,10.67,10.67,0,0,1-.85,1.15L92.82,130c7.06,12.84,20.5,26.16,33.49,33.21l22.31-19a13.08,13.08,0,0,1,1.12-.84,19.91,19.91,0,0,1,19-1.74l.18.08L216,162.8A20.06,20.06,0,0,1,227.85,183.58Zm-24.31-.06-42-18.81-22.43,19.07a11.63,11.63,0,0,1-1.11.85A20,20,0,0,1,118.31,186c-19.48-9.4-38.89-28.68-48.31-48a20,20,0,0,1,1.28-19.64,10.75,10.75,0,0,1,.86-1.15L91.3,94.49l-18.82-42A36.29,36.29,0,0,0,44,88,124.15,124.15,0,0,0,168,212,36.29,36.29,0,0,0,203.54,183.52ZM137.63,97.47a32,32,0,0,1,20.9,20.9,12,12,0,0,0,11.44,8.4,12.22,12.22,0,0,0,3.61-.55,12,12,0,0,0,7.84-15,56,56,0,0,0-36.59-36.59,12,12,0,1,0-7.2,22.89Z"></path></svg>';
+        var _emailSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M230.14,25.86a20,20,0,0,0-19.57-5.11l-.22.07L18.44,79a20,20,0,0,0-3.06,37.25L99,157l40.71,83.65a19.81,19.81,0,0,0,18,11.38c.57,0,1.15,0,1.73-.07A19.82,19.82,0,0,0,177,237.56L235.18,45.65a1.42,1.42,0,0,0,.07-.22A20,20,0,0,0,230.14,25.86ZM156.91,221.07l-34.37-70.64,46-45.95a12,12,0,0,0-17-17l-46,46L34.93,99.09,210,46Z"></path></svg>';
+        ctaHtml = '<div class="flex flex-col gap-y-2.5">' +
+          '<button id="' + prToggleId + '" type="button" class="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium w-full sm:w-auto">' + cfg.ctaText + '</button>' +
+          '<div id="' + prRevealId + '" style="display:none" class="flex flex-col gap-y-2 sm:flex-row sm:gap-x-2">' +
+            '<a href="tel:+358400407002" class="inline-flex items-center gap-x-2 px-4 py-2.5 rounded-lg bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium" style="text-decoration:none">' + _phoneSvg + '+358 40 040 7002</a>' +
+            '<a href="mailto:tiimi@autovex.fi" class="inline-flex items-center gap-x-2 px-4 py-2.5 rounded-lg bg-white hover:bg-blue-50 border border-blue-200 text-blue-700 text-sm font-medium" style="text-decoration:none">' + _emailSvg + 'tiimi@autovex.fi</a>' +
+          '</div>' +
+        '</div>';
+      }
+
+      container.innerHTML =
+        '<div class="p-6 flex flex-col space-y-4 rounded-xl border-2 overflow-auto ' + cfg.themeBase + '">' +
+          // Header row: icon left, reg plate right
+          '<div class="flex justify-between items-center">' +
+            '<div class="flex items-center gap-x-1.5">' +
+              '<span class="' + cfg.iconColor + ' flex-shrink-0">' + cfg.icon + '</span>' +
+            '</div>' +
+            '<div class="flex rounded-md">' +
+              '<div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>' +
+              '<div class="py-1 px-1.5 border border-l-0 rounded-r-md text-sm ' + cfg.regNoPlate + '">' + plate + '</div>' +
+            '</div>' +
+          '</div>' +
+          // Title + content
+          '<div class="flex flex-col space-y-2.5">' +
+            '<span class="text-xl text-slate-800 font-bold">' + cfg.title + '</span>' +
+            (cfg.content ? '<span class="text-slate-600">' + cfg.content + '</span>' : '') +
+          '</div>' +
+          // Footer: mobile timer above button, desktop timer right of button
+          '<div class="pt-2.5">' +
+            (showTimeLeft ? '<div class="mb-4 sm:hidden">' + makeTimeLeftHtml(idM) + '</div>' : '') +
+            '<div class="flex gap-x-2.5 items-end">' +
+              ctaHtml +
+              (showTimeLeft ? '<div class="hidden sm:block ml-auto self-end">' + makeTimeLeftHtml(idD) + '</div>' : '') +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      if (notifType === 'postRejection' && prToggleId) {
+        var _prBtn = document.getElementById(prToggleId);
+        var _prReveal = document.getElementById(prRevealId);
+        if (_prBtn && _prReveal) {
+          _prBtn.addEventListener('click', function() {
+            _prBtn.style.display = 'none';
+            _prReveal.style.display = 'flex';
+          });
+        }
+      }
+
+      if (showTimeLeft) {
+        notifIntervals.forEach(clearInterval);
+        notifIntervals = [];
+        var i1 = startCountdown(expiresAt, idM);
+        var i2 = startCountdown(expiresAt, idD);
+        if (i1) notifIntervals.push(i1);
+        if (i2) notifIntervals.push(i2);
+      }
+    }
+
+    // ── Render page from scenario data ──
+    function renderPage() {
+      if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+      if (notifIntervals.length) { notifIntervals.forEach(clearInterval); notifIntervals = []; }
+
+      var data = getData();
+      var req  = (data.requests || [])[0];
+      if (req) {
+        var _fs = getStore();
+        var _editOverride = {};
+        ['accessories','last_service_km','damage_and_service_information','edited_last_tech_inspection','last_service_date','last_service_year','last_service_month'].forEach(function(k) {
+          if (_fs[k] != null) _editOverride[k] = _fs[k];
+        });
+        if (Object.keys(_editOverride).length) req = Object.assign({}, req, _editOverride);
+      }
+      var negs = data.negotiations || [];
+      var drafts = data.drafts || [];
+
+      renderDrafts(drafts);
+
+      // Car identity
+      document.getElementById('reg-number').textContent     = plate;
+      document.getElementById('timer-reg').textContent      = plate;
+      document.getElementById('car-make-model').textContent = merkki + ' ' + malli;
+
+      var pills = document.getElementById('car-pills');
+      pills.innerHTML = '';
+      [vuosi, km.toLocaleString('fi-FI') + ' km', fuel].filter(Boolean).forEach(function(txt) {
+        var sp = document.createElement('span');
+        sp.className = 'px-1.5 py-0.5 text-xs text-slate-500 rounded border border-slate-200';
+        sp.textContent = txt;
+        pills.appendChild(sp);
+      });
+
+      // Car photo
+      var photos = s.photos || {}, photoMap = s.photoMap || {}, firstPhoto = null;
+      ['ulkopuoli','sisatilat','huoltokirja','renkaat','naarmut','tuulilasi'].forEach(function(sec) {
+        if (!firstPhoto && photos[sec] && photos[sec].length) firstPhoto = photos[sec][0];
+      });
+      if (!firstPhoto) { var keys = Object.keys(photoMap); if (keys.length) firstPhoto = photoMap[keys[0]]; }
+      if (firstPhoto) {
+        var img = document.getElementById('car-img');
+        img.src = firstPhoto;
+        img.classList.remove('hidden');
+        document.getElementById('car-placeholder').style.display = 'none';
+      }
+
+      var sectionLive    = document.getElementById('section-live');
+      var sectionUpdates = document.getElementById('section-updates');
+      var sectionReqs    = document.getElementById('section-requests');
+
+      if (!req) {
+        sectionLive.classList.add('hidden');
+        sectionReqs.classList.add('hidden');
+        renderDraftNotification(drafts, !drafts.length);
+        return;
+      }
+
+      sectionReqs.classList.remove('hidden');
+
+      var accEl = document.getElementById('car-accessories-text');
+      if (accEl) {
+        if (req.accessories) { accEl.textContent = req.accessories; accEl.classList.remove('hidden'); }
+        else { accEl.classList.add('hidden'); }
+      }
+
+      var state = computeRequestState(req, negs);
+      var cfg   = STATE_CFG[state] || STATE_CFG.auctionEnded;
+
+      // ── AuctionsProgress (Timer) ──
+      if (state === 'auctionOngoing') {
+        sectionLive.classList.remove('hidden');
+        var hasOffers = req.offer_count > 0;
+        var timerInfo = document.getElementById('timer-info');
+        var timerPWrap = document.getElementById('timer-progress-wrap');
+        document.getElementById('timer-offers').textContent  = req.offer_count;
+        document.getElementById('timer-bidders').textContent = req.buyers;
+
+        if (hasOffers) {
+          timerInfo.classList.add('hidden');
+          timerPWrap.classList.remove('hidden');
+          // Show end date label
+          document.getElementById('timer-date-label').classList.remove('hidden');
+          var endDate = new Date(req.auction_ends_at * 1000);
+          document.getElementById('timer-date-text').textContent = endDate.toLocaleString('fi-FI', { dateStyle: 'short', timeStyle: 'short' });
+          // Start countdown + progress
+          var pubAt = req.published_at || (req.auction_ends_at - 36*3600);
+          var totalDur = req.auction_ends_at - pubAt;
+          timerInterval = setInterval(function() {
+            var now    = _now();
+            var remain = Math.max(0, req.auction_ends_at - now);
+            var elapsed = now - pubAt;
+            var pct = Math.min(100, Math.max(0, Math.round((elapsed / totalDur) * 1000) / 10));
+            document.getElementById('timer-progress-bar').style.width = pct + '%';
+            document.getElementById('timer-time-left').textContent = formatCountdown(remain);
+          }, 1000);
+          // Immediate tick
+          var now0   = _now();
+          var rem0   = Math.max(0, req.auction_ends_at - now0);
+          var ela0   = now0 - pubAt;
+          var pct0   = Math.min(100, Math.max(0, Math.round((ela0 / totalDur) * 1000) / 10));
+          document.getElementById('timer-progress-bar').style.width = pct0 + '%';
+          document.getElementById('timer-time-left').textContent = formatCountdown(rem0);
+        } else {
+          timerInfo.classList.remove('hidden');
+          timerPWrap.classList.add('hidden');
+          document.getElementById('timer-date-label').classList.add('hidden');
+          document.getElementById('timer-date-text').textContent = 'Tarjouskilpailu alkaa kun ensimmäinen tarjous on tehty';
+        }
+      } else {
+        sectionLive.classList.add('hidden');
+      }
+
+      // ── Notification (updates/main.vue) ──
+      renderNotification(req, negs, state);
+
+      // ── CarCard badge ──
+      var badge = document.getElementById('status-badge');
+      badge.className = 'inline-flex items-center space-x-2 px-2 py-1 text-xs sm:text-sm rounded border ' + cfg.badge;
+      badge.innerHTML = cfg.icon + '<span>' + cfg.label + '</span>';
+
+      // ── CarCard CTAs ──
+      var ctaRow = document.getElementById('cta-row');
+      var _cardHref = cfg.primaryHref === 'decision.html' ? decisionHref() : cfg.primaryHref;
+      var primaryBtn = _cardHref
+        ? '<a href="' + _cardHref + '" class="' + BTN_SEC + '" style="text-decoration:none">' + cfg.primaryText + '</a>'
+        : '<button class="' + BTN_SEC + ' cursor-pointer border-0"' + (state === 'auctionOngoing' ? ' data-action="open-edit-modal"' : state === 'negotiations' ? ' data-action="open-neg-modal"' : '') + '>' + cfg.primaryText + '</button>';
+      var ghostBtn = '<button class="' + BTN_GHOST + ' cursor-pointer border-0" data-action="open-modal">' + cfg.ghostText + '</button>';
+      ctaRow.innerHTML = primaryBtn + ghostBtn;
+    }
+
+    renderPage();
+
+    // Wire all "Avaa tiedot" buttons (draft cards + live car card) to open modal
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-action="open-modal"]');
+      if (btn && window.openAdModal) window.openAdModal();
+    });
+
+    // ── Edit details modal ──
+    var _SERVICE_DATES = {
+      'within_6_months': 'Viimeisen 6 kuukauden aikana',
+      'over_6_months':   'Yli 6 kuukautta sitten',
+      'dont_remember':   'En ole varma'
+    };
+    var _MONTHS = {
+      '1':'Tammikuu','2':'Helmikuu','3':'Maaliskuu','4':'Huhtikuu',
+      '5':'Toukokuu','6':'Kesäkuu','7':'Heinäkuu','8':'Elokuu',
+      '9':'Syyskuu','10':'Lokakuu','11':'Marraskuu','12':'Joulukuu',
+      '':'En tiedä'
+    };
+    var _SERVICE_YEARS = {
+      '2026':'2026','2025':'2025','2024':'2024','2023':'2023 tai ennen'
+    };
+
+    function _renderEditChips(containerId, options, selected) {
+      var el = document.getElementById(containerId); if (!el) return;
+      el.innerHTML = '';
+      Object.keys(options).forEach(function(k) {
+        var btn = document.createElement('button');
+        btn.type = 'button'; btn.dataset.editKey = k; btn.dataset.editContainer = containerId;
+        btn.textContent = options[k];
+        var active = k === String(selected || '');
+        btn.className = 'px-3 py-1.5 text-sm rounded-full border cursor-pointer ' +
+          (active ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-blue-400 hover:text-blue-700');
+        el.appendChild(btn);
+      });
+    }
+
+    function openEditModal() {
+      var fs = getStore();
+      // Initialize mock defaults for fields not populated by the funnel
+      var _dirty = false;
+      if (fs.last_service_date == null) { fs.last_service_date = 'over_6_months'; _dirty = true; }
+      if (fs.last_service_year == null) { fs.last_service_year = '2024'; _dirty = true; }
+      if (_dirty) setStore(fs);
+      var _accVal = fs.accessories || '';
+      var _damVal = fs.damage_and_service_information || '';
+      document.getElementById('edit-accessories').value = _accVal;
+      document.getElementById('edit-accessories-count').textContent = _accVal.length;
+      document.getElementById('edit-last-service-km').value = fs.last_service_km != null ? fs.last_service_km : '';
+      document.getElementById('edit-damage').value = _damVal;
+      document.getElementById('edit-damage-count').textContent = _damVal.length;
+      document.getElementById('edit-tech-inspection').max = new Date().toISOString().split('T')[0];
+      document.getElementById('edit-tech-inspection').value = fs.edited_last_tech_inspection || '';
+      _editState.sd = fs.last_service_date || null;
+      _editState.sy = fs.last_service_year ? String(fs.last_service_year) : null;
+      _editState.sm = (fs.last_service_month != null) ? String(fs.last_service_month) : null;
+      _renderEditChips('edit-service-date-chips', _SERVICE_DATES, _editState.sd);
+      _renderEditChips('edit-service-year-chips', _SERVICE_YEARS, _editState.sy);
+      _renderEditChips('edit-service-month-chips', _MONTHS, _editState.sm);
+      document.getElementById('edit-service-month-wrap').classList.toggle('hidden', !_editState.sy);
+      _renderEditPhotos();
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+    }
+
+    function _renderEditPhotos() {
+      var grid = document.getElementById('edit-photo-grid');
+      if (!grid) return;
+      var fs = getStore();
+      var secs = ['ulkopuoli','sisatilat','huoltokirja','renkaat','naarmut','tuulilasi'];
+      var all = [];
+      secs.forEach(function(sec) {
+        var arr = ((fs.photos || {})[sec]) || [];
+        arr.forEach(function(src, idx) { all.push({ sec: sec, idx: idx, src: src }); });
+      });
+      if (!all.length) {
+        grid.innerHTML = '<p class="text-sm text-slate-400 italic py-2">Ei kuvia lisätty</p>';
+        return;
+      }
+      var hero = all[0];
+      var rest = all.slice(1);
+      var xSvg = '<svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
+      var html = '<div class="relative bg-slate-100 rounded-lg overflow-hidden mb-3">' +
+        '<span class="absolute top-2 left-2 z-10 bg-slate-800 text-white text-xs font-semibold px-2 py-0.5 rounded select-none">Kansikuva</span>' +
+        '<button type="button" class="absolute top-2 right-2 z-10 bg-white hover:bg-slate-100 text-slate-700 rounded w-6 h-6 flex items-center justify-center shadow-sm border border-slate-200" data-photo-del-sec="' + hero.sec + '" data-photo-del-idx="' + hero.idx + '">' + xSvg + '</button>' +
+        '<img src="' + hero.src + '" class="w-full object-cover" style="max-height:280px;display:block">' +
+        '</div>';
+      if (rest.length) {
+        html += '<div class="grid grid-cols-3 gap-2">';
+        rest.forEach(function(p) {
+          html += '<div class="relative rounded overflow-hidden bg-slate-100" style="aspect-ratio:1">' +
+            '<button type="button" class="absolute top-1 right-1 z-10 bg-white hover:bg-slate-100 text-slate-700 rounded w-5 h-5 flex items-center justify-center shadow-sm border border-slate-200" style="font-size:10px" data-photo-del-sec="' + p.sec + '" data-photo-del-idx="' + p.idx + '">' + xSvg + '</button>' +
+            '<img src="' + p.src + '" class="w-full h-full object-cover">' +
+            '</div>';
+        });
+        html += '</div>';
+      }
+      grid.innerHTML = html;
+    }
+
+    // Chip selection inside edit modal
+    document.addEventListener('click', function(e) {
+      var chip = e.target.closest('[data-edit-key]');
+      if (!chip) return;
+      var cid = chip.dataset.editContainer;
+      if (cid === 'edit-service-date-chips') {
+        _editState.sd = chip.dataset.editKey;
+        _renderEditChips('edit-service-date-chips', _SERVICE_DATES, _editState.sd);
+      } else if (cid === 'edit-service-year-chips') {
+        _editState.sy = chip.dataset.editKey;
+        _renderEditChips('edit-service-year-chips', _SERVICE_YEARS, _editState.sy);
+        document.getElementById('edit-service-month-wrap').classList.remove('hidden');
+        _renderEditChips('edit-service-month-chips', _MONTHS, _editState.sm);
+      } else if (cid === 'edit-service-month-chips') {
+        _editState.sm = chip.dataset.editKey;
+        _renderEditChips('edit-service-month-chips', _MONTHS, _editState.sm);
+      }
+    });
+
+    document.getElementById('edit-modal-save-btn').addEventListener('click', function() {
+      var fs = getStore();
+      var accVal = document.getElementById('edit-accessories').value.trim();
+      fs.accessories = accVal || null;
+      var km = parseInt(document.getElementById('edit-last-service-km').value);
+      fs.last_service_km = isNaN(km) ? null : km;
+      var damVal = document.getElementById('edit-damage').value.trim();
+      fs.damage_and_service_information = damVal || null;
+      fs.edited_last_tech_inspection = document.getElementById('edit-tech-inspection').value || null;
+      fs.last_service_date = _editState.sd;
+      fs.last_service_year = _editState.sy || null;
+      fs.last_service_month = (_editState.sm != null) ? _editState.sm : null;
+      setStore(fs);
+      closeEditModal();
+      renderPage();
+    });
+
+    document.getElementById('edit-modal-close-btn').addEventListener('click', closeEditModal);
+    document.getElementById('edit-modal-close-x').addEventListener('click', closeEditModal);
+    document.getElementById('edit-modal').addEventListener('click', function(e) {
+      if (!document.getElementById('edit-modal-panel').contains(e.target)) closeEditModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !document.getElementById('edit-modal').classList.contains('hidden')) closeEditModal();
+    });
+
+    document.getElementById('edit-accessories').addEventListener('input', function() {
+      document.getElementById('edit-accessories-count').textContent = this.value.length;
+    });
+    document.getElementById('edit-damage').addEventListener('input', function() {
+      document.getElementById('edit-damage-count').textContent = this.value.length;
+    });
+
+    document.addEventListener('click', function(e) {
+      var btn = e.target.closest('[data-photo-del-sec]');
+      if (!btn) return;
+      var sec = btn.dataset.photoDelSec;
+      var idx = parseInt(btn.dataset.photoDelIdx);
+      var fs = getStore();
+      if (fs.photos && fs.photos[sec]) {
+        fs.photos[sec].splice(idx, 1);
+        setStore(fs);
+        _renderEditPhotos();
+      }
+    });
+
+    // Wire "Muokkaa tietoja" button
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('[data-action="open-edit-modal"]')) openEditModal();
+    });
+
+    // ── Negotiation modal ──
+    function _fmtEur(n) { return n ? Number(n).toLocaleString('fi-FI') + ' €' : '—'; }
+
+    function openNegModal() {
+      var data = getData();
+      var neg = (data.negotiations || [])[0] || {};
+      var body = document.getElementById('neg-modal-body');
+      var decisionLink = document.getElementById('neg-modal-decision-link');
+      decisionLink.href = decisionHref();
+
+      var isCounterSent = SCENARIO === 'counter-offer-sent';
+      var isDealerReplied = SCENARIO === 'dealer-replied';
+      var canSimulate = isCounterSent || (isDealerReplied && _neg2ndCounter);
+
+      var html = '';
+
+      // Status row
+      var statusLabel = isCounterSent
+        ? '<span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Odottaa vastausta</span>'
+        : '<span class="inline-block px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">Autoliike vastasi</span>';
+
+      html += '<div class="flex items-center gap-2">' + statusLabel + '</div>';
+
+      // Offer history table
+      html += '<div class="bg-slate-50 rounded-lg p-4 space-y-2 text-sm">';
+      html += '<div class="flex justify-between text-slate-500"><span>Liikkeen alkuperäinen tarjous</span><span class="font-medium text-slate-800">' + _fmtEur(neg.dealer_original_amount) + '</span></div>';
+      html += '<div class="flex justify-between text-slate-500"><span>Sinun vastatarjouksesi</span><span class="font-medium text-slate-800">' + _fmtEur(neg.seller_counter_amount) + '</span></div>';
+      if (isDealerReplied && neg.dealer_counter_amount) {
+        html += '<div class="border-t border-slate-200 pt-2 flex justify-between text-slate-700 font-semibold"><span>Liikkeen vastatarjous</span><span>' + _fmtEur(neg.dealer_counter_amount) + '</span></div>';
+      }
+      if (_neg2ndCounter) {
+        html += '<div class="flex justify-between text-slate-500"><span>Sinun toinen vastatarjouksesi</span><span class="font-medium text-slate-800">' + _fmtEur(neg.seller_counter_amount) + '</span></div>';
+      }
+      html += '</div>';
+
+      // Status message
+      if (isCounterSent) {
+        html += '<p class="text-sm text-slate-600">Vastatarjouksesi on lähetetty autoliikkeelle. Saat ilmoituksen sähköpostiisi, kun liike reagoi tarjoukseesi.</p>';
+      } else if (isDealerReplied && !_neg2ndCounter) {
+        html += '<p class="text-sm text-slate-600">Autoliike on vastannut vastatarjoukseesi. Siirry päätössivulle hyväksyäksesi tarjouksen tai tehdäksesi toisen vastatarjouksen.</p>';
+        // Mock: let user simulate sending a 2nd counter
+        html += '<div class="pt-1"><button id="neg-2nd-counter-btn" class="text-sm text-blue-600 hover:text-blue-800 underline cursor-pointer bg-transparent border-0 p-0">Simuloi toinen vastatarjous</button></div>';
+      } else if (isDealerReplied && _neg2ndCounter) {
+        html += '<p class="text-sm text-slate-600">Toinen vastatarjouksesi on lähetetty autoliikkeelle. Odotamme vastausta.</p>';
+      }
+
+      // Tester tool section (simulate button)
+      if (canSimulate) {
+        html += '<div class="border border-amber-200 bg-amber-50 rounded-lg p-3">' +
+          '<p class="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-2">Prototyyppityökalu</p>' +
+          '<button id="neg-simulate-reply-btn" class="inline-flex items-center px-3 py-2 text-sm font-medium rounded-lg bg-amber-500 hover:bg-amber-600 text-white cursor-pointer border-0">Simulate dealer reply</button>' +
+        '</div>';
+      }
+
+      body.innerHTML = html;
+      document.getElementById('neg-modal').classList.remove('hidden');
+
+      // Wire 2nd counter button
+      var btn2 = document.getElementById('neg-2nd-counter-btn');
+      if (btn2) btn2.addEventListener('click', function() { _neg2ndCounter = true; openNegModal(); });
+
+      // Wire simulate button
+      var simBtn = document.getElementById('neg-simulate-reply-btn');
+      if (simBtn) simBtn.addEventListener('click', function() {
+        window.location.href = 'offers.html?scenario=dealer-replied';
+      });
+    }
+
+    function closeNegModal() {
+      document.getElementById('neg-modal').classList.add('hidden');
+      _neg2ndCounter = false;
+    }
+
+    document.getElementById('neg-modal-close-btn').addEventListener('click', closeNegModal);
+    document.getElementById('neg-modal-close-x').addEventListener('click', closeNegModal);
+    document.getElementById('neg-modal').addEventListener('click', function(e) {
+      if (!document.getElementById('neg-modal-panel').contains(e.target)) closeNegModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !document.getElementById('neg-modal').classList.contains('hidden')) closeNegModal();
+    });
+
+    document.addEventListener('click', function(e) {
+      if (e.target.closest('[data-action="open-neg-modal"]')) openNegModal();
+    });
+
+    // ── FAQ — all 16 from faq.sellers_profile_faqs ──
+    var CS_EMAIL = 'tiimi@autovex.fi';
+    var FAQS = [
+      { q: 'Miksi en näe autoliikkeiden nimiä ja tarjousten summia?',
+        a: '<p>Saamasi tarjoukset pääset näkemään heti tarjouskilpailun päätyttyä. Tarjouksen tehneen autoliikkeen tiedot näytetään, kun hyväksyt tarjouksen. Syy tähän on se, että jos autoliikkeiden tiedot paljastetaan, tarjouskilpailua ja vastatarjouksia ei välttämättä hoideta palvelumme sisällä.</p>' },
+      { q: 'Haittaako auton loppuvelka auton myyntiä?',
+        a: '<p>Ei haittaa! Autoliike maksaa loppuvelan kokonaisuudessaan rahoitusyhtiölle. Mikäli velka ylinttää auton arvon, veloittaa liike ylijäävän summan auton myyjltä.</p>' },
+      { q: 'Kuinka kauan auton myynnin kilpailutus kestää?',
+        a: '<p>AutoVex on tehokas tapa myydä auto. Kun olet täyttänyt autosi tiedot ja ilmoituksesi on julkaistu, sadat autoliikkeet ympäri Suomen näkevät autosi heti ja voivat tehdä siitä tarjouksia.</p><p>Tarjouskilpailun kesto on tyypillisesti 36 tuntia. Saat sähköpostiisi tietoja kilpailutuksen etenemisestä ja näet lopuksi parhaan tarjouksen. Sinulla on 24 tuntia aikaa hyväksyä tarjous tai tehdä vastatarjous. Mikäli hyväksyt tarjouksen, olethan valmis luopumaan autostasi noin viikon kuluessa.</p>' },
+      { q: 'Onko tarjouskilpailussa lähtöhintaa?',
+        a: '<p>Tarjouskilpailussa ei ole lähtö- tai pohjahintaa. Autoliikkeet näkevät pyyntihintasi, mutta voivat tarjota autosta yli tai alle tämän hinnan.</p>' },
+      { q: 'Voinko myydä autoa samanaikaisesti muualla?',
+        a: '<p>Voit, mutta emme suosittele sitä. Palvelumme idea perustuu siihen, että autoliikkeet kilpailevat keskenään autostasi. Mitä useampi liike osallistuu tarjouskilpailuun juuri AutoVexin kautta, sitä todennäköisemmin tarjottu summa nousee korkeammaksi. Auton myyminen muualla samaan aikaan vähentää kilpailua ja voi vaikuttaa negatiivisesti lopputulokseen.</p><p>AutoVexiä käyttävät sadat autoliikkeet ympäri Suomen – mukana ovat kaikki alan tunnetut toimijat. Yhdellä ilmoituksella tavoitat siis jo käytännössä koko markkinan ilman ylimääräistä vaivannäköä.</p>' },
+      { q: 'Mikä on tarjouksen hyväksymisen ja vastatarjouksen ero?',
+        a: '<p>Tarjouksen hyväksymällä näet, mikä autoliike on kyseessä ja kaupoista sovitaan suoraan liikkeen kanssa. Mikäli tarjotussa hinnassa olisi vielä parannettavaa, tee autoliikkeelle vastatarjous. Voit tehdä yhteensä kaksi vastatarjousta, minkä jälkeen hyväksyt tai hylkäät lopullisen hinnan.</p>' },
+      { q: 'Mitä jos en ole tyytyväinen tarjouksiin?',
+        a: '<p>Myyntivelvoitetta palvelun käytössä ei ole. Suosittelemme kuitenkin aina tekmään vastatarjouksen korkeimmalle tarjoajalle ennen tarjouksen hylkäämistä. Vastatarjouksen avulla päästään usein kauppoihin!</p>' },
+      { q: 'Onko AutoVex ilmainen palvelu?',
+        a: '<p>Kyllä, palvelu on myyjlle täysin ilmainen eikä piilokuluja ole.</p><p>Liiketoimintamallimme perustuu autoliikkeiden maksamaan välityspalkkioon toteutuneista kaupoista. Toimimme autoliikkeille tehokkaana hankintakanavana ja yhteistyökumppanina, joka auttaa heitä löytämään laadukkaita käytetyssä autoja – ja samalla sinä saat kilpailutettua autosi helposti.</p>' },
+      { q: 'Miten toimin, kun autoliike ei ole reagoinut vastatarjoukseeni ja muut tarjoukset ovat vanhenemassa?',
+        a: '<p>Vastatarjouksen tehtyäsi aika ei voi loppua kesken autoliikkeen vastausta odotellessa. Mikäli et kuitenkaan jostain syystä pääse korkeimman tarjoajan kanssa kauppoihin ja olisit valmis hyväksymään jonkin aiemmista tarjouksista, voit olla meihin yhteydessä kauppojen sopimiseksi. <a class="underline font-medium text-blue-600" href="mailto:' + CS_EMAIL + '">' + CS_EMAIL + '</a></p>' },
+      { q: 'Mitä tapahtuu, kun hyväksyn tarjouksen?',
+        a: '<p>Kun hyväksyt tarjouksen, autoliike on sinuun yhteydessä noin yhden arkipäivän kuluttua ja pääsette sopimaan auton luovutukseen liittyvistä käytännön asioista, kuten aikataulu, luovutuspaikka, ostosopimus, maksu sekä mahdollinen loppuvelan lunastaminen.</p>' },
+      { q: 'Voiko autoliike perua kaupat?',
+        a: '<p>Jos ilmenee, että autossa on isoja piileviä vikoja tai muuta vastaavaa mistä ei ole ilmoitettu ilmoituksessa, autoliike voi perua kaupat. Tämä kuitenkin tapahtuu erittmäin harvoin (jos tiedossa olevia selkeitä virheitä autosta on jätetty kertomatta). Jos näin pääsee käymään, meidän tiimimme on sinuun sekä autoliikkeeseen yhteydessä ja auttaa sinua saamaan haluamasi kaupat tehtyä toisen autoliikkeen kanssa.</p>' },
+      { q: 'Voiko tarjoukset hylyätä?',
+        a: '<p>Kyllä, tarjouskilpailun päätyttyä voit hylyätä tarjoukset profiilissasi. Suosittelemme kuitenkin aina tekmään vastatarjouksen korkeimmalle tarjoajalle ennen tarjouksen hylkäämistä. Vastatarjouksen avulla päästään usein kauppoihin!</p>' },
+      { q: 'Mitkä autoliikkeet käyttävät AutoVexiä?',
+        a: '<p>Mukana ovat kaikki suurimmat autoliikeketjut sekä satoja keskisuuria ja paikallisia autoliikkeiä ympäri Suomen.</p><p>Kaikki palvelussa toimivat ostajat ovat luotettavia ja ammattimaisia toimijoita. Olemme Suomen ensimmäinen ja suurin autoliikkeiden kilpailutuspalvelu, ja kauttamme on tehty jo kymmeniä tuhansia onnistuneita autokauppoja.</p>' },
+      { q: 'Mitä eroa on osto- ja vaihtotarjouksella?',
+        a: '<p>Autoliikkeen antamaa vaihtotarjousta ja ostotarjousta ei voi verrata keskenään. Autokaupoilla ollessa tärkeintä on kiinnittää huomiota välirahaan.</p>' },
+      { q: 'Miksi auton myynti AutoVexin kautta kannattaa?',
+        a: '<p>Vaivattomuus: Voit myydä autosi vaikka kotisohvalta. Yhdellä myynti-ilmoituksella tavoitat kerralla sadat autoliikkeet ympäri Suomen. Sinä voit helposti hyväksyä parhaan tarjouksen ja kaupat toteutuvat suoraan autoliikkeen kanssa.</p><p>Paras tarjous: Kaikki palvelussa mukana olevat autoliikkeet näkevät autosi tiedot ja käyvät tarjouskilpailua toisiaan vastaan. Näin varmistetaan, että saat autostasi markkinoiden parhaan tarjouksen.</p><p>Luotettavuus: Palvelussa ovat mukana sadat tunnetut ja turvalliset autoliikkeet. Kauttamme on myyty autoliikkeille jo yli 70 000 autoa.</p><p>Palvelu on sinulle täysin ilmainen! Jos et ole tyytyväinen tarjouksiin, et sitoudu myymään autoasi.</p>' },
+      { q: 'Miten saan autoliikkeet kiinnostumaan autostani?',
+        a: '<p>Tärkeintä on laatia mahdollisimman kattava ja selvä ilmoitus. Lisää autostasi kuvat sisältä ja ulkoa, kuvaa mahdolliset vauriot avoimesti ja liitä mukaan huoltohistoria. Erityisesti huoltokirjan merkinnät ja dokumentoidut huollot lisäävät autoliikkeiden luottamusta ja kiinnostusta.</p><p>Myös realistisen pyyntihinnan asettaminen on tärkeää ja me tuemme sinua tässä. Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta.</p>' },
+    ];
+
+    var ICON_CARET_DOWN = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg>';
+    var ICON_CARET_UP   = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 165.66a8 8 0 0 1-11.32 0L128 91.31l-74.34 74.35a8 8 0 0 1-11.32-11.32l80-80a8 8 0 0 1 11.32 0l80 80a8 8 0 0 1 0 11.32Z"/></svg>';
+
+    var faqList = document.getElementById('faq-list');
+    FAQS.forEach(function(faq) {
+      var wrap = document.createElement('div');
+      wrap.className = 'w-full bg-white p-3 rounded-md';
+
+      var det = document.createElement('details');
+      det.className = 'group peer';
+
+      var sum = document.createElement('summary');
+      sum.className = 'block cursor-pointer [&::-webkit-details-marker]:hidden';
+      sum.innerHTML =
+        '<div class="flex items-center justify-between gap-1">' +
+          '<span class="inline-flex flex-1 leading-snug text-sm text-gray-700 group-open:font-bold">' + faq.q + '</span>' +
+          '<span class="inline-flex text-slate-500 group-open:hidden ml-2 flex-shrink-0">' + ICON_CARET_DOWN + '</span>' +
+          '<span class="hidden text-slate-500 group-open:inline-flex ml-2 flex-shrink-0">' + ICON_CARET_UP + '</span>' +
+        '</div>';
+      det.appendChild(sum);
+
+      var cw = document.createElement('div');
+      cw.className = 'grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity] ease-in-out';
+      var ci = document.createElement('div');
+      ci.className = 'overflow-hidden';
+      ci.innerHTML = '<div class="pt-4 text-sm text-gray-600 space-y-2">' + faq.a + '</div>';
+      cw.appendChild(ci);
+      wrap.appendChild(det);
+      wrap.appendChild(cw);
+      faqList.appendChild(wrap);
+    });
+
+    // ── Floating scenario tester panel ──
+    var SCENARIO_GROUPS = [
+      { group: 'Draft', items: [
+        { id: 'blank',                 label: 'Empty' },
+        { id: 'draft-open',            label: 'Draft: Incomplete' },
+        { id: 'draft-in-review',       label: 'Draft: In review' },
+        { id: 'draft-rejected',        label: 'Draft: Rejected' },
+        { id: 'draft-rejected-images', label: 'Draft: Missing photos' },
+        { id: 'draft-queued',          label: 'Draft: Queued' },
+      ]},
+      { group: 'Auction ongoing', items: [
+        { id: 'live-no-bids',  label: 'Live, no bids' },
+        { id: 'auction-live',  label: 'Live, 2 bids' },
+      ]},
+      { group: 'Auction ended', items: [
+        { id: 'new-offers',            label: 'Ended, new offers' },
+        { id: 'seen-offers',           label: 'Ended, offers seen' },
+        { id: 'final-offer',           label: 'Final offer' },
+        { id: 'counter-offer-sent',    label: 'Counter-offer sent' },
+        { id: 'dealer-replied',        label: 'Dealer replied' },
+        { id: 'negotiation-stopped',   label: 'Negotiation stopped' },
+        { id: 'no-offers',             label: 'No offers' },
+        { id: 'all-rejected',          label: 'All rejected' },
+        { id: 'offers-expired-unseen', label: 'Expired, unseen' },
+        { id: 'offers-auto-rejected',  label: 'Auto-rejected' },
+      ]},
+      { group: 'Deal completed', items: [
+        { id: 'accepted',       label: 'Offer accepted' },
+        { id: 'deal-completed', label: 'Deal completed' },
+        { id: 'deal-failed',    label: 'Deal failed' },
+        { id: 'dac7',           label: 'DAC7: Personal info required' },
+      ]},
+    ];
+
+    var panel = document.createElement('div');
+    panel.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;font-family:system-ui,sans-serif;';
+
+    var toggle = document.createElement('button');
+    toggle.style.cssText = 'display:flex;align-items:center;gap:6px;padding:8px 12px;background:#0B6DFF;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);';
+    toggle.textContent = 'Scenario';
+
+    var drawer = document.createElement('div');
+    drawer.style.cssText = 'display:none;position:absolute;bottom:44px;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:240px;max-height:420px;overflow-y:auto;padding:8px 0;';
+
+    SCENARIO_GROUPS.forEach(function(grp, gi) {
+      if (gi > 0) {
+        var sep = document.createElement('div');
+        sep.style.cssText = 'height:1px;background:#e2e8f0;margin:4px 0;';
+        drawer.appendChild(sep);
+      }
+      var ghdr = document.createElement('div');
+      ghdr.style.cssText = 'padding:6px 14px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+      ghdr.textContent = grp.group;
+      drawer.appendChild(ghdr);
+      grp.items.forEach(function(sc) {
+        var a = document.createElement('a');
+        var cur = sc.id === SCENARIO;
+        a.href = 'offers.html?scenario=' + sc.id;
+        a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
+        a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;
+        a.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
+        a.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
+        drawer.appendChild(a);
+      });
+    });
+
+    var open = false;
+    toggle.addEventListener('click', function() {
+      open = !open;
+      drawer.style.display = open ? 'block' : 'none';
+    });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
+    document.addEventListener('click', function(e) { if (open && !panel.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
+
+    panel.appendChild(drawer);
+    panel.appendChild(toggle);
+    document.body.appendChild(panel);
+  </script>
+
+  <!-- Footer — no link columns on offers/decision pages (matches Astro prototype) -->
+  <footer class="bg-av-blue flex flex-col items-center gap-[38px] pt-14 pb-14">
+    <div class="flex flex-col gap-3.5 w-full max-w-[1388px] px-5">
+
+      <!-- Legal strip -->
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <div class="flex gap-3.5 font-body font-bold flex-wrap">
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit" data-i18n="footer.terms">Käyttöehdot</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit" data-i18n="footer.privacy">Tietosuojakäytäntö</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit" data-i18n="footer.cookies">Evästekäytäntö</a>
+        </div>
+        <div class="flex items-center gap-4 font-body text-sm text-white">
+          <span data-i18n="footer.language">Kieli</span>
+          <select id="lang-selector" onchange="setLang(this.value)" class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
+            <option value="fi">Suomi</option>
+            <option value="en">English</option>
+          </select>
+          <span class="font-body font-normal" data-i18n="footer.copyright">© 2025 All rights reserved</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Large AutoVex wordmark -->
+    <div class="w-full max-w-[1388px] px-5">
+      <img src="assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+  </footer>
+
+</body>
+</html>

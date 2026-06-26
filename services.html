@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Huollot &amp; kunto – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Checkbox */
+    input[type="checkbox"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      border: 1px solid #94A3B8;
+      border-radius: 2px;
+      background: white;
+      cursor: pointer;
+      position: relative;
+    }
+    input[type="checkbox"]:checked {
+      background: #0B6DFF;
+      border-color: #0B6DFF;
+    }
+    input[type="checkbox"]:checked::after {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 1px;
+      width: 8px;
+      height: 5px;
+      border-left: 2px solid white;
+      border-bottom: 2px solid white;
+      transform: rotate(-45deg);
+    }
+    /* Textarea resize handle */
+    textarea {
+      resize: vertical;
+    }
+    /* Focus ring */
+    textarea:focus { outline: none; border-color: #0B6DFF; box-shadow: 0 0 0 2px rgba(11,109,255,0.15); }
+    /* Field validation error */
+    @keyframes av-error-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      60%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+    .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
+    .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+
+    /* ── Follow-up questions — conditional sub-questions triggered by a parent selection ── */
+    .followup-section {
+      border-left: 2px solid #e2e8f0; /* slate-200 — full-height vertical line */
+      padding-left: 16px;
+      padding-top: 20px;
+      margin-top: 8px;
+    }
+    .followup-label {
+      font-size: 1rem;
+      line-height: 1.25rem;
+      font-weight: 400;
+      color: #0f172a; /* slate-900 — matches main question label color */
+    }
+  </style>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script>
+    // ── Shared storage helpers ──
+    const STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
+    function setStore(data) { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {} }
+
+    function initStepNav(currentStep) {
+      const s = getStore();
+      const URLS = { details:'details.html', services:'services.html', photos:'photos.html', price:'price.html', contact:'contact.html' };
+      const LOCKED          = '<img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const COMPLETE        = '<img src="assets/step-completed.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const WARNING         = '<img src="assets/step-incomplete.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const ACTIVE_EMPTY    = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-default-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_COMPLETE = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-completed.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_WARNING  = '<div class="w-7 h-7 rounded-full border-2 border-[#f59e0b] flex items-center justify-center flex-shrink-0"><img src="assets/step-incomplete-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      function isStarted(step) {
+        switch(step) {
+          case 'details':  return !!(s.details && s.details.merkki);
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; return rg.some(v=>v!=null)||!!sv.vaurio_naky||!!sv.vaurio_kolari||!!sv.korjaukset; }
+          case 'photos':   return !!(s.photosVisited||Object.values(s.photos||{}).some(a=>a&&a.length>0)||s.priceVisited||s.successVisited);
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi||c.sahkoposti||c.puhelin); }
+          default: return false;
+        }
+      }
+      function isComplete(step) {
+        switch(step) {
+          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const tiedotReq=sv.bookType==='digital'||sv.bookType==='both'; const tiedotOk=!tiedotReq||sv.tiedot==='no'||sv.tiedot==='unavailable'; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim())&&tiedotOk; }
+          case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
+          default: return false;
+        }
+      }
+      function hasPreviouslyLeft(step) {
+        switch(step) {
+          case 'details':  return !!s.detailsLeft;
+          case 'services': return !!s.servicesLeft;
+          case 'photos':   return !!s.priceVisited;
+          default: return false;
+        }
+      }
+      document.querySelectorAll('[data-step]').forEach(el => {
+        const step     = el.dataset.step;
+        const isActive = step === currentStep;
+        const started  = isStarted(step);
+        const complete = isComplete(step);
+        const dot = el.firstElementChild;
+        if (dot) {
+          let indicator;
+          if (isActive) {
+            indicator = complete ? ACTIVE_COMPLETE : (started && hasPreviouslyLeft(step)) ? ACTIVE_WARNING : ACTIVE_EMPTY;
+          } else {
+            indicator = !started ? LOCKED : complete ? COMPLETE : WARNING;
+          }
+          dot.insertAdjacentHTML('beforebegin', indicator);
+          dot.remove();
+        }
+        const label = el.querySelector('span');
+        if (label) {
+          if (isActive) {
+            label.style.color      = '#080808';
+            label.style.fontWeight = '700';
+          } else {
+            label.style.color      = started ? '#080808' : '#475569';
+            label.style.fontWeight = '';
+          }
+        }
+        if (!isActive) {
+          if (started) {
+            el.style.cursor = 'pointer';
+            if (el.tagName === 'A') { el.href = URLS[step]; }
+            else { el.onclick = () => window.location.href = URLS[step]; }
+          } else {
+            el.style.cursor = 'default';
+            if (el.tagName === 'A') { el.removeAttribute('href'); el.onclick = e => e.preventDefault(); }
+            else { el.onclick = null; }
+          }
+        }
+      });
+    }
+
+    function scrollAndPulse(el) {
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('av-error-pulse');
+      void el.offsetWidth;
+      el.classList.add('av-error-pulse');
+      el.addEventListener('animationend', () => el.classList.remove('av-error-pulse'), { once: true });
+    }
+
+    function validateAndContinue() {
+      const sv = getStore().services || {};
+      const rg = Array.isArray(sv.radioGroups) ? sv.radioGroups : [];
+      const tuulilasiEhja = rg[3] === 'Ehjä';
+      const missingIdx = [];
+      for (let i = 0; i < 5; i++) {
+        if (i === 4 && tuulilasiEhja) continue; // lasivakuutus not required when windshield intact
+        if (rg[i] == null) missingIdx.push(i);
+      }
+      const korjauksetEmpty = !(sv.korjaukset && sv.korjaukset.trim());
+      const bannerVisible = document.getElementById('tiedot-banner')?.style.display !== 'none' && document.getElementById('tiedot-banner')?.style.display !== '';
+      const tiedotEmpty = bannerVisible && _tiedotState !== 'no' && _tiedotState !== 'unavailable';
+      if (!missingIdx.length && !korjauksetEmpty && !tiedotEmpty) { setStore({...getStore(), servicesLeft: true}); window.location = 'photos.html'; return; }
+
+      // Inline error on tiedot options
+      if (tiedotEmpty) {
+        const tOpts = document.getElementById('tiedot-options');
+        if (tOpts) {
+          tOpts.style.outline = '2px solid #ef4444';
+          tOpts.style.outlineOffset = '4px';
+          tOpts.style.borderRadius = '8px';
+          const errId = 'err-tiedot';
+          if (!document.getElementById(errId)) {
+            const errEl = document.createElement('p');
+            errEl.id = errId;
+            errEl.className = 'av-error-msg';
+            errEl.textContent = t('err.selectionRequired');
+            tOpts.parentNode.insertBefore(errEl, tOpts.nextSibling);
+          }
+          tOpts.addEventListener('click', function () {
+            tOpts.style.outline = '';
+            tOpts.style.outlineOffset = '';
+            tOpts.style.borderRadius = '';
+            document.getElementById('err-tiedot')?.remove();
+          }, { once: true });
+        }
+      }
+
+      // Inline errors on unanswered radio groups
+      const groups = document.querySelectorAll('.radio-group');
+      missingIdx.forEach(i => {
+        if (!groups[i]) return;
+        groups[i].style.outline = '2px solid #ef4444';
+        groups[i].style.outlineOffset = '4px';
+        groups[i].style.borderRadius = '8px';
+        const errId = 'err-rg-' + i;
+        if (!document.getElementById(errId)) {
+          const errEl = document.createElement('p');
+          errEl.id = errId;
+          errEl.className = 'av-error-msg';
+          errEl.textContent = t('err.selectionRequired');
+          groups[i].parentNode.insertBefore(errEl, groups[i].nextSibling);
+        }
+        groups[i].addEventListener('click', function () {
+          groups[i].style.outline = '';
+          groups[i].style.outlineOffset = '';
+          groups[i].style.borderRadius = '';
+          document.getElementById(errId)?.remove();
+        }, { once: true });
+      });
+
+      // Inline error on korjaukset textarea
+      if (korjauksetEmpty) {
+        const ta = document.getElementById('korjaukset');
+        if (ta) {
+          ta.style.outline = '2px solid #ef4444';
+          ta.style.outlineOffset = '-2px';
+          const errId = 'err-korjaukset';
+          if (!document.getElementById(errId)) {
+            const errEl = document.createElement('p');
+            errEl.id = errId;
+            errEl.className = 'av-error-msg';
+            errEl.textContent = t('err.required');
+            ta.parentNode.insertBefore(errEl, ta.nextSibling);
+          }
+          ta.addEventListener('input', function () {
+            ta.style.outline = '';
+            ta.style.outlineOffset = '';
+            document.getElementById('err-korjaukset')?.remove();
+          }, { once: true });
+        }
+      }
+
+      // Scroll to topmost invalid element by DOM position
+      const errorEls = [];
+      missingIdx.forEach(function(i) { if (groups[i]) errorEls.push(groups[i]); });
+      if (tiedotEmpty) { var tb = document.getElementById('tiedot-banner'); if (tb) errorEls.push(tb); }
+      if (korjauksetEmpty) { var ta = document.getElementById('korjaukset'); if (ta) errorEls.push(ta); }
+      errorEls.sort(function(a, b) {
+        return (a.getBoundingClientRect().top + window.scrollY) - (b.getBoundingClientRect().top + window.scrollY);
+      });
+      if (errorEls.length) scrollAndPulse(errorEls[0]);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const groups = Array.from(document.querySelectorAll('.radio-group'));
+
+      function selectRadioBtn(btn) {
+        const group = btn.closest('.radio-group');
+        group.querySelectorAll('.radio-btn').forEach(b => {
+          b.classList.remove('border-2', 'border-av-blue');
+          b.classList.add('border', 'border-slate-400');
+          b.querySelector('.radio-dot').classList.remove('bg-av-blue');
+          b.querySelector('.radio-dot').classList.add('bg-white');
+          b.querySelector('.radio-inner')?.classList.add('hidden');
+        });
+        btn.classList.remove('border', 'border-slate-400');
+        btn.classList.add('border-2', 'border-av-blue');
+        btn.querySelector('.radio-dot').classList.remove('bg-white');
+        btn.querySelector('.radio-dot').classList.add('bg-av-blue');
+        btn.querySelector('.radio-inner')?.classList.remove('hidden');
+      }
+
+      // ── Save / Load ──
+      function saveServices() {
+        const s = getStore();
+        const bookTypeSel = document.getElementById('book-type-group')?.querySelector('.radio-btn.border-2');
+        s.services = {
+          radioGroups: groups.map(g => {
+            const sel = g.querySelector('.radio-btn.border-av-blue, .radio-btn.border-2');
+            return sel ? sel.querySelector('span')?.textContent?.trim() ?? null : null;
+          }),
+          korjaukset: document.getElementById('korjaukset')?.value ?? '',
+          tiedot: _tiedotState,
+          bookType: bookTypeSel?.getAttribute('data-book-type') ?? null,
+          lastServiceDetail: {
+            month: document.getElementById('last-service-month')?.value || null,
+            year:  document.getElementById('last-service-year')?.value  || null,
+            km:    document.getElementById('last-service-km')?.value    || null,
+          },
+        };
+        setStore(s);
+      }
+
+      function loadServices() {
+        const d = getStore().services || {};
+        // Restore radio groups
+        if (d.radioGroups) {
+          d.radioGroups.forEach((val, i) => {
+            if (!val || !groups[i]) return;
+            const btn = Array.from(groups[i].querySelectorAll('.radio-btn'))
+              .find(b => b.querySelector('span')?.textContent?.trim() === val);
+            if (btn) selectRadioBtn(btn);
+          });
+        }
+        // Restore textarea
+        const textarea  = document.getElementById('korjaukset');
+        const wordCount = document.getElementById('word-count');
+        if (textarea && d.korjaukset !== undefined) {
+          textarea.value = d.korjaukset;
+          if (wordCount) wordCount.textContent = textarea.value.length + '/1500';
+        }
+        // Restore tiedot state
+        if (d.tiedot === 'confirm') {
+          _tiedotState = 'confirm';
+          _tiedotSetFetch(true);
+          _tiedotSetNo(false);
+          document.getElementById('tiedot-confirm-body').style.display = 'block';
+          document.getElementById('tiedot-pay-btn').style.display = 'flex';
+        } else if (d.tiedot === 'no') {
+          _tiedotState = 'no';
+          _tiedotSetFetch(false);
+          _tiedotSetNo(true);
+        } else if (d.tiedot === 'unavailable') {
+          _tiedotState = 'unavailable';
+          _tiedotSetFetch(false);
+          _tiedotSetNo(true);
+          document.getElementById('tiedot-fetch-header').style.display = 'none';
+          document.getElementById('tiedot-unavail-body').style.display = 'block';
+        }
+        // Restore last service detail
+        if (d.lastServiceDetail) {
+          const mo = document.getElementById('last-service-month');
+          const yr = document.getElementById('last-service-year');
+          const km = document.getElementById('last-service-km');
+          if (mo && d.lastServiceDetail.month) mo.value = d.lastServiceDetail.month;
+          if (yr && d.lastServiceDetail.year)  yr.value = d.lastServiceDetail.year;
+          if (km && d.lastServiceDetail.km)    km.value = d.lastServiceDetail.km;
+        }
+        updateLasivakuutusVisibility();
+        updateLastServiceDetail();
+      }
+
+      // ── Last service detail ──
+      function populateLastServiceSelects() {
+        const monthSel = document.getElementById('last-service-month');
+        if (monthSel && monthSel.options.length <= 1) {
+          const fi = ['Tammikuu','Helmikuu','Maaliskuu','Huhtikuu','Toukokuu','Kesäkuu','Heinäkuu','Elokuu','Syyskuu','Lokakuu','Marraskuu','Joulukuu'];
+          const en = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+          const lang = window.getLang ? window.getLang() : 'fi';
+          const months = lang === 'en' ? en : fi;
+          months.forEach(function(m, i) {
+            const opt = document.createElement('option');
+            opt.value = i + 1;
+            opt.textContent = m;
+            monthSel.appendChild(opt);
+          });
+        }
+        const yearSel = document.getElementById('last-service-year');
+        if (yearSel && yearSel.options.length <= 1) {
+          const curYear = new Date().getFullYear();
+          for (let y = curYear; y >= curYear - 2; y--) {
+            const opt = document.createElement('option');
+            opt.value = y;
+            opt.textContent = y;
+            yearSel.appendChild(opt);
+          }
+          const oldOpt = document.createElement('option');
+          oldOpt.value = 'before';
+          oldOpt.textContent = (curYear - 3) + (window.getLang && window.getLang() === 'en' ? ' or before' : ' tai aiemmin');
+          yearSel.appendChild(oldOpt);
+        }
+      }
+
+      function updateLastServiceDetail() {
+        const grp = document.getElementById('last-service-group');
+        const sel = grp?.querySelector('.radio-btn.border-2');
+        const val = sel?.getAttribute('data-last-service');
+        const detail = document.getElementById('last-service-detail');
+        if (detail) detail.style.display = (sel && val === 'older') ? 'flex' : 'none';
+      }
+
+      // ── Conditional lasivakuutus ──
+      const tuulilasiGroup   = document.getElementById('tuulilasi-group');
+      const lasivakuutusSec  = document.getElementById('lasivakuutus-section');
+
+      function getSelectedText(group) {
+        const sel = group?.querySelector('.radio-btn.border-2');
+        return sel ? sel.querySelector('span')?.textContent?.trim() ?? null : null;
+      }
+
+      function updateLasivakuutusVisibility() {
+        const val = getSelectedText(tuulilasiGroup);
+        if (!val || val === 'Ehjä') {
+          lasivakuutusSec.style.display = 'none';
+          // Clear any prior lasivakuutus selection so it isn't stale in the store
+          const lasivakuutusGroup = groups[groups.indexOf(tuulilasiGroup) + 1];
+          if (lasivakuutusGroup) {
+            lasivakuutusGroup.querySelectorAll('.radio-btn').forEach(b => {
+              b.classList.remove('border-2', 'border-av-blue');
+              b.classList.add('border', 'border-slate-400');
+              b.querySelector('.radio-dot')?.classList.remove('bg-av-blue');
+              b.querySelector('.radio-dot')?.classList.add('bg-white');
+              b.querySelector('.radio-inner')?.classList.add('hidden');
+            });
+          }
+          saveServices();
+        } else {
+          lasivakuutusSec.style.display = '';
+        }
+      }
+
+      // Radio group interactivity
+      groups.forEach(group => {
+        group.querySelectorAll('.radio-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            selectRadioBtn(btn);
+            saveServices();
+            if (group === tuulilasiGroup) updateLasivakuutusVisibility();
+            if (group.id === 'book-type-group') updateTiedotBanner();
+            if (group.id === 'last-service-group') updateLastServiceDetail();
+          });
+        });
+      });
+
+      // Checkboxes
+      document.querySelector('[name="vaurio_naky"]')?.addEventListener('change', saveServices);
+      document.querySelector('[name="vaurio_kolari"]')?.addEventListener('change', saveServices);
+
+      // Textarea
+      const textarea  = document.getElementById('korjaukset');
+      const wordCount = document.getElementById('word-count');
+      if (textarea && wordCount) {
+        textarea.addEventListener('input', () => {
+          wordCount.textContent = textarea.value.length + '/1500';
+          saveServices();
+        });
+      }
+
+      // Last service detail selects + km input
+      document.getElementById('last-service-month')?.addEventListener('change', saveServices);
+      document.getElementById('last-service-year')?.addEventListener('change', saveServices);
+      document.getElementById('last-service-km')?.addEventListener('input', saveServices);
+
+      populateLastServiceSelects();
+      loadServices();
+      updateTiedotBanner();
+      updateHistoryVisibility();
+      initStepNav('services');
+    });
+
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) initStepNav('services');
+    });
+
+    // ── Varmennettu huoltohistoria ──
+    var _tiedotState = 'default'; // 'default' | 'no' | 'confirm' | 'unavailable'
+
+    function updateHistoryVisibility() {
+      var banner = document.getElementById('tiedot-banner');
+      var bannerVisible = banner && banner.style.display === 'flex';
+      var bookTypeSel = document.getElementById('book-type-group')?.querySelector('.radio-btn.border-2');
+      var show = bookTypeSel && (!bannerVisible || _tiedotState === 'no' || _tiedotState === 'unavailable');
+      var display = show ? '' : 'none';
+      var hs = document.getElementById('history-section');
+      var ls = document.getElementById('last-service-section');
+      if (hs) hs.style.display = display;
+      if (ls) ls.style.display = display;
+    }
+
+    function _tiedotSave() {
+      var s = getStore();
+      if (!s.services) s.services = {};
+      s.services.tiedot = _tiedotState;
+      setStore(s);
+    }
+
+    function updateTiedotBanner() {
+      var group = document.getElementById('book-type-group');
+      var banner = document.getElementById('tiedot-banner');
+      if (!group || !banner) return;
+      var sel = group.querySelector('.radio-btn.border-2');
+      var type = sel ? sel.getAttribute('data-book-type') : null;
+      if (type === 'digital' || type === 'both') {
+        banner.style.display = 'flex';
+      } else {
+        banner.style.display = 'none';
+        _tiedotReset();
+      }
+      updateHistoryVisibility();
+    }
+
+    function _tiedotReset() {
+      _tiedotState = 'default';
+      _tiedotSetFetch(false);
+      _tiedotSetNo(false);
+      document.getElementById('tiedot-fetch-header').style.display = '';
+      document.getElementById('tiedot-confirm-body').style.display = 'none';
+      document.getElementById('tiedot-unavail-body').style.display = 'none';
+      document.getElementById('tiedot-pay-btn').style.display = 'none';
+      _tiedotSave();
+      updateHistoryVisibility();
+    }
+
+    function tiedotSelectFetch() {
+      if (_tiedotState === 'unavailable') return;
+      _tiedotState = 'confirm';
+      _tiedotSetFetch(true);
+      _tiedotSetNo(false);
+      document.getElementById('tiedot-confirm-body').style.display = 'block';
+      document.getElementById('tiedot-unavail-body').style.display = 'none';
+      document.getElementById('tiedot-pay-btn').style.display = 'flex';
+      _tiedotSave();
+      updateHistoryVisibility();
+    }
+
+    function _tiedotClearError() {
+      var opts = document.getElementById('tiedot-options');
+      if (opts) {
+        opts.style.outline = '';
+        opts.style.outlineOffset = '';
+        opts.style.borderRadius = '';
+      }
+      document.getElementById('err-tiedot')?.remove();
+    }
+
+    function tiedotPay(e) {
+      e.stopPropagation();
+      _tiedotState = 'unavailable';
+      _tiedotSetFetch(false);
+      _tiedotSetNo(true);
+      document.getElementById('tiedot-fetch-header').style.display = 'none';
+      document.getElementById('tiedot-confirm-body').style.display = 'none';
+      document.getElementById('tiedot-pay-btn').style.display = 'none';
+      document.getElementById('tiedot-unavail-body').style.display = 'block';
+      _tiedotClearError();
+      _tiedotSave();
+      updateHistoryVisibility();
+    }
+
+    function tiedotSelectNo() {
+      if (_tiedotState === 'unavailable') return;
+      _tiedotState = 'no';
+      _tiedotSetFetch(false);
+      _tiedotSetNo(true);
+      document.getElementById('tiedot-confirm-body').style.display = 'none';
+      document.getElementById('tiedot-unavail-body').style.display = 'none';
+      document.getElementById('tiedot-pay-btn').style.display = 'none';
+      _tiedotClearError();
+      _tiedotSave();
+      updateHistoryVisibility();
+    }
+
+    function _tiedotSetFetch(on) {
+      var btn = document.getElementById('tiedot-fetch-btn');
+      if (!btn) return;
+      btn.classList.toggle('border-2', on);
+      btn.classList.toggle('border-av-blue', on);
+      btn.classList.toggle('border', !on);
+      btn.classList.toggle('border-slate-400', !on);
+      var dot = btn.querySelector('.tiedot-fetch-dot');
+      var inner = btn.querySelector('.tiedot-fetch-inner');
+      if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-slate-400', !on); }
+      if (inner) inner.classList.toggle('hidden', !on);
+    }
+
+    function _tiedotSetNo(on) {
+      var btn = document.getElementById('tiedot-no-btn');
+      if (!btn) return;
+      btn.classList.toggle('border-2', on);
+      btn.classList.toggle('border-av-blue', on);
+      btn.classList.toggle('bg-white', true);
+      btn.classList.toggle('border', !on);
+      btn.classList.toggle('border-slate-400', !on);
+      var dot = btn.querySelector('.tiedot-no-dot');
+      var inner = btn.querySelector('.tiedot-no-inner');
+      if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-slate-400', !on); }
+      if (inner) inner.classList.toggle('hidden', !on);
+    }
+  </script>
+</head>
+<body class="font-dm bg-white min-h-screen">
+
+  <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
+    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 max-md:flex-col max-md:px-0 max-md:gap-0">
+
+      <!-- ── Left column ── -->
+      <div class="flex-1 flex flex-col items-start gap-6 max-w-[512px] max-md:max-w-full max-md:w-full max-md:px-5 max-md:pt-5 max-md:pb-8">
+
+        <!-- Logo -->
+        <a href="index.html" aria-label="Takaisin etusivulle">
+          <img src="assets/b94a0928-6249-49e0-9364-78029020c168.svg"
+               alt="AutoVex"
+               class="w-[88px] h-[18px] object-contain block" />
+        </a>
+
+        <!-- Step navigation -->
+        <nav aria-label="Vaiheet" class="w-full flex items-start pb-3">
+          <div data-step="details" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.details">Varusteet</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="services" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.service">Huollot<br>&amp; kunto</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="photos" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.photos">Kuvat</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="price" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.price">Hinta</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="contact" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.contact">Yhteys</span>
+          </div>
+        </nav>
+
+        <!-- Headline -->
+        <h1 class="font-barlow font-bold text-slate-900 text-[30px] leading-8" data-i18n="service.title">Huollot</h1>
+
+        <!-- ── Form ── -->
+        <form class="w-full flex flex-col gap-10 md:gap-16" novalidate>
+
+          <!-- Huoltokirjan tyyppi -->
+          <div class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+              <span data-i18n="service.bookTypeLabel">Huoltokirjan tyyppi</span> <span class="text-red-500 font-medium">*</span>
+            </div>
+            <div id="book-type-group" class="flex flex-col gap-2 radio-group">
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="digital">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookDigital">Sähköinen huoltokirja</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="paper">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookPaper">Paperinen huoltokirja</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="both">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookBoth">Molemmat</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="unknown">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookUnknown">En tiedä</span>
+              </div>
+            </div>
+
+            <!-- Varmennettu huoltohistoria (required when shown) -->
+            <div id="tiedot-banner" style="display:none;" class="followup-section flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <!-- Section label -->
+              <div class="font-dm followup-label flex gap-1"><span data-i18n="service.tiedot.label">Varmennettu huoltohistoria</span> <span class="text-red-500 font-medium">*</span></div>
+              <!-- Info element -->
+              <div class="flex items-start gap-2">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="service.tiedot.info">Huoltohistoria on yksi tärkeimmistä tiedoista autonostajille.</p>
+              </div>
+            </div>
+            <div id="tiedot-options" class="flex flex-col gap-2">
+            <!-- Option 1: Hae sähköinen huoltohistoria -->
+            <div id="tiedot-fetch-btn" class="flex flex-col gap-[10px] p-4 border border-slate-400 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectFetch()">
+              <div id="tiedot-fetch-header" class="flex items-center gap-[10px]">
+                <div class="tiedot-fetch-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="tiedot-fetch-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <div class="flex flex-col flex-1 min-w-0">
+                  <div class="flex items-start w-full gap-2">
+                    <p class="flex-1 font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.tiedot.optionFetch">Hae sähköinen huoltohistoria</p>
+                    <span class="flex-shrink-0 border border-lime-400 bg-lime-50 rounded px-2 py-1 font-dm font-medium text-sm leading-[17px] text-lime-700 whitespace-nowrap" data-i18n="service.tiedot.recommended">Suositeltu</span>
+                  </div>
+                  <p class="font-dm text-xs leading-[14px] text-slate-500" data-i18n="service.tiedot.subtext">Virallinen digitaalinen huoltohistoria valmistajan rekisteristä.</p>
+                </div>
+              </div>
+              <!-- Confirm body (state 2) -->
+              <div id="tiedot-confirm-body" style="display:none;" class="flex flex-col gap-2 px-7 py-[10px] text-center">
+                <p class="font-dm font-bold text-xl leading-[23px] text-slate-900" data-i18n="service.tiedot.priceTitle">Huoltohistoriahaun hinta on 3€</p>
+                <p class="font-dm text-base leading-5 text-slate-700" data-i18n="service.tiedot.priceBody">Haluatko jatkaa ja maksaa heti?</p>
+              </div>
+              <!-- Unavailable body (state 3) -->
+              <div id="tiedot-unavail-body" style="display:none;" class="flex flex-col gap-2 px-5 py-[10px] text-center">
+                <p class="font-dm font-bold text-2xl leading-[28px] text-slate-900" data-i18n="service.tiedot.unavailTitle">Huoltohistoriahaku ei ole vielä saatavilla</p>
+                <p class="font-dm text-base leading-5 text-slate-700" data-i18n="service.tiedot.unavailBody">Testaamme palvelua. Mitään ei haettu eikä sinua veloitettu.</p>
+              </div>
+              <!-- Pay button (state 2 only) -->
+              <button id="tiedot-pay-btn" type="button" style="display:none;" onclick="tiedotPay(event)"
+                class="w-full h-10 flex items-center justify-center gap-2 rounded-lg bg-av-blue hover:bg-av-blue-dark transition-colors overflow-hidden relative">
+                <div class="absolute inset-0 rounded-lg pointer-events-none shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)]"></div>
+                <span class="font-dm font-medium text-sm leading-[17px] text-white" data-i18n="service.tiedot.payBtn">Maksa ja hae</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Option 2: Ei kiitos -->
+            <div id="tiedot-no-btn" class="flex items-center gap-[10px] p-4 border border-slate-400 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectNo()">
+              <div class="tiedot-no-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                <div class="tiedot-no-inner w-2 h-2 rounded-full bg-white hidden"></div>
+              </div>
+              <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.tiedot.optionNo">Ei kiitos</span>
+            </div>
+            </div><!-- /tiedot-options -->
+            </div>
+          </div>
+
+          <!-- Huoltohistoria -->
+          <div id="history-section" class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+              <span data-i18n="service.historyLabel">Huoltohistoria</span> <span class="text-red-500 font-medium">*</span>
+            </div>
+            <div class="flex flex-col gap-2 radio-group">
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFull">Täydellinen merkkiliikkeen historia</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFullOther">Täysi – muissa huoltamoissa</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyPartial">Osittainen</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyNone">Ei huoltokirjaa</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Viimeisin huolto -->
+          <div id="last-service-section" class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+              <span data-i18n="service.lastServiceLabel">Viimeisin huolto</span> <span class="text-red-500 font-medium">*</span>
+            </div>
+            <div id="last-service-group" class="flex flex-col gap-2 radio-group">
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-last-service="6mo">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.lastService6mo">Viimeisen 6 kuukauden aikana</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-last-service="older">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.lastServiceOlder">Yli 6 kuukautta sitten</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-last-service="unsure">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.lastServiceUnsure">En ole varma</span>
+              </div>
+            </div>
+
+            <!-- Last service detail (shown when not 6mo) -->
+            <div id="last-service-detail" style="display:none;" class="followup-section flex flex-col gap-4">
+              <!-- Month -->
+              <div class="flex flex-col gap-2">
+                <div class="font-dm followup-label" data-i18n="service.lastServiceMonthLabel">Viimeisin huoltokuukausi</div>
+                <div class="relative">
+                  <select id="last-service-month" class="w-full border border-slate-400 rounded-lg px-4 py-3 font-dm text-base text-slate-900 bg-white appearance-none cursor-pointer focus:outline-none focus:border-av-blue transition-colors">
+                    <option value="" data-i18n="service.lastServiceMonthPlaceholder">Valitse kuukausi</option>
+                  </select>
+                  <svg class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 text-slate-700" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+                </div>
+              </div>
+              <!-- Year -->
+              <div class="flex flex-col gap-2">
+                <div class="font-dm followup-label" data-i18n="service.lastServiceYearLabel">Viimeisin huoltovuosi</div>
+                <div class="relative">
+                  <select id="last-service-year" class="w-full border border-slate-400 rounded-lg px-4 py-3 font-dm text-base text-slate-900 bg-white appearance-none cursor-pointer focus:outline-none focus:border-av-blue transition-colors">
+                    <option value=""></option>
+                  </select>
+                  <svg class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 text-slate-700" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
+                </div>
+              </div>
+              <!-- Km (optional) -->
+              <div class="flex flex-col gap-2">
+                <div class="font-dm followup-label" data-i18n="service.lastServiceKmLabel">Huoltohetken kilometrimäärä (valinnainen)</div>
+                <div class="flex items-center border border-slate-400 rounded-lg bg-white overflow-hidden">
+                  <input type="number" id="last-service-km" placeholder="10000" data-i18n-placeholder="service.lastServiceKmPlaceholder" min="0" class="flex-1 font-dm text-base text-slate-900 placeholder:text-slate-300 outline-none bg-transparent px-4 py-3 min-w-0" />
+                  <span class="font-dm font-medium text-base text-slate-500 pr-4 flex-shrink-0">km</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section divider: Kunto -->
+          <h2 class="font-barlow font-bold text-slate-900 text-[30px] leading-8 pt-2" data-i18n="service.conditionTitle">Kunto</h2>
+
+          <!-- Tuulilasin kunto -->
+          <div class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+              <span data-i18n="service.windshieldLabel">Tuulilasin kunto</span> <span class="text-red-500 font-medium">*</span>
+            </div>
+            <div id="tuulilasi-group" class="flex flex-col gap-2 radio-group">
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.windshieldOk">Ehjä</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.windshieldChips">Kiveniskemiä</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.windshieldCracked">Halki</span>
+              </div>
+            </div>
+
+            <!-- Löytyykö sinulta lasivakuutus -->
+            <div id="lasivakuutus-section" class="followup-section flex flex-col gap-2">
+              <div class="font-dm followup-label flex gap-1">
+                <span data-i18n="service.glassInsurance">Löytyykö sinulta lasivakuutus?</span> <span class="text-red-500 font-medium">*</span>
+              </div>
+              <div class="flex flex-col gap-2 radio-group">
+                <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                  <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                    <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                  </div>
+                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.yes">Kyllä</span>
+                </div>
+                <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                  <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                    <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                  </div>
+                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.no">Ei</span>
+                </div>
+                <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                  <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                    <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                  </div>
+                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.unknown">En tiedä</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lisätiedot -->
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+                <span data-i18n="service.additionalLabel">Korjaukset ja viat</span> <span class="text-red-500 font-medium">*</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="service.additionalBody">Mainitse merkittävät viat, korjaukset, kolhut tai vauriot sekä kulumat, joista ostajien tulisi olla tietoisia.</p>
+              </div>
+            </div>
+            <div class="relative w-full">
+              <textarea id="korjaukset" name="korjaukset" maxlength="1500" rows="6"
+                placeholder="Esim. Jakohihna vaihdettu, kuljettajan istuimessa kulumaa, pieniä lommoja tai naarmuja, poikkeavia ääniä, sähkövikoja..." data-i18n-placeholder="service.additionalPlaceholder"
+                class="w-full border border-slate-400 rounded-lg bg-white px-3 pt-2.5 pb-8 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors resize-y min-h-[150px]"></textarea>
+              <div class="absolute bottom-2 right-3 flex items-center gap-1 pointer-events-none">
+                <span id="word-count" class="font-dm text-xs leading-[14px] text-slate-600">0/1500</span>
+                <!-- resize corner icon -->
+                <img src="assets/f04530ef-8002-4d64-9b8d-430e507bf370.svg" class="w-2.5 h-2.5 opacity-40" alt="" />
+              </div>
+            </div>
+          </div>
+
+          <!-- CTA -->
+          <button id="services-cta" type="button" onclick="validateAndContinue()"
+            class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors mt-1">
+            <span data-i18n="btn.continue">Jatka</span>
+            <img src="assets/b20aa3f2-b224-4816-a54e-7c0c6e18444b.svg" class="w-6 h-6" alt="" />
+          </button>
+
+          <!-- Back link -->
+          <div class="flex items-center justify-center w-full">
+            <a href="details.html" class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- ── Right column (cream) ── -->
+      <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col justify-between max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:gap-4 max-md:justify-start max-md:rounded-none max-md:px-5 max-md:py-8">
+        <div></div>
+
+        <!-- Fire promo card -->
+        <div class="bg-white rounded-xl p-5 flex items-center gap-5 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)] max-md:order-2">
+          <div class="w-[67px] h-[100px] flex-shrink-0 overflow-hidden">
+            <img src="assets/30ed09dd-b6bd-4c39-913f-cd1e9be5a291.png"
+                 class="w-full h-full object-cover"
+                 style="transform: scaleY(-1) rotate(180deg);"
+                 alt="" />
+          </div>
+          <div class="flex-1 flex flex-col gap-4">
+            <p class="font-barlow font-bold text-[#020617]" style="font-size:24px;line-height:26px;" data-i18n="sidebar.title">Erinomainen aika myydä</p>
+            <p class="font-dm text-base leading-5 text-black" data-i18n="sidebar.body">Autokauppa käy kuumana! Olemme myyneet jo yli 70 000 autoa!</p>
+          </div>
+        </div>
+
+        <!-- Save draft / Jatka myöhemmin -->
+        <div class="max-md:order-1">
+          <div id="save-draft-target" style="display:none"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script src="layout.js"></script>
+</body>
+</html>

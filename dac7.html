@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="fi" class="bg-blue-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Täytä tietosi – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body class="font-body bg-blue-50 min-h-screen">
+
+  <!-- Fixed white nav -->
+  <header class="fixed top-0 left-0 right-0 h-20 bg-white z-50">
+    <nav class="h-full max-w-screen-xxl mx-auto px-6 flex items-center justify-between gap-4">
+      <a href="index.html" aria-label="AutoVex etusivu">
+        <img src="assets/0ee90a56-efbf-4799-9249-76f362c9facf.svg"
+             alt="AutoVex"
+             class="w-[108px] h-[22px] object-contain block" />
+      </a>
+      <div class="flex items-center gap-1">
+        <a href="index.html"
+           class="hidden lg:inline-flex items-center px-5 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]"
+           style="text-decoration:none">
+          Aloita kilpailutus
+        </a>
+        <div class="flex flex-col items-center justify-center px-4 py-3 min-w-[50px] cursor-pointer">
+          <svg width="30" height="30" viewBox="0 -960 960 960" fill="#0B6DFF" aria-hidden="true">
+            <path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>
+          </svg>
+          <p id="nav-login-label" class="text-blue-600 text-xs font-semibold">Kirjaudu</p>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="h-20 bg-blue-50"></div>
+
+  <main class="px-5 sm:px-8 py-14">
+    <div class="max-w-[720px] mx-auto">
+      <div class="bg-white rounded-2xl shadow-sm p-6">
+
+        <!-- Header -->
+        <div class="flex flex-col gap-2.5 mb-9">
+          <h1 class="font-display font-bold text-[36px] leading-[40px] text-slate-900">Täytä tietosi</h1>
+          <p class="text-base leading-5 text-black">Jotta voit jatkaa AutoVexin käyttöä, täydennä henkilötietosi alla olevaan lomakkeeseen.</p>
+          <p class="text-base leading-5 text-black">Tarvitsemme tietoja liittyen aiemmin myymääsi autoon:</p>
+        </div>
+
+        <!-- Sold car list from localStorage -->
+        <div id="car-list" class="flex flex-col gap-2.5 mb-9"></div>
+
+        <!-- Form -->
+        <form id="dac7-form" class="flex flex-col gap-6 mb-9" novalidate autocomplete="off" data-form-type="other">
+
+          <!-- Henkilötunnus -->
+          <div class="flex flex-col gap-2">
+            <label for="field-hetu" class="flex items-center gap-1 text-base leading-5">
+              <span class="font-bold text-slate-900">Henkilötunnus</span>
+              <span class="font-medium text-red-500">*</span>
+            </label>
+            <input id="field-hetu" type="text" required autocomplete="off" data-lpignore="true" data-1p-ignore
+              placeholder="010101-123A"
+              class="h-14 px-4 border border-slate-400 rounded-lg text-base text-slate-900 placeholder-slate-300 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600" />
+            <p id="err-hetu" class="hidden text-sm text-red-500">Täytä tämä kenttä</p>
+          </div>
+
+          <!-- Katuosoite -->
+          <div class="flex flex-col gap-2">
+            <label for="field-street" class="flex items-center gap-1 text-base leading-5">
+              <span class="font-bold text-slate-900">Katuosoite</span>
+              <span class="font-medium text-red-500">*</span>
+            </label>
+            <input id="field-street" type="text" required autocomplete="off" data-lpignore="true" data-1p-ignore
+              placeholder="Pursimiehenkatu 29"
+              class="h-14 px-4 border border-slate-400 rounded-lg text-base text-slate-900 placeholder-slate-300 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600" />
+            <p id="err-street" class="hidden text-sm text-red-500">Täytä tämä kenttä</p>
+          </div>
+
+          <!-- Postinumero -->
+          <div class="flex flex-col gap-2">
+            <label for="field-zip" class="flex items-center gap-1 text-base leading-5">
+              <span class="font-bold text-slate-900">Postinumero</span>
+              <span class="font-medium text-red-500">*</span>
+            </label>
+            <input id="field-zip" type="text" required inputmode="numeric" autocomplete="off" data-lpignore="true" data-1p-ignore
+              placeholder="00150"
+              class="h-14 px-4 border border-slate-400 rounded-lg text-base text-slate-900 placeholder-slate-300 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600" />
+            <p id="err-zip" class="hidden text-sm text-red-500">Täytä tämä kenttä</p>
+          </div>
+
+          <!-- Postitoimipaikka -->
+          <div class="flex flex-col gap-2">
+            <label for="field-city" class="flex items-center gap-1 text-base leading-5">
+              <span class="font-bold text-slate-900">Postitoimipaikka</span>
+              <span class="font-medium text-red-500">*</span>
+            </label>
+            <input id="field-city" type="text" required autocomplete="off" data-lpignore="true" data-1p-ignore
+              placeholder="Helsinki"
+              class="h-14 px-4 border border-slate-400 rounded-lg text-base text-slate-900 placeholder-slate-300 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600" />
+            <p id="err-city" class="hidden text-sm text-red-500">Täytä tämä kenttä</p>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit"
+            class="w-full h-14 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] cursor-pointer border-0">
+            Lähetä tiedot
+          </button>
+
+        </form>
+
+        <!-- FAQ accordions -->
+        <div class="flex flex-col">
+
+          <details class="group border-b border-black/10">
+            <summary class="flex items-center gap-4 py-4 cursor-pointer list-none">
+              <span class="flex-1 font-body font-bold text-lg leading-[22px] text-slate-900">Miksi näitä tietoja pyydetään?</span>
+              <span class="text-slate-500 shrink-0">
+                <svg class="group-open:hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+                  <path d="M8.5 2v13M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="hidden group-open:block" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+                  <path d="M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </summary>
+            <p class="pb-4 text-sm leading-normal text-[#585D64]">AutoVexilla on lakisääteinen velvollisuus kerätä ja raportoida tiettyjä tietoja palvelun kautta autoja myyneistä käyttäjistä. Tämä koskee kaikkia käyttäjiä, jotka ovat myyneet yli 2 000 eurolla kalenterivuoden aikana.</p>
+          </details>
+
+          <details class="group border-b border-black/10">
+            <summary class="flex items-center gap-4 py-4 cursor-pointer list-none">
+              <span class="flex-1 font-body font-bold text-lg leading-[22px] text-slate-900">Kenen tiedot minun tulee antaa?</span>
+              <span class="text-slate-500 shrink-0">
+                <svg class="group-open:hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+                  <path d="M8.5 2v13M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="hidden group-open:block" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+                  <path d="M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </summary>
+            <p class="pb-4 text-sm leading-normal text-[#585D64]">Anna sen henkilön tiedot, jonka sähköpostiosoite on ollut auton myynti-ilmoituksessa.</p>
+          </details>
+
+          <details class="group border-b border-black/10">
+            <summary class="flex items-center gap-4 py-4 cursor-pointer list-none">
+              <span class="flex-1 font-body font-bold text-lg leading-[22px] text-slate-900">Mitä tapahtuu, jos en täytä tietoja?</span>
+              <span class="text-slate-500 shrink-0">
+                <svg class="group-open:hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+                  <path d="M8.5 2v13M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <svg class="hidden group-open:block" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
+                  <path d="M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </summary>
+            <p class="pb-4 text-sm leading-normal text-[#585D64]">Tietojen vahvistaminen on edellytys AutoVexin käytön jatkamiselle. Tietoja käytetään vain lakisääteiseen raportointiin eikä niiden toimittaminen vaikuta verotukseesi.</p>
+          </details>
+
+        </div>
+
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-av-blue flex flex-col items-center gap-[38px] pt-14 pb-14">
+    <div class="flex flex-col gap-3.5 w-full max-w-[1388px] px-5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <div class="flex gap-3.5 font-body font-bold flex-wrap">
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Käyttöehdot</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Tietosuojakäytäntö</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Evästekäytäntö</a>
+        </div>
+        <div class="flex items-center gap-4 font-body text-sm text-white">
+          <span class="font-body font-normal">© 2026 All rights reserved</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-full max-w-[1388px] px-5">
+      <img src="assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var STORE_KEY = 'autovex_funnel';
+      function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e) { return {}; } }
+
+      function escHtml(str) {
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+      }
+
+      var s = getStore();
+
+      // Update nav label with user's first name
+      var raw = ((s.contact || {}).kokoNimi || '').trim();
+      var firstName = raw ? raw.split(' ')[0] : null;
+      if (firstName) { document.getElementById('nav-login-label').textContent = firstName; }
+
+      // Render car from localStorage
+      var merkki = (s.details || {}).merkki || 'Toyota';
+      var malli  = (s.details || {}).malli  || 'Corolla';
+      var plate  = (s.hero    || {}).plate  || 'ABC-123';
+
+      var carList = document.getElementById('car-list');
+      var carRow = document.createElement('div');
+      carRow.className = 'flex items-center gap-3';
+      carRow.innerHTML =
+        '<span class="flex-1 font-body font-bold text-xl leading-[23px] text-slate-900">' + escHtml(merkki + ' ' + malli) + '</span>' +
+        '<div class="bg-white border border-slate-200 rounded flex-shrink-0">' +
+          '<div class="border-l-4 border-blue-600 pl-3 pr-1.5 py-1.5 rounded text-sm leading-4 text-slate-800 whitespace-nowrap">' +
+            escHtml(plate) +
+          '</div>' +
+        '</div>';
+      carList.appendChild(carRow);
+
+      // Form field error helpers
+      var FIELDS = [
+        { input: 'field-hetu',   error: 'err-hetu'   },
+        { input: 'field-street', error: 'err-street'  },
+        { input: 'field-zip',    error: 'err-zip'     },
+        { input: 'field-city',   error: 'err-city'    },
+      ];
+
+      FIELDS.forEach(function(f) {
+        document.getElementById(f.input).addEventListener('input', function() {
+          if (this.value.trim()) {
+            document.getElementById(f.error).classList.add('hidden');
+            this.classList.remove('border-red-500');
+            this.classList.add('border-slate-400');
+          }
+        });
+      });
+
+      // Form submit
+      document.getElementById('dac7-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var valid = true;
+        FIELDS.forEach(function(f) {
+          var inp = document.getElementById(f.input);
+          var err = document.getElementById(f.error);
+          if (!inp.value.trim()) {
+            err.classList.remove('hidden');
+            inp.classList.add('border-red-500');
+            inp.classList.remove('border-slate-400');
+            valid = false;
+          }
+        });
+        if (valid) {
+          window.location.href = 'offers.html?scenario=deal-completed';
+        }
+      });
+    })();
+  </script>
+
+</body>
+</html>

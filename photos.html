@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuvat – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .prog-ring { transition: stroke-dashoffset 0.12s linear; }
+    /* Field validation error */
+    @keyframes av-error-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      60%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+    .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
+    .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/libheif-js@1.18.2/libheif-web.js" onerror="console.warn('[AutoVex] libheif-js failed to load')"></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script>
+    // ── Shared storage helpers ──
+    const STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
+    function setStore(data) { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {} }
+
+    function initStepNav(currentStep) {
+      const s = getStore();
+      const URLS = { details:'details.html', services:'services.html', photos:'photos.html', price:'price.html', contact:'contact.html' };
+      const LOCKED          = '<img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const COMPLETE        = '<img src="assets/step-completed.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const WARNING         = '<img src="assets/step-incomplete.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const ACTIVE_EMPTY    = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-default-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_COMPLETE = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-completed.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_WARNING  = '<div class="w-7 h-7 rounded-full border-2 border-[#f59e0b] flex items-center justify-center flex-shrink-0"><img src="assets/step-incomplete-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      function isStarted(step) {
+        switch(step) {
+          case 'details':  return !!(s.details && s.details.merkki);
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; return rg.some(v=>v!=null)||!!sv.vaurio_naky||!!sv.vaurio_kolari||!!sv.korjaukset; }
+          case 'photos':   return !!(s.photosVisited||Object.values(s.photos||{}).some(a=>a&&a.length>0)||s.priceVisited||s.successVisited);
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi||c.sahkoposti||c.puhelin); }
+          default: return false;
+        }
+      }
+      function isComplete(step) {
+        switch(step) {
+          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
+          case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
+          default: return false;
+        }
+      }
+      function hasPreviouslyLeft(step) {
+        switch(step) {
+          case 'details':  return !!s.detailsLeft;
+          case 'services': return !!s.servicesLeft;
+          case 'photos':   return !!s.priceVisited;
+          default: return false;
+        }
+      }
+      document.querySelectorAll('[data-step]').forEach(el => {
+        const step     = el.dataset.step;
+        const isActive = step === currentStep;
+        const started  = isStarted(step);
+        const complete = isComplete(step);
+        const dot = el.firstElementChild;
+        if (dot) {
+          let indicator;
+          if (isActive) {
+            indicator = complete ? ACTIVE_COMPLETE : (started && hasPreviouslyLeft(step)) ? ACTIVE_WARNING : ACTIVE_EMPTY;
+          } else {
+            indicator = !started ? LOCKED : complete ? COMPLETE : WARNING;
+          }
+          dot.insertAdjacentHTML('beforebegin', indicator);
+          dot.remove();
+        }
+        const label = el.querySelector('span');
+        if (label) {
+          if (isActive) {
+            label.style.color      = '#080808';
+            label.style.fontWeight = '700';
+          } else {
+            label.style.color      = started ? '#080808' : '#475569';
+            label.style.fontWeight = '';
+          }
+        }
+        if (!isActive) {
+          if (started) {
+            el.style.cursor = 'pointer';
+            if (el.tagName === 'A') { el.href = URLS[step]; }
+            else { el.onclick = () => window.location.href = URLS[step]; }
+          } else {
+            el.style.cursor = 'default';
+            if (el.tagName === 'A') { el.removeAttribute('href'); el.onclick = e => e.preventDefault(); }
+            else { el.onclick = null; }
+          }
+        }
+      });
+    }
+
+    const SECTION_NAMES = ['ulkopuoli', 'sisatilat', 'huoltokirja', 'renkaat', 'naarmut', 'tuulilasi'];
+    let totalUploaded = 0;
+    const sectionCounts = {};
+
+    function updateCTA() {
+      const count = document.getElementById('photo-count');
+      const bar   = document.getElementById('progress-bar');
+      count.textContent = totalUploaded;
+      bar.style.width   = Math.min(totalUploaded / 5 * 100, 100) + '%';
+      const skipBtn = document.getElementById('skip-btn');
+      if (skipBtn) skipBtn.style.display = photosReady() ? 'none' : '';
+    }
+
+    function photosReady() {
+      const hasRequired = (sectionCounts['ulkopuoli'] || 0) > 0 && (sectionCounts['sisatilat'] || 0) > 0;
+      return totalUploaded >= 5 && hasRequired;
+    }
+
+    function scrollToMissingSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const container = el.querySelector('.section-container') || el;
+      container.style.outline = '2px solid #ef4444';
+      container.style.outlineOffset = '2px';
+      container.style.borderRadius = '8px';
+      container.classList.remove('av-error-pulse');
+      void container.offsetWidth;
+      container.classList.add('av-error-pulse');
+      container.addEventListener('animationend', () => container.classList.remove('av-error-pulse'), { once: true });
+      // Remove outline when user interacts with the section
+      el.addEventListener('click', () => { container.style.outline = ''; container.style.outlineOffset = ''; container.style.borderRadius = ''; }, { once: true });
+    }
+
+    function triggerSection(sectionEl) {
+      sectionEl.querySelector('input.section-input').click();
+    }
+
+    // Build a thumbnail with a progress circle (animated upload)
+    function makeThumbnail() {
+      const div = document.createElement('div');
+      div.className = 'relative h-20 bg-slate-100 rounded-md overflow-hidden ring-2 ring-av-blue shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]';
+      div.style.width = 'calc(50% - 5px)';
+      div.innerHTML = `
+        <div class="upload-progress absolute inset-0 bg-white/80 flex items-center justify-center z-20">
+          <svg class="w-10 h-10" viewBox="0 0 36 36">
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#e2e8f0" stroke-width="3"/>
+            <circle cx="18" cy="18" r="15.9155" fill="none" stroke="#0B6DFF" stroke-width="3"
+              stroke-dasharray="100" stroke-dashoffset="100" stroke-linecap="round"
+              transform="rotate(-90 18 18)" class="prog-ring"/>
+          </svg>
+        </div>
+        <img class="preview-img hidden absolute inset-0 w-full h-full object-cover" src="" alt="" />
+        <button class="delete-btn hidden absolute top-1 right-1 z-30 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center" onclick="event.stopPropagation(); deletePhoto(this)">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      `;
+      return div;
+    }
+
+    // Build a thumbnail already showing a data URL (for restoring from storage)
+    function makeRestoredThumbnail(dataUrl) {
+      const div = document.createElement('div');
+      div.className = 'restored-thumb relative h-20 bg-slate-100 rounded-md overflow-hidden ring-2 ring-av-blue shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]';
+      div.style.width = 'calc(50% - 5px)';
+      div.innerHTML = `
+        <button class="absolute top-1 right-1 z-30 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center" onclick="event.stopPropagation(); deletePhoto(this)">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      `;
+      if (isPdf(dataUrl)) {
+        div.appendChild(makePdfThumb());
+      } else if (isHeicDataUrl(dataUrl)) {
+        div.appendChild(makeHeicThumb());
+      } else {
+        const img = document.createElement('img');
+        img.className = 'absolute inset-0 w-full h-full object-cover';
+        img.src = dataUrl;
+        div.insertBefore(img, div.querySelector('button'));
+      }
+      return div;
+    }
+
+    // Resize a data URL to max `maxPx` on its longest side, saved as JPEG at 80% quality.
+    // Falls back to the original data URL if the image cannot be decoded.
+    function resizeDataUrl(dataUrl, maxPx, callback) {
+      const img = new Image();
+      img.onload = function() {
+        try {
+          let w = img.width, h = img.height;
+          if (w > maxPx || h > maxPx) {
+            if (w >= h) { h = Math.round(h * maxPx / w); w = maxPx; }
+            else        { w = Math.round(w * maxPx / h); h = maxPx; }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width  = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const result = canvas.toDataURL('image/jpeg', 0.8);
+          callback(result && result !== 'data:,' ? result : dataUrl);
+        } catch(e) {
+          callback(dataUrl);
+        }
+      };
+      img.onerror = function() { callback(dataUrl); };
+      img.src = dataUrl;
+    }
+
+    function isPdf(dataUrl) {
+      return typeof dataUrl === 'string' && dataUrl.startsWith('data:application/pdf');
+    }
+
+    function isHeicDataUrl(dataUrl) {
+      return typeof dataUrl === 'string' && /^data:image\/hei[cf]/i.test(dataUrl);
+    }
+
+    function makeDocThumb(label) {
+      const d = document.createElement('div');
+      d.className = 'absolute inset-0 bg-slate-50 flex flex-col items-center justify-center gap-1';
+      d.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:.6rem;font-weight:700;color:#ef4444;letter-spacing:.05em;font-family:'DM Sans',sans-serif;">${label}</span>`;
+      return d;
+    }
+
+    function makePdfThumb()  { return makeDocThumb('PDF');  }
+    function makeHeicThumb() { return makeDocThumb('HEIC'); }
+
+    // Persist a resized data URL for the given section name
+    function savePhotoDataUrl(sectionName, originalDataUrl) {
+      // Mark photos step visited first (small write, always succeeds)
+      const flag = getStore();
+      flag.photosVisited = true;
+      setStore(flag);
+
+      // PDFs and HEIC data URLs can't be canvas-resized — store as-is
+      if (isPdf(originalDataUrl) || isHeicDataUrl(originalDataUrl)) {
+        const s = getStore(); if (!s.photos) s.photos = {}; if (!s.photos[sectionName]) s.photos[sectionName] = [];
+        s.photos[sectionName].push(originalDataUrl); setStore(s); return;
+      }
+      // Downscale to max 500px before storing to stay within localStorage quota
+      resizeDataUrl(originalDataUrl, 500, function(resized) {
+        const s = getStore();
+        if (!s.photos) s.photos = {};
+        if (!s.photos[sectionName]) s.photos[sectionName] = [];
+        s.photos[sectionName].push(resized);
+        setStore(s);
+      });
+    }
+
+    // ── Slot helpers ─────────────────────────────────────────────
+
+    // Fill a placeholder slot in-place with an uploaded image
+    function fillSlot(slot, dataUrl, section, sectionName) {
+      slot.dataset.filled = 'true';
+      slot.classList.add('ring-2', 'ring-av-blue');
+      slot.classList.remove('cursor-pointer');
+      slot.onclick = null;
+      const hint = slot.querySelector('.slot-hint');
+      if (hint) hint.style.display = 'none';
+      if (isPdf(dataUrl)) {
+        slot.appendChild(makePdfThumb());
+      } else if (isHeicDataUrl(dataUrl)) {
+        slot.appendChild(makeHeicThumb());
+      } else {
+        const img = document.createElement('img');
+        img.className = 'absolute inset-0 w-full h-full object-cover';
+        img.src = dataUrl;
+        slot.appendChild(img);
+      }
+      const delBtn = document.createElement('button');
+      delBtn.className = 'absolute top-1 right-1 z-30 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center';
+      delBtn.innerHTML = '<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      delBtn.onclick = function(e) { e.stopPropagation(); deletePhoto(this); };
+      slot.appendChild(delBtn);
+    }
+
+    // Restore a filled placeholder slot back to its empty hint state
+    function clearSlot(slot) {
+      delete slot.dataset.filled;
+      slot.classList.remove('ring-2', 'ring-av-blue');
+      slot.classList.add('cursor-pointer');
+      slot.onclick = function() { triggerSection(this.closest('.section-container')); };
+      const hint = slot.querySelector('.slot-hint');
+      if (hint) hint.style.display = '';
+      Array.from(slot.children).forEach(child => {
+        if (!child.classList.contains('slot-hint')) child.remove();
+      });
+    }
+
+    // Re-render an entire section from stored data URLs.
+    // First N photos fill placeholder slots; any extras go into the uploaded-grid.
+    function renderSection(section, sectionName) {
+      const stored = ((getStore().photos) || {})[sectionName] || [];
+      const slots = Array.from(section.querySelectorAll('.placeholder-slot'));
+      const numSlots = slots.length;
+      const photoGrid = section.querySelector('.photo-grid');
+      const addSlot = section.querySelector('.add-slot');
+
+      slots.forEach(slot => clearSlot(slot));
+      stored.slice(0, numSlots).forEach((url, i) => fillSlot(slots[i], url, section, sectionName));
+
+      // Remove previously inserted extra thumbnails (leave placeholder-slots and add-slot intact)
+      Array.from(photoGrid.children)
+        .filter(c => !c.classList.contains('placeholder-slot') && !c.classList.contains('add-slot'))
+        .forEach(c => c.remove());
+      const extras = stored.slice(numSlots);
+      extras.forEach(url => {
+        const thumb = makeRestoredThumbnail(url);
+        photoGrid.insertBefore(thumb, addSlot);
+      });
+
+      const allSlotsFilled = slots.length > 0 && slots.every(s => s.dataset.filled === 'true');
+      if (extras.length > 0 || allSlotsFilled) {
+        addSlot.classList.remove('hidden');
+      } else {
+        addSlot.classList.add('hidden');
+      }
+    }
+
+    // Decode HEIC via libheif-js (asm.js build — no separate wasm fetch needed)
+    function decodeWithLibheif(file) {
+      return new Promise(function(resolve, reject) {
+        var lib = window.LibHeif;
+        if (!lib) { reject(new Error('LibHeif not loaded')); return; }
+        Promise.resolve(typeof lib === 'function' ? lib() : lib).then(function(module) {
+          file.arrayBuffer().then(function(buf) {
+            try {
+              var decoder = new module.HeifDecoder();
+              var images = decoder.decode(new Uint8Array(buf));
+              if (!images || !images.length) { reject(new Error('No images')); return; }
+              var image = images[0];
+              var w = image.get_width(), h = image.get_height(), max = 2000;
+              if (w > max || h > max) {
+                if (w >= h) { h = Math.round(h * max / w); w = max; }
+                else        { w = Math.round(w * max / h); h = max; }
+              }
+              var canvas = document.createElement('canvas');
+              canvas.width = w; canvas.height = h;
+              var ctx = canvas.getContext('2d');
+              var imgData = ctx.createImageData(w, h);
+              image.display(imgData, function(result) {
+                if (!result) { reject(new Error('display failed')); return; }
+                ctx.putImageData(result, 0, 0);
+                canvas.toBlob(function(blob) {
+                  blob ? resolve(blob) : reject(new Error('toBlob failed'));
+                }, 'image/jpeg', 0.90);
+              });
+            } catch(e) { reject(e); }
+          });
+        }).catch(reject);
+      });
+    }
+
+    // Convert HEIC/HEIF → JPEG; native decode first, libheif fallback, icon as last resort
+    function convertIfNeeded(file, callback) {
+      var isHeic = /image\/hei[cf]/i.test(file.type) || /\.(heic|heif)$/i.test(file.name);
+      if (!isHeic) { callback(file); return; }
+
+      function useLibheif() {
+        decodeWithLibheif(file)
+          .then(function(blob) { callback(blob); })
+          .catch(function(err) { console.warn('[AutoVex] libheif error:', err); callback(file); });
+      }
+
+      // Attempt 1: native img decode (Safari + Chrome with OS HEIC support)
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var w = img.naturalWidth, h = img.naturalHeight, max = 2000;
+        if (w > max || h > max) {
+          if (w >= h) { h = Math.round(h * max / w); w = max; }
+          else        { w = Math.round(w * max / h); h = max; }
+        }
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        URL.revokeObjectURL(url);
+        canvas.toBlob(function(blob) { blob ? callback(blob) : useLibheif(); }, 'image/jpeg', 0.90);
+      };
+      img.onerror = function() { URL.revokeObjectURL(url); useLibheif(); };
+      img.src = url;
+    }
+
+    // ── Upload handler ────────────────────────────────────────────
+
+    function handleSectionUpload(input) {
+      const files = Array.from(input.files);
+      if (!files.length) return;
+
+      const section     = input.closest('.section-container');
+      const sectionName = section.dataset.section;
+      const photoGrid = section.querySelector('.photo-grid');
+      const addSlot   = section.querySelector('.add-slot');
+
+      files.forEach(file => {
+        // Find an empty placeholder slot (not yet reserved)
+        const emptySlot = section.querySelector('.placeholder-slot:not([data-filled])');
+
+        if (emptySlot) {
+          // Reserve the slot immediately to prevent double-allocation on multi-file select
+          emptySlot.dataset.filled = 'pending';
+          convertIfNeeded(file, (fileOrBlob) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              fillSlot(emptySlot, e.target.result, section, sectionName);
+              // Show add-slot once all placeholder slots are fully filled
+              const stillEmpty = section.querySelectorAll('.placeholder-slot:not([data-filled="true"])');
+              if (stillEmpty.length === 0) addSlot.classList.remove('hidden');
+              sectionCounts[sectionName] = (sectionCounts[sectionName] || 0) + 1;
+              totalUploaded++;
+              updateCTA();
+              savePhotoDataUrl(sectionName, e.target.result);
+            };
+            reader.readAsDataURL(fileOrBlob);
+          });
+        } else {
+          // All placeholder slots full — insert before add-slot in photo-grid
+          addSlot.classList.remove('hidden');
+          const thumb = makeThumbnail();
+          photoGrid.insertBefore(thumb, addSlot);
+          const ring    = thumb.querySelector('.prog-ring');
+          const overlay = thumb.querySelector('.upload-progress');
+          const preview = thumb.querySelector('.preview-img');
+          convertIfNeeded(file, (fileOrBlob) => {
+            const reader = new FileReader();
+            reader.onprogress = (e) => {
+              if (e.lengthComputable) ring.style.strokeDashoffset = (100 - (e.loaded / e.total) * 100).toFixed(1);
+            };
+            reader.onload = (e) => {
+              ring.style.strokeDashoffset = '0';
+              setTimeout(() => {
+                overlay.classList.add('hidden');
+                if (isPdf(e.target.result)) {
+                  thumb.appendChild(makePdfThumb());
+                } else if (isHeicDataUrl(e.target.result)) {
+                  thumb.appendChild(makeHeicThumb());
+                } else {
+                  preview.src = e.target.result;
+                  preview.classList.remove('hidden');
+                }
+                thumb.querySelector('.delete-btn').classList.remove('hidden');
+                sectionCounts[sectionName] = (sectionCounts[sectionName] || 0) + 1;
+                totalUploaded++;
+                updateCTA();
+                savePhotoDataUrl(sectionName, e.target.result);
+              }, 350);
+            };
+            reader.readAsDataURL(fileOrBlob);
+          });
+        }
+      });
+
+      input.value = '';
+    }
+
+    function loadPhotos() {
+      const stored = getStore().photos || {};
+      totalUploaded = 0;
+      const sections = document.querySelectorAll('.section-container');
+      sections.forEach((section, i) => {
+        const name = SECTION_NAMES[i];
+        section.dataset.section = name;
+        const count = (stored[name] || []).length;
+        sectionCounts[name] = count;
+        totalUploaded += count;
+        if (count > 0) renderSection(section, name);
+      });
+      updateCTA();
+    }
+
+    function deletePhoto(btn) {
+      const section     = btn.closest('.section-container');
+      const sectionName = section.dataset.section;
+      const slots       = Array.from(section.querySelectorAll('.placeholder-slot'));
+      const photoGrid = section.querySelector('.photo-grid');
+
+      // Determine storage index
+      let idx;
+      const slot = btn.closest('.placeholder-slot');
+      if (slot) {
+        idx = slots.indexOf(slot);
+      } else {
+        const thumb  = btn.closest('.relative');
+        const thumbs = Array.from(photoGrid.children)
+          .filter(el => !el.classList.contains('add-slot') && !el.classList.contains('placeholder-slot'));
+        idx = slots.length + thumbs.indexOf(thumb);
+      }
+
+      // Remove from storage
+      const s = getStore();
+      if (s.photos && s.photos[sectionName] && idx >= 0) {
+        s.photos[sectionName].splice(idx, 1);
+        if (s.photos[sectionName].length === 0) delete s.photos[sectionName];
+        setStore(s);
+      }
+
+      sectionCounts[sectionName] = Math.max(0, (sectionCounts[sectionName] || 0) - 1);
+      totalUploaded = Math.max(0, totalUploaded - 1);
+      updateCTA();
+      renderSection(section, sectionName);
+    }
+
+    function skipPhotos() {
+      document.getElementById('skip-photos-modal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSkipModal() {
+      document.getElementById('skip-photos-modal').style.display = 'none';
+      document.body.style.overflow = '';
+    }
+
+    function confirmSkipPhotos() {
+      closeSkipModal();
+      window.location.href = 'price.html';
+    }
+
+    function ctaNavigate() {
+      if (!photosReady()) {
+        if ((sectionCounts['ulkopuoli'] || 0) === 0) {
+          scrollToMissingSection('section-ulkopuoli');
+        } else if ((sectionCounts['sisatilat'] || 0) === 0) {
+          scrollToMissingSection('section-sisatilat');
+        } else {
+          // Have required sections but < 5 total — scroll to ulkopuoli to add more
+          scrollToMissingSection('section-ulkopuoli');
+        }
+        return;
+      }
+      const from = new URLSearchParams(window.location.search).get('from');
+      window.location = from === 'success' ? 'success.html' : 'price.html';
+    }
+
+    window.addEventListener('DOMContentLoaded', function() {
+      loadPhotos();
+      initStepNav('photos');
+      // Show tuulilasi photo section only when windshield has damage
+      const sv = getStore().services || {};
+      const rg = Array.isArray(sv.radioGroups) ? sv.radioGroups : [];
+      if (rg[3] && rg[3] !== 'Ehjä') {
+        document.getElementById('tuulilasi-photo-section').style.display = 'flex';
+      }
+    });
+
+    // When the browser restores the page from bfcache (browser back button),
+    // DOMContentLoaded doesn't fire again — re-render all sections from storage.
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) {
+        totalUploaded = 0;
+        Object.keys(sectionCounts).forEach(k => { sectionCounts[k] = 0; });
+        loadPhotos();
+        initStepNav('photos');
+      }
+    });
+  </script>
+</head>
+<body class="font-dm bg-white min-h-screen">
+
+  <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
+    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 max-md:flex-col max-md:px-0 max-md:gap-0">
+
+      <!-- ── Left column ── -->
+      <div class="flex-1 flex flex-col items-start gap-6 max-w-[512px] max-md:max-w-full max-md:w-full max-md:px-5 max-md:pt-5 max-md:pb-8">
+
+        <!-- Logo -->
+        <a href="index.html" aria-label="Takaisin etusivulle">
+          <img src="assets/4139c083-6999-4751-b94f-68fe6346603f.svg"
+               alt="AutoVex"
+               class="w-[88px] h-[18px] object-contain block" />
+        </a>
+
+        <!-- Step navigation -->
+        <nav aria-label="Vaiheet" class="w-full flex items-start pb-3">
+          <div data-step="details" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.details">Varusteet</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="services" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.service">Huollot<br>&amp; kunto</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="photos" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.photos">Kuvat</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="price" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.price">Hinta</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="contact" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.contact">Yhteys</span>
+          </div>
+        </nav>
+
+        <!-- Headline + intro -->
+        <div class="flex flex-col gap-2.5 w-full">
+          <h1 class="font-barlow font-bold text-slate-900 text-2xl leading-[26px]" data-i18n="photos.title">Lisää vielä kuvat</h1>
+          <p class="font-dm text-base leading-5 text-black" data-i18n="photos.subtitle">Viisi selkeää, puhelimella otettua kuvaa riittää hyvin.</p>
+          <button onclick="openPhotoTipsModal()" class="flex items-center gap-1.5 mt-1">
+            <img src="assets/0edf1f20-ec72-4fd0-b1e9-e9b2f798ef2d.svg" class="w-3.5 h-3.5" alt="" />
+            <span class="font-dm font-medium text-base leading-5 text-av-blue" data-i18n="photos.tipsTitle">Vinkkimme parhaisiin kuviin</span>
+          </button>
+        </div>
+
+        <!-- Photo count indicator -->
+        <div class="w-full flex items-center gap-2">
+          <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div id="progress-bar" class="h-full bg-av-blue rounded-full transition-all duration-300" style="width:0%"></div>
+          </div>
+          <span class="font-dm text-sm leading-5 text-slate-500 whitespace-nowrap"><span id="photo-count">0</span> / 5 kuvaa</span>
+        </div>
+
+        <!-- ── Required sections ── -->
+        <div class="w-full flex flex-col gap-10 md:gap-16">
+
+        <!-- Ulkopuoli -->
+        <div id="section-ulkopuoli" class="w-full flex flex-col gap-2">
+          <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+            <span data-i18n="photos.exterior">Ulkopuoli</span> <span class="text-red-500 font-medium">*</span>
+          </div>
+          <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
+            <div class="photo-grid flex flex-wrap gap-2.5">
+              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/f31f1c0c-6c0a-47c0-8d94-61ba2b021a1d.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/42e9d6b8-61c9-4729-9154-3de054d86680.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/64075db4-9ebd-4c4a-b04a-a5a9b5b964f7.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/11db3357-b60f-4312-97a0-953e518025b1.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+            </div>
+            <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+          </div>
+        </div>
+
+        <!-- Sisätilat -->
+        <div id="section-sisatilat" class="w-full flex flex-col gap-2">
+          <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+            <span data-i18n="photos.interior">Sisätilat</span> <span class="text-red-500 font-medium">*</span>
+          </div>
+          <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
+            <div class="photo-grid flex flex-wrap gap-2.5">
+              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/18f3969c-4149-4d1e-ac00-6eda86313a87.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+            </div>
+            <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+          </div>
+        </div>
+
+        <!-- ── Optional section ── -->
+        <div class="w-full flex flex-col gap-10 md:gap-16">
+          <div class="flex flex-col gap-1">
+            <h2 class="font-barlow font-bold text-slate-900 text-xl leading-[23px]" data-i18n="photos.optionalTitle">Valinnaiset lisäkuvat</h2>
+            <p class="font-dm text-base leading-5 text-black" data-i18n="photos.optionalBody">Näillä lisäät ostajan luottamusta ja voit parantaa tarjouksia.</p>
+          </div>
+
+          <!-- Huoltokirja -->
+          <div class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.serviceBook">Huoltokirja</div>
+            <p class="font-dm text-xs text-slate-500 -mt-1" data-i18n="photos.serviceBookHint">Voit ladata kuvia tai PDF-tiedostoja</p>
+            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
+              <div class="photo-grid flex flex-wrap gap-2.5">
+                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/f09754df-5293-4176-ad94-b407336adfb8.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+              </div>
+              <input type="file" accept="image/*,application/pdf" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+            </div>
+          </div>
+
+          <!-- Renkaat -->
+          <div class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.tyres">Renkaat</div>
+            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
+              <div class="photo-grid flex flex-wrap gap-2.5">
+                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/8454b159-fd20-48ea-b9ad-e56f903c727e.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+              </div>
+              <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+            </div>
+          </div>
+
+          <!-- Naarmut tai kolhut -->
+          <div class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.scratches">Naarmut tai kolhut</div>
+            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
+              <div class="photo-grid flex flex-wrap gap-2.5">
+                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/47d03926-fe55-47b1-8e34-677c13e776d9.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+              </div>
+              <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+            </div>
+          </div>
+
+          <!-- Tuulilasin vauriot (shown only when tuulilasi is not Ehjä) -->
+          <div id="tuulilasi-photo-section" class="flex flex-col gap-2" style="display:none;">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.windshield">Tuulilasin vauriot</div>
+            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
+              <div class="photo-grid flex flex-wrap gap-2.5">
+                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/205e2397-44f2-41f8-bc68-7ea08bb6c108.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+              </div>
+              <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+            </div>
+          </div>
+        </div>
+
+        </div><!-- /photo sections -->
+
+        <!-- ── Actions ── -->
+        <div class="w-full flex flex-col gap-4 pb-4">
+          <button id="cta-btn" onclick="ctaNavigate()"
+            class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] transition-all hover:bg-[#0A59EB] cursor-pointer">
+            <span data-i18n="btn.continue">Jatka</span>
+            <img src="assets/9d85c0c9-f908-4a9d-8fc4-c9e24f312e91.svg" class="w-6 h-6" alt="" />
+          </button>
+          <button id="skip-btn" onclick="skipPhotos()"
+            class="w-full h-14 bg-white font-dm font-medium text-base text-av-blue rounded-lg flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors">
+            <span data-i18n="photos.skipBtn">Lisään kuvat myöhemmin</span>
+          </button>
+          <div class="flex items-center justify-center">
+            <a href="services.html" class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Right column (cream) ── -->
+      <div id="right-col" class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col justify-between max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:gap-4 max-md:justify-start max-md:rounded-none max-md:px-5 max-md:py-8">
+        <div id="right-col-spacer"></div>
+        <div class="bg-white rounded-xl p-5 flex items-center gap-5 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)] max-md:order-2">
+          <div class="w-[67px] h-[100px] flex-shrink-0 overflow-hidden">
+            <img src="assets/30ed09dd-b6bd-4c39-913f-cd1e9be5a291.png"
+                 class="w-full h-full object-cover"
+                 style="transform: scaleY(-1) rotate(180deg);"
+                 alt="" />
+          </div>
+          <div class="flex-1 flex flex-col gap-4">
+            <p class="font-barlow font-bold text-[#020617]" style="font-size:24px;line-height:26px;" data-i18n="sidebar.title">Erinomainen aika myydä</p>
+            <p class="font-dm text-base leading-5 text-black" data-i18n="sidebar.body">Autokauppa käy kuumana! Olemme myyneet jo yli 70 000 autoa!</p>
+          </div>
+        </div>
+        <!-- Save draft / Jatka myöhemmin -->
+        <div class="max-md:order-1">
+          <div id="save-draft-target" style="display:none"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- Skip photos confirmation modal -->
+<div id="skip-photos-modal" style="display:none;" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+  <div onclick="closeSkipModal()" class="absolute inset-0 bg-black/50"></div>
+  <div class="relative w-full max-w-sm bg-white rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.25)]">
+    <div class="p-6 pb-0">
+      <p class="font-barlow font-bold text-slate-900 text-lg leading-snug mb-2.5" data-i18n="photos.skipTitle">Ohitetaanko kuvat?</p>
+      <p class="font-dm text-base leading-5 text-slate-600" data-i18n="photos.skipBody">Ilmoituksesi lähetetään ilman kuvia. Voit palata lisäämään kuvat myöhemmin – hyvät kuvat parantavat tarjouksia merkittävästi.</p>
+    </div>
+    <div class="flex gap-3 p-5">
+      <button onclick="closeSkipModal()"
+        class="flex-1 h-11 border border-slate-300 bg-white rounded-lg font-dm font-medium text-base text-slate-600 cursor-pointer hover:bg-slate-50 transition-colors"
+        data-i18n="btn.cancel">
+        Peruuta
+      </button>
+      <button onclick="confirmSkipPhotos()"
+        class="flex-1 h-11 bg-av-blue border-none rounded-lg font-dm font-medium text-base text-white cursor-pointer hover:bg-[#0A59EB] transition-colors"
+        data-i18n="photos.skipConfirm">
+        Jatka ilman kuvia
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Photo tips modal -->
+<div id="photo-tips-modal" style="display:none;" class="fixed inset-0 z-50 flex items-end md:items-center justify-center">
+  <!-- Backdrop -->
+  <div onclick="closePhotoTipsModal()" class="absolute inset-0 bg-black/50"></div>
+  <!-- Sheet -->
+  <div class="relative w-full md:max-w-lg bg-white rounded-t-2xl md:rounded-2xl flex flex-col max-h-[85vh] md:max-h-[80vh]">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-5 pt-5 pb-4 border-b border-slate-100 flex-shrink-0">
+      <h2 class="font-barlow font-bold text-slate-900 text-xl leading-[23px]" data-i18n="photos.tipsTitle">Vinkkimme parhaisiin kuviin</h2>
+      <button onclick="closePhotoTipsModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors flex-shrink-0" aria-label="Sulje">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M14 4L4 14M4 4l10 10" stroke="#475569" stroke-width="1.75" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <!-- Scrollable content -->
+    <div class="overflow-y-auto px-5 py-5 flex flex-col gap-6">
+
+      <!-- Required -->
+      <div class="flex flex-col gap-4">
+        <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.tipsRequiredTitle">Pakolliset kuvat</p>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="photos.tipsExteriorTitle">Ulkopuoli</p>
+          <p class="font-dm text-base leading-5 text-slate-700" data-i18n="photos.tipsExteriorBody">Ota vähintään neljä kuvaa: etuosa, takaosa ja molemmat sivut. Kuvaa päivänvalossa ulkona tai kirkkaassa valaistuksessa. Vältä varjoja ja heijastuksia. Auto kannattaa pestä ennen kuvaamista – siisteys näkyy ja vaikuttaa tarjouksiin.</p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="photos.tipsInteriorTitle">Sisätilat</p>
+          <p class="font-dm text-base leading-5 text-slate-700" data-i18n="photos.tipsInteriorBody">Kuvaa kojelauta, etupenkit ja takapenkit. Jos tavaratila on tilavuudeltaan merkittävä, ota kuva myös siitä. Hyvät sisäkuvat kertovat välittömästi auton siisteyden tasosta ja yleisestä kunnosta.</p>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100"></div>
+
+      <!-- Optional -->
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-1">
+          <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.tipsOptionalTitle">Lisäkuvat – valinnaisia, mutta kannattavia</p>
+          <p class="font-dm text-base leading-5 text-slate-600" data-i18n="photos.tipsOptionalBody">Autoliikkeet tekevät tarjouksia nopeammin ja rohkeammin, kun autosta on kattava dokumentaatio. Mitä avoimempi olet, sitä vähemmän on epäselvyyksiä – ja sitä korkeammalle tarjoukset tyypillisesti nousevat.</p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="photos.tipsServiceBookTitle">Huoltokirja</p>
+          <p class="font-dm text-base leading-5 text-slate-700" data-i18n="photos.tipsServiceBookBody">Huoltokirja on ostajille yksi tärkeimmistä luottamussignaaleista. Kuva siitä osoittaa säännöllisen huoltohistorian ja voi selvästi nostaa tarjousten tasoa.</p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="photos.tipsTyresTitle">Renkaat</p>
+          <p class="font-dm text-base leading-5 text-slate-700" data-i18n="photos.tipsTyresBody">Kuva renkaista auttaa ostajia arvioimaan jäljellä olevan kulutuspinnan. Erityisen hyödyllinen, jos renkaat ovat hyvässä kunnossa – se on myyntiargumentti, jota kannattaa hyödyntää.</p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="photos.tipsScratchesTitle">Naarmut tai kolhut</p>
+          <p class="font-dm text-base leading-5 text-slate-700" data-i18n="photos.tipsScratchesBody">Avoin dokumentointi vioista rakentaa luottamusta ja poistaa epäselvyydet heti. Ostaja tietää mitä odottaa, ja kaupanteko sujuu nopeammin ilman ikäviä yllätyksiä.</p>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="photos.tipsWindshieldTitle">Tuulilasin vauriot</p>
+          <p class="font-dm text-base leading-5 text-slate-700" data-i18n="photos.tipsWindshieldBody">Kuvaa vaurio läheltä niin, että sen laajuus näkyy selkeästi. Tämä auttaa autoliikkeitä arvioimaan korjaustarpeen etukäteen ja tekemään tarkemman tarjouksen.</p>
+        </div>
+      </div>
+
+    </div>
+    <!-- Footer -->
+    <div class="px-5 py-4 border-t border-slate-100 flex-shrink-0">
+      <button onclick="closePhotoTipsModal()"
+        class="w-full h-12 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center cursor-pointer hover:bg-[#0A59EB] transition-colors"
+        data-i18n="photos.tipsDismiss">
+        Selvä, kiitos!
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openPhotoTipsModal() {
+    document.getElementById('photo-tips-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closePhotoTipsModal() {
+    document.getElementById('photo-tips-modal').style.display = 'none';
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      closePhotoTipsModal();
+      closeSkipModal();
+    }
+  });
+</script>
+<script src="mobile-upload-widget.js"></script>
+<script src="layout.js"></script>
+</body>
+</html>

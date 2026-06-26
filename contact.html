@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yhteystiedot – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom checkbox */
+    .av-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1px solid #94a3b8;
+      border-radius: 2px;
+      background: white;
+      flex-shrink: 0;
+      cursor: pointer;
+      position: relative;
+      margin: 0;
+    }
+    .av-checkbox:checked {
+      background: #0B6DFF;
+      border-color: #0B6DFF;
+    }
+    .av-checkbox:checked::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 1px;
+      width: 5px;
+      height: 9px;
+      border: 2px solid white;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+    /* Field validation error */
+    @keyframes av-error-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      60%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+    .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
+    .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+  </style>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script>
+    // ── Shared storage helpers ──
+    const STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
+    function setStore(data) { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {} }
+
+    function initStepNav(currentStep) {
+      const s = getStore();
+      const URLS = { details:'details.html', services:'services.html', photos:'photos.html', price:'price.html', contact:'contact.html' };
+      const LOCKED          = '<img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const COMPLETE        = '<img src="assets/step-completed.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const WARNING         = '<img src="assets/step-incomplete.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
+      const ACTIVE_EMPTY    = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-default-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_COMPLETE = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-completed.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      const ACTIVE_WARNING  = '<div class="w-7 h-7 rounded-full border-2 border-[#f59e0b] flex items-center justify-center flex-shrink-0"><img src="assets/step-incomplete-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
+      function isStarted(step) {
+        switch(step) {
+          case 'details':  return !!(s.details && s.details.merkki);
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; return rg.some(v=>v!=null)||!!sv.vaurio_naky||!!sv.vaurio_kolari||!!sv.korjaukset; }
+          case 'photos':   return !!(s.photosVisited||Object.values(s.photos||{}).some(a=>a&&a.length>0)||s.priceVisited||s.successVisited);
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi||c.sahkoposti||c.puhelin); }
+          default: return false;
+        }
+      }
+      function isComplete(step) {
+        switch(step) {
+          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
+          case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
+          case 'price':    return !!s.priceVisited;
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
+          default: return false;
+        }
+      }
+      function hasPreviouslyLeft(step) {
+        switch(step) {
+          case 'details':  return !!s.detailsLeft;
+          case 'services': return !!s.servicesLeft;
+          case 'photos':   return !!s.priceVisited;
+          default: return false;
+        }
+      }
+      document.querySelectorAll('[data-step]').forEach(el => {
+        const step     = el.dataset.step;
+        const isActive = step === currentStep;
+        const started  = isStarted(step);
+        const complete = isComplete(step);
+        const dot = el.firstElementChild;
+        if (dot) {
+          let indicator;
+          if (isActive) {
+            indicator = complete ? ACTIVE_COMPLETE : (started && hasPreviouslyLeft(step)) ? ACTIVE_WARNING : ACTIVE_EMPTY;
+          } else {
+            indicator = !started ? LOCKED : complete ? COMPLETE : WARNING;
+          }
+          dot.insertAdjacentHTML('beforebegin', indicator);
+          dot.remove();
+        }
+        const label = el.querySelector('span');
+        if (label) {
+          if (isActive) {
+            label.style.color      = '#080808';
+            label.style.fontWeight = '700';
+          } else {
+            label.style.color      = started ? '#080808' : '#475569';
+            label.style.fontWeight = '';
+          }
+        }
+        if (!isActive) {
+          if (started) {
+            el.style.cursor = 'pointer';
+            if (el.tagName === 'A') { el.href = URLS[step]; }
+            else { el.onclick = () => window.location.href = URLS[step]; }
+          } else {
+            el.style.cursor = 'default';
+            if (el.tagName === 'A') { el.removeAttribute('href'); el.onclick = e => e.preventDefault(); }
+            else { el.onclick = null; }
+          }
+        }
+      });
+    }
+
+    function scrollAndPulse(el) {
+      if (!el) return;
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.remove('av-error-pulse');
+      void el.offsetWidth;
+      el.classList.add('av-error-pulse');
+      el.addEventListener('animationend', () => el.classList.remove('av-error-pulse'), { once: true });
+    }
+
+    function setFieldError(inputEl, msg) {
+      // Resolve the visual target: the element that gets the outline and pulse.
+      // - Checkbox → its parent <label> (so the full label text is highlighted, not just the 16px box)
+      // - Input inside a flex row (phone with country selector) → the flex row wrapper
+      // - Everything else → the input itself
+      let target = inputEl;
+      if (inputEl.type === 'checkbox') {
+        target = inputEl.closest('label') || inputEl;
+      } else if (!inputEl.parentNode.classList.contains('flex-col')) {
+        target = inputEl.parentNode;
+      }
+
+      const isDirectInput = target === inputEl;
+      target.style.outline = '2px solid #ef4444';
+      target.style.outlineOffset = isDirectInput ? '-2px' : '4px';
+      if (!isDirectInput) target.style.borderRadius = '8px';
+
+      const errId = 'err-' + inputEl.id;
+      let err = document.getElementById(errId);
+      if (!err) {
+        err = document.createElement('p');
+        err.id = errId;
+        err.className = 'av-error-msg';
+        target.parentNode.insertBefore(err, target.nextSibling);
+      }
+      err.textContent = msg;
+
+      const clear = () => {
+        target.style.outline = '';
+        target.style.outlineOffset = '';
+        if (!isDirectInput) target.style.borderRadius = '';
+        document.getElementById(errId)?.remove();
+      };
+      inputEl.addEventListener('input', clear, { once: true });
+      inputEl.addEventListener('change', clear, { once: true });
+
+      return target; // caller passes this to scrollAndPulse
+    }
+
+    function validateContact(e) {
+      e.preventDefault();
+      const nimi    = document.getElementById('koko-nimi');
+      const puhelin = document.getElementById('puhelin');
+      const sposti  = document.getElementById('sahkoposti');
+      const ehdot   = document.getElementById('kayttoehdot');
+
+      let firstTarget = null;
+
+      if (!nimi.value.trim()) {
+        const tgt = setFieldError(nimi, t('contact.nameError'));
+        if (!firstTarget) firstTarget = tgt;
+      }
+      if (!puhelin.value.trim()) {
+        const tgt = setFieldError(puhelin, t('contact.phoneError'));
+        if (!firstTarget) firstTarget = tgt;
+      }
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sposti.value.trim());
+      if (!emailOk) {
+        const tgt = setFieldError(sposti, sposti.value.trim() ? t('contact.emailInvalidError') : t('contact.emailEmptyError'));
+        if (!firstTarget) firstTarget = tgt;
+      }
+      if (!ehdot.checked) {
+        const tgt = setFieldError(ehdot, t('contact.termsError'));
+        if (!firstTarget) firstTarget = tgt;
+      }
+
+      if (firstTarget) {
+        scrollAndPulse(firstTarget);
+        return;
+      }
+
+      saveContact();
+      // New submission always starts with an unverified email (clears flags
+      // left over from a previous run, incl. the DAC7 completion)
+      const s = getStore();
+      s.emailVerified = false;
+      s.dac7Completed = false;
+      setStore(s);
+      window.location.href = 'success.html';
+    }
+
+    function saveContact() {
+      const s = getStore();
+      s.contact = {
+        kokoNimi:     document.getElementById('koko-nimi').value,
+        sahkoposti:   document.getElementById('sahkoposti').value,
+        puhelin:      document.getElementById('puhelin').value,
+        kayttoehdot:  document.getElementById('kayttoehdot').checked,
+        markkinointi: document.getElementById('markkinointi').checked,
+      };
+      setStore(s);
+    }
+
+    function loadContact() {
+      const d = getStore().contact || {};
+      if (d.kokoNimi     !== undefined) document.getElementById('koko-nimi').value       = d.kokoNimi;
+      if (d.sahkoposti   !== undefined) document.getElementById('sahkoposti').value      = d.sahkoposti;
+      if (d.puhelin      !== undefined) document.getElementById('puhelin').value         = d.puhelin;
+      if (d.kayttoehdot  !== undefined) document.getElementById('kayttoehdot').checked   = d.kayttoehdot;
+      if (d.markkinointi !== undefined) document.getElementById('markkinointi').checked  = d.markkinointi;
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadContact();
+      initStepNav('contact');
+      ['koko-nimi','sahkoposti','puhelin'].forEach(id => {
+        document.getElementById(id)?.addEventListener('input', saveContact);
+      });
+      ['kayttoehdot','markkinointi'].forEach(id => {
+        document.getElementById(id)?.addEventListener('change', saveContact);
+      });
+
+      // Treatment B: update right column bullets for asking-price path
+      const s = getStore();
+      if (s.priceMode === 'asking') {
+        document.getElementById('contact-step1-title').textContent = t('nextSteps.step1TitleAsk');
+        document.getElementById('contact-step1-body').textContent = t('nextSteps.step1BodyAskContact');
+        document.getElementById('contact-step2-title').textContent = t('nextSteps.step2TitleAsk');
+        document.getElementById('contact-step2-body').textContent = t('nextSteps.step2BodyAsk');
+        document.getElementById('contact-step3-title').textContent = t('nextSteps.step3TitleAsk');
+        document.getElementById('contact-step3-body').textContent = t('nextSteps.step3BodyAsk');
+      }
+    });
+
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) initStepNav('contact');
+    });
+  </script>
+</head>
+<body class="font-dm bg-white min-h-screen">
+
+  <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
+    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 max-md:flex-col max-md:px-0 max-md:gap-0">
+
+      <!-- ── Left column ── -->
+      <div class="flex-1 flex flex-col items-start gap-6 max-w-[512px] max-md:max-w-full max-md:w-full max-md:px-5 max-md:pt-5 max-md:pb-8">
+
+        <!-- Logo -->
+        <a href="index.html" aria-label="Takaisin etusivulle">
+          <img src="assets/27d3e903-c743-4381-b374-6416dff1c0f2.svg"
+               alt="AutoVex"
+               class="w-[88px] h-[18px] object-contain block" />
+        </a>
+
+        <!-- Step navigation -->
+        <nav aria-label="Vaiheet" class="w-full flex items-start pb-3">
+          <div data-step="details" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.details">Varusteet</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="services" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.service">Huollot<br>&amp; kunto</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="photos" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.photos">Kuvat</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="price" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.price">Hinta</span>
+          </div>
+          <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
+          <div data-step="contact" class="flex flex-col items-center gap-2 flex-1 min-w-0">
+            <div class="w-7 h-7 flex-shrink-0"></div>
+            <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.contact">Yhteys</span>
+          </div>
+        </nav>
+
+        <!-- Headline + intro -->
+        <div class="flex flex-col gap-2.5 w-full">
+          <h1 class="font-barlow font-bold text-slate-900 text-2xl leading-[26px]" data-i18n="contact.title">Miten voimme tavoittaa sinut?</h1>
+          <p class="font-dm text-base leading-5 text-black" data-i18n="contact.subtitle">Olemme tarvittaessa sinuun yhteydessä tarjouskilpailuun liittyen. Ostava autoliike ottaa yhteyttä, jos hyväksyt tarjouksen.</p>
+        </div>
+
+        <!-- Form -->
+        <form class="w-full flex flex-col gap-10 md:gap-16" onsubmit="validateContact(event)">
+
+          <!-- Koko nimi -->
+          <div class="flex flex-col gap-2 w-full">
+            <label for="koko-nimi" class="flex items-center gap-1 font-dm font-bold text-base leading-5 text-slate-900">
+              <span data-i18n="contact.nameLabel">Koko nimi</span> <span class="text-red-500 font-medium">*</span>
+            </label>
+            <input id="koko-nimi" type="text" placeholder="Etunimi Sukunimi" data-i18n-placeholder="contact.namePlaceholder"
+              class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
+          </div>
+
+          <!-- Puhelinnumero -->
+          <div class="flex flex-col gap-2 w-full">
+            <label for="puhelin" class="flex items-center gap-1 font-dm font-bold text-base leading-5 text-slate-900">
+              <span data-i18n="contact.phoneLabel">Puhelinnumero</span> <span class="text-red-500 font-medium">*</span>
+            </label>
+            <div class="flex w-full">
+              <!-- Country selector -->
+              <div class="h-14 w-[75px] flex-shrink-0 border border-slate-400 rounded-l-lg bg-white flex items-center justify-between px-3 cursor-pointer">
+                <span class="text-base leading-5">🇫🇮</span>
+                <img src="assets/9841766b-6fb0-4c94-a37b-c9d847a3f0c2.svg" class="w-4 h-4" alt="" />
+              </div>
+              <!-- Number input -->
+              <input id="puhelin" type="tel" placeholder="+358401234567" data-i18n-placeholder="contact.phonePlaceholder"
+                class="flex-1 h-14 border-t border-r border-b border-slate-400 rounded-r-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
+            </div>
+          </div>
+
+          <!-- Sähköposti -->
+          <div id="sahkoposti-row" class="flex flex-col gap-2 w-full">
+            <label for="sahkoposti" class="flex items-center gap-1 font-dm font-bold text-base leading-5 text-slate-900">
+              <span data-i18n="contact.emailLabel">Sähköposti</span> <span class="text-red-500 font-medium">*</span>
+            </label>
+            <input id="sahkoposti" type="text" inputmode="email" autocomplete="email" placeholder="Sähköpostiosoitteesi" data-i18n-placeholder="contact.emailPlaceholder"
+              class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
+          </div>
+
+          <!-- Checkboxes -->
+          <div class="flex flex-col gap-3.5 w-full">
+            <!-- Terms -->
+            <label class="flex items-start gap-2.5 cursor-pointer">
+              <input id="kayttoehdot" type="checkbox" class="av-checkbox mt-0.5" />
+              <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n-html="contact.termsLabel">
+                Hyväksyn AutoVexin <a href="#" class="text-av-blue underline hover:text-av-blue-dark">käyttöehdot</a> <span class="text-red-500">*</span>
+              </span>
+            </label>
+            <!-- Marketing -->
+            <label class="flex items-start gap-2.5 cursor-pointer">
+              <input id="markkinointi" type="checkbox" class="av-checkbox mt-0.5" />
+              <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n="contact.marketingLabel">
+                Haluan vastaanottaa mielenkiintoista sisältöä ja vinkkejä auton myyntiin sähköpostitse.
+              </span>
+            </label>
+          </div>
+
+          <!-- CTA -->
+          <button type="submit"
+            class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors mt-1">
+            <span data-i18n="contact.submitBtn">Lähetä tarkastukseen</span>
+            <img src="assets/2298f807-f79d-4913-a748-1d256742f181.svg" class="w-6 h-6" alt="" />
+          </button>
+
+          <!-- Back link -->
+          <div class="flex items-center justify-center w-full">
+            <a href="price.html" class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- ── Right column (cream) ── -->
+      <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+
+        <h2 class="font-dm font-bold text-black text-xl leading-[23px]" data-i18n="nextSteps.title">Mitä tapahtuu seuraavaksi?</h2>
+
+        <div class="flex flex-col gap-5">
+          <!-- Step 1 -->
+          <div class="flex gap-2 items-start">
+            <img src="assets/ab3a3854-b859-449e-a101-124a48afb129.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
+            <div class="flex flex-col gap-0.5">
+              <p id="contact-step1-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step1Title">Ilmoituksesi tarkistetaan</p>
+              <p id="contact-step1-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step1Body">Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.</p>
+            </div>
+          </div>
+          <!-- Step 2 -->
+          <div class="flex gap-2 items-start">
+            <img src="assets/3748cbfa-5a5c-4240-a8b2-15e15b0fe60d.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="2" />
+            <div class="flex flex-col gap-0.5">
+              <p id="contact-step2-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step2Title">Tarjouskilpailu käynnissä</p>
+              <p id="contact-step2-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step2Body">Tarjouskilpailu kestää tyypillisesti 36 tuntia. Tarkkailethan sähköpostiasi.</p>
+            </div>
+          </div>
+          <!-- Step 3 -->
+          <div class="flex gap-2 items-start">
+            <img src="assets/4e9b9909-d196-4d82-9a55-97a7d2146430.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="3" />
+            <div class="flex flex-col gap-0.5">
+              <p id="contact-step3-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step3Title">Tarjouskilpailu päättynyt – katso tulokset!</p>
+              <p id="contact-step3-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step3Body">Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Save draft / Jatka myöhemmin -->
+        <div class="mt-auto">
+          <div id="save-draft-target" style="display:none"></div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  <script src="layout.js"></script>
+</body>
+</html>

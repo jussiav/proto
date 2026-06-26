@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoVex – Kilpailutamme autoliikkeet puolestasi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':     '#0B6DFF',
+            'av-blue-dark':'#0050C8',
+            'av-blue-500': '#2890FF',
+            'av-dark':     '#08234D',
+            'av-turquoise':'#00F0DC',
+            'av-sky':      '#DAF0F5',
+            'av-peach':    '#F5AB84',
+            'av-cream':    '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <style>
+    /* EU stars inside the FIN badge */
+    .eu-stars { width: 20px; height: 20px; }
+
+    /* Logo marquee */
+    @keyframes marquee-ltr { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes marquee-rtl { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      width: max-content;
+      will-change: transform;
+      height: 48px;
+    }
+    .logo-row-ltr { animation: marquee-ltr 90s linear infinite; }
+    .logo-row-rtl { animation: marquee-rtl 90s linear infinite; }
+
+    .logo-carousel-wrap {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+      mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+    }
+    .logo-row img {
+      height: 100%;
+      width: auto;
+      max-width: 96px;
+      object-fit: contain;
+      object-position: center;
+      flex-shrink: 0;
+      opacity: 1;
+    }
+
+    /* About section car */
+    .about-car {
+      position: absolute;
+      bottom: 0;
+      left: 55%;
+      width: 100%;
+      height: 100%;
+      background-image: url('assets/about-car.jpg');
+      background-size: cover;
+      background-position: center bottom;
+      transform: scaleX(-1);
+      z-index: 1;
+    }
+    @media (max-width: 767px) {
+      .about-car {
+        left: 80%;
+        width: 600px;
+        height: 220px;
+      }
+    }
+
+    /* Reviews carousel – hide scrollbar */
+    .reviews-track::-webkit-scrollbar { display: none; }
+
+    /* Stats map – hide background on small screens */
+    @media (max-width: 767px) {
+      .stats-map-section { background-image: none !important; }
+    }
+
+    /* Field validation error */
+    @keyframes av-error-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
+      60%  { box-shadow: 0 0 0 10px rgba(239,68,68,0); }
+      100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); }
+    }
+    .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; border-radius: 8px; }
+    .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .faq-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s ease; }
+    .faq-body > div { overflow: hidden; }
+    .faq-item.open .faq-body { grid-template-rows: 1fr; }
+
+  </style>
+</head>
+<body class="font-dm bg-white text-slate-900">
+
+  <div id="site-nav"></div>
+
+  <main>
+
+  <!-- ── Hero ── -->
+  <section id="hero-section" class="flex flex-col items-center overflow-hidden" style="background: linear-gradient(to bottom, #0B6DFF 26%, #0050C8 60%);">
+    <div class="flex flex-col items-center gap-14 pt-12 pb-6 px-10 w-full max-w-[1366px] md:gap-14 max-md:px-5 max-md:gap-8 max-md:pt-10">
+
+      <!-- Headline: default state -->
+      <div id="hero-headline-default" class="flex flex-col items-center gap-5 text-center w-full">
+        <h1 class="font-barlow font-bold text-white w-full text-4xl leading-10 md:text-6xl md:leading-tight" data-i18n="hero.title">
+          Kilpailutamme autoliikkeet puolestasi
+        </h1>
+        <p class="font-dm font-medium text-slate-200 w-full text-xl leading-6" data-i18n="hero.subtitle">
+          Ilmoita ilmaiseksi, myy eniten tarjoavalle autoliikkeelle.
+        </p>
+      </div>
+
+      <!-- Headline: progress state (hidden by default) -->
+      <div id="hero-headline-progress" class="hidden flex-col items-center gap-5 text-center w-full">
+        <h1 id="hero-headline-progress-text" class="font-barlow font-bold text-white w-full text-4xl leading-10">
+          Laitetaan autosi liikkeelle:
+        </h1>
+      </div>
+
+      <!-- CTA row -->
+      <div class="flex items-start gap-7 justify-center relative w-full max-md:flex-col max-md:items-center max-md:gap-4">
+
+        <!-- ── Default: Form block ── -->
+        <form id="hero-form" class="flex flex-col gap-1.5 w-[336px] flex-shrink-0 max-md:w-full max-md:max-w-sm" style="scroll-margin-top: 96px;">
+
+          <!-- Registration plate -->
+          <div id="plate-field" class="flex flex-col gap-1">
+            <div id="plate-wrapper" class="flex w-full h-14 rounded-lg overflow-hidden shadow-2xl bg-white">
+              <div class="flex flex-col items-center justify-center gap-[3px] w-9 flex-shrink-0 bg-av-blue border-2 border-slate-50 border-r-0 rounded-l-lg py-1.5">
+                <svg class="eu-stars" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g transform="translate(10,10)">
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(0) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(30) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(60) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(90) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(120) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(150) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(180) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(210) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(240) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(270) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(300) translate(0,-4.5) scale(0.55)"/>
+                    <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(330) translate(0,-4.5) scale(0.55)"/>
+                  </g>
+                </svg>
+                <span class="font-barlow font-bold text-white text-[9px] tracking-wide">FIN</span>
+              </div>
+              <input id="plate"
+                     type="text"
+                     placeholder="REKISTERINUMERO"
+                     autocomplete="off"
+                     data-i18n-placeholder="hero.platePlaceholder"
+                     class="flex-1 bg-transparent border-none outline-none font-barlow font-bold text-slate-500 text-base text-center px-3 uppercase focus:text-av-dark" />
+              <div class="w-9 flex-shrink-0" aria-hidden="true"></div>
+            </div>
+            <p id="plate-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.plateError">Tarkista rekisterinumero – esim. ABC-123</p>
+          </div>
+
+          <!-- KM input -->
+          <div id="mileage-field" class="flex flex-col gap-1">
+            <div id="mileage-wrapper" class="flex items-center justify-between w-full h-14 bg-white border border-white rounded-lg px-4 gap-2 shadow-[0_25px_50px_0_rgba(0,0,0,0.25)]">
+              <img src="assets/22acf63e-2552-4a20-ac4a-b7c9b8ca23c7.svg" class="w-6 h-6 flex-shrink-0" alt="" />
+              <input id="mileage"
+                     type="text"
+                     placeholder="AJOKILOMETRIT"
+                     data-i18n-placeholder="hero.mileagePlaceholder"
+                     class="flex-1 border-none outline-none bg-transparent font-barlow font-bold text-slate-500 text-base text-center focus:text-av-dark" />
+              <span class="font-dm font-medium text-base text-gray-700 flex-shrink-0">km</span>
+            </div>
+            <p id="mileage-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.mileageError">Syötä ajokilometrit</p>
+          </div>
+
+          <!-- Submit -->
+          <button type="submit"
+                  class="flex items-center justify-center gap-2 w-full h-14 bg-av-turquoise text-black font-dm font-medium text-base rounded-lg shadow-2xl hover:brightness-95 transition-all"
+                  data-i18n="hero.cta">
+            Hae auton tiedot
+            <img src="assets/679c64f9-3060-4fbd-85b7-d40eff72d139.svg" class="w-6 h-6" alt="" />
+          </button>
+
+          <!-- Google rating -->
+          <div class="flex items-center gap-3 justify-center mt-1.5">
+            <div class="flex items-center gap-2.5">
+              <div class="bg-white p-1.5 rounded-lg w-[30px] h-[30px] flex items-center justify-center">
+                <img src="assets/1baf3416-84ef-4543-9acb-d36d0298ed3b.png" class="w-[18px] h-[18px] object-contain" alt="Google" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="font-dm font-bold text-base text-white">4.7</span>
+                <div class="flex items-center gap-px">
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/bc2225e8-3677-41d6-bfb9-06c2d82e4377.svg" class="w-[17px] h-[17px]" alt="½" />
+                </div>
+              </div>
+            </div>
+            <a href="#" class="font-dm text-xs text-white underline whitespace-nowrap" data-i18n="hero.ratingCount">7000+ arvostelua</a>
+          </div>
+        </form>
+
+        <!-- ── Progress: Card block (hidden by default) ── -->
+        <div id="hero-progress-card" class="hidden flex-col gap-3 w-[336px] flex-shrink-0 max-md:w-full max-md:max-w-sm">
+
+          <!-- White card: reg tag + car name + km -->
+          <div class="bg-white border border-slate-300 rounded-lg p-4 flex flex-col gap-3">
+
+            <!-- Registration tag -->
+            <div id="progress-plate-badge" class="border border-slate-200 rounded overflow-hidden w-[78px]">
+              <div class="border-l-4 border-av-blue bg-white flex items-center pl-2.5 pr-1.5 py-1.5">
+                <span id="progress-plate" class="font-dm text-sm text-slate-800 whitespace-nowrap tracking-wider uppercase"></span>
+              </div>
+            </div>
+
+            <!-- Car name -->
+            <p id="progress-carname" class="font-dm font-bold text-slate-900 text-xl leading-6"></p>
+
+            <!-- Km -->
+            <div id="progress-km-display" class="flex items-center gap-2">
+              <img src="assets/0fa6d12d-3af3-4995-bbcb-4f2aff63f3d7.svg" class="w-5 h-5 flex-shrink-0" alt="" />
+              <span id="progress-km" class="font-dm text-slate-600 text-base"></span>
+            </div>
+          </div>
+
+          <!-- Jatka button -->
+          <button class="flex items-center justify-center gap-2 w-full h-14 bg-av-turquoise text-black font-dm font-medium text-base rounded-lg shadow-2xl hover:brightness-95 transition-all">
+            Jatka
+            <img src="assets/a44d8089-da10-4a28-9c28-b4aa199b97bc.svg" class="w-6 h-6" alt="" />
+          </button>
+
+          <!-- Reset link -->
+          <div class="flex items-center justify-center">
+            <a id="reset-hero" href="#"
+               class="font-dm text-sm text-white underline text-center hover:text-slate-200 transition-colors"
+               data-i18n="hero.newRequest">
+              Tee uusi tarjouspyyntö
+            </a>
+          </div>
+
+          <!-- Google rating -->
+          <div class="flex items-center gap-3 justify-center mt-1">
+            <div class="flex items-center gap-2.5">
+              <div class="bg-white p-1.5 rounded-lg w-[30px] h-[30px] flex items-center justify-center">
+                <img src="assets/1baf3416-84ef-4543-9acb-d36d0298ed3b.png" class="w-[18px] h-[18px] object-contain" alt="Google" />
+              </div>
+              <div class="flex items-center gap-1">
+                <span class="font-dm font-bold text-base text-white">4.7</span>
+                <div class="flex items-center gap-px">
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                  <img src="assets/bc2225e8-3677-41d6-bfb9-06c2d82e4377.svg" class="w-[17px] h-[17px]" alt="½" />
+                </div>
+              </div>
+            </div>
+            <a href="#" class="font-dm text-xs text-white underline whitespace-nowrap" data-i18n="hero.ratingCount">7000+ arvostelua</a>
+          </div>
+        </div>
+
+        <!-- Car illustration + car silhouette behind (desktop only) -->
+        <div class="relative flex-shrink-0 max-md:hidden">
+          <img id="hero-car-bg"
+               src="assets/hero-car-bg.svg"
+               alt=""
+               aria-hidden="true"
+               class="absolute pointer-events-none w-[320px] h-auto opacity-[0.18]"
+               style="top: 48%; left: 65%; transform: translateY(-50%);" />
+          <img src="assets/29dce3a9-3ee1-4d06-9f6b-159711d06702.png"
+               alt=""
+               id="hero-illustration"
+               class="w-[284px] h-[280px] object-contain relative z-10" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Wave -->
+    <svg width="100%" height="42" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="white"/>
+    </svg>
+  </section>
+
+  <!-- ── Dealers ── -->
+  <section class="flex flex-col items-center gap-10 px-10 pt-[68px] pb-10 max-md:px-5 max-md:pt-10" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
+    <div class="flex flex-col items-center gap-5 w-full max-w-[1366px]">
+      <h2 class="font-barlow font-bold text-black text-center text-3xl leading-tight md:text-5xl" data-i18n="regional.dealersTitle">Autoliikkeet ympäri suomen</h2>
+      <p class="font-dm text-slate-500 text-xl text-center leading-6" data-i18n="regional.mapCaption">Tavoita nämä ja sadat muut autoliikkeet ympäri Suomen yhdellä ilmoituksella.</p>
+    </div>
+    <!-- Desktop: single row -->
+    <div class="logo-carousel-wrap hidden md:block w-full">
+      <div class="logo-row logo-row-ltr">
+        <img src="assets/dealership_logos/auto-huiput.png" alt="Auto Huiput" />
+        <img src="assets/dealership_logos/auto-suni.png" alt="Auto Suni" />
+        <img src="assets/dealership_logos/autocenter.webp" alt="Autocenter" />
+        <img src="assets/dealership_logos/autoexpert-ekroos-oy.png" alt="Autoexpert Ekroos" />
+        <img src="assets/dealership_logos/autokeskus.png" alt="Autokeskus" />
+        <img src="assets/dealership_logos/autoq.png" alt="AutoQ" />
+        <img src="assets/dealership_logos/autosalpa.png" alt="Autosalpa" />
+        <img src="assets/dealership_logos/bilar-99e.png" alt="Bilar 99e" />
+        <img src="assets/dealership_logos/bilia.png" alt="Bilia" />
+        <img src="assets/dealership_logos/hedin.png" alt="Hedin" />
+        <img src="assets/dealership_logos/j-rinta-jouppi-oy.png" alt="J. Rinta-Jouppi" />
+        <img src="assets/dealership_logos/juhan-auto.png" alt="Juhan Auto" />
+        <img src="assets/dealership_logos/k-auto.png" alt="K-Auto" />
+        <img src="assets/dealership_logos/kamux.png" alt="Kamux" />
+        <img src="assets/dealership_logos/kayttoauto.png" alt="Käyttöauto" />
+        <img src="assets/dealership_logos/keskusautohalli-oy.png" alt="Keskusautohalli" />
+        <img src="assets/dealership_logos/kiesi.png" alt="Kiesi" />
+        <img src="assets/dealership_logos/kymppiplus.png" alt="Kymppiplus" />
+        <img src="assets/dealership_logos/levoranta.png" alt="Levoranta" />
+        <img src="assets/dealership_logos/nelipyora.png" alt="Nelipyörä" />
+        <img src="assets/dealership_logos/parrotz.png" alt="Parrotz" />
+        <img src="assets/dealership_logos/porho.png" alt="Porho" />
+        <img src="assets/dealership_logos/pp-auto-oy.png" alt="PP-Auto" />
+        <img src="assets/dealership_logos/rinta-jouppi.png" alt="Rinta-Jouppi" />
+        <img src="assets/dealership_logos/saka.png" alt="Saka" />
+        <img src="assets/dealership_logos/savilahden-auto.png" alt="Savilahden Auto" />
+        <img src="assets/dealership_logos/sport-car-center-scc.png" alt="Sport Car Center" />
+        <img src="assets/dealership_logos/suomen-ostoauto.png" alt="Suomen Ostoauto" />
+        <img src="assets/dealership_logos/toyota-kaivoksela.png" alt="Toyota Kaivoksela" />
+        <img src="assets/dealership_logos/vaihto-plus.png" alt="Vaihto-Plus" />
+        <img src="assets/dealership_logos/vaihtoautomaa.png" alt="Vaihtoautomaa" />
+        <img src="assets/dealership_logos/vaihtokaara.png" alt="Vaihtokaara" />
+        <img src="assets/dealership_logos/veho.png" alt="Veho" />
+        <img src="assets/dealership_logos/wetteri.png" alt="Wetteri" />
+        <!-- duplicate for seamless loop -->
+        <img src="assets/dealership_logos/auto-huiput.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/auto-suni.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autocenter.webp" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autoexpert-ekroos-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autokeskus.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autoq.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autosalpa.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/bilar-99e.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/bilia.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/hedin.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/j-rinta-jouppi-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/juhan-auto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/k-auto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kamux.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kayttoauto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/keskusautohalli-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kiesi.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kymppiplus.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/levoranta.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/nelipyora.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/parrotz.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/porho.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/pp-auto-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/rinta-jouppi.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/saka.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/savilahden-auto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/sport-car-center-scc.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/suomen-ostoauto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/toyota-kaivoksela.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/vaihto-plus.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/vaihtoautomaa.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/vaihtokaara.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/veho.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/wetteri.png" alt="" aria-hidden="true" />
+      </div>
+    </div>
+
+    <!-- Mobile: single row -->
+    <div class="logo-carousel-wrap md:hidden w-full">
+      <div class="logo-row logo-row-ltr">
+        <img src="assets/dealership_logos/auto-huiput.png" alt="Auto Huiput" />
+        <img src="assets/dealership_logos/auto-suni.png" alt="Auto Suni" />
+        <img src="assets/dealership_logos/autocenter.webp" alt="Autocenter" />
+        <img src="assets/dealership_logos/autoexpert-ekroos-oy.png" alt="Autoexpert Ekroos" />
+        <img src="assets/dealership_logos/autokeskus.png" alt="Autokeskus" />
+        <img src="assets/dealership_logos/autoq.png" alt="AutoQ" />
+        <img src="assets/dealership_logos/autosalpa.png" alt="Autosalpa" />
+        <img src="assets/dealership_logos/bilar-99e.png" alt="Bilar 99e" />
+        <img src="assets/dealership_logos/bilia.png" alt="Bilia" />
+        <img src="assets/dealership_logos/hedin.png" alt="Hedin" />
+        <img src="assets/dealership_logos/j-rinta-jouppi-oy.png" alt="J. Rinta-Jouppi" />
+        <img src="assets/dealership_logos/juhan-auto.png" alt="Juhan Auto" />
+        <img src="assets/dealership_logos/k-auto.png" alt="K-Auto" />
+        <img src="assets/dealership_logos/kamux.png" alt="Kamux" />
+        <img src="assets/dealership_logos/kayttoauto.png" alt="Käyttöauto" />
+        <img src="assets/dealership_logos/keskusautohalli-oy.png" alt="Keskusautohalli" />
+        <img src="assets/dealership_logos/kiesi.png" alt="Kiesi" />
+        <img src="assets/dealership_logos/kymppiplus.png" alt="Kymppiplus" />
+        <img src="assets/dealership_logos/levoranta.png" alt="Levoranta" />
+        <img src="assets/dealership_logos/nelipyora.png" alt="Nelipyörä" />
+        <img src="assets/dealership_logos/parrotz.png" alt="Parrotz" />
+        <img src="assets/dealership_logos/porho.png" alt="Porho" />
+        <img src="assets/dealership_logos/pp-auto-oy.png" alt="PP-Auto" />
+        <img src="assets/dealership_logos/rinta-jouppi.png" alt="Rinta-Jouppi" />
+        <img src="assets/dealership_logos/saka.png" alt="Saka" />
+        <img src="assets/dealership_logos/savilahden-auto.png" alt="Savilahden Auto" />
+        <img src="assets/dealership_logos/sport-car-center-scc.png" alt="Sport Car Center" />
+        <img src="assets/dealership_logos/suomen-ostoauto.png" alt="Suomen Ostoauto" />
+        <img src="assets/dealership_logos/toyota-kaivoksela.png" alt="Toyota Kaivoksela" />
+        <img src="assets/dealership_logos/vaihto-plus.png" alt="Vaihto-Plus" />
+        <img src="assets/dealership_logos/vaihtoautomaa.png" alt="Vaihtoautomaa" />
+        <img src="assets/dealership_logos/vaihtokaara.png" alt="Vaihtokaara" />
+        <img src="assets/dealership_logos/veho.png" alt="Veho" />
+        <img src="assets/dealership_logos/wetteri.png" alt="Wetteri" />
+        <!-- duplicate for seamless loop -->
+        <img src="assets/dealership_logos/auto-huiput.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/auto-suni.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autocenter.webp" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autoexpert-ekroos-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autokeskus.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autoq.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/autosalpa.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/bilar-99e.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/bilia.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/hedin.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/j-rinta-jouppi-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/juhan-auto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/k-auto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kamux.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kayttoauto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/keskusautohalli-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kiesi.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/kymppiplus.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/levoranta.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/nelipyora.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/parrotz.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/porho.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/pp-auto-oy.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/rinta-jouppi.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/saka.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/savilahden-auto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/sport-car-center-scc.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/suomen-ostoauto.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/toyota-kaivoksela.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/vaihto-plus.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/vaihtoautomaa.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/vaihtokaara.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/veho.png" alt="" aria-hidden="true" />
+        <img src="assets/dealership_logos/wetteri.png" alt="" aria-hidden="true" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FAQ / Steps – Desktop ── -->
+  <section class="hidden md:flex flex-col items-center gap-10 px-10 pt-20 pb-[52px]" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
+    <div class="flex flex-col items-center gap-5 w-full max-w-[1366px]">
+      <h2 class="font-barlow font-bold text-black text-center text-5xl leading-tight" data-i18n="howItWorks.title">Näin löydämme autollesi ostajan</h2>
+      <p class="font-dm text-slate-500 text-xl text-center leading-6" data-i18n="howItWorks.subtitle">Fiksuin tapa myydä auto on antaa AutoVexin kilpailuttaa autoliikkeet puolestasi.</p>
+    </div>
+    <div class="flex gap-5 items-stretch w-full max-w-[1366px]">
+      <!-- Step 01 -->
+      <div class="flex-1 flex flex-col gap-6 bg-white border border-slate-200 rounded-3xl pt-10 min-[768px]:max-[899px]:pt-5 px-10 min-[768px]:max-[899px]:px-5 pb-5 min-[768px]:max-[899px]:pb-2.5">
+        <div class="flex flex-col gap-5">
+          <!-- Badge: image is horizontally flipped, number is counter-flipped to read normally -->
+          <div class="-scale-x-100 flex-none w-fit">
+            <div class="relative h-11 w-24 overflow-hidden">
+              <img class="absolute block w-full h-full" src="assets/96c88380-1e28-4bc2-bba8-207824f080c0.svg" alt="" />
+              <div class="absolute inset-0 flex items-center justify-end pr-4">
+                <span class="-scale-x-100 font-barlow font-bold text-[30px] leading-8 text-white">01</span>
+              </div>
+            </div>
+          </div>
+          <h3 class="font-barlow font-bold text-slate-900 text-2xl leading-tight" data-i18n="howItWorks.step1Title">Luo myynti-ilmoitus</h3>
+          <p class="font-dm text-slate-700 text-base leading-5" data-i18n="howItWorks.step1Body">Kerro meille autostasi. Auton perustietojen lisäksi tarvitset vain 5 kuvaa ja huoltokirjan.</p>
+        </div>
+        <div class="w-full rounded-xl overflow-hidden" style="aspect-ratio:358/302;">
+          <img src="assets/3e939569-33cb-4b13-85dd-ab29fbb40989.png" class="w-full h-full object-cover" alt="Luo myynti-ilmoitus" />
+        </div>
+      </div>
+      <!-- Step 02 -->
+      <div class="flex-1 flex flex-col gap-6 bg-white border border-slate-200 rounded-3xl pt-10 min-[768px]:max-[899px]:pt-5 px-10 min-[768px]:max-[899px]:px-5 pb-5 min-[768px]:max-[899px]:pb-2.5">
+        <div class="flex flex-col gap-5">
+          <div class="-scale-x-100 flex-none w-fit">
+            <div class="relative h-11 w-24 overflow-hidden">
+              <img class="absolute block w-full h-full" src="assets/96c88380-1e28-4bc2-bba8-207824f080c0.svg" alt="" />
+              <div class="absolute inset-0 flex items-center justify-end pr-4">
+                <span class="-scale-x-100 font-barlow font-bold text-[30px] leading-8 text-white">02</span>
+              </div>
+            </div>
+          </div>
+          <h3 class="font-barlow font-bold text-slate-900 text-2xl leading-tight" data-i18n="howItWorks.step2Title">Autoliikkeet kilpailevat</h3>
+          <p class="font-dm text-slate-700 text-base leading-5" data-i18n="howItWorks.step2Body">Ilmoituksesi näkyy sadoille autoliikkeille, jotka kilpailevat autostasi tarjouksilla.</p>
+        </div>
+        <div class="w-full rounded-xl overflow-hidden" style="aspect-ratio:367/330;">
+          <img src="assets/d157fd2a-fd22-44ec-a358-f8eefac98d49.png" class="w-full h-full object-cover" alt="Autoliikkeet kilpailevat" />
+        </div>
+      </div>
+      <!-- Step 03 -->
+      <div class="flex-1 flex flex-col gap-6 bg-white border border-slate-200 rounded-3xl pt-10 min-[768px]:max-[899px]:pt-5 px-10 min-[768px]:max-[899px]:px-5 pb-5 min-[768px]:max-[899px]:pb-2.5">
+        <div class="flex flex-col gap-5">
+          <div class="-scale-x-100 flex-none w-fit">
+            <div class="relative h-11 w-24 overflow-hidden">
+              <img class="absolute block w-full h-full" src="assets/96c88380-1e28-4bc2-bba8-207824f080c0.svg" alt="" />
+              <div class="absolute inset-0 flex items-center justify-end pr-4">
+                <span class="-scale-x-100 font-barlow font-bold text-[30px] leading-8 text-white">03</span>
+              </div>
+            </div>
+          </div>
+          <h3 class="font-barlow font-bold text-slate-900 text-2xl leading-tight" data-i18n="howItWorks.step3Title">Päätä itse myynnistä</h3>
+          <p class="font-dm text-slate-700 text-base leading-5" data-i18n="howItWorks.step3Body">Hyväksy tarjous, tee vastatarjous tai jätä myymättä. Tarjouksen hyväksyttyäsi autoliike on sinuun yhteydessä.</p>
+        </div>
+        <div class="w-full rounded-xl overflow-hidden" style="aspect-ratio:359/323;">
+          <img src="assets/f75714fe-a2a4-4e8f-8b73-6cfa04920001.png" class="w-full h-full object-cover" alt="Päätä itse myynnistä" />
+        </div>
+      </div>
+    </div>
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg hover:bg-[#0A59EB] transition-colors" data-i18n="nav.startAuction">
+      Aloita kilpailutus
+    </a>
+  </section>
+
+  <!-- ── FAQ / Steps – Mobile ── -->
+  <section class="flex md:hidden flex-col items-center gap-5 px-7 py-10" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
+    <div class="flex flex-col items-center gap-2.5 pt-2.5 w-full text-center">
+      <img src="assets/b8ba012b-96be-4849-921f-2de9511f75fa.svg" class="w-56 h-auto" alt="" />
+      <h2 class="font-barlow font-bold text-black text-3xl leading-8" data-i18n="howItWorks.title">Näin löydämme autollesi ostajan</h2>
+      <p class="font-dm text-slate-500 text-lg leading-[22px]" data-i18n="howItWorks.subtitle">Fiksuin tapa myydä auto on antaa AutoVexin kilpailuttaa autoliikkeet puolestasi.</p>
+    </div>
+    <div class="bg-white border border-slate-200 rounded-3xl px-7 py-10 w-full max-w-sm flex flex-col gap-5">
+      <div class="flex flex-col items-center gap-2.5 text-center">
+        <img src="assets/2d92ffd7-0618-47a9-bb1f-6320eff4486b.svg" class="w-11 h-11 object-contain" alt="" />
+        <h3 class="font-barlow font-bold text-slate-900 text-xl leading-[23px]" data-i18n="howItWorks.step1Title">Luo myynti-ilmoitus</h3>
+        <p class="font-dm text-slate-700 text-base leading-5" data-i18n="howItWorks.step1Body">Kerro meille autostasi. Auton perustietojen lisäksi tarvitset vain 5 kuvaa ja huoltokirjan.</p>
+      </div>
+      <div class="flex flex-col items-center gap-2.5 text-center">
+        <img src="assets/36a4dbe5-c235-4155-a3f3-591b836a4a91.svg" class="w-10 h-10 object-contain" alt="" />
+        <h3 class="font-barlow font-bold text-slate-900 text-xl leading-[23px]" data-i18n="howItWorks.step2Title">Autoliikkeet kilpailevat</h3>
+        <p class="font-dm text-slate-700 text-base leading-5" data-i18n="howItWorks.step2Body">Ilmoituksesi näkyy sadoille autoliikkeille, jotka kilpailevat autostasi tarjouksilla.</p>
+      </div>
+      <div class="flex flex-col items-center gap-2.5 text-center">
+        <img src="assets/39f4c5d2-9444-4083-9edb-f64290306c8a.svg" class="w-10 h-10 object-contain" alt="" />
+        <h3 class="font-barlow font-bold text-slate-900 text-xl leading-[23px]" data-i18n="howItWorks.step3Title">Päätä itse myynnistä</h3>
+        <p class="font-dm text-slate-700 text-base leading-5" data-i18n="howItWorks.step3Body">Hyväksy tarjous, tee vastatarjous tai jätä myymättä. Tarjouksen hyväksyttyäsi autoliike on sinuun yhteydessä.</p>
+      </div>
+    </div>
+    <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg hover:bg-[#0A59EB] transition-colors" data-i18n="nav.startAuction">
+      Aloita kilpailutus
+    </a>
+  </section>
+
+  <!-- ── Reviews (Arvosteluja) ── -->
+  <section class="flex flex-col items-center py-16 md:py-28 px-5 md:px-10 gap-5" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
+
+    <div class="flex flex-col items-center gap-5 w-full max-w-[1366px] text-center mb-5 md:mb-7">
+      <h2 class="font-barlow font-bold text-black text-4xl md:text-5xl leading-tight" data-i18n="reviewsSection.title">Arvosteluja</h2>
+      <p class="font-dm text-slate-500 text-xl leading-6" data-i18n="reviewsSection.subtitle">Tuhannet autoilijat ovat jo löytäneet autolleen ostajan AutoVexin kautta.</p>
+    </div>
+
+    <!-- Carousel wrapper — arrows positioned relative to this -->
+    <div class="relative w-full">
+
+      <!-- Prev arrow (desktop only) -->
+      <button id="reviews-prev"
+              class="hidden md:flex absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md items-center justify-center hover:bg-slate-50 transition-colors"
+              aria-label="Edellinen">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M10 12L6 8l4-4" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- Next arrow (desktop only) -->
+      <button id="reviews-next"
+              class="hidden md:flex absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md items-center justify-center hover:bg-slate-50 transition-colors"
+              aria-label="Seuraava">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M6 4l4 4-4 4" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- Carousel: single row, all screen sizes -->
+      <div class="w-full overflow-hidden"
+           style="mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+                  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);">
+        <div class="reviews-track flex gap-3.5 overflow-x-auto px-5 md:px-10 pb-2"
+             style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;">
+
+        <!-- Card 1: Matti / BMW 3-sarja -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-1.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="BMW 3-sarja" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Matti</strong> · BMW 3-sarja</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r1">Helpommaksi ei auton myyntiä varmastikaan saa tehtyä. Selkeä ja nopea prosessi – kauppa syntyi alle viikossa.</p>
+          </div>
+        </div>
+
+        <!-- Card 2: Sanna / VW Golf -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-2.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="VW Golf" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Sanna</strong> · VW Golf</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r2">Sain autostani paremman hinnan kuin olin odottanut. Tarjouskilpailu toi ostajat yhteen ja hinta nousi mukavasti.</p>
+          </div>
+        </div>
+
+        <!-- Card 3: Pekka / Toyota Yaris -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-3.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Toyota Yaris" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Pekka</strong> · Toyota Yaris</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r3">Ilmoituksen tekeminen oli todella vaivatonta. Tiimi soitti seuraavana päivänä ja kaikki järjestyi nopeasti.</p>
+          </div>
+        </div>
+
+        <!-- Card 4: Tiina / Skoda Octavia -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-4.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Skoda Octavia" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Tiina</strong> · Skoda Octavia</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r4">Erinomainen palvelu! En olisi uskonut, että autoni myynti voisi sujua näin stressittömästi. Suosittelen lämpimästi.</p>
+          </div>
+        </div>
+
+        <!-- Card 5: Juhani / Volvo XC60 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-5.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Volvo XC60" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Juhani</strong> · Volvo XC60</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r5">Kilpailutus toi useita tarjouksia muutamassa päivässä. Lopullinen hinta ylitti odotukseni selvästi.</p>
+          </div>
+        </div>
+
+        <!-- Card 6: Leena / Ford Focus -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-1.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Ford Focus" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Leena</strong> · Ford Focus</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r6">Palvelu toimi täydellisesti. Sain tarjouksen jo ensimmäisenä päivänä ja kauppa tehtiin viikossa. Erittäin tyytyväinen!</p>
+          </div>
+        </div>
+
+        <!-- Card 7: Mikael / Audi A4 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-2.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Audi A4" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Mikael</strong> · Audi A4</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r7">Aiemmin myin auton itse nettisivustoilla ja se vei viikkoja. AutoVexin kautta sama asia hoitui parissa päivässä.</p>
+          </div>
+        </div>
+
+        <!-- Card 8: Hanna / Nissan Qashqai -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-3.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Nissan Qashqai" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Hanna</strong> · Nissan Qashqai</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r8">Asiakaspalvelu oli loistavaa alusta loppuun. Tuntui siltä, että autoni myynti oli oikeasti heille tärkeää.</p>
+          </div>
+        </div>
+
+        <!-- Card 9: Timo / Mercedes C-sarja -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-4.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Mercedes C-sarja" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Timo</strong> · Mercedes C-sarja</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r9">Uskomattoman sujuvaa. Ilmoituksen tekoon meni 10 minuuttia ja tarjouksia alkoi tulla jo seuraavana aamuna.</p>
+          </div>
+        </div>
+
+        <!-- Card 10: Riikka / Kia Sportage -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-5.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Kia Sportage" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Riikka</strong> · Kia Sportage</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r10">Loistava konsepti! En joutunut itse neuvottelemaan kenenkään kanssa – kaikki hoitui palvelun kautta.</p>
+          </div>
+        </div>
+
+        <!-- Card 11: Antti / Mazda CX-5 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-1.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Mazda CX-5" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Antti</strong> · Mazda CX-5</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r11">Myyin auton ilman yhtään ylimääräistä vaivaa. Kuvien lisääminen oli helppoa ja prosessi eteni itsestään.</p>
+          </div>
+        </div>
+
+        <!-- Card 12: Päivi / Hyundai i30 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-2.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Hyundai i30" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Päivi</strong> · Hyundai i30</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r12">Paljon parempi kuin perinteiset autoliikkeet. Sain rehellisen arvion autostani ja kauppa sujui läpinäkyvästi.</p>
+          </div>
+        </div>
+
+        <!-- Card 13: Lauri / Subaru Outback -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-3.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Subaru Outback" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Lauri</strong> · Subaru Outback</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r13">Pelkäsin aluksi, että autoni on liian vanha myytäväksi. Silti sain useita hyviä tarjouksia ja myynti onnistui hienosti.</p>
+          </div>
+        </div>
+
+        <!-- Card 14: Kristiina / Peugeot 308 -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-4.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Peugeot 308" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Kristiina</strong> · Peugeot 308</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r14">Käytin palvelua ensimmäistä kertaa ja olin positiivisesti yllättynyt. Yksinkertainen, nopea ja tuloksia tuova.</p>
+          </div>
+        </div>
+
+        <!-- Card 15: Erkki / Honda CR-V -->
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col flex-shrink-0 w-[240px] md:w-[260px]" style="scroll-snap-align: start;">
+          <img src="assets/review-5.jpg" class="w-full object-cover" style="aspect-ratio:318/176;" alt="Honda CR-V" />
+          <div class="flex flex-col gap-3 p-3 flex-1">
+            <div class="flex items-center justify-between gap-1">
+              <div class="flex items-center gap-1 min-w-0">
+                <img src="assets/review-user-icon.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+                <span class="font-dm text-[11px] text-slate-500 truncate"><strong>Erkki</strong> · Honda CR-V</span>
+              </div>
+              <div class="flex flex-shrink-0">
+                <img src="assets/review-star-icon.svg" class="w-3 h-3" alt="★" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" /><img src="assets/review-star-icon.svg" class="w-3 h-3" alt="" />
+              </div>
+            </div>
+            <p class="font-dm text-xs text-slate-600 leading-4" data-i18n="reviews.r15">Paras tapa myydä auto. Ei turhaa tinkimistä yksityisostajien kanssa – ammattimaiset tarjoukset suoraan käteeni.</p>
+          </div>
+        </div>
+
+        </div>
+      </div><!-- end mask wrapper -->
+
+    </div><!-- end carousel wrapper -->
+  </section>
+
+  <!-- ── Stats + Map (Kymmeniätuhansia onnistuneita kauppoja) ── -->
+  <section class="stats-map-section relative flex flex-col items-center py-16 md:py-28 px-5 md:px-10 overflow-hidden bg-white"
+           style="background-image: url('assets/stats-finland-map.png');
+                  background-repeat: no-repeat;
+                  background-position: bottom right;
+                  background-size: auto 90%;">
+    <div class="w-full max-w-[1366px]">
+
+      <!-- Content: max half width on desktop so map shows through on right -->
+      <div class="md:max-w-[52%] flex flex-col gap-10">
+
+        <div class="flex flex-col gap-10">
+          <h3 class="font-barlow font-bold text-black text-3xl leading-8" data-i18n="stats.title">Kymmeniätuhansia onnistuneita kauppoja</h3>
+          <div class="flex gap-6 md:gap-10">
+            <div class="flex items-start gap-2.5">
+              <img src="assets/stats-car-icon.svg" class="w-8 h-8 flex-shrink-0 mt-0.5" alt="" />
+              <div class="flex flex-col gap-0.5">
+                <span class="font-dm font-bold text-2xl text-gray-900 leading-7">50 000+</span>
+                <span class="font-dm text-base text-slate-600 leading-5" data-i18n="stats.carsSold">Myytyä autoa</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-2.5">
+              <img src="assets/stats-star-icon.svg" class="w-8 h-8 flex-shrink-0 mt-0.5" alt="" />
+              <div class="flex flex-col gap-0.5">
+                <span class="font-dm font-bold text-2xl text-gray-900 leading-7">4,7/5</span>
+                <span class="font-dm text-base text-slate-600 leading-5" data-i18n="stats.rating">Asiakkaiden arvosana</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-4">
+          <h2 class="font-barlow font-bold text-slate-900 text-4xl md:text-5xl leading-tight" data-i18n="regional.title">Tavoita autoliikkeet ympäri Suomen</h2>
+          <p class="font-dm text-slate-600 text-base leading-5" data-i18n="regional.body">Autostasi eniten maksava autoliike voi sijaita missä päin Suomea tahansa. Kilpailuta autoliikkeet ja vastaanota tarjouksia eri puolilta Suomea yhdellä tarjouspyynnöllä.</p>
+          <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;"
+             class="self-start inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg hover:bg-[#0A59EB] transition-colors"
+             data-i18n="nav.startAuction">
+            Aloita kilpailutus
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── About (est. 2018 / Keitä me olemme) ── -->
+  <section class="bg-av-blue relative overflow-hidden">
+
+    <!-- Car: absolute to section so it reaches the right edge; rear peeks in on mobile -->
+    <div class="about-car" aria-hidden="true"></div>
+
+    <div class="flex items-stretch w-full max-w-[1366px] mx-auto px-10 py-16 md:py-20 gap-8 max-md:px-5">
+
+      <!-- Left: text (above car) -->
+      <div class="flex flex-col gap-10 flex-1 md:max-w-[50%] py-4 relative" style="z-index: 10;">
+        <div class="flex flex-col leading-none">
+          <span class="font-barlow font-bold text-white/60 text-2xl italic">est.</span>
+          <span class="font-barlow font-bold text-white" style="font-size: clamp(72px, 8vw, 100px); line-height: 0.9;" data-i18n="about.est">2018</span>
+        </div>
+        <div class="flex flex-col gap-3">
+          <h2 class="font-barlow font-bold text-white text-2xl leading-8" data-i18n="about.title">Keitä me olemme</h2>
+          <p class="font-dm text-white/80 text-base leading-5" data-i18n="about.body">AutoVex.fi -palvelu lanseerattiin keväällä 2018. Vuonna 2025 AutoVexiä käyttävät jo kaikki Suomen suurimmat autoliikkeet, sekä sadat keski- ja pienikokoisetkin. Tavoitteenamme on mullistaa tapa, jolla kuluttajat myyvät autojaan, samalla jatkaen alan markkinajohtajana Suomessa.</p>
+        </div>
+      </div>
+
+      <!-- Right: person only (desktop) — waves goodbye as car drives off right -->
+      <div class="hidden md:block flex-1 relative min-h-[420px]" style="z-index: 2;">
+        <img src="assets/about-person.png"
+             class="absolute object-contain object-bottom"
+             style="width: 280px; bottom: 0; left: 5%; z-index: 2; transform: scaleX(-1);"
+             alt="" />
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── FAQ (Usein kysyttyä) ── -->
+  <section class="px-5 md:px-10 pt-16 md:pt-20 pb-14 md:pb-[52px]" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
+    <div class="max-w-[800px] mx-auto flex flex-col gap-8">
+
+      <div class="flex flex-col items-center gap-4 pb-4 text-center">
+        <h2 class="font-barlow font-bold text-black text-center text-3xl leading-tight md:text-5xl" data-i18n="faq.title">Usein kysytyt kysymykset</h2>
+        <p class="font-dm text-slate-500 text-xl text-center leading-6" data-i18n="faq.subtitle">Vastaukset yleisimpiin kysymyksiin auton myynnistä.</p>
+      </div>
+
+      <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+        <div class="px-6 pt-5 pb-4">
+          <h3 class="font-barlow font-bold text-slate-900 text-lg leading-tight md:text-xl" data-i18n="faq.groupTitle">Yleiset kysymykset palvelusta</h3>
+        </div>
+        <div class="divide-y divide-slate-100">
+
+          <div class="faq-item">
+            <button class="faq-trigger w-full flex items-center px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
+              <span data-i18n="faq.q1">Miksi auton myynti AutoVexin kautta kannattaa?</span>
+            </button>
+            <div class="faq-body"><div>
+              <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="faq.a1">AutoVex on suomalainen kilpailutuspalvelu, jossa autoliikkeet kilpailevat tarjouksista. Etuja ovat vaivattomuus (myy kotisohvalta), paras tarjous kilpailun kautta sekä luotettavuus — sadat tunnetut liikkeet ja yli 70 000 myytyä autoa. Palvelu on myyjälle täysin ilmainen.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger w-full flex items-center px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
+              <span data-i18n="faq.q2">Miten myyntiprosessi etenee?</span>
+            </button>
+            <div class="faq-body"><div>
+              <ol class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5 list-decimal list-inside space-y-1" data-i18n-html="faq.a2"><li>Ilmoituksen luominen — perustiedot haetaan automaattisesti rekisterinumerosta</li><li>Asiantuntijan puhelinsoitto (n. 5 min)</li><li>Tarjouskilpailu (tyypillisesti 36 tuntia)</li><li>Päätöksenteko</li><li>Kaupat ostavan liikkeen kanssa</li></ol>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger w-full flex items-center px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
+              <span data-i18n="faq.q3">Onko AutoVex ilmainen palvelu?</span>
+            </button>
+            <div class="faq-body"><div>
+              <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="faq.a3">Kyllä, täysin ilmainen myyjälle. Autoliikkeet maksavat välityspalkkion toteutuneista kaupoista.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger w-full flex items-center px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
+              <span data-i18n="faq.q4">Sitoudunko myymään autoni?</span>
+            </button>
+            <div class="faq-body"><div>
+              <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="faq.a4">Ei. Tarjouspyyntö ei velvoita myyntiin. Sinulla on 24 tuntia hyväksyä tarjous — sen jälkeen se raukeaa automaattisesti.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger w-full flex items-center px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
+              <span data-i18n="faq.q5">Mitkä autoliikkeet ovat mukana palvelussa?</span>
+            </button>
+            <div class="faq-body"><div>
+              <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="faq.a5">Mukana ovat kaikki suurimmat autoliikeketjut sekä satoja keskisuuria ja paikallisia autoliikkeitä ympäri Suomea.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger w-full flex items-center px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
+              <span data-i18n="faq.q6">Kuinka vanhoja autoja palvelussa voi myydä?</span>
+            </button>
+            <div class="faq-body"><div>
+              <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="faq.a6">Alle 250 000 km ajettuja autoja. Ikärajaa ei ole, mutta suurin kiinnostus kohdistuu alle 10 vuotta vanhoihin ja alle 150 000 km ajettuihin autoihin.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-trigger w-full flex items-center px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
+              <span data-i18n="faq.q7">Miten AutoVexiin saa yhteyden?</span>
+            </button>
+            <div class="faq-body"><div>
+              <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n-html="faq.a7">Sähköpostitse: <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>. Palvelu arkisin klo 10–16. Asiakaspalvelu auttaa koko prosessin ajan.</p>
+            </div></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="flex justify-center">
+        <a href="help.html" class="inline-flex items-center gap-1.5 font-dm font-medium text-av-blue hover:underline transition-colors">
+          <span data-i18n="faq.moreLink">Lisää kysymyksiä?</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 3 11 8 6 13"/></svg>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      document.querySelectorAll('.faq-trigger').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var item = btn.closest('.faq-item');
+          var isOpen = item.classList.contains('open');
+          item.classList.toggle('open', !isOpen);
+          btn.setAttribute('aria-expanded', String(!isOpen));
+        });
+      });
+    })();
+  </script>
+
+  <script>
+    (function () {
+      var track = document.querySelector('.reviews-track');
+      var STEP = 274; // card width (260) + gap (14)
+      document.getElementById('reviews-prev').addEventListener('click', function () {
+        track.scrollBy({ left: -STEP, behavior: 'smooth' });
+      });
+      document.getElementById('reviews-next').addEventListener('click', function () {
+        track.scrollBy({ left: STEP, behavior: 'smooth' });
+      });
+    })();
+  </script>
+
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="layout.js"></script>
+  <script src="vehicle-card.js"></script>
+  <script>
+    (function () {
+      var navWhite = document.getElementById('nav-white');
+      var hero     = document.getElementById('hero-section');
+      var lastY    = window.scrollY || 0;
+      var NAV_H    = 96; // matches h-24
+      // White nav hides when hero top gets within this many px of the nav bottom
+      var HIDE_OFFSET = 20;
+
+      function showWhite() { navWhite.style.transform = 'translateY(0)'; }
+      function hideWhite() { navWhite.style.transform = 'translateY(-100%)'; }
+
+      window.addEventListener('scroll', function () {
+        var y          = window.scrollY;
+        var heroBottom = hero.getBoundingClientRect().bottom;
+        var heroTop    = hero.getBoundingClientRect().top;
+        var scrollingUp = y < lastY;
+
+        // At very top: always hide white nav
+        if (y <= 0) {
+          hideWhite();
+          lastY = 0;
+          return;
+        }
+
+        if (scrollingUp) {
+          if (heroBottom < 0) {
+            // Hero is entirely above the viewport — show white nav
+            showWhite();
+          } else {
+            // Hero has re-entered the viewport; hide white nav only once its
+            // top edge is close to the white nav's bottom (nearly touching blue nav)
+            if (heroTop >= NAV_H - HIDE_OFFSET) {
+              hideWhite();
+            }
+            // else: hero top is still well below the nav — keep white nav visible
+          }
+        } else {
+          // Scrolling down: always hide white nav
+          hideWhite();
+        }
+
+        lastY = y;
+      }, { passive: true });
+    })();
+  </script>
+  <script>
+    const STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
+    function setStore(data) { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {} }
+
+    function formatKm(raw) {
+      const n = parseInt(String(raw).replace(/\D/g, ''), 10);
+      if (isNaN(n)) return raw + ' km';
+      return n.toLocaleString('fi-FI') + ' km';
+    }
+
+    function getFurthestStep(store) {
+      const contact = store.contact || {};
+      if (contact.kokoNimi || contact.sahkoposti || contact.puhelin) return 'contact.html';
+      if (store.photosVisited || Object.values(store.photos || {}).some(arr => arr && arr.length > 0)) return 'photos.html';
+      const services = store.services || {};
+      const radioGroups = Array.isArray(services.radioGroups) ? services.radioGroups : [];
+      if (radioGroups.some(v => v !== null && v !== undefined) || services.vaurio_naky || services.vaurio_kolari || services.korjaukset) return 'services.html';
+      return 'details.html';
+    }
+
+    function showProgressState(store) {
+      const hero = store.hero || {};
+      const details = store.details || {};
+      const plate = hero.plate || '';
+      const km = hero.km || '';
+      const merkki = details.merkki || '';
+      const malli = details.malli || '';
+      const carName = [merkki, malli].filter(Boolean).join(' ') || plate;
+
+      document.getElementById('progress-plate').textContent = plate.toUpperCase();
+      document.getElementById('progress-carname').textContent = carName;
+      document.getElementById('progress-km').textContent = formatKm(km);
+
+      const btn = document.querySelector('#hero-progress-card button');
+      var _currentScenario = (function() {
+        try {
+          var off = JSON.parse(localStorage.getItem('autovex_offers') || 'null') || {};
+          var dec = JSON.parse(localStorage.getItem('autovex_decision') || 'null') || {};
+          return off.scenario || dec.scenario || null;
+        } catch(e) { return null; }
+      })();
+      var _LIVE      = ['live-no-bids', 'auction-live'];
+      var _COMPLETED = ['accepted', 'all-rejected'];
+      var headline, destination;
+      if (store.offersVisited && _currentScenario) {
+        if (_COMPLETED.indexOf(_currentScenario) !== -1) {
+          headline = t('heroStates.dealCompleted');
+        } else if (_LIVE.indexOf(_currentScenario) !== -1) {
+          headline = t('heroStates.auctionOngoing');
+        } else {
+          headline = t('heroStates.auctionEnded');
+        }
+        destination = 'offers.html';
+      } else if (store.emailVerified) {
+        headline = store.priceMode === 'asking' ? t('heroStates.awaitingOffers') : t('heroStates.underReview');
+        destination = 'success.html';
+      } else {
+        headline = t('heroStates.launchingCar');
+        destination = store.successVisited ? 'success.html' : getFurthestStep(store);
+      }
+      document.getElementById('hero-headline-progress-text').textContent = headline;
+      btn.innerHTML = t('btn.continue') + ' <img src="assets/a44d8089-da10-4a28-9c28-b4aa199b97bc.svg" class="w-6 h-6" alt="" />';
+      btn.onclick = function() { window.location.href = destination; };
+
+      document.getElementById('hero-headline-default').classList.add('hidden');
+      document.getElementById('hero-headline-default').classList.remove('flex');
+      document.getElementById('hero-headline-progress').classList.remove('hidden');
+      document.getElementById('hero-headline-progress').classList.add('flex');
+
+      document.getElementById('hero-form').classList.add('hidden');
+      document.getElementById('hero-progress-card').classList.remove('hidden');
+      document.getElementById('hero-progress-card').classList.add('flex');
+    }
+
+    function showInputState() {
+      document.getElementById('hero-headline-default').classList.remove('hidden');
+      document.getElementById('hero-headline-default').classList.add('flex');
+      document.getElementById('hero-headline-progress').classList.add('hidden');
+      document.getElementById('hero-headline-progress').classList.remove('flex');
+
+      document.getElementById('hero-form').classList.remove('hidden');
+      document.getElementById('hero-progress-card').classList.add('hidden');
+      document.getElementById('hero-progress-card').classList.remove('flex');
+    }
+
+    function checkHeroState() {
+      const store = getStore();
+      if (store.hero && store.hero.plate && store.hero.km) {
+        showProgressState(store);
+      } else {
+        showInputState();
+      }
+    }
+
+    function syncNavLoginLabel() {
+      const store = getStore();
+      const raw = ((store.contact || {}).kokoNimi || '').trim();
+      const name = raw ? raw.split(' ')[0] : null;
+      const label = name || t('nav.login');
+      const blue = document.getElementById('nav-login-label');
+      const white = document.querySelector('#nav-white [data-i18n="nav.login"]');
+      if (blue) blue.textContent = label;
+      if (white) white.textContent = label;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      checkHeroState();
+      syncNavLoginLabel();
+
+      // KM auto-formatter: digits only, space every 3 from the right
+      document.getElementById('mileage').addEventListener('input', function() {
+        const raw = this.value.replace(/\D/g, '');
+        const pos = this.selectionStart;
+        const prevLen = this.value.length;
+        this.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+        // Keep cursor roughly in position
+        const diff = this.value.length - prevLen;
+        this.setSelectionRange(Math.max(0, pos + diff), Math.max(0, pos + diff));
+      });
+
+      function scrollAndPulse(el) {
+        if (!el) return;
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.remove('av-error-pulse');
+        void el.offsetWidth;
+        el.classList.add('av-error-pulse');
+        el.addEventListener('animationend', () => el.classList.remove('av-error-pulse'), { once: true });
+      }
+
+      function heroFieldError(fieldId, wrapperId, inputId, isPlateField) {
+        const field   = document.getElementById(fieldId);
+        const wrapper = document.getElementById(wrapperId);
+        const input   = document.getElementById(inputId);
+        const errEl   = document.getElementById(fieldId.replace('-field', '-error'));
+
+        // Show inline error text
+        if (errEl) errEl.classList.remove('hidden');
+
+        // Red outline on inner wrapper (outline is not clipped by overflow-hidden)
+        wrapper.style.outline = '2px solid rgba(239,68,68,0.85)';
+        wrapper.style.outlineOffset = '-2px';
+
+        // Pulse on outer field div (no overflow-hidden — box-shadow renders reliably)
+        field.classList.remove('av-error-pulse');
+        void field.offsetWidth;
+        field.classList.add('av-error-pulse');
+        field.addEventListener('animationend', () => field.classList.remove('av-error-pulse'), { once: true });
+
+        // Scroll to field
+        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Live-clear: remove error state the moment the value becomes valid
+        function clearIfValid() {
+          const val   = input.value.trim();
+          const valid = isPlateField
+            ? /^[A-Za-z]{3}-[0-9]{3}$/.test(val)
+            : input.value.replace(/\D/g, '').length > 0;
+          if (valid) {
+            if (errEl) errEl.classList.add('hidden');
+            wrapper.style.outline = '';
+            wrapper.style.outlineOffset = '';
+            input.removeEventListener('input', clearIfValid);
+          }
+        }
+        input.addEventListener('input', clearIfValid);
+      }
+
+      var finnishCarPlateRegex = /^(?:[A-ZÅÄÖ]{2,3}-[1-9][0-9]{0,2}|ÅL[N]?-[1-9][0-9]{0,4}|CD-[0-9]{4}|C-[0-9]{5})$/;
+
+      function normalizePlate(raw) {
+        var clean   = raw.replace(/[^A-Za-zÅÄÖåäö0-9]/g, '').toUpperCase();
+        var letters = (clean.match(/^[A-ZÅÄÖ]*/) || [''])[0].slice(0, 3);
+        var digits  = clean.slice(letters.length).replace(/[^0-9]/g, '');
+        if (letters === 'C')  { digits = digits.slice(0, 5); return digits.length ? 'C-'  + digits : 'C'; }
+        if (letters === 'CD') { digits = digits.slice(0, 4); return digits.length ? 'CD-' + digits : 'CD'; }
+        digits = digits.replace(/^0+/, '').slice(0, /^ÅLN?$/.test(letters) ? 5 : 3);
+        return digits.length ? letters + '-' + digits : letters;
+      }
+
+      (function () {
+        var plateInput = document.getElementById('plate');
+        plateInput.addEventListener('input', function () {
+          var pos    = plateInput.selectionStart;
+          var before = plateInput.value;
+          var after  = normalizePlate(before);
+          if (after !== before) {
+            plateInput.value = after;
+            var shift = after.length - before.length;
+            plateInput.setSelectionRange(pos + shift, pos + shift);
+          }
+        });
+      })();
+
+      document.getElementById('hero-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var plate   = normalizePlate(document.getElementById('plate').value.trim());
+        const kmRaw = document.getElementById('mileage').value.replace(/\D/g, '').trim();
+
+        const plateValid = finnishCarPlateRegex.test(plate);
+        const kmValid    = kmRaw.length > 0;
+
+        if (!plateValid) {
+          heroFieldError('plate-field', 'plate-wrapper', 'plate', true);
+          return;
+        }
+        if (!kmValid) {
+          heroFieldError('mileage-field', 'mileage-wrapper', 'mileage', false);
+          return;
+        }
+
+        const km = kmRaw.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+        const s = getStore();
+        s.hero = { plate, km };
+        setStore(s);
+        window.location.href = 'details.html?' + new URLSearchParams({ plate, km });
+      });
+
+      document.getElementById('reset-hero').addEventListener('click', function(e) {
+        e.preventDefault();
+        window.confirmDeleteAd(function () {
+          try { localStorage.removeItem('autovex_decision'); } catch(e) {}
+          try { localStorage.removeItem('autovex_offers'); } catch(e) {}
+          showInputState();
+          syncNavLoginLabel();
+        });
+      });
+    });
+
+    // Handle back-forward cache: DOMContentLoaded doesn't re-fire when the browser
+    // restores the page from bfcache, so re-check state on every pageshow.
+    window.addEventListener('pageshow', function(e) {
+      if (e.persisted) {
+        checkHeroState();
+        syncNavLoginLabel();
+      }
+    });
+  </script>
+
+  <!-- ── Vend banner ── -->
+  <div id="vend-banner"
+       class="flex items-center justify-center px-10 max-md:px-5"
+       style="background:#EFE5E5; position:fixed; bottom:0; left:0; right:0; z-index:40;">
+    <div class="flex items-center justify-between w-full max-w-[1366px]
+                py-5 max-md:py-[17px] gap-6
+                max-md:flex-col max-md:items-center max-md:gap-3 max-md:text-center">
+      <img src="assets/Vend_Markkinapaikat.svg" alt="Vend Markkinapaikat"
+           class="flex-shrink-0 w-[140px] h-auto md:w-auto md:h-5 xl:h-6" />
+      <p class="font-dm text-xs leading-4 text-slate-700 xl:text-sm xl:leading-5 max-md:text-center">
+        <span data-i18n="vend.body">AutoVex on osa Vend-konsernia. Vend on vastuussa tietojesi käsittelystä tällä sivustolla.</span>
+        <a href="#" class="underline ml-1" data-i18n="vend.readMore">Lue lisää</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var b      = document.getElementById('vend-banner');
+      var footer = document.querySelector('footer');
+      if (!b || !footer) return;
+
+      // Push footer up so the fixed banner doesn't overlap it
+      function applyOffset() {
+        footer.style.paddingBottom = b.offsetHeight + 'px';
+      }
+      applyOffset();
+      window.addEventListener('resize', applyOffset);
+
+      setTimeout(function () {
+        // Remove offset, make banner static (it follows footer naturally)
+        footer.style.paddingBottom = '';
+        window.removeEventListener('resize', applyOffset);
+        b.style.position = '';
+        b.style.bottom   = '';
+        b.style.left     = '';
+        b.style.right    = '';
+        b.style.zIndex   = '';
+      }, 10000);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ilmoitus lähetetty – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body class="font-dm bg-white min-h-screen">
+
+  <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
+    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 max-md:flex-col max-md:px-0 max-md:gap-0">
+
+      <!-- ── Left column ── -->
+      <div class="flex-1 flex flex-col items-start gap-6 max-w-[512px] max-md:max-w-full max-md:w-full max-md:px-5 max-md:pt-5 max-md:pb-8">
+
+        <!-- Logo -->
+        <a href="index.html" aria-label="Takaisin etusivulle" data-i18n-aria="success.backToHome">
+          <img src="assets/0ee90a56-efbf-4799-9249-76f362c9facf.svg"
+               alt="AutoVex"
+               class="w-[88px] h-[18px] object-contain block" />
+        </a>
+
+        <!-- Headline + subtext + badge -->
+        <div id="success-headline-section" class="flex flex-col gap-2.5 w-full text-center items-center">
+          <h1 id="success-headline" class="font-barlow font-bold text-slate-900 text-2xl leading-[26px]">
+            Hienoa! Ilmoitustasi tarkastetaan parhaillaan.
+          </h1>
+          <p id="success-subtext" class="font-dm text-base leading-5 text-black">
+            Olemme sinuun yhteydessä puhelimitse viimeistään huomenna, jotta saadaan autosi myytyä mahdollisimman pian.
+          </p>
+          <div id="success-badge" class="hidden items-center gap-2 bg-slate-200 border border-slate-300 rounded px-2 py-1">
+            <img src="assets/icon-hourglass-bold.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+            <span id="success-badge-text" class="font-dm font-medium text-sm text-slate-500"></span>
+          </div>
+        </div>
+
+        <!-- Illustration -->
+        <div id="success-illustration-wrap" class="w-full flex items-center justify-center">
+          <img id="success-illustration"
+               src="assets/5c60c059-afbf-433e-8541-bd611d13e275.svg"
+               alt=""
+               class="w-[288px] h-auto object-contain" />
+        </div>
+
+        <!-- Email verification card (shown when email not yet verified) -->
+        <div id="success-email-card" class="hidden w-full border-2 border-av-blue rounded-xl p-4 flex flex-col gap-6">
+          <div class="flex items-center justify-between">
+            <img src="assets/icon-email-envelope.svg" class="w-8 h-8 flex-shrink-0" alt="" />
+            <div class="bg-white border border-slate-200 rounded px-2 py-0.5">
+              <span id="success-email-address" class="font-dm font-medium text-base text-slate-600 whitespace-nowrap"></span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-5">
+            <div class="flex flex-col gap-2.5">
+              <p id="success-email-card-title" class="font-dm font-bold text-lg text-slate-800 leading-[22px]"></p>
+              <p id="success-email-card-body" class="font-dm font-medium text-base text-slate-600 leading-5"></p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <p id="success-email-card-no-email" class="font-dm font-bold text-base text-slate-800 leading-5"></p>
+              <button id="success-email-resend" class="font-dm font-medium text-base text-slate-600 leading-5 underline text-left bg-transparent border-none p-0 cursor-pointer"></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicle card -->
+        <div id="av-vehicle-card" class="w-full"></div>
+
+      </div>
+
+      <!-- ── Right column (cream) ── -->
+      <div class="flex-1 bg-av-cream rounded-xl p-8 min-h-[480px] flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+
+        <h2 class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="success.nextStepsTitle">Mitä tapahtuu seuraavaksi?</h2>
+
+        <div id="success-steps" class="flex flex-col gap-5">
+
+          <div class="flex gap-2 items-start">
+            <img src="assets/cf9ed64c-e015-4129-a683-516894e443b4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
+            <div class="flex flex-col gap-0.5">
+              <p id="step1-title" class="font-dm font-bold text-base leading-5 text-black"></p>
+              <p id="step1-body" class="font-dm text-base leading-5 text-black"></p>
+            </div>
+          </div>
+
+          <div class="flex gap-2 items-start">
+            <img src="assets/7cb7ddce-86cc-457f-be2d-f44485a7e101.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="2" />
+            <div class="flex flex-col gap-0.5">
+              <p id="step2-title" class="font-dm font-bold text-base leading-5 text-black"></p>
+              <p id="step2-body" class="font-dm text-base leading-5 text-black"></p>
+            </div>
+          </div>
+
+          <div class="flex gap-2 items-start">
+            <img src="assets/d7dbeec3-32bb-407c-a234-273ace9af998.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="3" />
+            <div class="flex flex-col gap-0.5">
+              <p id="step3-title" class="font-dm font-bold text-base leading-5 text-black"></p>
+              <p id="step3-body" class="font-dm text-base leading-5 text-black"></p>
+            </div>
+          </div>
+
+          <div id="success-step4-row" class="flex gap-2 items-start">
+            <img src="assets/step-4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="4" />
+            <div class="flex flex-col gap-0.5">
+              <p id="step4-title" class="font-dm font-bold text-base leading-5 text-black"></p>
+              <p id="step4-body" class="font-dm text-base leading-5 text-black"></p>
+            </div>
+          </div>
+
+          <div id="success-step5-row" class="flex gap-2 items-start">
+            <img src="assets/step-5.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="5" />
+            <div class="flex flex-col gap-0.5">
+              <p id="step5-title" class="font-dm font-bold text-base leading-5 text-black"></p>
+              <p id="step5-body" class="font-dm text-base leading-5 text-black"></p>
+            </div>
+          </div>
+
+        </div>
+
+        <a id="success-offers-btn" href="offers.html?scenario=live-no-bids"
+           style="display:none;align-items:center;justify-content:center;background:#0B6DFF;border-radius:.5rem;height:3.5rem;padding:0 2rem;text-decoration:none;box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);">
+          <span style="font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;color:white;">Näytä tarjouspyyntöni</span>
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script src="vehicle-card.js"></script>
+  <script>
+    const STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
+    function setStore(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch(e) {} }
+
+    // DAC7: emails starting with "dac" belong to previous AutoVex sellers and
+    // must complete the dac7 form before reaching the verified treatment
+    function isDacUser(s) {
+      return ((s.contact || {}).sahkoposti || '').trim().toLowerCase().indexOf('dac') === 0;
+    }
+
+    function photosComplete(s) {
+      const ph = s.photos || {};
+      const total = Object.values(ph).reduce((n, a) => n + (a ? a.length : 0), 0);
+      return total >= 5 && !!(ph.ulkopuoli && ph.ulkopuoli.length) && !!(ph.sisatilat && ph.sisatilat.length);
+    }
+
+    function updateContent() {
+      const s = getStore();
+      const photosOk = photosComplete(s);
+      const emailVerified = !!s.emailVerified;
+      const existing = document.getElementById('success-photos-btn');
+      const leftCol = document.getElementById('success-illustration-wrap').parentNode;
+      const headlineSection = document.getElementById('success-headline-section');
+      const illustrationWrap = document.getElementById('success-illustration-wrap');
+      const emailCard = document.getElementById('success-email-card');
+
+      var offersBtn = document.getElementById('success-offers-btn');
+
+      var vehicleCard = document.getElementById('av-vehicle-card');
+      if (!photosOk) {
+        // ── PHOTOS MISSING ──
+        if (vehicleCard) vehicleCard.style.display = '';
+        if (offersBtn) offersBtn.style.display = 'none';
+        leftCol.insertBefore(illustrationWrap, headlineSection); // illustration above headline
+        document.getElementById('success-illustration').src = 'assets/success-photos-missing.png';
+        document.getElementById('success-headline').textContent = t('success.headlineMissingPhotos');
+        document.getElementById('success-subtext').textContent  = t('success.subtextMissingPhotos');
+        document.getElementById('success-badge').style.display  = 'none';
+        emailCard.style.display = 'none';
+        document.getElementById('success-step4-row').style.display = 'none';
+        document.getElementById('success-step5-row').style.display = 'none';
+        document.getElementById('step1-title').textContent = t('success.missingStep1Title');
+        document.getElementById('step1-body').textContent  = t('success.missingStep1Body');
+        document.getElementById('step2-title').textContent = t('success.missingStep2Title');
+        document.getElementById('step2-body').textContent  = t('success.missingStep2Body');
+        document.getElementById('step3-title').textContent = t('success.missingStep3Title');
+        document.getElementById('step3-body').textContent  = t('success.missingStep3Body');
+        if (!existing) {
+          const btn = document.createElement('a');
+          btn.id = 'success-photos-btn';
+          btn.href = 'photos.html?from=success';
+          btn.style.cssText = 'display:flex;align-items:center;justify-content:center;background:#0B6DFF;border-radius:.5rem;height:3.5rem;padding:0 2rem;text-decoration:none;align-self:stretch;margin-top:.5rem;box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);';
+          btn.innerHTML = '<span style="font-family:\'DM Sans\',sans-serif;font-weight:500;font-size:1rem;color:white;">' + t('success.addPhotosBtn') + '</span>';
+          document.getElementById('success-subtext').insertAdjacentElement('afterend', btn);
+        }
+
+      } else if (emailVerified) {
+        // ── EMAIL VERIFIED ──
+        if (vehicleCard) vehicleCard.style.display = '';
+        existing?.remove();
+        hideEmailToast();
+        if (offersBtn) offersBtn.style.display = 'flex';
+        leftCol.insertBefore(illustrationWrap, headlineSection); // illustration above headline
+        document.getElementById('success-illustration').src = 'assets/success-email-verified-illustration.svg';
+        document.getElementById('success-headline').textContent = t('success.headlineEmailVerified');
+        document.getElementById('success-subtext').textContent  = t('success.subtextEmailVerified');
+        document.getElementById('success-badge').style.display  = 'none';
+        emailCard.style.display = 'none';
+        document.getElementById('success-step4-row').style.display = 'none';
+        document.getElementById('success-step5-row').style.display = 'none';
+        document.getElementById('step1-title').textContent = t('success.verifiedStep1Title');
+        document.getElementById('step1-body').textContent  = t('success.verifiedStep1Body');
+        document.getElementById('step2-title').textContent = t('success.verifiedStep2Title');
+        document.getElementById('step2-body').textContent  = t('success.verifiedStep2Body');
+        document.getElementById('step3-title').textContent = t('success.verifiedStep3Title');
+        document.getElementById('step3-body').textContent  = t('success.verifiedStep3Body');
+
+      } else {
+        // ── EMAIL NOT YET VERIFIED ──
+        if (vehicleCard) vehicleCard.style.display = 'none';
+        existing?.remove();
+        if (offersBtn) offersBtn.style.display = 'none';
+        // Illustration below headline
+        leftCol.insertBefore(illustrationWrap, emailCard);
+        document.getElementById('success-illustration').src = 'assets/success-verify-email-illustration.png';
+        document.getElementById('success-headline').textContent = t('success.headlineVerifyEmail');
+        document.getElementById('success-subtext').textContent  = t('success.subtextVerifyEmail');
+        const badge = document.getElementById('success-badge');
+        badge.style.display = 'flex';
+        document.getElementById('success-badge-text').textContent = t('success.badgeInReview');
+        emailCard.style.display = 'flex';
+        const userEmail = (getStore().contact || {}).sahkoposti || '';
+        document.getElementById('success-email-address').textContent       = userEmail;
+        document.getElementById('success-email-card-title').textContent    = t('success.emailCardTitle');
+        document.getElementById('success-email-card-body').textContent     = t('success.emailCardBody');
+        document.getElementById('success-email-card-no-email').textContent = t('success.emailCardNoEmail');
+        document.getElementById('success-email-resend').textContent        = t('success.emailCardResend');
+        document.getElementById('success-step4-row').style.display = 'flex';
+        document.getElementById('success-step5-row').style.display = 'flex';
+        document.getElementById('step1-title').textContent = t('success.step1Title');
+        document.getElementById('step1-body').textContent  = t('success.step1Body');
+        document.getElementById('step2-title').textContent = t('success.step2Title');
+        document.getElementById('step2-body').textContent  = t('success.step2Body');
+        document.getElementById('step3-title').textContent = t('success.step3Title');
+        document.getElementById('step3-body').textContent  = t('success.step3Body');
+        document.getElementById('step4-title').textContent = t('success.step4Title');
+        document.getElementById('step4-body').textContent  = t('success.step4Body');
+        document.getElementById('step5-title').textContent = t('success.step5Title');
+        document.getElementById('step5-body').textContent  = t('success.step5Body');
+        showEmailToast();
+      }
+    }
+
+    // Handle emailVerified URL param (landing from virtual email CTA)
+    (function () {
+      const p = new URLSearchParams(window.location.search);
+      if (p.get('emailVerified') === '1') {
+        const s = getStore();
+        if (isDacUser(s) && !s.dac7Completed) {
+          // Previous seller: collect DAC7 details before verified treatment
+          window.location.replace('dac7.html');
+          return;
+        }
+        s.emailVerified = true;
+        setStore(s);
+        // Clean the URL without reloading
+        history.replaceState(null, '', window.location.pathname);
+      }
+    }());
+
+    // Handle postMessage from iframe (virtual mobile device verify button)
+    window.addEventListener('message', function (e) {
+      if (!e.data || e.data.type !== 'emailVerified') return;
+      const s = getStore();
+      if (isDacUser(s) && !s.dac7Completed) {
+        // Previous seller: collect DAC7 details before verified treatment
+        window.location.href = 'dac7.html';
+        return;
+      }
+      s.emailVerified = true;
+      setStore(s);
+      if (typeof window.muwCloseFrame === 'function') window.muwCloseFrame(false);
+      updateContent();
+      renderVehicleCard('av-vehicle-card', { successView: true });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const s = getStore();
+      s.successVisited = true;
+      setStore(s);
+      updateContent();
+      renderVehicleCard('av-vehicle-card', { successView: true });
+
+      document.getElementById('success-email-resend').addEventListener('click', function () {
+        showEmailToast();
+      });
+
+      document.getElementById('email-toast-close').addEventListener('click', function () {
+        var toast = document.getElementById('email-toast');
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(16px)';
+        setTimeout(function () { toast.style.display = 'none'; }, 350);
+      });
+
+      document.getElementById('email-toast-view').addEventListener('click', function () {
+        if (typeof window.muwOpenVerifyFrame === 'function') window.muwOpenVerifyFrame();
+      });
+    });
+
+    window.addEventListener('pageshow', function (e) {
+      if (e.persisted) { updateContent(); renderVehicleCard('av-vehicle-card', { successView: true }); }
+    });
+
+    var emailToastTimer = null;
+
+    function hideEmailToast() {
+      if (emailToastTimer) { clearTimeout(emailToastTimer); emailToastTimer = null; }
+      var toast = document.getElementById('email-toast');
+      if (!toast) return;
+      toast.style.transition = 'none';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(16px)';
+      toast.style.display = 'none';
+    }
+
+    function showEmailToast() {
+      var toast = document.getElementById('email-toast');
+      if (!toast) return;
+      // Reset so animation replays on every page show
+      if (emailToastTimer) clearTimeout(emailToastTimer);
+      toast.style.transition = 'none';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(16px)';
+      toast.style.display = 'none';
+      emailToastTimer = setTimeout(function () {
+        emailToastTimer = null;
+        toast.style.display = 'flex';
+        toast.offsetHeight; // force reflow
+        toast.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+        // Apply current language
+        var titleEl = document.getElementById('email-toast-title');
+        var nowEl   = document.getElementById('email-toast-now');
+        var viewEl  = document.getElementById('email-toast-view');
+        if (titleEl) titleEl.textContent = t('success.emailToastTitle');
+        if (nowEl)   nowEl.textContent   = t('success.emailToastNow');
+        if (viewEl)  viewEl.textContent  = t('success.emailToastView');
+      }, 1500);
+    }
+  </script>
+
+  <!-- OS-style email notification toast -->
+  <div id="email-toast" style="
+    position:fixed;bottom:24px;right:24px;z-index:8000;
+    width:320px;max-width:calc(100vw - 32px);
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    border-radius:16px;
+    box-shadow:0 8px 40px rgba(0,0,0,0.16),0 2px 8px rgba(0,0,0,0.08),0 0 0 1px rgba(0,0,0,0.05);
+    padding:14px 14px 14px 16px;
+    display:none;flex-direction:column;gap:5px;
+    opacity:0;transform:translateY(16px);
+    transition:opacity 0.35s ease,transform 0.35s ease;
+    font-family:'DM Sans',sans-serif;">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="width:32px;height:32px;background:#0B6DFF;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+        <svg width="16" height="13" viewBox="0 0 16 13" fill="none"><rect x="0.75" y="0.75" width="14.5" height="11.5" rx="2.25" stroke="white" stroke-width="1.5"/><path d="M1 2.5l7 4.5 7-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <span style="font-size:13px;font-weight:700;color:#020617;flex:1;letter-spacing:-0.01em;">AutoVex</span>
+      <span id="email-toast-now" style="font-size:12px;color:#94a3b8;">nyt</span>
+      <button id="email-toast-close" aria-label="Sulje" style="background:none;border:none;padding:0;cursor:pointer;color:#94a3b8;margin-left:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M1.5 1.5l7 7M8.5 1.5l-7 7" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <p id="email-toast-title" style="font-size:14px;font-weight:600;color:#020617;margin:0 0 0 40px;line-height:1.4;">Sinulla on 1 uusi sähköposti</p>
+    <button id="email-toast-view" style="display:flex;align-items:center;gap:4px;margin:0 0 0 40px;background:none;border:none;padding:0;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:#0B6DFF;">
+      Näytä sähköposti
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <script src="mobile-upload-widget.js"></script>
+  <script src="layout.js"></script>
+</body>
+</html>
