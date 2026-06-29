@@ -79,6 +79,14 @@
     function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
     function setStore(data) { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {} }
 
+    var _offersScenario = (function() {
+      try {
+        var off = JSON.parse(localStorage.getItem('autovex_offers') || 'null') || {};
+        var dec = JSON.parse(localStorage.getItem('autovex_decision') || 'null') || {};
+        return off.scenario || dec.scenario || null;
+      } catch(e) { return null; }
+    })();
+
     function initStepNav(currentStep) {
       const s = getStore();
       const URLS = { details:'details.html', services:'services.html', photos:'photos.html', price:'price.html', contact:'contact.html' };
@@ -243,13 +251,11 @@
       s.emailVerified = false;
       s.dac7Completed = false;
       setStore(s);
-      try {
-        const _off = JSON.parse(localStorage.getItem('autovex_offers') || 'null') || {};
-        const _dec = JSON.parse(localStorage.getItem('autovex_decision') || 'null') || {};
-        const _sc  = _off.scenario || _dec.scenario || null;
-        if (_sc) { window.location.href = 'offers.html?scenario=' + encodeURIComponent(_sc); return; }
-      } catch(e) {}
-      window.location.href = 'success.html';
+      if (_offersScenario) {
+        window.location.href = 'offers.html?scenario=' + encodeURIComponent(_offersScenario);
+      } else {
+        window.location.href = 'success.html';
+      }
     }
 
     function saveContact() {
@@ -282,6 +288,10 @@
       ['kayttoehdot','markkinointi'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', saveContact);
       });
+
+      if (_offersScenario) {
+        document.getElementById('contact-submit-label').textContent = 'Valmis';
+      }
 
       // Treatment B: update right column bullets for asking-price path
       const s = getStore();
@@ -408,7 +418,7 @@
           <!-- CTA -->
           <button type="submit"
             class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors mt-1">
-            <span data-i18n="contact.submitBtn">Lähetä tarkastukseen</span>
+            <span id="contact-submit-label" data-i18n="contact.submitBtn">Lähetä tarkastukseen</span>
             <img src="assets/2298f807-f79d-4913-a748-1d256742f181.svg" class="w-6 h-6" alt="" />
           </button>
 
