@@ -243,6 +243,12 @@
       s.emailVerified = false;
       s.dac7Completed = false;
       setStore(s);
+      try {
+        const _off = JSON.parse(localStorage.getItem('autovex_offers') || 'null') || {};
+        const _dec = JSON.parse(localStorage.getItem('autovex_decision') || 'null') || {};
+        const _sc  = _off.scenario || _dec.scenario || null;
+        if (_sc) { window.location.href = 'offers.html?scenario=' + encodeURIComponent(_sc); return; }
+      } catch(e) {}
       window.location.href = 'success.html';
     }
 
