@@ -560,22 +560,48 @@
       window.location = from === 'success' ? 'success.html' : 'price.html';
     }
 
-    var _PHOTO_SCENARIO = new URLSearchParams(window.location.search).get('scenario');
+    var _urlParams     = new URLSearchParams(window.location.search);
+    var _PHOTO_SCENARIO = _urlParams.get('scenario');
+    var _isMobileFrame  = _urlParams.get('mode') === 'mobile';
+    var _fillToken = 0; // incremented to cancel any in-flight _loadFilledScenario
+
+    function _clearPhotosNow() {
+      _fillToken++; // cancel any pending fill callbacks
+      // wipe localStorage
+      try { var _s = getStore(); _s.photos = {}; _s.photosVisited = false; setStore(_s); } catch(e) {}
+      // reset in-memory counters
+      totalUploaded = 0;
+      SECTION_NAMES.forEach(function(n) { sectionCounts[n] = 0; });
+      // directly clear every slot and remove extra thumbnails
+      document.querySelectorAll('.section-container').forEach(function(section) {
+        section.querySelectorAll('.placeholder-slot').forEach(function(slot) { clearSlot(slot); });
+        var grid = section.querySelector('.photo-grid');
+        if (grid) Array.from(grid.children)
+          .filter(function(c) { return !c.classList.contains('placeholder-slot') && !c.classList.contains('add-slot'); })
+          .forEach(function(c) { c.remove(); });
+        var add = section.querySelector('.add-slot');
+        if (add) add.classList.add('hidden');
+      });
+      updateCTA();
+    }
 
     function _loadFilledScenario() {
+      if (_isMobileFrame) return; // never write scenario photos from inside the phone frame
       var SCENARIO_PHOTOS = {
         ulkopuoli:   ['scenario-ulkopuoli-2.jpg','scenario-ulkopuoli-1.jpg','scenario-ulkopuoli-3.jpg','scenario-ulkopuoli-4.jpg','scenario-ulkopuoli-5.jpg'],
         sisatilat:   ['scenario-sisatilat-1.jpg','scenario-sisatilat-2.jpg','scenario-sisatilat-3.jpg','scenario-sisatilat-4.jpg'],
         huoltokirja: ['scenario-huoltokirja-1.jpg','scenario-huoltokirja-2.jpg','scenario-huoltokirja-3.jpg','scenario-huoltokirja-4.jpg','scenario-huoltokirja-5.jpg'],
         renkaat:     ['scenario-renkaat-1.jpg'],
       };
-      // Clear any existing photos before injecting scenario data
-      var s = getStore(); s.photos = {}; s.photosVisited = true; setStore(s);
+      _fillToken++; // new fill run; any prior run's callbacks are now stale
+      var myToken = _fillToken;
+      // clear before filling
+      try { var s = getStore(); s.photos = {}; s.photosVisited = true; setStore(s); } catch(e) {}
 
       var entries = Object.entries(SCENARIO_PHOTOS);
       var total = entries.reduce(function(n, e) { return n + e[1].length; }, 0);
       var done = 0;
-      function onOne() { done++; if (done === total) loadPhotos(); }
+      function onOne() { done++; if (done === total && _fillToken === myToken) loadPhotos(); }
 
       entries.forEach(function(entry) {
         var section = entry[0], files = entry[1];
@@ -591,6 +617,7 @@
             })
             .then(function(dataUrl) {
               resizeDataUrl(dataUrl, 500, function(resized) {
+                if (_fillToken !== myToken) return; // cancelled — do not write
                 var st = getStore();
                 if (!st.photos) st.photos = {};
                 if (!st.photos[section]) st.photos[section] = [];
@@ -606,7 +633,10 @@
 
     window.addEventListener('DOMContentLoaded', function() {
       if (_PHOTO_SCENARIO === 'filled') {
+        _clearPhotosNow();
         _loadFilledScenario();
+      } else if (_PHOTO_SCENARIO === 'empty') {
+        _clearPhotosNow();
       } else {
         loadPhotos();
       }
@@ -945,8 +975,9 @@
 <script>
   // ── Floating scenario tester panel ──
   (function() {
+    if (_isMobileFrame) return; // no panel inside the phone frame iframe
     var SCENARIOS = [
-      { id: null,     label: 'Empty (default)' },
+      { id: 'empty',  label: 'Empty (default)' },
       { id: 'filled', label: 'Photos filled' },
     ];
 
@@ -960,14 +991,42 @@
     var drawer = document.createElement('div');
     drawer.style.cssText = 'display:none;position:absolute;bottom:44px;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:200px;overflow:hidden;padding:8px 0;';
 
+    function _panelSetActive(id) {
+      _PHOTO_SCENARIO = id;
+      history.replaceState(null, '', id ? 'photos.html?scenario=' + id : 'photos.html');
+      Array.from(drawer.querySelectorAll('a')).forEach(function(el) {
+        var isNow = el.dataset.scid === (id || '');
+        el.style.color      = isNow ? '#0B6DFF' : '#334155';
+        el.style.background = isNow ? '#EEF6FA' : 'transparent';
+        el.style.fontWeight = isNow ? '700' : '400';
+        el.querySelector('.sc-dot').style.display = isNow ? 'inline' : 'none';
+        el.querySelector('.sc-gap').style.display = isNow ? 'none' : 'inline-block';
+      });
+      drawer.style.display = 'none';
+    }
+
     SCENARIOS.forEach(function(sc) {
       var cur = _PHOTO_SCENARIO === sc.id;
       var a = document.createElement('a');
-      a.href = sc.id ? 'photos.html?scenario=' + sc.id : 'photos.html';
+      a.href = '#';
+      a.dataset.scid = sc.id || '';
       a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
-      a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;
-      a.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
-      a.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
+      var dot = document.createElement('svg'); dot.setAttribute('width','8'); dot.setAttribute('height','8'); dot.setAttribute('viewBox','0 0 8 8'); dot.innerHTML = '<circle cx="4" cy="4" r="4" fill="#0B6DFF"/>'; dot.className = 'sc-dot'; dot.style.display = cur ? 'inline' : 'none'; dot.style.flexShrink = '0';
+      var gap = document.createElement('span'); gap.className = 'sc-gap'; gap.style.cssText = 'width:8px;display:' + (cur ? 'none' : 'inline-block') + ';flex-shrink:0;';
+      a.appendChild(dot); a.appendChild(gap); a.appendChild(document.createTextNode(sc.label));
+      a.addEventListener('mouseover', function() { if (_PHOTO_SCENARIO !== sc.id) this.style.background = '#f8fafc'; });
+      a.addEventListener('mouseout',  function() { if (_PHOTO_SCENARIO !== sc.id) this.style.background = 'transparent'; });
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (sc.id === 'empty') {
+          _clearPhotosNow();
+          _panelSetActive('empty');
+        } else if (sc.id === 'filled') {
+          _clearPhotosNow();
+          _loadFilledScenario();
+          _panelSetActive('filled');
+        }
+      });
       drawer.appendChild(a);
     });
 
