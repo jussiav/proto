@@ -560,8 +560,56 @@
       window.location = from === 'success' ? 'success.html' : 'price.html';
     }
 
+    var _PHOTO_SCENARIO = new URLSearchParams(window.location.search).get('scenario');
+
+    function _loadFilledScenario() {
+      var SCENARIO_PHOTOS = {
+        ulkopuoli:   ['scenario-ulkopuoli-1.jpg','scenario-ulkopuoli-2.jpg','scenario-ulkopuoli-3.jpg','scenario-ulkopuoli-4.jpg','scenario-ulkopuoli-5.jpg'],
+        sisatilat:   ['scenario-sisatilat-1.jpg','scenario-sisatilat-2.jpg','scenario-sisatilat-3.jpg','scenario-sisatilat-4.jpg'],
+        huoltokirja: ['scenario-huoltokirja-1.jpg','scenario-huoltokirja-2.jpg','scenario-huoltokirja-3.jpg','scenario-huoltokirja-4.jpg','scenario-huoltokirja-5.jpg'],
+        renkaat:     ['scenario-renkaat-1.jpg'],
+      };
+      // Clear any existing photos before injecting scenario data
+      var s = getStore(); s.photos = {}; s.photosVisited = true; setStore(s);
+
+      var entries = Object.entries(SCENARIO_PHOTOS);
+      var total = entries.reduce(function(n, e) { return n + e[1].length; }, 0);
+      var done = 0;
+      function onOne() { done++; if (done === total) loadPhotos(); }
+
+      entries.forEach(function(entry) {
+        var section = entry[0], files = entry[1];
+        files.forEach(function(file) {
+          fetch('assets/' + file)
+            .then(function(r) { return r.blob(); })
+            .then(function(blob) {
+              return new Promise(function(res) {
+                var fr = new FileReader();
+                fr.onload = function(e) { res(e.target.result); };
+                fr.readAsDataURL(blob);
+              });
+            })
+            .then(function(dataUrl) {
+              resizeDataUrl(dataUrl, 500, function(resized) {
+                var st = getStore();
+                if (!st.photos) st.photos = {};
+                if (!st.photos[section]) st.photos[section] = [];
+                st.photos[section].push(resized);
+                setStore(st);
+                onOne();
+              });
+            })
+            .catch(function() { onOne(); });
+        });
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', function() {
-      loadPhotos();
+      if (_PHOTO_SCENARIO === 'filled') {
+        _loadFilledScenario();
+      } else {
+        loadPhotos();
+      }
       initStepNav('photos');
       // Show tuulilasi photo section only when windshield has damage
       const sv = getStore().services || {};
@@ -893,5 +941,47 @@
 </script>
 <script src="mobile-upload-widget.js"></script>
 <script src="layout.js"></script>
+
+<script>
+  // ── Floating scenario tester panel ──
+  (function() {
+    var SCENARIOS = [
+      { id: null,     label: 'Empty (default)' },
+      { id: 'filled', label: 'Photos filled' },
+    ];
+
+    var panel = document.createElement('div');
+    panel.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;font-family:system-ui,sans-serif;';
+
+    var toggle = document.createElement('button');
+    toggle.style.cssText = 'display:flex;align-items:center;gap:6px;padding:8px 12px;background:#0B6DFF;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);';
+    toggle.textContent = 'Scenario';
+
+    var drawer = document.createElement('div');
+    drawer.style.cssText = 'display:none;position:absolute;bottom:44px;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:200px;overflow:hidden;padding:8px 0;';
+
+    SCENARIOS.forEach(function(sc) {
+      var cur = _PHOTO_SCENARIO === sc.id;
+      var a = document.createElement('a');
+      a.href = sc.id ? 'photos.html?scenario=' + sc.id : 'photos.html';
+      a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
+      a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;
+      a.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
+      a.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
+      drawer.appendChild(a);
+    });
+
+    toggle.addEventListener('click', function() {
+      drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
+    });
+    document.addEventListener('click', function(e) {
+      if (!panel.contains(e.target)) drawer.style.display = 'none';
+    });
+
+    panel.appendChild(drawer);
+    panel.appendChild(toggle);
+    document.body.appendChild(panel);
+  })();
+</script>
 </body>
 </html>
