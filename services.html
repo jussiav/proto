@@ -501,6 +501,9 @@
     }
 
     function updateTiedotBanner() {
+      // HIDDEN: Varmennettu huoltohistoria temporarily disabled
+      updateHistoryVisibility();
+      return;
       var group = document.getElementById('book-type-group');
       var banner = document.getElementById('tiedot-banner');
       if (!group || !banner) return;
