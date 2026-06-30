@@ -98,9 +98,12 @@
               <span class="font-bold text-slate-900">Henkilötunnus</span>
               <span class="font-medium text-red-500">*</span>
             </label>
-            <input id="field-hetu" type="text" required autocomplete="off" data-lpignore="true" data-1p-ignore
-              placeholder="010101-123A"
-              class="h-14 px-4 border border-slate-400 rounded-lg text-base text-slate-900 placeholder-slate-300 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600" />
+            <div id="hetu-wrapper" class="h-14 flex items-center gap-2 border border-slate-400 rounded-lg bg-white px-4 focus-within:border-blue-600 focus-within:ring-1 focus-within:ring-blue-600 transition-colors">
+              <input id="field-hetu" type="text" required autocomplete="off" data-lpignore="true" data-1p-ignore
+                placeholder="010101-123A"
+                class="flex-1 h-full border-none outline-none bg-transparent text-base text-slate-900 placeholder-slate-300" />
+              <button id="hetu-edit-btn" type="button" class="hidden flex-shrink-0 text-sm font-medium text-blue-600 hover:text-blue-800 bg-transparent border-0 p-0 cursor-pointer">Muokkaa</button>
+            </div>
             <p id="err-hetu" class="hidden text-sm text-red-500">Täytä tämä kenttä</p>
           </div>
 
@@ -231,6 +234,53 @@
         return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
       }
 
+      var _urlParams    = new URLSearchParams(window.location.search);
+      var _DAC7_SCENARIO = _urlParams.get('scenario'); // 'returning' or null
+
+      var PREFILLED = {
+        hetu:   '******-***M',
+        street: 'Fredrikinkatu 42 B 15',
+        zip:    '00100',
+        city:   'Helsinki',
+      };
+
+      function _lockHetu() {
+        var inp     = document.getElementById('field-hetu');
+        var wrapper = document.getElementById('hetu-wrapper');
+        inp.setAttribute('readonly', '');
+        inp.classList.add('text-slate-500', 'cursor-default');
+        inp.classList.remove('text-slate-900');
+        wrapper.classList.add('bg-slate-50', 'border-slate-300');
+        wrapper.classList.remove('border-slate-400', 'border-red-500');
+        document.getElementById('hetu-edit-btn').classList.remove('hidden');
+      }
+
+      function _unlockHetu() {
+        var inp     = document.getElementById('field-hetu');
+        var wrapper = document.getElementById('hetu-wrapper');
+        inp.removeAttribute('readonly');
+        inp.classList.remove('text-slate-500', 'cursor-default');
+        inp.classList.add('text-slate-900');
+        wrapper.classList.remove('bg-slate-50', 'border-slate-300', 'border-red-500');
+        wrapper.classList.add('border-slate-400');
+        document.getElementById('hetu-edit-btn').classList.add('hidden');
+      }
+
+      function _applyReturning() {
+        document.getElementById('field-hetu').value   = PREFILLED.hetu;
+        document.getElementById('field-street').value = PREFILLED.street;
+        document.getElementById('field-zip').value    = PREFILLED.zip;
+        document.getElementById('field-city').value   = PREFILLED.city;
+        _lockHetu();
+      }
+
+      function _applyDefault() {
+        _unlockHetu();
+        ['field-hetu','field-street','field-zip','field-city'].forEach(function(id) {
+          document.getElementById(id).value = '';
+        });
+      }
+
       var s = getStore();
 
       // Update nav label with user's first name
@@ -255,6 +305,20 @@
         '</div>';
       carList.appendChild(carRow);
 
+      // Expose for scenario panel
+      window._dac7ApplyReturning = _applyReturning;
+      window._dac7ApplyDefault   = _applyDefault;
+
+      // Apply scenario on load
+      if (_DAC7_SCENARIO === 'returning') _applyReturning();
+
+      // Edit button — clears masked value and activates input
+      document.getElementById('hetu-edit-btn').addEventListener('click', function() {
+        document.getElementById('field-hetu').value = '';
+        _unlockHetu();
+        document.getElementById('field-hetu').focus();
+      });
+
       // Form field error helpers
       var FIELDS = [
         { input: 'field-hetu',   error: 'err-hetu'   },
@@ -267,8 +331,9 @@
         document.getElementById(f.input).addEventListener('input', function() {
           if (this.value.trim()) {
             document.getElementById(f.error).classList.add('hidden');
-            this.classList.remove('border-red-500');
-            this.classList.add('border-slate-400');
+            var borderEl = f.input === 'field-hetu' ? document.getElementById('hetu-wrapper') : this;
+            borderEl.classList.remove('border-red-500');
+            borderEl.classList.add('border-slate-400');
           }
         });
       });
@@ -281,9 +346,11 @@
           var inp = document.getElementById(f.input);
           var err = document.getElementById(f.error);
           if (!inp.value.trim()) {
+            err.textContent = 'Täytä tämä kenttä';
             err.classList.remove('hidden');
-            inp.classList.add('border-red-500');
-            inp.classList.remove('border-slate-400');
+            var borderEl = f.input === 'field-hetu' ? document.getElementById('hetu-wrapper') : inp;
+            borderEl.classList.add('border-red-500');
+            borderEl.classList.remove('border-slate-400', 'border-slate-300');
             valid = false;
           }
         });
@@ -291,6 +358,69 @@
           window.location.href = 'offers.html?scenario=deal-completed';
         }
       });
+    })();
+  </script>
+
+  <script>
+    // Scenario panel
+    (function() {
+      var SCENARIOS = [
+        { id: null,         label: 'Empty (default)' },
+        { id: 'returning',  label: 'Returning user'  },
+      ];
+
+      var panel = document.createElement('div');
+      panel.style.cssText = 'position:fixed;bottom:20px;right:20px;z-index:9000;font-family:"DM Sans",sans-serif;';
+
+      var btn = document.createElement('button');
+      btn.textContent = 'Scenario';
+      btn.style.cssText = 'background:#1e293b;color:#fff;border:none;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.18);';
+
+      var menu = document.createElement('div');
+      menu.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 6px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.12);padding:6px;min-width:180px;';
+
+      var _currentScenario = new URLSearchParams(window.location.search).get('scenario');
+
+      SCENARIOS.forEach(function(sc) {
+        var item = document.createElement('button');
+        var isActive = sc.id === _currentScenario;
+        item.textContent = (isActive ? '✓ ' : '') + sc.label;
+        item.style.cssText = 'display:block;width:100%;text-align:left;background:' + (isActive ? '#EEF6FA' : 'transparent') + ';border:none;border-radius:6px;padding:7px 10px;font-size:13px;font-weight:' + (isActive ? '600' : '400') + ';color:#1e293b;cursor:pointer;';
+        item.addEventListener('mouseenter', function() { if (!isActive) this.style.background = '#f8fafc'; });
+        item.addEventListener('mouseleave', function() { if (!isActive) this.style.background = 'transparent'; });
+        item.addEventListener('click', function() {
+          _currentScenario = sc.id;
+          history.replaceState(null, '', sc.id ? 'dac7.html?scenario=' + sc.id : 'dac7.html');
+          menu.style.display = 'none';
+          // Update form
+          if (sc.id === 'returning') {
+            window._dac7ApplyReturning();
+          } else {
+            window._dac7ApplyDefault();
+          }
+          // Refresh active state in menu
+          menu.querySelectorAll('button').forEach(function(b, i) {
+            var s = SCENARIOS[i];
+            var active = s.id === _currentScenario;
+            b.textContent = (active ? '✓ ' : '') + s.label;
+            b.style.background = active ? '#EEF6FA' : 'transparent';
+            b.style.fontWeight  = active ? '600' : '400';
+          });
+        });
+        menu.appendChild(item);
+      });
+
+      var open = false;
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        open = !open;
+        menu.style.display = open ? 'block' : 'none';
+      });
+      document.addEventListener('click', function() { open = false; menu.style.display = 'none'; });
+
+      panel.appendChild(menu);
+      panel.appendChild(btn);
+      document.body.appendChild(panel);
     })();
   </script>
 

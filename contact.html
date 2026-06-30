@@ -83,7 +83,9 @@
       try {
         var off = JSON.parse(localStorage.getItem('autovex_offers') || 'null') || {};
         var dec = JSON.parse(localStorage.getItem('autovex_decision') || 'null') || {};
-        return off.scenario || dec.scenario || null;
+        var sc = off.scenario || dec.scenario || null;
+        // draft-open means funnel completion, not a return edit — go to success, not offers
+        return sc === 'draft-open' ? null : sc;
       } catch(e) { return null; }
     })();
 
