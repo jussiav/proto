@@ -245,11 +245,13 @@
       }
 
       saveContact();
-      // New submission always starts with an unverified email (clears flags
-      // left over from a previous run, incl. the DAC7 completion)
       const s = getStore();
-      s.emailVerified = false;
-      s.dac7Completed = false;
+      // Only reset verification flags for first-time submissions.
+      // Returning users who already verified keep their status.
+      if (!s.emailVerified) {
+        s.emailVerified = false;
+        s.dac7Completed = false;
+      }
       setStore(s);
       if (_offersScenario) {
         window.location.href = 'offers.html?scenario=' + encodeURIComponent(_offersScenario);

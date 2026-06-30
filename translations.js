@@ -128,7 +128,7 @@ window.TRANSLATIONS = {
       draft:          'Luonnos',
       openDetails:    'Avaa tiedot',
       priceLabelAsk:  'Pyyntihinta:',
-      priceLabelTarget: 'Tavoitehinta:',
+      priceLabelTarget: 'Oma arviosi:',
     },
 
     /* ── Ad preview modal (vehicle-card.js) ── */
@@ -552,11 +552,11 @@ window.TRANSLATIONS = {
 
     /* ── Price page ── */
     price: {
-      title:           'Onko sinulla tavoitehinta?',
-      subtitle:        'Säästät aikaa turhien tarjouksien kanssa. Voit jatkaa myös ilman tavoitehintaa.',
+      title:           'Arvioi autosi arvo itse tai jätä se meidän tehtäväksi.',
+      subtitle:        'Arviosi auttaa meitä valmistautumaan tarjouskilpailuun. Jos et halua arvioida, teemme sen puolestasi.',
       askVariantTitle:    'Mikä olisi tarjous, johon olisit tyytyväinen?',
       askVariantSubtitle: 'Realistinen pyyntihinta tekee autostasi kiinnostavamman tarjouskilpailussa.',
-      targetLabel:     'Tavoitehinta (valinnainen)',
+      targetLabel:     'Oma arviosi (valinnainen)',
       targetPlaceholder: 'esim. 12 500',
       targetError:     'Anna hinta numeroina, esim. 12 500.',
       targetNote:      'Et sitoudu myymään tavoitehinnallasi.',
@@ -703,7 +703,7 @@ window.TRANSLATIONS = {
       draft:            'Draft',
       openDetails:      'Open details',
       priceLabelAsk:    'Asking price:',
-      priceLabelTarget: 'Target price:',
+      priceLabelTarget: 'Your estimate:',
     },
 
     modal: {
@@ -1114,11 +1114,11 @@ window.TRANSLATIONS = {
     },
 
     price: {
-      title:              'Do you have a target price?',
-      subtitle:           'You\'ll save time filtering out irrelevant offers. You can also continue without a target price.',
+      title:              'Estimate your car\'s value, or let us do it for you.',
+      subtitle:           'Your estimate helps us prepare for the auction. If you don\'t want to estimate, we\'ll take care of it.',
       askVariantTitle:    'What offer would you be happy with?',
       askVariantSubtitle: 'A realistic asking price makes your car more attractive in the auction.',
-      targetLabel:        'Target price (optional)',
+      targetLabel:        'My estimate (optional)',
       targetPlaceholder:  'e.g. 12,500',
       targetError:        'Enter price as numbers, e.g. 12,500.',
       targetNote:         'You\'re not committed to selling at your target price.',
