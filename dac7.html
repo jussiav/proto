@@ -90,7 +90,7 @@
         <div id="car-list" class="flex flex-col gap-2.5 mb-9"></div>
 
         <!-- Form -->
-        <form id="dac7-form" class="flex flex-col gap-6 mb-9" novalidate autocomplete="off" data-form-type="other">
+        <form id="dac7-form" class="flex flex-col gap-6" novalidate autocomplete="off" data-form-type="other">
 
           <!-- Henkilötunnus -->
           <div class="flex flex-col gap-2">
@@ -151,59 +151,65 @@
 
         </form>
 
-        <!-- FAQ accordions -->
-        <div class="flex flex-col">
-
-          <details class="group border-b border-black/10">
-            <summary class="flex items-center gap-4 py-4 cursor-pointer list-none">
-              <span class="flex-1 font-body font-bold text-lg leading-[22px] text-slate-900">Miksi näitä tietoja pyydetään?</span>
-              <span class="text-slate-500 shrink-0">
-                <svg class="group-open:hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-                  <path d="M8.5 2v13M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <svg class="hidden group-open:block" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-                  <path d="M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </span>
-            </summary>
-            <p class="pb-4 text-sm leading-normal text-[#585D64]">AutoVexilla on lakisääteinen velvollisuus kerätä ja raportoida tiettyjä tietoja palvelun kautta autoja myyneistä käyttäjistä. Tämä koskee kaikkia käyttäjiä, jotka ovat myyneet yli 2 000 eurolla kalenterivuoden aikana.</p>
-          </details>
-
-          <details class="group border-b border-black/10">
-            <summary class="flex items-center gap-4 py-4 cursor-pointer list-none">
-              <span class="flex-1 font-body font-bold text-lg leading-[22px] text-slate-900">Kenen tiedot minun tulee antaa?</span>
-              <span class="text-slate-500 shrink-0">
-                <svg class="group-open:hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-                  <path d="M8.5 2v13M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <svg class="hidden group-open:block" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-                  <path d="M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </span>
-            </summary>
-            <p class="pb-4 text-sm leading-normal text-[#585D64]">Anna sen henkilön tiedot, jonka sähköpostiosoite on ollut auton myynti-ilmoituksessa.</p>
-          </details>
-
-          <details class="group border-b border-black/10">
-            <summary class="flex items-center gap-4 py-4 cursor-pointer list-none">
-              <span class="flex-1 font-body font-bold text-lg leading-[22px] text-slate-900">Mitä tapahtuu, jos en täytä tietoja?</span>
-              <span class="text-slate-500 shrink-0">
-                <svg class="group-open:hidden" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-                  <path d="M8.5 2v13M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <svg class="hidden group-open:block" width="17" height="17" viewBox="0 0 17 17" fill="none" aria-hidden="true">
-                  <path d="M2 8.5h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-              </span>
-            </summary>
-            <p class="pb-4 text-sm leading-normal text-[#585D64]">Tietojen vahvistaminen on edellytys AutoVexin käytön jatkamiselle. Tietoja käytetään vain lakisääteiseen raportointiin eikä niiden toimittaminen vaikuta verotukseesi.</p>
-          </details>
-
-        </div>
-
-
       </div>
+
+    <!-- FAQ accordions -->
+    <div class="space-y-2.5 mt-6">
+
+      <div class="w-full bg-white p-3 rounded-md">
+        <details class="group peer">
+          <summary class="block cursor-pointer [&::-webkit-details-marker]:hidden">
+            <div class="flex items-center justify-between gap-1">
+              <span class="inline-flex flex-1 leading-snug text-sm text-gray-700 group-open:font-bold">Miksi näitä tietoja pyydetään?</span>
+              <span class="inline-flex text-slate-500 group-open:hidden ml-2 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></span>
+              <span class="hidden text-slate-500 group-open:inline-flex ml-2 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 165.66a8 8 0 0 1-11.32 0L128 91.31l-74.34 74.35a8 8 0 0 1-11.32-11.32l80-80a8 8 0 0 1 11.32 0l80 80a8 8 0 0 1 0 11.32Z"/></svg></span>
+            </div>
+          </summary>
+        </details>
+        <div class="grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity] ease-in-out">
+          <div class="overflow-hidden">
+            <div class="pt-4 text-sm text-gray-600 space-y-2">AutoVexilla on lakisääteinen velvollisuus kerätä ja raportoida tiettyjä tietoja palvelun kautta autoja myyneistä käyttäjistä. Tämä koskee kaikkia käyttäjiä, jotka ovat myyneet yli 2 000 eurolla kalenterivuoden aikana.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full bg-white p-3 rounded-md">
+        <details class="group peer">
+          <summary class="block cursor-pointer [&::-webkit-details-marker]:hidden">
+            <div class="flex items-center justify-between gap-1">
+              <span class="inline-flex flex-1 leading-snug text-sm text-gray-700 group-open:font-bold">Kenen tiedot minun tulee antaa?</span>
+              <span class="inline-flex text-slate-500 group-open:hidden ml-2 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></span>
+              <span class="hidden text-slate-500 group-open:inline-flex ml-2 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 165.66a8 8 0 0 1-11.32 0L128 91.31l-74.34 74.35a8 8 0 0 1-11.32-11.32l80-80a8 8 0 0 1 11.32 0l80 80a8 8 0 0 1 0 11.32Z"/></svg></span>
+            </div>
+          </summary>
+        </details>
+        <div class="grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity] ease-in-out">
+          <div class="overflow-hidden">
+            <div class="pt-4 text-sm text-gray-600 space-y-2">Anna sen henkilön tiedot, jonka sähköpostiosoite on ollut auton myynti-ilmoituksessa.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-full bg-white p-3 rounded-md">
+        <details class="group peer">
+          <summary class="block cursor-pointer [&::-webkit-details-marker]:hidden">
+            <div class="flex items-center justify-between gap-1">
+              <span class="inline-flex flex-1 leading-snug text-sm text-gray-700 group-open:font-bold">Mitä tapahtuu, jos en täytä tietoja?</span>
+              <span class="inline-flex text-slate-500 group-open:hidden ml-2 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></span>
+              <span class="hidden text-slate-500 group-open:inline-flex ml-2 flex-shrink-0"><svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 165.66a8 8 0 0 1-11.32 0L128 91.31l-74.34 74.35a8 8 0 0 1-11.32-11.32l80-80a8 8 0 0 1 11.32 0l80 80a8 8 0 0 1 0 11.32Z"/></svg></span>
+            </div>
+          </summary>
+        </details>
+        <div class="grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity] ease-in-out">
+          <div class="overflow-hidden">
+            <div class="pt-4 text-sm text-gray-600 space-y-2">Tietojen vahvistaminen on edellytys AutoVexin käytön jatkamiselle. Tietoja käytetään vain lakisääteiseen raportointiin eikä niiden toimittaminen vaikuta verotukseesi.</div>
+          </div>
+        </div>
+      </div>
+
     </div>
+
+  </div>
   </main>
 
   <!-- Footer -->
