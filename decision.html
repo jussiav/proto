@@ -150,6 +150,7 @@
           <select class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
             <option value="fi">Suomi</option><option value="en">English</option>
           </select>
+          <span id="scenario-anchor" class="relative inline-flex"></span>
           <span class="font-body font-normal">© 2025 All rights reserved</span>
         </div>
       </div>
@@ -171,7 +172,8 @@
     function saveState() {
       try {
         localStorage.setItem(_STATE_KEY, JSON.stringify({ scenario: SCENARIO, negotiations: NEGOTIATIONS, acceptedOffer: ACCEPTED_OFFER, acceptedOffersSnapshot: ACCEPTED_OFFERS_SNAPSHOT }));
-        localStorage.setItem('autovex_offers', JSON.stringify({ scenario: SCENARIO }));
+        var _existingOffers = (function() { try { return JSON.parse(localStorage.getItem('autovex_offers') || '{}'); } catch(e) { return {}; } })();
+        localStorage.setItem('autovex_offers', JSON.stringify(Object.assign({}, _existingOffers, { scenario: SCENARIO })));
       } catch(e) {}
     }
     var _savedState = _loadState();
@@ -468,17 +470,50 @@
       return 'not_great_auction';
     }
 
-    // ── Bid progression generator — mirrors offers.astro insightsData formula ──
-    // steps = max(3, offerCount) so chart joints == offer_count shown in stats
+    // ── Bid progression generator ──
+    // Produces `steps` values from base→highest with variable increments (min 50€ each).
+    // Uses a fixed weight pattern to give a non-linear, realistic-looking progression.
     function genInsights(count, highest) {
       if (!count || !highest) return [];
-      var base  = Math.round(highest * 0.65 / 100) * 100;
-      var steps = Math.max(3, count);
-      var out   = [];
-      for (var i = 1; i <= steps; i++) {
-        out.push(Math.round((base + (highest - base) * i / steps) / 100) * 100);
+      var base       = Math.round(highest * 0.65 / 100) * 100;
+      var steps      = Math.max(3, count);
+      var totalRange = highest - base;
+
+      // Fallback: range too small for varied steps — equal distribution
+      if (totalRange < steps * 50) {
+        var eq = [];
+        for (var i = 1; i <= steps; i++) {
+          eq.push(Math.round((base + totalRange * i / steps) / 50) * 50);
+        }
+        eq[eq.length - 1] = highest;
+        return eq;
       }
-      out[out.length - 1] = highest;
+
+      // Variable weight pattern — repeats for large step counts
+      var PATTERN = [1, 1.5, 0.7, 2.0, 0.8, 1.3, 0.6, 1.8, 1.1, 0.9, 1.4, 0.75];
+      var weights = [], wSum = 0;
+      for (var i = 0; i < steps; i++) {
+        var w = PATTERN[i % PATTERN.length];
+        weights.push(w);
+        wSum += w;
+      }
+
+      // Raw increments rounded to nearest 50, floor at 50
+      var increments = weights.map(function(w) {
+        return Math.max(50, Math.round((w / wSum) * totalRange / 50) * 50);
+      });
+
+      var out = [], cur = base;
+      for (var i = 0; i < steps - 1; i++) {
+        var remaining = steps - 1 - i;
+        // Cap so remaining steps can still each contribute ≥50
+        var maxNext = highest - remaining * 50;
+        cur = Math.min(cur + increments[i], maxNext);
+        // Ensure strictly increasing by at least 50
+        if (out.length > 0) cur = Math.max(cur, out[out.length - 1] + 50);
+        out.push(cur);
+      }
+      out.push(highest);
       return out;
     }
 
@@ -638,8 +673,12 @@
         html += '</div>';
       }
 
-      // Amount
-      html += '<div class="text-5xl font-bold font-display text-center ' + amtColor + '">' + fmtCurrency(offer.amount) + '</div>';
+      // Amount — use latest dealer counter-offer amount regardless of subsequent seller messages
+      var _neg = NEGOTIATIONS[offer.id];
+      var _negMsgs = (_neg && _neg.messages) || [];
+      var _lastDealerMsg = _negMsgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0] || null;
+      var effectiveAmount = Math.max(_lastDealerMsg && _lastDealerMsg.amount ? _lastDealerMsg.amount : offer.amount, offer.amount);
+      html += '<div class="text-5xl font-bold font-display text-center ' + amtColor + '">' + fmtCurrency(effectiveAmount) + '</div>';
 
       // Status badge
       if (!isAccepted) html += buildStatusBadge(status, timeToReact, offer.dealer_replied);
@@ -948,7 +987,10 @@
       // Hero + offer cards — all direct children of #offers-grid
       var grid     = document.getElementById('offers-grid');
       var selected = selectOffers(offers);
-      var expiryTs = (req.expires_at || 0) + REACTION;
+      var _offersStore = (function() { try { return JSON.parse(localStorage.getItem('autovex_offers') || '{}'); } catch(e) { return {}; } })();
+      var expiryTs = (_offersStore.sharedExpiryScenario === SCENARIO && _offersStore.sharedExpiry)
+        ? _offersStore.sharedExpiry
+        : (req.expires_at || 0) + REACTION;
       var hc       = HERO_COPY[pas] || HERO_COPY.good_auction;
 
       grid.innerHTML = '';
@@ -1031,7 +1073,7 @@
     var NEGOTIATIONS = {};
     var ACCEPTED_OFFER          = _savedState.acceptedOffer          || null;
     var ACCEPTED_OFFERS_SNAPSHOT = _savedState.acceptedOffersSnapshot || null;
-    // Restore negotiations from localStorage
+    // Restore negotiations from localStorage across all scenarios
     if (_savedState.negotiations) {
       Object.keys(_savedState.negotiations).forEach(function(k) {
         NEGOTIATIONS[parseInt(k, 10)] = _savedState.negotiations[k];
@@ -1092,10 +1134,14 @@
           '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Hyväksy tarjous</button>' +
         '</div>';
       document.getElementById('modal-btn-accept').addEventListener('click', function() {
-        ACCEPTED_OFFER = offer;
+        var _acceptNeg = NEGOTIATIONS[offer.id];
+        var _acceptMsgs = (_acceptNeg && _acceptNeg.messages) || [];
+        var _acceptLastDealer = _acceptMsgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0] || null;
+        var _acceptAmt = Math.max(_acceptLastDealer && _acceptLastDealer.amount ? _acceptLastDealer.amount : offer.amount, offer.amount);
+        ACCEPTED_OFFER = Object.assign({}, offer, { amount: _acceptAmt });
         var _snap = getData().offers || [];
         ACCEPTED_OFFERS_SNAPSHOT = _snap.map(function(o) {
-          return Object.assign({}, o, { status: o.id === offer.id ? 1 : 2, negotiation_pending: false, dealer_replied: false });
+          return Object.assign({}, o, { status: o.id === offer.id ? 1 : 2, negotiation_pending: false, dealer_replied: false, amount: o.id === offer.id ? _acceptAmt : o.amount });
         });
         SCENARIO = 'accepted'; saveState(); closeModal();
         window.location.href = 'decision.html?scenario=accepted';
@@ -1383,13 +1429,12 @@
         { id: 'deal-failed',    label: 'Deal failed' },
       ]},
     ];
-    var panel = document.createElement('div');
-    panel.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;font-family:system-ui,sans-serif;';
+    var panel = document.getElementById('scenario-anchor');
     var toggle = document.createElement('button');
-    toggle.style.cssText = 'display:flex;align-items:center;gap:6px;padding:8px 12px;background:#0B6DFF;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);';
+    toggle.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.8);font-size:13px;font-weight:400;cursor:pointer;padding:0;text-decoration:underline;font-family:system-ui,sans-serif;';
     toggle.textContent = 'Scenario';
     var drawer = document.createElement('div');
-    drawer.style.cssText = 'display:none;position:absolute;bottom:44px;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);width:260px;max-height:80vh;overflow-y:auto;padding:8px 0;';
+    drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);width:260px;max-height:80vh;overflow-y:auto;padding:8px 0;z-index:9999;';
 
     // Section: scenarios
     SCENARIO_GROUPS.forEach(function(grp, gi) {
@@ -1485,7 +1530,7 @@
       var _msgs = _neg.messages || [];
       var _lastSellerMsg = _msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
       if (!_lastSellerMsg) { alert('Send a counter-offer first'); return; }
-      var _dealerAmount = Math.round(_lastSellerMsg.amount * 0.97);
+      var _dealerAmount = Math.max(Math.round(_lastSellerMsg.amount * 0.97), _h.amount);
       _neg.messages.push({
         sender: 'dealer',
         amount: _dealerAmount,
@@ -1500,13 +1545,23 @@
     });
     drawer.appendChild(simBtn);
 
+    var resetNegBtn = document.createElement('button');
+    resetNegBtn.textContent = 'Reset counter offers';
+    resetNegBtn.style.cssText = 'display:block;margin:4px 14px 10px;width:calc(100% - 28px);background:#ef4444;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
+    resetNegBtn.addEventListener('click', function() {
+      NEGOTIATIONS = {};
+      saveState();
+      open = false; drawer.style.display = 'none';
+      renderPage();
+    });
+    drawer.appendChild(resetNegBtn);
+
     var open = false;
     toggle.addEventListener('click', function() { open = !open; drawer.style.display = open ? 'block' : 'none'; });
     document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
     document.addEventListener('click', function(e) { if (open && !panel.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
     panel.appendChild(drawer);
     panel.appendChild(toggle);
-    document.body.appendChild(panel);
 
     // Create modal element (must exist before wiring)
     var modalEl = document.createElement('div');
@@ -1542,14 +1597,29 @@
     if (SCENARIO === 'dealer-replied') {
       var _drData = getData();
       (_drData.offers || []).forEach(function(o) {
-        if (o.dealer_replied && !NEGOTIATIONS[o.id]) {
+        if (!o.dealer_replied) return;
+        if (!NEGOTIATIONS[o.id]) {
+          // No negotiation yet — seed full thread with default seller + dealer messages
           NEGOTIATIONS[o.id] = {
             messages: [
               { sender: 'seller', amount: 11700, message: 'Hei! Haluaisin tästä hieman enemmän. Minkä verran joustoa teillä on?', created_at: new Date((_now()-5*3600)*1000).toISOString() },
-              { sender: 'dealer', amount: 11300, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date((_now()-1*3600)*1000).toISOString() }
+              { sender: 'dealer', amount: 11600, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date((_now()-1*3600)*1000).toISOString() }
             ],
             isStopped: false
           };
+        } else {
+          // Negotiation exists from prior scenario — add dealer reply if none present
+          var _hasDealerReply = NEGOTIATIONS[o.id].messages.some(function(m) { return m.sender === 'dealer'; });
+          if (!_hasDealerReply) {
+            var _lastSeller = NEGOTIATIONS[o.id].messages.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+            var _replyAmt = Math.max(Math.round((_lastSeller ? _lastSeller.amount : o.amount) * 0.97), o.amount);
+            NEGOTIATIONS[o.id].messages.push({
+              sender: 'dealer',
+              amount: _replyAmt,
+              message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!',
+              created_at: new Date((_now()-1*3600)*1000).toISOString()
+            });
+          }
         }
       });
     }
@@ -1562,8 +1632,8 @@
           NEGOTIATIONS[o.id] = {
             messages: [
               { sender: 'seller', amount: 11700, message: 'Hei! Haluaisin tästä hieman enemmän. Minkä verran joustoa teillä on?', created_at: new Date((_now()-5*3600)*1000).toISOString() },
-              { sender: 'dealer', amount: 11300, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date((_now()-3*3600)*1000).toISOString() },
-              { sender: 'seller', amount: 11500, message: 'Okei, voisiko 11 500 € onnistua?', created_at: new Date((_now()-1*3600)*1000).toISOString() }
+              { sender: 'dealer', amount: 11600, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date((_now()-3*3600)*1000).toISOString() },
+              { sender: 'seller', amount: 11650, message: 'Okei, voisiko 11 650 € onnistua?', created_at: new Date((_now()-1*3600)*1000).toISOString() }
             ],
             isStopped: true
           };
@@ -1582,6 +1652,27 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape' && !document.getElementById('offer-modal').classList.contains('hidden')) closeModal();
     });
+
+    // URL trigger: ?trigger=dealer-reply adds dealer reply to existing negotiations and switches to dealer-replied scenario
+    if (_params.get('trigger') === 'dealer-reply') {
+      var _td = getData();
+      (_td.offers || []).slice(0, 1).forEach(function(o) {
+        var _tNeg = NEGOTIATIONS[o.id] || { messages: [], isStopped: false };
+        var _tHasDealer = _tNeg.messages.some(function(m) { return m.sender === 'dealer'; });
+        if (!_tHasDealer) {
+          var _tLastSeller = _tNeg.messages.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+          var _tAmt = Math.max(Math.round((_tLastSeller ? _tLastSeller.amount : o.amount) * 0.97), o.amount);
+          _tNeg.messages.push({ sender: 'dealer', amount: _tAmt, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date().toISOString() });
+          NEGOTIATIONS[o.id] = _tNeg;
+        }
+      });
+      SCENARIO = 'dealer-replied';
+      // Remove trigger from URL without reload so it doesn't re-fire on refresh
+      var _cleanUrl = new URL(window.location.href);
+      _cleanUrl.searchParams.delete('trigger');
+      _cleanUrl.searchParams.set('scenario', 'dealer-replied');
+      window.history.replaceState({}, '', _cleanUrl.toString());
+    }
 
     // Boot
     saveState();

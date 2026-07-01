@@ -981,15 +981,12 @@
       { id: 'filled', label: 'Photos filled' },
     ];
 
-    var panel = document.createElement('div');
-    panel.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;font-family:system-ui,sans-serif;';
-
     var toggle = document.createElement('button');
-    toggle.style.cssText = 'display:flex;align-items:center;gap:6px;padding:8px 12px;background:#0B6DFF;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.25);';
+    toggle.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.8);font-size:13px;font-weight:400;cursor:pointer;padding:0;text-decoration:underline;font-family:system-ui,sans-serif;';
     toggle.textContent = 'Scenario';
 
     var drawer = document.createElement('div');
-    drawer.style.cssText = 'display:none;position:absolute;bottom:44px;right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:200px;overflow:hidden;padding:8px 0;';
+    drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:200px;overflow:hidden;padding:8px 0;z-index:9999;';
 
     function _panelSetActive(id) {
       _PHOTO_SCENARIO = id;
@@ -1034,13 +1031,38 @@
       drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
     });
     document.addEventListener('click', function(e) {
-      if (!panel.contains(e.target)) drawer.style.display = 'none';
+      var _anch = document.getElementById('scenario-anchor');
+      if (_anch && !_anch.contains(e.target)) drawer.style.display = 'none';
     });
 
-    panel.appendChild(drawer);
-    panel.appendChild(toggle);
-    document.body.appendChild(panel);
+    window.addEventListener('DOMContentLoaded', function() {
+      var _anchor = document.getElementById('scenario-anchor');
+      if (_anchor) { _anchor.appendChild(drawer); _anchor.appendChild(toggle); }
+    });
   })();
 </script>
+
+  <footer class="bg-av-blue flex flex-col items-center gap-[38px] pt-14 pb-14">
+    <div class="flex flex-col gap-3.5 w-full max-w-[1388px] px-5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <div class="flex gap-3.5 font-body font-bold flex-wrap">
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Käyttöehdot</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Tietosuojakäytäntö</a>
+          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Evästekäytäntö</a>
+        </div>
+        <div class="flex items-center gap-4 font-body text-sm text-white">
+          <span>Kieli</span>
+          <select class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
+            <option value="fi">Suomi</option><option value="en">English</option>
+          </select>
+          <span id="scenario-anchor" class="relative inline-flex"></span>
+          <span class="font-body font-normal">© 2025 All rights reserved</span>
+        </div>
+      </div>
+    </div>
+    <div class="w-full max-w-[1388px] px-5">
+      <img src="assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+  </footer>
 </body>
 </html>
