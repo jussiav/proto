@@ -1561,18 +1561,25 @@
       var msgs = (neg && neg.messages) || [];
       var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
       var lastDealer = msgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0];
+      var counter = lastSeller ? lastSeller.amount : offer.amount;
       var floor = Math.max(offer.amount, lastDealer ? lastDealer.amount : 0);
-      var proposed = Math.max(Math.round((lastSeller ? lastSeller.amount : offer.amount) * 0.97), offer.amount);
-      var sticks = proposed <= floor || (!deterministic && Math.random() < 0.3);
+      var proposed = Math.max(Math.round(counter * 0.97), floor);
+      // Never above the seller's counter-offer; reaching it means the dealer agrees to it
+      var amount = Math.min(proposed, counter);
+      var meets = amount === counter;
+      var sticks = !meets && (amount <= floor || (!deterministic && Math.random() < 0.3));
+      if (sticks) amount = floor;
       var endsNegotiation = sticks && !deterministic && Math.random() < 0.4;
       return {
-        amount: sticks ? floor : proposed,
+        amount: amount,
         endsNegotiation: endsNegotiation,
-        message: endsNegotiation
-          ? 'Hei! Emme valitettavasti pysty korottamaan tarjoustamme. Tämä jää lopulliseksi tarjoukseksemme.'
-          : sticks
-            ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
-            : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!'
+        message: meets
+          ? 'Hei! Käy kaupaksi — hyväksymme ehdottamasi hinnan. Toivottavasti pääsemme kauppoihin!'
+          : endsNegotiation
+            ? 'Hei! Emme valitettavasti pysty korottamaan tarjoustamme. Tämä jää lopulliseksi tarjoukseksemme.'
+            : sticks
+              ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
+              : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!'
       };
     }
 
