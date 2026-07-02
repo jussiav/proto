@@ -1,1 +1,8 @@
 .DS_Store
+prod-codebase/
+Prod-codebase/
+.claude/
+docs/
+logs/
+screenshots/
+vue-tests/node_modules/

@@ -653,7 +653,7 @@
       var showAccept  = !expired && ['firstPlace','secondPlace','thirdPlace','finalOffer','negotiation_stopped','negotiation'].indexOf(status) !== -1;
       var showNeg     = !expired && ['firstPlace','negotiation','negotiation_stopped'].indexOf(status) !== -1;
       var isAccepted  = status === 'accepted';
-      var negBtnLabel = (status === 'negotiation' && offer.dealer_replied) ? 'Näytä vastaus' : status === 'negotiation' ? 'Vastatarjous lähetetty' : status === 'negotiation_stopped' ? 'Näytä vastaus' : 'Tee vastatarjous';
+      var negBtnLabel = (status === 'negotiation' && dealerReplied) ? 'Näytä vastaus' : status === 'negotiation' ? 'Vastatarjous lähetetty' : status === 'negotiation_stopped' ? 'Näytä vastaus' : 'Tee vastatarjous';
       var acceptText  = status === 'finalOffer' ? 'Hyväksy lopullinen tarjous' : (status === 'firstPlace' || status === 'negotiation' || status === 'negotiation_stopped') ? 'Hyväksy korkein tarjous' : 'Hyväksy alhaisempi tarjous';
 
       var html = '<div class="w-full flex justify-center">' +
@@ -676,12 +676,15 @@
       // Amount — use latest dealer counter-offer amount regardless of subsequent seller messages
       var _neg = NEGOTIATIONS[offer.id];
       var _negMsgs = (_neg && _neg.messages) || [];
+      var _lastNegMsg = _negMsgs.slice(-1)[0] || null;
       var _lastDealerMsg = _negMsgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0] || null;
+      // dealerReplied: live NEGOTIATIONS wins — true only when the LAST message is from dealer
+      var dealerReplied = _negMsgs.length > 0 ? !!(_lastNegMsg && _lastNegMsg.sender === 'dealer') : !!offer.dealer_replied;
       var effectiveAmount = Math.max(_lastDealerMsg && _lastDealerMsg.amount ? _lastDealerMsg.amount : offer.amount, offer.amount);
       html += '<div class="text-5xl font-bold font-display text-center ' + amtColor + '">' + fmtCurrency(effectiveAmount) + '</div>';
 
       // Status badge
-      if (!isAccepted) html += buildStatusBadge(status, timeToReact, offer.dealer_replied);
+      if (!isAccepted) html += buildStatusBadge(status, timeToReact, dealerReplied);
 
       // Accept button
       if (showAccept) {
@@ -698,7 +701,7 @@
       if (showNeg) {
         html += '<div class="relative">' +
           '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' + negBtnLabel + '</button>' +
-          (offer.dealer_replied ? '<div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 bg-lime-600 rounded-full text-xs text-black animate-pulse">1</div>' : '') +
+          (dealerReplied ? '<div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 bg-lime-600 rounded-full text-xs text-black animate-pulse">1</div>' : '') +
           '<div class="flex text-xs mt-2 mb-2 space-x-2 text-left">' +
             '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>' +
             '<span class="text-slate-700">Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen.</span>' +
@@ -1263,6 +1266,9 @@
         cur.messages.push({ sender: 'seller', amount: amount, message: message, created_at: new Date().toISOString() });
         NEGOTIATIONS[MODAL.offerId] = cur;
         SCENARIO = 'counter-offer-sent'; saveState();
+        var _negUrl = new URL(window.location.href);
+        _negUrl.searchParams.set('scenario', 'counter-offer-sent');
+        window.history.replaceState({}, '', _negUrl.toString());
         renderPage();
         openModal('Negotiate', MODAL.offerId);
       });
@@ -1530,6 +1536,7 @@
       var _msgs = _neg.messages || [];
       var _lastSellerMsg = _msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
       if (!_lastSellerMsg) { alert('Send a counter-offer first'); return; }
+      var _simSellerRounds = _msgs.filter(function(m) { return m.sender === 'seller'; }).length;
       var _dealerAmount = Math.max(Math.round(_lastSellerMsg.amount * 0.97), _h.amount);
       _neg.messages.push({
         sender: 'dealer',
@@ -1537,8 +1544,9 @@
         message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!',
         created_at: new Date().toISOString()
       });
+      if (_simSellerRounds >= 2) { _neg.isStopped = true; }
       NEGOTIATIONS[_h.id] = _neg;
-      SCENARIO = 'dealer-replied'; saveState();
+      SCENARIO = _simSellerRounds >= 2 ? 'negotiation-stopped' : 'dealer-replied'; saveState();
       open = false; drawer.style.display = 'none';
       renderPage();
       openModal('Negotiate', _h.id);
@@ -1611,6 +1619,7 @@
           // Negotiation exists from prior scenario — add dealer reply if none present
           var _hasDealerReply = NEGOTIATIONS[o.id].messages.some(function(m) { return m.sender === 'dealer'; });
           if (!_hasDealerReply) {
+            var _priorSellerRounds = NEGOTIATIONS[o.id].messages.filter(function(m) { return m.sender === 'seller'; }).length;
             var _lastSeller = NEGOTIATIONS[o.id].messages.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
             var _replyAmt = Math.max(Math.round((_lastSeller ? _lastSeller.amount : o.amount) * 0.97), o.amount);
             NEGOTIATIONS[o.id].messages.push({
@@ -1619,6 +1628,7 @@
               message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!',
               created_at: new Date((_now()-1*3600)*1000).toISOString()
             });
+            if (_priorSellerRounds >= 2) { NEGOTIATIONS[o.id].isStopped = true; }
           }
         }
       });
@@ -1660,18 +1670,25 @@
         var _tNeg = NEGOTIATIONS[o.id] || { messages: [], isStopped: false };
         var _tHasDealer = _tNeg.messages.some(function(m) { return m.sender === 'dealer'; });
         if (!_tHasDealer) {
+          var _tSellerRounds = _tNeg.messages.filter(function(m) { return m.sender === 'seller'; }).length;
           var _tLastSeller = _tNeg.messages.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
           var _tAmt = Math.max(Math.round((_tLastSeller ? _tLastSeller.amount : o.amount) * 0.97), o.amount);
           _tNeg.messages.push({ sender: 'dealer', amount: _tAmt, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date().toISOString() });
+          if (_tSellerRounds >= 2) { _tNeg.isStopped = true; }
           NEGOTIATIONS[o.id] = _tNeg;
+          var _tScenario = _tSellerRounds >= 2 ? 'negotiation-stopped' : 'dealer-replied';
+          SCENARIO = _tScenario;
+          var _cleanUrl = new URL(window.location.href);
+          _cleanUrl.searchParams.delete('trigger');
+          _cleanUrl.searchParams.set('scenario', _tScenario);
+          window.history.replaceState({}, '', _cleanUrl.toString());
+        } else {
+          // Dealer already replied — just clean the trigger param
+          var _cleanUrl2 = new URL(window.location.href);
+          _cleanUrl2.searchParams.delete('trigger');
+          window.history.replaceState({}, '', _cleanUrl2.toString());
         }
       });
-      SCENARIO = 'dealer-replied';
-      // Remove trigger from URL without reload so it doesn't re-fire on refresh
-      var _cleanUrl = new URL(window.location.href);
-      _cleanUrl.searchParams.delete('trigger');
-      _cleanUrl.searchParams.set('scenario', 'dealer-replied');
-      window.history.replaceState({}, '', _cleanUrl.toString());
     }
 
     // Boot
