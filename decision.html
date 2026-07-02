@@ -1271,12 +1271,23 @@
         fRight += '<button id="modal-btn-close" class="inline-flex items-center justify-center px-6 h-10 rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 text-sm font-medium">Sulje</button>';
       }
 
-      footer.innerHTML = '<div class="flex justify-end items-center gap-1">' + fRight + '</div>';
+      // QuickNegotiate (reached via "Hylkää tarjouskilpailu") always keeps the
+      // continue-to-reject path visible next to the counter-offer, like
+      // production OfferActions.vue
+      var fLeft = '';
+      if (isQuick) {
+        fLeft = '<button id="modal-btn-reject-from-neg" class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium">Hylkää tarjous</button>';
+      }
+      footer.innerHTML = fLeft
+        ? '<div class="flex justify-between items-center gap-1">' + fLeft + '<div class="flex items-center gap-1">' + fRight + '</div></div>'
+        : '<div class="flex justify-end items-center gap-1">' + fRight + '</div>';
 
       var closeBtn       = document.getElementById('modal-btn-close');
       var acceptFromNeg  = document.getElementById('modal-btn-accept-from-neg');
       var sendBtn        = document.getElementById('modal-btn-send-neg');
+      var rejectFromNeg  = document.getElementById('modal-btn-reject-from-neg');
 
+      if (rejectFromNeg) rejectFromNeg.addEventListener('click', function() { MODAL.action = 'RejectConfirm'; renderModal(); });
       if (closeBtn)      closeBtn.addEventListener('click', closeModal);
       if (acceptFromNeg) acceptFromNeg.addEventListener('click', function() { openModal('Accept', MODAL.offerId); });
       if (sendBtn) sendBtn.addEventListener('click', function() {
@@ -1338,9 +1349,62 @@
       });
     }
 
+    // Follow-up questions per primary reason — mirrors production RejectConfirm.vue
+    // (dynamicAdditionalOptions switch + conditional inputs + tooltips)
+    var REJECT_FOLLOWUPS = {
+      I_DONT_WANT_TO_SELL_AT_THE_PRICE_OFFERED: { question: 'Mihin tämä hinta perustuu?', options: [
+        { value: 'OPEN_LOAN_AMOUNT_FOR_THE_CAR',            label: 'Autosta jäljellä olevaan rahoitukseen.' },
+        { value: 'PRICE_I_SAW_IN_SERVICES_LIKE_NETTIAUTO',  label: 'Vastaavien autojen hintoihin netissä.' },
+        { value: 'PURCHASE_OFFER_FROM_DEALER',              label: 'Saamaani suoraostotarjoukseen autoliikkeeltä.' },
+        { value: 'EXCHANGE_OFFER_FROM_DEALER',              label: 'Saamaani vaihtotarjoukseen autoliikkeeltä.' },
+        { value: 'PRICE_I_BOUGHT_THE_CAR_FOR_MYSELF',       label: 'Hintaan, jolla ostin auton itse.' },
+        { value: 'OTHER',                                   label: 'Muu syy' }
+      ] },
+      I_HAVE_A_BETTER_OFFER_FROM_ANOTHER_SOURCE: { question: 'Millaisen tarjouksen sait autostasi?', options: [
+        { value: 'I_HAVE_A_BETTER_EXCHANGE_OFFER_IN_HAND',              label: 'Olen saanut paremman vaihtotarjouksen autostani.' },
+        { value: 'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_DEALER', label: 'Olen saanut autoliikkeeltä paremman suoraostotarjouksen autostani.' },
+        { value: 'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_CONSUMER', label: 'Olen saanut yksityishenkilöltä paremman suoraostotarjouksen autostani.' }
+      ] },
+      I_HAVE_ALREADY_SOLD_MY_CAR: { question: 'Kenelle myit auton?', options: [
+        { value: 'TO_A_PRIVATE_PERSON',        label: 'Yksityiselle henkilölle.' },
+        { value: 'AS_PART_OF_AN_EXCHANGE_DEAL',label: 'Tein vaihtokaupan autosta.' },
+        { value: 'TO_A_DEALER_DIRECTLY',       label: 'Myin auton suoraan autoliikkeelle.' }
+      ] },
+      I_CANT_SELL_THE_CAR_RIGHT_NOW: { question: 'Milloin uskot voivasi myydä autosi?', options: [
+        { value: 'WHEN_I_FOUND_MY_NEXT_CAR',        label: 'Voin myydä autoni kun olen löytänyt uuden auton.' },
+        { value: 'I_STILL_NEED_THE_CAR_FOR_A_WEEK', label: 'Tarvitsen autoani vielä viikon ajan.' },
+        { value: 'I_STILL_NEED_THE_CAR_FOR_TWO_WEEK', label: 'Tarvitsen autoani vielä kahden viikon ajan.' },
+        { value: 'I_WANT_TO_KEEP_MY_CAR_FOR_NOW',   label: 'Haluan pitää autoni toistaiseksi.' }
+      ] },
+      I_WAS_NOT_INTERESTED_IN_SELLING_MY_CAR: { question: 'Miksi päätit tehdä tarjouspyynnön?', options: [
+        { value: 'I_NEEDED_THE_PRICE_TO_NEGOTIATE_ELSEWHERE',       label: 'Tarvitsin hinnan neuvotteluja varten.' },
+        { value: 'I_WAS_CURIOUS_ABOUT_THE_CURRENT_VALUE_OF_THE_CAR', label: 'Halusin tietää autoni nykyisen arvon.' },
+        { value: 'OTHER',                                            label: 'Muu syy' }
+      ] }
+    };
+    var REJECT_TOOLTIPS = {
+      PRICE_I_SAW_IN_SERVICES_LIKE_NETTIAUTO: '<a href="https://autovex.fi/blogi/auton-myynti-autoliikkeelle-vs-yksityiselle-netissa" target="_blank">Lisätietoa yksityismyynnin ja autoliikkeelle myymisen eroista.</a>',
+      I_HAVE_A_BETTER_EXCHANGE_OFFER_IN_HAND: '<a href="https://autovex.fi/blogi/mita-eroa-on-vaihtotarjouksella-ja-ostotarjouksella" target="_blank">Lisätietoa vaihtotarjouksen vertaamisesta.</a>'
+    };
+    // I_AM_NOT_SURE branches on whether the offer reaches 90 % of the seller's estimate
+    function rejectFollowupFor(reason, offer, req) {
+      if (reason !== 'I_AM_NOT_SURE_THIS_OFFER_IS_RIGHT') return REJECT_FOLLOWUPS[reason] || null;
+      var est = (req && req.price_estimation) || (req && req.asking_price) || 0;
+      var overNinety = est && offer && (offer.amount / est) * 100 > 90;
+      return overNinety
+        ? { question: 'Kuinka voimme auttaa sinua?', options: [
+            { value: 'I_NEED_MORE_TIME_TO_THINK', label: 'Tarvitsen lisää aikaa päätöksentekoon.' }
+          ] }
+        : { question: 'Miksi olet epävarma tarjouksesta?', options: [
+            { value: 'I_DONT_KNOW_HOW_TO_MAKE_SURE_THAT_THE_BID_IS_IN_LINE_WITH_THE_MARKET', label: 'En tiedä miten voin varmistaa, että tarjous on markkinan mukainen.' },
+            { value: 'I_HAVE_NEVER_SOLD_A_CAR_BEFORE', label: 'En ole koskaan ennen myynyt autoa.' }
+          ] };
+    }
+
     function renderRejectConfirmModal(body, footer, offer) {
-      rejectFormState = { reason: null, starRating: 0 };
+      rejectFormState = { reason: null, additionalReason: '', starRating: 0 };
       var starColors = ['text-red-500', 'text-red-400', 'text-yellow-400', 'text-green-500', 'text-green-700'];
+      var req = getData().request;
 
       var html = '';
       html += '<div class="font-bold text-xl mb-1">Olet hylkäämässä tarjouksen autostasi.</div>';
@@ -1351,6 +1415,10 @@
         html += '<li class="ml-2 text-slate-700"><input type="radio" id="rej-r-' + i + '" name="rej-reason" value="' + opt.value + '" class="mr-2 cursor-pointer"><label for="rej-r-' + i + '" class="cursor-pointer">' + opt.label + '</label></li>';
       });
       html += '</ol></div>';
+      html += '<div id="rej-counter-section" class="hidden mb-6"><label class="block text-sm font-medium text-slate-700 mb-1">Millä hinnalla olisit valmis tekemään kaupat?</label><input type="number" id="rej-counter-price" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>';
+      html += '<div id="rej-followup-section" class="hidden mb-6"></div>';
+      html += '<div id="rej-other-section" class="hidden mb-6"><textarea id="rej-other-text" rows="3" maxlength="150" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea></div>';
+      html += '<div id="rej-extra-input-section" class="hidden mb-6"><label id="rej-extra-input-label" class="block text-sm font-medium text-slate-700 mb-1"></label><input type="text" id="rej-extra-input" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>';
       html += '<div id="rej-star-section" class="hidden mb-4">';
       html += '<label class="block text-base font-medium text-black mb-3">Mitä pidit palvelustamme? <span class="text-red-500">*</span></label>';
       html += '<div class="flex items-center justify-center bg-gray-100 border border-gray-300 p-4 rounded h-24"><div class="flex justify-between gap-4">';
@@ -1360,10 +1428,49 @@
       html += '</div></div></div>';
       body.innerHTML = html;
 
+      function syncSections() {
+        var r = rejectFormState.reason, a = rejectFormState.additionalReason;
+        document.getElementById('rej-counter-section').classList.toggle('hidden', r !== 'I_DONT_WANT_TO_SELL_AT_THE_PRICE_OFFERED');
+        document.getElementById('rej-other-section').classList.toggle('hidden', !(r === 'OTHER' || a === 'OTHER'));
+        var extra = document.getElementById('rej-extra-input-section');
+        var extraLabel = document.getElementById('rej-extra-input-label');
+        if (a === 'I_NEED_MORE_TIME_TO_THINK') { extra.classList.remove('hidden'); extraLabel.textContent = 'Kuinka paljon lisäaikaa tarvitset?'; }
+        else if (a === 'I_HAVE_A_BETTER_EXCHANGE_OFFER_IN_HAND' || a === 'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_DEALER' || a === 'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_CONSUMER') { extra.classList.remove('hidden'); extraLabel.textContent = 'Millaisen hinnan saat autostasi vaihdossa?'; }
+        else { extra.classList.add('hidden'); }
+        // stars appear once a follow-up answer exists (or primary reason is OTHER) — as in production
+        document.getElementById('rej-star-section').classList.toggle('hidden', !(a !== '' || r === 'OTHER'));
+      }
+
+      function renderFollowup() {
+        var section = document.getElementById('rej-followup-section');
+        var fu = rejectFormState.reason && rejectFormState.reason !== 'OTHER' ? rejectFollowupFor(rejectFormState.reason, offer, req) : null;
+        if (!fu) { section.classList.add('hidden'); section.innerHTML = ''; return; }
+        var fh = '<label class="block text-base font-medium text-black mb-3">' + fu.question + ' <span class="text-red-500">*</span></label><ol class="space-y-2">';
+        fu.options.forEach(function(opt, i) {
+          fh += '<li class="ml-2 text-slate-700"><input type="radio" id="rej-fu-' + i + '" name="rej-followup" value="' + opt.value + '" class="mr-2 cursor-pointer"><label for="rej-fu-' + i + '" class="cursor-pointer">' + opt.label + '</label>';
+          fh += '<div id="rej-tip-' + opt.value + '" class="hidden bg-blue-100 text-blue-600 text-xs mt-2 mr-2 px-3 py-2 rounded shadow underline">' + (REJECT_TOOLTIPS[opt.value] || '') + '</div></li>';
+        });
+        fh += '</ol>';
+        section.innerHTML = fh;
+        section.classList.remove('hidden');
+        section.querySelectorAll('input[name="rej-followup"]').forEach(function(radio) {
+          radio.addEventListener('change', function() {
+            rejectFormState.additionalReason = this.value;
+            section.querySelectorAll('[id^="rej-tip-"]').forEach(function(tip) { tip.classList.add('hidden'); });
+            var tip = document.getElementById('rej-tip-' + this.value);
+            if (tip && REJECT_TOOLTIPS[this.value]) tip.classList.remove('hidden');
+            syncSections();
+            updateRejectFooter(footer);
+          });
+        });
+      }
+
       body.querySelectorAll('input[name="rej-reason"]').forEach(function(radio) {
         radio.addEventListener('change', function() {
           rejectFormState.reason = this.value;
-          document.getElementById('rej-star-section').classList.remove('hidden');
+          rejectFormState.additionalReason = '';
+          renderFollowup();
+          syncSections();
           updateRejectFooter(footer);
         });
       });
