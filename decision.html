@@ -249,6 +249,10 @@
     var _funnelAskingPrice = (function() {
       try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return parseInt(String(f.askingPrice || f.priceExpectation || '').replace(/\D/g, '')) || 12000; } catch(e) { return 12000; }
     })();
+    // True only when the seller actually entered a price in the funnel (asking price or own estimate)
+    var _funnelPriceIsSet = (function() {
+      try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return !!String(f.askingPrice || f.priceExpectation || '').replace(/\D/g, ''); } catch(e) { return false; }
+    })();
     var _funnelIsTreatmentB = (function() {
       try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return !!f._treatmentB; } catch(e) { return false; }
     })();
@@ -405,6 +409,29 @@
 
     function getData() {
       var d = (SCENARIOS[SCENARIO] || SCENARIOS['new-offers'])();
+      // Funnel-price anchoring: when the seller set a price in the funnel, default
+      // offer levels follow it — highest = price + 100 €, second = price − 50 €,
+      // remaining offers scaled proportionally below the second. Scenario-panel
+      // URL params still win, and an accepted-offer snapshot is the user's own
+      // action so it is never restyled.
+      var _hasAcceptSnapshot = SCENARIO === 'accepted' && !!ACCEPTED_OFFERS_SNAPSHOT;
+      if (_funnelPriceIsSet && !_hasAcceptSnapshot && d.offers.length > 0) {
+        if (OV_HIGHEST === null || OV_HIGHEST === undefined) {
+          d.offers[0].amount      = _funnelAskingPrice + 100;
+          d.request.highest_offer = d.offers[0].amount;
+          d.request.insights_data = genInsights(d.request.offer_count, d.offers[0].amount);
+        }
+        if (OV_SECOND === undefined && d.offers.length > 1) {
+          var _origSecond = d.offers[1].amount;
+          d.offers[1].amount = _funnelAskingPrice - 50;
+          for (var _oi = 2; _oi < d.offers.length; _oi++) {
+            d.offers[_oi].amount = Math.round(d.offers[_oi].amount / _origSecond * d.offers[1].amount / 50) * 50;
+          }
+        }
+        if (typeof d.request.second_highest_offer !== 'undefined' && d.offers.length > 1) {
+          d.request.second_highest_offer = d.offers[1].amount;
+        }
+      }
       // Apply price overrides from URL params
       if (OV_ASKING  !== null && OV_ASKING  !== undefined) {
         d.request.asking_price    = OV_ASKING;
@@ -1525,6 +1552,30 @@
     negHdrEl.style.cssText = 'padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
     negHdrEl.textContent = 'Negotiation';
     drawer.appendChild(negHdrEl);
+    // Dealer reply simulation — shared by the panel button, the dealer-replied
+    // scenario seed and ?trigger=dealer-reply. Rules: the reply can never be
+    // lower than the dealer's latest offer (previous reply or original offer);
+    // the dealer may also stick to that amount, and when sticking may end the
+    // negotiation entirely.
+    function computeDealerReply(offer, neg, deterministic) {
+      var msgs = (neg && neg.messages) || [];
+      var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+      var lastDealer = msgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0];
+      var floor = Math.max(offer.amount, lastDealer ? lastDealer.amount : 0);
+      var proposed = Math.max(Math.round((lastSeller ? lastSeller.amount : offer.amount) * 0.97), offer.amount);
+      var sticks = proposed <= floor || (!deterministic && Math.random() < 0.3);
+      var endsNegotiation = sticks && !deterministic && Math.random() < 0.4;
+      return {
+        amount: sticks ? floor : proposed,
+        endsNegotiation: endsNegotiation,
+        message: endsNegotiation
+          ? 'Hei! Emme valitettavasti pysty korottamaan tarjoustamme. Tämä jää lopulliseksi tarjoukseksemme.'
+          : sticks
+            ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
+            : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!'
+      };
+    }
+
     var simBtn = document.createElement('button');
     simBtn.textContent = 'Simulate dealer reply';
     simBtn.style.cssText = 'display:block;margin:4px 14px 10px;width:calc(100% - 28px);background:#6366f1;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
@@ -1537,16 +1588,16 @@
       var _lastSellerMsg = _msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
       if (!_lastSellerMsg) { alert('Send a counter-offer first'); return; }
       var _simSellerRounds = _msgs.filter(function(m) { return m.sender === 'seller'; }).length;
-      var _dealerAmount = Math.max(Math.round(_lastSellerMsg.amount * 0.97), _h.amount);
+      var _reply = computeDealerReply(_h, _neg);
       _neg.messages.push({
         sender: 'dealer',
-        amount: _dealerAmount,
-        message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!',
+        amount: _reply.amount,
+        message: _reply.message,
         created_at: new Date().toISOString()
       });
-      if (_simSellerRounds >= 2) { _neg.isStopped = true; }
+      if (_simSellerRounds >= 2 || _reply.endsNegotiation) { _neg.isStopped = true; }
       NEGOTIATIONS[_h.id] = _neg;
-      SCENARIO = _simSellerRounds >= 2 ? 'negotiation-stopped' : 'dealer-replied'; saveState();
+      SCENARIO = _neg.isStopped ? 'negotiation-stopped' : 'dealer-replied'; saveState();
       open = false; drawer.style.display = 'none';
       renderPage();
       openModal('Negotiate', _h.id);
@@ -1620,12 +1671,11 @@
           var _hasDealerReply = NEGOTIATIONS[o.id].messages.some(function(m) { return m.sender === 'dealer'; });
           if (!_hasDealerReply) {
             var _priorSellerRounds = NEGOTIATIONS[o.id].messages.filter(function(m) { return m.sender === 'seller'; }).length;
-            var _lastSeller = NEGOTIATIONS[o.id].messages.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
-            var _replyAmt = Math.max(Math.round((_lastSeller ? _lastSeller.amount : o.amount) * 0.97), o.amount);
+            var _seedReply = computeDealerReply(o, NEGOTIATIONS[o.id], true);
             NEGOTIATIONS[o.id].messages.push({
               sender: 'dealer',
-              amount: _replyAmt,
-              message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!',
+              amount: _seedReply.amount,
+              message: _seedReply.message,
               created_at: new Date((_now()-1*3600)*1000).toISOString()
             });
             if (_priorSellerRounds >= 2) { NEGOTIATIONS[o.id].isStopped = true; }
@@ -1671,12 +1721,11 @@
         var _tHasDealer = _tNeg.messages.some(function(m) { return m.sender === 'dealer'; });
         if (!_tHasDealer) {
           var _tSellerRounds = _tNeg.messages.filter(function(m) { return m.sender === 'seller'; }).length;
-          var _tLastSeller = _tNeg.messages.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
-          var _tAmt = Math.max(Math.round((_tLastSeller ? _tLastSeller.amount : o.amount) * 0.97), o.amount);
-          _tNeg.messages.push({ sender: 'dealer', amount: _tAmt, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date().toISOString() });
-          if (_tSellerRounds >= 2) { _tNeg.isStopped = true; }
+          var _tReply = computeDealerReply(o, _tNeg);
+          _tNeg.messages.push({ sender: 'dealer', amount: _tReply.amount, message: _tReply.message, created_at: new Date().toISOString() });
+          if (_tSellerRounds >= 2 || _tReply.endsNegotiation) { _tNeg.isStopped = true; }
           NEGOTIATIONS[o.id] = _tNeg;
-          var _tScenario = _tSellerRounds >= 2 ? 'negotiation-stopped' : 'dealer-replied';
+          var _tScenario = _tNeg.isStopped ? 'negotiation-stopped' : 'dealer-replied';
           SCENARIO = _tScenario;
           var _cleanUrl = new URL(window.location.href);
           _cleanUrl.searchParams.delete('trigger');

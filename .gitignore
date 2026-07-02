@@ -6,3 +6,5 @@ docs/
 logs/
 screenshots/
 vue-tests/node_modules/
+usertest-results/
+usertest-failure.png
