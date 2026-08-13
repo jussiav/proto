@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Toimitusmatka — design change spec · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body bg-blue-50 text-slate-900">
+
+  <!-- Header -->
+  <header class="bg-av-dark text-white">
+    <div class="max-w-4xl mx-auto px-5 py-10">
+      <p class="font-dm text-sm font-medium uppercase tracking-wide text-av-turquoise mb-2">Design change spec · ad creation funnel</p>
+      <h1 class="font-display font-bold text-3xl md:text-4xl leading-tight">Toimitusmatka — delivery distance selector</h1>
+      <p class="font-dm text-base text-blue-100 mt-3 max-w-2xl">The delivery-distance question in <code class="text-av-turquoise">details.html</code> was rebuilt from a range slider into option cards with a free-distance fallback. This page is the single reference for the change: rationale, behavior, states, data contract and copy.</p>
+      <div class="flex flex-wrap gap-2 mt-5 font-dm text-xs">
+        <span class="bg-white/10 rounded-full px-3 py-1">Status: implemented</span>
+        <span class="bg-white/10 rounded-full px-3 py-1">Page: details.html</span>
+        <span class="bg-white/10 rounded-full px-3 py-1">Data key: details.deliveryRange</span>
+        <span class="bg-white/10 rounded-full px-3 py-1">August 2026</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-5 py-10 flex flex-col gap-12">
+
+    <!-- 1. Previous design -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-4">1 · Previous design and its issues</h2>
+      <div class="grid md:grid-cols-2 gap-5">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Removed UI (inert replica)</p>
+          <label class="font-dm font-bold text-base leading-5 text-slate-900 block mb-3">Kuinka kauas voit toimittaa auton? <span class="text-red-500 font-medium">*</span></label>
+          <div class="flex items-start gap-2 mb-3">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+            <p class="font-dm text-sm leading-5 text-slate-700">Tarjoukset alueesi ulkopuolelta sisältävät noudon kotipihastasi</p>
+          </div>
+          <input type="range" class="old-slider" min="50" max="600" value="325" tabindex="-1" aria-hidden="true" />
+          <div class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center justify-between mt-3">
+            <span class="font-dm text-base leading-5 text-slate-900">325</span>
+            <span class="font-dm font-medium text-base leading-5 text-gray-700">km</span>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Issues</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>Preselected default (325 km).</b> Sellers could pass the question without ever considering it. In the data, a deliberate 325 and an untouched default were indistinguishable.</li>
+            <li><b>No consequences shown.</b> Nothing told the seller what the value does in the auction — that offers from outside the range include dealer pick-up, or that a wider range attracts more offers without pick-up and typically a higher price.</li>
+            <li><b>False precision.</b> 25 km steps on a 50–600 range imply differences that don't exist, and sliders are hard to set precisely on mobile.</li>
+            <li><b>No "anywhere in Finland".</b> The 600 km cap was arbitrary; the strongest option for the auction could not be expressed at all.</li>
+            <li><b>Weak framing.</b> A question + an unanchored number gave the seller no reference points to reason from.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. New design, live -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-2">2 · New design — try it</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Live copy of the implemented component. The readout below shows exactly what would be written to the funnel draft (<code>details.deliveryRange</code>).</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <div class="flex flex-col gap-3">
+            <label class="font-dm font-bold text-base leading-5 text-slate-900">Voin toimittaa auton itse <span class="text-red-500 font-medium">*</span></label>
+            <div id="demo-options" class="flex flex-col gap-2">
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="demo-toimitus" value="500" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Minne vain Suomessa</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900">Eniten tarjouksia ilman noutoa – korkeampi hinta</span>
+                </span>
+              </label>
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="demo-toimitus" value="300" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Laajalti Suomessa</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900">Useimmat tarjoukset ilman noutoa</span>
+                </span>
+                <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">300 km</span>
+              </label>
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="demo-toimitus" value="100" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Oman seudun sisällä</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900">Moni liike hakee auton puolestasi</span>
+                </span>
+                <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">100 km</span>
+              </label>
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="demo-toimitus" value="50" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Vain lähialueelle</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900">Lähes kaikki liikkeet hakevat auton puolestasi</span>
+                </span>
+                <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">50 km</span>
+              </label>
+              <div id="demo-custom-card" class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 cursor-pointer">
+                  <input type="radio" name="demo-toimitus" value="custom" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                  <span class="font-dm font-bold text-base leading-5 text-slate-900">Muu etäisyys</span>
+                </label>
+                <div class="relative">
+                  <input id="demo-custom-km" type="number" inputmode="numeric" placeholder="50–500"
+                    class="spec-num-input w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
+                </div>
+                <p id="demo-msg" class="av-error-msg" style="display:none"></p>
+              </div>
+            </div>
+            <div class="flex items-start gap-2">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+              <p class="font-dm text-base leading-5 text-slate-700">Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.</p>
+            </div>
+            <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-2.5 font-mono text-sm" id="demo-out">details.deliveryRange: <b class="text-white">null</b></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Why this behaves better</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>The consequence is the content.</b> Every option pairs a distance with what it means in the auction: how far the seller drives themselves, whether dealers will pick the car up, and that a wider range means more offers without pick-up — and typically a higher price. The seller decides on outcomes, not on an abstract number of kilometres.</li>
+            <li><b>Offers outside the range still come.</b> The helper text makes the core promise explicit: the listing is visible to every dealer in Finland regardless of the choice; dealers outside the range include home pick-up and price its cost into their offer. Choosing a short distance no longer feels like shrinking the auction.</li>
+            <li><b>No default.</b> Nothing is preselected, so every stored value is a deliberate answer. The data becomes trustworthy for pricing and matching.</li>
+            <li><b>One tap for most sellers.</b> Four presets in descending order cover the realistic cases; typing is needed only for the rare in-between value.</li>
+            <li><b>"Minne vain Suomessa" hides the number.</b> The strongest option is a promise, not a radius — it stores 500 without showing it.</li>
+            <li><b>Native radios.</b> Keyboard and screen-reader behavior come from the platform, matching every other card group in the funnel.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. All states -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-2">3 · All states</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Selected state is always a 2 px blue inner border on white. Error state: red field border, light red field background, red message. Auto-correction uses a neutral grey message — the user made no mistake, the value was just moved into range.</p>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4" id="state-grid">
+
+        <div class="bg-white rounded-lg p-4 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Preset · unselected (page default)</p>
+          <div class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4">
+            <span class="w-4 h-4 rounded-full border border-slate-400 flex-shrink-0"></span>
+            <span class="flex-1">
+              <span class="block font-dm font-bold text-sm leading-5 text-slate-900">Laajalti Suomessa</span>
+              <span class="block font-dm text-sm leading-5 text-slate-900">Useimmat tarjoukset ilman noutoa</span>
+            </span>
+            <span class="font-dm font-medium text-xs text-slate-900 whitespace-nowrap">300 km</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Preset · selected</p>
+          <div class="flex items-center gap-2.5 border-2 border-av-blue rounded-lg bg-white p-4">
+            <span class="w-4 h-4 rounded-full border-4 border-av-blue flex-shrink-0"></span>
+            <span class="flex-1">
+              <span class="block font-dm font-bold text-sm leading-5 text-slate-900">Laajalti Suomessa</span>
+              <span class="block font-dm text-sm leading-5 text-slate-900">Useimmat tarjoukset ilman noutoa</span>
+            </span>
+            <span class="font-dm font-medium text-xs text-slate-900 whitespace-nowrap">300 km</span>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Custom · unselected</p>
+          <div class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4">
+            <div class="flex items-center gap-2.5">
+              <span class="w-4 h-4 rounded-full border border-slate-400 flex-shrink-0"></span>
+              <span class="font-dm font-bold text-sm leading-5 text-slate-900">Muu etäisyys</span>
+            </div>
+            <div class="relative">
+              <span class="block w-full h-11 border border-slate-400 rounded-lg bg-white px-3 pr-10 font-dm text-sm text-slate-300 leading-[2.75rem]">50–500</span>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 font-dm font-medium text-sm text-gray-700">km</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Custom · selected, focused, value typed</p>
+          <div class="flex flex-col gap-2.5 border-2 border-av-blue rounded-lg bg-white p-4">
+            <div class="flex items-center gap-2.5">
+              <span class="w-4 h-4 rounded-full border-4 border-av-blue flex-shrink-0"></span>
+              <span class="font-dm font-bold text-sm leading-5 text-slate-900">Muu etäisyys</span>
+            </div>
+            <div class="relative">
+              <span class="block w-full h-11 border border-av-blue rounded-lg bg-white px-3 pr-10 font-dm text-sm text-slate-900 leading-[2.75rem]" style="box-shadow: inset 0 0 0 1px #0B6DFF">10</span>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 font-dm font-medium text-sm text-gray-700">km</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Custom · auto-corrected on blur (neutral)</p>
+          <div class="flex flex-col gap-2.5 border-2 border-av-blue rounded-lg bg-white p-4">
+            <div class="flex items-center gap-2.5">
+              <span class="w-4 h-4 rounded-full border-4 border-av-blue flex-shrink-0"></span>
+              <span class="font-dm font-bold text-sm leading-5 text-slate-900">Muu etäisyys</span>
+            </div>
+            <div class="relative">
+              <span class="block w-full h-11 border border-slate-400 rounded-lg bg-white px-3 pr-10 font-dm text-sm text-slate-900 leading-[2.75rem]">50</span>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 font-dm font-medium text-sm text-gray-700">km</span>
+            </div>
+            <p class="av-neutral-msg">Arvo korjattiin välille 50–500 km.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Custom · selected, empty (error)</p>
+          <div class="flex flex-col gap-2.5 border-2 border-av-blue rounded-lg bg-white p-4">
+            <div class="flex items-center gap-2.5">
+              <span class="w-4 h-4 rounded-full border-4 border-av-blue flex-shrink-0"></span>
+              <span class="font-dm font-bold text-sm leading-5 text-slate-900">Muu etäisyys</span>
+            </div>
+            <div class="relative">
+              <span class="block w-full h-11 border border-red-500 rounded-lg bg-red-50 px-3 pr-10 font-dm text-sm text-slate-300 leading-[2.75rem]">50–500</span>
+              <span class="absolute right-3 top-1/2 -translate-y-1/2 font-dm font-medium text-sm text-gray-700">km</span>
+            </div>
+            <p class="av-error-msg">Anna kilometrimäärä välillä 50–500 km.</p>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 border border-slate-200 sm:col-span-2 lg:col-span-3">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Page-level · continue pressed with nothing selected</p>
+          <div class="rounded-lg p-3" style="outline: 2px solid #ef4444; outline-offset: 4px; border-radius: 8px">
+            <div class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-3">
+              <span class="w-4 h-4 rounded-full border border-slate-400 flex-shrink-0"></span>
+              <span class="font-dm font-bold text-sm text-slate-900">Minne vain Suomessa</span>
+            </div>
+            <p class="font-dm text-xs text-slate-500 mt-2">… (all five cards inside the outline)</p>
+          </div>
+          <p class="av-error-msg mt-3">Valitse yksi vaihtoehto.</p>
+          <p class="font-dm text-xs text-slate-500 mt-2">Same pattern as the other required card groups on the page (red outline around the group, message below, cleared on selection, page scrolls to the first missing field).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Behavior rules -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-4">4 · Behavior rules</h2>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
+          <li><b>No default value.</b> Nothing preselected, nothing prefilled — ever.</li>
+          <li><b>Selecting "Muu etäisyys" with an empty field is an immediate error.</b> The field enters error state on the same tap, so a missing value can't survive to the bottom of the form unnoticed.</li>
+          <li><b>Values below 50 or above 500 are auto-corrected on blur.</b> The message is neutral grey, not red — the user made no mistake; the value was moved into the allowed range.</li>
+          <li><b>Free input is rounded to 10 km precision</b> on blur (e.g. 275 → 280), silently when the value was already in range.</li>
+          <li><b>Typing in or focusing the field selects "Muu etäisyys"; picking a preset clears the field.</b> Two values can never be active at once.</li>
+          <li><b>No continue button inside the component.</b> Validation happens in the field because the page's submit button is far below.</li>
+          <li><b>Preset click / field input also clears the page-level "select one" error</b> if the continue button had flagged the group.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 5. Data contract -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-4">5 · Data contract</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Aspect</th>
+              <th class="px-5 py-3 font-medium">Rule</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Stored field</td><td class="px-5 py-3">One integer only. Prototype: <code>details.deliveryRange</code> (localStorage draft). Production equivalent: <code>delivery_radius_km</code>. No flags, no extra fields.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Range</td><td class="px-5 py-3">50–500 km after blur. While typing, the raw value is held; blur clamps and rounds.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Preset values</td><td class="px-5 py-3">500 · 300 · 100 · 50 — each stores exactly the number shown on the card. <b>"Minne vain Suomessa" shows no number to the user but stores 500.</b></td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Custom values</td><td class="px-5 py-3">Rounded to 10 km precision, clamped to 50–500.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Empty / untouched</td><td class="px-5 py-3">Stored as empty — blocks the page-level continue validation like any other required field.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Downstream</td><td class="px-5 py-3">Summary card/modal renders the raw number as "<i>N</i> km". No consumer changes were needed.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. Guardrails -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-4">6 · Guardrails — deliberate omissions</h2>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>No dealer counts.</b> The options never claim "N dealers in your area" — every dealer in Finland sees the listing regardless of the choice.</li>
+          <li><b>No value-dependent extra info under the selector.</b> If the UI reveals different content per value, users start probing values to see what appears. The helper text is fixed.</li>
+          <li><b>No default</b> — restated because it is the most tempting regression. A preselected option reintroduces the exact data-quality problem this change removes.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 7. Copy -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-4">7 · Copy (FI / EN)</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Key (details.*)</th>
+              <th class="px-5 py-3 font-medium">Finnish</th>
+              <th class="px-5 py-3 font-medium">English</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3"><code>deliveryRange</code></td><td class="px-5 py-3">Voin toimittaa auton itse</td><td class="px-5 py-3">I can deliver the car myself</td></tr>
+            <tr><td class="px-5 py-3"><code>delivery500</code> / <code>Desc</code></td><td class="px-5 py-3">Minne vain Suomessa — Eniten tarjouksia ilman noutoa – korkeampi hinta</td><td class="px-5 py-3">Anywhere in Finland — The most offers without collection – higher price</td></tr>
+            <tr><td class="px-5 py-3"><code>delivery300</code> / <code>Desc</code></td><td class="px-5 py-3">Laajalti Suomessa — Useimmat tarjoukset ilman noutoa</td><td class="px-5 py-3">Widely across Finland — Most offers without collection</td></tr>
+            <tr><td class="px-5 py-3"><code>delivery100</code> / <code>Desc</code></td><td class="px-5 py-3">Oman seudun sisällä — Moni liike hakee auton puolestasi</td><td class="px-5 py-3">Within my own region — Many dealers collect the car for you</td></tr>
+            <tr><td class="px-5 py-3"><code>delivery50</code> / <code>Desc</code></td><td class="px-5 py-3">Vain lähialueelle — Lähes kaikki liikkeet hakevat auton puolestasi</td><td class="px-5 py-3">Local area only — Nearly all dealers collect the car for you</td></tr>
+            <tr><td class="px-5 py-3"><code>deliveryOther</code></td><td class="px-5 py-3">Muu etäisyys</td><td class="px-5 py-3">Other distance</td></tr>
+            <tr><td class="px-5 py-3"><code>deliveryRangeNote</code></td><td class="px-5 py-3">Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.</td><td class="px-5 py-3">Your listing is visible to dealers across Finland. Dealers factor collection costs into their offers.</td></tr>
+            <tr><td class="px-5 py-3"><code>deliveryMsgEmpty</code></td><td class="px-5 py-3">Anna kilometrimäärä välillä 50–500 km.</td><td class="px-5 py-3">Enter a distance between 50–500 km.</td></tr>
+            <tr><td class="px-5 py-3"><code>deliveryMsgFixed</code></td><td class="px-5 py-3">Arvo korjattiin välille 50–500 km.</td><td class="px-5 py-3">Value adjusted to the 50–500 km range.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-xs text-slate-500 mt-3">Note: source mockups wrote "suomessa" lowercase; the correct form <b>Suomessa</b> is used everywhere. Apply the same fix in the Figma file.</p>
+    </section>
+
+    <!-- 8. Rejected alternatives -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-4">8 · Rejected / deferred alternatives</h2>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm font-bold text-sm mb-1">Number field with ± 50 km steppers</p>
+          <p class="font-dm text-sm text-slate-700">Rejected. Typing is heavier than tapping, and without options the user has nothing to anchor their own number to — and no place to explain what a choice means for offers.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm font-bold text-sm mb-1">Coarse band → refine chips</p>
+          <p class="font-dm text-sm text-slate-700">Rejected. Two taps instead of one, and chips have no room for the consequence copy — the one thing this question must communicate.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm font-bold text-sm mb-1">Real place names as options <span class="font-normal text-slate-500">(phase 2)</span></p>
+          <p class="font-dm text-sm text-slate-700">Deferred. "Helsinki, Turku, Vaasa" is more concrete than kilometres and hints at the return trip, but requires distance computation from the seller's postal code plus fallbacks for sparse regions. Structure is identical to the shipped version, so a later A/B directly prices the data integration.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm font-bold text-sm mb-1">Finland map visualization <span class="font-normal text-slate-500">(phase 2)</span></p>
+          <p class="font-dm text-sm text-slate-700">Deferred. The only variant where the core promise is a picture — the whole country is always colored, only the shade changes. Needs a ZIP centroid and a vector map; a radius is also as-the-crow-flies, not driving distance.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 pt-6 pb-10">
+      <p class="font-dm text-xs text-slate-500">
+        AutoVex prototype · delivery distance selector spec · August 2026 ·
+        Implemented in <code>details.html</code> + <code>translations.js</code> (commit <code>82cf63a</code>) ·
+        Live in the funnel: <a class="text-av-blue underline" href="../details.html">details.html</a>
+      </p>
+    </footer>
+  </main>
+
+  <script>
+    (function(){
+      const presetValues = [500, 300, 100, 50];
+      const customRadio = document.querySelector('input[name="demo-toimitus"][value="custom"]');
+      const input = document.getElementById('demo-custom-km');
+      const msgEl = document.getElementById('demo-msg');
+      const out = document.getElementById('demo-out');
+      const MSG_EMPTY = 'Anna kilometrimäärä välillä 50–500 km.';
+      const MSG_FIXED = 'Arvo korjattiin välille 50–500 km.';
+
+      function clampKm(v) { v = Math.round(v / 10) * 10; return Math.max(50, Math.min(500, v)); }
+      function showMsg(kind, text) { msgEl.className = kind === 'error' ? 'av-error-msg' : 'av-neutral-msg'; msgEl.textContent = text; msgEl.style.display = ''; }
+      function hideMsg() { msgEl.textContent = ''; msgEl.style.display = 'none'; }
+      function setErr(on) {
+        input.classList.toggle('border-red-500', on);
+        input.classList.toggle('bg-red-50', on);
+        input.classList.toggle('border-slate-400', !on);
+        input.classList.toggle('bg-white', !on);
+      }
+      function emptyError() { setErr(true); showMsg('error', MSG_EMPTY); }
+      function currentVal() {
+        const checked = document.querySelector('input[name="demo-toimitus"]:checked');
+        if (!checked) return null;
+        if (checked.value !== 'custom') return checked.value;
+        if (input.value === '') return null;
+        const n = Number(input.value);
+        return isNaN(n) ? null : String(n);
+      }
+      function paint() {
+        const v = currentVal();
+        out.innerHTML = 'details.deliveryRange: <b class="text-white">' + (v === null ? 'null' : v) + '</b>';
+      }
+
+      document.querySelectorAll('input[name="demo-toimitus"]').forEach(r => r.addEventListener('change', () => {
+        if (r.value === 'custom') {
+          if (input.value === '') emptyError();
+          input.focus();
+        } else {
+          input.value = '';
+          setErr(false);
+          hideMsg();
+        }
+        paint();
+      }));
+      input.addEventListener('focus', () => {
+        if (!customRadio.checked) {
+          customRadio.checked = true;
+          if (input.value === '') emptyError();
+          paint();
+        }
+      });
+      input.addEventListener('input', () => {
+        if (!customRadio.checked) customRadio.checked = true;
+        if (input.value === '') emptyError();
+        else { setErr(false); hideMsg(); }
+        paint();
+      });
+      input.addEventListener('blur', () => {
+        if (!customRadio.checked) return;
+        if (input.value === '') { emptyError(); return; }
+        const raw = Number(input.value);
+        const fixed = clampKm(isNaN(raw) ? 50 : raw);
+        if (isNaN(raw) || raw < 50 || raw > 500) showMsg('neutral', MSG_FIXED);
+        else hideMsg();
+        setErr(false);
+        input.value = fixed;
+        paint();
+      });
+      paint();
+    })();
+  </script>
+</body>
+</html>

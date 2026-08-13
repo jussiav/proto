@@ -143,7 +143,7 @@
             '</select>' +
           '</div>' +
           '<span class="font-dm font-normal" data-i18n="footer.copyright">© 2025 All rights reserved</span>' +
-          '<span class="font-dm font-normal opacity-50 text-sm">Updated 13.08.26 klo 12.10</span>' +
+          '<span class="font-dm font-normal opacity-50 text-sm">Updated 13.08.26 klo 12.33</span>' +
         '</div>' +
       '</div>' +
       '<div class="w-full max-w-[1388px] px-5">' +
