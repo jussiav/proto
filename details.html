@@ -31,37 +31,10 @@
     }
   </script>
   <style>
-    /* Range slider styling */
-    input[type="range"] {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 4px;
-      background: #D7EDFF;
-      border-radius: 10px;
-      outline: none;
-      cursor: pointer;
-    }
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #2890FF;
-      border: 3px solid white;
-      box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2);
-      cursor: pointer;
-    }
-    input[type="range"]::-moz-range-thumb {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      background: #2890FF;
-      border: 3px solid white;
-      box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2);
-      cursor: pointer;
-    }
+    /* Delivery custom km field — hide native number spinners */
+    #delivery-custom-km { -moz-appearance: textfield; appearance: textfield; }
+    #delivery-custom-km::-webkit-outer-spin-button,
+    #delivery-custom-km::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     /* Custom select arrow */
     .select-wrapper select {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -83,6 +56,7 @@
     }
     .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
     .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
     /* Checkbox */
     input[type="checkbox"] {
       -webkit-appearance: none;
@@ -247,6 +221,7 @@
       // Validate radio groups (vaihteisto, kesarenkaat, kesavanteet, talvirenkaat, talvivanteet, avaimet)
       const radioGroups = [
         { name: 'vaihteisto',   containerId: 'vaihteisto-options',   val: d.vaihteisto },
+        { name: 'toimitus',     containerId: 'delivery-options',     val: d.deliveryRange },
         { name: 'kesarenkaat',  containerId: 'kesarenkaat-options',  val: d.kesarenkaat },
         { name: 'kesavanteet',  containerId: 'kesavanteet-options',  val: d.kesavanteet },
         { name: 'talvirenkaat', containerId: 'talvirenkaat-options', val: d.talvirenkaat },
@@ -337,19 +312,80 @@
       }
       brandSel.addEventListener('change', updateModels);
 
-      // Range slider
-      const slider     = document.getElementById('delivery-range');
-      const kmDisplay  = document.getElementById('delivery-km');
-      const sliderFill = document.getElementById('slider-fill');
+      // Toimitusmatka — valintakortit + "Muu etäisyys" (spec: toimitusmatka concept 11A)
+      const deliveryPresetValues = [500, 300, 100, 50];
+      const deliveryOptionsWrap  = document.getElementById('delivery-options');
+      const deliveryCustomRadio  = document.querySelector('input[name="toimitus"][value="custom"]');
+      const deliveryCustomInput  = document.getElementById('delivery-custom-km');
+      const deliveryMsgEl        = document.getElementById('delivery-msg');
 
-      function updateSlider() {
-        const min  = Number(slider.min);
-        const max  = Number(slider.max);
-        const val  = Number(slider.value);
-        sliderFill.style.width = ((val - min) / (max - min)) * 100 + '%';
-        kmDisplay.textContent  = val;
+      function clampDeliveryKm(v) { v = Math.round(v / 10) * 10; return Math.max(50, Math.min(500, v)); }
+
+      function showDeliveryMsg(kind, text) {
+        deliveryMsgEl.className = kind === 'error' ? 'av-error-msg' : 'av-neutral-msg';
+        deliveryMsgEl.textContent = text;
+        deliveryMsgEl.style.display = '';
       }
-      slider.addEventListener('input', updateSlider);
+      function hideDeliveryMsg() { deliveryMsgEl.textContent = ''; deliveryMsgEl.style.display = 'none'; }
+      function setDeliveryInputErr(on) {
+        deliveryCustomInput.classList.toggle('border-red-500', on);
+        deliveryCustomInput.classList.toggle('bg-red-50', on);
+        deliveryCustomInput.classList.toggle('border-slate-400', !on);
+        deliveryCustomInput.classList.toggle('bg-white', !on);
+      }
+      function deliveryEmptyError() { setDeliveryInputErr(true); showDeliveryMsg('error', t('details.deliveryMsgEmpty')); }
+      // Clear the page-level "select one" error from validateAndContinue, if present
+      function clearDeliveryGroupErr() {
+        document.getElementById('err-toimitus')?.remove();
+        deliveryOptionsWrap.style.outline = '';
+        deliveryOptionsWrap.style.outlineOffset = '';
+        deliveryOptionsWrap.style.borderRadius = '';
+      }
+
+      function getDeliveryVal() {
+        const checked = document.querySelector('input[name="toimitus"]:checked');
+        if (!checked) return '';
+        if (checked.value !== 'custom') return checked.value;
+        if (deliveryCustomInput.value === '') return '';
+        const n = Number(deliveryCustomInput.value);
+        return isNaN(n) ? '' : String(n);
+      }
+
+      document.querySelectorAll('input[name="toimitus"]').forEach(r => r.addEventListener('change', () => {
+        if (r.value === 'custom') {
+          if (deliveryCustomInput.value === '') deliveryEmptyError();
+          deliveryCustomInput.focus();
+        } else {
+          deliveryCustomInput.value = '';
+          setDeliveryInputErr(false);
+          hideDeliveryMsg();
+        }
+        saveDetails();
+      }));
+      deliveryCustomInput.addEventListener('focus', () => {
+        if (!deliveryCustomRadio.checked) {
+          deliveryCustomRadio.checked = true;
+          if (deliveryCustomInput.value === '') deliveryEmptyError();
+          saveDetails();
+        }
+      });
+      deliveryCustomInput.addEventListener('input', () => {
+        if (!deliveryCustomRadio.checked) deliveryCustomRadio.checked = true;
+        if (deliveryCustomInput.value === '') deliveryEmptyError();
+        else { setDeliveryInputErr(false); hideDeliveryMsg(); clearDeliveryGroupErr(); }
+        saveDetails();
+      });
+      deliveryCustomInput.addEventListener('blur', () => {
+        if (!deliveryCustomRadio.checked) return;
+        if (deliveryCustomInput.value === '') { deliveryEmptyError(); return; }
+        const raw = Number(deliveryCustomInput.value);
+        const fixed = clampDeliveryKm(isNaN(raw) ? 50 : raw);
+        if (isNaN(raw) || raw < 50 || raw > 500) showDeliveryMsg('neutral', t('details.deliveryMsgFixed'));
+        else hideDeliveryMsg();
+        setDeliveryInputErr(false);
+        deliveryCustomInput.value = fixed;
+        saveDetails();
+      });
 
       // ── Card display ──
       function updateCard() {
@@ -390,7 +426,7 @@
           vaihteisto:     getRadioVal('vaihteisto'),
           yrityskaytto:   document.getElementById('yrityskaytto').checked,
           sijainti:       document.getElementById('sijainti').value,
-          deliveryRange:  slider.value,
+          deliveryRange:  getDeliveryVal(),
           kesarenkaat:    getRadioVal('kesarenkaat'),
           kesavanteet:    getRadioVal('kesavanteet'),
           talvirenkaat:   getRadioVal('talvirenkaat'),
@@ -423,13 +459,19 @@
         setRadioVal('vaihteisto', d.vaihteisto || 'Automaatti');
         if (d.yrityskaytto   !== undefined) document.getElementById('yrityskaytto').checked = d.yrityskaytto;
         if (d.sijainti       !== undefined) document.getElementById('sijainti').value       = d.sijainti;
-        if (d.deliveryRange  !== undefined) slider.value = d.deliveryRange;
+        if (d.deliveryRange) {
+          if (deliveryPresetValues.includes(Number(d.deliveryRange))) {
+            setRadioVal('toimitus', String(Number(d.deliveryRange)));
+          } else {
+            deliveryCustomRadio.checked = true;
+            deliveryCustomInput.value = d.deliveryRange;
+          }
+        }
         if (d.kesarenkaat)   setRadioVal('kesarenkaat',  d.kesarenkaat);
         if (d.kesavanteet)   setRadioVal('kesavanteet',  d.kesavanteet);
         if (d.talvirenkaat)  setRadioVal('talvirenkaat', d.talvirenkaat);
         if (d.talvivanteet)  setRadioVal('talvivanteet', d.talvivanteet);
         if (d.avaimet)       setRadioVal('avaimet',      d.avaimet);
-        updateSlider();
         updateCard();
         // On first visit, persist the seeded defaults so validation reads them from the store
         if (!d.merkki) saveDetails();
@@ -441,8 +483,7 @@
         if (el) { el.addEventListener('change', saveDetails); el.addEventListener('input', saveDetails); }
       });
       document.getElementById('yrityskaytto')?.addEventListener('change', saveDetails);
-      slider.addEventListener('input', saveDetails);
-      // Wire radio groups
+      // Wire radio groups (toimitus saves via its own component handlers above)
       ['vaihteisto','kesarenkaat','kesavanteet','talvirenkaat','talvivanteet','avaimet'].forEach(name => {
         document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.addEventListener('change', saveDetails));
       });
@@ -701,31 +742,60 @@
               class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
           </div>
 
-          <!-- Kuinka kauas voit toimittaa auton -->
+          <!-- Voin toimittaa auton itse (toimitusmatka, valintakortit + muu etäisyys) -->
           <div class="flex flex-col gap-3">
             <label class="font-dm font-bold text-base leading-5 text-slate-900">
-              <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
+              <span data-i18n="details.deliveryRange">Voin toimittaa auton itse</span> <span class="text-red-500 font-medium">*</span>
             </label>
+            <div id="delivery-options" class="flex flex-col gap-2">
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="toimitus" value="500" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery500">Minne vain Suomessa</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery500Desc">Eniten tarjouksia ilman noutoa – korkeampi hinta</span>
+                </span>
+              </label>
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="toimitus" value="300" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery300">Laajalti Suomessa</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery300Desc">Useimmat tarjoukset ilman noutoa</span>
+                </span>
+                <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">300 km</span>
+              </label>
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="toimitus" value="100" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery100">Oman seudun sisällä</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery100Desc">Moni liike hakee auton puolestasi</span>
+                </span>
+                <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">100 km</span>
+              </label>
+              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <input type="radio" name="toimitus" value="50" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                <span class="flex-1">
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery50">Vain lähialueelle</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery50Desc">Lähes kaikki liikkeet hakevat auton puolestasi</span>
+                </span>
+                <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">50 km</span>
+              </label>
+              <div id="delivery-custom-card" class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 cursor-pointer">
+                  <input type="radio" name="toimitus" value="custom" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
+                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.deliveryOther">Muu etäisyys</span>
+                </label>
+                <div class="relative">
+                  <input id="delivery-custom-km" name="toimitus_km" type="number" inputmode="numeric" placeholder="50–500"
+                    class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
+                </div>
+                <p id="delivery-msg" class="av-error-msg" style="display:none"></p>
+              </div>
+            </div>
             <!-- Info text -->
             <div class="flex items-start gap-2">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
-              <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNote">Tarjoukset alueesi ulkopuolelta sisältävät noudon kotipihastasi</p>
-            </div>
-            <!-- Slider track -->
-            <div class="relative w-full h-4 flex items-center">
-              <!-- Background track -->
-              <div class="absolute w-full h-1 bg-[#D7EDFF] rounded-full"></div>
-              <!-- Fill track -->
-              <div id="slider-fill" class="absolute h-1 bg-av-blue-500 rounded-full left-0 pointer-events-none" style="width:50%"></div>
-              <!-- Range input -->
-              <input id="delivery-range" name="toimitus_km" type="range"
-                min="50" max="600" value="325" step="25"
-                class="relative z-10 w-full" />
-            </div>
-            <!-- km value input -->
-            <div class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center justify-between">
-              <span id="delivery-km" class="font-dm text-base leading-5 text-slate-900">325</span>
-              <span class="font-dm font-medium text-base leading-5 text-gray-700">km</span>
+              <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNote">Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.</p>
             </div>
           </div>
 
