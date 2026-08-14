@@ -31,10 +31,10 @@
     }
   </script>
   <style>
-    /* Delivery custom km field — hide native number spinners */
-    #delivery-custom-km { -moz-appearance: textfield; appearance: textfield; }
-    #delivery-custom-km::-webkit-outer-spin-button,
-    #delivery-custom-km::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Delivery km fields — hide native number spinners */
+    #delivery-custom-km, #delivery-step-km { -moz-appearance: textfield; appearance: textfield; }
+    #delivery-custom-km::-webkit-outer-spin-button, #delivery-custom-km::-webkit-inner-spin-button,
+    #delivery-step-km::-webkit-outer-spin-button, #delivery-step-km::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     /* Custom select arrow */
     .select-wrapper select {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -90,6 +90,10 @@
   <script src="i18n.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
+    // Delivery-distance UI variant, switched via ?delivery= URL param (cards | stepper).
+    // Top-level because both validateAndContinue and the DOMContentLoaded component code need it.
+    const DELIVERY_VARIANT = new URLSearchParams(window.location.search).get('delivery') === 'stepper' ? 'stepper' : 'cards';
+
     const carModels = {
       'Audi':          ['A1','A3','A4','A5','A6','A7','A8','e-tron','Q2','Q3','Q5','Q7','Q8','TT','RS3','RS6','S3','S5','SQ5','etron GT'],
       'BMW':           ['1 Series','2 Series','3 Series','4 Series','5 Series','7 Series','8 Series','X1','X2','X3','X4','X5','X6','X7','iX','iX3','M3','M5','Z4','i4'],
@@ -221,7 +225,9 @@
       // Validate radio groups (vaihteisto, kesarenkaat, kesavanteet, talvirenkaat, talvivanteet, avaimet)
       const radioGroups = [
         { name: 'vaihteisto',   containerId: 'vaihteisto-options',   val: d.vaihteisto },
-        { name: 'toimitus',     containerId: 'delivery-options',     val: d.deliveryRange },
+        // Stepper variant is a single input, not a choice — use the standard required-field message
+        { name: 'toimitus',     containerId: DELIVERY_VARIANT === 'stepper' ? 'delivery-variant-stepper' : 'delivery-options', val: d.deliveryRange,
+          ...(DELIVERY_VARIANT === 'stepper' ? { msgKey: 'err.required' } : {}) },
         { name: 'kesarenkaat',  containerId: 'kesarenkaat-options',  val: d.kesarenkaat },
         { name: 'kesavanteet',  containerId: 'kesavanteet-options',  val: d.kesavanteet },
         { name: 'talvirenkaat', containerId: 'talvirenkaat-options', val: d.talvirenkaat },
@@ -272,7 +278,7 @@
           const errEl = document.createElement('p');
           errEl.id = errId;
           errEl.className = 'av-error-msg';
-          errEl.textContent = t('err.selectOne');
+          errEl.textContent = t(g.msgKey || 'err.selectOne');
           container.parentNode.insertBefore(errEl, container.nextSibling);
         }
         const clear = () => { container.style.outline = ''; container.style.outlineOffset = ''; container.style.borderRadius = ''; document.getElementById(errId)?.remove(); };
@@ -312,12 +318,33 @@
       }
       brandSel.addEventListener('change', updateModels);
 
-      // Toimitusmatka — valintakortit + "Muu etäisyys" (spec: toimitusmatka concept 11A)
+      // Toimitusmatka — two variants, switched via ?delivery= URL param:
+      //   cards (default) = valintakortit + "Muu etäisyys" (spec concept 11A)
+      //   stepper         = number field ±50 km + impact block (spec concept 8 / section 2b)
+      const deliveryVariant = DELIVERY_VARIANT;
       const deliveryPresetValues = [500, 300, 100, 50];
       const deliveryOptionsWrap  = document.getElementById('delivery-options');
       const deliveryCustomRadio  = document.querySelector('input[name="toimitus"][value="custom"]');
       const deliveryCustomInput  = document.getElementById('delivery-custom-km');
       const deliveryMsgEl        = document.getElementById('delivery-msg');
+      const deliveryStepperWrap  = document.getElementById('delivery-variant-stepper');
+      const deliveryCardsNote    = document.getElementById('delivery-cards-note');
+      const deliveryStepInput    = document.getElementById('delivery-step-km');
+      const deliveryStepMinus    = document.getElementById('delivery-step-minus');
+      const deliveryStepPlus     = document.getElementById('delivery-step-plus');
+      const deliveryStepMsg      = document.getElementById('delivery-step-msg');
+      let deliveryStepValue = null;
+
+      if (deliveryVariant === 'stepper') {
+        deliveryOptionsWrap.classList.add('hidden');
+        deliveryCardsNote.classList.add('hidden');
+        deliveryStepperWrap.classList.remove('hidden');
+        deliveryStepperWrap.classList.add('flex');
+        // Stepper variant uses its own label copy; cards keep details.deliveryRange
+        const deliveryLabelSpan = document.querySelector('[data-i18n="details.deliveryRange"]');
+        deliveryLabelSpan.setAttribute('data-i18n', 'details.deliveryRangeStepper');
+        deliveryLabelSpan.textContent = t('details.deliveryRangeStepper');
+      }
 
       function clampDeliveryKm(v) { v = Math.round(v / 10) * 10; return Math.max(50, Math.min(500, v)); }
 
@@ -337,12 +364,16 @@
       // Clear the page-level "select one" error from validateAndContinue, if present
       function clearDeliveryGroupErr() {
         document.getElementById('err-toimitus')?.remove();
-        deliveryOptionsWrap.style.outline = '';
-        deliveryOptionsWrap.style.outlineOffset = '';
-        deliveryOptionsWrap.style.borderRadius = '';
+        const wrap = deliveryVariant === 'stepper' ? deliveryStepperWrap : deliveryOptionsWrap;
+        wrap.style.outline = '';
+        wrap.style.outlineOffset = '';
+        wrap.style.borderRadius = '';
       }
 
       function getDeliveryVal() {
+        if (deliveryVariant === 'stepper') {
+          return deliveryStepValue === null ? '' : String(deliveryStepValue);
+        }
         const checked = document.querySelector('input[name="toimitus"]:checked');
         if (!checked) return '';
         if (checked.value !== 'custom') return checked.value;
@@ -386,6 +417,83 @@
         deliveryCustomInput.value = fixed;
         saveDetails();
       });
+
+      // ── Stepper variant handlers (exact concept 8 behavior) ──
+      function deliveryStepShowFixed() { deliveryStepMsg.textContent = t('details.deliveryMsgFixed'); deliveryStepMsg.style.display = ''; }
+      function deliveryStepHideMsg() { deliveryStepMsg.textContent = ''; deliveryStepMsg.style.display = 'none'; }
+      function deliveryStepPaint() {
+        // Minus is also disabled when no value exists yet — stepping down from nothing makes no sense
+        deliveryStepMinus.disabled = deliveryStepValue === null || deliveryStepValue <= 50;
+        deliveryStepPlus.disabled  = deliveryStepValue !== null && deliveryStepValue >= 500;
+      }
+      function deliveryStepBump(d) {
+        deliveryStepValue = deliveryStepValue === null ? 50 : clampDeliveryKm(deliveryStepValue + d);
+        deliveryStepInput.value = deliveryStepValue;
+        deliveryStepHideMsg();
+        deliveryStepPaint();
+        clearDeliveryGroupErr();
+        saveDetails();
+      }
+      deliveryStepMinus.addEventListener('click', () => deliveryStepBump(-50));
+      deliveryStepPlus.addEventListener('click', () => deliveryStepBump(50));
+      deliveryStepInput.addEventListener('input', () => {
+        if (deliveryStepInput.value === '') { deliveryStepValue = null; deliveryStepHideMsg(); deliveryStepPaint(); saveDetails(); return; }
+        const raw = Number(deliveryStepInput.value);
+        deliveryStepValue = isNaN(raw) ? null : raw;
+        deliveryStepHideMsg();
+        deliveryStepPaint();
+        clearDeliveryGroupErr();
+        saveDetails();
+      });
+      deliveryStepInput.addEventListener('blur', () => {
+        if (deliveryStepInput.value === '') { deliveryStepValue = null; deliveryStepHideMsg(); deliveryStepPaint(); saveDetails(); return; }
+        const raw = Number(deliveryStepInput.value);
+        const fixed = clampDeliveryKm(isNaN(raw) ? 50 : raw);
+        if (isNaN(raw) || raw < 50 || raw > 500) deliveryStepShowFixed(); else deliveryStepHideMsg();
+        deliveryStepValue = fixed;
+        deliveryStepInput.value = fixed;
+        deliveryStepPaint();
+        saveDetails();
+      });
+      deliveryStepPaint();
+
+      // ── Floating delivery-variant switcher (prototype tool) ──
+      (function () {
+        const VARIANTS = [
+          { id: 'cards',   label: 'Option cards (11A)' },
+          { id: 'stepper', label: 'Stepper ±50 km (8 / 2b)' },
+        ];
+        const anchor = document.createElement('div');
+        anchor.id = 'delivery-variant-anchor';
+        anchor.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:9998;font-family:system-ui,sans-serif;';
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = 'Delivery UI';
+        btn.style.cssText = 'background:#08234D;color:#fff;border:none;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.25);';
+        const drawer = document.createElement('div');
+        drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:210px;padding:8px 0;';
+        const hdr = document.createElement('div');
+        hdr.style.cssText = 'padding:6px 14px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+        hdr.textContent = 'Distance selector';
+        drawer.appendChild(hdr);
+        VARIANTS.forEach(function (v) {
+          const cur = v.id === deliveryVariant;
+          const a = document.createElement('a');
+          a.href = 'details.html?delivery=' + v.id;
+          a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
+          a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + v.label;
+          a.addEventListener('mouseover', function () { if (!cur) this.style.background = '#f8fafc'; });
+          a.addEventListener('mouseout',  function () { if (!cur) this.style.background = 'transparent'; });
+          drawer.appendChild(a);
+        });
+        let open = false;
+        btn.addEventListener('click', function () { open = !open; drawer.style.display = open ? 'block' : 'none'; });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
+        document.addEventListener('click', function (e) { if (open && !anchor.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
+        anchor.appendChild(drawer);
+        anchor.appendChild(btn);
+        document.body.appendChild(anchor);
+      })();
 
       // ── Card display ──
       function updateCard() {
@@ -460,7 +568,14 @@
         if (d.yrityskaytto   !== undefined) document.getElementById('yrityskaytto').checked = d.yrityskaytto;
         if (d.sijainti       !== undefined) document.getElementById('sijainti').value       = d.sijainti;
         if (d.deliveryRange) {
-          if (deliveryPresetValues.includes(Number(d.deliveryRange))) {
+          if (deliveryVariant === 'stepper') {
+            const n = Number(d.deliveryRange);
+            if (!isNaN(n)) {
+              deliveryStepValue = n;
+              deliveryStepInput.value = n;
+              deliveryStepPaint();
+            }
+          } else if (deliveryPresetValues.includes(Number(d.deliveryRange))) {
             setRadioVal('toimitus', String(Number(d.deliveryRange)));
           } else {
             deliveryCustomRadio.checked = true;
@@ -747,6 +862,27 @@
             <label class="font-dm font-bold text-base leading-5 text-slate-900">
               <span data-i18n="details.deliveryRange">Voin toimittaa auton itse</span> <span class="text-red-500 font-medium">*</span>
             </label>
+            <!-- Variant B: stepper ±50 km (concept 8) — shown with ?delivery=stepper -->
+            <div id="delivery-variant-stepper" class="hidden flex-col gap-3">
+              <div class="flex items-stretch gap-2">
+                <button id="delivery-step-minus" type="button" aria-label="Vähennä 50 km" data-i18n-aria="details.deliveryStepMinus"
+                  class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">−</button>
+                <div class="relative flex-1">
+                  <input id="delivery-step-km" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
+                    class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-2xl font-bold text-center text-slate-900 placeholder:text-slate-300 placeholder:font-normal transition-colors" />
+                  <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
+                </div>
+                <button id="delivery-step-plus" type="button" aria-label="Lisää 50 km" data-i18n-aria="details.deliveryStepPlus"
+                  class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">+</button>
+              </div>
+              <p id="delivery-step-msg" class="av-neutral-msg" style="display:none"></p>
+              <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col gap-2">
+                <p class="font-dm text-sm leading-5 text-slate-900"><b data-i18n="details.deliveryImpact1b">Matkan sisällä:</b> <span data-i18n="details.deliveryImpact1">liikkeet voivat tarjota ilman noutoa.</span></p>
+                <p class="font-dm text-sm leading-5 text-slate-900"><b data-i18n="details.deliveryImpact2b">Kauempana:</b> <span data-i18n="details.deliveryImpact2">liike hakee auton ja huomioi noudon tarjouksessaan.</span></p>
+                <p class="font-dm text-sm leading-5 text-slate-900"><b data-i18n="details.deliveryImpact3b">Näkyvyys:</b> <span data-i18n="details.deliveryImpact3">Autoliikkeet ympäri Suomen näkevät ilmoituksesi.</span></p>
+              </div>
+            </div>
+            <!-- Variant A: option cards (default) -->
             <div id="delivery-options" class="flex flex-col gap-2">
               <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="toimitus" value="500" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
@@ -792,8 +928,8 @@
                 <p id="delivery-msg" class="av-error-msg" style="display:none"></p>
               </div>
             </div>
-            <!-- Info text -->
-            <div class="flex items-start gap-2">
+            <!-- Info text (cards variant only — stepper has its own impact block) -->
+            <div id="delivery-cards-note" class="flex items-start gap-2">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
               <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNote">Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.</p>
             </div>

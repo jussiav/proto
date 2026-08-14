@@ -63,7 +63,13 @@
   <!-- Header -->
   <header class="bg-av-dark text-white">
     <div class="max-w-4xl mx-auto px-5 py-10">
-      <p class="font-dm text-sm font-medium uppercase tracking-wide text-av-turquoise mb-2">Design change spec · ad creation funnel</p>
+      <div class="flex items-start justify-between gap-4">
+        <p class="font-dm text-sm font-medium uppercase tracking-wide text-av-turquoise mb-2">Design change spec · ad creation funnel</p>
+        <div class="flex rounded-full bg-white/10 p-0.5 flex-shrink-0" role="group" aria-label="Demo language">
+          <button id="lang-fi" type="button" class="font-dm text-xs font-medium rounded-full px-3 py-1">FI</button>
+          <button id="lang-en" type="button" class="font-dm text-xs font-medium rounded-full px-3 py-1">EN</button>
+        </div>
+      </div>
       <h1 class="font-display font-bold text-3xl md:text-4xl leading-tight">Toimitusmatka — delivery distance selector</h1>
       <p class="font-dm text-base text-blue-100 mt-3 max-w-2xl">The delivery-distance question in <code class="text-av-turquoise">details.html</code> was rebuilt from a range slider into option cards with a free-distance fallback. This page is the single reference for the change: rationale, behavior, states, data contract and copy.</p>
       <div class="flex flex-wrap gap-2 mt-5 font-dm text-xs">
@@ -110,47 +116,47 @@
     <!-- 2. New design, live -->
     <section>
       <h2 class="font-display font-bold text-2xl mb-2">2 · New design — try it</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Live copy of the implemented component. The readout below shows exactly what would be written to the funnel draft (<code>details.deliveryRange</code>).</p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Live copy of the implemented component. The readout below shows exactly what would be written to the funnel draft (<code>details.deliveryRange</code>). The demo loads its copy from the app's <code>translations.js</code> — the FI/EN toggle in the header switches it, and copy edits in the app propagate here automatically.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <div class="flex flex-col gap-3">
-            <label class="font-dm font-bold text-base leading-5 text-slate-900">Voin toimittaa auton itse <span class="text-red-500 font-medium">*</span></label>
+            <label class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.deliveryRange">Voin toimittaa auton itse</span> <span class="text-red-500 font-medium">*</span></label>
             <div id="demo-options" class="flex flex-col gap-2">
               <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="demo-toimitus" value="500" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Minne vain Suomessa</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900">Eniten tarjouksia ilman noutoa – korkeampi hinta</span>
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery500">Minne vain Suomessa</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery500Desc">Eniten tarjouksia ilman noutoa – korkeampi hinta</span>
                 </span>
               </label>
               <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="demo-toimitus" value="300" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Laajalti Suomessa</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900">Useimmat tarjoukset ilman noutoa</span>
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery300">Laajalti Suomessa</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery300Desc">Useimmat tarjoukset ilman noutoa</span>
                 </span>
                 <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">300 km</span>
               </label>
               <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="demo-toimitus" value="100" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Oman seudun sisällä</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900">Moni liike hakee auton puolestasi</span>
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery100">Oman seudun sisällä</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery100Desc">Moni liike hakee auton puolestasi</span>
                 </span>
                 <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">100 km</span>
               </label>
               <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="demo-toimitus" value="50" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900">Vain lähialueelle</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900">Lähes kaikki liikkeet hakevat auton puolestasi</span>
+                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery50">Vain lähialueelle</span>
+                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery50Desc">Lähes kaikki liikkeet hakevat auton puolestasi</span>
                 </span>
                 <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">50 km</span>
               </label>
               <div id="demo-custom-card" class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <label class="flex items-center gap-2.5 cursor-pointer">
                   <input type="radio" name="demo-toimitus" value="custom" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                  <span class="font-dm font-bold text-base leading-5 text-slate-900">Muu etäisyys</span>
+                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.deliveryOther">Muu etäisyys</span>
                 </label>
                 <div class="relative">
                   <input id="demo-custom-km" type="number" inputmode="numeric" placeholder="50–500"
@@ -162,7 +168,7 @@
             </div>
             <div class="flex items-start gap-2">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
-              <p class="font-dm text-base leading-5 text-slate-700">Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.</p>
+              <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNote">Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.</p>
             </div>
             <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-2.5 font-mono text-sm" id="demo-out">details.deliveryRange: <b class="text-white">null</b></div>
           </div>
@@ -177,6 +183,67 @@
             <li><b>"Minne vain Suomessa" hides the number.</b> The strongest option is a promise, not a radius — it stores 500 without showing it.</li>
             <li><b>Native radios.</b> Keyboard and screen-reader behavior come from the platform, matching every other card group in the funnel.</li>
           </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2b. Secondary candidate: stepper field -->
+    <section>
+      <h2 class="font-display font-bold text-2xl mb-2">2b · Secondary candidate — number field with ± 50 km</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Concept 8 from the exploration, revived as a secondary candidate. Same stepper behavior as the original concept, extended with a fixed impact block so the seller understands what the distance does in the auction. <b>Implemented in the prototype</b> behind a URL switch: <a class="text-av-blue underline" href="../details.html?delivery=stepper">details.html?delivery=stepper</a> (option cards remain the default; a floating "Delivery UI" switcher on the page toggles between them). Stores the same single km value.</p>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs">
+        <span class="bg-blue-100 text-blue-800 rounded-full px-3 py-1 font-medium">Secondary candidate</span>
+        <span class="bg-slate-200 text-slate-700 rounded-full px-3 py-1 font-medium">In prototype: ?delivery=stepper</span>
+        <span class="bg-slate-200 text-slate-700 rounded-full px-3 py-1 font-medium">No postcode data</span>
+        <span class="bg-slate-200 text-slate-700 rounded-full px-3 py-1 font-medium">Exact ± 50 km behavior</span>
+      </div>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <div class="flex flex-col gap-3">
+            <label class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.deliveryRangeStepper">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span></label>
+            <div class="flex items-stretch gap-2">
+              <button id="cb-minus" type="button" aria-label="Vähennä 50 km" data-i18n-aria="details.deliveryStepMinus"
+                class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">−</button>
+              <div class="relative flex-1">
+                <input id="cb-num" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
+                  class="spec-num-input w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-2xl font-bold text-center text-slate-900 placeholder:text-slate-300 placeholder:font-normal transition-colors" />
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
+              </div>
+              <button id="cb-plus" type="button" aria-label="Lisää 50 km" data-i18n-aria="details.deliveryStepPlus"
+                class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">+</button>
+            </div>
+            <p id="cb-msg" class="av-neutral-msg" style="display:none"></p>
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col gap-2">
+              <p class="font-dm text-sm leading-5 text-slate-800"><b data-i18n="details.deliveryImpact1b">Matkan sisällä:</b> <span data-i18n="details.deliveryImpact1">liikkeet voivat tarjota ilman noutoa.</span></p>
+              <p class="font-dm text-sm leading-5 text-slate-800"><b data-i18n="details.deliveryImpact2b">Kauempana:</b> <span data-i18n="details.deliveryImpact2">liike hakee auton ja huomioi noudon tarjouksessaan.</span></p>
+              <p class="font-dm text-sm leading-5 text-slate-800"><b data-i18n="details.deliveryImpact3b">Näkyvyys:</b> <span data-i18n="details.deliveryImpact3">Autoliikkeet ympäri Suomen näkevät ilmoituksesi.</span></p>
+            </div>
+            <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-2.5 font-mono text-sm" id="cb-out">details.deliveryRange: <b class="text-white">null</b></div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Behavior (exact, from concept 8) + what changed</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>No default.</b> Field is empty; <b>−</b> starts disabled (nothing to step down from), the first tap of <b>+</b> sets the value to 50 km.</li>
+            <li><b>Steps of 50 km.</b> <b>−</b> disables at 50 (and when empty), <b>+</b> disables at 500.</li>
+            <li><b>New: the range is visible before the seller hits it.</b> The empty field reads <code>50–500</code> as its placeholder (same pattern as the custom field in the primary candidate), so the allowed range is on screen from the start. It answers "why 50–500?" without stating the business reasoning, and the auto-correction message no longer appears out of nowhere.</li>
+            <li><b>Free typing allowed.</b> While typing, the raw value is kept. On blur the value is rounded to 10 km precision and clamped to 50–500; out-of-range entries get the neutral grey correction message, not an error.</li>
+            <li><b>Empty field = no value.</b> Unlike the primary candidate, an empty field is not an in-field error — the page-level continue validation catches it with the standard required-field message <i>Pakollinen kenttä.</i> (<code>err.required</code>), not the choice-oriented <i>Valitse yksi vaihtoehto.</i> the option cards use.</li>
+            <li><b>New: fixed impact block.</b> Three constant lines under the field explain the consequence of the distance: dealers within it can offer without pickup, dealers beyond it collect the car and price the pickup into their offer, and the listing is visible to all dealers in Finland regardless. The block never changes with the value — nothing to probe by trying different numbers (implementation rule 8 of the exploration).</li>
+            <li><b>Why still secondary:</b> typing/stepping gives no anchor points — the option cards name realistic scenarios and pair each with its outcome in one tap. This variant suits an A/B test arm or compact layouts.</li>
+          </ul>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mt-5 mb-2">Copy (FI / EN) — keys <code>details.deliveryRangeStepper</code> / <code>deliveryImpact1–3</code> in translations.js</p>
+          <div class="overflow-x-auto">
+            <table class="w-full font-dm text-sm text-left">
+              <tbody class="divide-y divide-slate-100 text-slate-800">
+                <tr><td class="py-2 pr-4"><b>Kuinka kauas voit toimittaa auton?</b> (label, stepper only)</td><td class="py-2"><b>How far can you deliver the car?</b></td></tr>
+                <tr><td class="py-2 pr-4">50–500 (placeholder)</td><td class="py-2">50–500</td></tr>
+                <tr><td class="py-2 pr-4"><b>Matkan sisällä:</b> liikkeet voivat tarjota ilman noutoa.</td><td class="py-2"><b>Within your distance:</b> dealers can offer without collection.</td></tr>
+                <tr><td class="py-2 pr-4"><b>Kauempana:</b> liike hakee auton ja huomioi noudon tarjouksessaan.</td><td class="py-2"><b>Further away:</b> the dealer collects the car and factors it into the offer.</td></tr>
+                <tr><td class="py-2 pr-4"><b>Näkyvyys:</b> Autoliikkeet ympäri Suomen näkevät ilmoituksesi.</td><td class="py-2"><b>Visibility:</b> Dealers across Finland see your listing.</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
@@ -368,8 +435,8 @@
       <h2 class="font-display font-bold text-2xl mb-4">8 · Rejected / deferred alternatives</h2>
       <div class="grid sm:grid-cols-2 gap-4">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm font-bold text-sm mb-1">Number field with ± 50 km steppers</p>
-          <p class="font-dm text-sm text-slate-700">Rejected. Typing is heavier than tapping, and without options the user has nothing to anchor their own number to — and no place to explain what a choice means for offers.</p>
+          <p class="font-dm font-bold text-sm mb-1">Number field with ± 50 km steppers <span class="font-normal text-slate-500">(promoted)</span></p>
+          <p class="font-dm text-sm text-slate-700">Originally rejected for typing friction and missing anchor points. Revived as the <b>secondary candidate</b> (section 2b) with a fixed impact block that explains the consequences the original lacked.</p>
         </div>
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm font-bold text-sm mb-1">Coarse band → refine chips</p>
@@ -396,6 +463,9 @@
     </footer>
   </main>
 
+  <!-- Live app translations: demo copy always mirrors the funnel. i18n.js provides t()/setLang()/getLang(). -->
+  <script src="../translations.js"></script>
+  <script src="../i18n.js"></script>
   <script>
     (function(){
       const presetValues = [500, 300, 100, 50];
@@ -403,19 +473,18 @@
       const input = document.getElementById('demo-custom-km');
       const msgEl = document.getElementById('demo-msg');
       const out = document.getElementById('demo-out');
-      const MSG_EMPTY = 'Anna kilometrimäärä välillä 50–500 km.';
-      const MSG_FIXED = 'Arvo korjattiin välille 50–500 km.';
+      let msgState = null; // null | 'empty' | 'fixed' — tracked so a language toggle can re-render the visible message
 
       function clampKm(v) { v = Math.round(v / 10) * 10; return Math.max(50, Math.min(500, v)); }
-      function showMsg(kind, text) { msgEl.className = kind === 'error' ? 'av-error-msg' : 'av-neutral-msg'; msgEl.textContent = text; msgEl.style.display = ''; }
-      function hideMsg() { msgEl.textContent = ''; msgEl.style.display = 'none'; }
+      function showMsg(kind, text) { msgEl.className = kind === 'error' ? 'av-error-msg' : 'av-neutral-msg'; msgEl.textContent = text; msgEl.style.display = ''; msgState = kind === 'error' ? 'empty' : 'fixed'; }
+      function hideMsg() { msgEl.textContent = ''; msgEl.style.display = 'none'; msgState = null; }
       function setErr(on) {
         input.classList.toggle('border-red-500', on);
         input.classList.toggle('bg-red-50', on);
         input.classList.toggle('border-slate-400', !on);
         input.classList.toggle('bg-white', !on);
       }
-      function emptyError() { setErr(true); showMsg('error', MSG_EMPTY); }
+      function emptyError() { setErr(true); showMsg('error', t('details.deliveryMsgEmpty')); }
       function currentVal() {
         const checked = document.querySelector('input[name="demo-toimitus"]:checked');
         if (!checked) return null;
@@ -458,12 +527,83 @@
         if (input.value === '') { emptyError(); return; }
         const raw = Number(input.value);
         const fixed = clampKm(isNaN(raw) ? 50 : raw);
-        if (isNaN(raw) || raw < 50 || raw > 500) showMsg('neutral', MSG_FIXED);
+        if (isNaN(raw) || raw < 50 || raw > 500) showMsg('neutral', t('details.deliveryMsgFixed'));
         else hideMsg();
         setErr(false);
         input.value = fixed;
         paint();
       });
+      paint();
+
+      // ── Language toggle (header) ──
+      const langBtns = { fi: document.getElementById('lang-fi'), en: document.getElementById('lang-en') };
+      const ACTIVE   = 'font-dm text-xs font-medium rounded-full px-3 py-1 bg-av-turquoise text-av-dark';
+      const INACTIVE = 'font-dm text-xs font-medium rounded-full px-3 py-1 text-white hover:bg-white/10';
+      function paintLang() {
+        const cur = getLang();
+        langBtns.fi.className = cur === 'fi' ? ACTIVE : INACTIVE;
+        langBtns.en.className = cur === 'en' ? ACTIVE : INACTIVE;
+      }
+      function switchLang(lang) {
+        setLang(lang); // re-applies all data-i18n texts
+        paintLang();
+        // re-render the currently visible dynamic message in the new language
+        if (msgState === 'empty') showMsg('error', t('details.deliveryMsgEmpty'));
+        else if (msgState === 'fixed') showMsg('neutral', t('details.deliveryMsgFixed'));
+      }
+      langBtns.fi.addEventListener('click', () => switchLang('fi'));
+      langBtns.en.addEventListener('click', () => switchLang('en'));
+      paintLang();
+    })();
+
+    // ── Candidate B: number field with ± 50 km (concept 8, exact behavior) ──
+    (function(){
+      const num = document.getElementById('cb-num');
+      const minus = document.getElementById('cb-minus');
+      const plus = document.getElementById('cb-plus');
+      const msgEl = document.getElementById('cb-msg');
+      const out = document.getElementById('cb-out');
+      let value = null;
+      let msgShown = false;
+
+      // Copy comes from the app's translations.js (details.deliveryStepper* / deliveryImpact* keys)
+      // via data-i18n attributes — i18n.js re-applies them on every setLang(). Only the dynamic
+      // correction message needs a re-render hook here.
+      function applyCB() {
+        if (msgShown) msgEl.textContent = t('details.deliveryMsgFixed');
+      }
+
+      function clampKm(v) { v = Math.round(v / 10) * 10; return Math.max(50, Math.min(500, v)); }
+      function showFixedMsg() { msgEl.textContent = t('details.deliveryMsgFixed'); msgEl.style.display = ''; msgShown = true; }
+      function hideMsg() { msgEl.textContent = ''; msgEl.style.display = 'none'; msgShown = false; }
+      function paint() {
+        minus.disabled = value === null || value <= 50;
+        plus.disabled  = value !== null && value >= 500;
+        out.innerHTML = 'details.deliveryRange: <b class="text-white">' + (value === null ? 'null' : value) + '</b>';
+      }
+      function bump(d) { value = value === null ? 50 : clampKm(value + d); num.value = value; hideMsg(); paint(); }
+
+      minus.addEventListener('click', () => bump(-50));
+      plus.addEventListener('click', () => bump(50));
+      num.addEventListener('input', () => {
+        if (num.value === '') { value = null; hideMsg(); paint(); return; }
+        const raw = Number(num.value);
+        value = isNaN(raw) ? null : raw;
+        hideMsg(); paint();
+      });
+      num.addEventListener('blur', () => {
+        if (num.value === '') { value = null; hideMsg(); paint(); return; }
+        const raw = Number(num.value);
+        const fixed = clampKm(isNaN(raw) ? 50 : raw);
+        if (isNaN(raw) || raw < 50 || raw > 500) showFixedMsg(); else hideMsg();
+        value = fixed; num.value = fixed; paint();
+      });
+
+      // re-apply candidate B copy after the header language toggle (registered after, so runs after setLang)
+      document.getElementById('lang-fi').addEventListener('click', applyCB);
+      document.getElementById('lang-en').addEventListener('click', applyCB);
+
+      applyCB();
       paint();
     })();
   </script>
