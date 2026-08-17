@@ -17,8 +17,14 @@ export const iconViewBoxes = {
   'ph-fill-shield-check': '0 0 256 256',
   'minus': '0 0 24 24',
   'plus': '0 0 24 24',
-  'minus-new': '0 0 18 18',
-  'plus-new': '0 0 18 18',
+  // The bold pair's artwork is drawn edge to edge in an 18×18 box, so in a 24px icon slot it
+  // fills the whole slot — 33% larger than the light `minus`/`plus` pair, which sit in a 24×24
+  // box with 3 units of padding each side. Framing the same 18-unit artwork in a 24-unit
+  // viewBox (offset -3) reproduces that padding exactly: identical footprint to the light pair
+  // and to Figma, with the bold stroke weight preserved. No path data is modified.
+  // Upstream fix: republish minus-new/plus-new with a padded 24×24 viewBox.
+  'minus-new': '-3 -3 24 24',
+  'plus-new': '-3 -3 24 24',
 }
 
 export function getSpriteUrl(icon) {
