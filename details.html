@@ -13,6 +13,22 @@
       theme: {
         extend: {
           colors: {
+            // Production blue scale (tailwind.config.js) — overrides the CDN default so
+            // library components (UiButton secondary = blue-100/200/800) render true colours.
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
             'av-blue':      '#0B6DFF',
             'av-blue-dark': '#0050C8',
             'av-blue-500':  '#2890FF',
@@ -354,9 +370,11 @@
       const deliveryMsgEl        = document.getElementById('delivery-msg');
       const deliveryStepperWrap  = document.getElementById('delivery-variant-stepper');
       const deliveryStepInput    = document.getElementById('delivery-step-km');
-      const deliveryStepMinus    = document.getElementById('delivery-step-minus');
-      const deliveryStepPlus     = document.getElementById('delivery-step-plus');
       const deliveryStepMsg      = document.getElementById('delivery-step-msg');
+      // The −/+ buttons are the real UiButton library component, mounted by
+      // vue-tests/dist/delivery-stepper.js. This page still owns the value; the
+      // bridge only forwards clicks in and disabled state out.
+      const deliveryStepper      = window.AVDeliveryStepper || null;
       const deliveryControlWrap  = document.getElementById('delivery-variant-control');
       const deliveryControlSlider= document.getElementById('delivery-control-slider');
       const deliveryControlFill  = document.getElementById('delivery-control-fill');
@@ -462,8 +480,10 @@
       function deliveryStepHideMsg() { deliveryStepMsg.textContent = ''; deliveryStepMsg.style.display = 'none'; }
       function deliveryStepPaint() {
         // Minus is also disabled when no value exists yet — stepping down from nothing makes no sense
-        deliveryStepMinus.disabled = deliveryStepValue === null || deliveryStepValue <= 50;
-        deliveryStepPlus.disabled  = deliveryStepValue !== null && deliveryStepValue >= 500;
+        deliveryStepper?.setDisabled({
+          minus: deliveryStepValue === null || deliveryStepValue <= 50,
+          plus:  deliveryStepValue !== null && deliveryStepValue >= 500
+        });
       }
       function deliveryStepBump(d) {
         deliveryStepValue = deliveryStepValue === null ? 50 : clampDeliveryKm(deliveryStepValue + d);
@@ -473,8 +493,7 @@
         clearDeliveryGroupErr();
         saveDetails();
       }
-      deliveryStepMinus.addEventListener('click', () => deliveryStepBump(-50));
-      deliveryStepPlus.addEventListener('click', () => deliveryStepBump(50));
+      deliveryStepper?.onStep(delta => deliveryStepBump(delta));
       deliveryStepInput.addEventListener('input', () => {
         if (deliveryStepInput.value === '') { deliveryStepValue = null; deliveryStepHideMsg(); deliveryStepPaint(); saveDetails(); return; }
         const raw = Number(deliveryStepInput.value);
@@ -978,7 +997,7 @@
                 <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
               </div>
               <div class="flex items-start gap-2">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
                 <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNoteCurrent">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
               </div>
             </div>
@@ -994,7 +1013,7 @@
               </div>
               <p id="delivery-v1-msg" class="av-neutral-msg" style="display:none"></p>
               <div class="flex items-start gap-2">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
                 <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNoteCurrent">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
               </div>
             </div>
@@ -1004,21 +1023,22 @@
                 <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <div class="flex items-stretch gap-2">
-                <button id="delivery-step-minus" type="button" aria-label="Vähennä 50 km" data-i18n-aria="details.deliveryStepMinus"
-                  class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">−</button>
+                <!-- Real library component: UiButton variant="secondary" + production minus icon.
+                     Rendered by vue-tests/dist/delivery-stepper.js (see COMPONENTS.md). -->
+                <div data-av-stepper="minus" class="flex-shrink-0"></div>
                 <div class="relative flex-1">
                   <input id="delivery-step-km" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
                     class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-center text-slate-900 placeholder:text-slate-300 transition-colors" />
                   <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
                 </div>
-                <button id="delivery-step-plus" type="button" aria-label="Lisää 50 km" data-i18n-aria="details.deliveryStepPlus"
-                  class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">+</button>
+                <div data-av-stepper="plus" class="flex-shrink-0"></div>
               </div>
               <p id="delivery-step-msg" class="av-neutral-msg" style="display:none"></p>
-              <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col gap-2">
-                <p class="font-dm text-sm leading-5 text-slate-900"><b data-i18n="details.deliveryImpact1b">Matkan sisällä:</b> <span data-i18n="details.deliveryImpact1">liikkeet voivat tarjota ilman noutoa.</span></p>
-                <p class="font-dm text-sm leading-5 text-slate-900"><b data-i18n="details.deliveryImpact2b">Kauempana:</b> <span data-i18n="details.deliveryImpact2">liike hakee auton ja huomioi noudon tarjouksessaan.</span></p>
-                <p class="font-dm text-sm leading-5 text-slate-900"><b data-i18n="details.deliveryImpact3b">Näkyvyys:</b> <span data-i18n="details.deliveryImpact3">Autoliikkeet ympäri Suomen näkevät ilmoituksesi.</span></p>
+              <!-- Standard funnel info line: filled blue info icon + text (same pattern as
+                   "Korjaukset ja viat" on services.html) -->
+              <div class="flex items-start gap-2">
+                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="details.deliveryImpactNote">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</p>
               </div>
             </div>
             <!-- CARDS: option cards (concept 11A) — explored, not part of the A/B test -->
@@ -1073,7 +1093,7 @@
             </div>
             <!-- Info text (cards variant) -->
             <div id="delivery-cards-note" class="flex items-start gap-2">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+              <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
               <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNote">Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.</p>
             </div>
             </div>
@@ -1261,6 +1281,15 @@
 
     </div>
   </div>
+  <!-- Real library components (Vue): delivery-stepper mounts UiButton for the Variant 2 −/+
+       controls. Must run before DOMContentLoaded so the page's stepper logic finds the bridge.
+       Rebuild with `npm run build` in vue-tests/. -->
+  <!-- Tailwind Play CDN safelist. The CDN only generates CSS for classes present at first
+       paint, so utilities that a Vue component applies later (e.g. UiButton's disabled state
+       when the page loads with both steppers enabled) would otherwise have no styles.
+       Keep in sync with the variants the mounted components can produce. -->
+  <div class="hidden bg-slate-200 hover:bg-slate-200 active:bg-slate-200 !text-slate-300 pointer-events-none cursor-not-allowed bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 active:text-blue-700" aria-hidden="true"></div>
+  <script src="vue-tests/dist/delivery-stepper.js"></script>
   <script src="layout.js"></script>
 </body>
 </html>

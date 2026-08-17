@@ -138,7 +138,7 @@
             <tr><td class="px-4 py-3 font-bold whitespace-nowrap">Input method</td><td class="px-4 py-3">Slider + km field</td><td class="px-4 py-3">km field only</td><td class="px-4 py-3">km field + −/+ 50 km</td></tr>
             <tr><td class="px-4 py-3 font-bold whitespace-nowrap">Default value</td><td class="px-4 py-3">200 km preselected</td><td class="px-4 py-3">None (empty)</td><td class="px-4 py-3">None (empty)</td></tr>
             <tr><td class="px-4 py-3 font-bold whitespace-nowrap">Range shown up front</td><td class="px-4 py-3">Only via slider ends</td><td class="px-4 py-3">Placeholder <code>50–500</code></td><td class="px-4 py-3">Placeholder <code>50–500</code></td></tr>
-            <tr><td class="px-4 py-3 font-bold whitespace-nowrap">Consequence explained</td><td class="px-4 py-3">One-line tip</td><td class="px-4 py-3">One-line tip (unchanged)</td><td class="px-4 py-3">Three-line block</td></tr>
+            <tr><td class="px-4 py-3 font-bold whitespace-nowrap">Consequence explained</td><td class="px-4 py-3">One-line tip</td><td class="px-4 py-3">One-line tip (unchanged)</td><td class="px-4 py-3">Fuller info line</td></tr>
             <tr><td class="px-4 py-3 font-bold whitespace-nowrap">Label size</td><td class="px-4 py-3" colspan="3"><code>text-xl font-bold</code> in every arm — see the global change below</td></tr>
             <tr><td class="px-4 py-3 font-bold whitespace-nowrap">Stored value</td><td class="px-4 py-3" colspan="3">Identical in all arms — one integer, <code>delivery_distance</code>, 50–500 km</td></tr>
           </tbody>
@@ -178,7 +178,7 @@
             <span class="font-dm font-medium text-base leading-5 text-gray-700">km</span>
           </div>
           <div class="flex items-start gap-2 mt-3">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+            <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
             <p class="font-dm text-sm leading-5 text-slate-700">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
           </div>
         </div>
@@ -209,7 +209,7 @@
             <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
           </div>
           <div class="flex items-start gap-2 mt-3">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="8" cy="8" r="7.25" stroke="#0B6DFF" stroke-width="1.5"/><path d="M8 7v5" stroke="#0B6DFF" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.75" fill="#0B6DFF"/></svg>
+            <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
             <p class="font-dm text-sm leading-5 text-slate-700">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
           </div>
         </div>
@@ -243,21 +243,20 @@
           <div class="flex flex-col gap-3">
             <label class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span></label>
             <div class="flex items-stretch gap-2">
-              <button id="cb-minus" type="button" aria-label="Vähennä 50 km" data-i18n-aria="details.deliveryStepMinus"
-                class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">−</button>
+              <!-- Real library component: UiButton secondary + production minus icon,
+                   rendered by ../vue-tests/dist/delivery-stepper.js -->
+              <div data-av-stepper="minus" class="flex-shrink-0"></div>
               <div class="relative flex-1">
                 <input id="cb-num" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
                   class="spec-num-input w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-center text-slate-900 placeholder:text-slate-300 transition-colors" />
                 <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
               </div>
-              <button id="cb-plus" type="button" aria-label="Lisää 50 km" data-i18n-aria="details.deliveryStepPlus"
-                class="w-14 h-14 flex-shrink-0 border border-slate-400 rounded-lg bg-white font-dm text-2xl leading-none text-av-blue cursor-pointer hover:border-av-blue transition-colors disabled:text-slate-300 disabled:bg-slate-100 disabled:cursor-not-allowed disabled:hover:border-slate-400">+</button>
+              <div data-av-stepper="plus" class="flex-shrink-0"></div>
             </div>
             <p id="cb-msg" class="av-neutral-msg" style="display:none"></p>
-            <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col gap-2">
-              <p class="font-dm text-sm leading-5 text-slate-800"><b data-i18n="details.deliveryImpact1b">Matkan sisällä:</b> <span data-i18n="details.deliveryImpact1">liikkeet voivat tarjota ilman noutoa.</span></p>
-              <p class="font-dm text-sm leading-5 text-slate-800"><b data-i18n="details.deliveryImpact2b">Kauempana:</b> <span data-i18n="details.deliveryImpact2">liike hakee auton ja huomioi noudon tarjouksessaan.</span></p>
-              <p class="font-dm text-sm leading-5 text-slate-800"><b data-i18n="details.deliveryImpact3b">Näkyvyys:</b> <span data-i18n="details.deliveryImpact3">Autoliikkeet ympäri Suomen näkevät ilmoituksesi.</span></p>
+            <div class="flex items-start gap-2">
+              <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
+              <p class="font-dm text-base leading-5 text-black" data-i18n="details.deliveryImpactNote">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</p>
             </div>
             <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-2.5 font-mono text-sm" id="cb-out">details.deliveryRange: <b class="text-white">null</b></div>
           </div>
@@ -267,8 +266,10 @@
           <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
             <li><b>Everything Variant 1 changes</b> — slider removed, no default value, <code>50–500</code> placeholder, empty caught by <i>Pakollinen kenttä.</i></li>
             <li><b>Add − and + buttons at 50 km steps.</b> Placed either side of the field. <b>−</b> is disabled while the field is empty and at 50; <b>+</b> is disabled at 500. From empty, the first <b>+</b> tap sets 50 km. Typing stays available — the buttons are an addition, not a replacement.</li>
-            <li><b>Replace the one-line tip with a three-line block.</b> Reuses the field's existing rounding and clamping; only the explanation changes. States what the distance does in the auction: dealers within it can offer without collection, dealers beyond it collect the car and price that into their offer, and dealers across Finland see the listing regardless. Styled as a neutral surface (<code>bg-slate-50</code>, <code>border-slate-200</code>).</li>
-            <li><b>The block is constant.</b> It must not change with the entered value — value-dependent content invites sellers to probe numbers to see what appears.</li>
+            <li><b>Use the existing button component, no new one and no overrides.</b> <code>UiButton</code> with <code>type="button" variant="secondary" size="lg" iconOnly icon="minus|plus"</code> — the production <code>minus.svg</code> / <code>plus.svg</code> icons. Secondary and its disabled state come straight from the component: <code>blue-100/200/300</code> with <code>text-blue-800</code> when active, <code>bg-slate-200</code> with <code>!text-slate-300</code> when disabled. The demo above renders this exact component, not a replica.
+              <br><span class="text-slate-600">Two gotchas the component leaves to the caller: <b><code>type="button"</code> is required</b> — the field sits inside the step's <code>&lt;form&gt;</code>, and without it the button defaults to <code>submit</code> and reloads the page; and <b><code>iconOnly</code> is required</b> — without it the icon keeps its label-spacing offset and sits off-centre.</span></li>
+            <li><b>Replace the tip text with a fuller explanation of the consequence.</b> Same standard funnel info line — filled blue info icon, text to its right (identical markup to "Korjaukset ja viat" on the services step) — but the copy now states what the distance actually does: dealers inside the area can offer without collection, dealers outside include collection in their offer.</li>
+            <li><b>The text is constant.</b> It must not change with the entered value — value-dependent content invites sellers to probe numbers to see what appears.</li>
           </ol>
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mt-5 mb-2">Behavior detail (same as Variant 1 unless noted)</p>
           <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
@@ -427,9 +428,7 @@
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRange</code><br><span class="text-xs text-slate-500">label — all arms</span></td><td class="px-5 py-3">Kuinka kauas voit toimittaa auton?</td><td class="px-5 py-3">How far can you deliver the car?</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangeNoteCurrent</code><br><span class="text-xs text-slate-500">tip — control + V1</span></td><td class="px-5 py-3">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</td><td class="px-5 py-3">The distance affects how many dealers can make offers. Dealers offering collection can also bid from outside your area.</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangePlaceholder</code><br><span class="text-xs text-slate-500">V1 + V2</span></td><td class="px-5 py-3">50–500</td><td class="px-5 py-3">50–500</td></tr>
-            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpact1b</code> / <code>1</code><br><span class="text-xs text-slate-500">V2 block</span></td><td class="px-5 py-3"><b>Matkan sisällä:</b> liikkeet voivat tarjota ilman noutoa.</td><td class="px-5 py-3"><b>Within your distance:</b> dealers can offer without collection.</td></tr>
-            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpact2b</code> / <code>2</code><br><span class="text-xs text-slate-500">V2 block</span></td><td class="px-5 py-3"><b>Kauempana:</b> liike hakee auton ja huomioi noudon tarjouksessaan.</td><td class="px-5 py-3"><b>Further away:</b> the dealer collects the car and factors it into the offer.</td></tr>
-            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpact3b</code> / <code>3</code><br><span class="text-xs text-slate-500">V2 block</span></td><td class="px-5 py-3"><b>Näkyvyys:</b> Autoliikkeet ympäri Suomen näkevät ilmoituksesi.</td><td class="px-5 py-3"><b>Visibility:</b> Dealers across Finland see your listing.</td></tr>
+            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpactNote</code><br><span class="text-xs text-slate-500">V2 info line</span></td><td class="px-5 py-3">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</td><td class="px-5 py-3">Within your area, dealers can make an offer without collection. Dealers outside your area include collection in their offer.</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>err.required</code><br><span class="text-xs text-slate-500">submit, V1 + V2</span></td><td class="px-5 py-3">Pakollinen kenttä.</td><td class="px-5 py-3">Required field.</td></tr>
             <tr><td class="px-5 py-3"><code>deliveryMsgEmpty</code></td><td class="px-5 py-3">Anna kilometrimäärä välillä 50–500 km.</td><td class="px-5 py-3">Enter a distance between 50–500 km.</td></tr>
             <tr><td class="px-5 py-3"><code>deliveryMsgFixed</code><br><span class="text-xs text-slate-500">also used by V1 + V2 on auto-correct</span></td><td class="px-5 py-3">Arvo korjattiin välille 50–500 km.</td><td class="px-5 py-3">Value adjusted to the 50–500 km range.</td></tr>
@@ -466,6 +465,14 @@
   <!-- Live app translations: demo copy always mirrors the funnel's translations.js -->
   <script src="../translations.js"></script>
   <script src="../i18n.js"></script>
+  <!-- Real library components (Vue): the same bundle the prototype uses, so this demo and
+       details.html render the identical UiButton. Rebuild with `npm run build` in vue-tests/. -->
+  <!-- Tailwind Play CDN safelist. The CDN only generates CSS for classes present at first
+       paint, so utilities that a Vue component applies later (e.g. UiButton's disabled state
+       when the page loads with both steppers enabled) would otherwise have no styles.
+       Keep in sync with the variants the mounted components can produce. -->
+  <div class="hidden bg-slate-200 hover:bg-slate-200 active:bg-slate-200 !text-slate-300 pointer-events-none cursor-not-allowed bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 active:text-blue-700" aria-hidden="true"></div>
+  <script src="../vue-tests/dist/delivery-stepper.js"></script>
   <script>
     // Production copy is Finnish, so the demo always renders FI regardless of the reader's
     // stored app language. Reads translations.js directly and never writes av_lang, so opening
@@ -485,9 +492,10 @@
     // ── Candidate B: number field with ± 50 km (concept 8, exact behavior) ──
     (function(){
       const num = document.getElementById('cb-num');
-      const minus = document.getElementById('cb-minus');
-      const plus = document.getElementById('cb-plus');
       const msgEl = document.getElementById('cb-msg');
+      // The -/+ controls are the real UiButton component (see ../vue-tests). This demo keeps
+      // the value; the bridge forwards clicks in and disabled state out.
+      const stepper = window.AVDeliveryStepper || null;
       const out = document.getElementById('cb-out');
       let value = null;
 
@@ -495,14 +503,15 @@
       function showFixedMsg() { msgEl.textContent = specT('details.deliveryMsgFixed'); msgEl.style.display = ''; }
       function hideMsg() { msgEl.textContent = ''; msgEl.style.display = 'none'; }
       function paint() {
-        minus.disabled = value === null || value <= 50;
-        plus.disabled  = value !== null && value >= 500;
+        stepper?.setDisabled({
+          minus: value === null || value <= 50,
+          plus:  value !== null && value >= 500
+        });
         out.innerHTML = 'details.deliveryRange: <b class="text-white">' + (value === null ? 'null' : value) + '</b>';
       }
       function bump(d) { value = value === null ? 50 : clampKm(value + d); num.value = value; hideMsg(); paint(); }
 
-      minus.addEventListener('click', () => bump(-50));
-      plus.addEventListener('click', () => bump(50));
+      stepper?.onStep(delta => bump(delta));
       num.addEventListener('input', () => {
         if (num.value === '') { value = null; hideMsg(); paint(); return; }
         const raw = Number(num.value);

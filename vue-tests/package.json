@@ -1,0 +1,24 @@
+{
+  "name": "vue-tests",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && vite build --config vite.nav-icon.config.js && vite build --config vite.brand-logo.config.js && vite build --config vite.reg-badge.config.js && vite build --config vite.mileage.config.js && vite build --config vite.save-draft.config.js && vite build --config vite.save-draft-button.config.js && vite build --config vite.gallery.config.js && vite build --config vite.delivery-stepper.config.js",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "chart.js": "^4.4.0",
+    "chartjs-plugin-datalabels": "^2.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.10",
+    "tailwind-merge": "^3.6.0",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "vite": "^5.0.0"
+  }
+}
