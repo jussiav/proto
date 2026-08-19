@@ -35,23 +35,10 @@ if (progressRef) {
   }
 }
 
-// success.html — badge injected by vehicle-card.js into #av-vehicle-card; re-mounts on each render
-function mountVehicleCardBadge() {
-  const container = document.getElementById('vehicle-card-plate-badge')
-  if (!container || container.dataset.vueMounted) return
-  container.dataset.vueMounted = '1'
-  const plate = container.querySelector('span')?.textContent?.trim() || ''
-  container.style.display = 'none'
-  const mount = document.createElement('span')
-  mount.style.display = 'contents'
-  container.parentNode.insertBefore(mount, container)
-  createApp({
-    setup: () => () => h(ARegistrationNumberBadge, { registrationNumber: plate })
-  }).mount(mount)
-}
-
-const vehicleCardEl = document.getElementById('av-vehicle-card')
-if (vehicleCardEl) {
-  mountVehicleCardBadge()
-  new MutationObserver(mountVehicleCardBadge).observe(vehicleCardEl, { childList: true, subtree: true })
-}
+// NOTE: the car card used to expose #vehicle-card-plate-badge for this bundle to
+// take over. It no longer does — buildCarCard() in vehicle-card.js renders the
+// badge itself via buildRegBadge(), which mirrors ARegistrationNumberBadge.vue
+// including bg-white and the a11y attributes. Mounting Vue into that card was
+// fragile anyway: the card is re-rendered wholesale on every state change, so
+// the MutationObserver had to re-mount each time. Keep buildRegBadge in sync
+// with ARegistrationNumberBadge.vue.

@@ -56,6 +56,28 @@
     body: 'av-card__body'
   };
 
+  // ── buildRegBadge(plate, opts) ────────────────────────────────────
+  // Mirrors ARegistrationNumberBadge.vue (in Storybook) verbatim, including
+  // bg-white and the a11y attributes. The Vue bundle can't mount inside the
+  // card any more — the card re-renders wholesale, so the old MutationObserver
+  // hook was fragile — so this is the proto's vanilla renderer of that same
+  // component. Keep the two in sync.
+  //   opts.plateClass  extra classes on the plate half (offers' notification
+  //                    cards override the border/background there)
+  function buildRegBadge(plate, opts) {
+    opts = opts || {};
+    return '<div class="flex rounded-md bg-white" role="text"' +
+           ' aria-label="Rekisterinumero ' + esc(plate || '') + '">' +
+             '<div class="w-2 h-auto bg-av-blue rounded-l-md"></div>' +
+             '<div class="py-1 px-1.5 border border-l-0 rounded-r-md font-dm text-xs sm:text-sm text-slate-800 whitespace-nowrap ' +
+               (opts.plateClass || 'border-slate-200') + '">' +
+               (esc(plate) || '\u2013') +
+             '</div>' +
+           '</div>';
+  }
+
+  window.buildRegBadge = buildRegBadge;
+
   // ── buildCarCard(props) ───────────────────────────────────────────
   // The one card renderer. Structure mirrors prod's CarCard.vue, so props
   // mirror its props too — see CARD-COMPONENT-PLAN.md for the contract.
@@ -81,14 +103,7 @@
       // No photo — prod renders a plain bg-blue-300 with the white ph-car-simple icon.
       : '<img src="assets/ph-car-simple-white.svg" class="relative z-10 w-[70px] h-[70px] opacity-60" alt="" />';
 
-    // prod: <div class="w-2 h-auto bg-blue-600 rounded-l-md" /> + bordered plate
-    var plateBadge =
-      '<div class="flex rounded-md">' +
-        '<div class="w-2 h-auto bg-av-blue rounded-l-md"></div>' +
-        '<div class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 font-dm text-xs sm:text-sm text-slate-800 whitespace-nowrap">' +
-          (esc(props.registrationNumber) || '\u2013') +
-        '</div>' +
-      '</div>';
+    var plateBadge = buildRegBadge(props.registrationNumber);
 
     var statusBadge = props.status
       ? '<div class="inline-flex items-center space-x-2 px-2 py-1 font-dm text-xs sm:text-sm rounded border ' +

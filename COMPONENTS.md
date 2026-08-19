@@ -66,7 +66,9 @@ status: a component can be shipped in prod and rendered vanilla here.
 | Field | Value |
 |---|---|
 | **Status** | `in-storybook` |
+| **Renderer** | `vue` + `vanilla` twin |
 | **File** | `vue-tests/src/components/ARegistrationNumberBadge.vue` |
+| **Vanilla twin** | `vehicle-card.js` → `window.buildRegBadge(plate, opts)` |
 | **Bundle** | `vue-tests/dist/reg-badge.js` |
 | **Prod import** | `import { ARegistrationNumberBadge } from '@atoms'` |
 | **Figma** | _Add link_ |
@@ -77,7 +79,16 @@ status: a component can be shipped in prod and rendered vanilla here.
 |---|---|---|---|
 | `registrationNumber` | String | Yes | Pass uppercase with dash: `ABC-123` |
 
-**Used on:** `details.html` (next to km), `index.html` (hero progress card), `success.html` (vehicle card — via MutationObserver on `#av-vehicle-card`)
+**Used on:**
+- Vue bundle: `details.html` (next to km), `index.html` (hero progress card)
+- Vanilla twin `buildRegBadge()`: every car card (funnel + offers), offers'
+  notification cards, offers' auction timer
+
+Two renderers, one contract. The card re-renders wholesale on every state
+change, so mounting Vue into it needed a MutationObserver and broke silently
+when the card's internals changed — `buildRegBadge()` renders the same markup
+(including `bg-white`, `role="text"` and the `aria-label`) with no build step.
+**Keep the two in sync.**
 
 ---
 
@@ -277,6 +288,8 @@ because its card spans a 768px column; the funnel card sits in the tan
 `bg-av-cream` sidebar (`max-w-[48%]`), only ~375px wide at viewport 1024, where a
 250px photo would leave 125px for details. The card flips to photo-left at 480px
 of its **own** width.
+
+**Uses:** `buildRegBadge()` for the plate badge.
 
 **Used on:** `contact.html`, `success.html` (via `renderVehicleCard()`),
 `offers.html` (published listing + draft cards)

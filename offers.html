@@ -112,10 +112,7 @@
                 Tarjouskilpailu alkaa kun ensimmäinen tarjous on tehty
               </span>
             </div>
-            <div class="flex rounded-md flex-shrink-0 ml-3">
-              <div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>
-              <div id="timer-reg" class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 text-xs text-nowrap"></div>
-            </div>
+            <div id="timer-reg-badge" class="flex-shrink-0 ml-3"></div>
           </div>
         </div>
       </section>
@@ -537,12 +534,7 @@
     var BTN_PRIMARY = 'inline-flex items-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium w-full sm:w-auto';
 
     function buildDraftNotifHtml(icon, iconColor, border, bg, regNo, title, content, ctaHtml) {
-      var regNoHtml = regNo
-        ? '<div class="flex rounded-md">' +
-            '<div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>' +
-            '<div class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 text-sm">' + regNo + '</div>' +
-          '</div>'
-        : '';
+      var regNoHtml = regNo ? buildRegBadge(regNo) : '';
       return '<div class="p-6 flex flex-col space-y-4 rounded-xl border-2 overflow-auto ' + bg + ' ' + border + '">' +
         '<div class="flex justify-between items-center">' +
           '<div class="flex justify-start items-center gap-x-1.5">' +
@@ -845,10 +837,7 @@
             '<div class="flex items-center gap-x-1.5">' +
               '<span class="' + cfg.iconColor + ' flex-shrink-0">' + cfg.icon + '</span>' +
             '</div>' +
-            '<div class="flex rounded-md">' +
-              '<div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>' +
-              '<div class="py-1 px-1.5 border border-l-0 rounded-r-md text-sm ' + cfg.regNoPlate + '">' + plate + '</div>' +
-            '</div>' +
+            buildRegBadge(plate, { plateClass: cfg.regNoPlate }) +
           '</div>' +
           // Title + content
           '<div class="flex flex-col space-y-2.5">' +
@@ -906,7 +895,7 @@
 
       renderDrafts(drafts);
 
-      document.getElementById('timer-reg').textContent = plate;
+      document.getElementById('timer-reg-badge').innerHTML = buildRegBadge(plate);
 
       // Car photo — also used by the draft cards
       var photos = s.photos || {}, photoMap = s.photoMap || {}, firstPhoto = null;
