@@ -146,11 +146,11 @@
 
     const imageInner = photo
       ? `<img src="${photo}" class="absolute inset-0 w-full h-full object-cover" alt="" />${overlayTop}`
-      : `<img src="https://www.figma.com/api/mcp/asset/fc47d0e4-95d9-4224-970d-c8ff677971b3"
-              class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" alt="" />
-         <div class="absolute inset-0 bg-[#88CFFF] opacity-60"></div>
-         <img src="https://www.figma.com/api/mcp/asset/8c5421ae-bc06-4d3e-9641-2e5dc5e6d225"
-              class="relative z-10 w-[70px] h-[70px]" alt="" />
+      /* No photo — prod's CarCard placeholder: plain bg-blue-300 with a white
+         70x70 ph-car-simple icon. Prod has no background image behind it, so
+         the old faded car photo is dropped. Same treatment as offers.html. */
+      : `<img src="assets/ph-car-simple-white.svg"
+              class="relative z-10 w-[70px] h-[70px] opacity-60" alt="" />
          ${amberBar}${overlayTop}`;
 
     const cardBorder = options.successView ? 'border-2 border-av-blue' : 'border border-slate-200';
@@ -176,7 +176,7 @@
               </div>
             </div>
             <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded px-2 py-1">
-              <img src="https://www.figma.com/api/mcp/asset/9e224408-ac59-437b-9916-1ebb00db47f6" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
+              <img src="assets/ph-bold-paperclip-slate.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
               <span class="font-dm font-medium text-sm text-slate-500">${t('card.draft')}</span>
             </div>
           </div>

@@ -155,9 +155,7 @@
         <div class="av-card-shell w-full"><div class="av-card rounded-xl bg-white shadow-sm overflow-hidden">
           <div id="photo-wrap" class="av-card__media bg-blue-300">
             <img id="car-img" src="" alt="" class="object-cover h-full w-full hidden" />
-            <svg id="car-placeholder" width="70" height="70" viewBox="0 0 256 256" fill="white" class="opacity-60" aria-hidden="true">
-              <path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/>
-            </svg>
+            <img id="car-placeholder" src="assets/ph-car-simple-white.svg" width="70" height="70" class="opacity-60" alt="" />
           </div>
           <div class="av-card__body p-5 flex flex-col justify-between space-y-5">
             <div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">
@@ -663,7 +661,7 @@
       },
     };
 
-    var ICON_CAR_PLACEHOLDER = '<svg width="70" height="70" viewBox="0 0 256 256" fill="white" class="opacity-60" aria-hidden="true"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/></svg>';
+    var ICON_CAR_PLACEHOLDER = '<img src="assets/ph-car-simple-white.svg" width="70" height="70" class="opacity-60" alt="" />';
 
     function buildDraftCard(draft) {
       var cfg = DRAFT_STATUS_CFG[draft.status] || DRAFT_STATUS_CFG['open'];
