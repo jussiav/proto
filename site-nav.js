@@ -24,15 +24,30 @@
   var path = window.location.pathname;
   var isHelp = path.indexOf('help') !== -1;
 
-  var itemBase = 'px-8 py-2 flex items-center justify-center h-full gap-2 whitespace-nowrap transition-colors';
-  var itemIdle = itemBase + ' text-white/90 hover:text-white/75';
-  var itemActive = itemBase + ' text-white font-bold';
+  /* Menu item classes copied verbatim from the live nav's rendered markup
+     (MMenu.vue, color="blue"). Idle = white text, transparent. Active = white
+     block, blue text, 1px blue-100 bottom border — NOT bold; prod renders
+     every item at font-weight 400. */
+  var itemBase = 'px-4 py-3 lg:px-8 lg:py-2 rounded-lg lg:rounded-none flex items-center justify-center w-full gap-2 lg:h-full';
+  var itemIdle = itemBase + ' lg:text-white hover:bg-gray-100 lg:hover:bg-transparent lg:hover:text-white/75';
+  var itemActive = itemBase + ' lg:border-b lg:border-b-1 lg:border-b-blue-100 lg:bg-white lg:text-blue';
 
-  /* CTA is desktop-only, matching the current proto behaviour (no mobile
-     drawer yet — prod's hamburger + drawer is a separate follow-up). */
-  var style = document.createElement('style');
-  style.textContent = '.nav-cta-visible{display:none}@media(min-width:1024px){.nav-cta-visible{display:inline-flex}}';
-  document.head.appendChild(style);
+  /* Prod order and labels (live autovex.fi). Only Tuki has a page in the proto;
+     the rest keep href="#" rather than inventing routes. */
+  var MENU = [
+    { key: 'nav.reviews',    fi: 'Kokemuksia',     href: '#' },
+    { key: 'nav.blog',       fi: 'Blogi',          href: '#' },
+    { key: 'nav.forSellers', fi: 'Auton myyjälle', href: '#' },
+    { key: 'nav.forDealers', fi: 'Autoliikkeelle', href: '#' },
+    { key: 'nav.faq',        fi: 'Tuki',           href: 'help.html', active: isHelp }
+  ];
+
+  var MENU_HTML = MENU.map(function (m) {
+    return '<li class="flex flex-col items-center w-full lg:w-auto h-auto lg:h-full">' +
+             '<a href="' + m.href + '" class="' + (m.active ? itemActive : itemIdle) + '"' +
+             ' data-i18n="' + m.key + '">' + m.fi + '</a>' +
+           '</li>';
+  }).join('');
 
   var NAV_HTML =
     /* Spacer — prod renders this as a sibling before the fixed header so page
@@ -50,16 +65,19 @@
             ' class="w-[107px] h-[22px] flex-shrink-0 object-contain block" style="filter:brightness(0) invert(1);" />' +
           '</a>' +
         '</div>' +
-        '<ul id="nav-links" class="hidden lg:flex items-center h-full gap-2 font-dm font-medium text-base list-none ml-16 mr-auto">' +
-          '<li class="h-full"><a href="#" class="' + itemIdle + '" data-i18n="nav.reviews">Kokemuksia</a></li>' +
-          '<li class="h-full"><a href="#" class="' + itemIdle + '" data-i18n="nav.forSellers">Auton myyjälle</a></li>' +
-          '<li class="h-full"><a href="#" class="' + itemIdle + '" data-i18n="nav.blog">Blogi</a></li>' +
-          '<li class="h-full"><a href="help.html" class="' + (isHelp ? itemActive : itemIdle) + '" data-i18n="nav.faq">Tuki</a></li>' +
+        /* prod ul: flex-1 ... lg:justify-start lg:ml-16, no gap class.
+           Hidden below lg because prod's mobile drawer is a separate follow-up. */
+        '<ul id="nav-links" class="hidden lg:flex flex-1 lg:flex-row items-center lg:h-full lg:justify-start lg:ml-16 font-dm text-base list-none">' +
+          MENU_HTML +
         '</ul>' +
         '<div class="flex-shrink-0 flex items-center gap-3.5 justify-end">' +
+          /* CTA classes verbatim from the live nav (MMenuCTA + AButton with
+             Header.astro's buttonClass): white on desktop, blue below lg. */
           '<a id="nav-cta" href="index.html"' +
-          ' class="nav-cta-visible items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg whitespace-nowrap hover:bg-[#0A59EB] transition-colors"' +
-          ' style="box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);"' +
+          ' class="hidden lg:inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 px-8 h-14 text-base leading-tight rounded-lg relative whitespace-nowrap font-dm' +
+          ' shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' +
+          ' bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white' +
+          ' lg:bg-white lg:text-blue-600 lg:hover:bg-blue-50 lg:active:bg-blue-100"' +
           ' data-i18n="nav.startAuction">Aloita kilpailutus</a>' +
           '<a id="nav-login" href="#" class="flex flex-col items-center gap-0.5 px-1.5">' +
             '<img id="nav-login-icon" src="assets/nav-user-white.svg" alt="" class="w-6 h-6" />' +
