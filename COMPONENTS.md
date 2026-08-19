@@ -114,7 +114,7 @@ Live rendered gallery: [`components.html`](components.html) (open on GitHub Page
 | `startDate` | Dayjs | Yes | Auction start timestamp |
 | `endDate` | Dayjs | Yes | Auction end timestamp |
 
-**Used on:** `auction-test.html`
+**Used on:** `components.html`
 
 ---
 
