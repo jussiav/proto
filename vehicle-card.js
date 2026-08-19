@@ -1,10 +1,60 @@
 /**
  * Shared vehicle card + ad-preview modal component.
- * Included by contact.html and success.html.
- * Exposes window.renderVehicleCard(containerId) and window.openAdModal() / closeAdModal().
+ * Included by contact.html, success.html and offers.html.
+ *
+ * Exposes:
+ *   window.renderVehicleCard(containerId, options)  — funnel card (contact/success)
+ *   window.carCardClasses                           — shared shell class names
+ *   window.openAdModal() / closeAdModal()
+ *
+ * ── Card shell ────────────────────────────────────────────────────────────
+ * Mirrors prod's CarCard.vue: stacked photo-on-top by default, flipping to
+ * photo-left / details-right with a fixed 250px photo column.
+ *
+ * Prod switches on `lg:` (viewport ≥1024px), which works there because the card
+ * spans a 768px main column. In this proto the funnel card sits in the tan
+ * bg-av-cream sidebar (max-w-[48%]), so at viewport 1024 the card is only
+ * ~375px wide — a 250px photo would leave 125px for the details. Viewport
+ * breakpoints are the wrong tool for a card whose container is much narrower
+ * than the window, so the switch is a CONTAINER query on the card's own width.
+ * Same intent as prod, correct behaviour in a narrow column.
  */
 (function () {
   'use strict';
+
+  // ── Shared card shell ─────────────────────────────────────────────
+  // One definition for all three car cards: the funnel card below, and
+  // offers.html's published-listing + draft cards.
+  var SHELL_STYLE_ID = 'av-car-card-style';
+  if (!document.getElementById(SHELL_STYLE_ID)) {
+    var shellStyle = document.createElement('style');
+    shellStyle.id = SHELL_STYLE_ID;
+    shellStyle.textContent = [
+      /* The mount is the query container; the card reacts to its own width. */
+      '.av-card-shell{container-type:inline-size;}',
+      '.av-card{display:flex;flex-direction:column;width:100%;height:auto;}',
+      /* Stacked: prod's h-[220px] w-full photo. */
+      '.av-card__media{position:relative;height:220px;width:100%;flex-shrink:0;',
+      'display:flex;align-items:center;justify-content:center;overflow:hidden;}',
+      '.av-card__body{width:100%;height:auto;}',
+      /* Horizontal: prod's lg:w-[250px] photo column and lg:max-h-[250px] card.
+         480px = 250px photo + 230px details, the narrowest the details column
+         stays usable. Below that the card stays stacked. */
+      '@container (min-width: 480px){',
+      '  .av-card{flex-direction:row;max-height:250px;}',
+      '  .av-card__media{height:auto;width:250px;}',
+      '}'
+    ].join('');
+    document.head.appendChild(shellStyle);
+  }
+
+  // Class names for consumers that build their own card markup (offers.html).
+  window.carCardClasses = {
+    shell: 'av-card-shell',
+    card: 'av-card',
+    media: 'av-card__media',
+    body: 'av-card__body'
+  };
 
   // ── Storage ──
   const STORE_KEY = 'autovex_funnel';
@@ -55,7 +105,7 @@
     const priceLabel = t('card.priceLabelTarget');
 
     const priceTag = priceValue
-      ? `<div style="position:absolute;top:.5rem;left:.5rem;z-index:10;background:white;border-radius:.375rem;padding:.25rem .625rem;display:flex;align-items:center;gap:.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.15);">
+      ? `<div style="background:white;border-radius:.375rem;padding:.25rem .625rem;display:flex;align-items:center;gap:.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.15);">
            <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;color:#64748b;">${priceLabel}</span>
            <span style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:.75rem;color:#0f172a;">${Number(priceValue).toLocaleString('fi-FI')} €</span>
          </div>`
@@ -64,7 +114,7 @@
     let statusBadge = '';
     if (options.successView) {
       if (!photosOk) {
-        statusBadge = `<div style="position:absolute;top:.5rem;right:.5rem;z-index:10;display:flex;align-items:center;gap:.25rem;background:#fff7ed;border:1px solid #fb923c;border-radius:.375rem;padding:.25rem .5rem;">
+        statusBadge = `<div style="display:flex;align-items:center;gap:.25rem;background:#fff7ed;border:1px solid #fb923c;border-radius:.375rem;padding:.25rem .5rem;">
           <img src="assets/icon-warning-octagon.svg" style="width:.875rem;height:.875rem;flex-shrink:0;" alt="" />
           <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#c2410c;">${t('card.photosRequired')}</span>
         </div>`;
@@ -72,7 +122,7 @@
         const badgeText = t('card.underReview');
         // top-right (same anchor as the photos-required badge above) — centring collided with
         // the left-anchored price tag once the card moved into the narrower tan column
-        statusBadge = `<div style="position:absolute;top:.5rem;right:.5rem;z-index:10;display:flex;align-items:center;gap:.25rem;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:.375rem;padding:.25rem .5rem;white-space:nowrap;">
+        statusBadge = `<div style="display:flex;align-items:center;gap:.25rem;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:.375rem;padding:.25rem .5rem;white-space:nowrap;">
           <img src="assets/icon-hourglass.svg" style="width:.875rem;height:.875rem;flex-shrink:0;" alt="" />
           <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#64748b;">${badgeText}</span>
         </div>`;
@@ -85,27 +135,38 @@
          <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;color:white;">${t('card.photosRequired')}</span>
        </div>`;
 
+    // Price tag and status badge share one overlay row. They used to be anchored
+    // independently (top-left / top-right), which collided once the photo column
+    // narrowed to prod's 250px. Now they sit in a flex row that wraps instead.
+    const overlayTop = (priceTag || statusBadge)
+      ? `<div style="position:absolute;top:.5rem;left:.5rem;right:.5rem;z-index:10;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.25rem;">
+           ${priceTag}${statusBadge}
+         </div>`
+      : '';
+
     const imageInner = photo
-      ? `<img src="${photo}" class="absolute inset-0 w-full h-full object-cover" alt="" />${priceTag}${statusBadge}`
+      ? `<img src="${photo}" class="absolute inset-0 w-full h-full object-cover" alt="" />${overlayTop}`
       : `<img src="https://www.figma.com/api/mcp/asset/fc47d0e4-95d9-4224-970d-c8ff677971b3"
               class="absolute inset-0 w-full h-full object-cover opacity-30 pointer-events-none" alt="" />
          <div class="absolute inset-0 bg-[#88CFFF] opacity-60"></div>
          <img src="https://www.figma.com/api/mcp/asset/8c5421ae-bc06-4d3e-9641-2e5dc5e6d225"
               class="relative z-10 w-[70px] h-[70px]" alt="" />
-         ${amberBar}${priceTag}${statusBadge}`;
+         ${amberBar}${overlayTop}`;
 
     const cardBorder = options.successView ? 'border-2 border-av-blue' : 'border border-slate-200';
 
-    container.innerHTML = `
-      <div class="bg-white rounded-xl w-full ${cardBorder} shadow-md overflow-hidden">
+    container.classList.add('av-card-shell');
 
-        <!-- Image -->
-        <div class="relative h-[220px] w-full flex items-center justify-center overflow-hidden bg-[#88CFFF]">
+    container.innerHTML = `
+      <div class="av-card bg-white rounded-xl ${cardBorder} shadow-md overflow-hidden">
+
+        <!-- Image — 220px tall stacked, 250px wide column once the card is wide enough -->
+        <div class="av-card__media bg-[#88CFFF]">
           ${imageInner}
         </div>
 
         <!-- Body -->
-        <div class="flex flex-col gap-5 p-5">
+        <div class="av-card__body flex flex-col gap-5 p-5">
 
           <!-- Reg tag + badge -->
           <div class="flex items-center justify-between w-full">
