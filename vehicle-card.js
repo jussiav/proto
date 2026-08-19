@@ -50,11 +50,9 @@
     const tags    = [details.vuosimalli, hero.km ? fmtKm(hero.km) : '', details.polttoaine].filter(Boolean);
     const photo   = firstPhoto(photos);
     const photosOk = photosComplete(photos);
-    const isAskingPrice = s.priceMode === 'asking';
-    const isSelfPrice = s.priceMode === 'self';
-    // askingPrice is the Treatment B (mandatory) field; priceExpectation is Treatment A (optional)
-    const priceValue = isAskingPrice ? s.askingPrice : (s.priceExpectation || (isSelfPrice ? s.askingPrice : null));
-    const priceLabel = isAskingPrice ? t('card.priceLabelAsk') : t('card.priceLabelTarget');
+    // Single price variant: the seller's optional own estimate.
+    const priceValue = s.priceExpectation || null;
+    const priceLabel = t('card.priceLabelTarget');
 
     const priceTag = priceValue
       ? `<div style="position:absolute;top:.5rem;left:.5rem;z-index:10;background:white;border-radius:.375rem;padding:.25rem .625rem;display:flex;align-items:center;gap:.25rem;box-shadow:0 1px 4px rgba(0,0,0,0.15);">
@@ -71,8 +69,10 @@
           <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#c2410c;">${t('card.photosRequired')}</span>
         </div>`;
       } else {
-        const badgeText = isAskingPrice ? t('card.awaitingOffers') : t('card.underReview');
-        statusBadge = `<div style="position:absolute;top:.5rem;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:.25rem;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:.375rem;padding:.25rem .5rem;white-space:nowrap;">
+        const badgeText = t('card.underReview');
+        // top-right (same anchor as the photos-required badge above) — centring collided with
+        // the left-anchored price tag once the card moved into the narrower tan column
+        statusBadge = `<div style="position:absolute;top:.5rem;right:.5rem;z-index:10;display:flex;align-items:center;gap:.25rem;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:.375rem;padding:.25rem .5rem;white-space:nowrap;">
           <img src="assets/icon-hourglass.svg" style="width:.875rem;height:.875rem;flex-shrink:0;" alt="" />
           <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#64748b;">${badgeText}</span>
         </div>`;
@@ -311,11 +311,10 @@
     </div>`;
 
     // ── Hinta ──
-    const isAskingPriceModal = s.priceMode === 'asking';
-    const priceRowLabel = isAskingPriceModal ? t('price.askingLabel') : t('price.targetLabel');
-    const priceRowValue = isAskingPriceModal
-      ? (s.askingPrice ? Number(s.askingPrice).toLocaleString('fi-FI') + ' €' : null)
-      : (s.priceExpectation ? Number(s.priceExpectation).toLocaleString('fi-FI') + ' €' : null);
+    const priceRowLabel = t('price.targetLabel');
+    const priceRowValue = s.priceExpectation
+      ? Number(s.priceExpectation).toLocaleString('fi-FI') + ' €'
+      : null;
     html += section(t('modal.sections.price'), 'price.html', row(priceRowLabel, priceRowValue));
 
     // ── Yhteystiedot ──

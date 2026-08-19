@@ -72,8 +72,8 @@
       }
       function isComplete(step) {
         switch(step) {
-          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
-          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
+          case 'details':  { const d=s.details||{}; /* rims only required when that season's tyres exist (duplicated across funnel pages) */ const kesaRimsOk=d.kesarenkaat==='Ei ole'||!!d.kesavanteet; const talviRimsOk=d.talvirenkaat==='Ei ole'||!!d.talvivanteet; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&kesaRimsOk&&d.talvirenkaat&&talviRimsOk&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const bookTypeOk=rg[0]==='Ei huoltokirjaa'?true:rg[1]!=null; return rg.length>=5&&rg[0]!=null&&bookTypeOk&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
           case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
           case 'price':    return !!s.priceVisited;
           case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
@@ -133,10 +133,7 @@
     const sectionCounts = {};
 
     function updateCTA() {
-      const count = document.getElementById('photo-count');
-      const bar   = document.getElementById('progress-bar');
-      count.textContent = totalUploaded;
-      bar.style.width   = Math.min(totalUploaded / 5 * 100, 100) + '%';
+      // Photo-count progress bar removed — prod has no such indicator.
       const skipBtn = document.getElementById('skip-btn');
       if (skipBtn) skipBtn.style.display = photosReady() ? 'none' : '';
     }
@@ -714,14 +711,6 @@
           </button>
         </div>
 
-        <!-- Photo count indicator -->
-        <div class="w-full flex items-center gap-2">
-          <div class="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-            <div id="progress-bar" class="h-full bg-av-blue rounded-full transition-all duration-300" style="width:0%"></div>
-          </div>
-          <span class="font-dm text-sm leading-5 text-slate-500 whitespace-nowrap"><span id="photo-count">0</span> / 5 kuvaa</span>
-        </div>
-
         <!-- ── Required sections ── -->
         <div class="w-full flex flex-col gap-10 md:gap-16">
 
@@ -791,6 +780,7 @@
           <!-- Naarmut tai kolhut -->
           <div class="flex flex-col gap-2">
             <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.scratches">Naarmut tai kolhut</div>
+            <p class="font-dm text-xs text-slate-500 -mt-1" data-i18n="photos.scratchesHint">Lisää kuvat, jos autossa on vaurioita.</p>
             <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
               <div class="photo-grid flex flex-wrap gap-2.5">
                 <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/47d03926-fe55-47b1-8e34-677c13e776d9.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
@@ -836,18 +826,6 @@
       <!-- ── Right column (cream) ── -->
       <div id="right-col" class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col justify-between max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:gap-4 max-md:justify-start max-md:rounded-none max-md:px-5 max-md:py-8">
         <div id="right-col-spacer"></div>
-        <div class="bg-white rounded-xl p-5 flex items-center gap-5 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)] max-md:order-2">
-          <div class="w-[67px] h-[100px] flex-shrink-0 overflow-hidden">
-            <img src="assets/30ed09dd-b6bd-4c39-913f-cd1e9be5a291.png"
-                 class="w-full h-full object-cover"
-                 style="transform: scaleY(-1) rotate(180deg);"
-                 alt="" />
-          </div>
-          <div class="flex-1 flex flex-col gap-4">
-            <p class="font-barlow font-bold text-[#020617]" style="font-size:24px;line-height:26px;" data-i18n="sidebar.title">Erinomainen aika myydä</p>
-            <p class="font-dm text-base leading-5 text-black" data-i18n="sidebar.body">Autokauppa käy kuumana! Olemme myyneet jo yli 70 000 autoa!</p>
-          </div>
-        </div>
         <!-- Save draft / Jatka myöhemmin -->
         <div class="max-md:order-1">
           <div id="save-draft-target" style="display:none"></div>

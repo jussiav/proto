@@ -344,6 +344,21 @@
     var _savedOffersState = _loadOffersState();
     var SCENARIO = _offersParams.get('scenario') || _savedOffersState.scenario || 'new-offers';
     try { localStorage.setItem(_OFFERS_STATE_KEY, JSON.stringify({ scenario: SCENARIO })); } catch(e) {}
+
+    // review_comms_content variants — mirrors TenderRequestDraftResource::reviewCommsContent()
+    // (tenderform.review.content.would_contact_* in vue-i18n-locales.generated.js)
+    var REVIEW_COPY_VARIANT = _offersParams.get('copy') === 'default' ? null : _offersParams.get('copy');
+    var FI_WEEKDAY_NAMES = { 1: 'maanantaina', 2: 'tiistaina', 3: 'keskiviikkona', 4: 'torstaina', 5: 'perjantaina' };
+    function _nextWorkDayName() {
+      var d = new Date();
+      do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6);
+      return FI_WEEKDAY_NAMES[d.getDay()];
+    }
+    var REVIEW_COMMS_CONTENT = {
+      soon: 'Olemme sinuun yhteydessä vielä puhelimitse, jotta autosi saadaan myytyä mahdollisimman pian.',
+      tomorrow: 'Olemme sinuun yhteydessä vielä puhelimitse viimeistään huomenna, jotta autosi saadaan myytyä mahdollisimman pian.',
+      next_work_day: 'Olemme sinuun yhteydessä vielä puhelimitse viimeistään ' + _nextWorkDayName() + ', jotta autosi saadaan myytyä mahdollisimman pian.',
+    };
     try { var _ds = JSON.parse(localStorage.getItem('autovex_decision') || '{}'); _ds.scenario = SCENARIO; localStorage.setItem('autovex_decision', JSON.stringify(_ds)); } catch(e) {}
     var _editState = { sd: null, sy: null, sm: null };
     var _neg2ndCounter = false;
@@ -368,7 +383,7 @@
     var BASE = {
       id: 1001, make: merkki, model: malli, year: parseInt(vuosi) || 2020,
       fuel_type: fuel, driven: km, registration_number: plate,
-      asking_price: parseInt(String(s.askingPrice || s.priceExpectation || '').replace(/\D/g, '')) || 12000, model_specification: '',
+      asking_price: parseInt(String(s.priceExpectation || '').replace(/\D/g, '')) || 12000, model_specification: '',
     };
 
     // ── Scenario data — matches offers.astro mock shapes ──
@@ -485,7 +500,7 @@
       }] }; },
       'draft-in-review': function() { return { requests: [], negotiations: [], drafts: [{
         id: 501, status: 'in_review', registration_number: 'XYZ-789',
-        review_comms_content: null, created_at: _now() - 86400,
+        review_comms_content: REVIEW_COMMS_CONTENT[REVIEW_COPY_VARIANT] || null, created_at: _now() - 86400,
         make_name: 'Toyota', model_name: 'Corolla',
         model_specification: 'Trendline 1,0 kk kW (75 hv)',
         year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
@@ -616,7 +631,7 @@
           html = buildDraftNotifHtml(
             NICON_FILL_HEADSET, 'text-blue-500', 'border-blue-500', 'bg-white', d.registration_number,
             'Tarjouspyyntösi on vastaanotettu - Tarkastus on käynnissä!',
-            'Kiitos tarjouspyynnöstäsi! Soitamme sinulle pian varmistaaksemme, että kaikki on kunnossa parhaan mahdollisen myyntikokemuksen takaamiseksi.',
+            d.review_comms_content || 'Kiitos tarjouspyynnöstäsi! Soitamme sinulle pian varmistaaksemme, että kaikki on kunnossa parhaan mahdollisen myyntikokemuksen takaamiseksi.',
             ''
           );
         } else if (d.status === 'rejected') {
@@ -1456,8 +1471,42 @@
       ghdr.textContent = grp.group;
       drawer.appendChild(ghdr);
       grp.items.forEach(function(sc) {
-        var a = document.createElement('a');
         var cur = sc.id === SCENARIO;
+
+        if (sc.id === 'draft-in-review') {
+          var row = document.createElement('div');
+          row.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
+          row.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
+          row.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
+          row.innerHTML = cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>';
+
+          var main = document.createElement('a');
+          main.href = 'offers.html?scenario=draft-in-review&copy=default';
+          main.style.cssText = 'text-decoration:none;color:inherit;';
+          main.textContent = sc.label;
+          row.appendChild(main);
+
+          var variants = document.createElement('span');
+          variants.style.cssText = 'color:#94a3b8;';
+          variants.appendChild(document.createTextNode(' ('));
+          [['default','1'], ['soon','2'], ['tomorrow','3'], ['next_work_day','4']].forEach(function(pair, vi) {
+            if (vi > 0) variants.appendChild(document.createTextNode(','));
+            var vActive = cur && (pair[0] === 'default' ? !REVIEW_COPY_VARIANT : REVIEW_COPY_VARIANT === pair[0]);
+            var vLink = document.createElement('a');
+            vLink.href = 'offers.html?scenario=draft-in-review&copy=' + pair[0];
+            vLink.title = pair[0].replace(/_/g, ' ');
+            vLink.style.cssText = 'text-decoration:underline;color:' + (vActive ? '#0B6DFF' : '#94a3b8') + ';font-weight:' + (vActive ? '700' : '400') + ';';
+            vLink.textContent = pair[1];
+            variants.appendChild(vLink);
+          });
+          variants.appendChild(document.createTextNode(')'));
+          row.appendChild(variants);
+
+          drawer.appendChild(row);
+          return;
+        }
+
+        var a = document.createElement('a');
         a.href = 'offers.html?scenario=' + sc.id;
         a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
         a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;

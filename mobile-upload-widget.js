@@ -460,6 +460,10 @@
     var isFi = muwIsFi();
     var banner = document.createElement('div');
     banner.id = 'muw-qr-banner';
+    // Vertically centre in the tan column (the "Erinomainen aika myydä" card that used to sit
+    // below was removed). Auto margins absorb the free space above and below equally.
+    banner.style.marginTop = 'auto';
+    banner.style.marginBottom = 'auto';
     banner.innerHTML =
       '<div style="background:white;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:16px;' +
         'box-shadow:0px 2px 4px -2px rgba(0,0,0,0.1),0px 4px 6px -1px rgba(0,0,0,0.1);">' +

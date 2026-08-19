@@ -1152,7 +1152,7 @@
         }
         destination = 'offers.html';
       } else if (store.emailVerified) {
-        headline = store.priceMode === 'asking' ? t('heroStates.awaitingOffers') : t('heroStates.underReview');
+        headline = t('heroStates.underReview');
         destination = 'success.html';
       } else {
         headline = t('heroStates.launchingCar');

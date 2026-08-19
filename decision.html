@@ -247,14 +247,11 @@
     var ACTIVE = function() { return _now() - 3600; };
 
     var _funnelAskingPrice = (function() {
-      try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return parseInt(String(f.askingPrice || f.priceExpectation || '').replace(/\D/g, '')) || 12000; } catch(e) { return 12000; }
+      try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return parseInt(String(f.priceExpectation || '').replace(/\D/g, '')) || 12000; } catch(e) { return 12000; }
     })();
     // True only when the seller actually entered a price in the funnel (asking price or own estimate)
     var _funnelPriceIsSet = (function() {
-      try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return !!String(f.askingPrice || f.priceExpectation || '').replace(/\D/g, ''); } catch(e) { return false; }
-    })();
-    var _funnelIsTreatmentB = (function() {
-      try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return !!f._treatmentB; } catch(e) { return false; }
+      try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return !!String(f.priceExpectation || '').replace(/\D/g, ''); } catch(e) { return false; }
     })();
 
     var BASE = {
@@ -825,7 +822,7 @@
       var html = '<dl class="flex flex-row divide-x divide-slate-200 text-center">';
       html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Tarjousta</dt><dd class="font-bold text-slate-800">' + offerCount + '</dd></div>';
       html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Autoliikettä</dt><dd class="font-bold text-slate-800">' + buyers + '</dd></div>';
-      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">' + (_funnelIsTreatmentB ? 'Pyyntihinta' : 'Oma arviosi') + '</dt><dd class="font-bold text-slate-800">' + askingFmt + '</dd></div>';
+      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Oma arviosi</dt><dd class="font-bold text-slate-800">' + askingFmt + '</dd></div>';
       html += '</dl>';
 
       // Chart — uses req.insights_data (pre-generated bid progression, mirrors offers.astro formula)

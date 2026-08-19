@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AuctionInsights — Vue Component Test</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':     '#0B6DFF',
+            'av-blue-500': '#2890FF',
+            'av-dark':     '#08234D',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+</head>
+<body class="font-dm bg-white text-av-dark p-8 max-w-2xl mx-auto">
+
+  <p class="text-xs text-slate-400 mb-2">Vue component test</p>
+  <h1 class="text-2xl font-bold mb-8">AuctionInsights</h1>
+
+  <!-- Props passed as data attributes — edit these to change what the component shows -->
+  <div id="auction-insights"
+    data-buyers="3"
+    data-offer-count="5"
+    data-asking-price="12400"
+    data-insights-data="[8000,9200,10500,11800,12400]"
+    data-start-date="2024-05-15T11:53:00"
+    data-end-date="2024-05-17T03:53:00"
+  ></div>
+
+  <script src="./vue-tests/dist/auction-insights.js"></script>
+  <script src="layout.js"></script>
+</body>
+</html>

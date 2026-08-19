@@ -34,7 +34,6 @@ window.TRANSLATIONS = {
 
     /* ── Hero dynamic states (shown when funnel is in progress) ── */
     heroStates: {
-      awaitingOffers:  'Odotetaan tarjouksia',
       underReview:     'Ilmoitustasi tarkastetaan parhaillaan',
       launchingCar:    'Laitetaan autosi liikkeelle:',
       openDetails:     'Avaa tiedot',
@@ -123,11 +122,9 @@ window.TRANSLATIONS = {
     /* ── Vehicle card status badges ── */
     card: {
       photosRequired: 'Kuvat puuttuvat',
-      awaitingOffers: 'Odotetaan tarjouksia',
       underReview:    'Tarkastus käynnissä',
       draft:          'Luonnos',
       openDetails:    'Avaa tiedot',
-      priceLabelAsk:  'Pyyntihinta:',
       priceLabelTarget: 'Oma arviosi:',
     },
 
@@ -191,15 +188,9 @@ window.TRANSLATIONS = {
     success: {
       step1Title:           'Vahvista sähköpostisi',
       step1Body:            'Tarkista sähköpostisi ja vahvista osoitteesi jatkaaksesi tarjouskilpailuun.',
-      step2TitleSelfPrice:  'Ilmoituksesi tarkistetaan',
-      step2BodySelfPrice:   'Tiimimme käy läpi ilmoituksesi ja julkaisee sen huutokauppaan. Saat ilmoituksen sähköpostitse.',
       headlineMissingPhotos:'Ilmoituksesi on vastaanotettu – kuvat vielä puuttuvat',
       subtextMissingPhotos: 'Lisää vielä kuvat autostasi – tarvitaan vähintään 5 kuvaa, erityisesti ulkopuolelta ja sisätiloista.',
       addPhotosBtn:         'Lisää puuttuvat kuvat',
-      headlineAsk:          'Hienoa! Ilmoituksesi julkaistaan huutokauppaan.',
-      subtextAsk:           'Ilmoituksesi on vastaanotettu ja julkaistaan suoraan tarjouskilpailuun. Saat sähköpostin kun kilpailu on käynnissä.',
-      headlineSelfPrice:    'Hienoa! Ilmoituksesi on lähetetty tarkistettavaksi.',
-      subtextSelfPrice:     'Tarkistamme ilmoituksesi ja julkaisemme sen huutokauppaan, jos kaikki näyttää hyvältä. Saat sähköpostin kun ilmoitus on julkaistu.',
       headlineDefault:      'Hienoa! Ilmoitustasi tarkastetaan parhaillaan.',
       subtextDefault:       'Olemme sinuun yhteydessä puhelimitse viimeistään huomenna, jotta saadaan autosi myytyä mahdollisimman pian.',
       nextStepsTitle:       'Mitä tapahtuu seuraavaksi?',
@@ -376,23 +367,20 @@ window.TRANSLATIONS = {
       body:  'Autokauppa käy kuumana! Olemme myyneet jo yli 70 000 autoa!',
     },
 
-    /* ── Shared: "what happens next" column (price + contact) ── */
+    /* ── Shared: "what happens next" column (price step only — matches prod's
+       WhatHappensNext.vue full 5-step list for draftStatus='open'/unverified) ── */
     nextSteps: {
       title:           'Mitä tapahtuu seuraavaksi?',
-      step1Title:      'Ilmoituksesi tarkistetaan',
-      step1Body:       'Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.',
-      step2Title:      'Tarjouskilpailu käynnissä',
-      step2Body:       'Tarjouskilpailu kestää tyypillisesti 36 tuntia. Tarkkailethan sähköpostiasi.',
-      step3Title:      'Tarjouskilpailu päättynyt – katso tulokset!',
-      step3Body:       'Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.',
-      /* ASK-plate variant (shown when plate matches ASK pattern) */
-      step1TitleAsk:   'Ilmoituksesi julkaistaan',
-      step1BodyAsk:    'Kun täytät yhteystietosi, ilmoituksesi julkaistaan suoraan tarjouskilpailuun ilman erillisarviota.',
-      step1BodyAskContact: 'Ilmoituksesi julkaistaan suoraan tarjouskilpailuun kun lähetät yhteystietosi.',
-      step2TitleAsk:   'Odotetaan tarjouksia',
-      step2BodyAsk:    'Ilmoituksesi on julkaistu. Tarjouskilpailu käynnistyy kun ensimmäinen tarjous on tehty.',
-      step3TitleAsk:   'Tarjouskilpailu päättyy',
-      step3BodyAsk:    'Saat ilmoituksen sähköpostiisi. Sinulla on 24 tuntia aikaa reagoida tarjouksiin.',
+      step1Title:      'Vahvista sähköpostisi',
+      step1Body:       'Tarkista sähköpostisi ja vahvista osoitteesi jatkaaksesi tarjouskilpailuun.',
+      step2Title:      'Ilmoituksesi tarkistetaan',
+      step2Body:       'Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.',
+      step3Title:      'Ilmoituksesi julkaistaan',
+      step3Body:       'Tarjouskilpailu käynnistyy, kun ensimmäinen tarjous on tehty.',
+      step4Title:      'Tarjouskilpailu käynnistyy',
+      step4Body:       'Tarjouskilpailu kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse.',
+      step5Title:      'Tarjouskilpailu päättyy ja saat tulokset',
+      step5Body:       'Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.',
     },
 
     /* ── Shared: action buttons ── */
@@ -465,6 +453,11 @@ window.TRANSLATIONS = {
       keys:              'Avaimet',
       keysOne:           'Yksi',
       keysTwo:           '2 tai enemmän',
+      /* Varustelu — optional free-text. Verbatim from prod
+         tenderform.equipment_info.accessories_{title,tip,placeholder}. */
+      accessoriesLabel:       'Varustelu',
+      accessoriesBody:        'Kerro lisävarusteista, joita muista samankaltaisista autoista saattaa puuttua.',
+      accessoriesPlaceholder: 'Vetokoukku, lasikatto, ratinlämmitin, mobiiliyhteys...',
       fuelPlaceholder:   'Valitse polttoaine',
       fuelPetrol:        'Bensiini',
       fuelDiesel:        'Diesel',
@@ -540,7 +533,8 @@ window.TRANSLATIONS = {
       serviceBook:          'Huoltokirja',
       serviceBookHint:      'Voit ladata kuvia tai PDF-tiedostoja',
       tyres:                'Renkaat',
-      scratches:            'Naarmut',
+      scratches:            'Naarmut tai kolhut',
+      scratchesHint:        'Lisää kuvat, jos autossa on vaurioita.',
       windshield:           'Tuulilasi',
       tipsTitle:            'Vinkkimme parhaisiin kuviin',
       tipsRequiredTitle:    'Pakolliset kuvat',
@@ -569,18 +563,12 @@ window.TRANSLATIONS = {
 
     /* ── Price page ── */
     price: {
-      title:           'Arvioi autosi arvo itse tai jätä se meidän tehtäväksi.',
+      title:           'Mitä odottaisit autoliikkeen tarjoavan autostasi?',
       subtitle:        'Arviosi auttaa meitä valmistautumaan tarjouskilpailuun. Jos et halua arvioida, teemme sen puolestasi.',
-      askVariantTitle:    'Mikä olisi tarjous, johon olisit tyytyväinen?',
-      askVariantSubtitle: 'Realistinen pyyntihinta tekee autostasi kiinnostavamman tarjouskilpailussa.',
       targetLabel:     'Oma arviosi (valinnainen)',
       targetPlaceholder: 'esim. 12 500',
       targetError:     'Anna hinta numeroina, esim. 12 500.',
       targetNote:      'Et sitoudu myymään tavoitehinnallasi.',
-      askingLabel:     'Pyyntihintasi',
-      askingPlaceholder: 'esim. 12 500',
-      askingError:     'Syötä pyyntihinta jatkaaksesi.',
-      askingNote:      'Auttaa ostajia ymmärtämään, millaista hintaa toivot. Tarjoukset usein ylittävät pyyntihinnan.',
     },
 
     /* ── Contact page ── */
@@ -665,7 +653,6 @@ window.TRANSLATIONS = {
     },
 
     heroStates: {
-      awaitingOffers:  'Awaiting offers',
       underReview:     'Your listing is being reviewed',
       launchingCar:    'Let\'s get your car moving:',
       openDetails:     'Open details',
@@ -715,11 +702,9 @@ window.TRANSLATIONS = {
 
     card: {
       photosRequired:   'Photos missing',
-      awaitingOffers:   'Awaiting offers',
       underReview:      'Under review',
       draft:            'Draft',
       openDetails:      'Open details',
-      priceLabelAsk:    'Asking price:',
       priceLabelTarget: 'Your estimate:',
     },
 
@@ -781,15 +766,9 @@ window.TRANSLATIONS = {
     success: {
       step1Title:           'Confirm your email',
       step1Body:            'Check your email and confirm your address to continue to the auction.',
-      step2TitleSelfPrice:  'Your listing is reviewed',
-      step2BodySelfPrice:   'Our team reviews your listing and publishes it to the auction. You\'ll receive an email when published.',
       headlineMissingPhotos:'Listing received – photos still missing',
       subtextMissingPhotos: 'Add photos of your car – at least 5 are needed, especially exterior and interior shots.',
       addPhotosBtn:         'Add missing photos',
-      headlineAsk:          'Great! Your listing is going to auction.',
-      subtextAsk:           'Your listing has been received and goes straight to auction. You\'ll get an email when the auction is live.',
-      headlineSelfPrice:    'Great! Your listing has been submitted for review.',
-      subtextSelfPrice:     'We\'ll review your listing and publish it to the auction if everything looks good. You\'ll get an email when published.',
       headlineDefault:      'Great! Your listing is being reviewed.',
       subtextDefault:       'We\'ll contact you by phone by tomorrow at the latest to get your car sold as soon as possible.',
       nextStepsTitle:       'What happens next?',
@@ -965,19 +944,16 @@ window.TRANSLATIONS = {
 
     nextSteps: {
       title:               'What happens next?',
-      step1Title:          'Your listing is reviewed',
-      step1Body:           'Our team reviews your listing. We\'ll call you to make sure everything is in order.',
-      step2Title:          'Auction in progress',
-      step2Body:           'The auction typically lasts 36 hours. Please keep an eye on your email.',
-      step3Title:          'Auction ended – see results!',
-      step3Body:           'We\'ll send an email when the auction ends. You have 24 hours to respond.',
-      step1TitleAsk:       'Your listing goes live',
-      step1BodyAsk:        'Once you submit your contact details, your listing goes straight to auction with no separate review.',
-      step1BodyAskContact: 'Your listing goes straight to auction once you submit your contact details.',
-      step2TitleAsk:       'Waiting for offers',
-      step2BodyAsk:        'Your listing is live. The auction starts when the first offer is made.',
-      step3TitleAsk:       'Auction ends',
-      step3BodyAsk:        'You\'ll get an email notification. You have 24 hours to respond to the offers.',
+      step1Title:          'Verify your email',
+      step1Body:           'Check your email and confirm your address to continue to the auction.',
+      step2Title:          'Your listing is reviewed',
+      step2Body:           'Our team reviews your listing. We\'ll call you to make sure everything is in order.',
+      step3Title:          'Your listing goes live',
+      step3Body:           'The auction starts once the first offer is made.',
+      step4Title:          'Auction in progress',
+      step4Body:           'The auction typically lasts 36 hours. We\'ll keep you posted by email.',
+      step5Title:          'Auction ends and you get results',
+      step5Body:           'We\'ll send an email when the auction ends. You have 24 hours to respond.',
     },
 
     btn: {
@@ -1047,6 +1023,11 @@ window.TRANSLATIONS = {
       keys:              'Keys',
       keysOne:           'One',
       keysTwo:           '2 or more',
+      /* Varustelu — prod has no EN for these keys (falls back to Finnish);
+         these are direct translations of the Finnish source. */
+      accessoriesLabel:       'Equipment',
+      accessoriesBody:        'Tell us about any extras that similar cars might not have.',
+      accessoriesPlaceholder: 'Tow hook, sunroof, heated steering wheel, mobile connectivity...',
       fuelPlaceholder:   'Select fuel type',
       fuelPetrol:        'Petrol',
       fuelDiesel:        'Diesel',
@@ -1120,7 +1101,8 @@ window.TRANSLATIONS = {
       serviceBook:          'Service book',
       serviceBookHint:      'You can upload images or PDF files',
       tyres:                'Tyres',
-      scratches:            'Scratches',
+      scratches:            'Scratches or dents',
+      scratchesHint:        'Add photos if the car has any damage.',
       windshield:           'Windshield',
       tipsTitle:            'Our tips for the best photos',
       tipsRequiredTitle:    'Required photos',
@@ -1148,18 +1130,12 @@ window.TRANSLATIONS = {
     },
 
     price: {
-      title:              'Estimate your car\'s value, or let us do it for you.',
+      title:              'What would you expect a dealer to offer for your car?',
       subtitle:           'Your estimate helps us prepare for the auction. If you don\'t want to estimate, we\'ll take care of it.',
-      askVariantTitle:    'What offer would you be happy with?',
-      askVariantSubtitle: 'A realistic asking price makes your car more attractive in the auction.',
       targetLabel:        'My estimate (optional)',
       targetPlaceholder:  'e.g. 12,500',
       targetError:        'Enter price as numbers, e.g. 12,500.',
       targetNote:         'You\'re not committed to selling at your target price.',
-      askingLabel:        'Your asking price',
-      askingPlaceholder:  'e.g. 12,500',
-      askingError:        'Enter asking price to continue.',
-      askingNote:         'Helps buyers understand the price you\'re hoping for. Offers often exceed the asking price.',
     },
 
     contact: {

@@ -118,8 +118,8 @@
       }
       function isComplete(step) {
         switch(step) {
-          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
-          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const tiedotReq=sv.bookType==='digital'||sv.bookType==='both'; const tiedotOk=!tiedotReq||sv.tiedot==='no'||sv.tiedot==='unavailable'; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim())&&tiedotOk; }
+          case 'details':  { const d=s.details||{}; /* rims only required when that season's tyres exist (duplicated across funnel pages) */ const kesaRimsOk=d.kesarenkaat==='Ei ole'||!!d.kesavanteet; const talviRimsOk=d.talvirenkaat==='Ei ole'||!!d.talvivanteet; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&kesaRimsOk&&d.talvirenkaat&&talviRimsOk&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const bookTypeOk=rg[0]==='Ei huoltokirjaa'?true:rg[1]!=null; const tiedotReq=sv.bookType==='digital'||sv.bookType==='both'; const tiedotOk=!tiedotReq||sv.tiedot==='no'||sv.tiedot==='unavailable'; return rg.length>=5&&rg[0]!=null&&bookTypeOk&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim())&&tiedotOk; }
           case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
           case 'price':    return !!s.priceVisited;
           case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
@@ -187,9 +187,12 @@
       const sv = getStore().services || {};
       const rg = Array.isArray(sv.radioGroups) ? sv.radioGroups : [];
       const tuulilasiEhja = rg[3] === 'Ehjä';
+      // Book type (index 1) is hidden when the seller has no service book at all — not required then
+      const bookTypeHidden = document.getElementById('book-type-section')?.style.display === 'none';
       const missingIdx = [];
       for (let i = 0; i < 5; i++) {
         if (i === 4 && tuulilasiEhja) continue; // lasivakuutus not required when windshield intact
+        if (i === 1 && bookTypeHidden) continue; // service-book type question not shown
         if (rg[i] == null) missingIdx.push(i);
       }
       const korjauksetEmpty = !(sv.korjaukset && sv.korjaukset.trim());
@@ -364,6 +367,7 @@
         }
         updateLasivakuutusVisibility();
         updateLastServiceDetail();
+        updateBookTypeVisibility();
       }
 
       // ── Last service detail ──
@@ -435,6 +439,33 @@
         }
       }
 
+      // ── Conditional Huoltokirjan tyyppi ──
+      // Prod hides the service-book-type question when the seller has no service book at all
+      // (ServiceInfo.vue:33). Clearing the hidden answer also clears the nested
+      // "Varmennettu huoltohistoria" flow, which only applies to digital/both book types.
+      const historyGroup    = document.getElementById('history-group');
+      const bookTypeSection = document.getElementById('book-type-section');
+      const NO_SERVICE_BOOK = 'Ei huoltokirjaa';
+
+      function updateBookTypeVisibility() {
+        if (!historyGroup || !bookTypeSection) return;
+        const val = getSelectedText(historyGroup);
+        const hide = val === NO_SERVICE_BOOK;
+        bookTypeSection.style.display = hide ? 'none' : 'flex';
+        if (hide) {
+          document.getElementById('book-type-group')?.querySelectorAll('.radio-btn').forEach(b => {
+            b.classList.remove('border-2', 'border-av-blue');
+            b.classList.add('border', 'border-slate-400');
+            b.querySelector('.radio-dot')?.classList.remove('bg-av-blue');
+            b.querySelector('.radio-dot')?.classList.add('bg-white');
+            b.querySelector('.radio-inner')?.classList.add('hidden');
+          });
+          _tiedotState = 'default';
+          updateTiedotBanner();
+          saveServices(); // re-save: the click handler saved before this cleared the selection
+        }
+      }
+
       // Radio group interactivity
       groups.forEach(group => {
         group.querySelectorAll('.radio-btn').forEach(btn => {
@@ -442,6 +473,7 @@
             selectRadioBtn(btn);
             saveServices();
             if (group === tuulilasiGroup) updateLasivakuutusVisibility();
+            if (group.id === 'history-group') updateBookTypeVisibility();
             if (group.id === 'book-type-group') updateTiedotBanner();
             if (group.id === 'last-service-group') updateLastServiceDetail();
           });
@@ -482,15 +514,14 @@
     var _tiedotState = 'default'; // 'default' | 'no' | 'confirm' | 'unavailable'
 
     function updateHistoryVisibility() {
-      var banner = document.getElementById('tiedot-banner');
-      var bannerVisible = banner && banner.style.display === 'flex';
-      var bookTypeSel = document.getElementById('book-type-group')?.querySelector('.radio-btn.border-2');
-      var show = bookTypeSel && (!bannerVisible || _tiedotState === 'no' || _tiedotState === 'unavailable');
-      var display = show ? '' : 'none';
+      // Previously these two were revealed only after a book type was chosen — that encoded the
+      // old question order (book type first). Huoltohistoria is now the first question and
+      // Huoltokirjan tyyppi is the conditional one, so both are always visible, matching prod
+      // (ServiceInfo.vue: service_book and last_service_date are never gated).
       var hs = document.getElementById('history-section');
       var ls = document.getElementById('last-service-section');
-      if (hs) hs.style.display = display;
-      if (ls) ls.style.display = display;
+      if (hs) hs.style.display = '';
+      if (ls) ls.style.display = '';
     }
 
     function _tiedotSave() {
@@ -656,8 +687,42 @@
         <!-- ── Form ── -->
         <form class="w-full flex flex-col gap-10 md:gap-16" novalidate>
 
-          <!-- Huoltokirjan tyyppi -->
-          <div class="flex flex-col gap-2">
+          <!-- Huoltohistoria -->
+          <div id="history-section" class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+              <span data-i18n="service.historyLabel">Huoltohistoria</span> <span class="text-red-500 font-medium">*</span>
+            </div>
+            <div id="history-group" class="flex flex-col gap-2 radio-group">
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFull">Täydellinen merkkiliikkeen historia</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFullOther">Täysi – muissa huoltamoissa</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyPartial">Osittainen</span>
+              </div>
+              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
+                </div>
+                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyNone">Ei huoltokirjaa</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Huoltokirjan tyyppi — hidden when Huoltohistoria = "Ei huoltokirjaa"
+               (mirrors prod ServiceInfo.vue:33 v-if service_book !== no_service_book) -->
+          <div id="book-type-section" class="flex flex-col gap-2">
             <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
               <span data-i18n="service.bookTypeLabel">Huoltokirjan tyyppi</span> <span class="text-red-500 font-medium">*</span>
             </div>
@@ -742,39 +807,6 @@
               <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.tiedot.optionNo">Ei kiitos</span>
             </div>
             </div><!-- /tiedot-options -->
-            </div>
-          </div>
-
-          <!-- Huoltohistoria -->
-          <div id="history-section" class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
-              <span data-i18n="service.historyLabel">Huoltohistoria</span> <span class="text-red-500 font-medium">*</span>
-            </div>
-            <div class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
-                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
-                </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFull">Täydellinen merkkiliikkeen historia</span>
-              </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
-                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
-                </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFullOther">Täysi – muissa huoltamoissa</span>
-              </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
-                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
-                </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyPartial">Osittainen</span>
-              </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
-                  <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
-                </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyNone">Ei huoltokirjaa</span>
-              </div>
             </div>
           </div>
 

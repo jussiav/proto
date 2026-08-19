@@ -154,6 +154,10 @@
       'Volvo':         ['C30','C40','C70','EX30','EX40','EX90','S40','S60','S80','S90','V40','V50','V60','V70','V90','XC40','XC60','XC70','XC90','EC40'],
     };
 
+    // Tyre-condition value meaning "no tyres for this season". When selected, that season's
+    // rims question is hidden and not required (mirrors prod EquipmentInfo.vue:188/:222).
+    const NO_TYRES = 'Ei ole';
+
     // ── Shared storage helpers ──
     const STORE_KEY = 'autovex_funnel';
     function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
@@ -180,8 +184,12 @@
       }
       function isComplete(step) {
         switch(step) {
-          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
-          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
+          case 'details':  { const d=s.details||{};
+            // Rims only count when that season's tyres exist — hidden question isn't required.
+            const kesaRimsOk  = d.kesarenkaat===NO_TYRES  || !!d.kesavanteet;
+            const talviRimsOk = d.talvirenkaat===NO_TYRES || !!d.talvivanteet;
+            return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&kesaRimsOk&&d.talvirenkaat&&talviRimsOk&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const bookTypeOk=rg[0]==='Ei huoltokirjaa'?true:rg[1]!=null; return rg.length>=5&&rg[0]!=null&&bookTypeOk&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
           case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
           case 'price':    return !!s.priceVisited;
           case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
@@ -268,12 +276,16 @@
           containerId: { control: 'delivery-variant-control', v1: 'delivery-variant-v1', v2: 'delivery-variant-stepper', cards: 'delivery-options' }[DELIVERY_VARIANT],
           ...(DELIVERY_VARIANT === 'cards' ? {} : { msgKey: 'err.required' }) },
         { name: 'kesarenkaat',  containerId: 'kesarenkaat-options',  val: d.kesarenkaat },
-        { name: 'kesavanteet',  containerId: 'kesavanteet-options',  val: d.kesavanteet },
+        // Rims groups are skipped entirely when that season's tyres are "Ei ole" — the question
+        // is hidden, so it must not block Continue.
+        { name: 'kesavanteet',  containerId: 'kesavanteet-options',  val: d.kesavanteet,
+          skip: d.kesarenkaat === NO_TYRES },
         { name: 'talvirenkaat', containerId: 'talvirenkaat-options', val: d.talvirenkaat },
-        { name: 'talvivanteet', containerId: 'talvivanteet-options', val: d.talvivanteet },
+        { name: 'talvivanteet', containerId: 'talvivanteet-options', val: d.talvivanteet,
+          skip: d.talvirenkaat === NO_TYRES },
         { name: 'avaimet',      containerId: 'avaimet-options',      val: d.avaimet },
       ];
-      const missingRadio = radioGroups.filter(g => !g.val);
+      const missingRadio = radioGroups.filter(g => !g.skip && !g.val);
 
       if (!missing.length && !missingRadio.length) { setStore({...getStore(), detailsLeft: true}); window.location = 'services.html'; return; }
 
@@ -635,6 +647,22 @@
         if (r) r.checked = true;
       }
 
+      // Show the rims question only when that season's tyres exist. When hidden, clear any
+      // stored answer so a stale value can't leak into the listing.
+      function syncRimsVisibility() {
+        [['kesarenkaat','kesavanteet'],['talvirenkaat','talvivanteet']].forEach(([tyres, rims]) => {
+          const group = document.getElementById(rims + '-group');
+          if (!group) return;
+          const show = getRadioVal(tyres) !== NO_TYRES;
+          group.style.display = show ? 'flex' : 'none';
+          if (!show) {
+            document.querySelectorAll(`input[name="${rims}"]`).forEach(r => { r.checked = false; });
+            document.getElementById('err-' + rims)?.remove();
+          }
+        });
+        saveDetails();
+      }
+
       function saveDetails() {
         const s = getStore();
         s.details = {
@@ -653,6 +681,7 @@
           talvirenkaat:   getRadioVal('talvirenkaat'),
           talvivanteet:   getRadioVal('talvivanteet'),
           avaimet:        getRadioVal('avaimet'),
+          varustelu:      (document.getElementById('varustelu')?.value || ''),
         };
         setStore(s);
         updateCard();
@@ -707,6 +736,12 @@
         if (d.talvirenkaat)  setRadioVal('talvirenkaat', d.talvirenkaat);
         if (d.talvivanteet)  setRadioVal('talvivanteet', d.talvivanteet);
         if (d.avaimet)       setRadioVal('avaimet',      d.avaimet);
+        const varusteluEl = document.getElementById('varustelu');
+        if (varusteluEl && d.varustelu !== undefined) {
+          varusteluEl.value = d.varustelu;
+          const vc = document.getElementById('varustelu-count');
+          if (vc) vc.textContent = varusteluEl.value.length + '/1500';
+        }
         updateCard();
         // On first visit, persist the seeded defaults so validation reads them from the store
         if (!d.merkki) saveDetails();
@@ -722,8 +757,24 @@
       ['vaihteisto','kesarenkaat','kesavanteet','talvirenkaat','talvivanteet','avaimet'].forEach(name => {
         document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.addEventListener('change', saveDetails));
       });
+      // Rims are only asked when that season's tyres exist (mirrors EquipmentInfo.vue:188/:222)
+      ['kesarenkaat','talvirenkaat'].forEach(name => {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.addEventListener('change', syncRimsVisibility));
+      });
+
+      // Varustelu textarea — live char counter + persist (same pattern as services.html)
+      (function () {
+        const ta = document.getElementById('varustelu');
+        const vc = document.getElementById('varustelu-count');
+        if (!ta) return;
+        ta.addEventListener('input', () => {
+          if (vc) vc.textContent = ta.value.length + '/1500';
+          saveDetails();
+        });
+      })();
 
       loadDetails();
+      syncRimsVisibility();
       initStepNav('details');
     });
 
@@ -1149,17 +1200,21 @@
             </div>
           </div>
 
-          <!-- Vanteet (kesä) -->
-          <div class="flex flex-col gap-2">
+          <!-- Vanteet (kesä) — side-by-side chip pair, mirrors prod Chips.vue/Chip.vue
+               (trueFalse: rounded-l-lg + rounded-r-lg, min-w-1/2, illustration right of label).
+               Hidden when kesärenkaat = "Ei ole", matching EquipmentInfo.vue:188. -->
+          <div id="kesavanteet-group" class="flex flex-col gap-2">
             <p class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.rimsWithSummer">Vanteet (kesä)</span> <span class="text-red-500 font-medium">*</span></p>
-            <div id="kesavanteet-options" class="flex flex-col gap-2">
-              <label class="flex items-center gap-2.5 h-[68px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+            <div id="kesavanteet-options" class="flex flex-row w-full">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="kesavanteet" value="Vanteilla" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWith">Vanteilla</span>
+                <img src="assets/rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
-              <label class="flex items-center gap-2.5 h-[68px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="kesavanteet" value="Ilman vanteita" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWithout">Ilman vanteita</span>
+                <img src="assets/no-rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
             </div>
           </div>
@@ -1214,17 +1269,20 @@
             </div>
           </div>
 
-          <!-- Vanteet (talvi) -->
-          <div class="flex flex-col gap-2">
+          <!-- Vanteet (talvi) — same chip pair as summer; hidden when talvirenkaat = "Ei ole"
+               (mirrors EquipmentInfo.vue:222). -->
+          <div id="talvivanteet-group" class="flex flex-col gap-2">
             <p class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.rimsWithWinter">Vanteet (talvi)</span> <span class="text-red-500 font-medium">*</span></p>
-            <div id="talvivanteet-options" class="flex flex-col gap-2">
-              <label class="flex items-center gap-2.5 h-[68px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+            <div id="talvivanteet-options" class="flex flex-row w-full">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="talvivanteet" value="Vanteilla" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWith">Vanteilla</span>
+                <img src="assets/rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
-              <label class="flex items-center gap-2.5 h-[68px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="talvivanteet" value="Ilman vanteita" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWithout">Ilman vanteita</span>
+                <img src="assets/no-rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
             </div>
           </div>
@@ -1241,6 +1299,30 @@
                 <input type="radio" name="avaimet" value="2 tai enemmän" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.keysTwo">2 tai enemmän</span>
               </label>
+            </div>
+          </div>
+
+          <!-- Varustelu — optional free-text (prod: EquipmentInfo.vue:255-281,
+               tenderform.equipment_info.accessories_*). Optional in Finland, so no * marker.
+               Visual pattern copied from "Korjaukset ja viat" on services.html. -->
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-1">
+              <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+                <span data-i18n="details.accessoriesLabel">Varustelu</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="details.accessoriesBody">Kerro lisävarusteista, joita muista samankaltaisista autoista saattaa puuttua.</p>
+              </div>
+            </div>
+            <div class="relative w-full">
+              <textarea id="varustelu" name="varustelu" maxlength="1500" rows="6"
+                placeholder="Vetokoukku, lasikatto, ratinlämmitin, mobiiliyhteys..." data-i18n-placeholder="details.accessoriesPlaceholder"
+                class="w-full border border-slate-400 rounded-lg bg-white px-3 pt-2.5 pb-8 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors resize-y min-h-[150px]"></textarea>
+              <div class="absolute bottom-2 right-3 flex items-center gap-1 pointer-events-none">
+                <span id="varustelu-count" class="font-dm text-xs leading-[14px] text-slate-600">0/1500</span>
+                <img src="assets/f04530ef-8002-4d64-9b8d-430e507bf370.svg" class="w-2.5 h-2.5 opacity-40" alt="" />
+              </div>
             </div>
           </div>
 

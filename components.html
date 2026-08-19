@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Component Gallery — AutoVex Prototype</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0A3A7A',
+            'av-turquoise': '#00E5C0',
+            'av-dark':      '#0F172A',
+            'av-cream':     '#F5F0E8',
+          },
+          fontFamily: {
+            dm:     ['DM Sans', 'sans-serif'],
+            barlow: ['Barlow', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Barlow:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    .status-prototype  { background:#FFF3E0;color:#E65100;border:1px solid #FFB74D; }
+    .status-progress   { background:#FFFDE7;color:#B45309;border:1px solid #FCD34D; }
+    .status-storybook  { background:#E8F5E9;color:#2E7D32;border:1px solid #81C784; }
+    .status-inprogress { background:#FFF8E1;color:#F57F17;border:1px solid #FFD54F; }
+    .prop-row:not(:last-child) td { border-bottom: 1px solid #f1f5f9; }
+
+    /* Component panels — hidden by default, shown when active */
+    .comp-panel        { display: none; }
+    .comp-panel.active { display: block; }
+
+    /* Sidebar nav items */
+    .nav-btn { transition: background 0.1s; }
+    .nav-btn:hover:not(.active) { background: #f8fafc; }
+    .nav-btn.active { background: #EFF6FF; }
+    .nav-btn.active .nav-name  { color: #0B6DFF; font-weight: 600; }
+    .nav-btn.active .nav-status { color: #93B4FF; }
+  </style>
+</head>
+<body class="font-dm h-screen flex flex-col overflow-hidden bg-slate-100">
+
+  <!-- Top bar -->
+  <header class="h-12 bg-av-blue flex-shrink-0 flex items-center px-5 gap-2 z-10">
+    <span class="font-barlow font-bold text-white text-base tracking-tight">AutoVex</span>
+    <svg class="w-3 h-3 text-white/30 flex-shrink-0" viewBox="0 0 6 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 1l4 5-4 5"/></svg>
+    <span class="text-white/70 text-sm font-dm">Component Gallery</span>
+    <div class="ml-auto flex items-center gap-5">
+      <a href="https://github.com/jussiav/proto1/blob/main/COMPONENTS.md" target="_blank" rel="noopener"
+         class="text-white/50 text-xs font-dm hover:text-white/90 transition-colors flex items-center gap-1">
+        COMPONENTS.md
+        <svg width="9" height="9" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="flex flex-1 overflow-hidden">
+
+    <!-- Sidebar -->
+    <nav class="w-56 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col overflow-y-auto">
+
+      <!-- Section label -->
+      <div class="px-4 pt-4 pb-2.5">
+        <p class="text-[11px] font-medium text-slate-400 uppercase tracking-widest">Components</p>
+      </div>
+
+      <!-- Nav items — prototype first (newest, needs dev handover), then storybook -->
+      <div class="flex-1 flex flex-col gap-px px-2 pb-3">
+
+        <button data-nav="NavUserIcon" onclick="showComp('NavUserIcon')"
+          class="nav-btn w-full flex items-start gap-2.5 px-3 py-2 text-left rounded-md">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 mt-[3px] bg-orange-500"></span>
+          <div class="min-w-0">
+            <p class="nav-name font-dm text-sm text-slate-700 truncate">NavUserIcon</p>
+            <p class="nav-status text-[11px] text-slate-400">Prototype</p>
+          </div>
+        </button>
+
+        <button data-nav="AuctionInsights" onclick="showComp('AuctionInsights')"
+          class="nav-btn w-full flex items-start gap-2.5 px-3 py-2 text-left rounded-md">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 mt-[3px] bg-orange-500"></span>
+          <div class="min-w-0">
+            <p class="nav-name font-dm text-sm text-slate-700 truncate">AuctionInsights</p>
+            <p class="nav-status text-[11px] text-slate-400">Prototype</p>
+          </div>
+        </button>
+
+        <button data-nav="SaveDraft" onclick="showComp('SaveDraft')"
+          class="nav-btn w-full flex items-start gap-2.5 px-3 py-2 text-left rounded-md">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 mt-[3px] bg-amber-500"></span>
+          <div class="min-w-0">
+            <p class="nav-name font-dm text-sm text-slate-700 truncate">SaveDraft</p>
+            <p class="nav-status text-[11px] text-slate-400">In Progress</p>
+          </div>
+        </button>
+
+        <div class="mx-3 my-2 border-t border-slate-100"></div>
+
+        <button data-nav="ABrandLogo" onclick="showComp('ABrandLogo')"
+          class="nav-btn w-full flex items-start gap-2.5 px-3 py-2 text-left rounded-md">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 mt-[3px] bg-green-500"></span>
+          <div class="min-w-0">
+            <p class="nav-name font-dm text-sm text-slate-700 truncate">ABrandLogo</p>
+            <p class="nav-status text-[11px] text-slate-400">In Storybook</p>
+          </div>
+        </button>
+
+        <button data-nav="ARegistrationNumberBadge" onclick="showComp('ARegistrationNumberBadge')"
+          class="nav-btn w-full flex items-start gap-2.5 px-3 py-2 text-left rounded-md">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 mt-[3px] bg-green-500"></span>
+          <div class="min-w-0">
+            <p class="nav-name font-dm text-sm text-slate-700 truncate">ARegistrationNumberBadge</p>
+            <p class="nav-status text-[11px] text-slate-400">In Storybook</p>
+          </div>
+        </button>
+
+        <button data-nav="AMileage" onclick="showComp('AMileage')"
+          class="nav-btn w-full flex items-start gap-2.5 px-3 py-2 text-left rounded-md">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 mt-[3px] bg-green-500"></span>
+          <div class="min-w-0">
+            <p class="nav-name font-dm text-sm text-slate-700 truncate">AMileage</p>
+            <p class="nav-status text-[11px] text-slate-400">In Storybook</p>
+          </div>
+        </button>
+
+        <button data-nav="UiButton" onclick="showComp('UiButton')"
+          class="nav-btn w-full flex items-start gap-2.5 px-3 py-2 text-left rounded-md">
+          <span class="w-2 h-2 rounded-full flex-shrink-0 mt-[3px] bg-green-500"></span>
+          <div class="min-w-0">
+            <p class="nav-name font-dm text-sm text-slate-700 truncate">UiButton</p>
+            <p class="nav-status text-[11px] text-slate-400">In Storybook</p>
+          </div>
+        </button>
+
+      </div>
+
+      <!-- Status legend -->
+      <div class="border-t border-slate-100 px-4 py-3 space-y-1.5">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span>
+          <span class="text-[11px] text-slate-400">In Storybook — prod</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span>
+          <span class="text-[11px] text-slate-400">In Progress — being built</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0"></span>
+          <span class="text-[11px] text-slate-400">Prototype only</span>
+        </div>
+      </div>
+
+    </nav>
+
+    <!-- Main content -->
+    <main id="gallery-main" class="flex-1 overflow-y-auto bg-slate-50 p-8">
+      <div class="max-w-[900px]">
+
+        <!-- ── NavUserIcon ── -->
+        <div id="comp-NavUserIcon" class="comp-panel">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 pt-5 pb-4 border-b border-slate-100">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <span class="status-prototype text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">Prototype</span>
+                  <h2 class="font-dm font-bold text-slate-900 text-lg">NavUserIcon</h2>
+                  <p class="font-dm text-slate-500 text-sm mt-1">Account/login icon for navigation bars. Inline SVG with configurable color. Prod equivalent: <code class="bg-slate-100 px-1 rounded text-xs">&lt;ASpriteIcon icon="account" /&gt;</code></p>
+                </div>
+                <div class="flex flex-col gap-2 items-end flex-shrink-0">
+                  <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Figma">
+                    Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </span>
+                  <a href="https://github.com/jussiav/proto1/blob/main/vue-tests/src/components/NavUserIcon.vue" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="vue-tests/src/components/NavUserIcon.vue">
+                    Vue <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-5 flex flex-wrap gap-8 flex-1">
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">color="white" — on blue nav</span>
+                <div class="w-12 h-12 bg-av-blue rounded-lg flex items-center justify-center">
+                  <div id="gallery-nav-icon-white"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">color="#0B6DFF" — on white nav</span>
+                <div class="w-12 h-12 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
+                  <div id="gallery-nav-icon-blue"></div>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
+              <table class="w-full text-xs font-dm">
+                <thead><tr class="text-slate-400"><th class="text-left pb-2 font-medium">Prop</th><th class="text-left pb-2 font-medium">Type</th><th class="text-left pb-2 font-medium">Default</th></tr></thead>
+                <tbody class="text-slate-700">
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>color</code></td><td class="pr-4">String</td><td>currentColor</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>size</code></td><td class="pr-4">String</td><td>24px</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── AuctionInsights ── -->
+        <div id="comp-AuctionInsights" class="comp-panel">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div class="px-6 pt-5 pb-4 border-b border-slate-100">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <span class="status-prototype text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">Prototype</span>
+                  <h2 class="font-dm font-bold text-slate-900 text-lg">AuctionInsights</h2>
+                  <p class="font-dm text-slate-500 text-sm mt-1">Auction analytics dashboard shown to the seller during an active auction. Displays offer history chart, buyer count, offer count, and time remaining. Not yet in Storybook.</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end flex-shrink-0">
+                  <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Figma">
+                    Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </span>
+                  <a href="https://github.com/jussiav/proto1/blob/main/vue-tests/src/AuctionInsights.vue" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="vue-tests/src/AuctionInsights.vue">
+                    Vue <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-5 bg-slate-50">
+              <span class="text-xs text-slate-400 font-dm block mb-3">Live render with sample data</span>
+              <div class="bg-white rounded-xl border border-slate-200 p-4 max-w-2xl">
+                <div id="gallery-auction-insights"></div>
+              </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
+              <table class="w-full text-xs font-dm">
+                <thead><tr class="text-slate-400"><th class="text-left pb-2 font-medium">Prop</th><th class="text-left pb-2 font-medium">Type</th><th class="text-left pb-2 font-medium">Notes</th></tr></thead>
+                <tbody class="text-slate-700">
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>buyers</code></td><td class="pr-4">Number</td><td>Active bidding dealers</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>offerCount</code></td><td class="pr-4">Number</td><td>Total offers placed</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>askingPrice</code></td><td class="pr-4">Number</td><td>Seller asking price (€)</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>insightsData</code></td><td class="pr-4">Number[]</td><td>Offer history for chart</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>startDate</code></td><td class="pr-4">Dayjs</td><td>Auction start</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>endDate</code></td><td class="pr-4">Dayjs</td><td>Auction end</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SaveDraft ── -->
+        <div id="comp-SaveDraft" class="comp-panel">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 pt-5 pb-4 border-b border-slate-100">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <span class="status-progress text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">In Progress</span>
+                  <h2 class="font-dm font-bold text-slate-900 text-lg">SaveDraft</h2>
+                  <p class="font-dm text-slate-500 text-sm mt-1">"Jatka myöhemmin?" block at the bottom of every funnel step. Vue SFC with 4 reactive states. Uses <code class="bg-slate-100 px-1 rounded text-xs">UiButton</code> and <code class="bg-slate-100 px-1 rounded text-xs">UiIcon</code> internally. State persisted in localStorage.</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end flex-shrink-0">
+                  <a href="https://www.figma.com/design/V99BoHZwiWopbwzLLorzDN/AI-Dribbles?node-id=406-3912" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors">
+                    Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                  <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Storybook">
+                    Storybook <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </span>
+                  <a href="https://github.com/jussiav/proto1/blob/main/vue-tests/src/components/SaveDraft.vue" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="vue-tests/src/components/SaveDraft.vue">
+                    Vue <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <!-- States -->
+            <div class="px-6 pt-5 pb-5 border-b border-slate-100">
+              <p class="font-dm text-xs font-medium text-slate-400 uppercase tracking-wide mb-4">States</p>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div class="flex flex-col gap-2">
+                  <span class="text-xs text-slate-400 font-dm">1 · Collapsed (default)</span>
+                  <div class="bg-slate-50 rounded-lg p-3"><div id="gallery-sd-collapsed"></div></div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <span class="text-xs text-slate-400 font-dm">2 · Expanded</span>
+                  <div class="bg-slate-50 rounded-lg p-3"><div id="gallery-sd-expanded"></div></div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <span class="text-xs text-slate-400 font-dm">3 · Expanded — validation error</span>
+                  <div class="bg-slate-50 rounded-lg p-3"><div id="gallery-sd-expanded-error"></div></div>
+                </div>
+                <div class="flex flex-col gap-2">
+                  <span class="text-xs text-slate-400 font-dm">4 · Submitted</span>
+                  <div class="bg-slate-50 rounded-lg p-3"><div id="gallery-sd-submitted"></div></div>
+                </div>
+
+              </div>
+            </div>
+            <div class="px-6 pb-5">
+              <table class="w-full text-sm font-dm">
+                <thead><tr class="text-left text-slate-500 border-b border-slate-100"><th class="py-1 pr-4 font-medium">Prop</th><th class="pr-4 font-medium">Type</th><th class="font-medium">Notes</th></tr></thead>
+                <tbody>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>storageKey</code></td><td class="pr-4">String</td><td>localStorage key, default <code>'autovex_funnel'</code></td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>onSubmitSuccess</code></td><td class="pr-4">Function</td><td><code>(email) => void</code> — called on submit and on mount restore. Used by contact.html to pre-fill the email field.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ABrandLogo ── -->
+        <div id="comp-ABrandLogo" class="comp-panel">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 pt-5 pb-4 border-b border-slate-100">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <span class="status-storybook text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">In Storybook</span>
+                  <h2 class="font-dm font-bold text-slate-900 text-lg">ABrandLogo</h2>
+                  <p class="font-dm text-slate-500 text-sm mt-1">AutoVex brand logo. Use <code class="bg-slate-100 px-1 rounded text-xs">inverted</code> on dark backgrounds. Use <code class="bg-slate-100 px-1 rounded text-xs">fullWidth</code> for footer.</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end flex-shrink-0">
+                  <a href="https://www.figma.com/design/V99BoHZwiWopbwzLLorzDN/AI-Dribbles?node-id=390-3912" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors">
+                    Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                  <a href="https://storybook.autovex.fi/?path=/docs/autovex-ui-atoms-brandlogo--docs" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors">
+                    Storybook <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                  <a href="https://github.com/jussiav/proto1/blob/main/vue-tests/src/components/ABrandLogo.vue" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="vue-tests/src/components/ABrandLogo.vue">
+                    Vue <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-5 flex flex-wrap gap-8 flex-1">
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">Default</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg flex items-center">
+                  <div id="gallery-logo-default"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">inverted — on blue bg</span>
+                <div class="p-4 bg-av-blue rounded-lg flex items-center">
+                  <div id="gallery-logo-inverted"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2 w-full">
+                <span class="text-xs text-slate-400 font-dm">fullWidth — footer</span>
+                <div class="p-4 bg-av-blue rounded-lg">
+                  <div id="gallery-logo-fullwidth"></div>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
+              <table class="w-full text-xs font-dm">
+                <thead><tr class="text-slate-400"><th class="text-left pb-2 font-medium">Prop</th><th class="text-left pb-2 font-medium">Type</th><th class="text-left pb-2 font-medium">Default</th></tr></thead>
+                <tbody class="text-slate-700">
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>src</code></td><td class="pr-4">String</td><td>assets/logo-blue.svg</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>inverted</code></td><td class="pr-4">Boolean</td><td>false</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>fullWidth</code></td><td class="pr-4">Boolean</td><td>false</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>width</code></td><td class="pr-4">Number</td><td>107</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>height</code></td><td class="pr-4">Number</td><td>22</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>alt</code></td><td class="pr-4">String</td><td>AutoVex</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ARegistrationNumberBadge ── -->
+        <div id="comp-ARegistrationNumberBadge" class="comp-panel">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 pt-5 pb-4 border-b border-slate-100">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <span class="status-storybook text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">In Storybook</span>
+                  <h2 class="font-dm font-bold text-slate-900 text-lg">ARegistrationNumberBadge</h2>
+                  <p class="font-dm text-slate-500 text-sm mt-1">Finnish vehicle registration number displayed as a licence plate badge. Always pass value as uppercase with dash, e.g. <code class="bg-slate-100 px-1 rounded text-xs">ABC-123</code>.</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end flex-shrink-0">
+                  <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Figma">
+                    Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </span>
+                  <a href="https://storybook.autovex.fi/?path=/docs/autovex-ui-atoms-registrationnumberbadge--docs" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors">
+                    Storybook <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                  <a href="https://github.com/jussiav/proto1/blob/main/vue-tests/src/components/ARegistrationNumberBadge.vue" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="vue-tests/src/components/ARegistrationNumberBadge.vue">
+                    Vue <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-5 flex flex-wrap gap-8 flex-1">
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">Default</span>
+                <div class="p-4 bg-slate-100 rounded-lg">
+                  <div id="gallery-reg-badge-1"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">Different plate</span>
+                <div class="p-4 bg-slate-100 rounded-lg">
+                  <div id="gallery-reg-badge-2"></div>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
+              <table class="w-full text-xs font-dm">
+                <thead><tr class="text-slate-400"><th class="text-left pb-2 font-medium">Prop</th><th class="text-left pb-2 font-medium">Type</th><th class="text-left pb-2 font-medium">Required</th></tr></thead>
+                <tbody class="text-slate-700">
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>registrationNumber</code></td><td class="pr-4">String</td><td>Yes</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── AMileage ── -->
+        <div id="comp-AMileage" class="comp-panel">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 pt-5 pb-4 border-b border-slate-100">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <span class="status-storybook text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">In Storybook</span>
+                  <h2 class="font-dm font-bold text-slate-900 text-lg">AMileage</h2>
+                  <p class="font-dm text-slate-500 text-sm mt-1">Mileage display with Phosphor gauge icon. Pass raw number — component formats to Finnish locale automatically.</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end flex-shrink-0">
+                  <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Figma">
+                    Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </span>
+                  <a href="https://storybook.autovex.fi/?path=/docs/autovex-ui-atoms-amileage--docs" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors">
+                    Storybook <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                  <a href="https://github.com/jussiav/proto1/blob/main/vue-tests/src/components/AMileage.vue" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="vue-tests/src/components/AMileage.vue">
+                    Vue <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-5 flex flex-wrap gap-8 flex-1">
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">100 000 km</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg">
+                  <div id="gallery-mileage-100k"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">50 000 km</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg">
+                  <div id="gallery-mileage-50k"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">8 200 km</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg">
+                  <div id="gallery-mileage-8k"></div>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
+              <table class="w-full text-xs font-dm">
+                <thead><tr class="text-slate-400"><th class="text-left pb-2 font-medium">Prop</th><th class="text-left pb-2 font-medium">Type</th><th class="text-left pb-2 font-medium">Required</th></tr></thead>
+                <tbody class="text-slate-700">
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>mileage</code></td><td class="pr-4">Number</td><td>Yes</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── UiButton ── -->
+        <div id="comp-UiButton" class="comp-panel">
+          <div class="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
+            <div class="px-6 pt-5 pb-4 border-b border-slate-100">
+              <div class="flex items-start justify-between gap-4">
+                <div class="flex-1 min-w-0">
+                  <span class="status-storybook text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">In Storybook</span>
+                  <h2 class="font-dm font-bold text-slate-900 text-lg">UiButton</h2>
+                  <p class="font-dm text-slate-500 text-sm mt-1">Multi-variant button. Combine <code class="bg-slate-100 px-1 rounded text-xs">variant</code> + <code class="bg-slate-100 px-1 rounded text-xs">intent</code> for all styles. Supports leading/trailing Phosphor icons and a <code class="bg-slate-100 px-1 rounded text-xs">loading</code> spinner state.</p>
+                </div>
+                <div class="flex flex-col gap-2 items-end flex-shrink-0">
+                  <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Figma">
+                    Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </span>
+                  <a href="https://storybook.autovex.fi/?path=/docs/autovex-ui-atoms-button--docs" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors">
+                    Storybook <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                  <a href="https://github.com/jussiav/proto1/blob/main/vue-tests/src/components/UiButton.vue" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="vue-tests/src/components/UiButton.vue">
+                    Vue <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-5 flex flex-wrap gap-8 flex-1">
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">neutral / default / lg + trailing icon</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg flex items-center">
+                  <div id="gallery-btn-neutral-lg"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">default / default / md</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg flex items-center">
+                  <div id="gallery-btn-default-md"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">default / primary / lg</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg flex items-center">
+                  <div id="gallery-btn-primary-lg"></div>
+                </div>
+              </div>
+              <div class="flex flex-col gap-2">
+                <span class="text-xs text-slate-400 font-dm">loading state</span>
+                <div class="p-4 bg-white border border-slate-200 rounded-lg flex items-center">
+                  <div id="gallery-btn-loading"></div>
+                </div>
+              </div>
+            </div>
+            <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
+              <table class="w-full text-xs font-dm">
+                <thead><tr class="text-slate-400"><th class="text-left pb-2 font-medium">Prop</th><th class="text-left pb-2 font-medium">Type</th><th class="text-left pb-2 font-medium">Default</th><th class="text-left pb-2 font-medium">Notes</th></tr></thead>
+                <tbody class="text-slate-700">
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>variant</code></td><td class="pr-4">String</td><td class="pr-4">'default'</td><td>default | primary | secondary | ghost | link</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>intent</code></td><td class="pr-4">String</td><td class="pr-4">'default'</td><td>default | neutral | success | destructive | primary | contrast</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>size</code></td><td class="pr-4">String</td><td class="pr-4">'md'</td><td>sm | md | lg | fw</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>loading</code></td><td class="pr-4">Boolean</td><td class="pr-4">false</td><td>Shows spinner, hides content</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>disabled</code></td><td class="pr-4">Boolean</td><td class="pr-4">false</td><td></td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>icon</code></td><td class="pr-4">String</td><td class="pr-4">null</td><td>Leading Phosphor icon name</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>iconTrailing</code></td><td class="pr-4">String</td><td class="pr-4">null</td><td>Trailing Phosphor icon name</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>tag</code></td><td class="pr-4">String</td><td class="pr-4">'button'</td><td>button | a</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer note -->
+        <p class="font-dm text-slate-400 text-xs mt-6">
+          Components rendered live from <code>vue-tests/dist/gallery.js</code>. Run <code>npm run build</code> in <code>vue-tests/</code> to update. See <code>COMPONENTS.md</code> for the full index.
+        </p>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script>
+    function showComp(name) {
+      document.querySelectorAll('.comp-panel').forEach(function(p) { p.classList.remove('active'); });
+      document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+      var panel = document.getElementById('comp-' + name);
+      var btn = document.querySelector('[data-nav="' + name + '"]');
+      if (panel) panel.classList.add('active');
+      if (btn) btn.classList.add('active');
+      var main = document.getElementById('gallery-main');
+      if (main) main.scrollTop = 0;
+      history.replaceState(null, '', '#' + name);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var initial = (location.hash || '').replace('#', '') || 'NavUserIcon';
+      showComp(initial);
+    });
+  </script>
+
+  <link rel="stylesheet" href="vue-tests/dist/style.css" />
+  <script src="layout.js"></script>
+  <script src="vue-tests/dist/gallery.js"></script>
+</body>
+</html>

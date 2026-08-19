@@ -96,15 +96,15 @@
             <img src="assets/price-illustration.svg" alt="" class="w-[217px] h-[154px] object-contain" />
           </div>
           <h1 id="price-headline" class="font-dm font-bold text-black text-2xl leading-[28px]" data-i18n="price.title">
-            Arvioi autosi arvo itse tai jätä se meidän tehtäväksi.
+            Mitä odottaisit autoliikkeen tarjoavan autostasi?
           </h1>
           <p id="price-subtext" class="font-dm text-base leading-5 text-black max-w-[432px]" data-i18n="price.subtitle">
             Arviosi auttaa meitä valmistautumaan tarjouskilpailuun. Jos et halua arvioida, teemme sen puolestasi.
           </p>
         </div>
 
-        <!-- Treatment A: Optional price expectation -->
-        <div id="treatment-a" class="w-full flex flex-col gap-4">
+        <!-- Optional price expectation — single variant for all sellers -->
+        <div class="w-full flex flex-col gap-4">
           <div class="flex flex-col gap-2">
             <label for="price-expectation" class="font-dm font-medium text-base text-slate-900" data-i18n="price.targetLabel">Oma arviosi (valinnainen)</label>
             <div class="price-input-wrapper w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
@@ -119,25 +119,6 @@
           <div class="flex items-start gap-2">
             <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
             <p class="font-dm text-base leading-5 text-slate-700" data-i18n="price.targetNote">Et sitoudu myymään tavoitehinnallasi.</p>
-          </div>
-        </div>
-
-        <!-- Treatment B: Mandatory asking price (ASK plates) -->
-        <div id="treatment-b" class="w-full flex flex-col gap-4" style="display:none;">
-          <div class="flex flex-col gap-2">
-            <label for="asking-price" class="font-dm font-medium text-base text-slate-900" data-i18n="price.askingLabel">Pyyntihintasi <span class="text-red-500">*</span></label>
-            <div class="price-input-wrapper w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
-              <input id="asking-price" type="text" inputmode="numeric" placeholder="esim. 12 500" data-i18n-placeholder="price.askingPlaceholder"
-                class="flex-1 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
-              <span class="font-dm font-medium text-base text-slate-400 flex-shrink-0">€</span>
-            </div>
-            <div id="asking-price-error" class="items-center gap-1.5" style="display:none;">
-              <p id="asking-price-error-msg" class="av-error-msg">Syötä pyyntihinta jatkaaksesi.</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-2">
-            <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-            <p class="font-dm text-base leading-5 text-slate-700" data-i18n="price.askingNote">Auttaa ostajia ymmärtämään, millaista hintaa toivot. Tarjoukset usein ylittävät pyyntihinnan.</p>
           </div>
         </div>
 
@@ -160,26 +141,42 @@
 
         <h2 class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="nextSteps.title">Mitä tapahtuu seuraavaksi?</h2>
 
+        <!-- Matches prod's WhatHappensNext.vue full 5-step list (draftStatus='open', unverified) —
+             this is the ONLY variant reachable here: providingPriceInfo always shows this exact list. -->
         <div class="flex flex-col gap-5">
           <div class="flex gap-2 items-start">
             <img src="assets/cf9ed64c-e015-4129-a683-516894e443b4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
             <div>
-              <p id="step1-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step1Title">Ilmoituksesi tarkistetaan</p>
-              <p id="step1-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step1Body">Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.</p>
+              <p id="step1-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step1Title">Vahvista sähköpostisi</p>
+              <p id="step1-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step1Body">Tarkista sähköpostisi ja vahvista osoitteesi jatkaaksesi tarjouskilpailuun.</p>
             </div>
           </div>
           <div class="flex gap-2 items-start">
             <img src="assets/7cb7ddce-86cc-457f-be2d-f44485a7e101.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="2" />
             <div>
-              <p id="step2-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step2Title">Tarjouskilpailu käynnissä</p>
-              <p id="step2-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step2Body">Tarjouskilpailu kestää tyypillisesti 36 tuntia. Tarkkailethan sähköpostiasi.</p>
+              <p id="step2-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step2Title">Ilmoituksesi tarkistetaan</p>
+              <p id="step2-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step2Body">Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.</p>
             </div>
           </div>
           <div class="flex gap-2 items-start">
             <img src="assets/d7dbeec3-32bb-407c-a234-273ace9af998.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="3" />
             <div>
-              <p id="step3-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step3Title">Tarjouskilpailu päättynyt – katso tulokset!</p>
-              <p id="step3-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step3Body">Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.</p>
+              <p id="step3-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step3Title">Ilmoituksesi julkaistaan</p>
+              <p id="step3-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step3Body">Tarjouskilpailu käynnistyy, kun ensimmäinen tarjous on tehty.</p>
+            </div>
+          </div>
+          <div class="flex gap-2 items-start">
+            <img src="assets/step-4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="4" />
+            <div>
+              <p id="step4-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step4Title">Tarjouskilpailu käynnistyy</p>
+              <p id="step4-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step4Body">Tarjouskilpailu kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse.</p>
+            </div>
+          </div>
+          <div class="flex gap-2 items-start">
+            <img src="assets/step-5.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="5" />
+            <div>
+              <p id="step5-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step5Title">Tarjouskilpailu päättyy ja saat tulokset</p>
+              <p id="step5-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step5Body">Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.</p>
             </div>
           </div>
         </div>
@@ -220,8 +217,8 @@
       }
       function isComplete(step) {
         switch(step) {
-          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
-          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
+          case 'details':  { const d=s.details||{}; /* rims only required when that season's tyres exist (duplicated across funnel pages) */ const kesaRimsOk=d.kesarenkaat==='Ei ole'||!!d.kesavanteet; const talviRimsOk=d.talvirenkaat==='Ei ole'||!!d.talvivanteet; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&kesaRimsOk&&d.talvirenkaat&&talviRimsOk&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const bookTypeOk=rg[0]==='Ei huoltokirjaa'?true:rg[1]!=null; return rg.length>=5&&rg[0]!=null&&bookTypeOk&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
           case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
           case 'price':    return !!s.priceVisited;
           case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
@@ -327,37 +324,18 @@
       const s = getStore();
       s.priceVisited = true;
 
-      if (s._treatmentB) {
-        const val = parsePriceValue('asking-price');
-        if (val === null) {
-          showPriceError('asking-price-error', 'asking-price-error-msg', t('price.askingError'));
-          scrollAndPulse(document.getElementById('asking-price')?.parentNode);
-          setStore(s); return;
-        }
-        if (val === false) {
-          showPriceError('asking-price-error', 'asking-price-error-msg', t('price.targetError'));
-          scrollAndPulse(document.getElementById('asking-price')?.parentNode);
-          setStore(s); return;
-        }
-        clearPriceError('asking-price-error', 'asking-price');
-        s.priceMode = 'asking';
-        s.askingPrice = val.toString();
-        delete s.priceExpectation;
+      const val = parsePriceValue('price-expectation');
+      if (val === false) {
+        showPriceError('price-expectation-error', null, '');
+        scrollAndPulse(document.getElementById('price-expectation')?.parentNode);
+        setStore(s); return;
+      }
+      clearPriceError('price-expectation-error', 'price-expectation');
+      // Blank is allowed — AutoVex estimates on the seller's behalf.
+      if (val !== null) {
+        s.priceExpectation = val.toString();
       } else {
-        const val = parsePriceValue('price-expectation');
-        if (val === false) {
-          showPriceError('price-expectation-error', null, '');
-          scrollAndPulse(document.getElementById('price-expectation')?.parentNode);
-          setStore(s); return;
-        }
-        clearPriceError('price-expectation-error', 'price-expectation');
-        delete s.priceMode;
-        delete s.askingPrice;
-        if (val !== null) {
-          s.priceExpectation = val.toString();
-        } else {
-          delete s.priceExpectation;
-        }
+        delete s.priceExpectation;
       }
 
       setStore(s);
@@ -368,9 +346,6 @@
       const s = getStore();
       s.priceVisited = true;
 
-      const plate = ((s.hero && s.hero.plate) || '').toUpperCase();
-      const isTreatmentB = plate.startsWith('ASK');
-      s._treatmentB = isTreatmentB;
       setStore(s);
 
       initStepNav('price');
@@ -380,30 +355,10 @@
         filterPriceInput(this);
         clearPriceError('price-expectation-error', 'price-expectation');
       });
-      document.getElementById('asking-price').addEventListener('input', function() {
-        filterPriceInput(this);
-        clearPriceError('asking-price-error', 'asking-price');
-      });
 
-      if (isTreatmentB) {
-        document.getElementById('treatment-a').style.display = 'none';
-        document.getElementById('treatment-b').style.display = 'flex';
-        document.getElementById('price-headline').textContent = t('price.askVariantTitle');
-        document.getElementById('price-subtext').textContent = t('price.askVariantSubtitle');
-        document.getElementById('step1-title').textContent = t('nextSteps.step1TitleAsk');
-        document.getElementById('step1-body').textContent = t('nextSteps.step1BodyAsk');
-        document.getElementById('step2-title').textContent = t('nextSteps.step2TitleAsk');
-        document.getElementById('step2-body').textContent = t('nextSteps.step2BodyAsk');
-        document.getElementById('step3-title').textContent = t('nextSteps.step3TitleAsk');
-        document.getElementById('step3-body').textContent = t('nextSteps.step3BodyAsk');
-        if (s.askingPrice) {
-          document.getElementById('asking-price').value = Number(s.askingPrice).toLocaleString('fi-FI');
-        }
-      } else {
-        if (s.priceExpectation) {
-          document.getElementById('price-expectation').value =
-            Number(s.priceExpectation).toLocaleString('fi-FI');
-        }
+      if (s.priceExpectation) {
+        document.getElementById('price-expectation').value =
+          Number(s.priceExpectation).toLocaleString('fi-FI');
       }
     });
 

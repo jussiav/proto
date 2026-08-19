@@ -110,8 +110,8 @@
       }
       function isComplete(step) {
         switch(step) {
-          case 'details':  { const d=s.details||{}; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&d.kesavanteet&&d.talvirenkaat&&d.talvivanteet&&d.avaimet); }
-          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; return rg.length>=5&&rg[0]!=null&&rg[1]!=null&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
+          case 'details':  { const d=s.details||{}; /* rims only required when that season's tyres exist (duplicated across funnel pages) */ const kesaRimsOk=d.kesarenkaat==='Ei ole'||!!d.kesavanteet; const talviRimsOk=d.talvirenkaat==='Ei ole'||!!d.talvivanteet; return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&kesaRimsOk&&d.talvirenkaat&&talviRimsOk&&d.avaimet); }
+          case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const bookTypeOk=rg[0]==='Ei huoltokirjaa'?true:rg[1]!=null; return rg.length>=5&&rg[0]!=null&&bookTypeOk&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
           case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
           case 'price':    return !!s.priceVisited;
           case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
@@ -286,6 +286,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       loadContact();
       initStepNav('contact');
+      if (typeof renderVehicleCard === 'function') renderVehicleCard('av-vehicle-card', {});
       ['koko-nimi','sahkoposti','puhelin'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', saveContact);
       });
@@ -296,21 +297,13 @@
       if (_offersScenario) {
         document.getElementById('contact-submit-label').textContent = 'Valmis';
       }
-
-      // Treatment B: update right column bullets for asking-price path
-      const s = getStore();
-      if (s.priceMode === 'asking') {
-        document.getElementById('contact-step1-title').textContent = t('nextSteps.step1TitleAsk');
-        document.getElementById('contact-step1-body').textContent = t('nextSteps.step1BodyAskContact');
-        document.getElementById('contact-step2-title').textContent = t('nextSteps.step2TitleAsk');
-        document.getElementById('contact-step2-body').textContent = t('nextSteps.step2BodyAsk');
-        document.getElementById('contact-step3-title').textContent = t('nextSteps.step3TitleAsk');
-        document.getElementById('contact-step3-body').textContent = t('nextSteps.step3BodyAsk');
-      }
     });
 
     window.addEventListener('pageshow', function(e) {
-      if (e.persisted) initStepNav('contact');
+      if (e.persisted) {
+        initStepNav('contact');
+        if (typeof renderVehicleCard === 'function') renderVehicleCard('av-vehicle-card', {});
+      }
     });
   </script>
 </head>
@@ -436,36 +429,14 @@
       </div>
 
       <!-- ── Right column (cream) ── -->
+      <!-- No "what happens next" panel here: prod's Sidebar.vue does not show WhatHappensNext
+           during the providingPersonalInfo step (only providingPriceInfo / waitingForReview /
+           waitingForEmailVerificationBeforePublishing / success+published gate it). -->
       <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
 
-        <h2 class="font-dm font-bold text-black text-xl leading-[23px]" data-i18n="nextSteps.title">Mitä tapahtuu seuraavaksi?</h2>
-
-        <div class="flex flex-col gap-5">
-          <!-- Step 1 -->
-          <div class="flex gap-2 items-start">
-            <img src="assets/ab3a3854-b859-449e-a101-124a48afb129.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
-            <div class="flex flex-col gap-0.5">
-              <p id="contact-step1-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step1Title">Ilmoituksesi tarkistetaan</p>
-              <p id="contact-step1-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step1Body">Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.</p>
-            </div>
-          </div>
-          <!-- Step 2 -->
-          <div class="flex gap-2 items-start">
-            <img src="assets/3748cbfa-5a5c-4240-a8b2-15e15b0fe60d.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="2" />
-            <div class="flex flex-col gap-0.5">
-              <p id="contact-step2-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step2Title">Tarjouskilpailu käynnissä</p>
-              <p id="contact-step2-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step2Body">Tarjouskilpailu kestää tyypillisesti 36 tuntia. Tarkkailethan sähköpostiasi.</p>
-            </div>
-          </div>
-          <!-- Step 3 -->
-          <div class="flex gap-2 items-start">
-            <img src="assets/4e9b9909-d196-4d82-9a55-97a7d2146430.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="3" />
-            <div class="flex flex-col gap-0.5">
-              <p id="contact-step3-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step3Title">Tarjouskilpailu päättynyt – katso tulokset!</p>
-              <p id="contact-step3-body" class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step3Body">Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.</p>
-            </div>
-          </div>
-        </div>
+        <!-- Car preview — prod shows the draft preview during providingPersonalInfo
+             (Sidebar.vue canPreviewDraft). Mid-funnel variant: no "under review" badge. -->
+        <div id="av-vehicle-card" class="w-full"></div>
 
         <!-- Save draft / Jatka myöhemmin -->
         <div class="mt-auto">
@@ -476,6 +447,7 @@
 
     </div>
   </div>
+  <script src="vehicle-card.js"></script>
   <script src="layout.js"></script>
 </body>
 </html>

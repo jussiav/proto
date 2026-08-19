@@ -1,0 +1,185 @@
+/**
+ * AutoVex / Wheelaway Design Tokens
+ * Source: AI Dribbles Figma file (V99BoHZwiWopbwzLLorzDN)
+ * Version: 1.0 – March 2025
+ */
+
+:root {
+
+  /* =====================
+     BRAND COLORS
+  ===================== */
+  --color-autovex-sky:        #DAF0F5;
+  --color-autovex-turquoise:  #00F0DC;
+  --color-autovex-blue:       #0B6DFF;
+  --color-autovex-dark-blue:  #08234D;
+  --color-autovex-peach:      #F5AB84;
+  --color-black:              #000000;
+  --color-white:              #FFFFFF;
+
+  /* AutoVex Blue Scale */
+  --color-blue-50:   #EEF6FA;
+  --color-blue-100:  #D7EDFF;
+  --color-blue-200:  #B9E0FF;
+  --color-blue-300:  #88CFFF;
+  --color-blue-400:  #50B2FF;
+  --color-blue-500:  #2890FF;
+  --color-blue-700:  #0A59EB;
+  --color-blue-800:  #0F47BE;
+  --color-blue-900:  #134195;
+  --color-blue-950:  #11285A;
+
+  /* =====================
+     SEMANTIC COLORS
+  ===================== */
+
+  /* Error – Red */
+  --color-error-50:   #FEF2F2;
+  --color-error-100:  #FEE2E1;
+  --color-error-200:  #FECACA;
+  --color-error-300:  #FDA5A5;
+  --color-error-400:  #F87171;
+  --color-error-500:  #EF4444;
+  --color-error-600:  #DC2625;
+  --color-error-700:  #B91C1B;
+  --color-error-800:  #991B1B;
+  --color-error-900:  #7F1C1D;
+  --color-error-950:  #450A0A;
+
+  /* Warning – Amber */
+  --color-warning-50:   #FFFBEB;
+  --color-warning-100:  #FEF3C7;
+  --color-warning-200:  #FDE68A;
+  --color-warning-300:  #FCD34D;
+  --color-warning-400:  #FBBF24;
+  --color-warning-500:  #F59E0B;
+  --color-warning-600:  #D97706;
+  --color-warning-700:  #B45309;
+  --color-warning-800:  #92400E;
+  --color-warning-900:  #78350F;
+  --color-warning-950:  #451A03;
+
+  /* Success – Lime */
+  --color-success-50:   #F7FEE7;
+  --color-success-100:  #ECFCCB;
+  --color-success-200:  #D9F99D;
+  --color-success-300:  #BEF264;
+  --color-success-400:  #A3E635;
+  --color-success-500:  #84CC16;
+  --color-success-600:  #65A30D;
+  --color-success-700:  #4D7C0F;
+  --color-success-800:  #3F6212;
+  --color-success-900:  #365314;
+  --color-success-950:  #1A2E05;
+
+  /* Info – Sky */
+  --color-info-50:   #F0F9FF;
+  --color-info-100:  #E0F2FE;
+  --color-info-200:  #BAE6FD;
+  --color-info-300:  #7DD3FC;
+  --color-info-400:  #38BDF8;
+  --color-info-500:  #0EA5E9;
+  --color-info-600:  #0284C7;
+  --color-info-700:  #0369A1;
+  --color-info-800:  #075985;
+  --color-info-900:  #0C4A6E;
+  --color-info-950:  #082F49;
+
+  /* =====================
+     NEUTRAL – SLATE GRAY
+  ===================== */
+  --color-slate-50:   #F8FAFC;
+  --color-slate-100:  #F1F5F9;
+  --color-slate-200:  #E2E8F0;
+  --color-slate-300:  #CBD5E1;
+  --color-slate-400:  #94A3B8;
+  --color-slate-500:  #64758B;
+  --color-slate-600:  #475569;
+  --color-slate-700:  #334155;
+  --color-slate-800:  #1E293B;
+  --color-slate-900:  #0F172A;
+  --color-slate-950:  #020617;
+
+  /* =====================
+     OTHER – ORANGE
+  ===================== */
+  --color-orange-50:   #FFF7ED;
+  --color-orange-100:  #FFEDD5;
+  --color-orange-200:  #FED7AA;
+  --color-orange-300:  #FDBA74;
+  --color-orange-400:  #FB923C;
+  --color-orange-500:  #F97316;
+  --color-orange-600:  #EA580C;
+  --color-orange-700:  #C2410C;
+  --color-orange-800:  #9A3412;
+  --color-orange-900:  #7C2D12;
+  --color-orange-950:  #412006;
+
+  /* =====================
+     TYPOGRAPHY
+  ===================== */
+
+  /* Font Families */
+  --font-headline:  'Barlow', sans-serif;   /* Bold only – H1, H2 */
+  --font-body:      'DM Sans', sans-serif;  /* Primary text font */
+
+  /* Font Weights */
+  --font-weight-light:   300;
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-bold:    700;
+
+  /* Font Sizes */
+  --text-xxs:  11px;
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;
+  --text-lg:   18px;
+  --text-xl:   20px;
+  --text-2xl:  24px;
+  --text-3xl:  30px;
+  --text-4xl:  36px;
+  --text-5xl:  48px;
+  --text-6xl:  60px;
+  --text-7xl:  72px;
+  --text-8xl:  96px;
+  --text-9xl:  128px;
+
+  /* Line Heights */
+  --leading-xxs:  15px;
+  --leading-xs:   15px;
+  --leading-sm:   20px;
+  --leading-base: 24px;
+  --leading-lg:   28px;
+  --leading-xl:   28px;
+  --leading-2xl:  32px;
+  --leading-3xl:  36px;
+  --leading-4xl:  40px;
+  /* 5xl–9xl: auto / normal */
+
+  /* =====================
+     BORDER RADIUS
+  ===================== */
+  --rounded-none: 0px;
+  --rounded-sm:   2px;
+  --rounded:      4px;
+  --rounded-md:   6px;
+  --rounded-lg:   8px;
+  --rounded-xl:   12px;
+  --rounded-2xl:  16px;
+  --rounded-3xl:  24px;
+  --rounded-full: 9999px;
+
+  /* =====================
+     SHADOWS
+  ===================== */
+  --shadow-sm:    0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow:       0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md:    0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg:    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl:    0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-2xl:   0 25px 50px -12px rgb(0 0 0 / 0.25);
+  --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+  --shadow-none:  none;
+
+}

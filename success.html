@@ -57,9 +57,9 @@
           <p id="success-subtext" class="font-dm text-base leading-5 text-black">
             Olemme sinuun yhteydessä puhelimitse viimeistään huomenna, jotta saadaan autosi myytyä mahdollisimman pian.
           </p>
-          <div id="success-badge" class="hidden items-center gap-2 bg-slate-200 border border-slate-300 rounded px-2 py-1">
-            <img src="assets/icon-hourglass-bold.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
-            <span id="success-badge-text" class="font-dm font-medium text-sm text-slate-500"></span>
+          <div id="success-badge" class="hidden items-center gap-2 rounded px-2 py-1">
+            <span id="success-badge-icon" class="w-3.5 h-3.5 flex-shrink-0 flex items-center justify-center"></span>
+            <span id="success-badge-text" class="font-dm font-medium text-sm"></span>
           </div>
         </div>
 
@@ -91,19 +91,46 @@
           </div>
         </div>
 
-        <!-- Vehicle card -->
-        <div id="av-vehicle-card" class="w-full"></div>
+        <!-- Notice card — in_review(verified)/published states only. Visual style + copy
+             confirmed verbatim against Review.vue's template (in_review+verified branch)
+             and Success.vue (bg-[rgb(250,234,218)] border-orange-300, underlined text link). -->
+        <div id="success-notice" class="hidden text-start w-full bg-[rgb(250,234,218)] rounded-lg p-4 gap-2 items-center border-2 border-orange-300">
+          <div class="flex flex-col">
+            <span id="success-notice-title" class="mb-2.5 text-xl text-slate-800 font-bold"></span>
+            <span id="success-notice-body" class="mb-4 text-base font-medium text-slate-600"></span>
+            <a id="success-notice-cta" href="#" class="text-slate-600 underline cursor-pointer font-medium"></a>
+          </div>
+        </div>
+
+        <!-- Action card — rejected / rejected+missing-images states. Confirmed against
+             Review.vue's <Notification> usage there: bordered card, icon, title, body,
+             and a primary BUTTON (not a text link) — a different component than the
+             peach notice above, which Review.vue reserves for in_review+verified/published. -->
+        <div id="success-action-card" class="hidden p-6 flex-col space-y-4 rounded-xl border-2 bg-white">
+          <div class="flex justify-start items-center gap-x-1.5">
+            <span id="success-action-card-icon"></span>
+          </div>
+          <div class="flex flex-col space-y-2.5">
+            <span id="success-action-card-title" class="text-xl text-slate-800 font-bold"></span>
+            <span id="success-action-card-body" class="text-slate-600"></span>
+          </div>
+          <div class="pt-2.5">
+            <a id="success-action-card-cta" href="#" style="display:flex;align-items:center;justify-content:center;background:#0B6DFF;border-radius:.5rem;height:3.5rem;padding:0 2rem;text-decoration:none;box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);width:100%;">
+              <span id="success-action-card-cta-text" style="font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;color:white;"></span>
+            </a>
+          </div>
+        </div>
 
       </div>
 
       <!-- ── Right column (cream) ── -->
-      <div class="flex-1 bg-av-cream rounded-xl p-8 min-h-[480px] flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+      <div class="flex-1 bg-av-cream rounded-xl p-8 min-h-[480px] flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
 
-        <h2 class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="success.nextStepsTitle">Mitä tapahtuu seuraavaksi?</h2>
+        <h2 id="success-next-steps-title" class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="success.nextStepsTitle">Mitä tapahtuu seuraavaksi?</h2>
 
         <div id="success-steps" class="flex flex-col gap-5">
 
-          <div class="flex gap-2 items-start">
+          <div id="success-step1-row" class="flex gap-2 items-start">
             <img src="assets/cf9ed64c-e015-4129-a683-516894e443b4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
             <div class="flex flex-col gap-0.5">
               <p id="step1-title" class="font-dm font-bold text-base leading-5 text-black"></p>
@@ -111,7 +138,7 @@
             </div>
           </div>
 
-          <div class="flex gap-2 items-start">
+          <div id="success-step2-row" class="flex gap-2 items-start">
             <img src="assets/7cb7ddce-86cc-457f-be2d-f44485a7e101.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="2" />
             <div class="flex flex-col gap-0.5">
               <p id="step2-title" class="font-dm font-bold text-base leading-5 text-black"></p>
@@ -119,7 +146,7 @@
             </div>
           </div>
 
-          <div class="flex gap-2 items-start">
+          <div id="success-step3-row" class="flex gap-2 items-start">
             <img src="assets/d7dbeec3-32bb-407c-a234-273ace9af998.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="3" />
             <div class="flex flex-col gap-0.5">
               <p id="step3-title" class="font-dm font-bold text-base leading-5 text-black"></p>
@@ -145,10 +172,13 @@
 
         </div>
 
-        <a id="success-offers-btn" href="offers.html?scenario=live-no-bids"
+        <a id="success-offers-btn" href="offers.html?scenario=draft-in-review"
            style="display:none;align-items:center;justify-content:center;background:#0B6DFF;border-radius:.5rem;height:3.5rem;padding:0 2rem;text-decoration:none;box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);">
           <span style="font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;color:white;">Näytä tarjouspyyntöni</span>
         </a>
+
+        <!-- Car preview — bottom of the tan column, below "what happens next" -->
+        <div id="av-vehicle-card" class="w-full mt-auto"></div>
 
       </div>
 
@@ -173,7 +203,236 @@
       return total >= 5 && !!(ph.ulkopuoli && ph.ulkopuoli.length) && !!(ph.sisatilat && ph.sisatilat.length);
     }
 
+    // ── Scenario param — forces one of prod's draft-status branches, overriding the
+    // organic photos/email simulation below. Mirrors offers.html's ?scenario= pattern. ──
+    var _successParams = new URLSearchParams(window.location.search);
+    var FORCED_SCENARIO = _successParams.get('scenario');
+    var FORCED_COPY = _successParams.get('copy') === 'default' ? null : _successParams.get('copy');
+
+    // "What happens next" step copy — verbatim from WhatHappensNext.vue /
+    // tenderform.what_happens_next.complete.* locale keys.
+    var NS = {
+      verify_email:  { t: 'Vahvista sähköpostisi', b: 'Tarkista sähköpostisi ja vahvista osoitteesi jatkaaksesi tarjouskilpailuun.' },
+      review:        { t: 'Ilmoituksesi tarkistetaan', b: 'Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.' },
+      published:     { t: 'Ilmoituksesi julkaistaan', b: 'Tarjouskilpailu käynnistyy, kun ensimmäinen tarjous on tehty.' },
+      published_alt: { t: 'Ilmoituksesi on nyt julkaistu', b: 'Tarjouskilpailu käynnistyy, kun ensimmäinen tarjous on tehty.' },
+      auction:       { t: 'Tarjouskilpailu käynnistyy', b: 'Tarjouskilpailu kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse.' },
+      auction_ends:  { t: 'Tarjouskilpailu päättyy ja saat tulokset', b: 'Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.' },
+    };
+
+    // Review-call timing variants — this screen maps to prod's Review.vue, whose own
+    // null-fallback (tenderform.review.content.fallback) differs from offers.html's
+    // (auction.landing.status_updates.in_review.content) — different Vue component, own default.
+    function _nextWorkDayName() {
+      var d = new Date();
+      var days = { 1: 'maanantaina', 2: 'tiistaina', 3: 'keskiviikkona', 4: 'torstaina', 5: 'perjantaina' };
+      do { d.setDate(d.getDate() + 1); } while (d.getDay() === 0 || d.getDay() === 6);
+      return days[d.getDay()];
+    }
+    var REVIEW_TIMING_FALLBACK = 'Olemme sinuun yhteydessä vielä puhelimitse mahdollisimman pian taataksemme sinulle parhaan mahdollisen asiakaskokemuksen.';
+    function reviewTimingText(variant) {
+      if (variant === 'soon') return 'Olemme sinuun yhteydessä vielä puhelimitse, jotta autosi saadaan myytyä mahdollisimman pian.';
+      if (variant === 'tomorrow') return 'Olemme sinuun yhteydessä vielä puhelimitse viimeistään huomenna, jotta autosi saadaan myytyä mahdollisimman pian.';
+      if (variant === 'next_work_day') return 'Olemme sinuun yhteydessä vielä puhelimitse viimeistään ' + _nextWorkDayName() + ', jotta autosi saadaan myytyä mahdollisimman pian.';
+      return REVIEW_TIMING_FALLBACK;
+    }
+
+    // Badge color/icon per draftStatus — colors match offers.html's DRAFT_STATUS_CFG for the
+    // same statuses; cyan (published) is new here, sourced from prod's consumer Success.vue
+    // (bg-white border-cyan-400 text-cyan-600, ph-bold-hourglass-high).
+    var ICON_HOURGLASS = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M10.0625 1.09375H3.9375C3.64742 1.09375 3.36922 1.20898 3.1641 1.4141C2.95898 1.61922 2.84375 1.89742 2.84375 2.1875V4.15625C2.84417 4.32597 2.88389 4.4933 2.95979 4.6451C3.0357 4.79691 3.14572 4.92908 3.28125 5.03125L5.90625 7L3.28125 8.96875C3.14572 9.07092 3.0357 9.20309 2.95979 9.3549C2.88389 9.5067 2.84417 9.67403 2.84375 9.84375V11.8125C2.84375 12.1026 2.95898 12.3808 3.1641 12.5859C3.36922 12.791 3.64742 12.9062 3.9375 12.9062H10.0625C10.3526 12.9062 10.6308 12.791 10.8359 12.5859C11.041 12.3808 11.1562 12.1026 11.1562 11.8125V9.86344C11.1561 9.69401 11.1168 9.52691 11.0415 9.37514C10.9662 9.22337 10.8569 9.09104 10.722 8.98844L8.08828 7L10.722 5.00937C10.8569 4.90678 10.9662 4.77444 11.0415 4.62267C11.1168 4.47091 11.1561 4.3038 11.1562 4.13437V2.1875C11.1563 1.89742 11.041 1.61922 10.8359 1.4141C10.6308 1.20898 10.3526 1.09375 10.0625 1.09375ZM9.84375 2.40625V3.28125H4.15625V2.40625H9.84375ZM7 6.17969L4.88523 4.59375H9.09617L7 6.17969ZM9.84375 11.5938H4.15625V9.95312L7 7.82031L9.84375 9.97117V11.5938Z"/></svg>';
+    var ICON_WARNING = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M6.34375 7.21875V4.375C6.34375 4.20095 6.41289 4.03403 6.53596 3.91096C6.65903 3.78789 6.82595 3.71875 7 3.71875C7.17405 3.71875 7.34097 3.78789 7.46404 3.91096C7.58711 4.03403 7.65625 4.20095 7.65625 4.375V7.21875C7.65625 7.3928 7.58711 7.55972 7.46404 7.68279C7.34097 7.80586 7.17405 7.875 7 7.875C6.82595 7.875 6.65903 7.80586 6.53596 7.68279C6.41289 7.55972 6.34375 7.3928 6.34375 7.21875ZM12.9063 5.00664V8.99336C12.9066 9.13704 12.8785 9.27938 12.8235 9.41211C12.7685 9.54485 12.6877 9.66535 12.5858 9.76664L9.76664 12.5858C9.66537 12.6877 9.54487 12.7685 9.41213 12.8235C9.27939 12.8786 9.13705 12.9067 8.99336 12.9063H5.00664C4.86295 12.9067 4.72061 12.8786 4.58787 12.8235C4.45513 12.7685 4.33463 12.6877 4.23336 12.5858L1.41422 9.76664C1.31231 9.66535 1.23151 9.54485 1.1765 9.41211C1.12149 9.27938 1.09336 9.13704 1.09375 8.99336V5.00664C1.09336 4.86296 1.12149 4.72062 1.1765 4.58789C1.23151 4.45515 1.31231 4.33465 1.41422 4.23336L4.23336 1.41422C4.33463 1.31228 4.45513 1.23147 4.58787 1.17645C4.72061 1.12144 4.86295 1.09333 5.00664 1.09375H8.99336C9.13705 1.09333 9.27939 1.12144 9.41213 1.17645C9.54487 1.23147 9.66537 1.31228 9.76664 1.41422L12.5858 4.23336C12.6877 4.33465 12.7685 4.45515 12.8235 4.58789C12.8785 4.72062 12.9066 4.86296 12.9063 5.00664ZM11.5938 5.09742L8.90258 2.40625H5.09742L2.40625 5.09742V8.90258L5.09742 11.5938H8.90258L11.5938 8.90258V5.09742ZM7 8.53125C6.82694 8.53125 6.65777 8.58257 6.51388 8.67871C6.36998 8.77486 6.25783 8.91152 6.19161 9.0714C6.12538 9.23129 6.10805 9.40722 6.14181 9.57695C6.17558 9.74669 6.25891 9.9026 6.38128 10.025C6.50365 10.1473 6.65956 10.2307 6.8293 10.2644C6.99903 10.2982 7.17496 10.2809 7.33485 10.2146C7.49473 10.1484 7.63139 10.0363 7.72754 9.89237C7.82368 9.74848 7.875 9.57931 7.875 9.40625C7.875 9.17419 7.78281 8.95163 7.61872 8.78753C7.45462 8.62344 7.23206 8.53125 7 8.53125Z"/></svg>';
+    var BADGE_COLORS = {
+      slate: { cls: 'bg-slate-200 border border-slate-300 text-slate-500', icon: ICON_HOURGLASS },
+      red:   { cls: 'bg-transparent border border-red-300 text-red-700',  icon: ICON_WARNING },
+      amber: { cls: 'bg-amber-50 border border-amber-400 text-amber-700', icon: ICON_WARNING },
+      cyan:  { cls: 'bg-white border border-cyan-400 text-cyan-600',      icon: ICON_HOURGLASS },
+    };
+    function setBadge(info) {
+      var badge = document.getElementById('success-badge');
+      if (!info) { badge.style.display = 'none'; return; }
+      var c = BADGE_COLORS[info.color];
+      badge.className = 'flex items-center gap-2 rounded px-2 py-1 ' + c.cls;
+      badge.style.display = 'flex';
+      document.getElementById('success-badge-icon').innerHTML = c.icon;
+      document.getElementById('success-badge-text').textContent = info.text;
+    }
+
+    function setNotice(info) {
+      var el = document.getElementById('success-notice');
+      if (!info) { el.classList.add('hidden'); return; }
+      document.getElementById('success-notice-title').textContent = info.title;
+      document.getElementById('success-notice-body').textContent = info.body;
+      var cta = document.getElementById('success-notice-cta');
+      cta.textContent = info.cta;
+      cta.href = info.href;
+      el.classList.remove('hidden');
+    }
+
+    // Icons/colors for the action card — 30x30 variants matching offers.html's NICON_FILL_CAR /
+    // NICON_FILL_WARN_OCT (same prod icon set: ph-fill-car / ph-fill-warning-octagon).
+    var NICON_FILL_CAR = '<svg width="30" height="30" viewBox="0 0 30 30" fill="currentColor" aria-hidden="true"><path d="M28.125 12.188h-1.266l-3.255-7.325A1.875 1.875 0 0 0 21.89 3.75H8.109a1.875 1.875 0 0 0-1.713 1.113l-3.255 7.324H1.875a.938.938 0 0 0 0 1.876h.938v9.374a1.875 1.875 0 0 0 1.874 1.875H7.5a1.875 1.875 0 0 0 1.875-1.875V22.5h11.25v.938a1.875 1.875 0 0 0 1.875 1.875h2.813a1.875 1.875 0 0 0 1.875-1.875v-9.375h.937a.938.938 0 0 0 0-1.876Zm-18.75 5.624H6.562a.938.938 0 0 1 0-1.875h2.813a.938.938 0 0 1 0 1.876Zm14.063 0h-2.813a.938.938 0 0 1 0-1.875h2.813a.938.938 0 0 1 0 1.876ZM5.192 12.188l2.916-6.562h13.782l2.916 6.563H5.193Z"/></svg>';
+    var NICON_FILL_WARN_OCT = '<svg width="30" height="30" viewBox="0 0 30 31" fill="currentColor" aria-hidden="true"><path d="m26.638 9.957-6.04-6.04a1.89 1.89 0 0 0-1.326-.55h-8.543a1.89 1.89 0 0 0-1.327.55l-6.04 6.04a1.89 1.89 0 0 0-.55 1.326v8.543c.002.497.2.974.55 1.327l6.04 6.04c.353.35.83.548 1.327.55h8.543a1.89 1.89 0 0 0 1.326-.55l6.04-6.04c.35-.353.548-.83.55-1.327v-8.543a1.89 1.89 0 0 0-.55-1.326ZM14.062 9.93a.938.938 0 0 1 1.876 0v6.562a.938.938 0 0 1-1.876 0V9.93ZM15 22.117a1.407 1.407 0 1 1 0-2.813 1.407 1.407 0 0 1 0 2.813Z"/></svg>';
+    var ACTION_CARD_COLORS = {
+      // Review.vue: theme="info" (plain rejected) / theme="danger" (missing images)
+      blue: { border: 'border-blue-500', icon: 'text-blue-500' },
+      red:  { border: 'border-red-400',  icon: 'text-red-500' },
+    };
+    function setActionCard(info) {
+      var el = document.getElementById('success-action-card');
+      if (!info) { el.classList.add('hidden'); return; }
+      var c = ACTION_CARD_COLORS[info.color];
+      el.className = 'flex flex-col space-y-4 rounded-xl border-2 bg-white p-6 ' + c.border;
+      document.getElementById('success-action-card-icon').className = c.icon;
+      document.getElementById('success-action-card-icon').innerHTML = info.icon === 'car' ? NICON_FILL_CAR : NICON_FILL_WARN_OCT;
+      document.getElementById('success-action-card-title').textContent = info.title;
+      document.getElementById('success-action-card-body').textContent = info.body;
+      document.getElementById('success-action-card-cta-text').textContent = info.cta;
+      document.getElementById('success-action-card-cta').href = info.href;
+    }
+
+    function renderSteps(keys) {
+      // Mirrors WhatHappensNext.vue's own v-if="computedNextSteps.length > 0" on its heading.
+      document.getElementById('success-next-steps-title').style.display = keys.length > 0 ? '' : 'none';
+      for (var i = 1; i <= 5; i++) {
+        var row = document.getElementById('success-step' + i + '-row');
+        var item = keys[i - 1] ? NS[keys[i - 1]] : null;
+        if (item) {
+          document.getElementById('step' + i + '-title').textContent = item.t;
+          document.getElementById('step' + i + '-body').textContent = item.b;
+          row.style.display = 'flex';
+        } else {
+          row.style.display = 'none';
+        }
+      }
+    }
+
+    // The 6 real draftStatus branches WhatHappensNext.vue/Review.vue/PublishQueue.vue/
+    // Success.vue (consumer) produce. Copy sourced verbatim from tenderform.review.rejected.*,
+    // tenderform.publish_queue.*, tenderform.published.* in vue-i18n-locales.generated.js.
+    var SUCCESS_SCENARIOS = {
+      'rejected': {
+        headline: 'Autoasi ei hyväksytty - tällä kertaa.',
+        subtext: 'Syynä saattaa olla ajoitus tai puuttuvat tiedot. Ei hätää - voit aina palata myöhemmin.',
+        badge: { text: 'Ei hyväksytty', color: 'red' },
+        steps: [],
+        // Review.vue: <Notification icon="ph-fill-car" theme="info"> + primary button (editDraft)
+        actionCard: { icon: 'car', color: 'blue', title: 'Mietitkö vielä?', body: 'Ymmärrämme täysin. Monet asiakkaamme palaavat myynnin pariin myöhemmin ja tekevät hyvät kaupat. Voit päivittää tarjouspyyntöä milloin tahansa.', cta: 'Päivitä tarjouspyyntöä', href: 'index.html' },
+        // Copied from prod: resources/assets/img/rejected.png
+        illustration: 'assets/success-rejected.png',
+      },
+      'rejected-missing-images': {
+        headline: 'Huomio! Tarvitsemme sinulta lisätietoja.',
+        subtext: 'Huomasimme, että joitakin tietoja puuttuu tarjouspyynnöstäsi.',
+        badge: { text: 'Tietoja tarvitaan', color: 'red' },
+        // Real WhatHappensNext.vue fallthrough for rejected+missingImages: falls to the
+        // default 4-step branch (still shows "under review") — an apparent prod quirk,
+        // reproduced as-is rather than corrected.
+        steps: ['review', 'published', 'auction', 'auction_ends'],
+        // Review.vue: <Notification icon="ph-fill-warning-octagon" theme="danger"> + primary button (addMissingImages)
+        actionCard: { icon: 'warning', color: 'red', title: 'Lataa kuvat jatkaaksesi', body: 'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia tehdäkseen parhaat tarjouksensa. 🚗 📸', cta: 'Lisää kuvat', href: 'photos.html' },
+        // Prod's rejected_info_missing.png — already in this prototype byte-identical
+        // as success-photos-missing.png (same image, used by the organic photos-missing state).
+        illustration: 'assets/success-photos-missing.png',
+      },
+      'in-review-unverified': {
+        headline: 'Tarjouspyyntösi on valmis! Yksi juttu vielä.',
+        subtext: 'Olemme vastaanottaneet ilmoituksesi ja tarkistamme sitä parhaillaan. Vahvista nyt sähköpostiosoitteesi.',
+        // tenderform.review.status (shown for draftStatus='in_review' regardless of email verification)
+        badge: { text: 'Tarkastus käynnissä', color: 'slate' },
+        steps: ['verify_email', 'review', 'published', 'auction', 'auction_ends'],
+        emailCard: true,
+        // Matches prod exactly: Review.vue shows verify_email.png for the unverified case.
+        illustration: 'assets/success-verify-email-illustration.png',
+      },
+      'in-review-verified': {
+        headline: 'Hienoa! Ilmoitustasi tarkastetaan parhaillaan.',
+        subtext: null,
+        // Same badge as the unverified case — Review.vue shows it outside the
+        // emailIsVerified branch, unconditionally for draftStatus='in_review'.
+        badge: { text: 'Tarkastus käynnissä', color: 'slate' },
+        steps: ['review', 'published', 'auction', 'auction_ends'],
+        timingVariant: true,
+        // prod Review.vue in_review+verified renders this notice (same keys Success.vue uses).
+        // Its text link replaces the standalone blue "Näytä tarjouspyyntöni" button.
+        notice: { title: 'Ota rennosti ja tarkkaile sähköpostiasi!', body: 'Pidä sähköposti lähettyvillä, ettet vahingossa menetä parasta tarjousta autostasi.', cta: 'Näytä tarjouspyyntöni', href: 'offers.html?scenario=draft-in-review' },
+        // Copied from prod: resources/assets/img/in_review.svg
+        illustration: 'assets/success-in-review.svg',
+      },
+      'queued': {
+        headline: 'Tarjouspyyntösi on valmis! Yksi juttu vielä.',
+        subtext: 'Olemme vastaanottaneet ilmoituksesi ja julkaisemme sen heti kun olet vahvistanut sähköpostiosoitteesi.',
+        badge: { text: 'Vaatii toimenpiteitä', color: 'amber' },
+        steps: ['verify_email', 'published', 'auction', 'auction_ends'],
+        emailCard: true,
+        // Prod's PublishQueue.vue reuses the SAME verify_email.png as in_review+unverified.
+        illustration: 'assets/success-verify-email-illustration.png',
+      },
+      'published': {
+        headline: 'Jännittävää! Tarjouskilpailu on alkamassa.',
+        subtext: 'Autosi on nyt satojen ostajien nähtävillä. Tarjouskilpailu alkaa ensimmäisestä tarjouksesta.',
+        badge: { text: 'Odotetaan tarjouksia', color: 'cyan' },
+        steps: ['published_alt', 'auction', 'auction_ends'],
+        notice: { title: 'Ota rennosti ja tarkkaile sähköpostiasi!', body: 'Pidä sähköposti lähettyvillä, ettet vahingossa menetä parasta tarjousta autostasi.', cta: 'Näytä tarjouspyyntöni', href: 'offers.html?scenario=new-offers' },
+        // Copied from prod: resources/assets/img/published.png
+        illustration: 'assets/success-published.png',
+      },
+    };
+
+    function renderForcedScenario(id, copyVariant) {
+      var def = SUCCESS_SCENARIOS[id];
+      if (!def) return false;
+
+      var leftCol = document.getElementById('success-illustration-wrap').parentNode;
+      var headlineSection = document.getElementById('success-headline-section');
+      var illustrationWrap = document.getElementById('success-illustration-wrap');
+      var emailCard = document.getElementById('success-email-card');
+      var offersBtn = document.getElementById('success-offers-btn');
+      var vehicleCard = document.getElementById('av-vehicle-card');
+      var existingPhotosBtn = document.getElementById('success-photos-btn');
+      if (existingPhotosBtn) existingPhotosBtn.remove();
+
+      if (vehicleCard) vehicleCard.style.display = '';
+      // prod Review.vue: h1 -> subtitle -> status badge -> figure
+      leftCol.insertBefore(illustrationWrap, headlineSection.nextSibling);
+      if (def.illustration) {
+        illustrationWrap.style.display = '';
+        document.getElementById('success-illustration').src = def.illustration;
+      } else {
+        // No matching asset exists in this prototype — hide rather than show a mismatched image.
+        illustrationWrap.style.display = 'none';
+      }
+
+      document.getElementById('success-headline').textContent = def.headline;
+      document.getElementById('success-subtext').textContent = def.timingVariant ? reviewTimingText(copyVariant) : def.subtext;
+
+      setBadge(def.badge);
+      renderSteps(def.steps);
+      setNotice(def.notice || null);
+      setActionCard(def.actionCard || null);
+
+      emailCard.style.display = def.emailCard ? 'flex' : 'none';
+      if (def.emailCard) {
+        var userEmail = (getStore().contact || {}).sahkoposti || 'esimerkki@email.fi';
+        document.getElementById('success-email-address').textContent = userEmail;
+        document.getElementById('success-email-card-title').textContent = t('success.emailCardTitle');
+        document.getElementById('success-email-card-body').textContent = t('success.emailCardBody');
+        document.getElementById('success-email-card-no-email').textContent = t('success.emailCardNoEmail');
+        document.getElementById('success-email-resend').textContent = t('success.emailCardResend');
+      }
+
+      // Standalone blue button retired — in-review-verified now uses the notice's text link,
+      // which carries the review-call copy variant through to offers.html.
+      offersBtn.style.display = 'none';
+      if (id === 'in-review-verified') {
+        document.getElementById('success-notice-cta').href =
+          'offers.html?scenario=draft-in-review&copy=' + (copyVariant || 'default');
+      }
+      return true;
+    }
+
     function updateContent() {
+      if (FORCED_SCENARIO && renderForcedScenario(FORCED_SCENARIO, FORCED_COPY)) return;
       const s = getStore();
       const photosOk = photosComplete(s);
       const emailVerified = !!s.emailVerified;
@@ -188,6 +447,7 @@
       var vehicleCard = document.getElementById('av-vehicle-card');
       if (!photosOk) {
         // ── PHOTOS MISSING ──
+        setNotice(null); setActionCard(null);
         if (vehicleCard) vehicleCard.style.display = '';
         if (offersBtn) offersBtn.style.display = 'none';
         leftCol.insertBefore(illustrationWrap, headlineSection); // illustration above headline
@@ -214,59 +474,20 @@
         }
 
       } else if (emailVerified) {
-        // ── EMAIL VERIFIED ──
-        if (vehicleCard) vehicleCard.style.display = '';
+        // ── EMAIL VERIFIED ── same state as scenario 'in-review-verified': render via the
+        // shared definition so the two paths cannot drift apart.
         existing?.remove();
         hideEmailToast();
-        if (offersBtn) offersBtn.style.display = 'flex';
-        leftCol.insertBefore(illustrationWrap, headlineSection); // illustration above headline
-        document.getElementById('success-illustration').src = 'assets/success-email-verified-illustration.svg';
-        document.getElementById('success-headline').textContent = t('success.headlineEmailVerified');
-        document.getElementById('success-subtext').textContent  = t('success.subtextEmailVerified');
-        document.getElementById('success-badge').style.display  = 'none';
-        emailCard.style.display = 'none';
-        document.getElementById('success-step4-row').style.display = 'none';
-        document.getElementById('success-step5-row').style.display = 'none';
-        document.getElementById('step1-title').textContent = t('success.verifiedStep1Title');
-        document.getElementById('step1-body').textContent  = t('success.verifiedStep1Body');
-        document.getElementById('step2-title').textContent = t('success.verifiedStep2Title');
-        document.getElementById('step2-body').textContent  = t('success.verifiedStep2Body');
-        document.getElementById('step3-title').textContent = t('success.verifiedStep3Title');
-        document.getElementById('step3-body').textContent  = t('success.verifiedStep3Body');
+        renderForcedScenario('in-review-verified', null);
+        return;
+
 
       } else {
-        // ── EMAIL NOT YET VERIFIED ──
-        if (vehicleCard) vehicleCard.style.display = 'none';
+        // ── EMAIL NOT YET VERIFIED ── same state as scenario 'in-review-unverified'.
         existing?.remove();
-        if (offersBtn) offersBtn.style.display = 'none';
-        // Illustration below headline
-        leftCol.insertBefore(illustrationWrap, emailCard);
-        document.getElementById('success-illustration').src = 'assets/success-verify-email-illustration.png';
-        document.getElementById('success-headline').textContent = t('success.headlineVerifyEmail');
-        document.getElementById('success-subtext').textContent  = t('success.subtextVerifyEmail');
-        const badge = document.getElementById('success-badge');
-        badge.style.display = 'flex';
-        document.getElementById('success-badge-text').textContent = t('success.badgeInReview');
-        emailCard.style.display = 'flex';
-        const userEmail = (getStore().contact || {}).sahkoposti || '';
-        document.getElementById('success-email-address').textContent       = userEmail;
-        document.getElementById('success-email-card-title').textContent    = t('success.emailCardTitle');
-        document.getElementById('success-email-card-body').textContent     = t('success.emailCardBody');
-        document.getElementById('success-email-card-no-email').textContent = t('success.emailCardNoEmail');
-        document.getElementById('success-email-resend').textContent        = t('success.emailCardResend');
-        document.getElementById('success-step4-row').style.display = 'flex';
-        document.getElementById('success-step5-row').style.display = 'flex';
-        document.getElementById('step1-title').textContent = t('success.step1Title');
-        document.getElementById('step1-body').textContent  = t('success.step1Body');
-        document.getElementById('step2-title').textContent = t('success.step2Title');
-        document.getElementById('step2-body').textContent  = t('success.step2Body');
-        document.getElementById('step3-title').textContent = t('success.step3Title');
-        document.getElementById('step3-body').textContent  = t('success.step3Body');
-        document.getElementById('step4-title').textContent = t('success.step4Title');
-        document.getElementById('step4-body').textContent  = t('success.step4Body');
-        document.getElementById('step5-title').textContent = t('success.step5Title');
-        document.getElementById('step5-body').textContent  = t('success.step5Body');
+        renderForcedScenario('in-review-unverified', null);
         showEmailToast();
+        return;
       }
     }
 
@@ -369,6 +590,76 @@
         }, 620);
       }, 1200);
     }
+
+    // ── Floating "Scenario" selector — forces one of prod's 6 real draftStatus branches.
+    // No footer exists on this page, so it's a fixed bottom-right control (same drawer
+    // pattern as offers.html's footer-anchored one). ──
+    (function () {
+      var ROWS = [
+        { id: null, label: 'Live simulation (photos/email)' },
+        { id: 'rejected', label: 'Rejected' },
+        { id: 'rejected-missing-images', label: 'Rejected — missing photos' },
+        { id: 'in-review-unverified', label: 'In review — email not verified' },
+        { id: 'in-review-verified', label: 'In review — email verified', variants: true },
+        { id: 'queued', label: 'Queued — email not verified' },
+        { id: 'published', label: 'Published (auction live)' },
+      ];
+
+      var wrap = document.createElement('div');
+      wrap.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;font-family:system-ui,sans-serif;';
+
+      var toggle = document.createElement('button');
+      toggle.style.cssText = 'background:#0B6DFF;color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);';
+      toggle.textContent = 'Scenario';
+
+      var drawer = document.createElement('div');
+      drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:280px;max-height:420px;overflow-y:auto;padding:8px 0;';
+
+      ROWS.forEach(function (row) {
+        var cur = row.id === null ? !FORCED_SCENARIO : FORCED_SCENARIO === row.id;
+        var container = document.createElement('div');
+        container.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
+        container.innerHTML = cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>';
+
+        var main = document.createElement('a');
+        main.href = row.id ? ('success.html?scenario=' + row.id + (row.variants ? '&copy=default' : '')) : 'success.html';
+        main.style.cssText = 'text-decoration:none;color:inherit;';
+        main.textContent = row.label;
+        container.appendChild(main);
+
+        if (row.variants) {
+          var variants = document.createElement('span');
+          variants.style.cssText = 'color:#94a3b8;';
+          variants.appendChild(document.createTextNode(' ('));
+          [['default', '1'], ['soon', '2'], ['tomorrow', '3'], ['next_work_day', '4']].forEach(function (pair, vi) {
+            if (vi > 0) variants.appendChild(document.createTextNode(','));
+            var vActive = cur && (pair[0] === 'default' ? !FORCED_COPY : FORCED_COPY === pair[0]);
+            var vLink = document.createElement('a');
+            vLink.href = 'success.html?scenario=' + row.id + '&copy=' + pair[0];
+            vLink.title = pair[0].replace(/_/g, ' ');
+            vLink.style.cssText = 'text-decoration:underline;color:' + (vActive ? '#0B6DFF' : '#94a3b8') + ';font-weight:' + (vActive ? '700' : '400') + ';';
+            vLink.textContent = pair[1];
+            variants.appendChild(vLink);
+          });
+          variants.appendChild(document.createTextNode(')'));
+          container.appendChild(variants);
+        }
+
+        container.addEventListener('mouseover', function () { if (!cur) container.style.background = '#f8fafc'; });
+        container.addEventListener('mouseout', function () { if (!cur) container.style.background = 'transparent'; });
+
+        drawer.appendChild(container);
+      });
+
+      var open = false;
+      toggle.addEventListener('click', function () { open = !open; drawer.style.display = open ? 'block' : 'none'; });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
+      document.addEventListener('click', function (e) { if (open && !wrap.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
+
+      wrap.appendChild(drawer);
+      wrap.appendChild(toggle);
+      document.body.appendChild(wrap);
+    })();
   </script>
 
   <style>
