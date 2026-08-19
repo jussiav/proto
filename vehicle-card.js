@@ -62,7 +62,7 @@
   //
   //   registrationNumber, make, model, modelSpecification,
   //   year, mileage, fuelType, driveType, image,
-  //   status, statusColor, statusIcon,
+  //   status, statusColor, statusIcon, supportingText,
   //   primaryCta / secondaryCta  { text, href?, attrs? }
   //
   // Proto-only extensions (no prod equivalent), kept explicit:
@@ -149,6 +149,9 @@
                 : '') +
             '</div>' +
             '<div class="flex flex-wrap self-stretch gap-1.5 items-center">' + pills + '</div>' +
+            (props.supportingText
+              ? '<p class="font-dm text-sm text-slate-500 italic">' + esc(props.supportingText) + '</p>'
+              : '') +
           '</div>' +
           ctaRow +
         '</div>' +

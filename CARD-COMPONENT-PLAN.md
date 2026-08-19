@@ -72,6 +72,9 @@ Proto-only extensions (no prod equivalent — keep clearly marked):
 
 Ordered by ascending risk. Each is independently verifiable and committable.
 
+**All four batches complete.** The card is now one component: `buildCarCard(props)`
+in `vehicle-card.js`, with three thin adapters mapping their own data into it.
+
 ### Batch 1 — contract + renderer + funnel card `[x]` DONE
 - [x] `buildCarCard(props)` in `vehicle-card.js`, returning the full card markup
 - [x] `renderVehicleCard()` becomes a thin adapter: read localStorage → props → `buildCarCard`
@@ -100,24 +103,35 @@ this is a refactor behind an unchanged public function.
 
 Low risk: also JS-built, straightforward data mapping. No id-based fill.
 
-### Batch 3 — offers published card `[ ]`
-- [ ] Replace the static markup + id-based population with a props call
-- [ ] Rework the scenario logic to build props instead of writing into elements
-- [ ] Verify all offers scenarios (`live-no-bids`, `auction-live`, `new-offers`,
-      `seen-offers`, `no-offers`, `all-rejected`, `accepted`, `deal-completed`,
-      `deal-failed`, `blank`)
+### Batch 3 — offers published card `[x]` DONE
+- [x] Replace the static markup + id-based population with a props call
+- [x] Rework the scenario logic to build props instead of writing into elements
+- [x] Verify offers scenarios — all five `STATE_CFG` states covered
+      (auctionOngoing, auctionEnded, negotiations, offerAccepted, offersRejected)
+      plus the `!req` path: `blank`, `live-no-bids`, `auction-live`, `new-offers`,
+      `no-offers`, `all-rejected`, `dealer-replied`, `accepted`, `deal-completed`,
+      `deal-failed`
+- [x] `supportingText` prop added for the accessories line (prod
+      `ListingCardSupportingText`); verified through the edit-modal save + re-render
+- [x] `BTN_SEC` / `BTN_GHOST` removed from offers.html — button styles now live in
+      buildCarCard as prod's UiButton variants
+- [x] Confirmed the card survives re-render: `open-modal`, `open-edit-modal` and
+      `open-neg-modal` are all delegated listeners, so replacing innerHTML keeps
+      them wired
 
 Highest risk: touches scenario logic, and the card is re-rendered as state
 changes. Needs the full scenario sweep.
 
-### Batch 4 — gallery + process `[ ]`
-- [ ] `COMPONENTS.md` entry, prod equivalent `CarCard.vue`
-- [ ] `components.html` preview with props table
-- [ ] Add a **Renderer** column (`vanilla` / `vue`) to `COMPONENTS.md` and
-      `docs/component-gallery-process.md` — status values describe prod's
-      lifecycle, renderer describes how the proto builds it. Currently the
-      process assumes every component is a Vue SFC, so vanilla components have
-      nowhere to be indexed.
+### Batch 4 — gallery + process `[x]` DONE
+- [x] `COMPONENTS.md` entry, prod equivalent `CarCard.vue`
+- [x] `components.html` preview — two containers (wide + narrow) so the container
+      query is visible, plus the full props table
+- [x] **Renderer** values (`vanilla` / `vue`) added to `COMPONENTS.md` and
+      `docs/component-gallery-process.md`
+- [x] NEW STATUS VALUE `in-prod`. `CarCard.vue` is shipped in prod but has no
+      `CarCard.stories.ts`, so none of `prototype` / `in-progress` /
+      `in-storybook` described it honestly. Rename if you prefer another word —
+      it is used in COMPONENTS.md, components.html and the process doc.
 
 ---
 

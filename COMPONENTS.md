@@ -1,9 +1,17 @@
 # Component Index
 
-Machine-readable index of all Vue components in the prototype.
+Machine-readable index of all shared components in the prototype.
 Live rendered gallery: [`components.html`](components.html) (open on GitHub Pages).
 
-**Status values:** `prototype` | `in-progress` | `in-storybook`
+**Status values:** `prototype` | `in-progress` | `in-prod` | `in-storybook` —
+these describe the component's lifecycle **in production**, not how the proto
+builds it. `in-prod` means shipped in the prod codebase but with no Storybook
+story yet (e.g. `CarCard.vue`); `in-storybook` means shipped *and* documented at
+storybook.autovex.fi.
+
+**Renderer values:** `vue` (SFC in `vue-tests/`, needs a build) | `vanilla`
+(plain JS/CSS module, no build step) — how the proto renders it. Orthogonal to
+status: a component can be shipped in prod and rendered vanilla here.
 
 ---
 
@@ -215,3 +223,60 @@ When a component is built in prod and added to Storybook:
 2. Add the Storybook URL
 3. Update the status badge in `components.html`
 4. Add the Storybook link button in `components.html`
+
+---
+
+## CarCard
+
+| Field | Value |
+|---|---|
+| **Status** | `in-prod` |
+| **Renderer** | `vanilla` |
+| **File** | `vehicle-card.js` → `window.buildCarCard(props)` |
+| **Bundle** | — (no build step) |
+| **Prod equivalent** | `resources/assets/js/pages/offers/components/CarCard.vue` |
+| **Figma** | _Add link_ |
+| **Storybook** | — (no `CarCard.stories.ts` in the prod codebase) |
+
+Returns an HTML string; callers own their own event wiring. Rendered vanilla
+rather than as a Vue SFC because the card appears on `contact`, `success` and
+`offers` — a broken `vue-tests` build would break the funnel mid-user-test, and
+a per-change `npm run build` slows the ideation loop. Call sites pass props, so
+promoting it to Vue later is a renderer swap, not a rewrite.
+
+**Props** (mirroring `CarCard.vue`):
+| Prop | Type | Notes |
+|---|---|---|
+| `registrationNumber` | String | Plate; renders the blue-bar badge |
+| `make` | String | |
+| `model` | String | |
+| `modelSpecification` | String | Trim line under the name |
+| `year` | String\|Number | Spec pill |
+| `mileage` | String | Spec pill, pre-formatted |
+| `driveType` | String | Spec pill |
+| `fuelType` | String | Spec pill |
+| `image` | String\|null | Photo URL; `null` renders the ph-car-simple placeholder |
+| `status` | String | Badge label |
+| `statusColor` | String | Badge colour classes |
+| `statusIcon` | String | Badge icon markup |
+| `supportingText` | String | Italic line under the pills (prod `ListingCardSupportingText`) |
+| `primaryCta` | Object | `{ text, href?, attrs? }` — UiButton `secondary` |
+| `secondaryCta` | Object | `{ text, href?, attrs? }` — UiButton `ghost` |
+
+**Proto-only props** (no prod equivalent):
+| Prop | Notes |
+|---|---|
+| `mediaOverlay` | Markup layered over the photo (price tag, status badges) |
+| `mediaBottom` | Markup pinned to the photo's bottom edge (amber "photos missing" bar) |
+| `cardClass` | Extra classes on the card root (e.g. the success-page border) |
+| `ctaFullWidth` | Keep CTAs full-width instead of prod's right-aligned row |
+| `ctaSlot` | Raw markup replacing the CTA row (prod's `#actions` slot) |
+
+**Responsiveness:** container query, not prod's `lg:`. Prod switches on viewport
+because its card spans a 768px column; the funnel card sits in the tan
+`bg-av-cream` sidebar (`max-w-[48%]`), only ~375px wide at viewport 1024, where a
+250px photo would leave 125px for details. The card flips to photo-left at 480px
+of its **own** width.
+
+**Used on:** `contact.html`, `success.html` (via `renderVehicleCard()`),
+`offers.html` (published listing + draft cards)

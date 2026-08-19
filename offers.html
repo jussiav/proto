@@ -152,29 +152,8 @@
           <span class="text-blue-900 leading-3">Julkaistut ilmoituksesi</span>
         </h2>
 
-        <div class="av-card-shell w-full"><div class="av-card rounded-xl bg-white shadow-sm overflow-hidden">
-          <div id="photo-wrap" class="av-card__media bg-blue-300">
-            <img id="car-img" src="" alt="" class="object-cover h-full w-full hidden" />
-            <img id="car-placeholder" src="assets/ph-car-simple-white.svg" width="70" height="70" class="opacity-60" alt="" />
-          </div>
-          <div class="av-card__body p-5 flex flex-col justify-between space-y-5">
-            <div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">
-              <div class="flex rounded-md">
-                <div class="w-2 h-auto bg-blue-600 rounded-l-md"></div>
-                <div id="reg-number" class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 text-xs sm:text-sm"></div>
-              </div>
-              <div id="status-badge" class="inline-flex items-center space-x-2 px-2 py-1 text-xs sm:text-sm rounded border"></div>
-            </div>
-            <div class="space-y-3">
-              <div class="flex flex-col">
-                <span id="car-make-model" class="text-base font-bold text-slate-900"></span>
-              </div>
-              <div id="car-pills" class="flex flex-wrap self-stretch gap-1.5 text-sm items-center"></div>
-              <p id="car-accessories-text" class="text-sm text-slate-500 italic hidden"></p>
-            </div>
-            <div id="cta-row" class="w-full flex items-center md:justify-end flex-col sm:flex-row gap-y-4 sm:gap-y-0 sm:gap-x-2"></div>
-          </div>
-        </div></div>
+        <!-- Rendered by buildCarCard (vehicle-card.js) -->
+        <div id="published-card" class="av-card-shell w-full"></div>
       </section>
 
       <!-- FAQ section -->
@@ -555,8 +534,6 @@
     var NICON_FILL_WARN_OCT    = '<svg width="30" height="30" viewBox="0 0 30 31" fill="currentColor" aria-hidden="true"><path d="m26.638 9.957-6.04-6.04a1.89 1.89 0 0 0-1.326-.55h-8.543a1.89 1.89 0 0 0-1.327.55l-6.04 6.04a1.89 1.89 0 0 0-.55 1.326v8.543c.002.497.2.974.55 1.327l6.04 6.04c.353.35.83.548 1.327.55h8.543a1.89 1.89 0 0 0 1.326-.55l6.04-6.04c.35-.353.548-.83.55-1.327v-8.543a1.89 1.89 0 0 0-.55-1.326ZM14.062 9.93a.938.938 0 0 1 1.876 0v6.562a.938.938 0 0 1-1.876 0V9.93ZM15 22.117a1.407 1.407 0 1 1 0-2.813 1.407 1.407 0 0 1 0 2.813Z"/></svg>';
 
     // ── CarCard badge state config ──
-    var BTN_SEC     = 'w-full md:w-auto px-4 py-2 text-xs sm:text-sm font-medium rounded-lg bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 sm:order-2 text-center';
-    var BTN_GHOST   = 'w-full md:w-auto px-4 py-2 text-xs sm:text-sm font-medium rounded-lg bg-transparent hover:bg-blue-50 active:bg-blue-100 text-blue-600';
     var BTN_PRIMARY = 'inline-flex items-center px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium w-full sm:w-auto';
 
     function buildDraftNotifHtml(icon, iconColor, border, bg, regNo, title, content, ctaHtml) {
@@ -929,32 +906,14 @@
 
       renderDrafts(drafts);
 
-      // Car identity
-      document.getElementById('reg-number').textContent     = plate;
-      document.getElementById('timer-reg').textContent      = plate;
-      document.getElementById('car-make-model').textContent = merkki + ' ' + malli;
+      document.getElementById('timer-reg').textContent = plate;
 
-      var pills = document.getElementById('car-pills');
-      pills.innerHTML = '';
-      [vuosi, km.toLocaleString('fi-FI') + ' km', fuel].filter(Boolean).forEach(function(txt) {
-        var sp = document.createElement('span');
-        sp.className = 'px-1.5 py-0.5 text-xs text-slate-500 rounded border border-slate-200';
-        sp.textContent = txt;
-        pills.appendChild(sp);
-      });
-
-      // Car photo
+      // Car photo — also used by the draft cards
       var photos = s.photos || {}, photoMap = s.photoMap || {}, firstPhoto = null;
       ['ulkopuoli','sisatilat','huoltokirja','renkaat','naarmut','tuulilasi'].forEach(function(sec) {
         if (!firstPhoto && photos[sec] && photos[sec].length) firstPhoto = photos[sec][0];
       });
       if (!firstPhoto) { var keys = Object.keys(photoMap); if (keys.length) firstPhoto = photoMap[keys[0]]; }
-      if (firstPhoto) {
-        var img = document.getElementById('car-img');
-        img.src = firstPhoto;
-        img.classList.remove('hidden');
-        document.getElementById('car-placeholder').style.display = 'none';
-      }
 
       var sectionLive    = document.getElementById('section-live');
       var sectionUpdates = document.getElementById('section-updates');
@@ -968,12 +927,6 @@
       }
 
       sectionReqs.classList.remove('hidden');
-
-      var accEl = document.getElementById('car-accessories-text');
-      if (accEl) {
-        if (req.accessories) { accEl.textContent = req.accessories; accEl.classList.remove('hidden'); }
-        else { accEl.classList.add('hidden'); }
-      }
 
       var state = computeRequestState(req, negs);
       var cfg   = STATE_CFG[state] || STATE_CFG.auctionEnded;
@@ -1025,19 +978,33 @@
       // ── Notification (updates/main.vue) ──
       renderNotification(req, negs, state);
 
-      // ── CarCard badge ──
-      var badge = document.getElementById('status-badge');
-      badge.className = 'inline-flex items-center space-x-2 px-2 py-1 text-xs sm:text-sm rounded border ' + cfg.badge;
-      badge.innerHTML = cfg.icon + '<span>' + cfg.label + '</span>';
-
-      // ── CarCard CTAs ──
-      var ctaRow = document.getElementById('cta-row');
+      // ── Published car card — adapter: request state -> buildCarCard props ──
       var _cardHref = cfg.primaryHref === 'decision.html' ? decisionHref() : cfg.primaryHref;
-      var primaryBtn = _cardHref
-        ? '<a href="' + _cardHref + '" class="' + BTN_SEC + '" style="text-decoration:none">' + cfg.primaryText + '</a>'
-        : '<button class="' + BTN_SEC + ' cursor-pointer border-0"' + (state === 'auctionOngoing' ? ' data-action="open-edit-modal"' : state === 'negotiations' ? ' data-action="open-neg-modal"' : '') + '>' + cfg.primaryText + '</button>';
-      var ghostBtn = '<button class="' + BTN_GHOST + ' cursor-pointer border-0" data-action="open-modal">' + cfg.ghostText + '</button>';
-      ctaRow.innerHTML = primaryBtn + ghostBtn;
+      var _primaryAction = state === 'auctionOngoing' ? 'open-edit-modal'
+                         : state === 'negotiations'   ? 'open-neg-modal'
+                         : null;
+
+      document.getElementById('published-card').innerHTML = buildCarCard({
+        registrationNumber: plate,
+        make:  merkki,
+        model: malli,
+        year:     vuosi,
+        mileage:  km ? km.toLocaleString('fi-FI') + ' km' : null,
+        fuelType: fuel,
+        image: firstPhoto,
+        supportingText: req.accessories || null,
+
+        status: cfg.label,
+        statusColor: cfg.badge,
+        statusIcon: cfg.icon,
+
+        primaryCta: {
+          text: cfg.primaryText,
+          href: _cardHref || null,
+          attrs: (!_cardHref && _primaryAction) ? 'data-action="' + _primaryAction + '"' : ''
+        },
+        secondaryCta: { text: cfg.ghostText, attrs: 'data-action="open-modal"' }
+      });
     }
 
     renderPage();
