@@ -34,7 +34,7 @@
       '.av-card-shell{container-type:inline-size;}',
       '.av-card{display:flex;flex-direction:column;width:100%;height:auto;}',
       /* Stacked: prod's h-[220px] w-full photo. */
-      '.av-card__media{position:relative;height:220px;width:100%;flex-shrink:0;',
+      '.av-card__media{position:relative;height:220px;width:100%;flex-shrink:0;background:#88CFFF;',
       'display:flex;align-items:center;justify-content:center;overflow:hidden;}',
       '.av-card__body{width:100%;height:auto;}',
       /* Horizontal: prod's lg:w-[250px] photo column and lg:max-h-[250px] card.
@@ -55,6 +55,94 @@
     media: 'av-card__media',
     body: 'av-card__body'
   };
+
+  // ── buildCarCard(props) ───────────────────────────────────────────
+  // The one card renderer. Structure mirrors prod's CarCard.vue, so props
+  // mirror its props too — see CARD-COMPONENT-PLAN.md for the contract.
+  //
+  //   registrationNumber, make, model, modelSpecification,
+  //   year, mileage, fuelType, driveType, image,
+  //   status, statusColor, statusIcon,
+  //   primaryCtaText/primaryCtaAttrs, secondaryCtaText/secondaryCtaAttrs
+  //
+  // Proto-only extensions (no prod equivalent), kept explicit:
+  //   mediaOverlay  extra markup layered over the photo (price tag, badges)
+  //   mediaBottom   extra markup pinned to the photo's bottom edge
+  //   cardClass     extra classes on the card root (e.g. the success border)
+  //   ctaFullWidth  keep CTAs full-width instead of prod's right-aligned row
+  //
+  // Returns an HTML string. Callers own their own event wiring.
+  function buildCarCard(props) {
+    props = props || {};
+
+    var mediaInner = props.image
+      ? '<img src="' + esc(props.image) + '" class="absolute inset-0 w-full h-full object-cover" alt="" />'
+      // No photo — prod renders a plain bg-blue-300 with the white ph-car-simple icon.
+      : '<img src="assets/ph-car-simple-white.svg" class="relative z-10 w-[70px] h-[70px] opacity-60" alt="" />';
+
+    // prod: <div class="w-2 h-auto bg-blue-600 rounded-l-md" /> + bordered plate
+    var plateBadge =
+      '<div class="flex rounded-md">' +
+        '<div class="w-2 h-auto bg-av-blue rounded-l-md"></div>' +
+        '<div class="py-1 px-1.5 border border-l-0 rounded-r-md border-slate-200 font-dm text-xs sm:text-sm text-slate-800 whitespace-nowrap">' +
+          (esc(props.registrationNumber) || '\u2013') +
+        '</div>' +
+      '</div>';
+
+    var statusBadge = props.status
+      ? '<div class="inline-flex items-center space-x-2 px-2 py-1 font-dm text-xs sm:text-sm rounded border ' +
+          (props.statusColor || 'bg-slate-50 border-slate-200 text-slate-500') + '">' +
+          (props.statusIcon || '') + '<span>' + esc(props.status) + '</span>' +
+        '</div>'
+      : '';
+
+    var name = [props.make, props.model].filter(Boolean).map(esc).join(' ');
+
+    var pills = [props.year, props.mileage, props.driveType, props.fuelType]
+      .filter(Boolean)
+      .map(function (v) {
+        return '<span class="px-1.5 py-0.5 font-dm text-xs text-slate-500 rounded border border-slate-200">' + esc(v) + '</span>';
+      }).join('');
+
+    function cta(text, attrs, cls) {
+      if (!text) return '';
+      return '<button type="button" ' + (attrs || '') + ' class="' + cls + '">' + esc(text) + '</button>';
+    }
+    var btnWidth = props.ctaFullWidth ? 'w-full' : 'w-full md:w-auto';
+    var ctaRow = (props.primaryCtaText || props.secondaryCtaText)
+      ? '<div class="w-full flex items-center ' +
+          (props.ctaFullWidth ? 'flex-col gap-y-2' : 'md:justify-end flex-col sm:flex-row gap-y-4 sm:gap-y-0 sm:gap-x-2') + '">' +
+          cta(props.secondaryCtaText, props.secondaryCtaAttrs,
+              btnWidth + ' h-10 flex items-center justify-center rounded-lg border border-slate-200 font-dm font-medium text-sm text-av-blue cursor-pointer hover:bg-slate-50 transition-colors') +
+          cta(props.primaryCtaText, props.primaryCtaAttrs,
+              btnWidth + ' h-10 flex items-center justify-center rounded-lg font-dm font-medium text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 cursor-pointer transition-colors') +
+        '</div>'
+      : '';
+
+    return '' +
+      '<div class="av-card bg-white rounded-xl overflow-hidden ' + (props.cardClass || 'shadow-sm') + '">' +
+        '<div class="av-card__media">' +
+          mediaInner + (props.mediaBottom || '') + (props.mediaOverlay || '') +
+        '</div>' +
+        '<div class="av-card__body p-5 flex flex-col justify-between space-y-5">' +
+          '<div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">' +
+            plateBadge + statusBadge +
+          '</div>' +
+          '<div class="space-y-3">' +
+            '<div class="flex flex-col">' +
+              '<span class="font-dm text-base font-bold text-slate-900">' + (name || '\u2013') + '</span>' +
+              (props.modelSpecification
+                ? '<span class="font-dm text-sm text-slate-500 text-wrap">' + esc(props.modelSpecification) + '</span>'
+                : '') +
+            '</div>' +
+            '<div class="flex flex-wrap self-stretch gap-1.5 items-center">' + pills + '</div>' +
+          '</div>' +
+          ctaRow +
+        '</div>' +
+      '</div>';
+  }
+
+  window.buildCarCard = buildCarCard;
 
   // ── Storage ──
   const STORE_KEY = 'autovex_funnel';
@@ -144,61 +232,33 @@
          </div>`
       : '';
 
-    const imageInner = photo
-      ? `<img src="${photo}" class="absolute inset-0 w-full h-full object-cover" alt="" />${overlayTop}`
-      /* No photo — prod's CarCard placeholder: plain bg-blue-300 with a white
-         70x70 ph-car-simple icon. Prod has no background image behind it, so
-         the old faded car photo is dropped. Same treatment as offers.html. */
-      : `<img src="assets/ph-car-simple-white.svg"
-              class="relative z-10 w-[70px] h-[70px] opacity-60" alt="" />
-         ${amberBar}${overlayTop}`;
-
-    const cardBorder = options.successView ? 'border-2 border-av-blue' : 'border border-slate-200';
-
+    // ── Adapter: funnel store -> buildCarCard props ──
+    // Everything below is data mapping; the markup lives in buildCarCard.
     container.classList.add('av-card-shell');
+    container.innerHTML = buildCarCard({
+      registrationNumber: plate,
+      make:  details.merkki,
+      model: details.malli,
+      modelSpecification: trim,
+      year:     details.vuosimalli,
+      mileage:  hero.km ? fmtKm(hero.km) : '',
+      fuelType: details.polttoaine,
+      image: photo,
 
-    container.innerHTML = `
-      <div class="av-card bg-white rounded-xl ${cardBorder} shadow-md overflow-hidden">
+      // Draft badge — prod Preview.vue draftStatusConfig.open uses ph-bold-paperclip
+      status: t('card.draft'),
+      statusColor: 'bg-slate-50 border-slate-200 text-slate-500',
+      statusIcon: '<img src="assets/ph-bold-paperclip-slate.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />',
 
-        <!-- Image — 220px tall stacked, 250px wide column once the card is wide enough -->
-        <div class="av-card__media bg-[#88CFFF]">
-          ${imageInner}
-        </div>
+      secondaryCtaText: t('card.openDetails'),
+      secondaryCtaAttrs: 'id="av-open-modal-btn"',
+      ctaFullWidth: true,
 
-        <!-- Body -->
-        <div class="av-card__body flex flex-col gap-5 p-5">
-
-          <!-- Reg tag + badge -->
-          <div class="flex items-center justify-between w-full">
-            <div id="vehicle-card-plate-badge" class="border border-slate-200 rounded w-[78px] overflow-hidden">
-              <div class="border-l-4 border-av-blue bg-white flex items-center pl-2.5 pr-1.5 py-1.5">
-                <span class="font-dm text-sm leading-4 text-slate-800 whitespace-nowrap tracking-wider">${esc(plate) || '–'}</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded px-2 py-1">
-              <img src="assets/ph-bold-paperclip-slate.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />
-              <span class="font-dm font-medium text-sm text-slate-500">${t('card.draft')}</span>
-            </div>
-          </div>
-
-          <!-- Car info -->
-          <div class="flex flex-col gap-3 w-full">
-            <div>
-              <p class="font-dm font-bold text-base leading-5 text-slate-900">${esc(carName) || '–'}</p>
-              ${trim ? `<p class="font-dm text-sm leading-4 text-slate-500 mt-0.5">${esc(trim)}</p>` : ''}
-            </div>
-            <div class="flex flex-wrap gap-1.5">
-              ${tags.map(tag => `<span class="border border-slate-200 rounded px-1.5 py-0.5 font-dm text-xs leading-[14px] text-slate-500">${esc(tag)}</span>`).join('')}
-            </div>
-          </div>
-
-          <!-- CTA -->
-          <button id="av-open-modal-btn"
-            class="w-full h-10 flex items-center justify-center rounded-lg border border-slate-200 font-dm font-medium text-sm text-av-blue cursor-pointer hover:bg-slate-50 transition-colors">
-            ${t('card.openDetails')}
-          </button>
-        </div>
-      </div>`;
+      // Proto-only extensions
+      mediaOverlay: overlayTop,
+      mediaBottom: amberBar,
+      cardClass: (options.successView ? 'border-2 border-av-blue' : 'border border-slate-200') + ' shadow-md'
+    });
 
     document.getElementById('av-open-modal-btn').addEventListener('click', window.openAdModal);
   };
