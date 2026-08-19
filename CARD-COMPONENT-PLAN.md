@@ -75,6 +75,20 @@ Ordered by ascending risk. Each is independently verifiable and committable.
 **All four batches complete.** The card is now one component: `buildCarCard(props)`
 in `vehicle-card.js`, with three thin adapters mapping their own data into it.
 
+### Follow-on (done, outside the original four)
+
+- **`buildRegBadge(plate, opts)`** — the plate badge existed in four hand-rolled
+  copies. Consolidating it also fixed a regression batch 1 introduced: dropping
+  `#vehicle-card-plate-badge` silently stopped the Vue
+  `ARegistrationNumberBadge` from mounting, losing `bg-white`, `role="text"` and
+  the `aria-label` from every car card. Two renderers, one contract — see
+  COMPONENTS.md.
+- **Production blue scale added to 6 pages** (`contact`, `success`, `price`,
+  `services`, `photos`, `components`) per CLAUDE.md rule 4. `success.html`'s
+  action card was rendering Tailwind CDN `blue-500` (#3b82f6) instead of AutoVex
+  (#2890FF); `photos.html`'s add-slot hover and `components.html`'s status dots
+  had the same problem. All 12 pages now define the scale.
+
 ### Batch 1 — contract + renderer + funnel card `[x]` DONE
 - [x] `buildCarCard(props)` in `vehicle-card.js`, returning the full card markup
 - [x] `renderVehicleCard()` becomes a thin adapter: read localStorage → props → `buildCarCard`
