@@ -86,10 +86,17 @@ Ordered by ascending risk. Each is independently verifiable and committable.
 Lowest risk: the funnel card is already built in JS from a single store, so
 this is a refactor behind an unchanged public function.
 
-### Batch 2 — offers draft card `[ ]`
-- [ ] `buildDraftCard()` maps its draft object to props and calls `buildCarCard`
-- [ ] Delete the duplicated markup
-- [ ] Verify every `draft-*` scenario
+### Batch 2 — offers draft card `[x]` DONE
+- [x] `buildDraftCard()` maps its draft object to props and calls `buildCarCard`
+- [x] Delete the duplicated markup (54 lines)
+- [x] Verify every `draft-*` scenario: open, in_review, rejected, queued
+- [x] CTA contract upgraded to descriptors `{ text, href?, attrs? }` — the draft
+      card needs an `<a href>` for its primary action, which the earlier
+      text+attrs form couldn't express. Added `ctaSlot` for prod's `#actions`
+      slot equivalent. Default button styles are prod's UiButton secondary and
+      ghost variants (CLAUDE.md rule 8), replacing the funnel's bordered button.
+- [x] `ICON_CAR_PLACEHOLDER` removed from offers.html — buildCarCard renders the
+      placeholder itself.
 
 Low risk: also JS-built, straightforward data mapping. No id-based fill.
 

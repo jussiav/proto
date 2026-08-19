@@ -63,13 +63,14 @@
   //   registrationNumber, make, model, modelSpecification,
   //   year, mileage, fuelType, driveType, image,
   //   status, statusColor, statusIcon,
-  //   primaryCtaText/primaryCtaAttrs, secondaryCtaText/secondaryCtaAttrs
+  //   primaryCta / secondaryCta  { text, href?, attrs? }
   //
   // Proto-only extensions (no prod equivalent), kept explicit:
   //   mediaOverlay  extra markup layered over the photo (price tag, badges)
   //   mediaBottom   extra markup pinned to the photo's bottom edge
   //   cardClass     extra classes on the card root (e.g. the success border)
   //   ctaFullWidth  keep CTAs full-width instead of prod's right-aligned row
+  //   ctaSlot       raw markup replacing the CTA row (prod's #actions slot)
   //
   // Returns an HTML string. Callers own their own event wiring.
   function buildCarCard(props) {
@@ -104,20 +105,32 @@
         return '<span class="px-1.5 py-0.5 font-dm text-xs text-slate-500 rounded border border-slate-200">' + esc(v) + '</span>';
       }).join('');
 
-    function cta(text, attrs, cls) {
-      if (!text) return '';
-      return '<button type="button" ' + (attrs || '') + ' class="' + cls + '">' + esc(text) + '</button>';
+    // CTAs. prod's CarCard renders UiButton secondary (primary action) and ghost
+    // (secondary action), or an #actions slot. Descriptors are
+    // { text, href?, attrs? } — an href renders <a>, otherwise <button>.
+    var BTN_BASE = 'px-4 py-2 font-dm text-xs sm:text-sm font-medium rounded-lg text-center cursor-pointer transition-colors inline-flex items-center justify-center';
+    // UiButton variants — see CLAUDE.md rule 8
+    var BTN_SECONDARY = BTN_BASE + ' bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 sm:order-2';
+    var BTN_GHOST     = BTN_BASE + ' bg-transparent hover:bg-blue-50 active:bg-blue-100 text-blue-600';
+
+    function cta(desc, variantCls, widthCls) {
+      if (!desc || !desc.text) return '';
+      var cls = widthCls + ' ' + variantCls;
+      var attrs = desc.attrs || '';
+      return desc.href
+        ? '<a href="' + esc(desc.href) + '" ' + attrs + ' class="' + cls + '" style="text-decoration:none">' + esc(desc.text) + '</a>'
+        : '<button type="button" ' + attrs + ' class="' + cls + '">' + esc(desc.text) + '</button>';
     }
+
     var btnWidth = props.ctaFullWidth ? 'w-full' : 'w-full md:w-auto';
-    var ctaRow = (props.primaryCtaText || props.secondaryCtaText)
-      ? '<div class="w-full flex items-center ' +
-          (props.ctaFullWidth ? 'flex-col gap-y-2' : 'md:justify-end flex-col sm:flex-row gap-y-4 sm:gap-y-0 sm:gap-x-2') + '">' +
-          cta(props.secondaryCtaText, props.secondaryCtaAttrs,
-              btnWidth + ' h-10 flex items-center justify-center rounded-lg border border-slate-200 font-dm font-medium text-sm text-av-blue cursor-pointer hover:bg-slate-50 transition-colors') +
-          cta(props.primaryCtaText, props.primaryCtaAttrs,
-              btnWidth + ' h-10 flex items-center justify-center rounded-lg font-dm font-medium text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 cursor-pointer transition-colors') +
-        '</div>'
-      : '';
+    var ctaRow = props.ctaSlot ? props.ctaSlot
+      : (props.primaryCta || props.secondaryCta)
+        ? '<div class="w-full flex items-center ' +
+            (props.ctaFullWidth ? 'flex-col gap-y-2' : 'md:justify-end flex-col sm:flex-row gap-y-4 sm:gap-y-0 sm:gap-x-2') + '">' +
+            cta(props.secondaryCta, BTN_GHOST, btnWidth) +
+            cta(props.primaryCta, BTN_SECONDARY, btnWidth) +
+          '</div>'
+        : '';
 
     return '' +
       '<div class="av-card bg-white rounded-xl overflow-hidden ' + (props.cardClass || 'shadow-sm') + '">' +
@@ -250,8 +263,7 @@
       statusColor: 'bg-slate-50 border-slate-200 text-slate-500',
       statusIcon: '<img src="assets/ph-bold-paperclip-slate.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />',
 
-      secondaryCtaText: t('card.openDetails'),
-      secondaryCtaAttrs: 'id="av-open-modal-btn"',
+      secondaryCta: { text: t('card.openDetails'), attrs: 'id="av-open-modal-btn"' },
       ctaFullWidth: true,
 
       // Proto-only extensions
