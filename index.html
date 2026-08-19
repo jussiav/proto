@@ -113,6 +113,7 @@
 <body class="font-dm bg-white text-slate-900">
 
   <div id="site-nav"></div>
+  <script src="site-nav.js"></script>
 
   <main>
 
@@ -1052,52 +1053,6 @@
   <script src="layout.js"></script>
   <script src="vehicle-card.js"></script>
   <script>
-    (function () {
-      var navWhite = document.getElementById('nav-white');
-      var hero     = document.getElementById('hero-section');
-      var lastY    = window.scrollY || 0;
-      var NAV_H    = 96; // matches h-24
-      // White nav hides when hero top gets within this many px of the nav bottom
-      var HIDE_OFFSET = 20;
-
-      function showWhite() { navWhite.style.transform = 'translateY(0)'; }
-      function hideWhite() { navWhite.style.transform = 'translateY(-100%)'; }
-
-      window.addEventListener('scroll', function () {
-        var y          = window.scrollY;
-        var heroBottom = hero.getBoundingClientRect().bottom;
-        var heroTop    = hero.getBoundingClientRect().top;
-        var scrollingUp = y < lastY;
-
-        // At very top: always hide white nav
-        if (y <= 0) {
-          hideWhite();
-          lastY = 0;
-          return;
-        }
-
-        if (scrollingUp) {
-          if (heroBottom < 0) {
-            // Hero is entirely above the viewport — show white nav
-            showWhite();
-          } else {
-            // Hero has re-entered the viewport; hide white nav only once its
-            // top edge is close to the white nav's bottom (nearly touching blue nav)
-            if (heroTop >= NAV_H - HIDE_OFFSET) {
-              hideWhite();
-            }
-            // else: hero top is still well below the nav — keep white nav visible
-          }
-        } else {
-          // Scrolling down: always hide white nav
-          hideWhite();
-        }
-
-        lastY = y;
-      }, { passive: true });
-    })();
-  </script>
-  <script>
     const STORE_KEY = 'autovex_funnel';
     function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch { return {}; } }
     function setStore(data) { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch(e) {} }
@@ -1197,10 +1152,8 @@
       const raw = ((store.contact || {}).kokoNimi || '').trim();
       const name = raw ? raw.split(' ')[0] : null;
       const label = name || t('nav.login');
-      const blue = document.getElementById('nav-login-label');
-      const white = document.querySelector('#nav-white [data-i18n="nav.login"]');
-      if (blue) blue.textContent = label;
-      if (white) white.textContent = label;
+      const navLabel = document.getElementById('nav-login-label');
+      if (navLabel) navLabel.textContent = label;
     }
 
     document.addEventListener('DOMContentLoaded', function() {

@@ -32,7 +32,15 @@ These rules apply to all new pages and components in this prototype, without exc
 
 9. **Accordion/FAQ.** Use the MAccordion pattern: `<details class="group peer">` + sibling content div with `grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity]`. Item wrapper: `bg-white p-3 rounded-md`. Title: `text-sm text-gray-700 group-open:font-bold`. Icons: `caret-down`/`caret-up` 16×16 `text-slate-500`. List gap: `space-y-2.5`. FAQ content comes from `faq.sellers_profile_faqs` in `vue-i18n-locales.generated.js` — all items, exact HTML.
 
-10. **Nav bar (white).** Fixed, `h-20 bg-white`, followed by spacer `<div class="h-20 bg-blue-50">`. Contains: AutoVex logo (left) + "Aloita kilpailutus" primary blue button (desktop only, hidden mobile) + account-filled icon + "Kirjaudu" label (right). Source: `ONavigationBar.vue` + `Header.astro`.
+10. **Nav bar — one shared definition, `site-nav.js`.** Never inline nav markup in a page and never re-add nav HTML to `layout.js`. A page opts in with `<div id="site-nav"></div>` followed immediately by `<script src="site-nav.js"></script>` (the script must come right after the mount so the nav exists before any inline page script that reads `#nav-login-label`).
+
+    Blue variant, matching prod `ONavigationBar.vue` with `color="blue"`: spacer `<div class="h-20 bg-av-blue">` then a single `fixed h-20 bg-av-blue z-50` header, inner `nav` at `max-w-[1440px] mx-auto px-6` (prod's `max-w-screen-xxl`; `screens.xxl = 1440px`). White logo, menu items pushed right with `ml-16`, "Aloita kilpailutus" CTA (`lg:` and up only) + account icon + "Kirjaudu" label on the right.
+
+    **Scroll = headroom.** One nav, no second white nav. Pinned within the top 96px; scrolling down past that unpins it (`translateY(-100%)`), scrolling up pins it back. `transition: transform 200ms linear`. Ported from prod's `useHeadRoom.js` (headroom.js, offset 96) + `sass/headroom.scss`.
+
+    **Funnel pages have no nav** (details/price/services/photos/contact/success) — they omit both the mount and the script. Currently on the nav: `index.html`, `help.html`, `dac7.html`, `decision.html`, `offers.html`.
+
+    Prod source: `ONavigationBar.vue`, `Header.astro`, `useHeadRoom.js`. Note the 2026-08-14 codebase dump is **stale for nav colour** — it still has `color="white"` on app pages (`auth/index.vue`, `offers/landing`, `offers/decision`), but live autovex.fi renders `bg-blue` there. Treat the live site as authoritative for the nav.
 
 ## Current Work: Offers + Decision Pages
 

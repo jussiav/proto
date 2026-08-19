@@ -1,76 +1,13 @@
 /**
- * Shared site layout: nav + footer.
+ * Shared site footer + prototype-wide script loading.
+ *
+ * The site nav lives in site-nav.js — one definition shared by every
+ * non-funnel page. Do not re-add nav markup here.
+ *
  * Runs synchronously during parsing so data-i18n attributes are present
  * before i18n.js fires on DOMContentLoaded.
  */
 (function () {
-  var path = window.location.pathname;
-  var isHelp = path.indexOf('help') !== -1;
-
-  var faqBlue  = isHelp ? 'opacity-100 font-bold whitespace-nowrap'                           : 'opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap';
-  var faqWhite = isHelp ? 'font-bold text-av-blue whitespace-nowrap'                          : 'opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap';
-
-  /* ── nav-cta-visible rule (shared across pages) ── */
-  var style = document.createElement('style');
-  style.textContent = '.nav-cta-visible{display:none}@media(min-width:768px){.nav-cta-visible{display:flex}}';
-  document.head.appendChild(style);
-
-  /* ── Nav HTML ── */
-  var NAV_HTML =
-    '<nav id="nav-blue" class="h-24 flex items-center justify-center px-10 max-md:px-5 bg-av-blue">' +
-      '<div class="flex items-center justify-between w-full max-w-[1366px]">' +
-        '<div class="flex-shrink-0 flex items-center">' +
-          '<a href="index.html" aria-label="AutoVex etusivu">' +
-            '<img id="nav-logo" src="assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"' +
-            ' class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />' +
-          '</a>' +
-        '</div>' +
-        '<ul id="nav-links" class="hidden md:flex items-center gap-7 font-dm font-medium text-base text-white list-none transition-colors duration-300">' +
-          '<li><a href="#" class="opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap" data-i18n="nav.reviews">Kokemuksia</a></li>' +
-          '<li><a href="#" class="opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap" data-i18n="nav.forSellers">Auton myyjälle</a></li>' +
-          '<li><a href="#" class="opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap" data-i18n="nav.blog">Blogi</a></li>' +
-          '<li><a href="help.html" class="' + faqBlue + '" data-i18n="nav.faq">Tuki</a></li>' +
-        '</ul>' +
-        '<div class="flex-shrink-0 flex items-center gap-3.5 justify-end ml-auto md:ml-0">' +
-          '<a id="nav-cta" href="#"' +
-          ' class="hidden items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-medium text-base rounded-lg whitespace-nowrap"' +
-          ' style="box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);"' +
-          ' data-i18n="nav.startAuction">Aloita kilpailutus</a>' +
-          '<a id="nav-login" href="#" class="flex flex-col items-center gap-0.5 px-1.5 transition-colors duration-300">' +
-            '<img id="nav-login-icon" src="assets/nav-user-white.svg" alt="" class="w-6 h-6" />' +
-            '<span id="nav-login-label" class="font-dm font-bold text-[11px] leading-[15px] text-white whitespace-nowrap" data-i18n="nav.login">Kirjaudu</span>' +
-          '</a>' +
-        '</div>' +
-      '</div>' +
-    '</nav>' +
-    '<nav id="nav-white"' +
-    ' class="fixed top-0 left-0 right-0 z-50 h-24 flex items-center justify-center px-10 max-md:px-5 bg-white shadow-md"' +
-    ' style="transform:translateY(-100%);transition:transform 0.3s ease;">' +
-      '<div class="flex items-center justify-between w-full max-w-[1366px]">' +
-        '<div class="flex-shrink-0 flex items-center">' +
-          '<a href="index.html" aria-label="AutoVex etusivu">' +
-            '<img id="nav-logo-white" src="assets/logo-blue.svg" alt="AutoVex" class="w-[107px] h-[22px] flex-shrink-0 object-contain" />' +
-          '</a>' +
-        '</div>' +
-        '<ul class="hidden md:flex flex-1 min-w-0 overflow-hidden items-center justify-center gap-7 font-dm font-medium text-base text-slate-700 list-none px-6">' +
-          '<li><a href="#" class="opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap" data-i18n="nav.reviews">Kokemuksia</a></li>' +
-          '<li><a href="#" class="opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap" data-i18n="nav.forSellers">Auton myyjälle</a></li>' +
-          '<li><a href="#" class="opacity-80 hover:opacity-100 transition-opacity whitespace-nowrap" data-i18n="nav.blog">Blogi</a></li>' +
-          '<li><a href="help.html" class="' + faqWhite + '" data-i18n="nav.faq">Tuki</a></li>' +
-        '</ul>' +
-        '<div class="flex-shrink-0 flex items-center gap-3.5 justify-end">' +
-          '<a href="#"' +
-          ' class="nav-cta-visible items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg whitespace-nowrap hover:bg-[#0A59EB] transition-colors"' +
-          ' style="box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);"' +
-          ' onclick="window.scrollTo({top:0,behavior:\'smooth\'});return false;"' +
-          ' data-i18n="nav.startAuction">Aloita kilpailutus</a>' +
-          '<a href="#" class="flex flex-col items-center gap-0.5 px-1.5">' +
-            '<img id="nav-login-icon-white" src="assets/nav-user-blue.svg" alt="" class="w-6 h-6" />' +
-            '<span class="font-dm font-bold text-[11px] leading-[15px] text-av-blue whitespace-nowrap" data-i18n="nav.login">Kirjaudu</span>' +
-          '</a>' +
-        '</div>' +
-      '</div>' +
-    '</nav>';
 
   /* ── Footer HTML ── */
   var FOOTER_HTML =
@@ -143,37 +80,13 @@
             '</select>' +
           '</div>' +
           '<span class="font-dm font-normal" data-i18n="footer.copyright">© 2025 All rights reserved</span>' +
-          '<span class="font-dm font-normal opacity-50 text-sm">Updated 19.08.26 klo 11.06</span>' +
+          '<span class="font-dm font-normal opacity-50 text-sm">Updated 19.08.26 klo 11.42</span>' +
         '</div>' +
       '</div>' +
       '<div class="w-full max-w-[1388px] px-5">' +
         '<img id="footer-logo" src="assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />' +
       '</div>' +
     '</footer>';
-
-  /* ── Inject ── */
-  var navEl = document.getElementById('site-nav');
-  if (navEl) navEl.innerHTML = NAV_HTML;
-
-  /* ── Login state — show first name if stored ──
-     Registered as a DOMContentLoaded listener so it fires AFTER i18n.js's
-     listener (i18n registers in <head>, we register here in body). This
-     guarantees our name overwrites the "Kirjaudu" i18n just applied. */
-  (function () {
-    try {
-      var s = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
-      var raw = ((s.contact || {}).kokoNimi || '').trim();
-      var name = raw ? raw.split(' ')[0] : null;
-      if (name) {
-        document.addEventListener('DOMContentLoaded', function () {
-          var blue = document.getElementById('nav-login-label');
-          if (blue) blue.textContent = name;
-          var white = document.querySelector('#nav-white [data-i18n="nav.login"]');
-          if (white) white.textContent = name;
-        });
-      }
-    } catch (e) {}
-  })();
 
   var footerEl = document.getElementById('site-footer');
   if (footerEl) footerEl.outerHTML = FOOTER_HTML;
@@ -206,17 +119,6 @@
   var sdScript = document.createElement('script');
   sdScript.src = 'vue-tests/dist/save-draft.js';
   document.body.appendChild(sdScript);
-
-  /* ── Simple nav scroll for pages without a full-screen hero ── */
-  window.SiteLayout = {
-    initSimpleNavScroll: function () {
-      var navWhite = document.getElementById('nav-white');
-      if (!navWhite) return;
-      window.addEventListener('scroll', function () {
-        navWhite.style.transform = window.scrollY > 80 ? 'translateY(0)' : 'translateY(-100%)';
-      }, { passive: true });
-    }
-  };
 
   /* ── Prototype instructions modal ── */
   /* UPDATE THIS SECTION whenever a new conditional flow is added to the prototype */

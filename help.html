@@ -54,6 +54,7 @@
 <body class="font-dm bg-white text-slate-900">
 
   <div id="site-nav"></div>
+  <script src="site-nav.js"></script>
 
   <main>
 
@@ -586,7 +587,6 @@
 
   <script src="layout.js"></script>
   <script>
-    SiteLayout.initSimpleNavScroll();
 
     /* ── FAQ translations (JS-managed, avoids ~74 individual data-i18n attrs) ── */
     var A = function(text) { return { q: text[0], a: text[1] }; };
