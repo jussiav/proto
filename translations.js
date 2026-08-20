@@ -32,7 +32,7 @@ window.TRANSLATIONS = {
     hero: {
       title:              'Kilpailutamme autoliikkeet puolestasi',
       subtitle:           'Ilmoita ilmaiseksi, myy eniten tarjoavalle autoliikkeelle.',
-      platePlaceholder:   'REKISTERINUMERO',
+      platePlaceholder:   'ABC-123',
       mileagePlaceholder: 'AJOKILOMETRIT',
       cta:                'Hae auton tiedot',
       ratingCount:        '7000+ arvostelua',
@@ -622,7 +622,7 @@ window.TRANSLATIONS = {
     hero: {
       title:              'We auction your car to dealerships',
       subtitle:           'List for free, sell to the highest bidding dealership.',
-      platePlaceholder:   'REGISTRATION',
+      platePlaceholder:   'ABC-123',
       mileagePlaceholder: 'MILEAGE',
       cta:                'Find my car',
       ratingCount:        '7,000+ reviews',
