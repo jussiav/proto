@@ -623,77 +623,7 @@
       }, 1200);
     }
 
-    // ── Floating "Scenario" selector — forces one of prod's 6 real draftStatus branches.
-    // No footer exists on this page, so it's a fixed bottom-right control (same drawer
-    // pattern as offers.html's footer-anchored one). ──
-    (function () {
-      if (!window.protoDev) return;   // proto tooling hidden in test mode
-      var ROWS = [
-        { id: null, label: 'Live simulation (photos/email)' },
-        { id: 'rejected', label: 'Rejected' },
-        { id: 'rejected-missing-images', label: 'Rejected — missing photos' },
-        { id: 'in-review-unverified', label: 'In review — email not verified' },
-        { id: 'in-review-verified', label: 'In review — email verified', variants: true },
-        { id: 'queued', label: 'Queued — email not verified' },
-        { id: 'published', label: 'Published (auction live)' },
-      ];
-
-      var wrap = document.createElement('div');
-      wrap.setAttribute('data-proto-dev', '');
-      wrap.style.cssText = 'position:fixed;bottom:16px;right:16px;z-index:9999;font-family:system-ui,sans-serif;';
-
-      var toggle = document.createElement('button');
-      toggle.style.cssText = 'background:#0B6DFF;color:#fff;border:none;border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.2);';
-      toggle.textContent = 'Scenario';
-
-      var drawer = document.createElement('div');
-      drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:280px;max-height:420px;overflow-y:auto;padding:8px 0;';
-
-      ROWS.forEach(function (row) {
-        var cur = row.id === null ? !FORCED_SCENARIO : FORCED_SCENARIO === row.id;
-        var container = document.createElement('div');
-        container.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
-        container.innerHTML = cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>';
-
-        var main = document.createElement('a');
-        main.href = row.id ? ('success.html?scenario=' + row.id + (row.variants ? '&copy=default' : '')) : 'success.html';
-        main.style.cssText = 'text-decoration:none;color:inherit;';
-        main.textContent = row.label;
-        container.appendChild(main);
-
-        if (row.variants) {
-          var variants = document.createElement('span');
-          variants.style.cssText = 'color:#94a3b8;';
-          variants.appendChild(document.createTextNode(' ('));
-          [['default', '1'], ['soon', '2'], ['tomorrow', '3'], ['next_work_day', '4']].forEach(function (pair, vi) {
-            if (vi > 0) variants.appendChild(document.createTextNode(','));
-            var vActive = cur && (pair[0] === 'default' ? !FORCED_COPY : FORCED_COPY === pair[0]);
-            var vLink = document.createElement('a');
-            vLink.href = 'success.html?scenario=' + row.id + '&copy=' + pair[0];
-            vLink.title = pair[0].replace(/_/g, ' ');
-            vLink.style.cssText = 'text-decoration:underline;color:' + (vActive ? '#0B6DFF' : '#94a3b8') + ';font-weight:' + (vActive ? '700' : '400') + ';';
-            vLink.textContent = pair[1];
-            variants.appendChild(vLink);
-          });
-          variants.appendChild(document.createTextNode(')'));
-          container.appendChild(variants);
-        }
-
-        container.addEventListener('mouseover', function () { if (!cur) container.style.background = '#f8fafc'; });
-        container.addEventListener('mouseout', function () { if (!cur) container.style.background = 'transparent'; });
-
-        drawer.appendChild(container);
-      });
-
-      var open = false;
-      toggle.addEventListener('click', function () { open = !open; drawer.style.display = open ? 'block' : 'none'; });
-      document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
-      document.addEventListener('click', function (e) { if (open && !wrap.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
-
-      wrap.appendChild(drawer);
-      wrap.appendChild(toggle);
-      document.body.appendChild(wrap);
-    })();
+    /* Scenario selector moved to the shared proto bar (proto-bar.js). */
   </script>
 
   <style>
@@ -741,5 +671,6 @@
 
   <script src="mobile-upload-widget.js"></script>
   <script src="layout.js"></script>
+  <script src="proto-bar.js"></script>
 </body>
 </html>

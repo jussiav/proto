@@ -59,7 +59,7 @@
        <head> before body parsing so panels never flash into view. */
     var style = document.createElement('style');
     style.id = 'proto-mode-style';
-    style.textContent = '[data-proto-dev],#scenario-anchor{display:none !important}';
+    style.textContent = '[data-proto-dev]{display:none !important}';
     document.head.appendChild(style);
 
     if (window.console && console.info) {

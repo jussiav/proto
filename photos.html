@@ -973,90 +973,14 @@
       { id: 'empty',  label: 'Empty (default)' },
       { id: 'filled', label: 'Photos filled' },
     ];
+    window.protoPage = { scenarios: [{ id: 'empty', label: 'Empty (default)' }, { id: 'filled', label: 'Photos filled' }] };   // consumed by proto-bar.js
 
-    var toggle = document.createElement('button');
-    toggle.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.8);font-size:13px;font-weight:400;cursor:pointer;padding:0;text-decoration:underline;font-family:system-ui,sans-serif;';
-    toggle.textContent = 'Scenario';
-
-    var drawer = document.createElement('div');
-    drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:200px;overflow:hidden;padding:8px 0;z-index:9999;';
-
-    function _panelSetActive(id) {
-      _PHOTO_SCENARIO = id;
-      history.replaceState(null, '', id ? 'photos.html?scenario=' + id : 'photos.html');
-      Array.from(drawer.querySelectorAll('a')).forEach(function(el) {
-        var isNow = el.dataset.scid === (id || '');
-        el.style.color      = isNow ? '#0B6DFF' : '#334155';
-        el.style.background = isNow ? '#EEF6FA' : 'transparent';
-        el.style.fontWeight = isNow ? '700' : '400';
-        el.querySelector('.sc-dot').style.display = isNow ? 'inline' : 'none';
-        el.querySelector('.sc-gap').style.display = isNow ? 'none' : 'inline-block';
-      });
-      drawer.style.display = 'none';
-    }
-
-    SCENARIOS.forEach(function(sc) {
-      var cur = _PHOTO_SCENARIO === sc.id;
-      var a = document.createElement('a');
-      a.href = '#';
-      a.dataset.scid = sc.id || '';
-      a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
-      var dot = document.createElement('svg'); dot.setAttribute('width','8'); dot.setAttribute('height','8'); dot.setAttribute('viewBox','0 0 8 8'); dot.innerHTML = '<circle cx="4" cy="4" r="4" fill="#0B6DFF"/>'; dot.className = 'sc-dot'; dot.style.display = cur ? 'inline' : 'none'; dot.style.flexShrink = '0';
-      var gap = document.createElement('span'); gap.className = 'sc-gap'; gap.style.cssText = 'width:8px;display:' + (cur ? 'none' : 'inline-block') + ';flex-shrink:0;';
-      a.appendChild(dot); a.appendChild(gap); a.appendChild(document.createTextNode(sc.label));
-      a.addEventListener('mouseover', function() { if (_PHOTO_SCENARIO !== sc.id) this.style.background = '#f8fafc'; });
-      a.addEventListener('mouseout',  function() { if (_PHOTO_SCENARIO !== sc.id) this.style.background = 'transparent'; });
-      a.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (sc.id === 'empty') {
-          _clearPhotosNow();
-          _panelSetActive('empty');
-        } else if (sc.id === 'filled') {
-          _clearPhotosNow();
-          _loadFilledScenario();
-          _panelSetActive('filled');
-        }
-      });
-      drawer.appendChild(a);
-    });
-
-    toggle.addEventListener('click', function() {
-      drawer.style.display = drawer.style.display === 'none' ? 'block' : 'none';
-    });
-    document.addEventListener('click', function(e) {
-      var _anch = document.getElementById('scenario-anchor');
-      if (_anch && !_anch.contains(e.target)) drawer.style.display = 'none';
-    });
-
-    window.addEventListener('DOMContentLoaded', function() {
-      if (!window.protoDev) return;   // proto tooling hidden in test mode
-      var _anchor = document.getElementById('scenario-anchor');
-      if (_anchor) { _anchor.appendChild(drawer); _anchor.appendChild(toggle); }
-    });
+    /* Scenario drawer moved to the shared proto bar (proto-bar.js). */
   })();
 </script>
+  <!-- No footer: funnel pages have none. This one existed only to host the
+       scenario drawer, now on the shared proto bar (proto-bar.js). -->
 
-  <footer class="bg-av-blue flex flex-col items-center gap-[38px] pt-14 pb-14">
-    <div class="flex flex-col gap-3.5 w-full max-w-[1388px] px-5">
-      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
-        <div class="flex gap-3.5 font-body font-bold flex-wrap">
-          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Käyttöehdot</a>
-          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Tietosuojakäytäntö</a>
-          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Evästekäytäntö</a>
-        </div>
-        <div class="flex items-center gap-4 font-body text-sm text-white">
-          <span>Kieli</span>
-          <select class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
-            <option value="fi">Suomi</option><option value="en">English</option>
-          </select>
-          <span id="scenario-anchor" data-proto-dev class="relative inline-flex"></span>
-          <span class="font-body font-normal">© 2025 All rights reserved</span>
-        </div>
-      </div>
-    </div>
-    <div class="w-full max-w-[1388px] px-5">
-      <img src="assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
-    </div>
-  </footer>
+  <script src="proto-bar.js"></script>
 </body>
 </html>

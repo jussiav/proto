@@ -132,6 +132,20 @@
       return DELIVERY_VARIANTS.includes(p) ? p : 'v2';
     })();
 
+    /* The delivery selector is a design CANDIDATE, not a state of the world, so
+       it goes on the bar's Variant row. Note the default is v2, not control. */
+    window.protoPage = {
+      variantParam: 'delivery',
+      variantDefault: 'v2',        // what the page renders with no param
+
+      variants: [
+        { id: 'control', label: 'Control — current design' },
+        { id: 'v1',      label: 'Variant 1 — no slider, no default' },
+        { id: 'v2',      label: 'Variant 2 — ±50 km steppers (default)' },
+        { id: 'cards',   label: 'Variant 3 — option cards' }
+      ]
+    };
+
     const carModels = {
       'Audi':          ['A1','A3','A4','A5','A6','A7','A8','e-tron','Q2','Q3','Q5','Q7','Q8','TT','RS3','RS6','S3','S5','SQ5','etron GT'],
       'BMW':           ['1 Series','2 Series','3 Series','4 Series','5 Series','7 Series','8 Series','X1','X2','X3','X4','X5','X6','X7','iX','iX3','M3','M5','Z4','i4'],
@@ -573,55 +587,7 @@
         saveDetails();
       });
 
-      // ── Floating delivery-variant switcher (prototype tool) ──
-      (function () {
-        if (!window.protoDev) return;   // proto tooling hidden in test mode
-        const VARIANT_GROUPS = [
-          { group: 'A/B test', items: [
-            { id: 'control', label: 'Control — current design' },
-            { id: 'v1',      label: 'Variant 1 — no slider, no default' },
-            { id: 'v2',      label: 'Variant 2 — ±50 km steppers' },
-          ]},
-        ];
-        const anchor = document.createElement('div');
-        anchor.id = 'delivery-variant-anchor';
-        anchor.setAttribute('data-proto-dev', '');
-        anchor.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:9998;font-family:system-ui,sans-serif;';
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.textContent = 'Delivery UI';
-        btn.style.cssText = 'background:#08234D;color:#fff;border:none;border-radius:999px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.25);';
-        const drawer = document.createElement('div');
-        drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:210px;padding:8px 0;';
-        VARIANT_GROUPS.forEach(function (grp, gi) {
-          if (gi > 0) {
-            const sep = document.createElement('div');
-            sep.style.cssText = 'height:1px;background:#e2e8f0;margin:4px 0;';
-            drawer.appendChild(sep);
-          }
-          const hdr = document.createElement('div');
-          hdr.style.cssText = 'padding:6px 14px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
-          hdr.textContent = grp.group;
-          drawer.appendChild(hdr);
-          grp.items.forEach(function (v) {
-            const cur = v.id === deliveryVariant;
-            const a = document.createElement('a');
-            a.href = 'details.html?delivery=' + v.id;
-            a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
-            a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + v.label;
-            a.addEventListener('mouseover', function () { if (!cur) this.style.background = '#f8fafc'; });
-            a.addEventListener('mouseout',  function () { if (!cur) this.style.background = 'transparent'; });
-            drawer.appendChild(a);
-          });
-        });
-        let open = false;
-        btn.addEventListener('click', function () { open = !open; drawer.style.display = open ? 'block' : 'none'; });
-        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
-        document.addEventListener('click', function (e) { if (open && !anchor.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
-        anchor.appendChild(drawer);
-        anchor.appendChild(btn);
-        document.body.appendChild(anchor);
-      })();
+      /* Delivery-variant switcher moved to the shared proto bar (proto-bar.js). */
 
       // ── Card display ──
       function updateCard() {
@@ -1376,5 +1342,6 @@
   <div class="hidden bg-slate-200 hover:bg-slate-200 active:bg-slate-200 !text-slate-300 pointer-events-none cursor-not-allowed bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 active:text-blue-700" aria-hidden="true"></div>
   <script src="vue-tests/dist/delivery-stepper.js"></script>
   <script src="layout.js"></script>
+  <script src="proto-bar.js"></script>
 </body>
 </html>

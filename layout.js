@@ -71,7 +71,6 @@
             '<a href="#" class="hover:underline" data-i18n="footer.cookies">Evästekäytäntö</a>' +
           '</div>' +
           '<div class="flex items-center gap-4 font-dm text-sm text-white">' +
-            '<button data-proto-dev onclick="window.__protoModal&&window.__protoModal.open()" class="font-dm text-sm text-white/70 hover:text-white underline underline-offset-2 cursor-pointer bg-transparent border-none p-0">Prototype instructions</button>' +
             '<span data-i18n="footer.language">Kieli</span>' +
             '<select id="lang-selector" onchange="setLang(this.value)"' +
             ' class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-dm cursor-pointer">' +
@@ -80,7 +79,7 @@
             '</select>' +
           '</div>' +
           '<span class="font-dm font-normal" data-i18n="footer.copyright">© 2025 All rights reserved</span>' +
-          '<span class="font-dm font-normal opacity-50 text-sm">Updated 20.08.26 klo 10.47</span>' +
+          '<span class="font-dm font-normal opacity-50 text-sm">Updated 20.08.26 klo 13.23</span>' +
         '</div>' +
       '</div>' +
       '<div class="w-full max-w-[1388px] px-5">' +

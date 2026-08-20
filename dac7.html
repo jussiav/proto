@@ -201,7 +201,6 @@
           <a href="#" class="hover:underline" style="text-decoration:none;color:inherit">Evästekäytäntö</a>
         </div>
         <div class="flex items-center gap-4 font-body text-sm text-white">
-          <span id="scenario-anchor" class="relative inline-flex"></span>
           <span class="font-body font-normal">© 2026 All rights reserved</span>
         </div>
       </div>
@@ -349,64 +348,10 @@
 
   <script>
     // Scenario panel
-    (function() {
-      var SCENARIOS = [
-        { id: null,         label: 'Empty (default)' },
-        { id: 'returning',  label: 'Returning user'  },
-      ];
-
-      var anchor = document.getElementById('scenario-anchor');
-
-      var btn = document.createElement('button');
-      btn.textContent = 'Scenario';
-      btn.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.8);font-size:13px;font-weight:400;cursor:pointer;padding:0;text-decoration:underline;font-family:"DM Sans",sans-serif;';
-
-      var menu = document.createElement('div');
-      menu.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 24px rgba(0,0,0,0.12);padding:6px;min-width:180px;z-index:9999;';
-
-      var _currentScenario = new URLSearchParams(window.location.search).get('scenario');
-
-      SCENARIOS.forEach(function(sc) {
-        var item = document.createElement('button');
-        var isActive = sc.id === _currentScenario;
-        item.textContent = (isActive ? '✓ ' : '') + sc.label;
-        item.style.cssText = 'display:block;width:100%;text-align:left;background:' + (isActive ? '#EEF6FA' : 'transparent') + ';border:none;border-radius:6px;padding:7px 10px;font-size:13px;font-weight:' + (isActive ? '600' : '400') + ';color:#1e293b;cursor:pointer;';
-        item.addEventListener('mouseenter', function() { if (!isActive) this.style.background = '#f8fafc'; });
-        item.addEventListener('mouseleave', function() { if (!isActive) this.style.background = 'transparent'; });
-        item.addEventListener('click', function() {
-          _currentScenario = sc.id;
-          history.replaceState(null, '', sc.id ? 'dac7.html?scenario=' + sc.id : 'dac7.html');
-          menu.style.display = 'none';
-          // Update form
-          if (sc.id === 'returning') {
-            window._dac7ApplyReturning();
-          } else {
-            window._dac7ApplyDefault();
-          }
-          // Refresh active state in menu
-          menu.querySelectorAll('button').forEach(function(b, i) {
-            var s = SCENARIOS[i];
-            var active = s.id === _currentScenario;
-            b.textContent = (active ? '✓ ' : '') + s.label;
-            b.style.background = active ? '#EEF6FA' : 'transparent';
-            b.style.fontWeight  = active ? '600' : '400';
-          });
-        });
-        menu.appendChild(item);
-      });
-
-      var open = false;
-      btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        open = !open;
-        menu.style.display = open ? 'block' : 'none';
-      });
-      document.addEventListener('click', function() { open = false; menu.style.display = 'none'; });
-
-      anchor.appendChild(menu);
-      anchor.appendChild(btn);
-    })();
+    /* Scenario panel moved to the shared proto bar (proto-bar.js). */
+    window.protoPage = { scenarios: [{ id: 'returning', label: 'Returning user' }] };
   </script>
 
+  <script src="proto-bar.js"></script>
 </body>
 </html>

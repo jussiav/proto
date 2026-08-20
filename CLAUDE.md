@@ -67,10 +67,39 @@ participant, findable by whoever picks the machine up next.
 
 Exposes `window.protoMode` (`'dev' | 'test'`) and `window.protoDev` (boolean).
 
-**Adding proto-only UI:** mark its root with `data-proto-dev` AND, if built in
-JS, skip building it when `!window.protoDev`. The CSS rule
-(`[data-proto-dev],#scenario-anchor{display:none !important}`) is a safety net;
-not building it is the actual fix.
+**One control surface: `proto-bar.js`.** All proto tooling lives on a single
+thin strip fixed to the viewport bottom — deliberately styled like browser
+chrome (grey, system font, native `<select>`s) so it never reads as AutoVex UI.
+Dev mode only. Present on every page, including ones with no scenarios, so the
+mode is always legible. Collapses to a small corner tab; that state persists.
+
+It replaced five inconsistent per-page drawers (offers, decision, photos,
+success, dac7), the delivery-variant switcher on details, and the footer's
+"Prototype instructions" link. `photos.html` also lost its `<footer>` — it was
+the only funnel page with one, and it existed solely to host that drawer.
+
+A page declares what it offers by setting `window.protoPage` before
+DOMContentLoaded:
+
+```js
+window.protoPage = {
+  scenarios: [ { group: 'Drafts', items: [ { id, label } ] } ],  // or flat
+  scenarioParam: 'scenario',   // default
+  variants: [ { id, label } ],
+  variantParam: 'delivery',    // default 'variant'
+  variantDefault: 'v2'         // what renders with no param
+};
+```
+
+**Scenario vs Variant are separate rows, deliberately.** Scenario = a state of
+the world a real seller could be in. Variant = a design candidate that exists
+only because we are proposing it. `details.html`'s delivery selector is a
+variant, not a scenario.
+
+**Adding proto-only UI:** prefer putting it on the bar. If it must be its own
+element, mark the root with `data-proto-dev` AND skip building it when
+`!window.protoDev`. The CSS rule (`[data-proto-dev]{display:none !important}`)
+is a safety net; not building it is the actual fix.
 
 **Guard placement matters.** `if (!window.protoDev) return;` must sit inside the
 panel's own IIFE, never in an enclosing function that has page logic after it.

@@ -1356,86 +1356,8 @@
         { id: 'dac7',           label: 'DAC7: Personal info required' },
       ]},
     ];
-
-    var toggle = document.createElement('button');
-    toggle.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.8);font-size:13px;font-weight:400;cursor:pointer;padding:0;text-decoration:underline;font-family:system-ui,sans-serif;';
-    toggle.textContent = 'Scenario';
-
-    var drawer = document.createElement('div');
-    drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);min-width:240px;max-height:420px;overflow-y:auto;padding:8px 0;z-index:9999;';
-
-    SCENARIO_GROUPS.forEach(function(grp, gi) {
-      if (gi > 0) {
-        var sep = document.createElement('div');
-        sep.style.cssText = 'height:1px;background:#e2e8f0;margin:4px 0;';
-        drawer.appendChild(sep);
-      }
-      var ghdr = document.createElement('div');
-      ghdr.style.cssText = 'padding:6px 14px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
-      ghdr.textContent = grp.group;
-      drawer.appendChild(ghdr);
-      grp.items.forEach(function(sc) {
-        var cur = sc.id === SCENARIO;
-
-        if (sc.id === 'draft-in-review') {
-          var row = document.createElement('div');
-          row.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
-          row.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
-          row.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
-          row.innerHTML = cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>';
-
-          var main = document.createElement('a');
-          main.href = 'offers.html?scenario=draft-in-review&copy=default';
-          main.style.cssText = 'text-decoration:none;color:inherit;';
-          main.textContent = sc.label;
-          row.appendChild(main);
-
-          var variants = document.createElement('span');
-          variants.style.cssText = 'color:#94a3b8;';
-          variants.appendChild(document.createTextNode(' ('));
-          [['default','1'], ['soon','2'], ['tomorrow','3'], ['next_work_day','4']].forEach(function(pair, vi) {
-            if (vi > 0) variants.appendChild(document.createTextNode(','));
-            var vActive = cur && (pair[0] === 'default' ? !REVIEW_COPY_VARIANT : REVIEW_COPY_VARIANT === pair[0]);
-            var vLink = document.createElement('a');
-            vLink.href = 'offers.html?scenario=draft-in-review&copy=' + pair[0];
-            vLink.title = pair[0].replace(/_/g, ' ');
-            vLink.style.cssText = 'text-decoration:underline;color:' + (vActive ? '#0B6DFF' : '#94a3b8') + ';font-weight:' + (vActive ? '700' : '400') + ';';
-            vLink.textContent = pair[1];
-            variants.appendChild(vLink);
-          });
-          variants.appendChild(document.createTextNode(')'));
-          row.appendChild(variants);
-
-          drawer.appendChild(row);
-          return;
-        }
-
-        var a = document.createElement('a');
-        a.href = 'offers.html?scenario=' + sc.id;
-        a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
-        a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;
-        a.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
-        a.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
-        drawer.appendChild(a);
-      });
-    });
-
-    var open = false;
-    toggle.addEventListener('click', function() {
-      open = !open;
-      drawer.style.display = open ? 'block' : 'none';
-    });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
-    document.addEventListener('click', function(e) {
-      var _anch = document.getElementById('scenario-anchor');
-      if (open && _anch && !_anch.contains(e.target)) { open = false; drawer.style.display = 'none'; }
-    });
-
-    window.addEventListener('DOMContentLoaded', function() {
-      if (!window.protoDev) return;   // proto tooling hidden in test mode
-      var _anchor = document.getElementById('scenario-anchor');
-      if (_anchor) { _anchor.appendChild(drawer); _anchor.appendChild(toggle); }
-    });
+    window.protoPage = { scenarios: SCENARIO_GROUPS };   // consumed by proto-bar.js
+    /* Scenario drawer moved to the shared proto bar (proto-bar.js). */
   </script>
 
   <!-- Footer — no link columns on offers/decision pages (matches Astro prototype) -->
@@ -1455,7 +1377,6 @@
             <option value="fi">Suomi</option>
             <option value="en">English</option>
           </select>
-          <span id="scenario-anchor" data-proto-dev class="relative inline-flex"></span>
           <span class="font-body font-normal" data-i18n="footer.copyright">© 2025 All rights reserved</span>
         </div>
       </div>
@@ -1468,5 +1389,6 @@
     </div>
   </footer>
 
+  <script src="proto-bar.js"></script>
 </body>
 </html>
