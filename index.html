@@ -137,7 +137,10 @@
     window.protoPage = {
       scenarios: Object.keys(window.PROTO_MOCK.states).map(function (k) {
         return { id: k, label: window.PROTO_MOCK.states[k] };
-      })
+      }),
+      /* No ?scenario= param needed: report what the store actually holds, so the
+         menu stays in step with Seed car / Reset data. */
+      scenarioCurrent: window.PROTO_MOCK.detect
     };
   </script>
 

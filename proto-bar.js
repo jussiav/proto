@@ -204,8 +204,13 @@
     var scWrap = document.createElement('label');
     scWrap.appendChild(document.createTextNode('Scenario'));
     var scParam = cfg.scenarioParam || 'scenario';
+    /* scenarioCurrent lets a page report its live state when it is not in the
+       URL — the front page's state is localStorage, so after Seed car or Reset
+       data the menu must still show what is actually loaded. */
+    var scCurrent = params.get(scParam) ||
+      (typeof cfg.scenarioCurrent === 'function' ? cfg.scenarioCurrent() : cfg.scenarioCurrent) || null;
     var scSel = cfg.scenarios && cfg.scenarios.length
-      ? buildSelect(cfg.scenarios, scParam, params.get(scParam), '— default —', cfg.scenarioExtraParams)
+      ? buildSelect(cfg.scenarios, scParam, scCurrent, '— default —', cfg.scenarioExtraParams)
       : (function () { var s = document.createElement('select'); s.disabled = true;
           var o = document.createElement('option'); o.textContent = 'none on this page';
           s.appendChild(o); return s; }());
@@ -280,23 +285,38 @@
        "show me this page with a car in it" and "give me a clean slate" are
        needed on every page, not per page. */
     if (window.PROTO_MOCK) {
+      /* On a mock-driven page (data-proto-mock, i.e. the front page) the
+         scenario param IS the mock state, so it has to go — leaving it on meant
+         the auto-seed re-applied the old state over the one just written, which
+         is what produced the disagreeing combinations. Anywhere else the page
+         owns ?scenario= for its own states, so it must survive: seeding a car
+         on offers must not throw away which offers scenario you were looking
+         at. */
+      var mockDrivenPage = document.documentElement.hasAttribute('data-proto-mock');
+      function applyMockState(name) {
+        window.PROTO_MOCK.seed(name);
+        if (!mockDrivenPage) { window.location.reload(); return; }
+        var p = new URLSearchParams(window.location.search);
+        p.delete(scParam);
+        var q = p.toString();
+        window.location.href = window.location.pathname + (q ? '?' + q : '');
+      }
+
       var seedBtn = document.createElement('button');
       seedBtn.type = 'button';
       seedBtn.textContent = 'Seed car';
-      seedBtn.title = 'Fill localStorage with the mock car, keeping the current scenario';
+      seedBtn.title = 'Fill every funnel field — submitted, email not yet verified';
       seedBtn.addEventListener('click', function () {
-        window.PROTO_MOCK.car();
-        window.location.reload();
+        applyMockState(window.PROTO_MOCK.SEED_STATE);
       });
       bar.appendChild(seedBtn);
 
       var clearBtn = document.createElement('button');
       clearBtn.type = 'button';
       clearBtn.textContent = 'Reset data';
-      clearBtn.title = 'Clear funnel progress — back to a first-time visitor';
+      clearBtn.title = 'Clear car details — back to a first-time visitor';
       clearBtn.addEventListener('click', function () {
-        window.PROTO_MOCK.clear();
-        window.location.reload();
+        applyMockState(window.PROTO_MOCK.CLEAR_STATE);
       });
       bar.appendChild(clearBtn);
     }

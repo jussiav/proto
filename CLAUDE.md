@@ -154,9 +154,20 @@ Solves two things the bar could not reach on its own:
   `index.html` opts in with `data-proto-mock` on `<html>`; the bar drives them
   through the normal `?scenario=` param.
 - **Car details on offers/decision/success** were blank unless you had actually
-  walked the funnel. The bar has built-in **Seed car** (fills the mock car,
-  keeps the current scenario) and **Reset data** (back to a first-time visitor),
-  available on every page.
+  walked the funnel. The bar has built-in **Seed car** and **Reset data** on
+  every page.
+
+**Seed car and Reset data are named states, not a separate mechanism.** Seed car
+= `draft-complete` (every funnel field filled, submitted, email not verified);
+Reset data = `empty`. They were originally a loose car-details merge that left
+the store and the bar's scenario menu disagreeing, producing front-page
+combinations you could not sensibly continue from.
+
+The front page reports its live state via `scenarioCurrent: PROTO_MOCK.detect`,
+so the menu tracks the store rather than the URL. On a `data-proto-mock` page
+seeding drops `?scenario=` (it would otherwise re-seed the old state over the
+new one); everywhere else the param is the page's own and survives, so seeding a
+car on offers keeps the offers scenario you were looking at.
 
 ```js
 window.PROTO_MOCK.seed('in-review');  // a named state

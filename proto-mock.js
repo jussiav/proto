@@ -18,9 +18,13 @@
  * Loaded in <head> so seeding happens BEFORE page scripts read the store.
  *
  *   window.PROTO_MOCK.seed('in-review')   // write a named state
- *   window.PROTO_MOCK.car()               // just the car, keep everything else
- *   window.PROTO_MOCK.clear()             // back to a first-time visitor
- *   window.PROTO_MOCK.states             // { name: label } for the bar
+ *   window.PROTO_MOCK.car()               // = seed('draft-complete')
+ *   window.PROTO_MOCK.clear()             // = seed('empty')
+ *   window.PROTO_MOCK.detect()            // which named state the store matches
+ *   window.PROTO_MOCK.states              // { name: label } for the bar
+ *
+ * The bar's Seed car / Reset data are just these two named states, so the
+ * scenario menu and the store can never disagree.
  *
  * Selecting a mock scenario OVERWRITES funnel progress. That is the point — the
  * scenario *is* the state — but it means you lose a half-finished walkthrough.
@@ -124,24 +128,45 @@
     'deal-completed':   'Deal completed'
   };
 
+  /* Which named state does the CURRENT store correspond to? The front page has
+     no ?scenario= param of its own — its state IS the store — so the bar needs
+     this to show the right selection after a seed or reset. Checked most
+     specific first. */
+  function detect() {
+    var f = {}, off = {};
+    try { f   = JSON.parse(localStorage.getItem(FUNNEL_KEY) || '{}'); } catch (e) {}
+    try { off = JSON.parse(localStorage.getItem(OFFERS_KEY) || '{}') || {}; } catch (e) {}
+    if (!f || !f.hero) return 'empty';
+    if (f.offersVisited) {
+      if (off.scenario === 'accepted' || off.scenario === 'all-rejected') return 'deal-completed';
+      if (off.scenario === 'auction-live' || off.scenario === 'live-no-bids') return 'auction-ongoing';
+      return 'auction-ended';
+    }
+    if (f.emailVerified) return 'in-review';
+    if (f.contact && f.contact.sahkoposti) return 'draft-complete';
+    return 'draft-incomplete';
+  }
+
   window.PROTO_MOCK = {
     states: LABELS,
+    detect: detect,
+    /* What "Seed car" and "Reset data" on the bar map to. Keeping them as named
+       states rather than a separate mechanism is what stops the bar's scenario
+       selection and the actual store from disagreeing. */
+    SEED_STATE: 'draft-complete',
+    CLEAR_STATE: 'empty',
     seed: function (name) {
       var b = BUILDERS[name];
       if (!b) return false;
       b();
       return true;
     },
-    /* Car details only — leaves funnel progress and scenario state alone. Used
-       by the bar's "Seed demo car" action on pages that read car details but
-       have their own scenario axis (offers, decision, success). */
-    car: function () {
-      var cur = {};
-      try { cur = JSON.parse(localStorage.getItem(FUNNEL_KEY) || '{}'); } catch (e) {}
-      var s = clone(CAR);
-      Object.keys(s).forEach(function (k) { cur[k] = s[k]; });
-      write(FUNNEL_KEY, cur);
-    },
+    /* Seed = every funnel field filled, submitted, email not yet verified. This
+       is deliberately a NAMED state ('draft-complete') rather than a loose
+       car-details merge: a merge left the store and the bar's scenario menu
+       disagreeing, which produced combinations the front page could not
+       sensibly continue from. */
+    car: function () { BUILDERS['draft-complete'](); },
     clear: function () { BUILDERS['empty'](); }
   };
 
