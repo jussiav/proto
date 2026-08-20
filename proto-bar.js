@@ -33,7 +33,6 @@
   if (!window.protoDev) return;   // test mode: no tooling at all
 
   var BAR_H = 30;
-  var COLLAPSE_KEY = 'autovex_proto_bar_collapsed';
 
   var PAGES = [
     { href: 'index.html',     label: 'Front page' },
@@ -58,9 +57,7 @@
   ready(function () {
     var cfg = window.protoPage || {};
     var params = new URLSearchParams(window.location.search);
-    var file = (window.location.pathname.split('/').pop() || 'index.html');
-    var collapsed = false;
-    try { collapsed = localStorage.getItem(COLLAPSE_KEY) === '1'; } catch (e) {}
+    var file = (window.location.pathname.split('/').pop() || 'index.html');   // marks "(here)" in Go to
 
     /* ── styles ── */
     var css = document.createElement('style');
@@ -73,7 +70,6 @@
       '#proto-bar *{font:inherit;box-sizing:border-box;}',
       '#proto-bar .pb-chip{display:inline-flex;align-items:center;gap:4px;padding:1px 6px;border-radius:3px;',
       '  background:#4a4a4f;color:#fff;font-size:10px;font-weight:600;letter-spacing:.04em;}',
-      '#proto-bar .pb-file{color:#6b6b70;white-space:nowrap;}',
       '#proto-bar label{display:inline-flex;align-items:center;gap:5px;color:#6b6b70;white-space:nowrap;}',
       '#proto-bar select{height:20px;max-width:230px;padding:0 4px;border:1px solid #c3c3c7;border-radius:3px;',
       '  background:#fff;color:#1d1d20;}',
@@ -82,12 +78,6 @@
       '#proto-bar button{height:20px;padding:0 7px;border:1px solid #c3c3c7;border-radius:3px;',
       '  background:#fff;color:#1d1d20;cursor:pointer;}',
       '#proto-bar button:hover{background:#e9e9eb;}',
-      /* Collapsed: a small tab in the corner, out of the way. */
-      '#proto-bar-tab{position:fixed;right:8px;bottom:8px;z-index:2147483000;',
-      '  font:11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;',
-      '  background:#4a4a4f;color:#fff;border:none;border-radius:3px;padding:5px 8px;',
-      '  cursor:pointer;opacity:.55;}',
-      '#proto-bar-tab:hover{opacity:1;}',
       'body.proto-bar-on{padding-bottom:' + BAR_H + 'px;}'
     ].join('');
     document.head.appendChild(css);
@@ -129,14 +119,6 @@
       return sel;
     }
 
-    /* ── collapsed tab ── */
-    var tab = document.createElement('button');
-    tab.id = 'proto-bar-tab';
-    tab.type = 'button';
-    tab.textContent = 'DEV ▲';
-    tab.title = 'Show prototype controls';
-    tab.addEventListener('click', function () { setCollapsed(false); });
-
     /* ── the bar ── */
     var bar = document.createElement('div');
     bar.id = 'proto-bar';
@@ -144,14 +126,9 @@
 
     var chip = document.createElement('span');
     chip.className = 'pb-chip';
-    chip.textContent = 'DEV';
-    chip.title = 'Prototype tooling is visible. Switch to Test to hide it.';
+    chip.textContent = 'Prototype';
+    chip.title = 'Prototype tooling — not part of the product UI';
     bar.appendChild(chip);
-
-    var fileLabel = document.createElement('span');
-    fileLabel.className = 'pb-file';
-    fileLabel.textContent = file;
-    bar.appendChild(fileLabel);
 
     /* Mode */
     var modeWrap = document.createElement('label');
@@ -216,33 +193,11 @@
     goWrap.appendChild(goSel);
     bar.appendChild(goWrap);
 
-    /* Prototype instructions — moved off the site footer, where it did not belong */
-    if (window.__protoModal) {
-      var infoBtn = document.createElement('button');
-      infoBtn.type = 'button';
-      infoBtn.textContent = 'Scenarios…';
-      infoBtn.title = 'Prototype instructions';
-      infoBtn.addEventListener('click', function () { window.__protoModal.open(); });
-      bar.appendChild(infoBtn);
-    }
-
-    var hideBtn = document.createElement('button');
-    hideBtn.type = 'button';
-    hideBtn.textContent = '▼';
-    hideBtn.title = 'Hide the bar (stays hidden until you show it again)';
-    hideBtn.addEventListener('click', function () { setCollapsed(true); });
-    bar.appendChild(hideBtn);
-
-    function setCollapsed(v) {
-      collapsed = v;
-      try { localStorage.setItem(COLLAPSE_KEY, v ? '1' : '0'); } catch (e) {}
-      bar.style.display = v ? 'none' : 'flex';
-      tab.style.display = v ? 'block' : 'none';
-      document.body.classList.toggle('proto-bar-on', !v);
-    }
+    /* No scenario-reference button. The old modal dumped every scenario of every
+       page into one wall of text; that reference belongs on its own page with
+       each scenario collapsible. Pending. */
 
     document.body.appendChild(bar);
-    document.body.appendChild(tab);
-    setCollapsed(collapsed);
+    document.body.classList.add('proto-bar-on');
   });
 }());

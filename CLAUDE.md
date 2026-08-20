@@ -78,6 +78,16 @@ success, dac7), the delivery-variant switcher on details, and the footer's
 "Prototype instructions" link. `photos.html` also lost its `<footer>` — it was
 the only funnel page with one, and it existed solely to host that drawer.
 
+Shows: a `Prototype` identity chip, **Mode**, **Scenario**, **Variant** (only
+when the page has candidates) and **Go to**. No page name, no collapse control
+— the bar stays visible. The Mode row is thin value while there are only two
+modes; it earns its place once there are more.
+
+**Pending:** a dedicated scenario-reference page, with each scenario
+collapsible. The old single modal listing every scenario of every page was
+removed; its content is in git history (`layout.js`, before the bar-cleanup
+commit) for whoever builds that page.
+
 A page declares what it offers by setting `window.protoPage` before
 DOMContentLoaded:
 
