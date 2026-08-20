@@ -387,7 +387,9 @@
         subtext: 'Autosi on nyt satojen ostajien nähtävillä. Tarjouskilpailu alkaa ensimmäisestä tarjouksesta.',
         badge: { text: 'Odotetaan tarjouksia', color: 'cyan' },
         steps: ['published_alt', 'auction', 'auction_ends'],
-        notice: { title: 'Ota rennosti ja tarkkaile sähköpostiasi!', body: 'Pidä sähköposti lähettyvillä, ettet vahingossa menetä parasta tarjousta autostasi.', cta: 'Näytä tarjouspyyntöni', href: 'offers.html?scenario=new-offers' },
+        // live-no-bids, not new-offers: this state's badge is "Odotetaan tarjouksia",
+        // so the offers page it links to must show a live auction with no bids yet.
+        notice: { title: 'Ota rennosti ja tarkkaile sähköpostiasi!', body: 'Pidä sähköposti lähettyvillä, ettet vahingossa menetä parasta tarjousta autostasi.', cta: 'Näytä tarjouspyyntöni', href: 'offers.html?scenario=live-no-bids' },
         // Copied from prod: resources/assets/img/published.png
         illustration: 'assets/success-published.png',
       },
