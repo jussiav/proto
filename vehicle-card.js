@@ -198,10 +198,15 @@
   }
 
   // ── Vehicle Card ──────────────────────────────────────────────
+  // Photo requirements: >=5 total, with at least one exterior and one interior.
+  // Exposed so pages gate their missing-photos notice on the same rule rather
+  // than re-implementing it.
   function photosComplete(photos) {
+    photos = photos || {};
     const total = Object.values(photos).reduce((n, a) => n + (a ? a.length : 0), 0);
     return total >= 5 && !!(photos.ulkopuoli && photos.ulkopuoli.length) && !!(photos.sisatilat && photos.sisatilat.length);
   }
+  window.photosComplete = photosComplete;
 
   window.renderVehicleCard = function (containerId, options) {
     options = options || {};
@@ -230,29 +235,19 @@
          </div>`
       : '';
 
+    // Under-review badge. There used to be a second variant here stamping
+    // "Kuvat puuttuvat" over the photo when photos were incomplete — that had no
+    // prod equivalent (prod's CarCard never overlays the media, and the string
+    // isn't in prod's locales). Missing photos are now surfaced the way prod does
+    // it, as a notification card on the page. See the photosNotice block in
+    // contact.html and success.html's action card.
     let statusBadge = '';
-    if (options.successView) {
-      if (!photosOk) {
-        statusBadge = `<div style="display:flex;align-items:center;gap:.25rem;background:#fff7ed;border:1px solid #fb923c;border-radius:.375rem;padding:.25rem .5rem;">
-          <img src="assets/icon-warning-octagon.svg" style="width:.875rem;height:.875rem;flex-shrink:0;" alt="" />
-          <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#c2410c;">${t('card.photosRequired')}</span>
-        </div>`;
-      } else {
-        const badgeText = t('card.underReview');
-        // top-right (same anchor as the photos-required badge above) — centring collided with
-        // the left-anchored price tag once the card moved into the narrower tan column
-        statusBadge = `<div style="display:flex;align-items:center;gap:.25rem;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:.375rem;padding:.25rem .5rem;white-space:nowrap;">
-          <img src="assets/icon-hourglass.svg" style="width:.875rem;height:.875rem;flex-shrink:0;" alt="" />
-          <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#64748b;">${badgeText}</span>
-        </div>`;
-      }
+    if (options.successView && photosOk) {
+      statusBadge = `<div style="display:flex;align-items:center;gap:.25rem;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:.375rem;padding:.25rem .5rem;white-space:nowrap;">
+        <img src="assets/icon-hourglass.svg" style="width:.875rem;height:.875rem;flex-shrink:0;" alt="" />
+        <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#64748b;">${t('card.underReview')}</span>
+      </div>`;
     }
-
-    const amberBar = options.successView ? '' :
-      `<div style="position:absolute;bottom:0;left:0;right:0;background:rgba(180,83,9,0.88);padding:.4rem .75rem;display:flex;align-items:center;justify-content:center;gap:.375rem;">
-         <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5L11.5 10.5H1.5L6.5 1.5Z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><rect x="6" y="5" width="1" height="3" rx=".5" fill="white"/><rect x="6" y="9" width="1" height="1" rx=".5" fill="white"/></svg>
-         <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:600;color:white;">${t('card.photosRequired')}</span>
-       </div>`;
 
     // Price tag and status badge share one overlay row. They used to be anchored
     // independently (top-left / top-right), which collided once the photo column
@@ -286,7 +281,6 @@
 
       // Proto-only extensions
       mediaOverlay: overlayTop,
-      mediaBottom: amberBar,
       cardClass: (options.successView ? 'border-2 border-av-blue' : 'border border-slate-200') + ' shadow-md'
     });
 

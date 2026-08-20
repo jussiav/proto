@@ -11,6 +11,13 @@ window.TRANSLATIONS = {
   /* ─── FINNISH ────────────────────────────────────────────────────────── */
   fi: {
 
+    photosNotice: {
+      // Verbatim from prod tenderform.review.rejected.missing_images.*
+      title: 'Lataa kuvat jatkaaksesi',
+      body:  'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia voidakseen tehdä parhaat tarjouksensa. 🚗📸',
+      cta:   'Lataa kuvat',
+    },
+
     nav: {
       faq:          'Tuki',
       reviews:      'Kokemuksia',
@@ -122,7 +129,6 @@ window.TRANSLATIONS = {
 
     /* ── Vehicle card status badges ── */
     card: {
-      photosRequired: 'Kuvat puuttuvat',
       underReview:    'Tarkastus käynnissä',
       draft:          'Luonnos',
       openDetails:    'Avaa tiedot',
@@ -596,6 +602,13 @@ window.TRANSLATIONS = {
   /* ─── ENGLISH ────────────────────────────────────────────────────────── */
   en: {
 
+    photosNotice: {
+      // Prod has no EN for these keys (falls back to Finnish) — translated here.
+      title: 'Upload photos to continue',
+      body:  'Your listing needs more photos before it can be published. Dealerships need clear photos to make their best offers. 🚗📸',
+      cta:   'Upload photos',
+    },
+
     nav: {
       faq:          'Help',
       reviews:      'Reviews',
@@ -703,7 +716,6 @@ window.TRANSLATIONS = {
     },
 
     card: {
-      photosRequired:   'Photos missing',
       underReview:      'Under review',
       draft:            'Draft',
       openDetails:      'Open details',

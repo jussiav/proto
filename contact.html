@@ -297,10 +297,25 @@
       if (d.markkinointi !== undefined) document.getElementById('markkinointi').checked  = d.markkinointi;
     }
 
+    // Missing-photos notice — gated on the same photosComplete() rule the card
+    // and the stepper use, so it can't contradict them.
+    function syncPhotosNotice() {
+      var el = document.getElementById('photos-notice');
+      if (!el) return;
+      var store = {};
+      try { store = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) {}
+      var ok = typeof window.photosComplete === 'function'
+        ? window.photosComplete(store.photos || {})
+        : true; // fail open — never warn when the rule is unavailable
+      el.classList.toggle('hidden', ok);
+      el.classList.toggle('flex', !ok);
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       loadContact();
       initStepNav('contact');
       if (typeof renderVehicleCard === 'function') renderVehicleCard('av-vehicle-card', {});
+      syncPhotosNotice();
       ['koko-nimi','sahkoposti','puhelin'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', saveContact);
       });
@@ -317,6 +332,7 @@
       if (e.persisted) {
         initStepNav('contact');
         if (typeof renderVehicleCard === 'function') renderVehicleCard('av-vehicle-card', {});
+        syncPhotosNotice();
       }
     });
   </script>
@@ -447,6 +463,28 @@
            during the providingPersonalInfo step (only providingPriceInfo / waitingForReview /
            waitingForEmailVerificationBeforePublishing / success+published gate it). -->
       <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+
+        <!-- Missing-photos notice — prod's treatment for this state is a
+             Notification card (Review.vue, theme="danger"), not a band stamped over
+             the car photo. Copy verbatim from
+             tenderform.review.rejected.missing_images.*. Shown only when the photo
+             requirements aren't met; hidden otherwise. -->
+        <div id="photos-notice" class="hidden p-6 flex-col space-y-4 rounded-xl border-2 border-red-400 bg-white">
+          <div class="flex justify-start items-center gap-x-1.5">
+            <span class="text-red-500">
+              <svg width="30" height="30" viewBox="0 0 30 31" fill="currentColor" aria-hidden="true"><path d="m26.638 9.957-6.04-6.04a1.89 1.89 0 0 0-1.326-.55h-8.543a1.89 1.89 0 0 0-1.327.55l-6.04 6.04a1.89 1.89 0 0 0-.55 1.326v8.543c.002.497.2.974.55 1.327l6.04 6.04c.353.35.83.548 1.327.55h8.543a1.89 1.89 0 0 0 1.326-.55l6.04-6.04c.35-.353.548-.83.55-1.327v-8.543a1.89 1.89 0 0 0-.55-1.326ZM14.062 9.93a.938.938 0 0 1 1.876 0v6.562a.938.938 0 0 1-1.876 0V9.93ZM15 22.117a1.407 1.407 0 1 1 0-2.813 1.407 1.407 0 0 1 0 2.813Z"/></svg>
+            </span>
+          </div>
+          <div class="flex flex-col space-y-2.5">
+            <span class="text-xl text-slate-800 font-bold" data-i18n="photosNotice.title">Lataa kuvat jatkaaksesi</span>
+            <span class="text-slate-600" data-i18n="photosNotice.body">Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia voidakseen tehdä parhaat tarjouksensa. 🚗📸</span>
+          </div>
+          <div class="pt-2.5">
+            <a href="photos.html" class="flex items-center justify-center bg-av-blue rounded-lg h-14 px-8 no-underline shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] w-full">
+              <span class="font-dm font-medium text-base text-white" data-i18n="photosNotice.cta">Lataa kuvat</span>
+            </a>
+          </div>
+        </div>
 
         <!-- Car preview — prod shows the draft preview during providingPersonalInfo
              (Sidebar.vue canPreviewDraft). Mid-funnel variant: no "under review" badge. -->
