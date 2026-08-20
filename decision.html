@@ -1548,7 +1548,85 @@
         { id: 'deal-failed',    label: 'Deal failed' },
       ]},
     ];
-    window.protoPage = { scenarios: SCENARIO_GROUPS };   // consumed by proto-bar.js
+    /* Restored: this lived inside the old scenario drawer, so deleting that
+       drawer also deleted it — breaking ?trigger=dealer-reply and the scenario
+       seeding below, which both call it. */
+    function computeDealerReply(offer, neg, deterministic) {
+      var msgs = (neg && neg.messages) || [];
+      var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+      var lastDealer = msgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0];
+      var counter = lastSeller ? lastSeller.amount : offer.amount;
+      var floor = Math.max(offer.amount, lastDealer ? lastDealer.amount : 0);
+      var proposed = Math.max(Math.round(counter * 0.97), floor);
+      // Never above the seller's counter-offer; reaching it means the dealer agrees to it
+      var amount = Math.min(proposed, counter);
+      var meets = amount === counter;
+      var sticks = !meets && (amount <= floor || (!deterministic && Math.random() < 0.3));
+      if (sticks) amount = floor;
+      var endsNegotiation = sticks && !deterministic && Math.random() < 0.4;
+      return {
+        amount: amount,
+        endsNegotiation: endsNegotiation,
+        message: meets
+          ? 'Hei! Käy kaupaksi — hyväksymme ehdottamasi hinnan. Toivottavasti pääsemme kauppoihin!'
+          : endsNegotiation
+            ? 'Hei! Emme valitettavasti pysty korottamaan tarjoustamme. Tämä jää lopulliseksi tarjoukseksemme.'
+            : sticks
+              ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
+              : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!'
+      };
+    }
+
+    /* Consumed by proto-bar.js. Restores what the old scenario drawer offered
+       beyond the scenario list: the three price overrides (persisted in the URL,
+       read at load) and the two negotiation actions (mutate simulated state,
+       then re-render). `second` uses keepEmpty because present-but-empty means
+       "force a single offer", distinct from the param being absent. */
+    window.protoPage = {
+      scenarios: SCENARIO_GROUPS,
+      fieldsLabel: 'Prices €',
+      fields: [
+        { key: 'asking',  label: 'Asking price €',  placeholder: 'asking' },
+        { key: 'highest', label: 'Highest offer €', placeholder: 'highest' },
+        { key: 'second',  label: '2nd highest € (empty = single offer)', placeholder: '2nd', keepEmpty: true }
+      ],
+      actions: [
+        {
+          label: 'Simulate dealer reply',
+          title: 'Dealer replies to your latest counter-offer',
+          run: function () {
+            var _d = getData();
+            var _h = (_d.offers || [])[0];
+            if (!_h) return;
+            var _neg  = NEGOTIATIONS[_h.id] || { messages: [], isStopped: false };
+            var _msgs = _neg.messages || [];
+            if (!_msgs.filter(function (m) { return m.sender === 'seller'; }).length) {
+              alert('Send a counter-offer first');
+              return;
+            }
+            var _rounds = _msgs.filter(function (m) { return m.sender === 'seller'; }).length;
+            var _reply = computeDealerReply(_h, _neg);
+            _neg.messages.push({
+              sender: 'dealer',
+              amount: _reply.amount,
+              message: _reply.message,
+              created_at: new Date().toISOString()
+            });
+            if (_rounds >= 2 || _reply.endsNegotiation) _neg.isStopped = true;
+            NEGOTIATIONS[_h.id] = _neg;
+            SCENARIO = _neg.isStopped ? 'negotiation-stopped' : 'dealer-replied';
+            saveState();
+            renderPage();
+            openModal('Negotiate', _h.id);
+          }
+        },
+        {
+          label: 'Reset counter offers',
+          title: 'Clear all negotiation messages',
+          run: function () { NEGOTIATIONS = {}; saveState(); renderPage(); }
+        }
+      ]
+    };
 
     /* Scenario panel moved to the shared proto bar (proto-bar.js). */
 

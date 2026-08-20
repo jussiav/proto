@@ -23,6 +23,8 @@
  *     scenarioParam: 'scenario',   // default
  *     variants:  [ { id, label } ],
  *     variantParam:  'variant',    // default
+ *     fields:    [ { key, label, placeholder, width, keepEmpty } ],  // URL overrides
+ *     actions:   [ { label, title, run } ],                          // state mutations
  *   };
  *
  * Scenario = which state of the world (a real seller could be in it).
@@ -85,6 +87,8 @@
       '#proto-bar select{height:20px;max-width:230px;padding:0 4px;border:1px solid #c3c3c7;border-radius:3px;',
       '  background:#fff;color:#1d1d20;}',
       '#proto-bar select:disabled{background:#e9e9eb;color:#a0a0a5;}',
+      '#proto-bar .pb-input{height:20px;width:74px;padding:0 4px;border:1px solid #c3c3c7;',
+      '  border-radius:3px;background:#fff;color:#1d1d20;}',
       '#proto-bar .pb-spacer{flex:1 1 auto;}',
       '#proto-bar button{height:20px;padding:0 7px;border:1px solid #c3c3c7;border-radius:3px;',
       '  background:#fff;color:#1d1d20;cursor:pointer;}',
@@ -220,6 +224,56 @@
       vWrap.appendChild(buildSelect(cfg.variants, vParam, vCurrent,
         cfg.variantDefault ? '— none —' : 'prod baseline', cfg.variantExtraParams));
       bar.appendChild(vWrap);
+    }
+
+    /* Numeric/text overrides — decision.html drives its offer amounts this way.
+       Applied together on Enter or via Apply, since they are read from the URL
+       at page load. An empty value clears the param, except where the page has
+       declared keepEmpty (decision needs "second=" present-but-empty to mean
+       "force a single offer"). */
+    if (cfg.fields && cfg.fields.length) {
+      var fWrap = document.createElement('label');
+      fWrap.appendChild(document.createTextNode(cfg.fieldsLabel || 'Overrides'));
+      var inputs = [];
+      cfg.fields.forEach(function (f) {
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'pb-input';
+        inp.placeholder = f.placeholder || f.label || f.key;
+        inp.title = f.label || f.key;
+        inp.value = params.get(f.key) || '';
+        if (f.width) inp.style.width = f.width;
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFields(); });
+        inputs.push({ f: f, el: inp });
+        fWrap.appendChild(inp);
+      });
+      function applyFields() {
+        var changes = {};
+        inputs.forEach(function (i) {
+          var v = i.el.value.trim();
+          changes[i.f.key] = v ? v : (i.f.keepEmpty ? '' : null);
+        });
+        window.location.href = withParams(changes);
+      }
+      var applyBtn = document.createElement('button');
+      applyBtn.type = 'button';
+      applyBtn.textContent = 'Apply';
+      applyBtn.addEventListener('click', applyFields);
+      fWrap.appendChild(applyBtn);
+      bar.appendChild(fWrap);
+    }
+
+    /* Page-supplied actions — things that mutate simulated state rather than
+       navigate, e.g. decision.html's "Simulate dealer reply". */
+    if (cfg.actions && cfg.actions.length) {
+      cfg.actions.forEach(function (a) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = a.label;
+        if (a.title) b.title = a.title;
+        b.addEventListener('click', function () { a.run(); });
+        bar.appendChild(b);
+      });
     }
 
     bar.appendChild(Object.assign(document.createElement('span'), { className: 'pb-spacer' }));

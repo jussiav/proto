@@ -102,6 +102,13 @@ window.protoPage = {
 };
 ```
 
+`fields` render as text inputs plus an Apply button, for params the page reads
+at load (decision.html's offer-price overrides). `keepEmpty` keeps a
+present-but-empty param, which decision uses to mean "force a single offer" as
+distinct from the param being absent. `actions` render as buttons for things
+that mutate simulated state rather than navigate (decision's "Simulate dealer
+reply", "Reset counter offers").
+
 An item may carry `params: { copy: 'soon' }` to set more than one param at
 once — `success.html` needs `scenario=` and `copy=` together for the
 review-call timing states, and two items may share an `id`. Any key listed in

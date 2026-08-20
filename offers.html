@@ -1356,7 +1356,25 @@
         { id: 'dac7',           label: 'DAC7: Personal info required' },
       ]},
     ];
-    window.protoPage = { scenarios: SCENARIO_GROUPS };   // consumed by proto-bar.js
+    /* Consumed by proto-bar.js. The draft-in-review state also has the four
+       review-call timing copy variants (REVIEW_COPY_VARIANT above), which the
+       old drawer offered and which are world state, not design candidates. */
+    window.protoPage = {
+      scenarioExtraParams: ['copy'],
+      scenarios: SCENARIO_GROUPS.map(function (g) {
+        if (g.group !== 'Draft') return g;
+        var items = [];
+        g.items.forEach(function (it) {
+          items.push(it);
+          if (it.id === 'draft-in-review') {
+            items.push({ id: it.id, label: 'Draft: In review — call today',        params: { copy: 'soon' } });
+            items.push({ id: it.id, label: 'Draft: In review — call tomorrow',     params: { copy: 'tomorrow' } });
+            items.push({ id: it.id, label: 'Draft: In review — call next workday', params: { copy: 'next_work_day' } });
+          }
+        });
+        return { group: g.group, items: items };
+      })
+    };
     /* Scenario drawer moved to the shared proto bar (proto-bar.js). */
   </script>
 
