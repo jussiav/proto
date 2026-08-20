@@ -37,12 +37,16 @@
       '.av-card__media{position:relative;height:220px;width:100%;flex-shrink:0;background:#88CFFF;',
       'display:flex;align-items:center;justify-content:center;overflow:hidden;}',
       '.av-card__body{width:100%;height:auto;}',
-      /* Horizontal: prod's lg:w-[250px] photo column and lg:max-h-[250px] card.
-         480px = 250px photo + 230px details, the narrowest the details column
-         stays usable. Below that the card stays stacked. */
+      /* Horizontal: prod's lg:max-h-[250px] card, photo capped at lg:w-[250px].
+         The 250px is a CAP, not a fixed column: prod puts no width on the media
+         wrapper and leaves flex-shrink at its default 1, with the body at
+         width:100%. So the two compete and the photo shrinks as the card
+         narrows — ~171px at a 540px card, which is what prod renders. A fixed
+         flex-shrink:0 column squeezed the details instead.
+         480px = the narrowest card that still reads as two columns. */
       '@container (min-width: 480px){',
       '  .av-card{flex-direction:row;max-height:250px;}',
-      '  .av-card__media{height:auto;width:250px;}',
+      '  .av-card__media{height:auto;width:250px;flex-shrink:1;min-width:0;}',
       '}'
     ].join('');
     document.head.appendChild(shellStyle);
@@ -297,7 +301,8 @@
       statusIcon: badge.icon,
 
       secondaryCta: { text: t('card.openDetails'), attrs: 'id="av-open-modal-btn"' },
-      ctaFullWidth: true,
+      // No ctaFullWidth: prod's CarCard row is md:justify-end with w-full
+      // md:w-auto buttons, so "Avaa tiedot" sits at the right edge on desktop.
 
       // Proto-only extensions
       mediaOverlay: overlayTop,

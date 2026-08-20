@@ -289,6 +289,18 @@ because its card spans a 768px column; the funnel card sits in the tan
 250px photo would leave 125px for details. The card flips to photo-left at 480px
 of its **own** width.
 
+The photo's 250px is a **cap, not a fixed column**. Prod puts no width on the
+media wrapper and leaves `flex-shrink` at its default 1, with the body at
+`width:100%`, so the two compete and the photo narrows as the card does:
+
+| Card width | Photo | Share |
+|---|---|---|
+| 900px | 194px | 22% |
+| 720px | 183px | 25% |
+| 589px | 172px | 29% |
+| 480px | 159px | 33% |
+| <480px | full width, 220px tall | stacked |
+
 **Uses:** `buildRegBadge()` for the plate badge.
 
 **Used on:** `contact.html`, `success.html` (via `renderVehicleCard()`),
