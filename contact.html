@@ -366,7 +366,7 @@
 
         <!-- Headline + intro -->
         <div class="flex flex-col gap-2.5 w-full">
-          <h1 class="font-barlow font-bold text-slate-900 text-2xl leading-[26px]" data-i18n="contact.title">Miten voimme tavoittaa sinut?</h1>
+          <h1 class="font-barlow font-bold text-slate-900 text-2xl leading-[26px]" data-i18n="contact.title">Miten tavoitamme sinut?</h1>
           <p class="font-dm text-base leading-5 text-black" data-i18n="contact.subtitle">Olemme tarvittaessa sinuun yhteydessä tarjouskilpailuun liittyen. Ostava autoliike ottaa yhteyttä, jos hyväksyt tarjouksen.</p>
         </div>
 
@@ -449,8 +449,14 @@
       <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
 
         <!-- Car preview — prod shows the draft preview during providingPersonalInfo
-             (Sidebar.vue canPreviewDraft). Mid-funnel variant: no "under review" badge. -->
-        <div id="av-vehicle-card" class="w-full"></div>
+             (Sidebar.vue canPreviewDraft). Mid-funnel variant: no "under review" badge.
+             The flex-1 wrapper centres it vertically — on this step the column has
+             no other content, and the save-draft block below stays pinned to the
+             bottom. A bare my-auto would have split the free space three ways
+             against that block's own mt-auto. -->
+        <div class="flex-1 flex items-center">
+          <div id="av-vehicle-card" class="w-full"></div>
+        </div>
 
         <!-- Save draft / Jatka myöhemmin -->
         <div class="mt-auto">

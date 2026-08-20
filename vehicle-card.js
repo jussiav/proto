@@ -56,6 +56,36 @@
     body: 'av-card__body'
   };
 
+  // ── Draft status badge ────────────────────────────────────────────
+  // Mirrors prod's draftStatusConfig in Preview.vue: the card's status badge is
+  // driven by the draft's status, not hardcoded. Text comes from
+  // auction.landing.drafts.status.*; icons and badge colours match prod's
+  // UiBadge colours (light / gray / light_red / amber).
+  // Shared with offers.html's DRAFT_STATUS_CFG, which adds its own CTA fields.
+  var DRAFT_ICON_HOURGLASS = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M10.0625 1.09375H3.9375C3.64742 1.09375 3.36922 1.20898 3.1641 1.4141C2.95898 1.61922 2.84375 1.89742 2.84375 2.1875V4.15625C2.84417 4.32597 2.88389 4.4933 2.95979 4.6451C3.0357 4.79691 3.14572 4.92908 3.28125 5.03125L5.90625 7L3.28125 8.96875C3.14572 9.07092 3.0357 9.20309 2.95979 9.3549C2.88389 9.5067 2.84417 9.67403 2.84375 9.84375V11.8125C2.84375 12.1026 2.95898 12.3808 3.1641 12.5859C3.36922 12.791 3.64742 12.9062 3.9375 12.9062H10.0625C10.3526 12.9062 10.6308 12.791 10.8359 12.5859C11.041 12.3808 11.1562 12.1026 11.1562 11.8125V9.86344C11.1561 9.69401 11.1168 9.52691 11.0415 9.37514C10.9662 9.22337 10.8569 9.09104 10.722 8.98844L8.08828 7L10.722 5.00937C10.8569 4.90678 10.9662 4.77444 11.0415 4.62267C11.1168 4.47091 11.1561 4.3038 11.1562 4.13437V2.1875C11.1563 1.89742 11.041 1.61922 10.8359 1.4141C10.6308 1.20898 10.3526 1.09375 10.0625 1.09375ZM9.84375 2.40625V3.28125H4.15625V2.40625H9.84375ZM7 6.17969L4.88523 4.59375H9.09617L7 6.17969ZM9.84375 11.5938H4.15625V9.95312L7 7.82031L9.84375 9.97117V11.5938Z"/></svg>';
+  var DRAFT_ICON_WARNING   = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M6.34375 7.21875V4.375C6.34375 4.20095 6.41289 4.03403 6.53596 3.91096C6.65903 3.78789 6.82595 3.71875 7 3.71875C7.17405 3.71875 7.34097 3.78789 7.46404 3.91096C7.58711 4.03403 7.65625 4.20095 7.65625 4.375V7.21875C7.65625 7.3928 7.58711 7.55972 7.46404 7.68279C7.34097 7.80586 7.17405 7.875 7 7.875C6.82595 7.875 6.65903 7.80586 6.53596 7.68279C6.41289 7.55972 6.34375 7.3928 6.34375 7.21875ZM12.9063 5.00664V8.99336C12.9066 9.13704 12.8785 9.27938 12.8235 9.41211C12.7685 9.54485 12.6877 9.66535 12.5858 9.76664L9.76664 12.5858C9.66537 12.6877 9.54487 12.7685 9.41213 12.8235C9.27939 12.8786 9.13705 12.9067 8.99336 12.9063H5.00664C4.86295 12.9067 4.72061 12.8786 4.58787 12.8235C4.45513 12.7685 4.33463 12.6877 4.23336 12.5858L1.41422 9.76664C1.31231 9.66535 1.23151 9.54485 1.1765 9.41211C1.12149 9.27938 1.09336 9.13704 1.09375 8.99336V5.00664C1.09336 4.86296 1.12149 4.72062 1.1765 4.58789C1.23151 4.45515 1.31231 4.33465 1.41422 4.23336L4.23336 1.41422C4.33463 1.31228 4.45513 1.23147 4.58787 1.17645C4.72061 1.12144 4.86295 1.09333 5.00664 1.09375H8.99336C9.13705 1.09333 9.27939 1.12144 9.41213 1.17645C9.54487 1.23147 9.66537 1.31228 9.76664 1.41422L12.5858 4.23336C12.6877 4.33465 12.7685 4.45515 12.8235 4.58789C12.8785 4.72062 12.9066 4.86296 12.9063 5.00664ZM11.5938 5.09742L8.90258 2.40625H5.09742L2.40625 5.09742V8.90258L5.09742 11.5938H8.90258L11.5938 8.90258V5.09742ZM7 8.53125C6.82694 8.53125 6.65777 8.58257 6.51388 8.67871C6.36998 8.77486 6.25783 8.91152 6.19161 9.0714C6.12538 9.23129 6.10805 9.40722 6.14181 9.57695C6.17558 9.74669 6.25891 9.9026 6.38128 10.025C6.50365 10.1473 6.65956 10.2307 6.8293 10.2644C6.99903 10.2982 7.17496 10.2809 7.33485 10.2146C7.49473 10.1484 7.63139 10.0363 7.72754 9.89237C7.82368 9.74848 7.875 9.57931 7.875 9.40625C7.875 9.17419 7.78281 8.95163 7.61872 8.78753C7.45462 8.62344 7.23206 8.53125 7 8.53125Z"/></svg>';
+  var DRAFT_ICON_PAPERCLIP = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="m11.62 7.464-4.487 4.484a3.282 3.282 0 0 1-4.64-4.642L7.86 1.953a2.188 2.188 0 1 1 3.093 3.095l-.01.008L5.707 10.1a.658.658 0 0 1-1.066-.234.656.656 0 0 1 .156-.712l5.234-5.038a.875.875 0 0 0-1.242-1.234L3.42 8.234a1.97 1.97 0 0 0 2.786 2.784l4.487-4.485a.659.659 0 0 1 1.123.465.656.656 0 0 1-.193.465h-.002Z"/></svg>';
+
+  // `key` not literal text, so the label follows the language toggle.
+  window.DRAFT_BADGES = {
+    'open': {
+      key: 'draftStatus.open', icon: DRAFT_ICON_PAPERCLIP,
+      badge: 'bg-slate-50 border-slate-200 text-slate-500'
+    },
+    'in_review': {
+      key: 'draftStatus.in_review', icon: DRAFT_ICON_HOURGLASS,
+      badge: 'bg-slate-200 border-gray-300 text-gray-500'
+    },
+    'rejected': {
+      key: 'draftStatus.rejected', icon: DRAFT_ICON_WARNING,
+      badge: 'bg-transparent border-red-300 text-red-700'
+    },
+    'queued_for_publishing_after_verification': {
+      key: 'draftStatus.queued', icon: DRAFT_ICON_WARNING,
+      badge: 'bg-amber-50 border-amber-400 text-amber-700'
+    }
+  };
+
   // ── buildRegBadge(plate, opts) ────────────────────────────────────
   // Mirrors ARegistrationNumberBadge.vue (in Storybook) verbatim, including
   // bg-white and the a11y attributes. The Vue bundle can't mount inside the
@@ -235,26 +265,16 @@
          </div>`
       : '';
 
-    // Under-review badge. There used to be a second variant here stamping
-    // "Kuvat puuttuvat" over the photo when photos were incomplete — that had no
-    // prod equivalent (prod's CarCard never overlays the media, and the string
-    // isn't in prod's locales). Missing photos are now surfaced the way prod does
-    // it, as a notification card on the page. See the photosNotice block in
-    // contact.html and success.html's action card.
-    let statusBadge = '';
-    if (options.successView && photosOk) {
-      statusBadge = `<div style="display:flex;align-items:center;gap:.25rem;background:#e2e8f0;border:1px solid #cbd5e1;border-radius:.375rem;padding:.25rem .5rem;white-space:nowrap;">
-        <img src="assets/icon-hourglass.svg" style="width:.875rem;height:.875rem;flex-shrink:0;" alt="" />
-        <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#64748b;">${t('card.underReview')}</span>
-      </div>`;
-    }
+    // Status is carried by the card's body badge (prod's CarCard status prop),
+    // driven by draft status. There used to be an extra pill overlaid on the
+    // photo here — prod's CarCard never overlays the media, and it duplicated
+    // the body badge, so it's gone.
+    const badge = window.DRAFT_BADGES[options.draftStatus] || window.DRAFT_BADGES['open'];
 
-    // Price tag and status badge share one overlay row. They used to be anchored
-    // independently (top-left / top-right), which collided once the photo column
-    // narrowed to prod's 250px. Now they sit in a flex row that wraps instead.
-    const overlayTop = (priceTag || statusBadge)
+    // Price tag overlay (proto-only; prod has no media overlay at all).
+    const overlayTop = priceTag
       ? `<div style="position:absolute;top:.5rem;left:.5rem;right:.5rem;z-index:10;display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:.25rem;">
-           ${priceTag}${statusBadge}
+           ${priceTag}
          </div>`
       : '';
 
@@ -271,10 +291,10 @@
       fuelType: details.polttoaine,
       image: photo,
 
-      // Draft badge — prod Preview.vue draftStatusConfig.open uses ph-bold-paperclip
-      status: t('card.draft'),
-      statusColor: 'bg-slate-50 border-slate-200 text-slate-500',
-      statusIcon: '<img src="assets/ph-bold-paperclip-slate.svg" class="w-3.5 h-3.5 flex-shrink-0" alt="" />',
+      // Status badge — prod Preview.vue draftStatusConfig, keyed on draft status
+      status: t(badge.key),
+      statusColor: badge.badge,
+      statusIcon: badge.icon,
 
       secondaryCta: { text: t('card.openDetails'), attrs: 'id="av-open-modal-btn"' },
       ctaFullWidth: true,

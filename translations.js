@@ -11,6 +11,14 @@ window.TRANSLATIONS = {
   /* ─── FINNISH ────────────────────────────────────────────────────────── */
   fi: {
 
+    // Verbatim from prod auction.landing.drafts.status.*
+    draftStatus: {
+      open:      'Keskeneräinen',
+      in_review: 'Tarkastus käynnissä',
+      rejected:  'Tietoja tarvitaan',
+      queued:    'Vaatii toimenpiteitä',
+    },
+
     nav: {
       faq:          'Tuki',
       reviews:      'Kokemuksia',
@@ -122,8 +130,6 @@ window.TRANSLATIONS = {
 
     /* ── Vehicle card status badges ── */
     card: {
-      underReview:    'Tarkastus käynnissä',
-      draft:          'Luonnos',
       openDetails:    'Avaa tiedot',
       priceLabelTarget: 'Oma arviosi:',
     },
@@ -573,7 +579,7 @@ window.TRANSLATIONS = {
 
     /* ── Contact page ── */
     contact: {
-      title:              'Miten voimme tavoittaa sinut?',
+      title:              'Miten tavoitamme sinut?',
       subtitle:           'Olemme tarvittaessa sinuun yhteydessä tarjouskilpailuun liittyen. Ostava autoliike ottaa yhteyttä, jos hyväksyt tarjouksen.',
       nameLabel:          'Koko nimi',
       namePlaceholder:    'Etunimi Sukunimi',
@@ -594,6 +600,14 @@ window.TRANSLATIONS = {
 
   /* ─── ENGLISH ────────────────────────────────────────────────────────── */
   en: {
+
+    // Prod has no EN for these (falls back to Finnish) — translated here.
+    draftStatus: {
+      open:      'Incomplete',
+      in_review: 'Review in progress',
+      rejected:  'Information needed',
+      queued:    'Action required',
+    },
 
     nav: {
       faq:          'Help',
@@ -702,8 +716,6 @@ window.TRANSLATIONS = {
     },
 
     card: {
-      underReview:      'Under review',
-      draft:            'Draft',
       openDetails:      'Open details',
       priceLabelTarget: 'Your estimate:',
     },
@@ -1139,7 +1151,7 @@ window.TRANSLATIONS = {
     },
 
     contact: {
-      title:             'How can we reach you?',
+      title:             'How do we reach you?',
       subtitle:          'We\'ll contact you if needed regarding the auction. The purchasing dealership will reach out once you accept an offer.',
       nameLabel:         'Full name',
       namePlaceholder:   'First Last',

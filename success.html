@@ -395,6 +395,21 @@
       },
     };
 
+    // Draft status the card's badge should reflect, per prod's draftStatusConfig.
+    // The forced scenarios ARE draft statuses; the organic path is in_review
+    // (the seller has just submitted and is awaiting review).
+    var SCENARIO_DRAFT_STATUS = {
+      'rejected':                 'rejected',
+      'rejected-missing-images':  'rejected',
+      'in-review-unverified':     'in_review',
+      'in-review-verified':       'in_review',
+      'queued':                   'queued_for_publishing_after_verification',
+      'published':                'in_review'
+    };
+    function currentDraftStatus() {
+      return SCENARIO_DRAFT_STATUS[FORCED_SCENARIO] || 'in_review';
+    }
+
     function renderForcedScenario(id, copyVariant) {
       var def = SUCCESS_SCENARIOS[id];
       if (!def) return false;
@@ -537,7 +552,7 @@
       setStore(s);
       if (typeof window.muwCloseFrame === 'function') window.muwCloseFrame(false);
       updateContent();
-      renderVehicleCard('av-vehicle-card', { successView: true });
+      renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus() });
     });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -545,7 +560,7 @@
       s.successVisited = true;
       setStore(s);
       updateContent();
-      renderVehicleCard('av-vehicle-card', { successView: true });
+      renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus() });
 
       document.getElementById('success-email-resend').addEventListener('click', function () {
         showEmailToast();
@@ -564,7 +579,7 @@
     });
 
     window.addEventListener('pageshow', function (e) {
-      if (e.persisted) { updateContent(); renderVehicleCard('av-vehicle-card', { successView: true }); }
+      if (e.persisted) { updateContent(); renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus() }); }
     });
 
     var emailToastTimer = null;
