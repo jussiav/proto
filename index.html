@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AutoVex – Kilpailutamme autoliikkeet puolestasi</title>
+  <title>Paras hinta autostasi - ilmaiseksi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
@@ -138,10 +138,10 @@
       <!-- Headline: default state -->
       <div id="hero-headline-default" class="flex flex-col items-center gap-5 text-center w-full">
         <h1 class="font-barlow font-bold text-white w-full text-4xl leading-10 md:text-6xl md:leading-tight" data-i18n="hero.title">
-          Kilpailutamme autoliikkeet puolestasi
+          Paras hinta autostasi - ilmaiseksi
         </h1>
         <p class="font-dm font-medium text-slate-200 w-full text-xl leading-6" data-i18n="hero.subtitle">
-          Ilmoita ilmaiseksi, myy eniten tarjoavalle autoliikkeelle.
+          Myy autosi eniten tarjoavalle autoliikkeelle.
         </p>
       </div>
 
@@ -208,8 +208,10 @@
           <!-- Submit -->
           <button type="submit"
                   class="flex items-center justify-center gap-2 w-full h-14 bg-av-turquoise text-black font-dm font-medium text-base rounded-lg shadow-2xl hover:bg-[#00E4D1] transition-colors"
-                  data-i18n="hero.cta">
-            Hae auton tiedot
+                  >
+            <!-- data-i18n scoped to the span: on the button it set textContent and
+                 destroyed the arrow icon, so the arrow never rendered. -->
+            <span data-i18n="hero.cta">Korkein hinta autostasi</span>
             <img src="assets/679c64f9-3060-4fbd-85b7-d40eff72d139.svg" class="w-6 h-6" alt="" />
           </button>
 

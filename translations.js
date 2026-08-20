@@ -30,11 +30,11 @@ window.TRANSLATIONS = {
     },
 
     hero: {
-      title:              'Kilpailutamme autoliikkeet puolestasi',
-      subtitle:           'Ilmoita ilmaiseksi, myy eniten tarjoavalle autoliikkeelle.',
+      title:              'Paras hinta autostasi - ilmaiseksi',
+      subtitle:           'Myy autosi eniten tarjoavalle autoliikkeelle.',
       platePlaceholder:   'ABC-123',
       mileagePlaceholder: 'AJOKILOMETRIT',
-      cta:                'Hae auton tiedot',
+      cta:                'Korkein hinta autostasi',
       ratingCount:        '7000+ arvostelua',
       plateError:         'Tarkista rekisterinumero. Esim. ABC-123.',
       mileageError:       'Tarkista kilometrimäärä.',
@@ -620,11 +620,11 @@ window.TRANSLATIONS = {
     },
 
     hero: {
-      title:              'We auction your car to dealerships',
-      subtitle:           'List for free, sell to the highest bidding dealership.',
+      title:              'The best price for your car - for free',
+      subtitle:           'Sell your car to the highest bidding dealership.',
       platePlaceholder:   'ABC-123',
       mileagePlaceholder: 'MILEAGE',
-      cta:                'Find my car',
+      cta:                'The highest price for your car',
       ratingCount:        '7,000+ reviews',
       plateError:         'Check registration number. E.g. ABC-123.',
       mileageError:       'Check mileage.',
