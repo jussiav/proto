@@ -32,6 +32,17 @@
   var itemIdle = itemBase + ' lg:text-white hover:bg-gray-100 lg:hover:bg-transparent lg:hover:text-white/75';
   var itemActive = itemBase + ' lg:border-b lg:border-b-1 lg:border-b-blue-100 lg:bg-white lg:text-blue';
 
+  /* Menu items appear ONLY on the marketing pages. In prod, ONavigationBar's
+     menuItems prop defaults to [] and just two consumers pass anything:
+     Header.astro (marketing, from Contentful) and offers/landing — and there
+     only for B2B sellers (`isB2BSeller ? menuItems : []`). Every consumer-facing
+     app page (decision, PersonalInformationPage/DAC7, auth, not-verified,
+     complete-profile) passes none, so MMenu's v-if="menuItems.length" renders
+     nothing. Same default here: a page opts in with data-menu="marketing".
+     The CTA and profile link are NOT gated — prod's default #actions slot
+     renders MMenuCTA + MProfileMenu on every one of those pages. */
+  var showMenu = mount.dataset.menu === 'marketing';
+
   /* Prod order and labels (live autovex.fi). Only Tuki has a page in the proto;
      the rest keep href="#" rather than inventing routes. */
   var MENU = [
@@ -67,9 +78,11 @@
         '</div>' +
         /* prod ul: flex-1 ... lg:justify-start lg:ml-16, no gap class.
            Hidden below lg because prod's mobile drawer is a separate follow-up. */
-        '<ul id="nav-links" class="hidden lg:flex flex-1 lg:flex-row items-center lg:h-full lg:justify-start lg:ml-16 font-dm text-base list-none">' +
-          MENU_HTML +
-        '</ul>' +
+        (showMenu
+          ? '<ul id="nav-links" class="hidden lg:flex flex-1 lg:flex-row items-center lg:h-full lg:justify-start lg:ml-16 font-dm text-base list-none">' +
+              MENU_HTML +
+            '</ul>'
+          : '') +
         '<div class="flex-shrink-0 flex items-center gap-3.5 justify-end">' +
           /* CTA classes verbatim from the live nav (MMenuCTA + AButton with
              Header.astro's buttonClass): white on desktop, blue below lg. */
