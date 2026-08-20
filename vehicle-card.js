@@ -90,7 +90,7 @@
   // Proto-only extensions (no prod equivalent), kept explicit:
   //   mediaOverlay  extra markup layered over the photo (price tag, badges)
   //   mediaBottom   extra markup pinned to the photo's bottom edge
-  //   cardClass     extra classes on the card root (e.g. the success border)
+  //   cardClass     extra classes on the card root (default: prod's shadow-sm)
   //   ctaFullWidth  keep CTAs full-width instead of prod's right-aligned row
   //   ctaSlot       raw markup replacing the CTA row (prod's #actions slot)
   //
@@ -199,14 +199,14 @@
 
   // ── Vehicle Card ──────────────────────────────────────────────
   // Photo requirements: >=5 total, with at least one exterior and one interior.
-  // Exposed so pages gate their missing-photos notice on the same rule rather
-  // than re-implementing it.
+  // NOTE: this rule is also implemented in success.html (photosComplete(store))
+  // and contact.html's stepper. Three copies — worth consolidating, but they
+  // take different arguments so it is not a drop-in change.
   function photosComplete(photos) {
     photos = photos || {};
     const total = Object.values(photos).reduce((n, a) => n + (a ? a.length : 0), 0);
     return total >= 5 && !!(photos.ulkopuoli && photos.ulkopuoli.length) && !!(photos.sisatilat && photos.sisatilat.length);
   }
-  window.photosComplete = photosComplete;
 
   window.renderVehicleCard = function (containerId, options) {
     options = options || {};
@@ -281,7 +281,9 @@
 
       // Proto-only extensions
       mediaOverlay: overlayTop,
-      cardClass: (options.successView ? 'border-2 border-av-blue' : 'border border-slate-200') + ' shadow-md'
+      // No cardClass: prod's CarCard root is `bg-white … shadow-sm` with no
+      // border, and no prod consumer ever passes one. The old blue border on
+      // success and slate border mid-funnel were both proto inventions.
     });
 
     document.getElementById('av-open-modal-btn').addEventListener('click', window.openAdModal);
