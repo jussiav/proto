@@ -276,6 +276,31 @@
       });
     }
 
+    /* Built-in data actions. Available everywhere PROTO_MOCK is loaded, because
+       "show me this page with a car in it" and "give me a clean slate" are
+       needed on every page, not per page. */
+    if (window.PROTO_MOCK) {
+      var seedBtn = document.createElement('button');
+      seedBtn.type = 'button';
+      seedBtn.textContent = 'Seed car';
+      seedBtn.title = 'Fill localStorage with the mock car, keeping the current scenario';
+      seedBtn.addEventListener('click', function () {
+        window.PROTO_MOCK.car();
+        window.location.reload();
+      });
+      bar.appendChild(seedBtn);
+
+      var clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.textContent = 'Reset data';
+      clearBtn.title = 'Clear funnel progress — back to a first-time visitor';
+      clearBtn.addEventListener('click', function () {
+        window.PROTO_MOCK.clear();
+        window.location.reload();
+      });
+      bar.appendChild(clearBtn);
+    }
+
     bar.appendChild(Object.assign(document.createElement('span'), { className: 'pb-spacer' }));
 
     /* Jump to another proto page */

@@ -139,6 +139,35 @@ panel was wrapped in its own IIFE.
 only the chrome is gated. That is how a moderator pins a participant to a
 starting state they cannot navigate out of.
 
+## Mock Funnel Data — `proto-mock.js`
+
+Seeds `localStorage` as if a seller had walked the funnel. Loaded in `<head>`
+(after `proto-mode.js`) so seeding happens before page scripts read the store.
+Shapes were captured from a real funnel walk, not invented, so they match what
+the pages actually read.
+
+Solves two things the bar could not reach on its own:
+
+- **Front-page hero states** come from funnel state, not a URL param, so
+  `empty` / `draft-incomplete` / `draft-complete` / `in-review` /
+  `auction-ongoing` / `auction-ended` / `deal-completed` were unreachable.
+  `index.html` opts in with `data-proto-mock` on `<html>`; the bar drives them
+  through the normal `?scenario=` param.
+- **Car details on offers/decision/success** were blank unless you had actually
+  walked the funnel. The bar has built-in **Seed car** (fills the mock car,
+  keeps the current scenario) and **Reset data** (back to a first-time visitor),
+  available on every page.
+
+```js
+window.PROTO_MOCK.seed('in-review');  // a named state
+window.PROTO_MOCK.car();              // just the car, keep everything else
+window.PROTO_MOCK.clear();            // first-time visitor
+window.PROTO_MOCK.states              // { name: label }, consumed by the bar
+```
+
+Selecting a mock scenario **overwrites funnel progress** — that is the point,
+the scenario *is* the state, but it means a half-finished walkthrough is lost.
+
 ## Current Work: Offers + Decision Pages
 
 **Goal:** Port `offers.astro` and `decision/[...tenderId].astro` from the Astro prototype to vanilla HTML in this Claude-Figma prototype, connected to the existing funnel via `success.html`.
