@@ -34,6 +34,7 @@
   </script>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
 <body class="font-body bg-blue-50 min-h-screen">
@@ -132,7 +133,7 @@
           <select class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
             <option value="fi">Suomi</option><option value="en">English</option>
           </select>
-          <span id="scenario-anchor" class="relative inline-flex"></span>
+          <span id="scenario-anchor" data-proto-dev class="relative inline-flex"></span>
           <span class="font-body font-normal">© 2025 All rights reserved</span>
         </div>
       </div>
@@ -1548,172 +1549,177 @@
         { id: 'deal-failed',    label: 'Deal failed' },
       ]},
     ];
-    var panel = document.getElementById('scenario-anchor');
-    var toggle = document.createElement('button');
-    toggle.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.8);font-size:13px;font-weight:400;cursor:pointer;padding:0;text-decoration:underline;font-family:system-ui,sans-serif;';
-    toggle.textContent = 'Scenario';
-    var drawer = document.createElement('div');
-    drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);width:260px;max-height:80vh;overflow-y:auto;padding:8px 0;z-index:9999;';
+    /* Scenario panel — proto tooling. Wrapped in its own IIFE so the
+       test-mode guard cannot skip the page logic that follows. */
+    (function () {
+      if (!window.protoDev) return;
+      var panel = document.getElementById('scenario-anchor');
+      var toggle = document.createElement('button');
+      toggle.style.cssText = 'background:transparent;border:none;color:rgba(255,255,255,0.8);font-size:13px;font-weight:400;cursor:pointer;padding:0;text-decoration:underline;font-family:system-ui,sans-serif;';
+      toggle.textContent = 'Scenario';
+      var drawer = document.createElement('div');
+      drawer.style.cssText = 'display:none;position:absolute;bottom:calc(100% + 8px);right:0;background:#fff;border:1px solid #e2e8f0;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,.15);width:260px;max-height:80vh;overflow-y:auto;padding:8px 0;z-index:9999;';
 
-    // Section: scenarios
-    SCENARIO_GROUPS.forEach(function(grp, gi) {
-      if (gi > 0) {
-        var sep0 = document.createElement('div');
-        sep0.style.cssText = 'height:1px;background:#e2e8f0;margin:4px 0;';
-        drawer.appendChild(sep0);
+      // Section: scenarios
+      SCENARIO_GROUPS.forEach(function(grp, gi) {
+        if (gi > 0) {
+          var sep0 = document.createElement('div');
+          sep0.style.cssText = 'height:1px;background:#e2e8f0;margin:4px 0;';
+          drawer.appendChild(sep0);
+        }
+        var ghdr = document.createElement('div');
+        ghdr.style.cssText = 'padding:6px 14px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+        ghdr.textContent = grp.group;
+        drawer.appendChild(ghdr);
+        grp.items.forEach(function(sc) {
+          var a = document.createElement('a');
+          var cur = sc.id === SCENARIO;
+          var q = new URLSearchParams();
+          q.set('scenario', sc.id);
+          a.href = 'decision.html?' + q.toString();
+          a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
+          a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;
+          a.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
+          a.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
+          drawer.appendChild(a);
+        });
+      });
+
+      // Separator
+      var sep = document.createElement('div');
+      sep.style.cssText = 'height:1px;background:#e2e8f0;margin:8px 0;';
+      drawer.appendChild(sep);
+
+      // Section: price inputs
+      var priceHdr = document.createElement('div');
+      priceHdr.style.cssText = 'padding:4px 14px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+      priceHdr.textContent = 'Price overrides';
+      drawer.appendChild(priceHdr);
+
+      function makeInput(labelText, paramKey, placeholder, defaultVal) {
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'padding:2px 14px 6px;';
+        var lbl = document.createElement('label');
+        lbl.style.cssText = 'display:block;font-size:10px;color:#64748b;margin-bottom:2px;';
+        lbl.textContent = labelText;
+        var inp = document.createElement('input');
+        inp.type = 'number';
+        inp.id = 'ov-' + paramKey;
+        inp.placeholder = placeholder || '';
+        inp.value = _params.has(paramKey) ? (_params.get(paramKey) || '') : (defaultVal !== undefined ? defaultVal : '');
+        inp.style.cssText = 'width:100%;border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;color:#334155;box-sizing:border-box;';
+        wrap.appendChild(lbl);
+        wrap.appendChild(inp);
+        return wrap;
       }
-      var ghdr = document.createElement('div');
-      ghdr.style.cssText = 'padding:6px 14px 2px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
-      ghdr.textContent = grp.group;
-      drawer.appendChild(ghdr);
-      grp.items.forEach(function(sc) {
-        var a = document.createElement('a');
-        var cur = sc.id === SCENARIO;
-        var q = new URLSearchParams();
-        q.set('scenario', sc.id);
-        a.href = 'decision.html?' + q.toString();
-        a.style.cssText = 'display:flex;align-items:center;padding:7px 14px;font-size:12px;text-decoration:none;color:' + (cur ? '#0B6DFF' : '#334155') + ';background:' + (cur ? '#EEF6FA' : 'transparent') + ';font-weight:' + (cur ? '700' : '400') + ';gap:6px;';
-        a.innerHTML = (cur ? '<svg width="8" height="8" viewBox="0 0 8 8" fill="#0B6DFF"><circle cx="4" cy="4" r="4"/></svg>' : '<span style="width:8px;display:inline-block"></span>') + sc.label;
-        a.addEventListener('mouseover', function() { if (!cur) this.style.background = '#f8fafc'; });
-        a.addEventListener('mouseout',  function() { if (!cur) this.style.background = 'transparent'; });
-        drawer.appendChild(a);
+
+      var curData = (SCENARIOS[SCENARIO] || SCENARIOS['new-offers'])();
+      drawer.appendChild(makeInput('Asking price €', 'asking', '', OV_ASKING !== null && OV_ASKING !== undefined ? OV_ASKING : _funnelAskingPrice));
+      drawer.appendChild(makeInput('Highest offer €', 'highest', '', OV_HIGHEST !== null && OV_HIGHEST !== undefined ? OV_HIGHEST : (curData.offers[0] ? curData.offers[0].amount : '')));
+      drawer.appendChild(makeInput('2nd highest € (empty = 1 offer)', 'second', 'Empty = single offer',
+        OV_SECOND === null ? '' : (OV_SECOND !== undefined ? OV_SECOND : (curData.offers[1] ? curData.offers[1].amount : ''))));
+
+      var applyBtn = document.createElement('button');
+      applyBtn.textContent = 'Apply';
+      applyBtn.style.cssText = 'display:block;margin:6px 14px 10px;width:calc(100% - 28px);background:#0B6DFF;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
+      applyBtn.addEventListener('click', function() {
+        var q = new URLSearchParams(window.location.search);
+        var askVal     = document.getElementById('ov-asking').value.trim();
+        var highestVal = document.getElementById('ov-highest').value.trim();
+        var secondVal  = document.getElementById('ov-second').value.trim();
+        if (askVal)     q.set('asking', askVal);   else q.delete('asking');
+        if (highestVal) q.set('highest', highestVal); else q.delete('highest');
+        // Always set 'second' param so we can distinguish "empty = single offer"
+        q.set('second', secondVal); // empty string → single offer
+        window.location.href = 'decision.html?' + q.toString();
       });
-    });
+      drawer.appendChild(applyBtn);
 
-    // Separator
-    var sep = document.createElement('div');
-    sep.style.cssText = 'height:1px;background:#e2e8f0;margin:8px 0;';
-    drawer.appendChild(sep);
+      // Section: negotiation simulator
+      var negSepEl = document.createElement('div');
+      negSepEl.style.cssText = 'height:1px;background:#e2e8f0;margin:8px 0;';
+      drawer.appendChild(negSepEl);
+      var negHdrEl = document.createElement('div');
+      negHdrEl.style.cssText = 'padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
+      negHdrEl.textContent = 'Negotiation';
+      drawer.appendChild(negHdrEl);
+      // Dealer reply simulation — shared by the panel button, the dealer-replied
+      // scenario seed and ?trigger=dealer-reply. Rules: the reply can never be
+      // lower than the dealer's latest offer (previous reply or original offer);
+      // the dealer may also stick to that amount, and when sticking may end the
+      // negotiation entirely.
+      function computeDealerReply(offer, neg, deterministic) {
+        var msgs = (neg && neg.messages) || [];
+        var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+        var lastDealer = msgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0];
+        var counter = lastSeller ? lastSeller.amount : offer.amount;
+        var floor = Math.max(offer.amount, lastDealer ? lastDealer.amount : 0);
+        var proposed = Math.max(Math.round(counter * 0.97), floor);
+        // Never above the seller's counter-offer; reaching it means the dealer agrees to it
+        var amount = Math.min(proposed, counter);
+        var meets = amount === counter;
+        var sticks = !meets && (amount <= floor || (!deterministic && Math.random() < 0.3));
+        if (sticks) amount = floor;
+        var endsNegotiation = sticks && !deterministic && Math.random() < 0.4;
+        return {
+          amount: amount,
+          endsNegotiation: endsNegotiation,
+          message: meets
+            ? 'Hei! Käy kaupaksi — hyväksymme ehdottamasi hinnan. Toivottavasti pääsemme kauppoihin!'
+            : endsNegotiation
+              ? 'Hei! Emme valitettavasti pysty korottamaan tarjoustamme. Tämä jää lopulliseksi tarjoukseksemme.'
+              : sticks
+                ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
+                : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!'
+        };
+      }
 
-    // Section: price inputs
-    var priceHdr = document.createElement('div');
-    priceHdr.style.cssText = 'padding:4px 14px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
-    priceHdr.textContent = 'Price overrides';
-    drawer.appendChild(priceHdr);
-
-    function makeInput(labelText, paramKey, placeholder, defaultVal) {
-      var wrap = document.createElement('div');
-      wrap.style.cssText = 'padding:2px 14px 6px;';
-      var lbl = document.createElement('label');
-      lbl.style.cssText = 'display:block;font-size:10px;color:#64748b;margin-bottom:2px;';
-      lbl.textContent = labelText;
-      var inp = document.createElement('input');
-      inp.type = 'number';
-      inp.id = 'ov-' + paramKey;
-      inp.placeholder = placeholder || '';
-      inp.value = _params.has(paramKey) ? (_params.get(paramKey) || '') : (defaultVal !== undefined ? defaultVal : '');
-      inp.style.cssText = 'width:100%;border:1px solid #e2e8f0;border-radius:6px;padding:5px 8px;font-size:12px;color:#334155;box-sizing:border-box;';
-      wrap.appendChild(lbl);
-      wrap.appendChild(inp);
-      return wrap;
-    }
-
-    var curData = (SCENARIOS[SCENARIO] || SCENARIOS['new-offers'])();
-    drawer.appendChild(makeInput('Asking price €', 'asking', '', OV_ASKING !== null && OV_ASKING !== undefined ? OV_ASKING : _funnelAskingPrice));
-    drawer.appendChild(makeInput('Highest offer €', 'highest', '', OV_HIGHEST !== null && OV_HIGHEST !== undefined ? OV_HIGHEST : (curData.offers[0] ? curData.offers[0].amount : '')));
-    drawer.appendChild(makeInput('2nd highest € (empty = 1 offer)', 'second', 'Empty = single offer',
-      OV_SECOND === null ? '' : (OV_SECOND !== undefined ? OV_SECOND : (curData.offers[1] ? curData.offers[1].amount : ''))));
-
-    var applyBtn = document.createElement('button');
-    applyBtn.textContent = 'Apply';
-    applyBtn.style.cssText = 'display:block;margin:6px 14px 10px;width:calc(100% - 28px);background:#0B6DFF;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
-    applyBtn.addEventListener('click', function() {
-      var q = new URLSearchParams(window.location.search);
-      var askVal     = document.getElementById('ov-asking').value.trim();
-      var highestVal = document.getElementById('ov-highest').value.trim();
-      var secondVal  = document.getElementById('ov-second').value.trim();
-      if (askVal)     q.set('asking', askVal);   else q.delete('asking');
-      if (highestVal) q.set('highest', highestVal); else q.delete('highest');
-      // Always set 'second' param so we can distinguish "empty = single offer"
-      q.set('second', secondVal); // empty string → single offer
-      window.location.href = 'decision.html?' + q.toString();
-    });
-    drawer.appendChild(applyBtn);
-
-    // Section: negotiation simulator
-    var negSepEl = document.createElement('div');
-    negSepEl.style.cssText = 'height:1px;background:#e2e8f0;margin:8px 0;';
-    drawer.appendChild(negSepEl);
-    var negHdrEl = document.createElement('div');
-    negHdrEl.style.cssText = 'padding:8px 14px 4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;';
-    negHdrEl.textContent = 'Negotiation';
-    drawer.appendChild(negHdrEl);
-    // Dealer reply simulation — shared by the panel button, the dealer-replied
-    // scenario seed and ?trigger=dealer-reply. Rules: the reply can never be
-    // lower than the dealer's latest offer (previous reply or original offer);
-    // the dealer may also stick to that amount, and when sticking may end the
-    // negotiation entirely.
-    function computeDealerReply(offer, neg, deterministic) {
-      var msgs = (neg && neg.messages) || [];
-      var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
-      var lastDealer = msgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0];
-      var counter = lastSeller ? lastSeller.amount : offer.amount;
-      var floor = Math.max(offer.amount, lastDealer ? lastDealer.amount : 0);
-      var proposed = Math.max(Math.round(counter * 0.97), floor);
-      // Never above the seller's counter-offer; reaching it means the dealer agrees to it
-      var amount = Math.min(proposed, counter);
-      var meets = amount === counter;
-      var sticks = !meets && (amount <= floor || (!deterministic && Math.random() < 0.3));
-      if (sticks) amount = floor;
-      var endsNegotiation = sticks && !deterministic && Math.random() < 0.4;
-      return {
-        amount: amount,
-        endsNegotiation: endsNegotiation,
-        message: meets
-          ? 'Hei! Käy kaupaksi — hyväksymme ehdottamasi hinnan. Toivottavasti pääsemme kauppoihin!'
-          : endsNegotiation
-            ? 'Hei! Emme valitettavasti pysty korottamaan tarjoustamme. Tämä jää lopulliseksi tarjoukseksemme.'
-            : sticks
-              ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
-              : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!'
-      };
-    }
-
-    var simBtn = document.createElement('button');
-    simBtn.textContent = 'Simulate dealer reply';
-    simBtn.style.cssText = 'display:block;margin:4px 14px 10px;width:calc(100% - 28px);background:#6366f1;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
-    simBtn.addEventListener('click', function() {
-      var _d = getData();
-      var _h = (_d.offers || [])[0];
-      if (!_h) return;
-      var _neg  = NEGOTIATIONS[_h.id] || { messages: [], isStopped: false };
-      var _msgs = _neg.messages || [];
-      var _lastSellerMsg = _msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
-      if (!_lastSellerMsg) { alert('Send a counter-offer first'); return; }
-      var _simSellerRounds = _msgs.filter(function(m) { return m.sender === 'seller'; }).length;
-      var _reply = computeDealerReply(_h, _neg);
-      _neg.messages.push({
-        sender: 'dealer',
-        amount: _reply.amount,
-        message: _reply.message,
-        created_at: new Date().toISOString()
+      var simBtn = document.createElement('button');
+      simBtn.textContent = 'Simulate dealer reply';
+      simBtn.style.cssText = 'display:block;margin:4px 14px 10px;width:calc(100% - 28px);background:#6366f1;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
+      simBtn.addEventListener('click', function() {
+        var _d = getData();
+        var _h = (_d.offers || [])[0];
+        if (!_h) return;
+        var _neg  = NEGOTIATIONS[_h.id] || { messages: [], isStopped: false };
+        var _msgs = _neg.messages || [];
+        var _lastSellerMsg = _msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+        if (!_lastSellerMsg) { alert('Send a counter-offer first'); return; }
+        var _simSellerRounds = _msgs.filter(function(m) { return m.sender === 'seller'; }).length;
+        var _reply = computeDealerReply(_h, _neg);
+        _neg.messages.push({
+          sender: 'dealer',
+          amount: _reply.amount,
+          message: _reply.message,
+          created_at: new Date().toISOString()
+        });
+        if (_simSellerRounds >= 2 || _reply.endsNegotiation) { _neg.isStopped = true; }
+        NEGOTIATIONS[_h.id] = _neg;
+        SCENARIO = _neg.isStopped ? 'negotiation-stopped' : 'dealer-replied'; saveState();
+        open = false; drawer.style.display = 'none';
+        renderPage();
+        openModal('Negotiate', _h.id);
       });
-      if (_simSellerRounds >= 2 || _reply.endsNegotiation) { _neg.isStopped = true; }
-      NEGOTIATIONS[_h.id] = _neg;
-      SCENARIO = _neg.isStopped ? 'negotiation-stopped' : 'dealer-replied'; saveState();
-      open = false; drawer.style.display = 'none';
-      renderPage();
-      openModal('Negotiate', _h.id);
-    });
-    drawer.appendChild(simBtn);
+      drawer.appendChild(simBtn);
 
-    var resetNegBtn = document.createElement('button');
-    resetNegBtn.textContent = 'Reset counter offers';
-    resetNegBtn.style.cssText = 'display:block;margin:4px 14px 10px;width:calc(100% - 28px);background:#ef4444;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
-    resetNegBtn.addEventListener('click', function() {
-      NEGOTIATIONS = {};
-      saveState();
-      open = false; drawer.style.display = 'none';
-      renderPage();
-    });
-    drawer.appendChild(resetNegBtn);
+      var resetNegBtn = document.createElement('button');
+      resetNegBtn.textContent = 'Reset counter offers';
+      resetNegBtn.style.cssText = 'display:block;margin:4px 14px 10px;width:calc(100% - 28px);background:#ef4444;color:#fff;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;';
+      resetNegBtn.addEventListener('click', function() {
+        NEGOTIATIONS = {};
+        saveState();
+        open = false; drawer.style.display = 'none';
+        renderPage();
+      });
+      drawer.appendChild(resetNegBtn);
 
-    var open = false;
-    toggle.addEventListener('click', function() { open = !open; drawer.style.display = open ? 'block' : 'none'; });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
-    document.addEventListener('click', function(e) { if (open && !panel.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
-    panel.appendChild(drawer);
-    panel.appendChild(toggle);
+      var open = false;
+      toggle.addEventListener('click', function() { open = !open; drawer.style.display = open ? 'block' : 'none'; });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && open) { open = false; drawer.style.display = 'none'; } });
+      document.addEventListener('click', function(e) { if (open && !panel.contains(e.target)) { open = false; drawer.style.display = 'none'; } });
+      panel.appendChild(drawer);
+      panel.appendChild(toggle);
+    }());
 
     // Create modal element (must exist before wiring)
     var modalEl = document.createElement('div');

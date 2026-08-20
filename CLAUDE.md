@@ -44,6 +44,44 @@ These rules apply to all new pages and components in this prototype, without exc
 
     Prod source: `ONavigationBar.vue`, `Header.astro`, `useHeadRoom.js`. As of the 2026-08-20 dump the **white variant is gone** — the `color` prop was removed from `NavigationBarProps` entirely, `navigationVariants` is a fixed `bg-blue` object, and the spacer is unconditionally `h-20 bg-blue`. Blue everywhere is now prod, not a divergence.
 
+## Proto Modes — dev vs test
+
+`proto-mode.js` (loaded in `<head>` on every page) decides whether the
+prototype's own tooling is visible. **The proto DEFAULTS TO DEV** — the team
+uses it far more often than the roughly monthly user tests, so scenario
+switchers, variant switchers and the prototype-instructions link are on unless
+explicitly turned off.
+
+| URL | Mode | Effect |
+|---|---|---|
+| *(no param)* | `dev` | All proto tooling visible. The default. |
+| `?mode=test` | `test` | All proto tooling hidden. **Sticks** across pages and tabs. |
+| `?mode=dev` or `?dev=1` | `dev` | Clears a stored test mode. |
+
+Test mode persists in `localStorage` (`autovex_proto_mode`), not the URL, so a
+moderator hands over ONE link and the participant keeps the clean view
+everywhere — including links opened in a new tab, which is exactly when dev
+chrome must not reappear. The cost is that test mode outlives the study, so
+while it is active the console logs the exit instruction: invisible to a
+participant, findable by whoever picks the machine up next.
+
+Exposes `window.protoMode` (`'dev' | 'test'`) and `window.protoDev` (boolean).
+
+**Adding proto-only UI:** mark its root with `data-proto-dev` AND, if built in
+JS, skip building it when `!window.protoDev`. The CSS rule
+(`[data-proto-dev],#scenario-anchor{display:none !important}`) is a safety net;
+not building it is the actual fix.
+
+**Guard placement matters.** `if (!window.protoDev) return;` must sit inside the
+panel's own IIFE, never in an enclosing function that has page logic after it.
+Two pages broke this way during implementation — `details.html` would have
+skipped `updateCard()`, and `decision.html` rendered no state at all until the
+panel was wrapped in its own IIFE.
+
+**`?scenario=` and `?variant=` still work in test mode.** URL carries the state;
+only the chrome is gated. That is how a moderator pins a participant to a
+starting state they cannot navigate out of.
+
 ## Current Work: Offers + Decision Pages
 
 **Goal:** Port `offers.astro` and `decision/[...tenderId].astro` from the Astro prototype to vanilla HTML in this Claude-Figma prototype, connected to the existing funnel via `success.html`.

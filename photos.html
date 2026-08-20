@@ -58,6 +58,7 @@
   <script src="https://cdn.jsdelivr.net/npm/libheif-js@1.18.2/libheif-web.js" onerror="console.warn('[AutoVex] libheif-js failed to load')"></script>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
     // ── Shared storage helpers ──
@@ -1028,6 +1029,7 @@
     });
 
     window.addEventListener('DOMContentLoaded', function() {
+      if (!window.protoDev) return;   // proto tooling hidden in test mode
       var _anchor = document.getElementById('scenario-anchor');
       if (_anchor) { _anchor.appendChild(drawer); _anchor.appendChild(toggle); }
     });
@@ -1047,7 +1049,7 @@
           <select class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
             <option value="fi">Suomi</option><option value="en">English</option>
           </select>
-          <span id="scenario-anchor" class="relative inline-flex"></span>
+          <span id="scenario-anchor" data-proto-dev class="relative inline-flex"></span>
           <span class="font-body font-normal">© 2025 All rights reserved</span>
         </div>
       </div>

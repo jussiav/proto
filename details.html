@@ -120,6 +120,7 @@
   </style>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
     // Delivery-distance UI variant, switched via ?delivery= URL param (cards | stepper).
@@ -574,6 +575,7 @@
 
       // ── Floating delivery-variant switcher (prototype tool) ──
       (function () {
+        if (!window.protoDev) return;   // proto tooling hidden in test mode
         const VARIANT_GROUPS = [
           { group: 'A/B test', items: [
             { id: 'control', label: 'Control — current design' },
@@ -583,6 +585,7 @@
         ];
         const anchor = document.createElement('div');
         anchor.id = 'delivery-variant-anchor';
+        anchor.setAttribute('data-proto-dev', '');
         anchor.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:9998;font-family:system-ui,sans-serif;';
         const btn = document.createElement('button');
         btn.type = 'button';
