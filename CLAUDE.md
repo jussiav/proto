@@ -94,12 +94,23 @@ DOMContentLoaded:
 ```js
 window.protoPage = {
   scenarios: [ { group: 'Drafts', items: [ { id, label } ] } ],  // or flat
-  scenarioParam: 'scenario',   // default
+  scenarioParam: 'scenario',        // default
+  scenarioExtraParams: ['copy'],    // other params an option may set
   variants: [ { id, label } ],
-  variantParam: 'delivery',    // default 'variant'
-  variantDefault: 'v2'         // what renders with no param
+  variantParam: 'delivery',         // default 'variant'
+  variantDefault: 'v2'              // what renders with no param
 };
 ```
+
+An item may carry `params: { copy: 'soon' }` to set more than one param at
+once — `success.html` needs `scenario=` and `copy=` together for the
+review-call timing states, and two items may share an `id`. Any key listed in
+`scenarioExtraParams` that an option does not set is cleared on navigation, so
+switching away never leaves a stale param behind.
+
+Page links resolve against the proto root, derived from `proto-bar.js`'s own
+`src`. Guessing from the path would break on `design-specs/` pages, and
+assuming `/` would break wherever the proto is served under a subpath.
 
 **Scenario vs Variant are separate rows, deliberately.** Scenario = a state of
 the world a real seller could be in. Variant = a design candidate that exists

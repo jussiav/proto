@@ -32,6 +32,17 @@
 (function () {
   if (!window.protoDev) return;   // test mode: no tooling at all
 
+  /* Resolve the proto root from this script's own URL rather than guessing from
+     the path. A bare "index.html" link would otherwise resolve relative to the
+     current directory and break on design-specs/ pages, and assuming "/" would
+     break wherever the proto is served under a subpath (GitHub Pages project
+     sites). currentScript is only readable during initial execution. */
+  var ROOT = (function () {
+    var el = document.currentScript;
+    var src = el && el.src;
+    return src ? src.replace(/[^/]*$/, '') : '';
+  }());
+
   var BAR_H = 30;
 
   var PAGES = [
@@ -83,18 +94,28 @@
     document.head.appendChild(css);
 
     /* ── helpers ── */
-    function withParam(key, value) {
+    function withParams(changes) {
       var p = new URLSearchParams(window.location.search);
-      if (value) p.set(key, value); else p.delete(key);
+      Object.keys(changes).forEach(function (k) {
+        var v = changes[k];
+        if (v) p.set(k, v); else p.delete(k);
+      });
       var q = p.toString();
       return window.location.pathname + (q ? '?' + q : '');
+    }
+    function withParam(key, value) {
+      var c = {}; c[key] = value; return withParams(c);
     }
     function groupsOf(list) {
       if (!list || !list.length) return [];
       return ('items' in list[0]) ? list : [{ group: null, items: list }];
     }
-    function buildSelect(list, param, currentValue, noneLabel) {
+    /* An item may carry `params` to set alongside the main one — success.html
+       needs scenario= and copy= together for the review-call timing states.
+       Options are keyed by index so two items can share an id. */
+    function buildSelect(list, param, currentValue, noneLabel, extraKeys) {
       var sel = document.createElement('select');
+      var flat = [];
       var groups = groupsOf(list);
       var none = document.createElement('option');
       none.value = ''; none.textContent = noneLabel;
@@ -108,13 +129,42 @@
         }
         (g.items || []).forEach(function (it) {
           var o = document.createElement('option');
-          o.value = it.id; o.textContent = it.label || it.id;
+          o.value = String(flat.length);
+          o.textContent = it.label || it.id;
+          flat.push(it);
           target.appendChild(o);
         });
       });
-      sel.value = currentValue || '';
+
+      /* Select the option matching the current URL, including extra params, so
+         the browser marks it — that check is the only "you are here" cue. */
+      var chosen = '';
+      flat.forEach(function (it, i) {
+        if (String(it.id) !== String(currentValue)) return;
+        var ok = (it.params || extraKeys) ? true : true;
+        (extraKeys || []).forEach(function (k) {
+          var want = (it.params || {})[k] || '';
+          var have = params.get(k) || '';
+          if (want !== have) ok = false;
+        });
+        if (ok && chosen === '') chosen = String(i);
+      });
+      sel.value = chosen;
+
       sel.addEventListener('change', function () {
-        window.location.href = withParam(param, sel.value);
+        if (sel.value === '') {
+          var clear = {}; clear[param] = null;
+          (extraKeys || []).forEach(function (k) { clear[k] = null; });
+          window.location.href = withParams(clear);
+          return;
+        }
+        var it = flat[Number(sel.value)];
+        var changes = {};
+        changes[param] = it.id;
+        /* Clear any extra key this option does not set, so switching away from
+           a state that used it does not leave a stale param behind. */
+        (extraKeys || []).forEach(function (k) { changes[k] = (it.params || {})[k] || null; });
+        window.location.href = withParams(changes);
       });
       return sel;
     }
@@ -151,7 +201,7 @@
     scWrap.appendChild(document.createTextNode('Scenario'));
     var scParam = cfg.scenarioParam || 'scenario';
     var scSel = cfg.scenarios && cfg.scenarios.length
-      ? buildSelect(cfg.scenarios, scParam, params.get(scParam), '— default —')
+      ? buildSelect(cfg.scenarios, scParam, params.get(scParam), '— default —', cfg.scenarioExtraParams)
       : (function () { var s = document.createElement('select'); s.disabled = true;
           var o = document.createElement('option'); o.textContent = 'none on this page';
           s.appendChild(o); return s; }());
@@ -168,7 +218,7 @@
       var vParam = cfg.variantParam || 'variant';
       var vCurrent = params.get(vParam) || cfg.variantDefault || '';
       vWrap.appendChild(buildSelect(cfg.variants, vParam, vCurrent,
-        cfg.variantDefault ? '— none —' : 'prod baseline'));
+        cfg.variantDefault ? '— none —' : 'prod baseline', cfg.variantExtraParams));
       bar.appendChild(vWrap);
     }
 
@@ -178,17 +228,22 @@
     var goWrap = document.createElement('label');
     goWrap.appendChild(document.createTextNode('Go to'));
     var goSel = document.createElement('select');
-    var cur = document.createElement('option');
-    cur.value = ''; cur.textContent = 'page…';
-    goSel.appendChild(cur);
+    var known = PAGES.some(function (p) { return p.href === file; });
+    if (!known) {   // e.g. a design-specs page, which isn't in the list
+      var cur = document.createElement('option');
+      cur.value = ''; cur.textContent = file;
+      goSel.appendChild(cur);
+    }
     PAGES.forEach(function (p) {
       var o = document.createElement('option');
       o.value = p.href; o.textContent = p.label;
-      if (p.href === file) o.textContent += '  (here)';
       goSel.appendChild(o);
     });
+    /* Preselect the current page so the browser marks it in the open dropdown —
+       the same "you are here" check the Scenario and Variant selects get. */
+    goSel.value = known ? file : '';
     goSel.addEventListener('change', function () {
-      if (goSel.value) window.location.href = goSel.value;
+      if (goSel.value && goSel.value !== file) window.location.href = ROOT + goSel.value;
     });
     goWrap.appendChild(goSel);
     bar.appendChild(goWrap);

@@ -224,6 +224,31 @@
     var FORCED_SCENARIO = _successParams.get('scenario');
     var FORCED_COPY = _successParams.get('copy') === 'default' ? null : _successParams.get('copy');
 
+    /* Scenarios for the proto bar. The six real draftStatus branches, plus the
+       review-call timing states — those are world state (all four strings are
+       real prod copy chosen by when the seller submitted), not design variants,
+       so they belong on the Scenario axis, carried by the extra `copy` param. */
+    window.protoPage = {
+      scenarioExtraParams: ['copy'],
+      scenarios: [
+        { group: 'Rejected', items: [
+          { id: 'rejected',                label: 'Rejected' },
+          { id: 'rejected-missing-images', label: 'Rejected — missing photos' }
+        ]},
+        { group: 'In review', items: [
+          { id: 'in-review-unverified',    label: 'In review — email not verified' },
+          { id: 'in-review-verified',      label: 'In review — email verified' },
+          { id: 'in-review-verified',      label: 'In review — verified, call today',        params: { copy: 'soon' } },
+          { id: 'in-review-verified',      label: 'In review — verified, call tomorrow',     params: { copy: 'tomorrow' } },
+          { id: 'in-review-verified',      label: 'In review — verified, call next workday', params: { copy: 'next_work_day' } }
+        ]},
+        { group: 'Published', items: [
+          { id: 'queued',                  label: 'Queued — email not verified' },
+          { id: 'published',               label: 'Published (auction live)' }
+        ]}
+      ]
+    };
+
     // "What happens next" step copy — verbatim from WhatHappensNext.vue /
     // tenderform.what_happens_next.complete.* locale keys.
     var NS = {
