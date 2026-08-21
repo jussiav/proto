@@ -161,7 +161,7 @@
 
         <!-- Matches prod's WhatHappensNext.vue full 5-step list (draftStatus='open', unverified) —
              this is the ONLY variant reachable here: providingPriceInfo always shows this exact list. -->
-        <div class="flex flex-col gap-5">
+        <div id="price-next-steps" class="flex flex-col gap-5">
           <!-- Step 1 (verify email) hides once the seller is logged in — prod's
                WhatHappensNext drops it via `!isVerified`, leaving four bullets. -->
           <div id="price-step1-row" class="flex gap-2 items-start">
@@ -393,6 +393,30 @@
       var loggedIn = !!s.loggedIn;
       var step1 = document.getElementById('price-step1-row');
       if (step1) step1.style.display = loggedIn ? 'none' : '';
+      renumberSteps();
+    }
+
+    /* The badges are pre-rendered numbered SVGs, so hiding a row would otherwise
+       leave the rest reading 2,3,4,5. Prod's MNumberedSteps renders `index + 1`
+       as text and so always renumbers; this reassigns the asset by visible
+       position to get the same result. */
+    var STEP_BADGES = [
+      'assets/cf9ed64c-e015-4129-a683-516894e443b4.svg',
+      'assets/7cb7ddce-86cc-457f-be2d-f44485a7e101.svg',
+      'assets/d7dbeec3-32bb-407c-a234-273ace9af998.svg',
+      'assets/step-4.svg',
+      'assets/step-5.svg'
+    ];
+    function renumberSteps() {
+      var rows = [].slice.call(document.querySelectorAll('#price-next-steps > .flex.gap-2'))
+        .filter(function (r) { return r.style.display !== 'none'; });
+      rows.forEach(function (row, i) {
+        var img = row.querySelector('img');
+        if (img && STEP_BADGES[i]) {
+          img.src = STEP_BADGES[i];
+          img.alt = String(i + 1);
+        }
+      });
     }
 
     function continueNext() {

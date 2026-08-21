@@ -172,10 +172,22 @@ lands: `published` for a non-reviewable car (it published immediately),
 `in-review-verified` for a reviewable one.
 
 **Mirroring a prod inconsistency deliberately:** the sidebar bullet count
-follows LOGIN state, not `can_review` — `WhatHappensNext` drops `verify_email`
-once `isVerified`, giving four bullets. So a non-reviewable seller still reads
-"Soitamme sinulle" at the price step, which contradicts the intent of never
-promising them a call. Reproduced as-is; a candidate can propose the fix.
+follows LOGIN state, not `can_review`. `WhatHappensNext` has no `can_review`
+reference at all — it takes only `draftStatus`, `isVerified` and
+`missingImages`, and at the price step the status is `open`. So:
+
+- not logged in → all 5 steps
+- logged in → `slice(1)` → 4 steps, `verify_email` dropped
+
+Both lists still lead with "Soitamme sinulle", so **prod promises the review
+call at the price step in both price variants** and only stops afterwards: the
+one list without the review step is the `queued_for_publishing_after_verification`
+branch, which is exactly the status a non-reviewable seller reaches after
+submitting unverified. Reproduced as-is; a candidate can propose the fix.
+
+Because rows are hidden rather than re-rendered, the numbered badges are
+reassigned by visible position (`renumberSteps`) — they are pre-rendered SVGs,
+where prod's `MNumberedSteps` prints `index + 1` and renumbers for free.
 
 **`auto_rejected` is a different mechanism** — `AutoRejectsUnfitVehicle` with its
 own `unfit_cars_auto_rejection` config, disabled for Finland. Not the review
