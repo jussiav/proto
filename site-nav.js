@@ -102,13 +102,18 @@
 
   mount.innerHTML = NAV_HTML;
 
-  /* ── Login state — show first name if stored ──
+  /* ── Login state — first name when LOGGED IN ──
+     Gated on s.loggedIn, not merely on a stored name: in prod the app only
+     knows the email is verified because the seller arrived via the email link,
+     which logs them in. A filled-in contact step alone is not a session, so a
+     mid-funnel seller must still see "Kirjaudu".
+
      Registered as a DOMContentLoaded listener so it fires AFTER i18n.js's
      listener (i18n registers in <head>, we register here in body). This
      guarantees our name overwrites the "Kirjaudu" i18n just applied. */
   try {
     var s = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
-    var raw = ((s.contact || {}).kokoNimi || '').trim();
+    var raw = s.loggedIn ? ((s.contact || {}).kokoNimi || '').trim() : '';
     var name = raw ? raw.split(' ')[0] : null;
     if (name) {
       document.addEventListener('DOMContentLoaded', function () {

@@ -493,7 +493,7 @@
       if (FORCED_SCENARIO && renderForcedScenario(FORCED_SCENARIO, FORCED_COPY)) return;
       const s = getStore();
       const photosOk = photosComplete(s);
-      const emailVerified = !!s.emailVerified;
+      const loggedIn = !!s.loggedIn;
       const existing = document.getElementById('success-photos-btn');
       const leftCol = document.getElementById('success-illustration-wrap').parentNode;
       const headlineSection = document.getElementById('success-headline-section');
@@ -531,7 +531,7 @@
           document.getElementById('success-subtext').insertAdjacentElement('afterend', btn);
         }
 
-      } else if (emailVerified) {
+      } else if (loggedIn) {
         // ── EMAIL VERIFIED ── same state as scenario 'in-review-verified': render via the
         // shared definition so the two paths cannot drift apart.
         existing?.remove();
@@ -549,6 +549,15 @@
       }
     }
 
+    /* Where verification lands the seller. A car outside the Filament review
+       segment was never review-called: it publishes straight away, so the
+       verified seller sees the published/auction-live state. A reviewable car
+       goes to review, so that seller sees in-review-verified. `reviewable` is
+       written by the price step; default true, which is the common case. */
+    function postVerifyScenario(store) {
+      return store.reviewable === false ? 'published' : 'in-review-verified';
+    }
+
     // Handle emailVerified URL param (landing from virtual email CTA)
     (function () {
       const p = new URLSearchParams(window.location.search);
@@ -559,10 +568,13 @@
           window.location.replace('dac7.html');
           return;
         }
-        s.emailVerified = true;
+        s.loggedIn = true;
         setStore(s);
-        // Clean the URL without reloading
-        history.replaceState(null, '', window.location.pathname);
+        /* Land on the scenario the draft's review path implies, rather than
+           just clearing the param — otherwise a non-reviewable seller would be
+           shown the review treatment. */
+        window.location.replace(window.location.pathname + '?scenario=' + postVerifyScenario(s));
+        return;
       }
     }());
 
@@ -575,11 +587,12 @@
         window.location.href = 'dac7.html';
         return;
       }
-      s.emailVerified = true;
+      s.loggedIn = true;
       setStore(s);
       if (typeof window.muwCloseFrame === 'function') window.muwCloseFrame(false);
-      updateContent();
-      renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus() });
+      /* Same routing as the email-link path: the review outcome decides which
+         verified state the seller sees. */
+      window.location.href = window.location.pathname + '?scenario=' + postVerifyScenario(s);
     });
 
     document.addEventListener('DOMContentLoaded', function () {

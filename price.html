@@ -111,10 +111,10 @@
           <div class="flex items-center justify-center h-[170px]">
             <img src="assets/price-illustration.svg" alt="" class="w-[217px] h-[154px] object-contain" />
           </div>
-          <h1 id="price-headline" class="font-dm font-bold text-black text-2xl leading-[28px]" data-i18n="price.title">
+          <h1 id="price-headline" class="font-dm font-bold text-black text-2xl leading-[28px]">
             Mitä odottaisit autoliikkeen tarjoavan autostasi?
           </h1>
-          <p id="price-subtext" class="font-dm text-base leading-5 text-black max-w-[432px]" data-i18n="price.subtitle">
+          <p id="price-subtext" class="font-dm text-base leading-5 text-black max-w-[432px]">
             Arviosi auttaa meitä valmistautumaan tarjouskilpailuun. Jos et halua arvioida, teemme sen puolestasi.
           </p>
         </div>
@@ -122,19 +122,21 @@
         <!-- Optional price expectation — single variant for all sellers -->
         <div class="w-full flex flex-col gap-4">
           <div class="flex flex-col gap-2">
-            <label for="price-expectation" class="font-dm font-medium text-base text-slate-900" data-i18n="price.targetLabel">Oma arviosi (valinnainen)</label>
+            <label for="price-expectation" class="font-dm font-medium text-base text-slate-900">
+              <span id="price-label">Oma arviosi (valinnainen)</span><span id="price-required-star" class="text-red-500 font-medium" style="display:none"> *</span>
+            </label>
             <div class="price-input-wrapper w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
-              <input id="price-expectation" type="text" inputmode="numeric" placeholder="esim. 12 500" data-i18n-placeholder="price.targetPlaceholder"
+              <input id="price-expectation" type="text" inputmode="numeric" placeholder="esim. 12 500"
                 class="flex-1 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
               <span class="font-dm font-medium text-base text-slate-400 flex-shrink-0">€</span>
             </div>
             <div id="price-expectation-error" class="items-center gap-1.5" style="display:none;">
-              <p class="av-error-msg">Anna hinta numeroina, esim. 12 500.</p>
+              <p id="price-error-msg" class="av-error-msg">Anna hinta numeroina, esim. 12 500.</p>
             </div>
           </div>
           <div class="flex items-start gap-2">
             <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-            <p class="font-dm text-base leading-5 text-slate-700" data-i18n="price.targetNote">Et sitoudu myymään tavoitehinnallasi.</p>
+            <p id="price-note" class="font-dm text-base leading-5 text-slate-700">Et sitoudu myymään tavoitehinnallasi.</p>
           </div>
         </div>
 
@@ -160,7 +162,9 @@
         <!-- Matches prod's WhatHappensNext.vue full 5-step list (draftStatus='open', unverified) —
              this is the ONLY variant reachable here: providingPriceInfo always shows this exact list. -->
         <div class="flex flex-col gap-5">
-          <div class="flex gap-2 items-start">
+          <!-- Step 1 (verify email) hides once the seller is logged in — prod's
+               WhatHappensNext drops it via `!isVerified`, leaving four bullets. -->
+          <div id="price-step1-row" class="flex gap-2 items-start">
             <img src="assets/cf9ed64c-e015-4129-a683-516894e443b4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
             <div>
               <p id="step1-title" class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step1Title">Vahvista sähköpostisi</p>
@@ -336,29 +340,110 @@
       if (wrapper) { wrapper.style.outline = ''; wrapper.style.outlineOffset = ''; }
     }
 
+    /* ── Reviewable or not ────────────────────────────────────────────────
+       Mirrors prod's ReviewIfPreferredSegment: the Filament settings are a
+       WHITELIST, so a car outside the configured mileage/year band is NOT
+       review-called, and that seller is asked for an asking price instead of an
+       optional estimate (PriceInfo.vue, can_review === false).
+
+       The thresholds here are the current Filament values and are expected to
+       drift — they live in TenderRequestReviewSettings, not in code.
+       ?scenario=asking-price / =price-estimate forces either variant for
+       demoing, without having to enter a qualifying car. */
+    var REVIEW_MAX_MILEAGE = 240000;
+    var REVIEW_MAX_AGE_YEARS = 10;
+
+    function isReviewable(store) {
+      var forced = new URLSearchParams(window.location.search).get('scenario');
+      if (forced === 'asking-price')   return false;
+      if (forced === 'price-estimate') return true;
+
+      var km = parseInt(String((store.hero || {}).km || '').replace(/\D/g, ''), 10);
+      if (!isNaN(km) && km > REVIEW_MAX_MILEAGE) return false;
+
+      var year = parseInt((store.details || {}).vuosimalli, 10);
+      if (!isNaN(year) && (new Date().getFullYear() - year) > REVIEW_MAX_AGE_YEARS) return false;
+
+      return true;
+    }
+
+    function applyPriceVariant() {
+      var s = getStore();
+      var reviewable = isReviewable(s);
+      document.body.dataset.priceVariant = reviewable ? 'estimate' : 'asking';
+
+      document.getElementById('price-headline').textContent =
+        t(reviewable ? 'price.title' : 'price.askingTitle');
+      document.getElementById('price-subtext').textContent =
+        t(reviewable ? 'price.subtitle' : 'price.askingSubtitle');
+      document.getElementById('price-label').textContent =
+        t(reviewable ? 'price.targetLabel' : 'price.askingLabel');
+      document.getElementById('price-expectation').placeholder =
+        t(reviewable ? 'price.targetPlaceholder' : 'price.askingPlaceholder');
+      document.getElementById('price-note').textContent =
+        t(reviewable ? 'price.targetNote' : 'price.askingInfo');
+      /* Required in the asking-price variant — prod marks the field with * and
+         validates it, where the estimate is optional. */
+      document.getElementById('price-required-star').style.display = reviewable ? 'none' : '';
+
+      /* Sidebar bullets: prod's WhatHappensNext shows all five only while the
+         seller is NOT yet logged in. Once logged in, verify_email drops and four
+         remain — which is what the prod screenshot of this step shows. The
+         review bullet stays either way; prod does not vary it by can_review. */
+      var loggedIn = !!s.loggedIn;
+      var step1 = document.getElementById('price-step1-row');
+      if (step1) step1.style.display = loggedIn ? 'none' : '';
+    }
+
     function continueNext() {
       const s = getStore();
       s.priceVisited = true;
 
       const val = parsePriceValue('price-expectation');
       if (val === false) {
-        showPriceError('price-expectation-error', null, '');
+        showPriceError('price-expectation-error', 'price-error-msg', t('price.targetError'));
+        scrollAndPulse(document.getElementById('price-expectation')?.parentNode);
+        setStore(s); return;
+      }
+      var reviewable = isReviewable(s);
+      if (!reviewable && val === null) {
+        /* Asking price is required — prod validates asking_price for
+           can_review === false, where the estimate is optional. */
+        showPriceError('price-expectation-error', 'price-error-msg', t('price.askingError'));
         scrollAndPulse(document.getElementById('price-expectation')?.parentNode);
         setStore(s); return;
       }
       clearPriceError('price-expectation-error', 'price-expectation');
-      // Blank is allowed — AutoVex estimates on the seller's behalf.
+
       if (val !== null) {
         s.priceExpectation = val.toString();
+        /* Which field the seller actually answered, so the pages after the
+           funnel know whether this draft is review-bound. prod stores
+           asking_price only when can_review is false. */
+        if (reviewable) { delete s.askingPrice; }
+        else { s.askingPrice = val.toString(); }
       } else {
-        delete s.priceExpectation;
+        delete s.priceExpectation; delete s.askingPrice;
       }
+      s.reviewable = reviewable;
 
       setStore(s);
       window.location = 'contact.html';
     }
 
+    window.protoPage = {
+      scenarios: [
+        { id: 'price-estimate', label: 'Optional price estimate (reviewable car)' },
+        { id: 'asking-price',   label: 'Asking price (outside review segment)' }
+      ]
+    };
+
+    /* Owned by applyPriceVariant, not data-i18n, so the variant survives a
+       language switch. */
+    document.addEventListener('av:langchange', applyPriceVariant);
+
     document.addEventListener('DOMContentLoaded', function() {
+      applyPriceVariant();
       const s = getStore();
       s.priceVisited = true;
 

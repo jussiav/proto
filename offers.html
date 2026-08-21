@@ -324,11 +324,11 @@
       try {
         var fs = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
         if (_DRAFT_ONLY.indexOf(SCENARIO) !== -1) {
-          delete fs.emailVerified; delete fs.successVisited; delete fs.offersVisited;
+          delete fs.loggedIn; delete fs.successVisited; delete fs.offersVisited;
         } else if (_IN_REVIEW.indexOf(SCENARIO) !== -1) {
-          fs.emailVerified = true; fs.successVisited = true; delete fs.offersVisited;
+          fs.loggedIn = true; fs.successVisited = true; delete fs.offersVisited;
         } else {
-          fs.emailVerified = true; fs.successVisited = true; fs.offersVisited = true;
+          fs.loggedIn = true; fs.successVisited = true; fs.offersVisited = true;
         }
         localStorage.setItem('autovex_funnel', JSON.stringify(fs));
       } catch(e) {}

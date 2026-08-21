@@ -1137,7 +1137,7 @@
           headline = t('heroStates.auctionEnded');
         }
         destination = 'offers.html';
-      } else if (store.emailVerified) {
+      } else if (store.loggedIn) {
         headline = t('heroStates.underReview');
         destination = 'success.html';
       } else {
@@ -1180,7 +1180,10 @@
 
     function syncNavLoginLabel() {
       const store = getStore();
-      const raw = ((store.contact || {}).kokoNimi || '').trim();
+      /* Gated on loggedIn, matching site-nav.js: a filled contact step is not a
+         session. Prod only knows the email is verified because the seller came
+         back via the email link, which logs them in. */
+      const raw = store.loggedIn ? ((store.contact || {}).kokoNimi || '').trim() : '';
       const name = raw ? raw.split(' ')[0] : null;
       const label = name || t('nav.login');
       const navLabel = document.getElementById('nav-login-label');

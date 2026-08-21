@@ -139,6 +139,63 @@ panel was wrapped in its own IIFE.
 only the chrome is gated. That is how a moderator pins a participant to a
 starting state they cannot navigate out of.
 
+## Review Segment — the Filament filters
+
+Prod computes ONE boolean and hands it to the frontend as `can_review`:
+
+```
+TenderRequestReviewSettings (Filament: enabled, fuel_types, min/max_model_year,
+min/max_mileage)  →  EvaluateDraftForReview  →  Resource: can_review
+```
+
+The settings are a **whitelist** (`ReviewIfPreferredSegment` validates the car
+falls INSIDE the band), so a high-mileage or old car is NOT review-called.
+
+**Where it shows in the UI:** only `PriceInfo.vue`. `can_review: false` swaps the
+price step to an asking-price question (`tenderform.price_info.asking_price_*`,
+required) instead of the optional estimate, and `CONFIRM_PRICE_INFO` goes
+straight to `submitting` — the price step is the last step, the draft publishes
+rather than going to review.
+
+Everything downstream branches on the resulting **draft status**, not on
+`can_review`: `review_comms_content` exists only when `isInReview()`, and
+`WhatHappensNext` keys off status. Offers and decision have no `can_review`
+branching at all; `asking_price` is passed to `CarCard` but never rendered, and
+C2BDecision's own comment says it is "being phased out of the consumer journey".
+
+**Proto implementation.** `price.html` derives it from the seeded car —
+mileage > 240 000 km or older than 10 years — matching the current Filament
+values, which are expected to drift. `?scenario=asking-price` /
+`price-estimate` forces either variant. The choice is recorded as
+`store.reviewable`, which `success.html` reads to decide where verification
+lands: `published` for a non-reviewable car (it published immediately),
+`in-review-verified` for a reviewable one.
+
+**Mirroring a prod inconsistency deliberately:** the sidebar bullet count
+follows LOGIN state, not `can_review` — `WhatHappensNext` drops `verify_email`
+once `isVerified`, giving four bullets. So a non-reviewable seller still reads
+"Soitamme sinulle" at the price step, which contradicts the intent of never
+promising them a call. Reproduced as-is; a candidate can propose the fix.
+
+**`auto_rejected` is a different mechanism** — `AutoRejectsUnfitVehicle` with its
+own `unfit_cars_auto_rejection` config, disabled for Finland. Not the review
+filters; easy to conflate.
+
+## Login state — `loggedIn`
+
+One flag, `store.loggedIn`, means "email verified" AND "logged in", because in
+prod they are the same event: the app only knows the address is verified because
+the seller returned via the email link, which logs them in. Renamed from
+`emailVerified` for that reason.
+
+The nav's first name is gated on it (`site-nav.js`, and `index.html`'s own
+`syncNavLoginLabel`) — a filled-in contact step is not a session. `offers`,
+`decision` and `dac7` are logged-in-only contexts and set the flag themselves as
+part of their scenario setup.
+
+The URL param `?emailVerified=1` and the `emailVerified` postMessage keep their
+names: those are the email link's contract, not the stored state.
+
 ## Mock Funnel Data — `proto-mock.js`
 
 Seeds `localStorage` as if a seller had walked the funnel. Loaded in `<head>`

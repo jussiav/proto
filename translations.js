@@ -575,6 +575,16 @@ window.TRANSLATIONS = {
       targetPlaceholder: 'esim. 12 500',
       targetError:     'Anna hinta numeroina, esim. 12 500.',
       targetNote:      'Et sitoudu myymään tavoitehinnallasi.',
+      /* Asking-price variant — shown when the car falls outside the Filament
+         review segment (can_review false). Verbatim from prod
+         tenderform.price_info.asking_price_*. The prod typo in
+         "mahdollisuuuksiasi" is reproduced as-is. */
+      askingTitle:       'Mikä olisi tarjous, johon olisit tyytyväinen?',
+      askingSubtitle:    'Realistinen pyyntihinta nostaa mahdollisuuuksiasi tarjouskilpailussa.',
+      askingLabel:       'Pyyntihintasi',
+      askingPlaceholder: 'Esim. 12 500',
+      askingInfo:        'Auttaa ostajia ymmärtämään, millaista hintaa toivot. Tarjoukset usein ylittävät pyyntihinnan.',
+      askingError:       'Anna pyyntihinta numeroina, esim. 12 500.',
     },
 
     /* ── Contact page ── */
@@ -1148,6 +1158,12 @@ window.TRANSLATIONS = {
       targetPlaceholder:  'e.g. 12,500',
       targetError:        'Enter price as numbers, e.g. 12,500.',
       targetNote:         'You\'re not committed to selling at your target price.',
+      askingTitle:        'What offer would you be happy with?',
+      askingSubtitle:     'A realistic asking price improves your chances in the auction.',
+      askingLabel:        'Your asking price',
+      askingPlaceholder:  'E.g. 12,500',
+      askingInfo:         'Helps buyers understand the price you\'re hoping for. Offers often exceed the asking price.',
+      askingError:        'Enter the asking price as numbers, e.g. 12,500.',
     },
 
     contact: {

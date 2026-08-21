@@ -78,6 +78,10 @@
     if (SUPPORTED.indexOf(lang) === -1) return;
     try { localStorage.setItem('av_lang', lang); } catch (e) {}
     applyTranslations();
+    /* Pages that swap copy per variant (price.html's asking-price vs estimate)
+       need to re-apply after a switch, since applyTranslations has just reset
+       every data-i18n node to its declared key. */
+    document.dispatchEvent(new CustomEvent('av:langchange', { detail: { lang: lang } }));
   }
 
   // Public API

@@ -115,27 +115,27 @@
     'in-review': function () {                  // "underReview" -> success.html
       var s = clone(CAR);
       s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
-      s.successVisited = true; s.emailVerified = true;
+      s.successVisited = true; s.loggedIn = true;
       write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
     },
     'auction-ongoing': function () {            // "auctionOngoing" -> offers.html
       var s = clone(CAR);
       s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
-      s.successVisited = true; s.emailVerified = true; s.offersVisited = true;
+      s.successVisited = true; s.loggedIn = true; s.offersVisited = true;
       write(FUNNEL_KEY, s);
       write(OFFERS_KEY, { scenario: 'auction-live' }); write(DECISION_KEY, null);
     },
     'auction-ended': function () {              // "auctionEnded" -> offers.html
       var s = clone(CAR);
       s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
-      s.successVisited = true; s.emailVerified = true; s.offersVisited = true;
+      s.successVisited = true; s.loggedIn = true; s.offersVisited = true;
       write(FUNNEL_KEY, s);
       write(OFFERS_KEY, { scenario: 'new-offers' }); write(DECISION_KEY, null);
     },
     'deal-completed': function () {             // "dealCompleted" -> offers.html
       var s = clone(CAR);
       s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
-      s.successVisited = true; s.emailVerified = true; s.offersVisited = true;
+      s.successVisited = true; s.loggedIn = true; s.offersVisited = true;
       write(FUNNEL_KEY, s);
       write(OFFERS_KEY, { scenario: 'accepted' }); write(DECISION_KEY, null);
     }
@@ -165,7 +165,7 @@
       if (off.scenario === 'auction-live' || off.scenario === 'live-no-bids') return 'auction-ongoing';
       return 'auction-ended';
     }
-    if (f.emailVerified) return 'in-review';
+    if (f.loggedIn) return 'in-review';
     if (f.contact && f.contact.sahkoposti) return 'draft-complete';
     return 'draft-incomplete';
   }

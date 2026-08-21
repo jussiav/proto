@@ -166,7 +166,7 @@
     (function() {
       try {
         var fs = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
-        fs.emailVerified = true; fs.successVisited = true; fs.offersVisited = true;
+        fs.loggedIn = true; fs.successVisited = true; fs.offersVisited = true;
         localStorage.setItem('autovex_funnel', JSON.stringify(fs));
       } catch(e) {}
     })();
