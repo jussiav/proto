@@ -157,9 +157,19 @@ Solves two things the bar could not reach on its own:
   walked the funnel. The bar has built-in **Seed car** and **Reset data** on
   every page.
 
-**Seed car and Reset data are named states, not a separate mechanism.** Seed car
-= `draft-complete` (every funnel field filled, submitted, email not verified);
-Reset data = `empty`. They were originally a loose car-details merge that left
+**Seed car and Reset prototype are named states, not a separate mechanism.**
+Seed car = `draft-complete`; Reset prototype = `empty`, and it always returns to
+`index.html` — clearing in place would leave you on a mid-funnel or offers page
+with nothing to render.
+
+`draft-complete` must satisfy every step's `isComplete()`, not just carry
+plausible data. Three things bite:
+- `services.radioGroups` stores the option's **label text** (`saveServices` in
+  services.html), so the strings must match the rendered labels exactly.
+- `services.bookType: 'paper'` is deliberate — `isComplete` only demands
+  `tiedot` when the book is `digital` or `both`.
+- `contact.kayttoehdot` and a non-empty `services.korjaukset` are both required;
+  `details.avaimet` must be `'2 tai enemmän'`, not any other wording. They were originally a loose car-details merge that left
 the store and the bar's scenario menu disagreeing, producing front-page
 combinations you could not sensibly continue from.
 

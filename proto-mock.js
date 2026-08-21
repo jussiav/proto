@@ -45,13 +45,28 @@
       vaihteisto: 'Automaatti', sijainti: 'Helsinki', deliveryRange: '50',
       kesarenkaat: 'Hyvät', kesavanteet: 'Vanteilla',
       talvirenkaat: 'Hyvät', talvivanteet: 'Vanteilla',
-      avaimet: 'Kaksi', varustelu: '', yrityskaytto: false
+      avaimet: '2 tai enemmän', varustelu: '', yrityskaytto: false
     },
+    /* radioGroups stores the option's LABEL TEXT (see saveServices in
+       services.html), so these must be the exact labels or the step reads as
+       unfilled. Order: huoltohistoria, huoltokirjan tyyppi, viimeisin huolto,
+       tuulilasin kunto, lasivakuutus.
+       bookType 'paper' is deliberate: isComplete only demands `tiedot` when the
+       book is digital or both, so paper keeps the state valid without it.
+       korjaukset must be a non-empty trimmed string — simulated user input, not
+       product copy. */
     services: {
-      tiedot: 'available', bookType: 'Sähköinen',
-      radioGroups: ['Kyllä', 'Ei', 'Ei', 'Ei', 'Kyllä'],
-      lastServiceDetail: { km: 132000, month: '5', year: '2025' },
-      korjaukset: ''
+      radioGroups: [
+        'Täydellinen merkkiliikkeen historia',
+        'Paperinen huoltokirja',
+        'Viimeisen 6 kuukauden aikana',
+        'Ehjä',
+        'Kyllä'
+      ],
+      bookType: 'paper',
+      tiedot: null,
+      korjaukset: 'Pieniä kiviskemiä konepellissä. Huollot tehty merkkiliikkeessä.',
+      lastServiceDetail: { km: 132000, month: '5', year: '2025' }
     },
     photos: {
       ulkopuoli: [PHOTO, PHOTO, PHOTO],
@@ -60,7 +75,9 @@
     contact: {
       kokoNimi: 'Matti Meikäläinen',
       sahkoposti: 'matti.meikalainen@example.fi',
-      puhelin: '+358401234567'
+      puhelin: '+358401234567',
+      kayttoehdot: true,      // isComplete('contact') requires it
+      markkinointi: false
     }
   };
 
@@ -85,34 +102,40 @@
       write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
     },
     'draft-complete': function () {             // "launchingCar", continue to success
+      /* Every step must read as COMPLETE, not merely started, so the stepper
+         shows all ticks and each page validates on Continue. The flags below are
+         what isStarted()/isComplete() check beyond the field data itself. */
       var s = clone(CAR);
-      s.detailsLeft = true; s.priceVisited = true; s.successVisited = true;
+      s.detailsLeft = true;
+      s.photosVisited = true;
+      s.priceVisited = true;
+      s.successVisited = true;
       write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
     },
     'in-review': function () {                  // "underReview" -> success.html
       var s = clone(CAR);
-      s.detailsLeft = true; s.priceVisited = true; s.successVisited = true;
-      s.emailVerified = true;
+      s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
+      s.successVisited = true; s.emailVerified = true;
       write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
     },
     'auction-ongoing': function () {            // "auctionOngoing" -> offers.html
       var s = clone(CAR);
-      s.detailsLeft = true; s.priceVisited = true; s.successVisited = true;
-      s.emailVerified = true; s.offersVisited = true;
+      s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
+      s.successVisited = true; s.emailVerified = true; s.offersVisited = true;
       write(FUNNEL_KEY, s);
       write(OFFERS_KEY, { scenario: 'auction-live' }); write(DECISION_KEY, null);
     },
     'auction-ended': function () {              // "auctionEnded" -> offers.html
       var s = clone(CAR);
-      s.detailsLeft = true; s.priceVisited = true; s.successVisited = true;
-      s.emailVerified = true; s.offersVisited = true;
+      s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
+      s.successVisited = true; s.emailVerified = true; s.offersVisited = true;
       write(FUNNEL_KEY, s);
       write(OFFERS_KEY, { scenario: 'new-offers' }); write(DECISION_KEY, null);
     },
     'deal-completed': function () {             // "dealCompleted" -> offers.html
       var s = clone(CAR);
-      s.detailsLeft = true; s.priceVisited = true; s.successVisited = true;
-      s.emailVerified = true; s.offersVisited = true;
+      s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
+      s.successVisited = true; s.emailVerified = true; s.offersVisited = true;
       write(FUNNEL_KEY, s);
       write(OFFERS_KEY, { scenario: 'accepted' }); write(DECISION_KEY, null);
     }

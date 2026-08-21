@@ -311,12 +311,16 @@
       });
       bar.appendChild(seedBtn);
 
+      /* Reset takes you back to the true initial state: no ad started, and on
+         the front page, wherever you happened to be. Clearing in place would
+         leave you on a mid-funnel or offers page with nothing to render. */
       var clearBtn = document.createElement('button');
       clearBtn.type = 'button';
-      clearBtn.textContent = 'Reset data';
-      clearBtn.title = 'Clear car details — back to a first-time visitor';
+      clearBtn.textContent = 'Reset prototype';
+      clearBtn.title = 'Clear all car details and return to the front page, no ad started';
       clearBtn.addEventListener('click', function () {
-        applyMockState(window.PROTO_MOCK.CLEAR_STATE);
+        window.PROTO_MOCK.clear();
+        window.location.href = ROOT + 'index.html';
       });
       bar.appendChild(clearBtn);
     }
