@@ -268,8 +268,9 @@ promoting it to Vue later is a renderer swap, not a rewrite.
 | `fuelType` | String | Spec pill |
 | `image` | String\|null | Photo URL; `null` renders the ph-car-simple placeholder |
 | `status` | String | Badge label |
-| `statusColor` | String | Badge colour classes |
+| `statusColor` | String | Badge wrapper + text colour classes (UiBadge `bgColor`/`borderColor`/`textColor`) |
 | `statusIcon` | String | Badge icon markup |
+| `statusIconColor` | String | Badge icon colour (UiBadge colours the icon separately; only its `light` variant differs from the text) |
 | `supportingText` | String | Italic line under the pills (prod `ListingCardSupportingText`) |
 | `primaryCta` | Object | `{ text, href?, attrs? }` — UiButton `secondary` |
 | `secondaryCta` | Object | `{ text, href?, attrs? }` — UiButton `ghost` |
@@ -277,7 +278,6 @@ promoting it to Vue later is a renderer swap, not a rewrite.
 **Proto-only props** (no prod equivalent):
 | Prop | Notes |
 |---|---|
-| `mediaOverlay` | Markup layered over the photo (price tag, status badges) |
 | `mediaBottom` | Markup pinned to the photo's bottom edge (amber "photos missing" bar) |
 | `cardClass` | Extra classes on the card root (e.g. the success-page border) |
 | `ctaFullWidth` | Keep CTAs full-width instead of prod's right-aligned row |

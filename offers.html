@@ -624,9 +624,10 @@
     };
     Object.keys(DRAFT_STATUS_CFG).forEach(function (k) {
       var b = window.DRAFT_BADGES[k];
-      DRAFT_STATUS_CFG[k].textKey = b.key;
-      DRAFT_STATUS_CFG[k].icon  = b.icon;
-      DRAFT_STATUS_CFG[k].badge = b.badge;
+      DRAFT_STATUS_CFG[k].textKey   = b.key;
+      DRAFT_STATUS_CFG[k].icon      = b.icon;
+      DRAFT_STATUS_CFG[k].badge     = b.badge;
+      DRAFT_STATUS_CFG[k].iconColor = b.iconColor;   // UiBadge colours the icon separately
     });
 
 
@@ -648,6 +649,7 @@
         status: t(cfg.textKey),
         statusColor: cfg.badge,
         statusIcon: cfg.icon,
+        statusIconColor: cfg.iconColor,
 
         primaryCta: cfg.primaryText ? { text: cfg.primaryText, href: 'photos.html' } : null,
         secondaryCta: cfg.secondaryText

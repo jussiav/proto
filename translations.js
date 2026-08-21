@@ -38,6 +38,10 @@ window.TRANSLATIONS = {
       ratingCount:        '7000+ arvostelua',
       plateError:         'Tarkista rekisterinumero. Esim. ABC-123.',
       mileageError:       'Tarkista kilometrimäärä.',
+      /* Exact prod copy: resources/lang/fi/form.php →
+         form.tender.driven_more_than_max (280 000 km = Finland's
+         max_driven_distance in config/country/finland.php). */
+      mileageMaxError:    'Valitettavasti kauttamme voi myydä vain alle 280 000 km ajettuja autoja',
       newRequest:         'Tee uusi tarjouspyyntö',
     },
 
@@ -131,7 +135,6 @@ window.TRANSLATIONS = {
     /* ── Vehicle card status badges ── */
     card: {
       openDetails:    'Avaa tiedot',
-      priceLabelTarget: 'Oma arviosi:',
     },
 
     /* ── Ad preview modal (vehicle-card.js) ── */
@@ -639,6 +642,9 @@ window.TRANSLATIONS = {
       ratingCount:        '7,000+ reviews',
       plateError:         'Check registration number. E.g. ABC-123.',
       mileageError:       'Check mileage.',
+      /* Prod has no EN string for form.tender.driven_more_than_max — only
+         FI and SV — so this is a proto rendering of the FI copy. */
+      mileageMaxError:    'Unfortunately only cars driven under 280 000 km can be sold through our service',
       newRequest:         'Start a new request',
     },
 
@@ -728,7 +734,6 @@ window.TRANSLATIONS = {
 
     card: {
       openDetails:      'Open details',
-      priceLabelTarget: 'Your estimate:',
     },
 
     modal: {

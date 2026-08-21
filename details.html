@@ -124,26 +124,40 @@
   <script src="proto-mock.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
-    // Delivery-distance UI variant, switched via ?delivery= URL param (cards | stepper).
-    // Top-level because both validateAndContinue and the DOMContentLoaded component code need it.
+    /* Delivery-distance arm of the "Delivery distance A/B test" initiative,
+       switched via ?delivery=. Read through protoVariant so it behaves like
+       every other initiative arm — remembered across pages, working in test
+       mode — instead of being URL-only. Top-level because both
+       validateAndContinue and the DOMContentLoaded component code need it. */
     const DELIVERY_VARIANTS = ['control', 'v1', 'v2', 'cards'];
     const DELIVERY_VARIANT = (function () {
-      const p = new URLSearchParams(window.location.search).get('delivery');
-      if (p === 'stepper') return 'v2'; // legacy link support
-      return DELIVERY_VARIANTS.includes(p) ? p : 'v2';
+      const arm = window.protoVariant('delivery', 'v2');
+      /* Normalise what gets remembered, not just what renders: ?delivery=stepper
+         is a legacy link for v2, and anything unrecognised is junk. Left in
+         storage either would keep the bar's row on "— none —" while the page
+         renders v2. */
+      if (arm === 'stepper') { window.protoVariantSet('delivery', 'v2'); return 'v2'; }
+      if (!DELIVERY_VARIANTS.includes(arm)) { window.protoVariantSet('delivery', null); return 'v2'; }
+      return arm;
     })();
 
     /* The delivery selector is a design CANDIDATE, not a state of the world, so
-       it goes on the bar's Variant row. Note the default is v2, not control. */
+       it goes on the bar's variant row — and that row is labelled with the
+       initiative that proposes it, so these arms are never a floating
+       "Variant 1/2/3" with nothing to trace them back to. Note the default is
+       v2, not control. */
     window.protoPage = {
-      variantParam: 'delivery',
-      variantDefault: 'v2',        // what the page renders with no param
-
-      variants: [
-        { id: 'control', label: 'Control — current design' },
-        { id: 'v1',      label: 'Variant 1 — no slider, no default' },
-        { id: 'v2',      label: 'Variant 2 — ±50 km steppers (default)' },
-        { id: 'cards',   label: 'Variant 3 — option cards' }
+      initiatives: [
+        {
+          slug:    'delivery',        // name + spec live in proto-mode's registry
+          default: 'v2',              // what the page renders with no param
+          variants: [
+            { id: 'control', label: 'Control — current design' },
+            { id: 'v1',      label: 'Variant 1 — no slider, no default' },
+            { id: 'v2',      label: 'Variant 2 — ±50 km steppers (default)' },
+            { id: 'cards',   label: 'Variant 3 — option cards' }
+          ]
+        }
       ]
     };
 

@@ -65,7 +65,8 @@ chrome must not reappear. The cost is that test mode outlives the study, so
 while it is active the console logs the exit instruction: invisible to a
 participant, findable by whoever picks the machine up next.
 
-Exposes `window.protoMode` (`'dev' | 'test'`) and `window.protoDev` (boolean).
+Exposes `window.protoMode` (`'dev' | 'test'`), `window.protoDev` (boolean) and
+`window.protoVariant(name, fallback)` — see **Initiatives** below.
 
 **One control surface: `proto-bar.js`.** All proto tooling lives on a single
 thin strip fixed to the viewport bottom — deliberately styled like browser
@@ -78,10 +79,11 @@ success, dac7), the delivery-variant switcher on details, and the footer's
 "Prototype instructions" link. `photos.html` also lost its `<footer>` — it was
 the only funnel page with one, and it existed solely to host that drawer.
 
-Shows: a `Prototype` identity chip, **Mode**, **Scenario**, **Variant** (only
-when the page has candidates) and **Go to**. No page name, no collapse control
-— the bar stays visible. The Mode row is thin value while there are only two
-modes; it earns its place once there are more.
+Shows: a `Prototype` identity chip, **Mode**, **Scenario**, **Variants** (one
+row for the whole page, options grouped under the initiative that proposes them)
+and **Go to**. No page name, no collapse control — the bar stays visible. The
+Mode row is thin value while there are only two modes; it earns its place once
+there are more.
 
 **Pending:** a dedicated scenario-reference page, with each scenario
 collapsible. The old single modal listing every scenario of every page was
@@ -96,9 +98,11 @@ window.protoPage = {
   scenarios: [ { group: 'Drafts', items: [ { id, label } ] } ],  // or flat
   scenarioParam: 'scenario',        // default
   scenarioExtraParams: ['copy'],    // other params an option may set
-  variants: [ { id, label } ],
-  variantParam: 'delivery',         // default 'variant'
-  variantDefault: 'v2'              // what renders with no param
+  initiatives: [ {
+    slug:    'delivery',   // the identity; name + spec come from the registry
+    default: 'v2',         // what THIS page renders with no param
+    variants: [ { id: 'control', label: 'Control — current design' } ]
+  } ]
 };
 ```
 
@@ -124,6 +128,102 @@ the world a real seller could be in. Variant = a design candidate that exists
 only because we are proposing it. `details.html`'s delivery selector is a
 variant, not a scenario.
 
+## Initiatives — every variant belongs to one
+
+A variant exists because some **initiative** proposes it. The bar has ONE
+**Variants** row per page and groups its options under the initiative's name —
+the same shape the Scenario row already uses for grouped states. One row scales
+as initiatives accumulate, where a row each would push the bar off the screen,
+and the grouping keeps every arm traceable, which a flat "Variant 1 / Variant 2"
+list drawn from several initiatives could never be.
+
+**The registry in `proto-mode.js` (`INITIATIVES`) is the single identity.** Each
+entry is `{ slug, name, spec, prodArm }`; the slug is the URL param AND the
+design-spec filename, so one grep finds every trace of an initiative. A page
+declares only its own business — `{ slug, default, variants }` — and never
+repeats the name or the spec path. Arm ids are `control` (today's design) and
+`v1`, `v2`, … Scenarios an initiative introduces use the bar's `group:` support
+with the initiative name as the optgroup label.
+
+Registering matters twice over: an arm param is remembered the moment it appears
+in any URL, not only on the pages that read it (otherwise a link to the funnel's
+first step could not pin an arm for a change landing three steps later), and
+selecting one variant can clear the others, including initiatives whose pages
+you are not currently looking at. Add an entry when an initiative is created,
+remove it when its winning arm is promoted.
+
+**`prodArm` is not the same as a page's `default`.** `prodArm` is the arm that
+matches production; `default` is what a page renders unasked. They differ on
+purpose for the delivery test, which defaults to `v2`. Keeping both lets the
+bar's first option tell the truth: `— none — production behaviour` when every
+default on the page IS the production arm, `— none — page defaults` when it is
+not.
+
+**One variant at a time.** Selecting an arm clears every other registered
+initiative, remembered arms included; the first option clears them all. So no
+selection = every page renders what it renders unasked, which is what a user-test
+participant must land in, and one click returns to it. Arms of initiatives this
+page does not show are listed disabled under **Active on other pages** — they
+change what the participant sees elsewhere and would otherwise be invisible.
+Combinations stay reachable by hand-writing the params; the row then reads
+`Mixed — N initiatives off default` rather than naming one arm and implying the
+rest are off.
+
+**Arms are sticky, via `window.protoVariant(name, fallback)`** in
+`proto-mode.js`. An initiative usually spans several funnel steps, and funnel
+navigation is a plain `window.location = 'contact.html'`, so a URL-only param
+would die at every step boundary. Same precedence as the mode: param wins and is
+remembered (`autovex_proto_variant_<slug>`), then the remembered arm, then the
+page's default. It lives in `proto-mode.js`, not the bar, because the bar is
+dev-only while arm links must work in test mode — that is how a moderator pins a
+participant to one arm. A remembered non-default arm is logged to the console on
+load, same escape hatch as test mode; picking `— none —` on the bar forgets it.
+
+**Pages normalise what gets remembered.** A legacy alias or a typo'd arm
+(`?delivery=stepper`, `?review-no-review=bogus`) would otherwise stick in
+localStorage and leave the bar's row on `— none —` while the page rendered
+something else. A page maps or clears it with `window.protoVariantSet(name,
+value)` (`null` forgets), and the bar only ever selects a value the initiative
+actually declares.
+
+**Live initiatives:**
+
+| Initiative | Slug / param | Page default | Prod arm | Pages | Spec |
+|---|---|---|---|---|---|
+| Delivery distance A/B test | `delivery` | `v2` | `control` | `details.html` | `design-specs/delivery-distance.html` |
+| Review/No review | `review-no-review` | `control` | `control` | `price.html` | `design-specs/review-no-review.html` |
+
+**Review/No review** makes funnel communication match whether the seller's car
+is in the review segment. Change 1 removes the "Mitä tapahtuu seuraavaksi?"
+component from the price step: prod's `WhatHappensNext` never sees `can_review`,
+so at that step it promises the review call to every seller, including the ones
+being asked for an asking price *because* they are outside the segment. The arm
+hides `#price-what-happens-next`; on desktop the cream column keeps its size and
+its save-draft mount and is otherwise empty — a deliberate divergence, since
+prod's `Sidebar.vue` keeps `VehicleMetrics` there. Below 768px the column
+(`#price-sidebar`) is hidden outright, matching prod's
+`shouldShowSidebarOnMobile`, which is driven by `WhatHappensNext`: stacked under
+the form an empty column is just a 64px strip of cream padding. The rule is
+hand-written CSS keyed to `body[data-rnr-arm]`, not `max-md:hidden` — the
+Tailwind Play CDN only generates utilities present at first paint. Default is `control`, so with no
+param the proto stays prod-faithful. See the Review Segment section above for
+the `can_review` chain this is about.
+
+### Initiative lifecycle
+
+1. **Live** — spec page status chip says *ready to build* / *in test*; the arms
+   are switchable from the initiative's bar row.
+2. **Promoted** — the winning arm becomes the only code. Delete the losing arms,
+   the page's `initiatives` declaration AND the registry entry (the option group
+   disappears, the param stops being read), plus any copy nothing renders any
+   more — if `v1` wins on
+   Review/No review, the whole `nextSteps` namespace leaves `translations.js`,
+   since `price.html` is its only consumer.
+3. **Completed** — the spec page stays, its chip changed to *completed — `<arm>`
+   promoted, `<month year>`* with a line naming what shipped, and the row above
+   moves to a **Completed initiatives** list here. The record survives; the
+   switch does not.
+
 **Adding proto-only UI:** prefer putting it on the bar. If it must be its own
 element, mark the root with `data-proto-dev` AND skip building it when
 `!window.protoDev`. The CSS rule (`[data-proto-dev]{display:none !important}`)
@@ -135,8 +235,8 @@ Two pages broke this way during implementation — `details.html` would have
 skipped `updateCard()`, and `decision.html` rendered no state at all until the
 panel was wrapped in its own IIFE.
 
-**`?scenario=` and `?variant=` still work in test mode.** URL carries the state;
-only the chrome is gated. That is how a moderator pins a participant to a
+**`?scenario=` and initiative params still work in test mode.** URL carries the
+state; only the chrome is gated. That is how a moderator pins a participant to a
 starting state they cannot navigate out of.
 
 ## Review Segment — the Filament filters
@@ -167,9 +267,99 @@ C2BDecision's own comment says it is "being phased out of the consumer journey".
 mileage > 240 000 km or older than 10 years — matching the current Filament
 values, which are expected to drift. `?scenario=asking-price` /
 `price-estimate` forces either variant. The choice is recorded as
-`store.reviewable`, which `success.html` reads to decide where verification
-lands: `published` for a non-reviewable car (it published immediately),
-`in-review-verified` for a reviewable one.
+`store.reviewable`, and `success.html`'s `draftScenario()` maps it plus login
+state onto the four states prod can actually be in:
+
+| | not verified | verified |
+|---|---|---|
+| reviewable | `in-review-unverified` | `in-review-verified` |
+| not reviewable | `queued` | `published` |
+
+Verified against prod: `PublishDraft` marks for review only when
+`EvaluateDraftForReview` passes; otherwise an unverified seller is queued
+(`draftShouldBeQueuedForPublishing`) and a verified one publishes outright. Both
+of those statuses take `WhatHappensNext` branches that DROP the
+"Ilmoituksesi tarkistetaan / Soitamme sinulle" step, so **a non-reviewable seller
+is never promised the call after the price step** — only on it. The organic
+(no-`?scenario=`) path used to render the in-review state for everyone, which
+promised the call to sellers prod would never call; `currentDraftStatus()` now
+follows the same mapping so the card badge cannot contradict the page.
+
+**Both badges are transcribed from prod, per state.** The page badge and the
+card badge are different components in prod and do NOT always agree — reproduced
+as-is:
+
+| draft status | page badge (own markup per screen) | card badge (`UiBadge` via `Preview.vue`) |
+|---|---|---|
+| `in_review` | Tarkastus käynnissä · hourglass · `bg-slate-200 border-gray-300 text-gray-500` | Tarkastus käynnissä · hourglass · gray |
+| `rejected` | **Ei hyväksytty** · warning-octagon · `bg-transparent border-red-300 text-red-700` | **Tietoja tarvitaan** · warning-octagon · light_red |
+| `rejected` + missing images | Tietoja tarvitaan · warning-octagon · same red | Tietoja tarvitaan · warning-octagon · light_red |
+| `queued_for_publishing_after_verification` | Vaatii toimenpiteitä · warning-octagon · `bg-amber-50 border-amber-400 text-amber-700` | Vaatii toimenpiteitä · warning-octagon · amber |
+| `published` | Odotetaan tarjouksia · **hourglass** · `bg-white border-cyan-400 text-cyan-600` | **prod renders no card at all** — see below |
+
+**Prod shows the car card in only some of these states.** `shouldShowPreview` is
+`isWaitingForReviewInReview || (canPreviewDraft && funnelType !== 'open_funnel')`,
+and `canPreviewDraft` lists `confirmingProvidedEmail`, `providingPersonalInfo`,
+`publishingDraft` and `waitingForEmailVerificationBeforePublishing` — not
+`success`, and not `waitingForReview` with a rejected draft. `Success.vue` renders
+no card of its own either. So:
+
+| state | card in prod? |
+|---|---|
+| `in_review` (verified or not) | yes — `isWaitingForReviewInReview` |
+| `queued_for_publishing_after_verification` | yes — `canPreviewDraft` |
+| `rejected`, with or without missing images | **no** |
+| `published` | **no** |
+
+`Preview.vue`'s `draftStatusConfig.published` entry — the untranslated literal
+`'Published'` plus a warning-octagon icon — is therefore **dead config**: the only
+path to it is the `publishingDraft.complete` microstep, which XState resolves
+inside one macrostep, so it never paints. Do not treat it as prod behaviour, and
+do not add a `published` entry to `DRAFT_BADGES` — there is nothing to render it.
+
+**The no-review car's own ending, verified against prod.**
+`VerifyTenderRequestDraftEmailController` logs the seller in and, when the draft
+is queued, calls `publishDraft` on the spot; the funnel's `onMounted` then sends
+`CONFIRM_PUBLISHED`, whose `isDraftPublished` guard targets `.success`. So the
+no-review seller's verification click publishes the ad and lands them on
+`Success.vue` — the same screen a seller who was already verified at submit
+reaches, since `Success.vue` has no branch on how you got there. One screen, two
+entry paths, which is why `success.html` models it as the single `published`
+scenario (menu group "Published — no review") rather than two. Content checked
+element by element: title/subtitle verbatim from `tenderform.published.*`, badge
+`Odotetaan tarjouksia` + hourglass + `bg-white border-cyan-400 text-cyan-600`,
+illustration byte-identical to prod's `published.png`, the peach notice block
+(`review.email_verified.notice.*`, underlined text link to /offers),
+`WhatHappensNext`'s published branch — `ad_published.title_alternative` +
+`auction_in_progress` + `auction_ends` — and no car card.
+
+`success.html` follows that table: a scenario carries `card: false` for
+`rejected`, `rejected-missing-images` and `published`, and `SCENARIO_DRAFT_STATUS`
+only maps the states that actually draw a card. Plain `rejected` then has neither
+steps nor card, so the column is empty — prod fills it with `VehicleMetrics`,
+never ported here — and below 768px it is dropped entirely
+(`html[data-success-sidebar="empty"]`), which is prod's own
+`shouldShowSidebarOnMobile = shouldShowWhatHappensNext || providingPersonalInfo`.
+
+`DRAFT_BADGES` in
+`vehicle-card.js` spells out `UiBadge`'s variants including `iconColor`, since
+UiBadge colours the icon separately and its `light` variant is the one where icon
+and text differ (slate-400 vs slate-500). Badge icons are `1em`, and the badge's
+font-size step is prod's `text-xs xs:text-sm` with prod's custom `xs` = 460px,
+hand-written in the card's shell CSS because the proto does not override
+Tailwind's default screens.
+
+**The seller's own price is never shown back to them.** Prod passes
+`asking_price` into `CarCard` (`Preview.vue`) and `CarCard` never renders it —
+the prop is declared and unused — and `CarDetailsCard`, the modal behind the
+card's CTA, has no price field at all. (`PreviewModal.vue` does render it, but
+nothing imports that component.) The proto's card had a price tag overlaid on the
+photo; it is gone, along with `card.priceLabelTarget` and `buildCarCard`'s
+`mediaOverlay` prop, whose only caller it was. The ad-preview sheet still echoes
+the value — it is the seller's own summary of what they typed, per section — and
+labels it with the field they actually filled: `price.askingLabel`
+("Pyyntihintasi", prod's `price_info.asking_price_label`) outside the review
+segment, `price.targetLabel` inside it.
 
 **Mirroring a prod inconsistency deliberately:** the sidebar bullet count
 follows LOGIN state, not `can_review`. `WhatHappensNext` has no `can_review`
@@ -183,7 +373,9 @@ Both lists still lead with "Soitamme sinulle", so **prod promises the review
 call at the price step in both price variants** and only stops afterwards: the
 one list without the review step is the `queued_for_publishing_after_verification`
 branch, which is exactly the status a non-reviewable seller reaches after
-submitting unverified. Reproduced as-is; a candidate can propose the fix.
+submitting unverified. Reproduced as-is in the `control` arm; the fix is Change 1
+of the **Review/No review** initiative below, which removes the component from
+this step entirely.
 
 Because rows are hidden rather than re-rendered, the numbered badges are
 reassigned by visible position (`renumberSteps`) — they are pre-rendered SVGs,

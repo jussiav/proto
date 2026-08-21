@@ -56,11 +56,49 @@
     }
     .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
     .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    /* "Review/No review" v1 — the arm is stamped on <html> in <head>, so these
+       rules apply before first paint and the removed panel never flashes.
+       Hand-written rather than Tailwind utilities because the Play CDN only
+       generates classes that exist in the DOM at first paint. */
+    html[data-rnr-arm="v1"] #price-what-happens-next { display: none; }
+    /* With the panel gone the cream column has nothing to show, and on a phone it
+       stacks under the form as a bare 64px strip of padding. Prod hides the whole
+       sidebar on mobile at this step for the same reason — Sidebar.vue's
+       shouldShowSidebarOnMobile is driven by WhatHappensNext. Desktop keeps the
+       column, which is where prod still shows VehicleMetrics. */
+    @media (max-width: 767px) {
+      html[data-rnr-arm="v1"] #price-sidebar { display: none; }
+    }
   </style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
+  <script>
+    /* ── "Review/No review" initiative ─────────────────────────────────────
+       Arm of the funnel-process-communication initiative documented in
+       design-specs/review-no-review.html. Change 1 removes the "Mitä tapahtuu
+       seuraavaksi?" component from this step: prod's WhatHappensNext never sees
+       can_review, so at the price step it promises the review call
+       ("Soitamme sinulle") to every seller — including the ones outside the
+       review segment, who will never get that call.
+
+       control = today's design, and it is the default: with no param the proto
+       stays prod-faithful. Read through protoVariant so the arm survives the walk
+       to the next funnel step and works in test mode.
+
+       Decided here in <head>, not in the page script at the end of <body>, so
+       the CSS above can hide the panel before it ever paints. */
+    var REVIEW_NO_REVIEW_ARM = (function () {
+      var ARMS = ['control', 'v1'];
+      var arm = window.protoVariant('review-no-review', 'control');
+      /* An unrecognised value must not stay remembered: it would render as
+         control while the bar's row sat on "— none —". */
+      if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('review-no-review', null); return 'control'; }
+      return arm;
+    }());
+    document.documentElement.dataset.rnrArm = REVIEW_NO_REVIEW_ARM;
+  </script>
   <script src="proto-mock.js"></script>
 </head>
 <body class="font-dm bg-white min-h-screen">
@@ -155,7 +193,12 @@
       </div>
 
       <!-- ── Right column (cream) ── -->
-      <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+      <div id="price-sidebar" class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+
+        <!-- The whole "what happens next" component — heading included — is one unit,
+             because the "Review/No review" initiative removes it as one unit. The
+             wrapper repeats the column's own gap-6 so nesting changes no spacing. -->
+        <div id="price-what-happens-next" class="flex flex-col gap-6">
 
         <h2 class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="nextSteps.title">Mitä tapahtuu seuraavaksi?</h2>
 
@@ -200,6 +243,8 @@
             </div>
           </div>
         </div>
+
+        </div><!-- /#price-what-happens-next -->
 
         <!-- Save draft / Jatka myöhemmin -->
         <div class="mt-auto">
@@ -389,7 +434,11 @@
       /* Sidebar bullets: prod's WhatHappensNext shows all five only while the
          seller is NOT yet logged in. Once logged in, verify_email drops and four
          remain — which is what the prod screenshot of this step shows. The
-         review bullet stays either way; prod does not vary it by can_review. */
+         review bullet stays either way; prod does not vary it by can_review.
+         Skipped entirely in the v1 arm ("Review/No review", decided in <head>),
+         where the component is not rendered at all. */
+      if (REVIEW_NO_REVIEW_ARM === 'v1') return;
+
       var loggedIn = !!s.loggedIn;
       var step1 = document.getElementById('price-step1-row');
       if (step1) step1.style.display = loggedIn ? 'none' : '';
@@ -455,10 +504,24 @@
       window.location = 'contact.html';
     }
 
+    /* Scenario and initiative are orthogonal here, which is the point of keeping
+       them on separate rows: the scenario says which segment the car is in, the
+       initiative row says which communication design is being shown. All four
+       combinations are reachable by URL and from the bar. */
     window.protoPage = {
       scenarios: [
         { id: 'price-estimate', label: 'Optional price estimate (reviewable car)' },
         { id: 'asking-price',   label: 'Asking price (outside review segment)' }
+      ],
+      initiatives: [
+        {
+          slug:    'review-no-review',  // name + spec live in proto-mode's registry
+          default: 'control',           // no param = today's design
+          variants: [
+            { id: 'control', label: 'Control — today\'s design' },
+            { id: 'v1',      label: 'Variant 1 — no "what happens next"' }
+          ]
+        }
       ]
     };
 

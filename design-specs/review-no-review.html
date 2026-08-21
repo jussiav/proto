@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Review / No review · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <!-- Hero — same treatment as every spec page (see delivery-distance.html). -->
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · ad creation funnel</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Review / No review</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The funnel tells every seller the same story about what happens after they submit — including the call from our team. For sellers outside the review segment that call never comes. This initiative makes funnel communication match the process the seller is actually in, one change at a time.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: live — 1 change ready to build
+        </span>
+        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1</span>
+        <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype param: <code>?review-no-review=</code></span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- Why -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Why this initiative exists</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Production already knows, at the price step, whether a seller's car is inside the review segment. It just doesn't tell the seller a matching story.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">What production computes</p>
+          <p class="font-dm text-sm leading-6 text-slate-800 mb-3">One boolean, resolved server-side and handed to the frontend on the draft resource:</p>
+          <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-3 font-mono text-xs leading-relaxed mb-3">TenderRequestReviewSettings <span class="text-slate-400">(Filament: enabled, fuel_types,<br>&nbsp;&nbsp;min/max_model_year, min/max_mileage)</span><br>&nbsp;&nbsp;→ EvaluateDraftForReview<br>&nbsp;&nbsp;→ resource: <b class="text-white">can_review</b></div>
+          <p class="font-dm text-sm leading-6 text-slate-800">The settings are a <b>whitelist</b> — <code>ReviewIfPreferredSegment</code> checks the car falls <i>inside</i> the configured band, so a high-mileage or old car is <b>not</b> review-called. <code>PriceInfo.vue</code> is the only component that reads <code>can_review</code>: it swaps the optional price estimate for a required asking price, and submitting publishes the draft instead of sending it to review.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">What the seller is told</p>
+          <p class="font-dm text-sm leading-6 text-slate-800 mb-3"><code>WhatHappensNext.vue</code> takes three props — <code>draftStatus</code>, <code>isVerified</code>, <code>missingImages</code>. There is <b>no <code>can_review</code> anywhere in it</b>. At the price step the draft status is still <code>open</code>, so every seller gets the full five-step list, bullet 2 of which is:</p>
+          <div class="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 mb-3">
+            <p class="font-dm font-bold text-sm text-black" data-i18n="nextSteps.step2Title">—</p>
+            <p class="font-dm text-sm leading-5 text-black" data-i18n="nextSteps.step2Body">—</p>
+          </div>
+          <p class="font-dm text-sm leading-6 text-slate-800">A seller whose car is outside the segment reads that promise on the same screen where we ask them for an asking price <i>because</i> they are outside it. Their ad publishes on submit; nobody calls. The promise is broken by the next click.</p>
+        </div>
+      </div>
+      <div class="bg-warning-50 border-2 border-warning-300 rounded-lg p-5 mt-5">
+        <p class="font-dm text-xs font-bold uppercase tracking-widest text-warning-800 mb-3 inline-flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.75" r="0.85" fill="currentColor"/></svg>
+          The list already varies — just on the wrong input
+        </p>
+        <p class="font-dm text-sm leading-6 text-slate-900">The five bullets drop to four when the seller is logged in (<code>isVerified</code> removes <i>verify your email</i>). So the component <b>does</b> branch — on session state, never on whether the seller's car gets reviewed. The one branch that omits the review bullet is <code>queued_for_publishing_after_verification</code>, which is exactly the status a non-reviewable seller reaches <i>after</i> submitting. The correct information exists one screen too late.</p>
+      </div>
+      </div>
+    </section>
+
+    <!-- Change log -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The initiative spans several funnel steps. Each change is specced, built and reviewed on its own; new ones are appended to this table and get their own section below. One arm parameter covers all of them, so a walkthrough is always in one consistent world.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">Step / component</th>
+              <th class="px-4 py-3 font-medium">Change</th>
+              <th class="px-4 py-3 font-medium">Arm</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-bold">1</td>
+              <td class="px-4 py-3">Price step — <code>Sidebar.vue</code> / <code>WhatHappensNext.vue</code><br><span class="text-xs text-slate-500">prototype: <code>price.html</code></span></td>
+              <td class="px-4 py-3">Remove the "Mitä tapahtuu seuraavaksi?" component from the price step entirely</td>
+              <td class="px-4 py-3"><code>v1</code></td>
+              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Ready to build</span></td>
+            </tr>
+            <tr class="text-slate-500">
+              <td class="px-4 py-3">2+</td>
+              <td class="px-4 py-3" colspan="4">Appended here as each change is specced. Nothing else is committed yet — see <b>Candidates</b> below for what is under discussion.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Change 1 -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 1 — remove "what happens next" from the price step</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The panel's whole content is a promise about a process the seller may not be in. Rather than branch it on <code>can_review</code> at this step, it comes out: the price step's job is the price question, and the process story belongs where the process is actually known. Below, the copy comes from the app's own <code>translations.js</code>, so these replicas can't drift from the prototype.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Control — today (<code>?review-no-review=control</code>)</p>
+          <div class="bg-av-cream rounded-xl p-5 flex flex-col gap-5">
+            <p class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="nextSteps.title">—</p>
+            <div class="flex gap-2 items-start">
+              <img src="../assets/cf9ed64c-e015-4129-a683-516894e443b4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="1" />
+              <div>
+                <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step1Title">—</p>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step1Body">—</p>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <img src="../assets/7cb7ddce-86cc-457f-be2d-f44485a7e101.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="2" />
+              <div>
+                <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step2Title">—</p>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step2Body">—</p>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <img src="../assets/d7dbeec3-32bb-407c-a234-273ace9af998.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="3" />
+              <div>
+                <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step3Title">—</p>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step3Body">—</p>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <img src="../assets/step-4.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="4" />
+              <div>
+                <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step4Title">—</p>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step4Body">—</p>
+              </div>
+            </div>
+            <div class="flex gap-2 items-start">
+              <img src="../assets/step-5.svg" class="w-6 h-6 flex-shrink-0 mt-0.5" alt="5" />
+              <div>
+                <p class="font-dm font-bold text-base leading-5 text-black" data-i18n="nextSteps.step5Title">—</p>
+                <p class="font-dm text-base leading-5 text-black" data-i18n="nextSteps.step5Body">—</p>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Five bullets while not logged in, four once logged in. Every seller sees bullet 2's review call, whichever price question they were asked.</p>
+        </div>
+
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Variant 1 — the change (<code>?review-no-review=v1</code>)</p>
+          <div class="bg-av-cream rounded-xl p-5 min-h-[220px] flex items-center justify-center">
+            <p class="font-dm text-sm text-slate-500 italic text-center max-w-[16rem]">On desktop the column keeps its place and its width. In the prototype it is empty; in production it keeps whatever <code>Sidebar.vue</code> already renders at this step (see below). On mobile the column is not rendered at all.</p>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Heading and all five bullets go. Nothing replaces them, and nothing new is written.</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5 items-start mt-5">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Production implementation — exhaustive</p>
+          <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
+            <li><b>One line in <code>Sidebar.vue</code>.</b> Drop <code>|| props.formState.matches('providingPriceInfo')</code> from <code>shouldShowWhatHappensNext</code>. Nothing else in that computed changes, and <code>WhatHappensNext.vue</code> itself is not touched — it still serves the review, verification, publish-queue and success states.</li>
+            <li><b>Decide the mobile case deliberately.</b> <code>shouldShowSidebarOnMobile</code> is <code>shouldShowWhatHappensNext || providingPersonalInfo</code>, so removing the price step from the first also stops the sidebar rendering on mobile at that step. That is a consequence, not a decision — confirm it is what you want before shipping. On mobile the step then shows the price question alone.</li>
+            <li><b>Do not fill the gap.</b> <code>VehicleMetrics</code> is already in that column (<code>v-if="vehicleMetrics?.brand"</code>) at every step, so on desktop production keeps showing it after the panel goes. No new component, no new copy.</li>
+            <li><b>Leave <code>can_review</code> alone.</b> This change adds no new consumer of it. <code>PriceInfo.vue</code> stays the only one.</li>
+          </ol>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Prototype implementation</p>
+          <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
+            <li><b>The panel is one unit.</b> Heading and bullets sit in <code>#price-what-happens-next</code>; the arm toggles that wrapper. The wrapper repeats the column's own <code>gap-6</code>, so nesting it changed no spacing in control.</li>
+            <li><b>The column stays on desktop, goes on mobile.</b> Same <code>flex-1 max-w-[48%]</code> cream panel at full height, holding only the (dormant) save-draft mount. Below 768&nbsp;px it is hidden instead: stacked under the form it would be a bare 64&nbsp;px strip of cream padding, and production hides the sidebar there anyway for the same reason (point 2 opposite).</li>
+            <li><b>The empty desktop column is a prototype artefact.</b> <code>VehicleMetrics</code> was never ported to this step, so the panel reads blank here while production keeps showing that card. Do not treat the blank column as the specified design.</li>
+            <li><b>Control keeps all of its logic.</b> The login-state bullet drop and the badge renumbering are untouched, and the <code>nextSteps.*</code> strings stay in <code>translations.js</code>. In the v1 arm that work is skipped rather than run against a hidden panel.</li>
+            <li><b>Orthogonal to the page's scenarios.</b> <code>?scenario=price-estimate|asking-price</code> still chooses the price question; the arm chooses the communication. All four combinations are reachable.</li>
+          </ol>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- How to test -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">How to try it</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Prototype: <a class="text-av-blue underline font-medium" href="https://jussiav.github.io/proto">https://jussiav.github.io/proto</a>. Switch arms from the <b>Variants</b> row on the prototype bar at the bottom of the page — the options are grouped under <b>Review/No review</b> — or open one directly. The arm is remembered as you walk the funnel, so a whole run stays in one arm, and the row's first option (<i>— none — production behaviour</i>) puts everything back.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Arm</th>
+              <th class="px-4 py-3 font-medium">Segment scenario</th>
+              <th class="px-4 py-3 font-medium">What you should see</th>
+              <th class="px-4 py-3 font-medium">Link</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-4 py-3 whitespace-nowrap font-bold">control</td><td class="px-4 py-3">Reviewable</td><td class="px-4 py-3">Optional estimate + the five-bullet panel. Today's design, and what renders with no parameter at all.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=control&amp;scenario=price-estimate">price.html?review-no-review=control&amp;scenario=price-estimate</a></td></tr>
+            <tr><td class="px-4 py-3 whitespace-nowrap font-bold">control</td><td class="px-4 py-3">Outside the segment</td><td class="px-4 py-3">Required asking price <b>and</b> the promise of a review call — the mismatch this initiative attacks.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=control&amp;scenario=asking-price">price.html?review-no-review=control&amp;scenario=asking-price</a></td></tr>
+            <tr class="bg-blue-50"><td class="px-4 py-3 whitespace-nowrap font-bold">v1</td><td class="px-4 py-3">Reviewable</td><td class="px-4 py-3">Optional estimate, no panel.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=v1&amp;scenario=price-estimate">price.html?review-no-review=v1&amp;scenario=price-estimate</a></td></tr>
+            <tr class="bg-blue-50"><td class="px-4 py-3 whitespace-nowrap font-bold">v1</td><td class="px-4 py-3">Outside the segment</td><td class="px-4 py-3">Required asking price, no panel — no promise that cannot be kept.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=v1&amp;scenario=asking-price">price.html?review-no-review=v1&amp;scenario=asking-price</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl">The parameter can be appended to <b>any</b> prototype page, not just the ones this initiative changes — put it on the funnel's first step and the whole run stays in that arm. It also works with <code>?mode=test</code>, which hides all prototype tooling: that combination is how a moderator pins a participant to one arm for a session.</p>
+      </div>
+    </section>
+
+    <!-- Data contract -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Data contract</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Aspect</th>
+              <th class="px-5 py-3 font-medium">Rule</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Stored fields</td><td class="px-5 py-3"><b>None added or changed.</b> Change 1 removes a presentational component; nothing about it is persisted, on the draft or anywhere else.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">API surface</td><td class="px-5 py-3">Unchanged. <code>can_review</code> keeps its current single consumer; no new resource field, no new endpoint.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Draft state machine</td><td class="px-5 py-3">Untouched. <code>CONFIRM_PRICE_INFO</code> still goes to review or straight to submitting exactly as it does today.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Copy</td><td class="px-5 py-3">No new strings. The five <code>what_happens_next.complete.*</code> steps stay in the translation files — the component still uses them in the review, verification, publish-queue and success states.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Analytics</td><td class="px-5 py-3">No new events. If step-level engagement is tracked, expect the price step's sidebar impressions to stop — that is the change, not a regression.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Copy affected -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy no longer shown at this step (FI / EN)</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Nothing is rewritten. These are the strings the price step stops rendering in the v1 arm. Prototype keys are <code>nextSteps.*</code> in <code>translations.js</code>; production keys are <code>tenderform.what_happens_next.complete.*</code>, which other draft states still use.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Key (nextSteps.*)</th>
+              <th class="px-5 py-3 font-medium">Finnish</th>
+              <th class="px-5 py-3 font-medium">English</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800" id="copy-table">
+            <!-- filled from translations.js so this table cannot drift -->
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Control-arm fidelity -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Already correct in production — do not change</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Two things the prototype used to get wrong about a no-review seller, both verified against the current code. They are listed here because they look like initiative material and are not: production already behaves correctly, and the prototype's control arm was corrected to match. Nothing to build.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The call is not promised after the price step</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><code>PublishDraft</code> marks a draft for review only when <code>EvaluateDraftForReview</code> passes. Otherwise an unverified seller is queued (<code>queued_for_publishing_after_verification</code>) and a verified one publishes outright — and <b>both</b> of those statuses take <code>WhatHappensNext</code> branches that drop the review step (<code>[allNextSteps[0], ...slice(2)]</code> and <code>slice(3)</code> respectively). So the email-confirmation screen never promises the call to a no-review seller. The price step is the only screen that does, which is exactly the scope of Change 1.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The car card is not shown on every screen</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><code>shouldShowPreview</code> is <code>isWaitingForReviewInReview || canPreviewDraft</code>, and <code>canPreviewDraft</code> does not include <code>success</code> or a rejected draft in <code>waitingForReview</code> — while <code>Success.vue</code> draws no card of its own. So the card appears on the in-review and email-verification screens and <b>nowhere else</b>: a rejected or published draft shows none. That is also why <code>Preview.vue</code>'s <code>draftStatusConfig.published</code> — the untranslated literal <code>'Published'</code> with a warning-octagon icon — never renders, and should be read as dead config rather than as a badge anyone sees.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The seller's own price is never echoed back</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><code>Preview.vue</code> passes <code>asking_price</code> into <code>CarCard</code>, and <code>CarCard</code> never renders it — the prop is declared and unused. <code>CarDetailsCard</code>, the modal behind the card's own CTA, has no price field either. (<code>PreviewModal.vue</code> does render one, but no component imports it.) So neither the contact step nor the confirmation screen shows the asking price or the estimate back to the seller.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- Candidates -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Candidates — under discussion, not specced</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Listed so the initiative's shape is visible, not as work to pick up. Nothing here is decided, and none of it is in the prototype yet.</p>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>Where the process story belongs instead.</b> If the price step no longer carries it, the seller still needs to know what happens after submitting — and by the success step the draft status makes the answer accurate for free.</li>
+          <li><b>The bullet list keyed to login state.</b> Today the five/four split is driven by <code>isVerified</code>; the review bullet itself never varies. Whether the list should branch on the segment wherever it does appear is an open question.</li>
+          <li><b>The submitted-state copy.</b> <code>review_comms_content</code> exists only for drafts in review, so a non-reviewable seller's post-submit screen is already a different path — worth reading end to end before adding anything new.</li>
+          <li><b>Dead config worth deleting.</b> <code>Preview.vue</code>'s <code>draftStatusConfig.published</code> entry cannot render (see above). Cleanup, not a seller-facing change — listed so nobody rediscovers it and mistakes it for a live bug.</li>
+        </ul>
+      </div>
+      </div>
+    </section>
+
+    <!-- Lifecycle -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Initiative lifecycle</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">How this page and the prototype stay honest as the initiative moves. The same rules apply to every initiative — they are recorded in the prototype's <code>CLAUDE.md</code>.</p>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
+          <li><b>Live.</b> The status chip in this page's header says <i>ready to build</i> or <i>in test</i>; the arms are switchable in the prototype from the initiative's own bar row.</li>
+          <li><b>Promoted.</b> When an arm becomes the default, the losing arms are deleted along with the initiative's entry in <code>window.protoPage</code> — the bar row disappears and the parameter stops being read. Copy that nothing renders any more goes too: if <code>v1</code> wins here, the whole <code>nextSteps</code> namespace leaves <code>translations.js</code>, since the price step is its only consumer.</li>
+          <li><b>Completed.</b> This page stays, with the header chip changed to <i>completed — &lt;arm&gt; promoted, &lt;month year&gt;</i> and a line naming what shipped. In <code>CLAUDE.md</code> the initiative moves to the completed list as one line. The record survives; the switch does not.</li>
+        </ol>
+      </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer — same structure as the prototype's site footer (layout.js). -->
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Review / No review</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+
+  <!-- Live app translations: the replicas and the copy table always mirror translations.js -->
+  <script src="../translations.js"></script>
+  <script src="../i18n.js"></script>
+  <script src="../proto-mode.js"></script>
+  <script src="../proto-mock.js"></script>
+  <script>
+    // Production copy is Finnish, so the replicas always render FI regardless of the
+    // reader's stored app language. Reads translations.js directly and never writes
+    // av_lang, so opening this page cannot change the language of the reader's own
+    // funnel session. Same approach as delivery-distance.html.
+    const FI = (window.TRANSLATIONS && window.TRANSLATIONS.fi) || {};
+    const EN = (window.TRANSLATIONS && window.TRANSLATIONS.en) || {};
+    function pick(tree, key) {
+      const v = key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), tree);
+      return v == null ? key : v;
+    }
+    (function renderFinnishReplicaCopy() {
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = pick(FI, el.getAttribute('data-i18n')); });
+      document.documentElement.lang = 'en'; // page prose is English; only the replica strings are Finnish
+    })();
+
+    /* The copy table is generated rather than typed: the strings it lists are the
+       ones the step stops showing, so a hand-written copy of them would be the one
+       place this page could silently disagree with the prototype. */
+    (function buildCopyTable() {
+      const rows = ['title'];
+      for (let i = 1; i <= 5; i++) rows.push('step' + i + 'Title', 'step' + i + 'Body');
+      const tbody = document.getElementById('copy-table');
+      tbody.innerHTML = rows.map(function (k) {
+        return '<tr><td class="px-5 py-3"><code>' + k + '</code></td>' +
+               '<td class="px-5 py-3">' + pick(FI, 'nextSteps.' + k) + '</td>' +
+               '<td class="px-5 py-3">' + pick(EN, 'nextSteps.' + k) + '</td></tr>';
+      }).join('');
+    })();
+  </script>
+  <script src="../proto-bar.js"></script>
+</body>
+</html>

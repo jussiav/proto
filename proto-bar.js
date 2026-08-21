@@ -21,8 +21,7 @@
  *   window.protoPage = {
  *     scenarios: [ { group: 'Drafts', items: [ { id, label } ] } ],  // or flat
  *     scenarioParam: 'scenario',   // default
- *     variants:  [ { id, label } ],
- *     variantParam:  'variant',    // default
+ *     initiatives: [ { slug, default, variants: [ { id, label } ] } ],
  *     fields:    [ { key, label, placeholder, width, keepEmpty } ],  // URL overrides
  *     actions:   [ { label, title, run } ],                          // state mutations
  *   };
@@ -30,6 +29,39 @@
  * Scenario = which state of the world (a real seller could be in it).
  * Variant   = which design candidate (exists only because we are proposing it).
  * Keeping them on separate rows keeps that distinction visible.
+ *
+ * ── One Variants row, grouped by initiative ────────────────────────────────
+ * Every variant exists because some initiative proposes it, so the Variants
+ * select groups its options under the initiative's name — the same shape the
+ * Scenario row already uses for grouped states. One row scales as initiatives
+ * accumulate, where a row per initiative would push the bar off the screen; and
+ * grouping keeps each arm traceable, which a flat "Variant 1 / Variant 2 / …"
+ * list from several initiatives could never be.
+ *
+ * A page declares only what is ITS business — which initiative, which arms, and
+ * what it renders unasked:
+ *
+ *   initiatives: [{
+ *     slug:    'delivery',   // the identity; name + spec come from the registry
+ *     default: 'v2',         // what this page renders with no param
+ *     variants: [ { id: 'control', label: 'Control — current design' }, … ]
+ *   }]
+ *
+ * The name, the spec path and which arm equals production live once, in
+ * proto-mode.js's INITIATIVES registry. See CLAUDE.md, "Initiatives".
+ *
+ * ── One variant at a time ──────────────────────────────────────────────────
+ * Selecting an arm clears every OTHER initiative, remembered arms included, and
+ * the default option clears them all: no selection means every page renders what
+ * it renders unasked, which is production wherever the page's default is the
+ * registry's prodArm. That is what a user-test participant must land in, and it
+ * is the state the bar returns to in one click. Combinations remain reachable by
+ * hand-writing the params; the row then says so rather than picking one arm and
+ * implying the rest are off.
+ *
+ * When an arm is promoted to the default, delete the losing arms AND the page's
+ * declaration; the option group disappears and the spec page is marked
+ * completed. See CLAUDE.md, "Initiative lifecycle".
  */
 (function () {
   if (!window.protoDev) return;   // test mode: no tooling at all
@@ -217,17 +249,136 @@
     scWrap.appendChild(scSel);
     bar.appendChild(scWrap);
 
-    /* Variant — only when the page actually offers candidates. variantDefault
-       lets a page say what it renders with no param, so the bar shows the truth
-       rather than implying a baseline that isn't active (details.html
-       defaults to v2, not control). */
-    if (cfg.variants && cfg.variants.length) {
+    /* ── Variants — one row for the page, grouped by initiative ──────────── */
+    var pageInitiatives = (cfg.initiatives || []).map(function (ini) {
+      var reg = (window.protoInitiative && window.protoInitiative(ini.slug)) || null;
+      if (!reg && window.console && console.warn) {
+        console.warn('[proto] Unregistered initiative slug "' + ini.slug +
+                     '" — add it to INITIATIVES in proto-mode.js.');
+      }
+      return {
+        slug:    ini.slug,
+        name:    (reg && reg.name) || ini.slug,
+        spec:    reg && reg.spec,
+        prodArm: reg && reg.prodArm,
+        deflt:   ini.default ? String(ini.default) : '',
+        arms:    groupsOf(ini.variants || []).reduce(function (all, g) {
+                   return all.concat(g.items || []);
+                 }, [])
+      };
+    }).filter(function (ini) { return ini.arms.length; });
+
+    /* The arm actually in force: the URL, then the remembered arm, then the
+       page's default — but only values this initiative offers, so a legacy alias
+       or a typo cannot select an option that does not exist. */
+    function activeArm(ini) {
+      var ids = ini.arms.map(function (a) { return String(a.id); });
+      var wanted = [params.get(ini.slug),
+                    window.protoVariantStored && window.protoVariantStored(ini.slug),
+                    ini.deflt];
+      for (var i = 0; i < wanted.length; i++) {
+        if (wanted[i] && ids.indexOf(String(wanted[i])) !== -1) return String(wanted[i]);
+      }
+      return ini.deflt;
+    }
+
+    if (pageInitiatives.length) {
       var vWrap = document.createElement('label');
-      vWrap.appendChild(document.createTextNode('Variant'));
-      var vParam = cfg.variantParam || 'variant';
-      var vCurrent = params.get(vParam) || cfg.variantDefault || '';
-      vWrap.appendChild(buildSelect(cfg.variants, vParam, vCurrent,
-        cfg.variantDefault ? '— none —' : 'prod baseline', cfg.variantExtraParams));
+      vWrap.appendChild(document.createTextNode('Variants'));
+
+      var vSel = document.createElement('select');
+      var armOptions = [];   // { ini, arm }, indexed by option value
+
+      /* With nothing selected each initiative renders its own default. That is
+         production only when every default IS the production arm — the delivery
+         test defaults to v2 on purpose — so the label states which it is rather
+         than promising production everywhere. */
+      var allProd = pageInitiatives.every(function (ini) {
+        return !ini.deflt || !ini.prodArm || ini.deflt === String(ini.prodArm);
+      });
+      var noneOpt = document.createElement('option');
+      noneOpt.value = '';
+      noneOpt.textContent = allProd ? '— none — production behaviour' : '— none — page defaults';
+      vSel.appendChild(noneOpt);
+
+      pageInitiatives.forEach(function (ini) {
+        var group = document.createElement('optgroup');
+        group.label = ini.name;
+        if (ini.spec) group.title = ini.name + ' — spec: ' + ini.spec;
+        ini.arms.forEach(function (arm) {
+          var o = document.createElement('option');
+          o.value = String(armOptions.length);
+          o.textContent = arm.label || arm.id;
+          armOptions.push({ ini: ini, arm: arm });
+          group.appendChild(o);
+        });
+        vSel.appendChild(group);
+      });
+
+      /* Arms in force on initiatives this page does not show — a hand-written
+         URL, or an arm picked on another page. Listed, disabled, because they
+         change what the participant sees elsewhere and would otherwise be
+         invisible; picking anything in this row clears them. */
+      var elsewhere = (window.protoInitiatives || []).filter(function (reg) {
+        var shown = pageInitiatives.some(function (ini) { return ini.slug === reg.slug; });
+        if (shown) return false;
+        var stored = window.protoVariantStored && window.protoVariantStored(reg.slug);
+        var arm = params.get(reg.slug) || stored;
+        return arm && String(arm) !== String(reg.prodArm || '');
+      });
+      if (elsewhere.length) {
+        var elseGroup = document.createElement('optgroup');
+        elseGroup.label = 'Active on other pages';
+        elsewhere.forEach(function (reg) {
+          var arm = params.get(reg.slug) || window.protoVariantStored(reg.slug);
+          var o = document.createElement('option');
+          o.disabled = true;
+          o.textContent = reg.name + ': ' + arm;
+          elseGroup.appendChild(o);
+        });
+        vSel.appendChild(elseGroup);
+      }
+
+      /* One select cannot show two arms at once, and it cannot show an arm that
+         belongs to another page at all. Either way it says what is going on
+         rather than sitting on "none" while something is live, or naming one arm
+         and implying the rest are off. */
+      var offDefault = pageInitiatives.filter(function (ini) { return activeArm(ini) !== ini.deflt; });
+      var offTotal = offDefault.length + elsewhere.length;
+      if (offTotal > 1 || (offTotal === 1 && !offDefault.length)) {
+        var mixed = document.createElement('option');
+        mixed.value = 'mixed';
+        mixed.textContent = offTotal > 1
+          ? 'Mixed — ' + offTotal + ' initiatives off default'
+          : 'Off default on another page — ' + elsewhere[0].name;
+        vSel.insertBefore(mixed, noneOpt.nextSibling);
+        vSel.value = 'mixed';
+      } else if (offDefault.length === 1) {
+        var live = activeArm(offDefault[0]);
+        armOptions.forEach(function (opt, i) {
+          if (opt.ini === offDefault[0] && String(opt.arm.id) === live) vSel.value = String(i);
+        });
+      } else {
+        vSel.value = '';
+      }
+
+      vSel.addEventListener('change', function () {
+        if (vSel.value === 'mixed') return;   // not a state you can navigate INTO
+        var chosen = vSel.value === '' ? null : armOptions[Number(vSel.value)];
+        var changes = {};
+        /* Every registered initiative, not just this page's: an arm picked three
+           steps ago is still in force, and "one variant at a time" has to mean
+           the whole prototype, not the current page. Clearing the param is not
+           enough — arms are remembered — so each one is forgotten too. */
+        (window.protoInitiatives || []).forEach(function (reg) {
+          var keep = chosen && chosen.ini.slug === reg.slug;
+          changes[reg.slug] = keep ? String(chosen.arm.id) : null;
+          if (!keep && window.protoVariantSet) window.protoVariantSet(reg.slug, null);
+        });
+        window.location.href = withParams(changes);
+      });
+
+      vWrap.appendChild(vSel);
       bar.appendChild(vWrap);
     }
 

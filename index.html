@@ -218,6 +218,7 @@
               <span class="font-dm font-medium text-base text-gray-700 flex-shrink-0">km</span>
             </div>
             <p id="mileage-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.mileageError">Syötä ajokilometrit</p>
+            <p id="mileage-max-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.mileageMaxError">Valitettavasti kauttamme voi myydä vain alle 280 000 km ajettuja autoja</p>
           </div>
 
           <!-- Submit -->
@@ -1194,6 +1195,38 @@
       checkHeroState();
       syncNavLoginLabel();
 
+      /* Prod caps mileage at country_config('max_driven_distance') — 280 000 km
+         for Finland (config/country/finland.php). LandingPageForm.vue watches
+         form.driven and pushes form.tender.driven_more_than_max as soon as the
+         value stops being `< maxMileage`, so the notice appears while typing,
+         not on submit — and 280 000 itself is already too high. */
+      const MAX_MILEAGE = 280000;
+
+      function mileageTooHigh() {
+        const digits = document.getElementById('mileage').value.replace(/\D/g, '');
+        return digits.length > 0 && Number(digits) >= MAX_MILEAGE;
+      }
+
+      function syncMileageMaxError() {
+        const wrapper = document.getElementById('mileage-wrapper');
+        const emptyEl = document.getElementById('mileage-error');
+        const maxEl   = document.getElementById('mileage-max-error');
+        const tooHigh = mileageTooHigh();
+
+        maxEl.classList.toggle('hidden', !tooHigh);
+
+        if (tooHigh) {
+          // The two mileage messages never show together.
+          emptyEl.classList.add('hidden');
+          wrapper.style.outline = '2px solid rgba(239,68,68,0.85)';
+          wrapper.style.outlineOffset = '-2px';
+        } else if (emptyEl.classList.contains('hidden')) {
+          // Only drop the outline if the empty-field error isn't owning it.
+          wrapper.style.outline = '';
+          wrapper.style.outlineOffset = '';
+        }
+      }
+
       // KM auto-formatter: digits only, space every 3 from the right
       document.getElementById('mileage').addEventListener('input', function() {
         const raw = this.value.replace(/\D/g, '');
@@ -1203,6 +1236,7 @@
         // Keep cursor roughly in position
         const diff = this.value.length - prevLen;
         this.setSelectionRange(Math.max(0, pos + diff), Math.max(0, pos + diff));
+        syncMileageMaxError();
       });
 
       function scrollAndPulse(el) {
@@ -1241,7 +1275,7 @@
           const val   = input.value.trim();
           const valid = isPlateField
             ? /^[A-Za-z]{3}-[0-9]{3}$/.test(val)
-            : input.value.replace(/\D/g, '').length > 0;
+            : input.value.replace(/\D/g, '').length > 0 && !mileageTooHigh();
           if (valid) {
             if (errEl) errEl.classList.add('hidden');
             wrapper.style.outline = '';
@@ -1284,13 +1318,18 @@
         const kmRaw = document.getElementById('mileage').value.replace(/\D/g, '').trim();
 
         const plateValid = finnishCarPlateRegex.test(plate);
-        const kmValid    = kmRaw.length > 0;
+        const kmValid    = kmRaw.length > 0 && Number(kmRaw) < MAX_MILEAGE;
 
         if (!plateValid) {
           heroFieldError('plate-field', 'plate-wrapper', 'plate', true);
           return;
         }
         if (!kmValid) {
+          if (mileageTooHigh()) {
+            syncMileageMaxError();
+            scrollAndPulse(document.getElementById('mileage-field'));
+            return;
+          }
           heroFieldError('mileage-field', 'mileage-wrapper', 'mileage', false);
           return;
         }

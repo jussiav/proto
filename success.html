@@ -75,7 +75,7 @@
           </p>
           <div id="success-badge" class="hidden items-center gap-2 rounded px-2 py-1">
             <span id="success-badge-icon" class="w-3.5 h-3.5 flex-shrink-0 flex items-center justify-center"></span>
-            <span id="success-badge-text" class="font-dm font-medium text-sm"></span>
+            <span id="success-badge-text" class="font-dm text-sm"></span>
           </div>
         </div>
 
@@ -140,7 +140,7 @@
       </div>
 
       <!-- ── Right column (cream) ── -->
-      <div class="flex-1 bg-av-cream rounded-xl p-8 min-h-[480px] flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+      <div id="success-sidebar" class="flex-1 bg-av-cream rounded-xl p-8 min-h-[480px] flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
 
         <h2 id="success-next-steps-title" class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="success.nextStepsTitle">Mitä tapahtuu seuraavaksi?</h2>
 
@@ -243,9 +243,16 @@
           { id: 'in-review-verified',      label: 'In review — verified, call tomorrow',     params: { copy: 'tomorrow' } },
           { id: 'in-review-verified',      label: 'In review — verified, call next workday', params: { copy: 'next_work_day' } }
         ]},
-        { group: 'Published', items: [
-          { id: 'queued',                  label: 'Queued — email not verified' },
-          { id: 'published',               label: 'Published (auction live)' }
+        /* The no-review path. A car outside the review segment is never
+           review-called: unverified it is queued, and verifying publishes it —
+           VerifyTenderRequestDraftEmailController calls publishDraft on a queued
+           draft, then the funnel's onMounted CONFIRM_PUBLISHED routes the
+           published status to `success`. Both ways into `published` (verified at
+           submit, or verified afterwards) land on the same Success.vue screen,
+           so this is one scenario, not two. */
+        { group: 'Published — no review', items: [
+          { id: 'queued',                  label: 'Queued — waiting for email verification' },
+          { id: 'published',               label: 'Auto-published — email verified, auction live' }
         ]}
       ]
     };
@@ -283,8 +290,16 @@
     // (bg-white border-cyan-400 text-cyan-600, ph-bold-hourglass-high).
     var ICON_HOURGLASS = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M10.0625 1.09375H3.9375C3.64742 1.09375 3.36922 1.20898 3.1641 1.4141C2.95898 1.61922 2.84375 1.89742 2.84375 2.1875V4.15625C2.84417 4.32597 2.88389 4.4933 2.95979 4.6451C3.0357 4.79691 3.14572 4.92908 3.28125 5.03125L5.90625 7L3.28125 8.96875C3.14572 9.07092 3.0357 9.20309 2.95979 9.3549C2.88389 9.5067 2.84417 9.67403 2.84375 9.84375V11.8125C2.84375 12.1026 2.95898 12.3808 3.1641 12.5859C3.36922 12.791 3.64742 12.9062 3.9375 12.9062H10.0625C10.3526 12.9062 10.6308 12.791 10.8359 12.5859C11.041 12.3808 11.1562 12.1026 11.1562 11.8125V9.86344C11.1561 9.69401 11.1168 9.52691 11.0415 9.37514C10.9662 9.22337 10.8569 9.09104 10.722 8.98844L8.08828 7L10.722 5.00937C10.8569 4.90678 10.9662 4.77444 11.0415 4.62267C11.1168 4.47091 11.1561 4.3038 11.1562 4.13437V2.1875C11.1563 1.89742 11.041 1.61922 10.8359 1.4141C10.6308 1.20898 10.3526 1.09375 10.0625 1.09375ZM9.84375 2.40625V3.28125H4.15625V2.40625H9.84375ZM7 6.17969L4.88523 4.59375H9.09617L7 6.17969ZM9.84375 11.5938H4.15625V9.95312L7 7.82031L9.84375 9.97117V11.5938Z"/></svg>';
     var ICON_WARNING = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M6.34375 7.21875V4.375C6.34375 4.20095 6.41289 4.03403 6.53596 3.91096C6.65903 3.78789 6.82595 3.71875 7 3.71875C7.17405 3.71875 7.34097 3.78789 7.46404 3.91096C7.58711 4.03403 7.65625 4.20095 7.65625 4.375V7.21875C7.65625 7.3928 7.58711 7.55972 7.46404 7.68279C7.34097 7.80586 7.17405 7.875 7 7.875C6.82595 7.875 6.65903 7.80586 6.53596 7.68279C6.41289 7.55972 6.34375 7.3928 6.34375 7.21875ZM12.9063 5.00664V8.99336C12.9066 9.13704 12.8785 9.27938 12.8235 9.41211C12.7685 9.54485 12.6877 9.66535 12.5858 9.76664L9.76664 12.5858C9.66537 12.6877 9.54487 12.7685 9.41213 12.8235C9.27939 12.8786 9.13705 12.9067 8.99336 12.9063H5.00664C4.86295 12.9067 4.72061 12.8786 4.58787 12.8235C4.45513 12.7685 4.33463 12.6877 4.23336 12.5858L1.41422 9.76664C1.31231 9.66535 1.23151 9.54485 1.1765 9.41211C1.12149 9.27938 1.09336 9.13704 1.09375 8.99336V5.00664C1.09336 4.86296 1.12149 4.72062 1.1765 4.58789C1.23151 4.45515 1.31231 4.33465 1.41422 4.23336L4.23336 1.41422C4.33463 1.31228 4.45513 1.23147 4.58787 1.17645C4.72061 1.12144 4.86295 1.09333 5.00664 1.09375H8.99336C9.13705 1.09333 9.27939 1.12144 9.41213 1.17645C9.54487 1.23147 9.66537 1.31228 9.76664 1.41422L12.5858 4.23336C12.6877 4.33465 12.7685 4.45515 12.8235 4.58789C12.8785 4.72062 12.9066 4.86296 12.9063 5.00664ZM11.5938 5.09742L8.90258 2.40625H5.09742L2.40625 5.09742V8.90258L5.09742 11.5938H8.90258L11.5938 8.90258V5.09742ZM7 8.53125C6.82694 8.53125 6.65777 8.58257 6.51388 8.67871C6.36998 8.77486 6.25783 8.91152 6.19161 9.0714C6.12538 9.23129 6.10805 9.40722 6.14181 9.57695C6.17558 9.74669 6.25891 9.9026 6.38128 10.025C6.50365 10.1473 6.65956 10.2307 6.8293 10.2644C6.99903 10.2982 7.17496 10.2809 7.33485 10.2146C7.49473 10.1484 7.63139 10.0363 7.72754 9.89237C7.82368 9.74848 7.875 9.57931 7.875 9.40625C7.875 9.17419 7.78281 8.95163 7.61872 8.78753C7.45462 8.62344 7.23206 8.53125 7 8.53125Z"/></svg>';
+    /* The page badge is NOT UiBadge — each screen writes its own, so the classes
+       are transcribed from the screen that owns the state:
+         slate  Review.vue in_review    bg-slate-200 border-gray-300 text-gray-500   hourglass
+         red    Review.vue rejected     bg-transparent border-red-300 text-red-700   warning-octagon
+         amber  PublishQueue.vue        bg-amber-50 border-amber-400 text-amber-700  warning-octagon
+         cyan   Success.vue published   bg-white border-cyan-400 text-cyan-600       hourglass
+       Note the card badge for the same state can differ — prod's published card
+       uses UiBadge cyan (bg-cyan-100, text-cyan-700) and a warning-octagon. */
     var BADGE_COLORS = {
-      slate: { cls: 'bg-slate-200 border border-slate-300 text-slate-500', icon: ICON_HOURGLASS },
+      slate: { cls: 'bg-slate-200 border border-gray-300 text-gray-500',  icon: ICON_HOURGLASS },
       red:   { cls: 'bg-transparent border border-red-300 text-red-700',  icon: ICON_WARNING },
       amber: { cls: 'bg-amber-50 border border-amber-400 text-amber-700', icon: ICON_WARNING },
       cyan:  { cls: 'bg-white border border-cyan-400 text-cyan-600',      icon: ICON_HOURGLASS },
@@ -356,6 +371,7 @@
         headline: 'Autoasi ei hyväksytty - tällä kertaa.',
         subtext: 'Syynä saattaa olla ajoitus tai puuttuvat tiedot. Ei hätää - voit aina palata myöhemmin.',
         badge: { text: 'Ei hyväksytty', color: 'red' },
+        card: false,   // prod: waitingForReview + rejected is not in canPreviewDraft
         steps: [],
         // Review.vue: <Notification icon="ph-fill-car" theme="info"> + primary button (editDraft)
         actionCard: { icon: 'car', color: 'blue', title: 'Mietitkö vielä?', body: 'Ymmärrämme täysin. Monet asiakkaamme palaavat myynnin pariin myöhemmin ja tekevät hyvät kaupat. Voit päivittää tarjouspyyntöä milloin tahansa.', cta: 'Päivitä tarjouspyyntöä', href: 'index.html' },
@@ -366,6 +382,7 @@
         headline: 'Huomio! Tarvitsemme sinulta lisätietoja.',
         subtext: 'Huomasimme, että joitakin tietoja puuttuu tarjouspyynnöstäsi.',
         badge: { text: 'Tietoja tarvitaan', color: 'red' },
+        card: false,   // same rejected status, same reason
         // Real WhatHappensNext.vue fallthrough for rejected+missingImages: falls to the
         // default 4-step branch (still shows "under review") — an apparent prod quirk,
         // reproduced as-is rather than corrected.
@@ -413,6 +430,7 @@
         headline: 'Jännittävää! Tarjouskilpailu on alkamassa.',
         subtext: 'Autosi on nyt satojen ostajien nähtävillä. Tarjouskilpailu alkaa ensimmäisestä tarjouksesta.',
         badge: { text: 'Odotetaan tarjouksia', color: 'cyan' },
+        card: false,   // prod: `success` is not in canPreviewDraft, and Success.vue has no card
         steps: ['published_alt', 'auction', 'auction_ends'],
         // live-no-bids, not new-offers: this state's badge is "Odotetaan tarjouksia",
         // so the offers page it links to must show a live auction with no bids yet.
@@ -425,16 +443,18 @@
     // Draft status the card's badge should reflect, per prod's draftStatusConfig.
     // The forced scenarios ARE draft statuses; the organic path is in_review
     // (the seller has just submitted and is awaiting review).
+    /* Only the states that actually draw a card need a status — see `card: false`
+       below for the ones prod does not preview at all. */
     var SCENARIO_DRAFT_STATUS = {
-      'rejected':                 'rejected',
-      'rejected-missing-images':  'rejected',
       'in-review-unverified':     'in_review',
       'in-review-verified':       'in_review',
-      'queued':                   'queued_for_publishing_after_verification',
-      'published':                'in_review'
+      'queued':                   'queued_for_publishing_after_verification'
     };
     function currentDraftStatus() {
-      return SCENARIO_DRAFT_STATUS[FORCED_SCENARIO] || 'in_review';
+      /* Follows the organic path too, not just ?scenario=. Without that the card
+         badge stayed on "Tarkastus käynnissä" while the page rendered the queued
+         state — the same review assumption this screen used to make everywhere. */
+      return SCENARIO_DRAFT_STATUS[FORCED_SCENARIO || draftScenario(getStore())] || 'in_review';
     }
 
     function renderForcedScenario(id, copyVariant) {
@@ -450,7 +470,20 @@
       var existingPhotosBtn = document.getElementById('success-photos-btn');
       if (existingPhotosBtn) existingPhotosBtn.remove();
 
-      if (vehicleCard) vehicleCard.style.display = '';
+      /* Prod previews the draft in some of these states and not others:
+         `shouldShowPreview` is `isWaitingForReviewInReview || canPreviewDraft`,
+         and `canPreviewDraft` covers confirmingProvidedEmail,
+         providingPersonalInfo, publishingDraft and
+         waitingForEmailVerificationBeforePublishing — NOT `success`, and not
+         `waitingForReview` with a rejected draft. `Success.vue` draws no card of
+         its own either. So a rejected or published draft shows no car card at
+         all, which is also why Preview.vue's `published` entry (the untranslated
+         literal "Published") never renders in prod. */
+      if (vehicleCard) vehicleCard.style.display = def.card === false ? 'none' : '';
+      /* With no steps and no card the column has nothing left, which is prod's
+         own test for dropping the sidebar on mobile. */
+      document.documentElement.dataset.successSidebar =
+        (def.card === false && !(def.steps || []).length) ? 'empty' : 'filled';
       // prod Review.vue: h1 -> subtitle -> status badge -> figure
       leftCol.insertBefore(illustrationWrap, headlineSection.nextSibling);
       if (def.illustration) {
@@ -532,30 +565,47 @@
         }
 
       } else if (loggedIn) {
-        // ── EMAIL VERIFIED ── same state as scenario 'in-review-verified': render via the
-        // shared definition so the two paths cannot drift apart.
+        /* ── EMAIL VERIFIED ── 'in-review-verified' for a reviewable car,
+           'published' for one outside the segment: prod publishes it outright
+           rather than sending it to review. Rendered through the shared scenario
+           definition so the organic path and the ?scenario= path cannot drift. */
         existing?.remove();
         hideEmailToast();
-        renderForcedScenario('in-review-verified', null);
+        renderForcedScenario(draftScenario(s), null);
         return;
 
 
       } else {
-        // ── EMAIL NOT YET VERIFIED ── same state as scenario 'in-review-unverified'.
+        /* ── EMAIL NOT YET VERIFIED ── 'in-review-unverified' for a reviewable
+           car, 'queued' for one outside the segment. This is the branch that
+           used to promise the review call to every seller: it always rendered
+           the in-review state, whose step list leads with "Soitamme sinulle",
+           even for a draft prod had queued for publishing and would never call
+           about. */
         existing?.remove();
-        renderForcedScenario('in-review-unverified', null);
+        renderForcedScenario(draftScenario(s), null);
         showEmailToast();
         return;
       }
     }
 
-    /* Where verification lands the seller. A car outside the Filament review
-       segment was never review-called: it publishes straight away, so the
-       verified seller sees the published/auction-live state. A reviewable car
-       goes to review, so that seller sees in-review-verified. `reviewable` is
-       written by the price step; default true, which is the common case. */
-    function postVerifyScenario(store) {
-      return store.reviewable === false ? 'published' : 'in-review-verified';
+    /* Which state this draft is actually in, by review path and email status.
+
+       A car outside the Filament review segment is never review-called. Prod's
+       PublishDraft sends it to review only when EvaluateDraftForReview passes;
+       otherwise an unverified seller is queued
+       (`queued_for_publishing_after_verification`, PublishDraft::
+       draftShouldBeQueuedForPublishing) and a verified one publishes outright.
+       That distinction matters here because WhatHappensNext branches on the
+       resulting status: the queued and published branches BOTH drop the
+       "Ilmoituksesi tarkistetaan / Soitamme sinulle" step, so a non-reviewable
+       seller is never promised the call on this screen.
+
+       `reviewable` is written by the price step; default true, the common case. */
+    function draftScenario(store) {
+      var reviewable = store.reviewable !== false;
+      if (store.loggedIn) return reviewable ? 'in-review-verified' : 'published';
+      return reviewable ? 'in-review-unverified' : 'queued';
     }
 
     // Handle emailVerified URL param (landing from virtual email CTA)
@@ -573,7 +623,7 @@
         /* Land on the scenario the draft's review path implies, rather than
            just clearing the param — otherwise a non-reviewable seller would be
            shown the review treatment. */
-        window.location.replace(window.location.pathname + '?scenario=' + postVerifyScenario(s));
+        window.location.replace(window.location.pathname + '?scenario=' + draftScenario(s));
         return;
       }
     }());
@@ -592,7 +642,7 @@
       if (typeof window.muwCloseFrame === 'function') window.muwCloseFrame(false);
       /* Same routing as the email-link path: the review outcome decides which
          verified state the seller sees. */
-      window.location.href = window.location.pathname + '?scenario=' + postVerifyScenario(s);
+      window.location.href = window.location.pathname + '?scenario=' + draftScenario(s);
     });
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -666,6 +716,17 @@
   </script>
 
   <style>
+    /* Prod's Sidebar.vue renders on mobile only when it has something to say:
+       `shouldShowSidebarOnMobile = shouldShowWhatHappensNext || providingPersonalInfo`.
+       Among this screen's states that excludes plain `rejected` — no steps, and
+       (in prod) only the VehicleMetrics card, which was never ported here. On a
+       phone the column would otherwise stack under the content as 480px of empty
+       cream. Desktop keeps it, as prod does. Hand-written rather than
+       `max-md:hidden` because the Tailwind Play CDN only generates utilities that
+       exist in the DOM at first paint. */
+    @media (max-width: 767px) {
+      html[data-success-sidebar="empty"] #success-sidebar { display: none; }
+    }
     @keyframes toastIn {
       0%   { opacity:0; transform:translateY(56px) scale(0.88); }
       60%  { opacity:1; transform:translateY(-8px) scale(1.03); }
