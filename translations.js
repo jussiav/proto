@@ -577,10 +577,11 @@ window.TRANSLATIONS = {
       targetNote:      'Et sitoudu myymään tavoitehinnallasi.',
       /* Asking-price variant — shown when the car falls outside the Filament
          review segment (can_review false). Verbatim from prod
-         tenderform.price_info.asking_price_*. The prod typo in
-         "mahdollisuuuksiasi" is reproduced as-is. */
+         tenderform.price_info.asking_price_*, except the prod typo
+         "mahdollisuuuksiasi" which is corrected here — bug filed with the dev
+         team, so prod will catch up. */
       askingTitle:       'Mikä olisi tarjous, johon olisit tyytyväinen?',
-      askingSubtitle:    'Realistinen pyyntihinta nostaa mahdollisuuuksiasi tarjouskilpailussa.',
+      askingSubtitle:    'Realistinen pyyntihinta nostaa mahdollisuuksiasi tarjouskilpailussa.',
       askingLabel:       'Pyyntihintasi',
       askingPlaceholder: 'Esim. 12 500',
       askingInfo:        'Auttaa ostajia ymmärtämään, millaista hintaa toivot. Tarjoukset usein ylittävät pyyntihinnan.',
