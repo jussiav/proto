@@ -231,7 +231,69 @@ filled button — a full-width blue block read as equally important as the
 step's own "Jatka", more attention than an optional section should draw. The
 hint and the size/count limits are one combined paragraph, not two, for the
 same reason: the section should read as a footnote next to the photo sections
-above it.
+above it. The section sits INSIDE the photo-sections wrapper (not after it) so
+it gets the same `gap-10`/`md:gap-16` spacing as every other section — it used
+to be a sibling of that wrapper, which gave it only the outer column's
+`gap-6` and made it read as glued to the section above it.
+
+Each file row uses the paperclip icon prod already gives a draft's `open`
+status (`DRAFT_ICON_PAPERCLIP`, prod's `ph-bold-paperclip`) rather than a
+second document glyph, shows no file size, and deletes with the EXACT button a
+photo thumbnail uses — a `bg-gray-100` square with a bold "+" rotated 45°,
+prod's own `.remove-button` technique (`ImagePreview.vue`), not a redrawn SVG X
+— one delete affordance and one "there is an attachment" icon across the step,
+not component-specific ones. The ad-preview modal's file rows use the same
+paperclip, left of the filename, for the same reason.
+
+**The whole photos step's baseline styling was brought in line with prod**
+(`ImageUpload.vue`/`ImagePreview.vue`/`ImageSections.vue`) at the same time,
+since the documents section needed an accurate foundation to sit on, not a
+foundation that itself diverged from prod. Empty/placeholder cells:
+`bg-gray-100 border rounded shadow-md` (prod's dummy-slot card), not the
+proto's old `bg-slate-100`/`rounded-md`/custom drop-shadow. Uploaded photos:
+`border-transparent` once accepted — prod drops the border rather than ringing
+it, so the blue `ring-2 ring-av-blue` the proto used to add on upload is gone.
+The outer dashed container is `border-2 border-dashed border-gray-500` (prod's
+`ImageSections.vue` wrapper), not `border border-slate-400`. The "add more"
+cell lost its own dashed box and centered outline plus — it is now styled
+exactly like every other empty cell, with the same small top-right filled-black
+plus icon the silhouette placeholders already used (prod's `.upload-button`
+plus, corner-positioned), rather than a second, differently-drawn plus.
+
+**A second pass matched tile proportions, spacing, and photo fill.** Tiles are
+`aspect-[2/1]` sized from their own width, not a fixed `h-20` — prod's
+`ImagePreview.vue` has no height utility at all, only `aspect-ratio-2/1`, so
+every tile's height now follows its width the same way. Uploaded photos are
+`object-contain`, not `object-cover`: prod shows the whole photo letterboxed
+inside the gray card rather than cropping it to fill, and the tile's own
+background is what shows in the letterboxed margins. Spacing: the outer
+container is `p-4` and `.photo-grid` is `gap-4`, both landing on 16px — prod
+gets that same 16px two ways (its own `p-2` wrapper plus each cell's own `p-2`,
+stacked), which this reproduces as one padding/gap value each rather than
+adding a real per-cell wrapper div, since nothing here depends on that
+wrapper existing. **Delete button position:** prod's own `-top-2 -right-2`
+button also carries `p-4` padding around a smaller inner box; the padding
+pulls the *visible* square back in more than the negative offset pushes it
+out, landing it ~8px inset from the corner — which is what both the prod and
+proto screenshots actually show, not a button hanging off the edge. `top-2
+right-2` on the single visible element reproduces that exact net position
+directly, without also copying a hit-target padding this static prototype has
+no touch-target reason to need.
+
+**A tile-width mismatch broke wrapping.** The tile-width formula changed from
+`calc(50% - 5px)` to `calc(50% - 8px)` when the gap grew from `gap-2.5` to
+`gap-4` (see above), but that edit matched only the HTML `style="width:..."`
+attribute form — `makeThumbnail`/`makeRestoredThumbnail` set their width via
+`div.style.width = '...'` (a JS property assignment, different string shape),
+so those two kept the old, now-too-wide value. Two tiles at the old width plus
+the new 16px gap summed to just over 100%, which is enough for `flex-wrap` to
+push the second tile onto its own line — and once one tile wraps, everything
+after it cascades onto its own line too. Only visible once a row actually
+contained one of the two dynamically-created tile types (an extra photo
+beyond the required slots, or one restored from storage on reload) next to a
+placeholder-slot or add-slot; a row of only static tiles never exposed it,
+which is why it survived the earlier verification pass. Fixed by updating
+both JS assignments to match.
 
 Files never touch the photo rules: not counted toward the 5-photo minimum, never
 completing or blocking the step, even when the file is an image.

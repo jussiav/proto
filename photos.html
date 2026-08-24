@@ -201,8 +201,8 @@
     // Build a thumbnail with a progress circle (animated upload)
     function makeThumbnail() {
       const div = document.createElement('div');
-      div.className = 'relative h-20 bg-slate-100 rounded-md overflow-hidden ring-2 ring-av-blue shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]';
-      div.style.width = 'calc(50% - 5px)';
+      div.className = 'relative aspect-[2/1] bg-gray-100 rounded overflow-hidden border-transparent shadow-md';
+      div.style.width = 'calc(50% - 8px)';
       div.innerHTML = `
         <div class="upload-progress absolute inset-0 bg-white/80 flex items-center justify-center z-20">
           <svg class="w-10 h-10" viewBox="0 0 36 36">
@@ -212,9 +212,9 @@
               transform="rotate(-90 18 18)" class="prog-ring"/>
           </svg>
         </div>
-        <img class="preview-img hidden absolute inset-0 w-full h-full object-cover" src="" alt="" />
-        <button class="delete-btn hidden absolute top-1 right-1 z-30 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center" onclick="event.stopPropagation(); deletePhoto(this)">
-          <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <img class="preview-img hidden absolute inset-0 w-full h-full object-contain" src="" alt="" />
+        <button class="delete-btn hidden absolute top-2 right-2 z-30 w-6 h-6 bg-gray-100 flex items-center justify-center font-semibold cursor-pointer" onclick="event.stopPropagation(); deletePhoto(this)">
+          <span style="font-size:32px;font-weight:600;line-height:8px;display:inline-block;transform:rotate(45deg);">+</span>
         </button>
       `;
       return div;
@@ -223,11 +223,11 @@
     // Build a thumbnail already showing a data URL (for restoring from storage)
     function makeRestoredThumbnail(dataUrl) {
       const div = document.createElement('div');
-      div.className = 'restored-thumb relative h-20 bg-slate-100 rounded-md overflow-hidden ring-2 ring-av-blue shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]';
-      div.style.width = 'calc(50% - 5px)';
+      div.className = 'restored-thumb relative aspect-[2/1] bg-gray-100 rounded overflow-hidden border-transparent shadow-md';
+      div.style.width = 'calc(50% - 8px)';
       div.innerHTML = `
-        <button class="absolute top-1 right-1 z-30 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center" onclick="event.stopPropagation(); deletePhoto(this)">
-          <svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <button class="absolute top-2 right-2 z-30 w-6 h-6 bg-gray-100 flex items-center justify-center font-semibold cursor-pointer" onclick="event.stopPropagation(); deletePhoto(this)">
+          <span style="font-size:32px;font-weight:600;line-height:8px;display:inline-block;transform:rotate(45deg);">+</span>
         </button>
       `;
       if (isPdf(dataUrl)) {
@@ -236,7 +236,7 @@
         div.appendChild(makeHeicThumb());
       } else {
         const img = document.createElement('img');
-        img.className = 'absolute inset-0 w-full h-full object-cover';
+        img.className = 'absolute inset-0 w-full h-full object-contain';
         img.src = dataUrl;
         div.insertBefore(img, div.querySelector('button'));
       }
@@ -313,8 +313,12 @@
     // Fill a placeholder slot in-place with an uploaded image
     function fillSlot(slot, dataUrl, section, sectionName) {
       slot.dataset.filled = 'true';
-      slot.classList.add('ring-2', 'ring-av-blue');
+      // Prod (ImagePreview.vue) keeps the base `border` utility always present
+      // and layers border-transparent ON TOP once accepted, rather than ringing
+      // it blue — removing the base class instead of layering left the browser
+      // falling back to the preflight default border color.
       slot.classList.remove('cursor-pointer');
+      slot.classList.add('border-transparent');
       slot.onclick = null;
       const hint = slot.querySelector('.slot-hint');
       if (hint) hint.style.display = 'none';
@@ -324,13 +328,16 @@
         slot.appendChild(makeHeicThumb());
       } else {
         const img = document.createElement('img');
-        img.className = 'absolute inset-0 w-full h-full object-cover';
+        img.className = 'absolute inset-0 w-full h-full object-contain';
         img.src = dataUrl;
         slot.appendChild(img);
       }
+      // Prod's .remove-button: bg-gray-100 square hanging outside the corner,
+      // a bold "+" rotated 45° rather than an SVG X — the literal technique
+      // ImagePreview.vue uses, not a redrawn equivalent.
       const delBtn = document.createElement('button');
-      delBtn.className = 'absolute top-1 right-1 z-30 w-5 h-5 bg-white rounded-full shadow flex items-center justify-center';
-      delBtn.innerHTML = '<svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      delBtn.className = 'absolute top-2 right-2 z-30 w-6 h-6 bg-gray-100 flex items-center justify-center font-semibold cursor-pointer';
+      delBtn.innerHTML = '<span style="font-size:32px;font-weight:600;line-height:8px;display:inline-block;transform:rotate(45deg);">+</span>';
       delBtn.onclick = function(e) { e.stopPropagation(); deletePhoto(this); };
       slot.appendChild(delBtn);
     }
@@ -338,7 +345,7 @@
     // Restore a filled placeholder slot back to its empty hint state
     function clearSlot(slot) {
       delete slot.dataset.filled;
-      slot.classList.remove('ring-2', 'ring-av-blue');
+      slot.classList.remove('border-transparent');
       slot.classList.add('cursor-pointer');
       slot.onclick = function() { triggerSection(this.closest('.section-container')); };
       const hint = slot.querySelector('.slot-hint');
@@ -731,7 +738,10 @@
       } catch (e) { return null; }
     }
 
-    var FILE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 text-slate-400" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+    /* Same paperclip prod uses for a draft's "open" status (DRAFT_ICON_PAPERCLIP
+       in vehicle-card.js, prod's ph-bold-paperclip) — one icon for "there is an
+       attachment here", reused rather than inventing a second document glyph. */
+    var FILE_ICON = '<svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" class="flex-shrink-0 text-slate-400" aria-hidden="true"><path d="m11.62 7.464-4.487 4.484a3.282 3.282 0 0 1-4.64-4.642L7.86 1.953a2.188 2.188 0 1 1 3.093 3.095l-.01.008L5.707 10.1a.658.658 0 0 1-1.066-.234.656.656 0 0 1 .156-.712l5.234-5.038a.875.875 0 0 0-1.242-1.234L3.42 8.234a1.97 1.97 0 0 0 2.786 2.784l4.487-4.485a.659.659 0 0 1 1.123.465.656.656 0 0 1-.193.465h-.002Z"/></svg>';
 
     function renderFiles() {
       var list = document.getElementById('files-list');
@@ -745,14 +755,19 @@
         var url = fileBlobUrl(entry);
         var li = document.createElement('li');
         li.className = 'flex items-center gap-2 bg-white border border-slate-200 rounded-md px-3 py-2';
+        /* Delete button is the EXACT same design as a photo thumbnail's own ×
+           (fillSlot/makeRestoredThumbnail above, itself matching prod's
+           ImagePreview.vue .remove-button): bg-gray-100 square, bold "+"
+           rotated 45° — one delete affordance across the whole step, not two.
+           Static here rather than corner-positioned (the photo tiles' own top-2/right-2)
+           since this is an inline row, not a photo card. */
         li.innerHTML =
           FILE_ICON +
           '<a class="flex-1 min-w-0 font-dm text-sm text-av-blue underline truncate" target="_blank" rel="noopener"' +
           ' href="' + (url || '#') + '">' + fileEsc(entry.name) + '</a>' +
-          '<span class="font-dm text-xs text-slate-400 flex-shrink-0">' + fileLabel(entry.size) + '</span>' +
-          '<button type="button" class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors"' +
+          '<button type="button" class="flex-shrink-0 w-6 h-6 bg-gray-100 flex items-center justify-center font-semibold cursor-pointer"' +
           ' title="' + fileEsc(t('files.remove')) + '" aria-label="' + fileEsc(t('files.remove')) + '" data-file-index="' + i + '">' +
-          '<svg width="10" height="10" viewBox="0 0 8 8" fill="none" aria-hidden="true"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+          '<span style="font-size:32px;font-weight:600;line-height:8px;display:inline-block;transform:rotate(45deg);">+</span>' +
           '</button>';
         li.querySelector('button').addEventListener('click', function () { deleteFile(i); });
         list.appendChild(li);
@@ -922,13 +937,13 @@
           <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
             <span data-i18n="photos.exterior">Ulkopuoli</span> <span class="text-red-500 font-medium">*</span>
           </div>
-          <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
-            <div class="photo-grid flex flex-wrap gap-2.5">
-              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/f31f1c0c-6c0a-47c0-8d94-61ba2b021a1d.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/42e9d6b8-61c9-4729-9154-3de054d86680.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/64075db4-9ebd-4c4a-b04a-a5a9b5b964f7.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/11db3357-b60f-4312-97a0-953e518025b1.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
+            <div class="photo-grid flex flex-wrap gap-4">
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/f31f1c0c-6c0a-47c0-8d94-61ba2b021a1d.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/42e9d6b8-61c9-4729-9154-3de054d86680.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/64075db4-9ebd-4c4a-b04a-a5a9b5b964f7.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/11db3357-b60f-4312-97a0-953e518025b1.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
             </div>
             <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
           </div>
@@ -939,10 +954,10 @@
           <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
             <span data-i18n="photos.interior">Sisätilat</span> <span class="text-red-500 font-medium">*</span>
           </div>
-          <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
-            <div class="photo-grid flex flex-wrap gap-2.5">
-              <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/18f3969c-4149-4d1e-ac00-6eda86313a87.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+          <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
+            <div class="photo-grid flex flex-wrap gap-4">
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/18f3969c-4149-4d1e-ac00-6eda86313a87.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
             </div>
             <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
           </div>
@@ -959,10 +974,10 @@
           <div class="flex flex-col gap-2">
             <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.serviceBook">Huoltokirja</div>
             <p class="font-dm text-xs text-slate-500 -mt-1" data-i18n="photos.serviceBookHint">Voit ladata kuvia tai PDF-tiedostoja</p>
-            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
-              <div class="photo-grid flex flex-wrap gap-2.5">
-                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/f09754df-5293-4176-ad94-b407336adfb8.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
+              <div class="photo-grid flex flex-wrap gap-4">
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/f09754df-5293-4176-ad94-b407336adfb8.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
@@ -971,10 +986,10 @@
           <!-- Renkaat -->
           <div class="flex flex-col gap-2">
             <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.tyres">Renkaat</div>
-            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
-              <div class="photo-grid flex flex-wrap gap-2.5">
-                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/8454b159-fd20-48ea-b9ad-e56f903c727e.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
+              <div class="photo-grid flex flex-wrap gap-4">
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/8454b159-fd20-48ea-b9ad-e56f903c727e.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
@@ -984,10 +999,10 @@
           <div class="flex flex-col gap-2">
             <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.scratches">Naarmut tai kolhut</div>
             <p class="font-dm text-xs text-slate-500 -mt-1" data-i18n="photos.scratchesHint">Lisää kuvat, jos autossa on vaurioita.</p>
-            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
-              <div class="photo-grid flex flex-wrap gap-2.5">
-                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/47d03926-fe55-47b1-8e34-677c13e776d9.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
+              <div class="photo-grid flex flex-wrap gap-4">
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/47d03926-fe55-47b1-8e34-677c13e776d9.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
@@ -996,25 +1011,29 @@
           <!-- Tuulilasin vauriot (shown only when tuulilasi is not Ehjä) -->
           <div id="tuulilasi-photo-section" class="flex flex-col gap-2" style="display:none;">
             <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.windshield">Tuulilasin vauriot</div>
-            <div class="section-container w-full border border-dashed border-slate-400 rounded-lg p-2.5">
-              <div class="photo-grid flex flex-wrap gap-2.5">
-                <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/205e2397-44f2-41f8-bc68-7ea08bb6c108.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
+            <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
+              <div class="photo-grid flex flex-wrap gap-4">
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/205e2397-44f2-41f8-bc68-7ea08bb6c108.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
           </div>
         </div>
 
-        </div><!-- /photo sections -->
-
         <!-- ── "Seller file upload" v1: documents, not photos ──────────────────
              Hidden unless the arm is on (html[data-files-arm="v1"], stamped in
              <head> so it never flashes). Files are listed by name only: no
              thumbnails, per the initiative — a filename is what identifies a
-             document, and a rendered first page is not worth the space. -->
+             document, and a rendered first page is not worth the space.
+
+             Kept INSIDE the photo-sections wrapper (closes below, not above) so
+             it inherits the same gap-10/md:gap-16 spacing as every other
+             section here — it was a sibling of that wrapper before, which gave
+             it only the outer column's gap-6 and made it read as glued to
+             Tuulilasi above it. -->
         <div id="files-section" class="w-full flex flex-col gap-2">
-          <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="files.title">Muut tiedostot</div>
+          <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="files.title">Muut dokumentit</div>
           <!-- Hint + limits combined into one paragraph (was two <p> elements) —
                this section should read as a footnote next to the photo sections
                above it, not compete with them for attention. -->
@@ -1028,13 +1047,15 @@
             <button type="button" id="files-add-btn"
               class="w-fit inline-flex items-center gap-1.5 font-dm font-medium text-sm text-av-blue hover:text-[#0A59EB] transition-colors cursor-pointer">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              <span data-i18n="files.addBtn">Lisää tiedostot</span>
+              <span data-i18n="files.addBtn">Lisää dokumentti</span>
             </button>
             <input type="file" id="files-input" class="hidden" multiple
                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/heic,image/heif" />
           </div>
           <p id="files-error" class="av-error-msg" style="display:none"></p>
         </div>
+
+        </div><!-- /photo sections -->
 
         <!-- ── Actions ── -->
         <div class="w-full flex flex-col gap-4 pb-4">

@@ -518,10 +518,16 @@
     const sellerFiles = Array.isArray(s.files) ? s.files : [];
     if (sellerFiles.length) {
       hasPhotos = true;
+      /* Same paperclip as the photos step's own file rows (DRAFT_ICON_PAPERCLIP,
+         prod's ph-bold-paperclip) — one icon for "there is an attachment here"
+         across the whole funnel, left of the filename in both places. */
       const fileRows = sellerFiles.map(f => {
         const href = modalFileUrl(f);
-        return `<a href="${href || '#'}" target="_blank" rel="noopener"
-          style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#0B6DFF;text-decoration:underline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.name)}</a>`;
+        return `<div style="display:flex;align-items:center;gap:.5rem;">
+          <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" style="color:#94a3b8;flex-shrink:0" aria-hidden="true"><path d="m11.62 7.464-4.487 4.484a3.282 3.282 0 0 1-4.64-4.642L7.86 1.953a2.188 2.188 0 1 1 3.093 3.095l-.01.008L5.707 10.1a.658.658 0 0 1-1.066-.234.656.656 0 0 1 .156-.712l5.234-5.038a.875.875 0 0 0-1.242-1.234L3.42 8.234a1.97 1.97 0 0 0 2.786 2.784l4.487-4.485a.659.659 0 0 1 1.123.465.656.656 0 0 1-.193.465h-.002Z"/></svg>
+          <a href="${href || '#'}" target="_blank" rel="noopener"
+            style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#0B6DFF;text-decoration:underline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.name)}</a>
+        </div>`;
       }).join('');
       photoHTML += `<div style="display:flex;flex-direction:column;gap:.375rem;">
         <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">${t('modal.photoCategories.tiedostot')}</span>

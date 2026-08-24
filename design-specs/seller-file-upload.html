@@ -159,10 +159,9 @@
             <div class="w-full border border-dashed border-slate-400 rounded-lg p-2.5 flex flex-col gap-2.5">
               <ul class="flex flex-col gap-2">
                 <li class="flex items-center gap-2 bg-white border border-slate-200 rounded-md px-3 py-2">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 text-slate-400" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" class="flex-shrink-0 text-slate-400" aria-hidden="true"><path d="m11.62 7.464-4.487 4.484a3.282 3.282 0 0 1-4.64-4.642L7.86 1.953a2.188 2.188 0 1 1 3.093 3.095l-.01.008L5.707 10.1a.658.658 0 0 1-1.066-.234.656.656 0 0 1 .156-.712l5.234-5.038a.875.875 0 0 0-1.242-1.234L3.42 8.234a1.97 1.97 0 0 0 2.786 2.784l4.487-4.485a.659.659 0 0 1 1.123.465.656.656 0 0 1-.193.465h-.002Z"/></svg>
                   <span class="flex-1 min-w-0 font-dm text-sm text-av-blue underline truncate">huoltokirja.pdf</span>
-                  <span class="font-dm text-xs text-slate-400 flex-shrink-0">444 kB</span>
-                  <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full"><svg width="10" height="10" viewBox="0 0 8 8" fill="none" aria-hidden="true"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                  <span class="flex-shrink-0 w-6 h-6 bg-gray-100 flex items-center justify-center font-semibold"><span style="font-size:32px;font-weight:600;line-height:8px;display:inline-block;transform:rotate(45deg);">+</span></span>
                 </li>
               </ul>
               <div class="w-fit inline-flex items-center gap-1.5 font-dm font-medium text-sm text-av-blue">
@@ -179,7 +178,8 @@
             <li><b>Filenames, no thumbnails.</b> A filename is what identifies a document; a rendered first page costs space and says less. This holds for images uploaded here too — attach a scanned receipt and it is listed by name like any other file.</li>
             <li><b>The limits are stated before uploading</b>, not discovered by failing: accepted types, size per file, and how many files — one short paragraph under the heading, not two, so the section stays a footnote next to the photo sections above it.</li>
             <li><b>The filename is the link.</b> It opens in a new tab; there is no separate open button.</li>
-            <li><b>Delete sits at the right of each row</b>, and removes without a confirmation step — nothing is lost that cannot be re-uploaded.</li>
+            <li><b>Long filenames truncate with an ellipsis</b>, not wrap or overflow — on both the photos step's list and the ad-preview modal's row, and more likely to be visible on narrow screens where the row has the least width to give the name. The full name is still the underlying file; only the display is shortened.</li>
+            <li><b>Delete sits at the right of each row</b>, and removes without a confirmation step — nothing is lost that cannot be re-uploaded. Same button design as a photo thumbnail's own × (prod's <code>.remove-button</code>: a <code>bg-gray-100</code> square with a bold "+" rotated 45°) — one delete affordance across the step, not two.</li>
             <li><b>Errors appear under the field and name the fix</b> — wrong type, too large, too many, unreadable. A rejected file never half-appears in the list.</li>
             <li><b>One file at a time fails.</b> Selecting five files where one is too large uploads the other four and reports the one.</li>
             <li><b>Documents never touch the photo rules.</b> They do not count toward the 5-photo minimum and cannot complete or block the step. A seller with a service-book PDF and no photos is still a seller with no photos.</li>
@@ -205,7 +205,7 @@
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr><td class="px-5 py-3 font-bold whitespace-nowrap">Photos step</td><td class="px-5 py-3">The list under the upload field</td><td class="px-5 py-3">Filename opens in a new tab · delete per row</td></tr>
-            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">Ad preview sheet</td><td class="px-5 py-3">A <b>Muut tiedostot</b> row inside the existing <b>Kuvat</b> section — the same section as Ulkopuoli/Sisätilat — wherever the sheet is opened from: contact step, confirmation screens, offers page</td><td class="px-5 py-3">Filename opens in a new tab. <b>No delete</b> — the sheet is read-only and links to the step where editing happens, which is how every other section there behaves.</td></tr>
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">Ad preview sheet</td><td class="px-5 py-3">A <b>Muut dokumentit</b> row inside the existing <b>Kuvat</b> section — the same section as Ulkopuoli/Sisätilat — wherever the sheet is opened from: contact step, confirmation screens, offers page</td><td class="px-5 py-3">Filename opens in a new tab. <b>No delete</b> — the sheet is read-only and links to the step where editing happens, which is how every other section there behaves.</td></tr>
             <tr><td class="px-5 py-3 font-bold whitespace-nowrap">Car card</td><td class="px-5 py-3">Nothing</td><td class="px-5 py-3">The card is a summary of the vehicle, and production has no file concept on it.</td></tr>
           </tbody>
         </table>
