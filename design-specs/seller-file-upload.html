@@ -177,6 +177,7 @@
           <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
             <li><b>Filenames, no thumbnails.</b> A filename is what identifies a document; a rendered first page costs space and says less. This holds for images uploaded here too — attach a scanned receipt and it is listed by name like any other file.</li>
             <li><b>The limits are stated before uploading</b>, not discovered by failing: accepted types, size per file, and how many files — one short paragraph under the heading, not two, so the section stays a footnote next to the photo sections above it.</li>
+            <li><b>The byte unit is translated, not formatted in code.</b> Finnish abbreviates megatavu as <b>Mt</b> and kilotavu as <b>kt</b> — not MB/kB. It fills <code>{size}</code> in both <code>description</code> and <code>errSize</code>, so a formatter that hardcodes "MB" leaks English into the one line where the seller reads the limit. Both units are translation keys (<code>files.unitMb</code>, <code>files.unitKb</code>) in the table below.</li>
             <li><b>The filename is the link.</b> It opens in a new tab; there is no separate open button.</li>
             <li><b>Long filenames truncate with an ellipsis</b>, not wrap or overflow — on both the photos step's list and the ad-preview modal's row, and more likely to be visible on narrow screens where the row has the least width to give the name. The full name is still the underlying file; only the display is shortened.</li>
             <li><b>Delete sits at the right of each row</b>, and removes without a confirmation step — nothing is lost that cannot be re-uploaded. Same button design as a photo thumbnail's own × (prod's <code>.remove-button</code>: a <code>bg-gray-100</code> square with a bold "+" rotated 45°) — one delete affordance across the step, not two.</li>
@@ -324,8 +325,9 @@
       document.documentElement.lang = 'en';
     })();
 
-    // The description line is built from the caps, exactly as the step builds it.
-    const PROTO_MAX = '1 MB', PROTO_COUNT = 5;
+    // The description line is built from the caps, exactly as the step builds it —
+    // including the byte unit, which is a translated string (fi "Mt", en "MB").
+    const PROTO_MAX = '1 ' + pick(FI, 'files.unitMb'), PROTO_COUNT = 5;
     const fill = (s, m) => String(s).replace(/\{(\w+)\}/g, (_, k) => m[k]);
     document.getElementById('spec-description').textContent =
       fill(pick(FI, 'files.description'), { size: PROTO_MAX, count: PROTO_COUNT });
@@ -333,7 +335,7 @@
     /* Generated, not typed: the copy table is the review artefact, so it has to be
        the strings the prototype actually renders. */
     (function buildCopyTable() {
-      const keys = ['title','description','addBtn','remove','errType','errSize','errCount','errRead','errStorage'];
+      const keys = ['title','description','addBtn','remove','errType','errSize','errCount','errRead','errStorage','unitMb','unitKb'];
       document.getElementById('copy-table').innerHTML = keys.map(k =>
         '<tr><td class="px-5 py-3"><code>' + k + '</code></td>' +
         '<td class="px-5 py-3">' + pick(FI, 'files.' + k) + '</td>' +

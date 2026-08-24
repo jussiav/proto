@@ -689,9 +689,12 @@
     };
     var FILE_EXTS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'heic', 'heif'];
 
+    /* The unit comes from translations, not from this function: Finnish writes
+       Mt/kt, not MB/kB. Called on render and on every rejected upload, so a
+       language switch picks up the right unit without re-seeding anything. */
     function fileLabel(bytes) {
-      if (bytes >= 1024 * 1024) return (Math.round(bytes / (1024 * 1024) * 10) / 10) + ' MB';
-      return Math.max(1, Math.round(bytes / 1024)) + ' kB';
+      if (bytes >= 1024 * 1024) return (Math.round(bytes / (1024 * 1024) * 10) / 10) + ' ' + t('files.unitMb');
+      return Math.max(1, Math.round(bytes / 1024)) + ' ' + t('files.unitKb');
     }
     function fileFill(str, map) {
       return String(str).replace(/\{(\w+)\}/g, function (_, k) { return map[k]; });
@@ -1047,7 +1050,7 @@
             <button type="button" id="files-add-btn"
               class="w-fit inline-flex items-center gap-1.5 font-dm font-medium text-sm text-av-blue hover:text-[#0A59EB] transition-colors cursor-pointer">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              <span data-i18n="files.addBtn">Lisää dokumentti</span>
+              <span data-i18n="files.addBtn">Lisää tiedosto</span>
             </button>
             <input type="file" id="files-input" class="hidden" multiple
                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/heic,image/heif" />

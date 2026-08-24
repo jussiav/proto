@@ -298,6 +298,15 @@ both JS assignments to match.
 Files never touch the photo rules: not counted toward the 5-photo minimum, never
 completing or blocking the step, even when the file is an image.
 
+**The byte unit is a translation key, not a string in the formatter.** Finnish
+abbreviates megatavu/kilotavu as `Mt`/`kt`, so `files.unitMb`/`files.unitKb`
+carry it per language and `fileLabel()` concatenates whichever is current. The
+unit fills `{size}` in both `files.description` and `files.errSize` — the only
+two places the seller reads the limit — so hardcoding `MB` would leak English
+into Finnish copy there. `renderFiles` is already bound to `av:langchange`, so
+the description re-renders with the right unit on a language switch. English
+doc prose on the spec page still says "1 MB"; that is documentation, not copy.
+
 Two proto-only mechanics worth knowing. The bytes are stored as data URLs in
 `localStorage`, which is why the cap is 1 MB per file / 5 files — base64 inflates
 by a third and the photo data URLs are already in there; production should allow

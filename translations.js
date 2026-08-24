@@ -586,20 +586,25 @@ window.TRANSLATIONS = {
          the configured caps, never hardcoded, so the copy can't drift from what
          the code actually enforces.
 
-         "tiedosto" survives in errType's own compound (tiedostomuoto = file
-         FORMAT, kuvatiedosto = image file as a TYPE) — those are the generic,
-         lexicalized technical terms regardless of what the upload is called;
-         "dokumenttimuoto" is not an established Finnish compound. Every other
-         string refers to the uploaded item itself, which now reads "dokumentti"
-         to match the section title and button. */
-      description:    'Esimerkiksi huoltokirja, sähköauton akkutesti tai vahinkotarkastus. PDF, Word tai kuva, enintään {size} per dokumentti, korkeintaan {count} dokumenttia.',
-      addBtn:         'Lisää dokumentti',
-      remove:         'Poista dokumentti',
+         The section title stays "dokumentit"; the copy underneath went back to
+         "tiedosto" by explicit correction — a deliberate split, not a leftover
+         from the earlier rename. Some error strings were shortened at the same
+         time (errSize/errCount dropped their second sentence, errRead/errStorage
+         got new second clauses) rather than just re-worded. */
+      description:    'Esimerkiksi huoltokirja, sähköauton akkutesti tai vahinkotarkastus. PDF, Word tai kuva, enintään {size} per tiedosto, korkeintaan {count} tiedostoa.',
+      addBtn:         'Lisää tiedosto',
+      remove:         'Poista tiedosto',
       errType:        'Tiedostomuotoa ei tueta. Valitse PDF-, Word- tai kuvatiedosto.',
-      errSize:        'Dokumentti on liian suuri. Enimmäiskoko on {size}. Valitse pienempi dokumentti.',
-      errCount:       'Voit lisätä enintään {count} dokumenttia. Poista jokin dokumentti ennen uuden lisäämistä.',
-      errRead:        'Dokumenttia ei voitu lukea. Valitse toinen dokumentti.',
-      errStorage:     'Dokumenttia ei voitu tallentaa. Poista jokin dokumentti ja yritä uudelleen.',
+      errSize:        'Tiedosto on liian suuri. Enimmäiskoko on {size}.',
+      errCount:       'Voit lisätä enintään {count} tiedostoa.',
+      errRead:        'Tiedostoa ei voitu lukea. Valitse toinen tai yritä uudelleen.',
+      errStorage:     'Tiedostoa ei voitu tallentaa. Yritä myöhemmin uudelleen.',
+      /* Byte units are translated, not hardcoded in the formatter: Finnish
+         abbreviates megatavu/kilotavu as Mt/kt, not MB/kB. They fill {size} in
+         description and errSize, so an English-only "MB" would leak into Finnish
+         copy at the one place the seller reads the limit. */
+      unitMb:         'Mt',
+      unitKb:         'kt',
     },
 
 
@@ -1194,14 +1199,16 @@ window.TRANSLATIONS = {
 
     files: {
       title:          'Other documents',
-      description:    'For example the service book, an EV battery test or a damage inspection. PDF, Word or an image, up to {size} per document, {count} documents at most.',
-      addBtn:         'Add document',
-      remove:         'Remove document',
+      description:    'For example the service book, an EV battery test or a damage inspection. PDF, Word or an image, up to {size} per file, {count} files at most.',
+      addBtn:         'Add file',
+      remove:         'Remove file',
       errType:        'That file type is not supported. Choose a PDF, Word or image file.',
-      errSize:        'The document is too large. The maximum size is {size}. Choose a smaller document.',
-      errCount:       'You can add at most {count} documents. Remove one before adding another.',
-      errRead:        'The document could not be read. Choose another document.',
-      errStorage:     'The document could not be saved. Remove a document and try again.',
+      errSize:        'The file is too large. The maximum size is {size}.',
+      errCount:       'You can add at most {count} files.',
+      errRead:        'The file could not be read. Choose another or try again.',
+      errStorage:     'The file could not be saved. Try again later.',
+      unitMb:         'MB',
+      unitKb:         'kB',
     },
 
     price: {
