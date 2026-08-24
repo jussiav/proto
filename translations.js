@@ -184,6 +184,7 @@ window.TRANSLATIONS = {
         renkaat:    'Renkaat',
         naarmut:    'Naarmut',
         tuulilasi:  'Tuulilasi',
+        tiedostot:  'Muut tiedostot',   // "Seller file upload" — modal category label
       },
       deleteConfirm: {
         title:   'Poistetaanko ilmoitus?',
@@ -540,7 +541,11 @@ window.TRANSLATIONS = {
       exterior:             'Ulkopuoli',
       interior:             'Sisätilat',
       serviceBook:          'Huoltokirja',
-      serviceBookHint:      'Voit ladata kuvia tai PDF-tiedostoja',
+      /* prod images_step.section_descriptions.service — the old "kuvia tai
+         PDF-tiedostoja" hint went with the PDF acceptance (prod's uploader is
+         image-only; files live in their own section, see the seller-file-upload
+         initiative). */
+      serviceBookHint:      'Lisää kuvat jokaisesta sivusta.',
       tyres:                'Renkaat',
       scratches:            'Naarmut tai kolhut',
       scratchesHint:        'Lisää kuvat, jos autossa on vaurioita.',
@@ -569,6 +574,28 @@ window.TRANSLATIONS = {
       optionalBody:         'Näillä lisäät ostajan luottamusta ja voit parantaa tarjouksia.',
       tipsDismiss:          'Selvä, kiitos!',
     },
+
+    /* ── "Seller file upload" initiative (v1 arm on the photos step) ──
+       No production copy exists for this feature — prod's uploader takes images
+       only. These are drafts pending approval; the error strings are adapted from
+       prod's images_step.filesize / .file_read_error so the voice matches. */
+    files: {
+      title:          'Muut tiedostot',
+      /* Combined hint + limits into one paragraph — two separate <p> elements
+         made the section read heavier than it is. {size}/{count} are filled from
+         the configured caps, never hardcoded, so the copy can't drift from what
+         the code actually enforces. */
+      description:    'Esimerkiksi huoltokirja, sähköauton akkutesti tai vahinkotarkastus. PDF, Word tai kuva, enintään {size} per tiedosto, korkeintaan {count} tiedostoa.',
+      addBtn:         'Lisää tiedostot',
+      remove:         'Poista tiedosto',
+      errType:        'Tiedostomuotoa ei tueta. Valitse PDF-, Word- tai kuvatiedosto.',
+      errSize:        'Tiedosto on liian suuri. Enimmäiskoko on {size}. Valitse pienempi tiedosto.',
+      errCount:       'Voit lisätä enintään {count} tiedostoa. Poista jokin tiedosto ennen uuden lisäämistä.',
+      errRead:        'Tiedostoa ei voitu lukea. Valitse toinen tiedosto.',
+      errStorage:     'Tiedostoa ei voitu tallentaa. Poista jokin tiedosto ja yritä uudelleen.',
+    },
+
+
 
     /* ── Price page ── */
     price: {
@@ -782,6 +809,7 @@ window.TRANSLATIONS = {
         renkaat:     'Tyres',
         naarmut:     'Scratches',
         tuulilasi:   'Windshield',
+        tiedostot:   'Other files',
       },
       deleteConfirm: {
         title:   'Delete listing?',
@@ -1127,7 +1155,7 @@ window.TRANSLATIONS = {
       exterior:             'Exterior',
       interior:             'Interior',
       serviceBook:          'Service book',
-      serviceBookHint:      'You can upload images or PDF files',
+      serviceBookHint:      'Add photos of every page.',
       tyres:                'Tyres',
       scratches:            'Scratches or dents',
       scratchesHint:        'Add photos if the car has any damage.',
@@ -1155,6 +1183,18 @@ window.TRANSLATIONS = {
       optionalTitle:        'Optional additional photos',
       optionalBody:         'These increase buyer confidence and can improve offers.',
       tipsDismiss:          'Got it, thanks!',
+    },
+
+    files: {
+      title:          'Other files',
+      description:    'For example the service book, an EV battery test or a damage inspection. PDF, Word or an image, up to {size} per file, {count} files at most.',
+      addBtn:         'Add files',
+      remove:         'Remove file',
+      errType:        'That file type is not supported. Choose a PDF, Word or image file.',
+      errSize:        'The file is too large. The maximum size is {size}. Choose a smaller file.',
+      errCount:       'You can add at most {count} files. Remove one before adding another.',
+      errRead:        'The file could not be read. Choose another file.',
+      errStorage:     'The file could not be saved. Remove a file and try again.',
     },
 
     price: {

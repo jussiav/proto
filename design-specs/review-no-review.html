@@ -360,6 +360,71 @@
       </div>
     </section>
 
+    <!-- Audit -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Audit — every place the seller is told about the review call</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A sweep of the whole prototype, each hit checked against production. The question for each: <b>is this promise gated on the review decision, or does every seller see it?</b> Ungated ones are the initiative's remaining scope.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">What it says</th>
+              <th class="px-4 py-3 font-medium">Gated on the decision?</th>
+              <th class="px-4 py-3 font-medium">Matches prod?</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold">Price step<br><span class="text-xs font-normal text-slate-500">sidebar</span></td>
+              <td class="px-4 py-3">"Ilmoituksesi tarkistetaan — Tiimimme käy läpi ilmoituksesi. <b>Soitamme sinulle</b>…"</td>
+              <td class="px-4 py-3"><b>No</b> — every seller, both price variants</td>
+              <td class="px-4 py-3">Yes. <b>Change 1</b> removes it.</td>
+            </tr>
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold">Contact step<br><span class="text-xs font-normal text-slate-500">submit button</span></td>
+              <td class="px-4 py-3">"<b>Lähetä tarkastukseen</b>" — the last click before submitting</td>
+              <td class="px-4 py-3"><b>No</b> — every seller</td>
+              <td class="px-4 py-3">Yes — <code>personal_info.submit</code>, and <code>PersonalInfo.vue</code> has no <code>can_review</code> branch. <b>Open candidate.</b></td>
+            </tr>
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold">Front page<br><span class="text-xs font-normal text-slate-500">process FAQ</span></td>
+              <td class="px-4 py-3">"Miten myyntiprosessi etenee?" lists "<b>Asiantuntijan puhelinsoitto (n. 5 min)</b>" as step 2 of 5</td>
+              <td class="px-4 py-3"><b>No</b> — marketing copy, shown to everyone</td>
+              <td class="px-4 py-3">Unverifiable from the code dump — the marketing site is Contentful-driven. <b>Needs checking against the live site.</b></td>
+            </tr>
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold">Front page<br><span class="text-xs font-normal text-slate-500">returning-seller hero</span></td>
+              <td class="px-4 py-3">"Ilmoitustasi tarkastetaan parhaillaan"</td>
+              <td class="px-4 py-3"><b>No</b> — gated only on being logged in</td>
+              <td class="px-4 py-3"><b>No.</b> Prod has one existing-draft hero ("Laitetaan :model liikkeelle!") and drops the draft once it is published. Prototype-only state.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">Offers page<br><span class="text-xs font-normal text-slate-500">status update</span></td>
+              <td class="px-4 py-3">"Tarjouspyyntösi on vastaanotettu - Tarkastus on käynnissä!" + <code>review_comms_content</code></td>
+              <td class="px-4 py-3">Yes — only <code>in_review</code> drafts</td>
+              <td class="px-4 py-3">Yes — prod filters <code>drafts.filter(status === 'in_review')</code>; a queued draft gets no notification.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">Post-submit screens</td>
+              <td class="px-4 py-3">Step lists, page badge, card badge</td>
+              <td class="px-4 py-3">Yes — by draft status</td>
+              <td class="px-4 py-3">Yes, since the control-arm corrections above.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">DAC7 page</td>
+              <td class="px-4 py-3">—</td>
+              <td class="px-4 py-3">n/a</td>
+              <td class="px-4 py-3">Yes — neither prod nor the prototype shows next-steps there.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Also found:</b> a set of translation strings that promise the call but are rendered nowhere — the prototype's old success-page keys (<code>headlineDefault</code>, <code>subtextDefault</code>, <code>badgeInReview</code>, <code>verifiedStep*</code>, <code>headlineEmailVerified</code>) and <code>dac7.step2*</code>. Harmless to a test participant, misleading to a developer reading the copy file. Worth deleting when the initiative next touches them.</p>
+      </div>
+    </section>
+
     <!-- Candidates -->
     <section class="av-band av-band-grey">
       <div class="av-container">

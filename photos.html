@@ -54,11 +54,30 @@
     }
     .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
     .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    /* "Seller file upload": the documents section exists only in the v1 arm. The
+       arm is stamped on <html> in <head>, so control never paints it. Written by
+       hand because the Tailwind Play CDN only generates utilities present at
+       first paint. */
+    html:not([data-files-arm="v1"]) #files-section { display: none; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/libheif-js@1.18.2/libheif-web.js" onerror="console.warn('[AutoVex] libheif-js failed to load')"></script>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
+  <script>
+    /* ── "Seller file upload" initiative ───────────────────────────────────
+       Arm of the initiative documented in design-specs/seller-file-upload.html.
+       v1 adds a documents section to this step; the photo sections stay
+       image-only in both arms, which is what prod's ImageUpload.vue accepts.
+       Decided here in <head> so the section never flashes in control. */
+    var FILES_ARM = (function () {
+      var ARMS = ['control', 'v1'];
+      var arm = window.protoVariant('seller-file-upload', 'control');
+      if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('seller-file-upload', null); return 'control'; }
+      return arm;
+    }());
+    document.documentElement.dataset.filesArm = FILES_ARM;
+  </script>
   <script src="proto-mock.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
@@ -644,6 +663,159 @@
       });
     }
 
+    /* ── "Seller file upload": the documents section ─────────────────────────
+       Files are NOT photos and never touch the photo rules: they do not count
+       toward the 5-photo minimum, and they cannot complete or block this step.
+
+       The prototype stores the real bytes in localStorage, which is what caps the
+       size — base64 inflates by a third and the photo data URLs are already in
+       there, so the ceiling is small on purpose. Production should allow far more
+       (see the spec); the UI states whatever the limit actually is, so the
+       prototype never promises a size it cannot store. */
+    var FILE_MAX_BYTES = 1024 * 1024;         // 1 MB per file — a proto storage limit
+    var FILE_MAX_COUNT = 5;
+    var FILE_TYPES = {
+      'application/pdf': 'PDF',
+      'application/msword': 'DOC',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
+      'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/heic': 'HEIC', 'image/heif': 'HEIF'
+    };
+    var FILE_EXTS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'heic', 'heif'];
+
+    function fileLabel(bytes) {
+      if (bytes >= 1024 * 1024) return (Math.round(bytes / (1024 * 1024) * 10) / 10) + ' MB';
+      return Math.max(1, Math.round(bytes / 1024)) + ' kB';
+    }
+    function fileFill(str, map) {
+      return String(str).replace(/\{(\w+)\}/g, function (_, k) { return map[k]; });
+    }
+    function storedFiles() { var f = getStore().files; return Array.isArray(f) ? f : []; }
+    function fileEsc(str) {
+      return String(str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function fileTypeOk(file) {
+      if (FILE_TYPES[file.type]) return true;
+      /* Windows can hand over an empty or odd MIME type for .doc/.docx, so the
+         extension is the fallback rather than a hard rejection. */
+      var ext = (file.name.split('.').pop() || '').toLowerCase();
+      return FILE_EXTS.indexOf(ext) !== -1;
+    }
+
+    function showFilesError(msg) {
+      var el = document.getElementById('files-error');
+      el.textContent = msg;
+      el.style.display = msg ? '' : 'none';
+    }
+
+    /* A data: URL cannot be opened as a top-level document in Chrome, so each row
+       links to a blob URL built from the stored bytes. Rebuilt on every render and
+       revoked with the row it belonged to. */
+    var fileBlobUrls = [];
+    function releaseFileBlobUrls() {
+      fileBlobUrls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} });
+      fileBlobUrls = [];
+    }
+    function fileBlobUrl(entry) {
+      try {
+        var parts = entry.data.split(',');
+        var mime = (parts[0].match(/:(.*?);/) || [null, entry.type || 'application/octet-stream'])[1];
+        var bin = atob(parts[1]);
+        var buf = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+        var url = URL.createObjectURL(new Blob([buf], { type: mime }));
+        fileBlobUrls.push(url);
+        return url;
+      } catch (e) { return null; }
+    }
+
+    var FILE_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 text-slate-400" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>';
+
+    function renderFiles() {
+      var list = document.getElementById('files-list');
+      if (!list) return;
+      releaseFileBlobUrls();
+      var files = storedFiles();
+      list.innerHTML = '';
+      list.style.display = files.length ? '' : 'none';
+
+      files.forEach(function (entry, i) {
+        var url = fileBlobUrl(entry);
+        var li = document.createElement('li');
+        li.className = 'flex items-center gap-2 bg-white border border-slate-200 rounded-md px-3 py-2';
+        li.innerHTML =
+          FILE_ICON +
+          '<a class="flex-1 min-w-0 font-dm text-sm text-av-blue underline truncate" target="_blank" rel="noopener"' +
+          ' href="' + (url || '#') + '">' + fileEsc(entry.name) + '</a>' +
+          '<span class="font-dm text-xs text-slate-400 flex-shrink-0">' + fileLabel(entry.size) + '</span>' +
+          '<button type="button" class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors"' +
+          ' title="' + fileEsc(t('files.remove')) + '" aria-label="' + fileEsc(t('files.remove')) + '" data-file-index="' + i + '">' +
+          '<svg width="10" height="10" viewBox="0 0 8 8" fill="none" aria-hidden="true"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg>' +
+          '</button>';
+        li.querySelector('button').addEventListener('click', function () { deleteFile(i); });
+        list.appendChild(li);
+      });
+
+      var description = document.getElementById('files-description');
+      if (description) {
+        description.textContent = fileFill(t('files.description'), {
+          size: fileLabel(FILE_MAX_BYTES), count: FILE_MAX_COUNT
+        });
+      }
+    }
+
+    function deleteFile(index) {
+      var s = getStore();
+      var files = Array.isArray(s.files) ? s.files : [];
+      files.splice(index, 1);
+      if (files.length) s.files = files; else delete s.files;
+      setStore(s);
+      showFilesError('');
+      renderFiles();
+    }
+
+    function addFiles(input) {
+      var picked = Array.prototype.slice.call(input.files || []);
+      input.value = '';
+      if (!picked.length) return;
+      showFilesError('');
+
+      (function next(queue) {
+        if (!queue.length) { renderFiles(); return; }
+        var file = queue.shift();
+
+        if (storedFiles().length >= FILE_MAX_COUNT) {
+          showFilesError(fileFill(t('files.errCount'), { count: FILE_MAX_COUNT }));
+          renderFiles(); return;
+        }
+        if (!fileTypeOk(file)) { showFilesError(t('files.errType')); return next(queue); }
+        if (file.size > FILE_MAX_BYTES) {
+          showFilesError(fileFill(t('files.errSize'), { size: fileLabel(FILE_MAX_BYTES) }));
+          return next(queue);
+        }
+
+        var reader = new FileReader();
+        reader.onerror = function () { showFilesError(t('files.errRead')); next(queue); };
+        reader.onload = function (e) {
+          var s = getStore();
+          if (!Array.isArray(s.files)) s.files = [];
+          s.files.push({ name: file.name, size: file.size, type: file.type || '', data: e.target.result });
+          /* setStore swallows quota errors, so write strictly here: a silently
+             dropped file would look uploaded until the next reload. */
+          try {
+            localStorage.setItem(STORE_KEY, JSON.stringify(s));
+          } catch (err) {
+            showFilesError(t('files.errStorage'));
+            renderFiles(); return;
+          }
+          next(queue);
+        };
+        reader.readAsDataURL(file);
+      }(picked));
+    }
+
     window.addEventListener('DOMContentLoaded', function() {
       if (_PHOTO_SCENARIO === 'filled') {
         _clearPhotosNow();
@@ -654,6 +826,21 @@
         loadPhotos();
       }
       initStepNav('photos');
+
+      /* "Seller file upload" v1 — wire the documents section. Rendered in both
+         arms (cheap, and the list is what the modal reads) but only visible in
+         v1; the CSS in <head> owns visibility. */
+      var filesInput = document.getElementById('files-input');
+      var filesBtn   = document.getElementById('files-add-btn');
+      if (filesInput && filesBtn) {
+        filesBtn.addEventListener('click', function () { filesInput.click(); });
+        filesInput.addEventListener('change', function () { addFiles(this); });
+        renderFiles();
+      }
+      /* The limits line is built from the caps, not from a static string, so a
+         language switch has to rebuild it. */
+      document.addEventListener('av:langchange', renderFiles);
+
       // Show tuulilasi photo section only when windshield has damage
       const sv = getStore().services || {};
       const rg = Array.isArray(sv.radioGroups) ? sv.radioGroups : [];
@@ -743,7 +930,7 @@
               <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/11db3357-b60f-4312-97a0-953e518025b1.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
               <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
             </div>
-            <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+            <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
           </div>
         </div>
 
@@ -757,7 +944,7 @@
               <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/18f3969c-4149-4d1e-ac00-6eda86313a87.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
               <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
             </div>
-            <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+            <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
           </div>
         </div>
 
@@ -777,7 +964,7 @@
                 <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/f09754df-5293-4176-ad94-b407336adfb8.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
                 <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
               </div>
-              <input type="file" accept="image/*,application/pdf" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+              <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
           </div>
 
@@ -789,7 +976,7 @@
                 <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/8454b159-fd20-48ea-b9ad-e56f903c727e.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
                 <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
               </div>
-              <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+              <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
           </div>
 
@@ -802,7 +989,7 @@
                 <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/47d03926-fe55-47b1-8e34-677c13e776d9.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
                 <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
               </div>
-              <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+              <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
           </div>
 
@@ -814,12 +1001,40 @@
                 <div class="placeholder-slot flex-shrink-0 h-20 bg-slate-100 border border-slate-200 rounded-md overflow-hidden relative cursor-pointer shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]" style="width:calc(50% - 5px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none" src="assets/205e2397-44f2-41f8-bc68-7ea08bb6c108.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
                 <div class="add-slot hidden flex-shrink-0 h-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-md flex items-center justify-center cursor-pointer hover:border-av-blue hover:bg-blue-50 transition-colors" style="width:calc(50% - 5px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/></svg></div>
               </div>
-              <input type="file" accept="image/*" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
+              <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
           </div>
         </div>
 
         </div><!-- /photo sections -->
+
+        <!-- ── "Seller file upload" v1: documents, not photos ──────────────────
+             Hidden unless the arm is on (html[data-files-arm="v1"], stamped in
+             <head> so it never flashes). Files are listed by name only: no
+             thumbnails, per the initiative — a filename is what identifies a
+             document, and a rendered first page is not worth the space. -->
+        <div id="files-section" class="w-full flex flex-col gap-2">
+          <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="files.title">Muut tiedostot</div>
+          <!-- Hint + limits combined into one paragraph (was two <p> elements) —
+               this section should read as a footnote next to the photo sections
+               above it, not compete with them for attention. -->
+          <p id="files-description" class="font-dm text-xs text-slate-500 -mt-1"></p>
+
+          <div class="w-full border border-dashed border-slate-400 rounded-lg p-2.5 flex flex-col gap-2.5">
+            <ul id="files-list" class="flex flex-col gap-2" style="display:none"></ul>
+            <!-- Text link + plus icon, not a filled button: a full-width blue
+                 block here read as equally important as "Jatka", which invited
+                 more attention than an optional section should. -->
+            <button type="button" id="files-add-btn"
+              class="w-fit inline-flex items-center gap-1.5 font-dm font-medium text-sm text-av-blue hover:text-[#0A59EB] transition-colors cursor-pointer">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span data-i18n="files.addBtn">Lisää tiedostot</span>
+            </button>
+            <input type="file" id="files-input" class="hidden" multiple
+                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/heic,image/heif" />
+          </div>
+          <p id="files-error" class="av-error-msg" style="display:none"></p>
+        </div>
 
         <!-- ── Actions ── -->
         <div class="w-full flex flex-col gap-4 pb-4">
@@ -974,7 +1189,19 @@
       { id: 'empty',  label: 'Empty (default)' },
       { id: 'filled', label: 'Photos filled' },
     ];
-    window.protoPage = { scenarios: [{ id: 'empty', label: 'Empty (default)' }, { id: 'filled', label: 'Photos filled' }] };   // consumed by proto-bar.js
+    window.protoPage = {
+      scenarios: [{ id: 'empty', label: 'Empty (default)' }, { id: 'filled', label: 'Photos filled' }],
+      initiatives: [
+        {
+          slug:    'seller-file-upload',   // name + spec live in proto-mode's registry
+          default: 'control',              // no param = today's design, no files section
+          variants: [
+            { id: 'control', label: 'Control — photos only' },
+            { id: 'v1',      label: 'Variant 1 — documents section' }
+          ]
+        }
+      ]
+    };
 
     /* Scenario drawer moved to the shared proto bar (proto-bar.js). */
   })();

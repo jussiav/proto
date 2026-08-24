@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller file upload · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · ad creation funnel</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Seller file upload</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Sellers have documents, not just photos — a service book PDF, a service report, a damage inspection. Today the funnel accepts images only, so those end up photographed page by page or not sent at all. This initiative adds one documents section to the photos step, and lists whatever was uploaded wherever the seller reviews their ad.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: ready to review — copy pending approval
+        </span>
+        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1</span>
+        <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype param: <code>?seller-file-upload=</code></span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- Today -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">What production accepts today</h2>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Images only, everywhere</p>
+          <p class="font-dm text-sm leading-6 text-slate-800 mb-3"><code>ImageUpload.vue</code> is the single uploader behind every photo section, and it declares:</p>
+          <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-3 font-mono text-xs leading-relaxed mb-3">accept="image/jpeg,image/png,image/heic,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;image/heif,image/x-adobe-dng"</div>
+          <p class="font-dm text-sm leading-6 text-slate-800">Per file: 100&nbsp;MB, downscaled to 2000×2000. Per ad: <code>image_upload.min/max</code> = 5–30. <b>No PDF path exists</b> — not in the uploader, not in the sections, not in the review screens.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What that costs the seller</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>The service book is the common case.</b> It is the document buyers ask about most, and the funnel has a whole section for it — which today can only hold photographs of its pages.</li>
+            <li><b>Anything already digital gets degraded.</b> A PDF service report or an emailed damage inspection has to be screenshotted to be attached.</li>
+            <li><b>Or it arrives out of band</b> — by email, or verbally on the review call — which is exactly the sort of thing autopublished ads will no longer have a call to carry.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="bg-warning-50 border-2 border-warning-300 rounded-lg p-5 mt-5">
+        <p class="font-dm text-xs font-bold uppercase tracking-widest text-warning-800 mb-3 inline-flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.75" r="0.85" fill="currentColor"/></svg>
+          Prototype correction shipped with this initiative
+        </p>
+        <p class="font-dm text-sm leading-6 text-slate-900">The prototype's Huoltokirja section had drifted: it accepted <code>application/pdf</code> and hinted "Voit ladata kuvia tai PDF-tiedostoja", which production never did. Both arms now match production's accept list exactly, and the hint is production's own <code>section_descriptions.service</code>. The PDF capability is now the v1 arm's contribution and nothing else, so the comparison is honest.</p>
+      </div>
+      </div>
+    </section>
+
+    <!-- The change -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 1 — one documents section</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Added as the last section of the photos step, after the optional photos. Photos and documents stay separate: the photo sections take images, this one takes documents, and neither borrows the other's UI.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">The section</p>
+          <div class="flex flex-col gap-2">
+            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="files.title">—</div>
+            <p class="font-dm text-xs text-slate-500 -mt-1" id="spec-description">—</p>
+            <div class="w-full border border-dashed border-slate-400 rounded-lg p-2.5 flex flex-col gap-2.5">
+              <ul class="flex flex-col gap-2">
+                <li class="flex items-center gap-2 bg-white border border-slate-200 rounded-md px-3 py-2">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="flex-shrink-0 text-slate-400" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span class="flex-1 min-w-0 font-dm text-sm text-av-blue underline truncate">huoltokirja.pdf</span>
+                  <span class="font-dm text-xs text-slate-400 flex-shrink-0">444 kB</span>
+                  <span class="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full"><svg width="10" height="10" viewBox="0 0 8 8" fill="none" aria-hidden="true"><path d="M1 1L7 7M7 1L1 7" stroke="#475569" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+                </li>
+              </ul>
+              <div class="w-fit inline-flex items-center gap-1.5 font-dm font-medium text-sm text-av-blue">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span data-i18n="files.addBtn">—</span>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Inert replica. Copy comes from the app's own <code>translations.js</code>, so it cannot drift from the prototype. The add control is a text link with a plus icon, not a filled button — a full-width blue block read as equally important as the step's own "Jatka", more attention than an optional section should draw.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Behaviour rules</p>
+          <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
+            <li><b>Filenames, no thumbnails.</b> A filename is what identifies a document; a rendered first page costs space and says less. This holds for images uploaded here too — attach a scanned receipt and it is listed by name like any other file.</li>
+            <li><b>The limits are stated before uploading</b>, not discovered by failing: accepted types, size per file, and how many files — one short paragraph under the heading, not two, so the section stays a footnote next to the photo sections above it.</li>
+            <li><b>The filename is the link.</b> It opens in a new tab; there is no separate open button.</li>
+            <li><b>Delete sits at the right of each row</b>, and removes without a confirmation step — nothing is lost that cannot be re-uploaded.</li>
+            <li><b>Errors appear under the field and name the fix</b> — wrong type, too large, too many, unreadable. A rejected file never half-appears in the list.</li>
+            <li><b>One file at a time fails.</b> Selecting five files where one is too large uploads the other four and reports the one.</li>
+            <li><b>Documents never touch the photo rules.</b> They do not count toward the 5-photo minimum and cannot complete or block the step. A seller with a service-book PDF and no photos is still a seller with no photos.</li>
+          </ol>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- Where files appear -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Where uploaded files appear</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Listing is <b>not</b> a variant. Any surface that shows the seller their own ad content lists the files when there are files — there is nothing to A/B about showing someone what they attached. On the ad preview sheet, files join the <b>Kuvat</b> section as a category row (label, then rows), the same shape as Ulkopuoli or Sisätilat — not a section of their own.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Surface</th>
+              <th class="px-5 py-3 font-medium">Shows</th>
+              <th class="px-5 py-3 font-medium">Affordances</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">Photos step</td><td class="px-5 py-3">The list under the upload field</td><td class="px-5 py-3">Filename opens in a new tab · delete per row</td></tr>
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">Ad preview sheet</td><td class="px-5 py-3">A <b>Muut tiedostot</b> row inside the existing <b>Kuvat</b> section — the same section as Ulkopuoli/Sisätilat — wherever the sheet is opened from: contact step, confirmation screens, offers page</td><td class="px-5 py-3">Filename opens in a new tab. <b>No delete</b> — the sheet is read-only and links to the step where editing happens, which is how every other section there behaves.</td></tr>
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">Car card</td><td class="px-5 py-3">Nothing</td><td class="px-5 py-3">The card is a summary of the vehicle, and production has no file concept on it.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Data contract -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Data contract</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Aspect</th>
+              <th class="px-5 py-3 font-medium">Rule</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">New collection</td><td class="px-5 py-3">Documents are their own collection on the draft, <b>not</b> images with a different mime type. Filename, size and content type are the fields the UI needs; the prototype stores <code>{ name, size, type, data }</code> under <code>files</code>.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Accepted types</td><td class="px-5 py-3">PDF, Word (<code>.doc</code>, <code>.docx</code>) and images. Validate on <b>both</b> mime type and extension — Windows hands over an empty or non-standard mime for Word documents often enough that mime alone rejects valid files.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Limits</td><td class="px-5 py-3"><b>Open question for production:</b> the prototype caps at <b>1&nbsp;MB per file, 5 files</b>, because it stores the bytes in <code>localStorage</code> (see below). A real service-book scan is bigger — the suggested production limit is <b>10&nbsp;MB per file, 5 files</b>, to be confirmed. Whatever is chosen, the UI must state it: the seller should never learn a limit by hitting it.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Image count</td><td class="px-5 py-3">Files never enter the <code>image_upload.min/max</code> count, even when the file is an image. Photo requirements are unchanged.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Dealer side</td><td class="px-5 py-3">Out of scope here. Whether dealers see seller documents is a separate decision — this initiative covers the seller's own surfaces only.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Prototype-only mechanic</td><td class="px-5 py-3">The prototype keeps the real bytes as a data URL in <code>localStorage</code>, which is why its cap is small: base64 inflates by a third and the photo data URLs already live there. Quota failures are caught and surfaced as an error rather than swallowed, because a silently dropped file looks uploaded until the next reload. Links are built as blob URLs at render time, since Chrome refuses to open a <code>data:</code> URL as a top-level document.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Copy -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy (FI / EN) — drafts, pending approval</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">This feature has no production copy, so every string below is a draft written for review. The two upload errors are adapted from production's own <code>images_step.filesize</code> and <code>.file_read_error</code> so the voice matches what the funnel already says. <code>{size}</code> and <code>{count}</code> are filled from the configured limits — the copy never hardcodes a number the code could contradict.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Key (files.*)</th>
+              <th class="px-5 py-3 font-medium">Finnish</th>
+              <th class="px-5 py-3 font-medium">English</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800" id="copy-table"></tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- How to try -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">How to try it</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl">Prototype: <a class="text-av-blue underline font-medium" href="https://jussiav.github.io/proto">https://jussiav.github.io/proto</a> → <i>Kuvat</i>. Switch arms from the <b>Variants</b> row on the prototype bar, grouped under <b>Seller file upload</b>, or open an arm directly:</p>
+      <p class="font-dm text-sm leading-6 text-slate-800 mt-2">
+        <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/photos.html?seller-file-upload=control">…/photos.html?seller-file-upload=control</a><br>
+        <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/photos.html?seller-file-upload=v1">…/photos.html?seller-file-upload=v1</a>
+      </p>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Seed car</b> on the prototype bar loads two sample documents (a PDF and a Word file), so the surfaces that list files can be seen without walking the photos step. They are real, openable files rather than stubs — a placeholder would make the links look broken. Seeded files show up wherever files are listed <b>regardless of arm</b>, which is deliberate: the listing is not part of the test.</p>
+      </div>
+    </section>
+
+    <!-- Open questions -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Open questions</h2>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>Production size and count limits</b> — the prototype's 1&nbsp;MB is a storage artefact, not a proposal. 10&nbsp;MB / 5 files is the suggestion.</li>
+          <li><b>All the Finnish copy</b> in the table above is a draft awaiting approval.</li>
+          <li><b>Do dealers see these documents?</b> If yes, that is its own change with its own review — a service book visible to dealers is a different product decision from one visible to the seller.</li>
+          <li><b>Does the review call change?</b> A seller who attached the service book has already answered what an advisor would otherwise ask, which is worth knowing for the routing work.</li>
+        </ul>
+      </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Seller file upload</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+
+  <script src="../translations.js"></script>
+  <script src="../i18n.js"></script>
+  <script src="../proto-mode.js"></script>
+  <script src="../proto-mock.js"></script>
+  <script>
+    // Same approach as the other spec pages: replicas always render the Finnish
+    // production-facing strings, read straight from translations.js, and this page
+    // never writes av_lang.
+    const FI = (window.TRANSLATIONS && window.TRANSLATIONS.fi) || {};
+    const EN = (window.TRANSLATIONS && window.TRANSLATIONS.en) || {};
+    function pick(tree, key) {
+      const v = key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), tree);
+      return v == null ? key : v;
+    }
+    (function renderReplicaCopy() {
+      document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = pick(FI, el.getAttribute('data-i18n')); });
+      document.documentElement.lang = 'en';
+    })();
+
+    // The description line is built from the caps, exactly as the step builds it.
+    const PROTO_MAX = '1 MB', PROTO_COUNT = 5;
+    const fill = (s, m) => String(s).replace(/\{(\w+)\}/g, (_, k) => m[k]);
+    document.getElementById('spec-description').textContent =
+      fill(pick(FI, 'files.description'), { size: PROTO_MAX, count: PROTO_COUNT });
+
+    /* Generated, not typed: the copy table is the review artefact, so it has to be
+       the strings the prototype actually renders. */
+    (function buildCopyTable() {
+      const keys = ['title','description','addBtn','remove','errType','errSize','errCount','errRead','errStorage'];
+      document.getElementById('copy-table').innerHTML = keys.map(k =>
+        '<tr><td class="px-5 py-3"><code>' + k + '</code></td>' +
+        '<td class="px-5 py-3">' + pick(FI, 'files.' + k) + '</td>' +
+        '<td class="px-5 py-3">' + pick(EN, 'files.' + k) + '</td></tr>'
+      ).join('');
+    })();
+  </script>
+  <script src="../proto-bar.js"></script>
+</body>
+</html>

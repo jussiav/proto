@@ -131,13 +131,13 @@
        validateAndContinue and the DOMContentLoaded component code need it. */
     const DELIVERY_VARIANTS = ['control', 'v1', 'v2', 'cards'];
     const DELIVERY_VARIANT = (function () {
-      const arm = window.protoVariant('delivery', 'v2');
+      const arm = window.protoVariant('delivery', 'control');
       /* Normalise what gets remembered, not just what renders: ?delivery=stepper
          is a legacy link for v2, and anything unrecognised is junk. Left in
          storage either would keep the bar's row on "— none —" while the page
-         renders v2. */
+         rendered something else. */
       if (arm === 'stepper') { window.protoVariantSet('delivery', 'v2'); return 'v2'; }
-      if (!DELIVERY_VARIANTS.includes(arm)) { window.protoVariantSet('delivery', null); return 'v2'; }
+      if (!DELIVERY_VARIANTS.includes(arm)) { window.protoVariantSet('delivery', null); return 'control'; }
       return arm;
     })();
 
@@ -150,11 +150,13 @@
       initiatives: [
         {
           slug:    'delivery',        // name + spec live in proto-mode's registry
-          default: 'v2',              // what the page renders with no param
+          /* Control, so the proto renders production with no param — the same
+             rule every other initiative follows. The arms stay one click away. */
+          default: 'control',
           variants: [
             { id: 'control', label: 'Control — current design' },
             { id: 'v1',      label: 'Variant 1 — no slider, no default' },
-            { id: 'v2',      label: 'Variant 2 — ±50 km steppers (default)' },
+            { id: 'v2',      label: 'Variant 2 — ±50 km steppers' },
             { id: 'cards',   label: 'Variant 3 — option cards' }
           ]
         }

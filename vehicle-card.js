@@ -389,7 +389,26 @@
     if (e.key === 'Escape') window.closeAdModal();
   });
 
+  /* A data: URL cannot be opened as a top-level document in Chrome, so file links
+     point at a blob built from the stored bytes. Revoked when the sheet is
+     repopulated, so opening the modal repeatedly does not leak. */
+  var modalFileUrls = [];
+  function modalFileUrl(entry) {
+    try {
+      var parts = String(entry.data).split(',');
+      var mime = (parts[0].match(/:(.*?);/) || [null, entry.type || 'application/octet-stream'])[1];
+      var bin = atob(parts[1]);
+      var buf = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      var url = URL.createObjectURL(new Blob([buf], { type: mime }));
+      modalFileUrls.push(url);
+      return url;
+    } catch (e) { return null; }
+  }
+
   function populateModal() {
+    modalFileUrls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} });
+    modalFileUrls = [];
     ensureModal();
     const s        = getStore();
     const hero     = s.hero     || {};
@@ -487,6 +506,29 @@
         </div>
       </div>`;
     });
+
+    /* "Muut tiedostot" ("Seller file upload") is a category row in the SAME
+       Kuvat section as ulkopuoli/sisätilat, not a section of its own — it is
+       the last thing the photos step collects, so it is the last category here.
+       No variant gate: it renders whenever the seller has uploaded files, which
+       is the initiative's own rule. Filenames only, no thumbnails, each linking
+       to the file in a new tab. No delete here: this sheet is read-only and
+       links back to the step where editing happens, same as every other
+       category's edit link above the whole section. */
+    const sellerFiles = Array.isArray(s.files) ? s.files : [];
+    if (sellerFiles.length) {
+      hasPhotos = true;
+      const fileRows = sellerFiles.map(f => {
+        const href = modalFileUrl(f);
+        return `<a href="${href || '#'}" target="_blank" rel="noopener"
+          style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#0B6DFF;text-decoration:underline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.name)}</a>`;
+      }).join('');
+      photoHTML += `<div style="display:flex;flex-direction:column;gap:.375rem;">
+        <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">${t('modal.photoCategories.tiedostot')}</span>
+        <div style="display:flex;flex-direction:column;gap:.375rem;">${fileRows}</div>
+      </div>`;
+    }
+
     if (!hasPhotos) photoHTML = `<span style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#64748b;">${t('modal.labels.noPhotos')}</span>`;
 
     html += `<div style="display:flex;flex-direction:column;gap:1rem;padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9;">

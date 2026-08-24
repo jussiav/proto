@@ -153,11 +153,13 @@ you are not currently looking at. Add an entry when an initiative is created,
 remove it when its winning arm is promoted.
 
 **`prodArm` is not the same as a page's `default`.** `prodArm` is the arm that
-matches production; `default` is what a page renders unasked. They differ on
-purpose for the delivery test, which defaults to `v2`. Keeping both lets the
-bar's first option tell the truth: `— none — production behaviour` when every
-default on the page IS the production arm, `— none — page defaults` when it is
-not.
+matches production; `default` is what a page renders unasked. Every live
+initiative currently defaults to its `prodArm`, so with no selection the whole
+proto renders production — which is the state a user-test participant must land
+in. The distinction is kept because an initiative may need to default to a
+candidate while it is being demoed, and the bar's first option then tells the
+truth either way: `— none — production behaviour` when every default on the page
+IS the production arm, `— none — page defaults` when it is not.
 
 **One variant at a time.** Selecting an arm clears every other registered
 initiative, remembered arms included; the first option clears them all. So no
@@ -190,8 +192,9 @@ actually declares.
 
 | Initiative | Slug / param | Page default | Prod arm | Pages | Spec |
 |---|---|---|---|---|---|
-| Delivery distance A/B test | `delivery` | `v2` | `control` | `details.html` | `design-specs/delivery-distance.html` |
+| Delivery distance A/B test | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
 | Review/No review | `review-no-review` | `control` | `control` | `price.html` | `design-specs/review-no-review.html` |
+| Seller file upload | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
 
 **Review/No review** makes funnel communication match whether the seller's car
 is in the review segment. Change 1 removes the "Mitä tapahtuu seuraavaksi?"
@@ -208,6 +211,46 @@ hand-written CSS keyed to `body[data-rnr-arm]`, not `max-md:hidden` — the
 Tailwind Play CDN only generates utilities present at first paint. Default is `control`, so with no
 param the proto stays prod-faithful. See the Review Segment section above for
 the `can_review` chain this is about.
+
+**Seller file upload** adds a documents section to the photos step — PDF, Word or
+images, listed by filename with no thumbnails, each linking to the file in a new
+tab. `photos.html` gates the section on `html[data-files-arm="v1"]`, stamped in
+`<head>` so control never paints it.
+
+Two things about it are deliberately NOT variants. **Listing is unconditional:**
+any surface that shows sellers their own ad content lists files when
+`store.files` is non-empty — on the ad-preview sheet they join the existing
+**Kuvat** section as a `Muut tiedostot` category row, the same shape as
+Ulkopuoli/Sisätilat, not a section of their own — because there is nothing to
+A/B about showing someone what they attached. The sheet stays read-only:
+filename links, no delete, per-section edit links as before. And **the car
+card shows nothing** — prod has no file concept there.
+
+The add control on the photos step is a **text link with a plus icon**, not a
+filled button — a full-width blue block read as equally important as the
+step's own "Jatka", more attention than an optional section should draw. The
+hint and the size/count limits are one combined paragraph, not two, for the
+same reason: the section should read as a footnote next to the photo sections
+above it.
+
+Files never touch the photo rules: not counted toward the 5-photo minimum, never
+completing or blocking the step, even when the file is an image.
+
+Two proto-only mechanics worth knowing. The bytes are stored as data URLs in
+`localStorage`, which is why the cap is 1 MB per file / 5 files — base64 inflates
+by a third and the photo data URLs are already in there; production should allow
+far more, and the spec carries that as an open question. And links are built as
+**blob URLs at render time**, because Chrome refuses to open a `data:` URL as a
+top-level document; they are revoked on re-render. Quota failures are caught and
+shown as an error rather than swallowed by `setStore`, since a silently dropped
+file looks uploaded until the next reload.
+
+Shipped alongside it: the proto's Huoltokirja section used to accept
+`application/pdf` with a "kuvia tai PDF-tiedostoja" hint, which prod's
+image-only `ImageUpload.vue` never did. Both arms now use prod's exact accept
+list and prod's own service-section copy, so the PDF capability belongs to v1
+alone. **All FI/EN copy for this initiative is a draft pending approval** — prod
+has none, since the feature does not exist there.
 
 ### Initiative lifecycle
 
@@ -239,9 +282,13 @@ panel was wrapped in its own IIFE.
 state; only the chrome is gated. That is how a moderator pins a participant to a
 starting state they cannot navigate out of.
 
-## Review Segment — the Filament filters
+## Review segment — will this seller be called?
 
-Prod computes ONE boolean and hands it to the frontend as `can_review`:
+Prod computes ONE boolean and hands it to the frontend as `can_review`. **Treat
+the decision as general, not as "the Filament filters".** Filament is only how it
+is decided today; the team's plan is a wider decision engine, and the consumer
+seller flow makes no distinction about where the decision was made — same two
+paths either way. Model the outcome, never the mechanism. Today's chain:
 
 ```
 TenderRequestReviewSettings (Filament: enabled, fuel_types, min/max_model_year,

@@ -114,6 +114,12 @@
       name: 'Review/No review',
       spec: 'design-specs/review-no-review.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'seller-file-upload',
+      name: 'Seller file upload',
+      spec: 'design-specs/seller-file-upload.html',
+      prodArm: 'control'
     }
   ];
 

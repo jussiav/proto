@@ -385,14 +385,18 @@
       if (wrapper) { wrapper.style.outline = ''; wrapper.style.outlineOffset = ''; }
     }
 
-    /* ── Reviewable or not ────────────────────────────────────────────────
-       Mirrors prod's ReviewIfPreferredSegment: the Filament settings are a
-       WHITELIST, so a car outside the configured mileage/year band is NOT
-       review-called, and that seller is asked for an asking price instead of an
-       optional estimate (PriceInfo.vue, can_review === false).
+    /* ── Will this seller be review-called? ───────────────────────────────
+       One boolean, `can_review`, and the seller flow never says where it came
+       from. Today prod decides it with the Filament review settings
+       (ReviewIfPreferredSegment, a WHITELIST — a car outside the configured
+       mileage/year band is NOT review-called); a wider decision engine may
+       decide it later. Either way the seller sees the same two paths, so the
+       proto models the OUTCOME, not the mechanism.
 
-       The thresholds here are the current Filament values and are expected to
-       drift — they live in TenderRequestReviewSettings, not in code.
+       A car outside the segment is asked for an asking price instead of the
+       optional estimate (PriceInfo.vue, can_review === false). The thresholds
+       below stand in for today's Filament values and are expected to drift —
+       they live in TenderRequestReviewSettings, not in code.
        ?scenario=asking-price / =price-estimate forces either variant for
        demoing, without having to enter a qualifying car. */
     var REVIEW_MAX_MILEAGE = 240000;

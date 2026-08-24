@@ -282,17 +282,29 @@
       return ini.deflt;
     }
 
-    if (pageInitiatives.length) {
-      var vWrap = document.createElement('label');
-      vWrap.appendChild(document.createTextNode('Variants'));
+    /* The row is always here, disabled when the page proposes nothing — same as
+       the Scenario row. A row that vanishes makes "no variants on this page" look
+       identical to "the bar is missing something". */
+    var vWrap = document.createElement('label');
+    vWrap.appendChild(document.createTextNode('Variants'));
 
+    if (!pageInitiatives.length) {
+      var emptySel = document.createElement('select');
+      emptySel.disabled = true;
+      var emptyOpt = document.createElement('option');
+      emptyOpt.textContent = 'none on this page';
+      emptySel.appendChild(emptyOpt);
+      vWrap.appendChild(emptySel);
+      bar.appendChild(vWrap);
+    } else {
       var vSel = document.createElement('select');
       var armOptions = [];   // { ini, arm }, indexed by option value
 
       /* With nothing selected each initiative renders its own default. That is
-         production only when every default IS the production arm — the delivery
-         test defaults to v2 on purpose — so the label states which it is rather
-         than promising production everywhere. */
+         production only when every default IS the production arm, which is the
+         rule today but not a guarantee — an initiative may default to a candidate
+         while it is being demoed — so the label states which it is rather than
+         promising production everywhere. */
       var allProd = pageInitiatives.every(function (ini) {
         return !ini.deflt || !ini.prodArm || ini.deflt === String(ini.prodArm);
       });
