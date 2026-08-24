@@ -34,9 +34,21 @@
   var OFFERS_KEY   = 'autovex_offers';
   var DECISION_KEY = 'autovex_decision';
 
-  /* One canonical car, shared by every state. Photo paths are assets that exist
-     in the repo, so cards render a real image rather than the placeholder. */
-  var PHOTO = 'assets/about-car.jpg';
+  /* One canonical car, shared by every state. Photos are the SAME assets
+     photos.html's own "Photos filled" scenario uses (see _loadFilledScenario)
+     — reusing that set rather than a single repeated placeholder means Seed car
+     and Photos filled show the same car, and nothing new had to be shot. Plain
+     asset paths render fine as a plain <img src>, so there is no need to fetch
+     and inline them as data URLs the way that scenario does for the LIVE
+     photos.html upload flow (fillSlot/isPdf/isHeicDataUrl only special-case
+     strings starting "data:", so a plain path just falls through to a normal
+     image). */
+  var SCENARIO_PHOTOS = {
+    ulkopuoli:   ['assets/scenario-ulkopuoli-2.jpg', 'assets/scenario-ulkopuoli-1.jpg', 'assets/scenario-ulkopuoli-3.jpg', 'assets/scenario-ulkopuoli-4.jpg', 'assets/scenario-ulkopuoli-5.jpg'],
+    sisatilat:   ['assets/scenario-sisatilat-1.jpg', 'assets/scenario-sisatilat-2.jpg', 'assets/scenario-sisatilat-3.jpg', 'assets/scenario-sisatilat-4.jpg'],
+    huoltokirja: ['assets/scenario-huoltokirja-1.jpg', 'assets/scenario-huoltokirja-2.jpg', 'assets/scenario-huoltokirja-3.jpg', 'assets/scenario-huoltokirja-4.jpg', 'assets/scenario-huoltokirja-5.jpg'],
+    renkaat:     ['assets/scenario-renkaat-1.jpg']
+  };
   var CAR = {
     hero: { plate: 'LRX-345', km: '148 000' },
     details: {
@@ -68,10 +80,7 @@
       korjaukset: 'Pieniä kiviskemiä konepellissä. Huollot tehty merkkiliikkeessä.',
       lastServiceDetail: { km: 132000, month: '5', year: '2025' }
     },
-    photos: {
-      ulkopuoli: [PHOTO, PHOTO, PHOTO],
-      sisatilat: [PHOTO, PHOTO]
-    },
+    photos: SCENARIO_PHOTOS,
     /* Documents from the "Seller file upload" initiative. Real, openable files
        rather than stubs — every surface links to them in a new tab, and a
        placeholder would make that link look broken. Small on purpose: the bytes

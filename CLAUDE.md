@@ -532,6 +532,15 @@ Seed car = `draft-complete`; Reset prototype = `empty`, and it always returns to
 `index.html` — clearing in place would leave you on a mid-funnel or offers page
 with nothing to render.
 
+**Seed car's photos are the same assets `photos.html`'s own "Photos filled"
+scenario uses** (`SCENARIO_PHOTOS` in `proto-mock.js`, mirroring
+`_loadFilledScenario`'s file list) — one real car across every surface, not a
+single placeholder image repeated. Covers all four sections that scenario
+fills (ulkopuoli, sisatilat, huoltokirja, renkaat), stored as plain asset paths
+rather than fetched-and-inlined data URLs: a plain path renders fine as a plain
+`<img src>`, and `fillSlot`/`isPdf`/`isHeicDataUrl` only special-case strings
+that start `data:`, so nothing on the photos step needs to know the difference.
+
 `draft-complete` must satisfy every step's `isComplete()`, not just carry
 plausible data. Three things bite:
 - `services.radioGroups` stores the option's **label text** (`saveServices` in
