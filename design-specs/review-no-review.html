@@ -342,7 +342,7 @@
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Already correct in production — do not change</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Two things the prototype used to get wrong about a no-review seller, both verified against the current code. They are listed here because they look like initiative material and are not: production already behaves correctly, and the prototype's control arm was corrected to match. Nothing to build.</p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Things the prototype used to get wrong about a no-review seller, all verified against the current code. They are listed here because they look like initiative material and are not: production already behaves correctly, and the prototype's control arm was corrected to match. Nothing to build.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The call is not promised after the price step</p>
@@ -351,6 +351,10 @@
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The car card is not shown on every screen</p>
           <p class="font-dm text-sm leading-6 text-slate-800"><code>shouldShowPreview</code> is <code>isWaitingForReviewInReview || canPreviewDraft</code>, and <code>canPreviewDraft</code> does not include <code>success</code> or a rejected draft in <code>waitingForReview</code> — while <code>Success.vue</code> draws no card of its own. So the card appears on the in-review and email-verification screens and <b>nowhere else</b>: a rejected or published draft shows none. That is also why <code>Preview.vue</code>'s <code>draftStatusConfig.published</code> — the untranslated literal <code>'Published'</code> with a warning-octagon icon — never renders, and should be read as dead config rather than as a badge anyone sees.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The estimate field carries no label</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">In <code>PriceInfo.vue</code> the reviewable seller's estimate is a bare <code>NumberInput</code> with a placeholder and <b>no</b> <code>label</code> prop — only the asking-price field passes one (<code>asking_price_label</code>, marked required). The prototype used to draw a label above both. Corrected in the control arm: the estimate variant now shows the question in the placeholder (<i>Oma arvio (vapaaehtoinen)</i>) and its info line reads <i>Ei vaikuta tarjouskilpailuun eikä velvoita myymään.</i>, both from production; the asking-price variant keeps its label and star. The label difference between the two variants is production's, not this initiative's.</p>
         </div>
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The seller's own price is never echoed back</p>

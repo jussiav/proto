@@ -160,11 +160,14 @@
         <!-- Optional price expectation — single variant for all sellers -->
         <div class="w-full flex flex-col gap-4">
           <div class="flex flex-col gap-2">
-            <label for="price-expectation" class="font-dm font-medium text-base text-slate-900">
-              <span id="price-label">Oma arviosi (valinnainen)</span><span id="price-required-star" class="text-red-500 font-medium" style="display:none"> *</span>
+            <!-- Label only in the asking-price variant. Prod's estimate field
+                 (PriceInfo.vue) renders a bare NumberInput with a placeholder and
+                 no label; only the asking-price field passes one. -->
+            <label id="price-label-row" for="price-expectation" class="font-dm font-medium text-base text-slate-900" style="display:none">
+              <span id="price-label">Pyyntihintasi</span><span id="price-required-star" class="text-red-500 font-medium" style="display:none"> *</span>
             </label>
             <div class="price-input-wrapper w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
-              <input id="price-expectation" type="text" inputmode="numeric" placeholder="esim. 12 500"
+              <input id="price-expectation" type="text" inputmode="numeric" placeholder="Oma arvio (vapaaehtoinen)"
                 class="flex-1 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
               <span class="font-dm font-medium text-base text-slate-400 flex-shrink-0">€</span>
             </div>
@@ -174,7 +177,7 @@
           </div>
           <div class="flex items-start gap-2">
             <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-            <p id="price-note" class="font-dm text-base leading-5 text-slate-700">Et sitoudu myymään tavoitehinnallasi.</p>
+            <p id="price-note" class="font-dm text-base leading-5 text-slate-700">Ei vaikuta tarjouskilpailuun eikä velvoita myymään.</p>
           </div>
         </div>
 
@@ -425,10 +428,21 @@
         t(reviewable ? 'price.title' : 'price.askingTitle');
       document.getElementById('price-subtext').textContent =
         t(reviewable ? 'price.subtitle' : 'price.askingSubtitle');
-      document.getElementById('price-label').textContent =
-        t(reviewable ? 'price.targetLabel' : 'price.askingLabel');
-      document.getElementById('price-expectation').placeholder =
+      /* The estimate variant has no label at all — prod's 92_combi block passes
+         NumberInput a placeholder only, so the whole label row is dropped and the
+         placeholder carries the question. The asking-price variant keeps prod's
+         label + required star. aria-label stands in as the accessible name in the
+         label-less variant; prod leaves the field unnamed there. */
+      var priceInput = document.getElementById('price-expectation');
+      document.getElementById('price-label-row').style.display = reviewable ? 'none' : '';
+      document.getElementById('price-label').textContent = t('price.askingLabel');
+      priceInput.placeholder =
         t(reviewable ? 'price.targetPlaceholder' : 'price.askingPlaceholder');
+      if (reviewable) {
+        priceInput.setAttribute('aria-label', t('price.targetPlaceholder'));
+      } else {
+        priceInput.removeAttribute('aria-label');
+      }
       document.getElementById('price-note').textContent =
         t(reviewable ? 'price.targetNote' : 'price.askingInfo');
       /* Required in the asking-price variant — prod marks the field with * and

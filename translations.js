@@ -613,10 +613,14 @@ window.TRANSLATIONS = {
     price: {
       title:           'Mitä odottaisit autoliikkeen tarjoavan autostasi?',
       subtitle:        'Arviosi auttaa meitä valmistautumaan tarjouskilpailuun. Jos et halua arvioida, teemme sen puolestasi.',
-      targetLabel:     'Oma arviosi (valinnainen)',
-      targetPlaceholder: 'esim. 12 500',
+      /* Prod's estimate field (PriceInfo.vue, the 92_combi block) has NO label —
+         the question is carried by the placeholder alone, and only the
+         asking-price field gets a real label. targetLabel therefore labels just
+         the ad-preview row in vehicle-card.js, not the input. */
+      targetLabel:     'Oma arvio (vapaaehtoinen)',
+      targetPlaceholder: 'Oma arvio (vapaaehtoinen)',
       targetError:     'Anna hinta numeroina, esim. 12 500.',
-      targetNote:      'Et sitoudu myymään tavoitehinnallasi.',
+      targetNote:      'Ei vaikuta tarjouskilpailuun eikä velvoita myymään.',
       /* Asking-price variant — shown when the car falls outside the Filament
          review segment (can_review false). Verbatim from prod
          tenderform.price_info.asking_price_*, except the prod typo
@@ -1215,9 +1219,9 @@ window.TRANSLATIONS = {
       title:              'What would you expect a dealer to offer for your car?',
       subtitle:           'Your estimate helps us prepare for the auction. If you don\'t want to estimate, we\'ll take care of it.',
       targetLabel:        'My estimate (optional)',
-      targetPlaceholder:  'e.g. 12,500',
+      targetPlaceholder:  'My estimate (optional)',
       targetError:        'Enter price as numbers, e.g. 12,500.',
-      targetNote:         'You\'re not committed to selling at your target price.',
+      targetNote:         'Doesn\'t affect the auction and doesn\'t commit you to selling.',
       askingTitle:        'What offer would you be happy with?',
       askingSubtitle:     'A realistic asking price improves your chances in the auction.',
       askingLabel:        'Your asking price',
