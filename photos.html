@@ -757,7 +757,10 @@
       files.forEach(function (entry, i) {
         var url = fileBlobUrl(entry);
         var li = document.createElement('li');
-        li.className = 'flex items-center gap-2 bg-white border border-slate-200 rounded-md px-3 py-2';
+        /* No card around a row: no border, no background, no padding. Inside the
+           dashed container the boxes read as a second nesting level for content
+           that is just a list of names. */
+        li.className = 'flex items-center gap-2';
         /* Delete button is the EXACT same design as a photo thumbnail's own ×
            (fillSlot/makeRestoredThumbnail above, itself matching prod's
            ImagePreview.vue .remove-button): bg-gray-100 square, bold "+"
@@ -1042,7 +1045,9 @@
                above it, not compete with them for attention. -->
           <p id="files-description" class="font-dm text-xs text-slate-500 -mt-1"></p>
 
-          <div class="w-full border border-dashed border-slate-400 rounded-lg p-2.5 flex flex-col gap-2.5">
+          <!-- Same dashed shell as every photo section above (prod's ImageSections.vue
+               wrapper): border-2 / gray-500 / p-4, not a thinner, lighter box. -->
+          <div class="w-full border-2 border-dashed border-gray-500 rounded-lg p-4 flex flex-col gap-2.5">
             <ul id="files-list" class="flex flex-col gap-2" style="display:none"></ul>
             <!-- Text link + plus icon, not a filled button: a full-width blue
                  block here read as equally important as "Jatka", which invited
