@@ -6,7 +6,7 @@
   <title>Hinta-arvio – AutoVex</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -44,6 +44,9 @@
       }
     }
   </script>
+  <!-- Prod scale tokens (fontSize 3xl+, screens, spacing). One shared
+       definition; must follow the config block above, which it merges into. -->
+  <script src="tw-tokens.js"></script>
   <style>
     /* Focus ring — on input wrapper so the € suffix is included */
     input:focus { outline: none; }
@@ -61,6 +64,14 @@
        Hand-written rather than Tailwind utilities because the Play CDN only
        generates classes that exist in the DOM at first paint. */
     html[data-rnr-arm="v1"] #price-what-happens-next { display: none; }
+    /* Native date input: Chrome renders its own "dd.mm.yyyy" hint from the
+       BROWSER's locale, not the page's lang, so it cannot be translated from
+       here. While the field is empty the internal text is made invisible and a
+       Finnish placeholder span is shown over it instead. The picker popup's own
+       month names and buttons stay browser-locale — nothing on the page can
+       reach them. */
+    .intent-date:not(.has-value)::-webkit-datetime-edit { color: transparent; }
+    .intent-date::-webkit-calendar-picker-indicator { cursor: pointer; }
     /* With the panel gone the cream column has nothing to show, and on a phone it
        stacks under the form as a bare 64px strip of padding. Prod hides the whole
        sidebar on mobile at this step for the same reason — Sidebar.vue's
@@ -98,6 +109,30 @@
       return arm;
     }());
     document.documentElement.dataset.rnrArm = REVIEW_NO_REVIEW_ARM;
+
+    /* ── "Seller intent A/B" initiative ────────────────────────────────────
+       design-specs/seller-intent.html. One question per arm, below the price
+       estimate, asked only of sellers INSIDE the review segment — the answers
+       are meant to help the coming decision engine tell a motivated seller from
+       a browsing one, and a car outside the segment is not review-called either
+       way.
+
+       Its own initiative, not an arm of "Review/No review", because it ships
+       first: it must not depend on changes that land later. So it deliberately
+       does NOT touch the "what happens next" panel or the contact step's submit
+       copy — both belong to that other initiative.
+
+       PHASE 1 IS INERT: the answer is stored and changes nothing. Which answers
+       should downgrade a seller is exactly what the A/B is meant to learn, so
+       every arm still lands on the in-review success state. deriveOutcome()
+       below is the single place phase 2 edits. */
+    var SELLER_INTENT_ARM = (function () {
+      var ARMS = ['control', 'v1', 'v2', 'v3'];
+      var arm = window.protoVariant('seller-intent', 'control');
+      if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('seller-intent', null); return 'control'; }
+      return arm;
+    }());
+    document.documentElement.dataset.intentArm = SELLER_INTENT_ARM;
   </script>
   <script src="proto-mock.js"></script>
 </head>
@@ -149,11 +184,11 @@
           <div class="flex items-center justify-center h-[170px]">
             <img src="assets/price-illustration.svg" alt="" class="w-[217px] h-[154px] object-contain" />
           </div>
-          <h1 id="price-headline" class="font-dm font-bold text-black text-2xl leading-[28px]">
+          <h1 id="price-headline" class="font-dm font-bold text-black text-2xl lg:text-3xl leading-[30px]">
             Mitä odottaisit autoliikkeen tarjoavan autostasi?
           </h1>
-          <p id="price-subtext" class="font-dm text-base leading-5 text-black max-w-[432px]">
-            Arviosi auttaa meitä valmistautumaan tarjouskilpailuun. Jos et halua arvioida, teemme sen puolestasi.
+          <p id="price-subtext" class="font-dm text-base text-black max-w-[432px]">
+            Oma arvio on vapaaehtoinen ja auttaa meitä ymmärtämään odotuksiasi.
           </p>
         </div>
 
@@ -163,13 +198,13 @@
             <!-- Label only in the asking-price variant. Prod's estimate field
                  (PriceInfo.vue) renders a bare NumberInput with a placeholder and
                  no label; only the asking-price field passes one. -->
-            <label id="price-label-row" for="price-expectation" class="font-dm font-medium text-base text-slate-900" style="display:none">
+            <label id="price-label-row" for="price-expectation" class="font-dm font-medium text-base leading-none mb-1 inline-block text-slate-900" style="display:none">
               <span id="price-label">Pyyntihintasi</span><span id="price-required-star" class="text-red-500 font-medium" style="display:none"> *</span>
             </label>
-            <div class="price-input-wrapper w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
+            <div class="price-input-wrapper w-full h-14 border border-gray-500 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
               <input id="price-expectation" type="text" inputmode="numeric" placeholder="Oma arvio (vapaaehtoinen)"
                 class="flex-1 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
-              <span class="font-dm font-medium text-base text-slate-400 flex-shrink-0">€</span>
+              <span class="font-dm text-xl text-slate-400 flex-shrink-0">€</span>
             </div>
             <div id="price-expectation-error" class="items-center gap-1.5" style="display:none;">
               <p id="price-error-msg" class="av-error-msg">Anna hinta numeroina, esim. 12 500.</p>
@@ -177,7 +212,45 @@
           </div>
           <div class="flex items-start gap-2">
             <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-            <p id="price-note" class="font-dm text-base leading-5 text-slate-700">Ei vaikuta tarjouskilpailuun eikä velvoita myymään.</p>
+            <p id="price-note" class="font-dm text-sm text-slate-700">Ei vaikuta tarjouskilpailuun eikä velvoita myymään.</p>
+          </div>
+        </div>
+
+        <!-- ── "Seller intent A/B": one question per arm ──────────────────────
+             Built by renderIntent() rather than written out three times, so the
+             arms cannot drift apart in markup. Hidden by default: shown only for
+             an arm with a question AND a seller inside the review segment. -->
+        <div id="price-intent" class="w-full flex flex-col gap-4" style="display:none">
+          <!-- Follows the price question's own headline (font-dm bold, centred),
+               one step down in size — it introduces a question, it is not the
+               page's question. Both moved up a notch together: prod's own heading
+               is text-2xl lg:text-3xl (PriceInfo.vue), so the page headline at
+               text-3xl now matches prod's desktop size. -->
+          <h2 id="price-intent-header" class="w-full font-dm font-bold text-black text-xl lg:text-2xl leading-[28px] text-center"></h2>
+          <div class="w-full flex flex-col gap-4">
+            <div id="price-intent-question" class="font-dm text-base text-slate-900"></div>
+            <!-- v2 only. Same shell as the price field above so the two inputs on
+                 this step look like one family. The Finnish placeholder is our own
+                 overlay: a native date input's own placeholder text comes from the
+                 BROWSER's locale and cannot be set from the page, so while the
+                 field is empty its internal text is hidden (see the CSS in <head>)
+                 and this span shows "pp.kk.vvvv" instead. -->
+            <div id="price-intent-date-wrap" class="price-input-wrapper relative w-full h-14 border border-gray-500 rounded-lg bg-white px-4 flex items-center transition-colors" style="display:none">
+              <input id="price-intent-date" type="date" lang="fi"
+                class="intent-date flex-1 border-none outline-none bg-transparent font-dm text-base text-slate-900" />
+              <span id="price-intent-date-placeholder"
+                class="pointer-events-none absolute left-4 font-dm text-base text-slate-300">pp.kk.vvvv</span>
+            </div>
+            <!-- Option rows use the funnel's existing radio pattern verbatim
+                 (services.html's .radio-btn cards). -->
+            <div id="price-intent-options" class="flex flex-col gap-3.5 radio-group"></div>
+            <!-- Optional is said here, not as a suffix on the question: the same
+                 info-icon line the estimate field above uses, so both optional
+                 fields on this step are marked the same way. -->
+            <div class="flex items-start gap-2">
+              <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
+              <p id="price-intent-note" class="font-dm text-sm text-slate-700"></p>
+            </div>
           </div>
         </div>
 
@@ -516,7 +589,13 @@
       } else {
         delete s.priceExpectation; delete s.askingPrice;
       }
-      s.reviewable = reviewable;
+      /* Phase 1: the outcome follows the segment alone — the intent answer is
+         passed in and ignored. Kept as store.reviewable so success.html's
+         existing four-state mapping and the card badges need no change. */
+      s.reviewable = deriveOutcome({
+        inSegment: reviewable,
+        intentAnswer: s.sellerIntentAnswer || null
+      }) === 'review';
 
       setStore(s);
       window.location = 'contact.html';
@@ -539,16 +618,205 @@
             { id: 'control', label: 'Control — today\'s design' },
             { id: 'v1',      label: 'Variant 1 — no "what happens next"' }
           ]
+        },
+        {
+          slug:    'seller-intent',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no intent question' },
+            { id: 'v1',      label: 'Variant 1 — handover timing, options' },
+            { id: 'v2',      label: 'Variant 2 — handover timing, date' },
+            { id: 'v3',      label: 'Variant 3 — selling situation' }
+          ]
         }
       ]
     };
 
+
+    /* ── "Seller intent A/B" ───────────────────────────────────────────────
+       One question per arm. Ids — both the question's and each option's — are
+       the data contract (seller_intent_question / seller_intent_answer), so they
+       are stable strings here, never the rendered label. services.html stores a
+       radio group's label TEXT, which is why its mock data has to match the copy
+       character for character; not repeating that for a field devs will consume. */
+    var INTENT_QUESTIONS = {
+      v1: {
+        id: 'handover-timing',
+        stem: 'intent.timingQuestion',
+        options: [
+          { id: 'asap',           key: 'intent.timingAsap' },
+          { id: 'within-week',    key: 'intent.timingWithinWeek' },
+          { id: 'coming-months',  key: 'intent.timingComingMonths' },
+          { id: 'later',          key: 'intent.timingLater' },
+          { id: 'just-exploring', key: 'intent.timingJustExploring' }
+        ]
+      },
+      /* Same stem as v1, different input: the arms test question FORMAT, not two
+         different questions. Date only — no options, so the answer is either a
+         date or nothing. */
+      v2: {
+        id: 'handover-date',
+        stem: 'intent.timingQuestion',
+        date: true,
+        options: []
+      },
+      v3: {
+        id: 'selling-situation',
+        stem: 'intent.situationQuestion',
+        options: [
+          { id: 'buying-another',    key: 'intent.situationBuyingAnother' },
+          { id: 'not-buying',        key: 'intent.situationNotBuying' },
+          { id: 'curious-value',     key: 'intent.situationCuriousValue' },
+          { id: 'exploring-service', key: 'intent.situationExploring' },
+          { id: 'other',             key: 'intent.situationOther' }
+        ]
+      }
+    };
+
+    function intentQuestion() {
+      return INTENT_QUESTIONS[SELLER_INTENT_ARM] || null;
+    }
+
+    /* The single phase-2 switch point. Today the intent answer is recorded and
+       ignored: every seller inside the review segment is still review-called,
+       which is what "phase 1 is inert" means. 'reject' is declared because the
+       reject path is parked, not abandoned — see the spec's open questions. */
+    var INTENT_OUTCOMES = ['review', 'publish', 'reject'];
+    function deriveOutcome(ctx) {
+      return ctx.inSegment ? 'review' : 'publish';
+    }
+
+    function intentDateBounds() {
+      var now = new Date();
+      var max = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+      function iso(d) {
+        return d.getFullYear() + '-' +
+          String(d.getMonth() + 1).padStart(2, '0') + '-' +
+          String(d.getDate()).padStart(2, '0');
+      }
+      return { min: iso(now), max: iso(max) };
+    }
+
+    function isIntentOptionId(question, value) {
+      return question.options.some(function (o) { return o.id === value; });
+    }
+
+    function saveIntentAnswer(question, answer) {
+      var s = getStore();
+      if (answer) {
+        s.sellerIntentQuestion = question.id;
+        s.sellerIntentAnswer = answer;
+      } else {
+        delete s.sellerIntentQuestion;
+        delete s.sellerIntentAnswer;
+      }
+      setStore(s);
+    }
+
+    /* Selected state is services.html's exactly: the card gains a 2px blue
+       border and the dot fills. */
+    function paintIntentSelection(selectedId) {
+      var rows = document.querySelectorAll('#price-intent-options .radio-btn');
+      [].forEach.call(rows, function (row) {
+        var on = row.getAttribute('data-intent-option') === selectedId;
+        row.classList.toggle('border-2', on);
+        row.classList.toggle('border-av-blue', on);
+        row.classList.toggle('border', !on);
+        row.classList.toggle('border-gray-500', !on);
+        var dot = row.querySelector('.radio-dot');
+        dot.classList.toggle('bg-av-blue', on);
+        dot.classList.toggle('bg-white', !on);
+        row.querySelector('.radio-inner').classList.toggle('hidden', !on);
+      });
+    }
+
+    function renderIntent() {
+      var block = document.getElementById('price-intent');
+      if (!block) return;
+      var question = intentQuestion();
+      var s = getStore();
+      var shown = !!question && isReviewable(s);
+
+      /* An answer exists only if the question was actually asked. Switching arm
+         or leaving the segment therefore drops it rather than leaving a stored
+         answer to a question this page no longer shows. */
+      var stale = !shown || s.sellerIntentQuestion !== question.id;
+      if (stale && (s.sellerIntentQuestion || s.sellerIntentAnswer)) {
+        saveIntentAnswer(null, null);
+        s = getStore();
+      }
+
+      block.style.display = shown ? '' : 'none';
+      if (!shown) return;
+
+      document.getElementById('price-intent-header').textContent = t('intent.header');
+      document.getElementById('price-intent-question').textContent = t(question.stem);
+      document.getElementById('price-intent-note').textContent = t('intent.note');
+
+      var stored = s.sellerIntentAnswer || null;
+      var dateWrap = document.getElementById('price-intent-date-wrap');
+      var dateInput = document.getElementById('price-intent-date');
+      var bounds = intentDateBounds();
+
+      dateWrap.style.display = question.date ? '' : 'none';
+      if (question.date) {
+        dateInput.min = bounds.min;
+        dateInput.max = bounds.max;
+        dateInput.value = (stored && !isIntentOptionId(question, stored)) ? stored : '';
+        syncDatePlaceholder();
+      }
+
+      var list = document.getElementById('price-intent-options');
+      list.innerHTML = '';
+      question.options.forEach(function (option) {
+        var row = document.createElement('div');
+        /* prod RadioButtons.vue: text-base font-display (Barlow) rounded-lg p-4,
+           label span ml-2 font-medium — taller cards and a medium weight, not the
+           bold DM Sans the proto used to draw. */
+        row.className = 'radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer';
+        row.setAttribute('data-intent-option', option.id);
+        row.innerHTML =
+          '<div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">' +
+            '<div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>' +
+          '</div>' +
+          '<span class="font-barlow font-medium text-base text-black"></span>';
+        row.querySelector('span').textContent = t(option.key);
+        row.addEventListener('click', function () {
+          saveIntentAnswer(question, option.id);
+          paintIntentSelection(option.id);
+        });
+        list.appendChild(row);
+      });
+
+      paintIntentSelection(stored && isIntentOptionId(question, stored) ? stored : null);
+    }
+
+    /* The overlay is only correct while the field is empty. */
+    function syncDatePlaceholder() {
+      var input = document.getElementById('price-intent-date');
+      var hint = document.getElementById('price-intent-date-placeholder');
+      var filled = !!input.value;
+      input.classList.toggle('has-value', filled);
+      hint.style.display = filled ? 'none' : '';
+    }
+
+    document.getElementById('price-intent-date').addEventListener('change', function () {
+      syncDatePlaceholder();
+      var question = intentQuestion();
+      if (!question || !question.date) return;
+      saveIntentAnswer(question, this.value || null);
+    });
+
     /* Owned by applyPriceVariant, not data-i18n, so the variant survives a
        language switch. */
     document.addEventListener('av:langchange', applyPriceVariant);
+    /* Same reason: the question's labels are rendered, not marked up. Selection
+       lives in the store, so a re-render restores it. */
+    document.addEventListener('av:langchange', renderIntent);
 
     document.addEventListener('DOMContentLoaded', function() {
       applyPriceVariant();
+      renderIntent();
       const s = getStore();
       s.priceVisited = true;
 

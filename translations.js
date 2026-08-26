@@ -545,7 +545,8 @@ window.TRANSLATIONS = {
          PDF-tiedostoja" hint went with the PDF acceptance (prod's uploader is
          image-only; files live in their own section, see the seller-file-upload
          initiative). */
-      serviceBookHint:      'Lisää kuvat jokaisesta sivusta.',
+      /* prod's `tenderform.add_image`, shown as the empty slot's tooltip. */
+      addImage:             'Lisää kuva',
       tyres:                'Renkaat',
       scratches:            'Naarmut tai kolhut',
       scratchesHint:        'Lisää kuvat, jos autossa on vaurioita.',
@@ -612,7 +613,7 @@ window.TRANSLATIONS = {
     /* ── Price page ── */
     price: {
       title:           'Mitä odottaisit autoliikkeen tarjoavan autostasi?',
-      subtitle:        'Arviosi auttaa meitä valmistautumaan tarjouskilpailuun. Jos et halua arvioida, teemme sen puolestasi.',
+      subtitle:        'Oma arvio on vapaaehtoinen ja auttaa meitä ymmärtämään odotuksiasi.',
       /* Prod's estimate field (PriceInfo.vue, the 92_combi block) has NO label —
          the question is carried by the placeholder alone, and only the
          asking-price field gets a real label. targetLabel therefore labels just
@@ -632,6 +633,39 @@ window.TRANSLATIONS = {
       askingPlaceholder: 'Esim. 12 500',
       askingInfo:        'Auttaa ostajia ymmärtämään, millaista hintaa toivot. Tarjoukset usein ylittävät pyyntihinnan.',
       askingError:       'Anna pyyntihinta numeroina, esim. 12 500.',
+    },
+
+    /* ── Seller intent A/B (design-specs/seller-intent.html) ──
+       One question per arm, below the price estimate, for sellers inside the
+       review segment only. ALL COPY HERE IS A DRAFT PENDING APPROVAL — prod has
+       no equivalent, the feature does not exist there. FI is as specified by the
+       team; EN is a working translation.
+
+       Option keys are the stable ids the data contract uses (asap, within-week,
+       …), so renaming a label never changes what was stored. */
+    intent: {
+      /* Section header between the estimate field and the question. */
+      header:            'Jotta voimme palvella sinua parhaiten:',
+      /* The question is marked skippable by the note below the options, not by a
+         suffix on the label — the same info-icon line the estimate field above
+         already uses, so the two optional fields on this step say so the same way. */
+      note:              'Vastaaminen on vapaaehtoista eikä velvoita myymään.',
+
+      /* v1 + v2 share this stem: same question, different input. */
+      timingQuestion:    'Jos saat hyvän tarjouksen, milloin voisit aikaisintaan luovuttaa autosi ostajalle?',
+      timingAsap:            'Mahdollisimman pian',
+      timingWithinWeek:      'Viikon sisällä',
+      timingComingMonths:    'Lähikuukausina',
+      timingLater:           'Myöhemmin',
+      timingJustExploring:   'Tutkailen vasta vaihtoehtoja',
+
+      /* v3 */
+      situationQuestion:      'Mikä kuvaa tilannettasi parhaiten?',
+      situationBuyingAnother: 'Olen myymässä autoani, koska tiedän jo hankkivani toisen auton',
+      situationNotBuying:     'Olen myymässä autoani, ja en aio ostaa toista',
+      situationCuriousValue:  'Haluan vain tietää autoni tämänhetkisen arvon',
+      situationExploring:     'Haluan tutustua palveluun',
+      situationOther:         'Jokin muu',
     },
 
     /* ── Contact page ── */
@@ -1171,7 +1205,7 @@ window.TRANSLATIONS = {
       exterior:             'Exterior',
       interior:             'Interior',
       serviceBook:          'Service book',
-      serviceBookHint:      'Add photos of every page.',
+      addImage:             'Add image',
       tyres:                'Tyres',
       scratches:            'Scratches or dents',
       scratchesHint:        'Add photos if the car has any damage.',
@@ -1217,7 +1251,7 @@ window.TRANSLATIONS = {
 
     price: {
       title:              'What would you expect a dealer to offer for your car?',
-      subtitle:           'Your estimate helps us prepare for the auction. If you don\'t want to estimate, we\'ll take care of it.',
+      subtitle:           'Your own estimate is optional and helps us understand your expectations.',
       targetLabel:        'My estimate (optional)',
       targetPlaceholder:  'My estimate (optional)',
       targetError:        'Enter price as numbers, e.g. 12,500.',
@@ -1228,6 +1262,26 @@ window.TRANSLATIONS = {
       askingPlaceholder:  'E.g. 12,500',
       askingInfo:         'Helps buyers understand the price you\'re hoping for. Offers often exceed the asking price.',
       askingError:        'Enter the asking price as numbers, e.g. 12,500.',
+    },
+
+    /* Seller intent A/B — draft copy pending approval, see the FI block. */
+    intent: {
+      header:            'So we can serve you best:',
+      note:              'Answering is optional and does not commit you to selling.',
+
+      timingQuestion:    'If you get a good offer, how soon could you hand the car over to the buyer?',
+      timingAsap:            'As soon as possible',
+      timingWithinWeek:      'Within a week',
+      timingComingMonths:    'In the coming months',
+      timingLater:           'Later',
+      timingJustExploring:   'Just exploring my options',
+
+      situationQuestion:      'What best describes your situation?',
+      situationBuyingAnother: 'I\'m selling because I already know I\'ll buy another car',
+      situationNotBuying:     'I\'m selling and don\'t plan to buy another',
+      situationCuriousValue:  'I just want to know what my car is worth right now',
+      situationExploring:     'I want to explore the service',
+      situationOther:         'Something else',
     },
 
     contact: {
