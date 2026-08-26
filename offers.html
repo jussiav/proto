@@ -64,11 +64,11 @@
 
       <!-- AuctionsProgress section — shown when auction is live -->
       <section id="section-live" class="hidden">
-        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
             <path d="M236 137A108.13 108.13 0 1 1 119 20a12 12 0 0 1 2 24 84.12 84.12 0 1 0 91 91 12 12 0 1 1 24 2ZM116 76v52a12 12 0 0 0 12 12h52a12 12 0 0 0 0-24h-40V76a12 12 0 0 0-24 0Zm92 20a16 16 0 1 0-16-16 16 16 0 0 0 16 16Zm-32-32a16 16 0 1 0-16-16 16 16 0 0 0 16 16Z"/>
           </svg>
-          <span class="text-blue-900 leading-3">Tarjouskauppa käynnissä</span>
+          <span class="text-blue-900 leading-[24px]">Tarjouskauppa käynnissä</span>
         </h2>
 
         <!-- Timer.vue: bg-white border border-gray-200 shadow-sm rounded-xl p-4 space-y-4 -->
@@ -125,34 +125,34 @@
 
       <!-- Updates/notifications section — shown when there's a notification -->
       <section id="section-updates" class="hidden">
-        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <!-- ph-bold-bell, viewBox 0 0 256 256 -->
           <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
             <path d="M221.8 175.94C216.25 166.38 208 139.33 208 104a80 80 0 1 0-160 0c0 35.34-8.26 62.38-13.81 71.94A16 16 0 0 0 48 200h48a32 32 0 0 0 64 0h48a16 16 0 0 0 13.8-24.06ZM128 216a16 16 0 0 1-16-16h32a16 16 0 0 1-16 16Z"/>
           </svg>
-          <span class="text-blue-900 leading-3">Ajankohtaista</span>
+          <span class="text-blue-900 leading-[24px]">Ajankohtaista</span>
         </h2>
         <div id="notification-container"></div>
       </section>
 
       <!-- Drafts section — shown when there are draft listings -->
       <section id="section-drafts" class="hidden">
-        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
             <path d="M84 224a12 12 0 0 1-12 12H56a20 20 0 0 1-20-20v-32a12 12 0 0 1 24 0v28h12a12 12 0 0 1 12 12ZM220 88v48a12 12 0 0 1-24 0v-32h-48a12 12 0 0 1-12-12V44h-16a12 12 0 0 1 0-24h32a12 12 0 0 1 8.49 3.51l56 56A12 12 0 0 1 220 88Zm-60-8h23l-23-23ZM80 20H56a20 20 0 0 0-20 20v24a12 12 0 0 0 24 0V44h20a12 12 0 0 0 0-24Zm128 144a12 12 0 0 0-12 12v36h-4a12 12 0 0 0 0 24h8a20 20 0 0 0 20-20v-40a12 12 0 0 0-12-12Zm-160-8a12 12 0 0 0 12-12v-40a12 12 0 0 0-24 0v40a12 12 0 0 0 12 12Zm104 56h-40a12 12 0 0 0 0 24h40a12 12 0 0 0 0-24Z"/>
           </svg>
-          <span class="text-blue-900 leading-3">Keskeneräiset ilmoituksesi</span>
+          <span class="text-blue-900 leading-[24px]">Keskeneräiset ilmoituksesi</span>
         </h2>
         <div id="draft-cards-container" class="flex flex-col gap-y-5"></div>
       </section>
 
       <!-- TenderRequests section -->
       <section id="section-requests">
-        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
             <path d="M240 100h-8.2l-26.72-60.12A20 20 0 0 0 186.8 28H69.2a20 20 0 0 0-18.28 11.88L24.2 100H16a12 12 0 0 0 0 24h4v76a20 20 0 0 0 20 20h28a20 20 0 0 0 20-20v-20h80v20a20 20 0 0 0 20 20h28a20 20 0 0 0 20-20v-76h4a12 12 0 0 0 0-24ZM71.8 52h112.4l21.33 48H50.47ZM64 196H44v-16h20Zm128 0v-16h20v16Zm20-40H44v-32h168Z"/>
           </svg>
-          <span class="text-blue-900 leading-3">Julkaistut ilmoituksesi</span>
+          <span class="text-blue-900 leading-[24px]">Julkaistut ilmoituksesi</span>
         </h2>
 
         <!-- Rendered by buildCarCard (vehicle-card.js) -->
@@ -161,11 +161,11 @@
 
       <!-- FAQ section -->
       <section>
-        <h2 class="font-display flex space-x-2.5 mb-5 items-center text-xl">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
             <path d="M144 180a16 16 0 1 1-16-16 16 16 0 0 1 16 16Zm92-52A108 108 0 1 1 128 20a108.12 108.12 0 0 1 108 108Zm-24 0a84 84 0 1 0-84 84 84.09 84.09 0 0 0 84-84Zm-84-64c-24.26 0-44 17.94-44 40v4a12 12 0 0 0 24 0v-4c0-8.82 9-16 20-16s20 7.18 20 16-9 16-20 16a12 12 0 0 0-12 12v8a12 12 0 0 0 23.73 2.56C158.31 137.88 172 122.37 172 104c0-22.06-19.74-40-44-40Z"/>
           </svg>
-          <span class="text-blue-900 leading-3">Usein kysytyt kysymykset</span>
+          <span class="text-blue-900 leading-[24px]">Usein kysytyt kysymykset</span>
         </h2>
         <div id="faq-list" class="faq-section flex flex-col space-y-2.5"></div>
       </section>
