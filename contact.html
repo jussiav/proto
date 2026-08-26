@@ -6,7 +6,7 @@
   <title>Yhteystiedot – AutoVex</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -44,6 +44,9 @@
       }
     }
   </script>
+  <!-- Prod scale tokens (fontSize 3xl+, screens, spacing). One shared
+       definition; must follow the config block above, which it merges into. -->
+  <script src="tw-tokens.js"></script>
   <style>
     /* Custom checkbox */
     .av-checkbox {
@@ -368,7 +371,7 @@
 
         <!-- Headline + intro -->
         <div class="flex flex-col gap-2.5 w-full">
-          <h1 class="font-barlow font-bold text-slate-900 text-2xl leading-[26px]" data-i18n="contact.title">Miten tavoitamme sinut?</h1>
+          <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="contact.title">Miten tavoitamme sinut?</h1>
           <p class="font-dm text-base leading-5 text-black" data-i18n="contact.subtitle">Olemme tarvittaessa sinuun yhteydessä tarjouskilpailuun liittyen. Ostava autoliike ottaa yhteyttä, jos hyväksyt tarjouksen.</p>
         </div>
 
@@ -377,37 +380,37 @@
 
           <!-- Koko nimi -->
           <div class="flex flex-col gap-2 w-full">
-            <label for="koko-nimi" class="flex items-center gap-1 font-dm font-bold text-base leading-5 text-slate-900">
+            <label for="koko-nimi" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900">
               <span data-i18n="contact.nameLabel">Koko nimi</span> <span class="text-red-500 font-medium">*</span>
             </label>
             <input id="koko-nimi" type="text" placeholder="Etunimi Sukunimi" data-i18n-placeholder="contact.namePlaceholder"
-              class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
+              class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
           </div>
 
           <!-- Puhelinnumero -->
           <div class="flex flex-col gap-2 w-full">
-            <label for="puhelin" class="flex items-center gap-1 font-dm font-bold text-base leading-5 text-slate-900">
+            <label for="puhelin" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900">
               <span data-i18n="contact.phoneLabel">Puhelinnumero</span> <span class="text-red-500 font-medium">*</span>
             </label>
             <div class="flex w-full">
               <!-- Country selector -->
-              <div class="h-14 w-[75px] flex-shrink-0 border border-slate-400 rounded-l-lg bg-white flex items-center justify-between px-3 cursor-pointer">
+              <div class="h-14 w-[75px] flex-shrink-0 border border-gray-500 rounded-l-lg bg-white flex items-center justify-between px-3 cursor-pointer">
                 <span class="text-base leading-5">🇫🇮</span>
                 <img src="assets/9841766b-6fb0-4c94-a37b-c9d847a3f0c2.svg" class="w-4 h-4" alt="" />
               </div>
               <!-- Number input -->
               <input id="puhelin" type="tel" placeholder="+358401234567" data-i18n-placeholder="contact.phonePlaceholder"
-                class="flex-1 h-14 border-t border-r border-b border-slate-400 rounded-r-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
+                class="flex-1 h-14 border-t border-r border-b border-gray-500 rounded-r-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
             </div>
           </div>
 
           <!-- Sähköposti -->
           <div id="sahkoposti-row" class="flex flex-col gap-2 w-full">
-            <label for="sahkoposti" class="flex items-center gap-1 font-dm font-bold text-base leading-5 text-slate-900">
+            <label for="sahkoposti" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900">
               <span data-i18n="contact.emailLabel">Sähköposti</span> <span class="text-red-500 font-medium">*</span>
             </label>
             <input id="sahkoposti" type="text" inputmode="email" autocomplete="email" placeholder="Sähköpostiosoitteesi" data-i18n-placeholder="contact.emailPlaceholder"
-              class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
+              class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
           </div>
 
           <!-- Checkboxes -->

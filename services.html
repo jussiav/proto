@@ -6,7 +6,7 @@
   <title>Huollot &amp; kunto – AutoVex</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -44,6 +44,9 @@
       }
     }
   </script>
+  <!-- Prod scale tokens (fontSize 3xl+, screens, spacing). One shared
+       definition; must follow the config block above, which it merges into. -->
+  <script src="tw-tokens.js"></script>
   <style>
     /* Checkbox */
     input[type="checkbox"] {
@@ -96,9 +99,11 @@
       margin-top: 8px;
     }
     .followup-label {
+      /* prod ServiceInfo: <label class="text-base font-medium mb-2"> — medium, and
+         no leading of its own, so 1.5. */
       font-size: 1rem;
-      line-height: 1.25rem;
-      font-weight: 400;
+      line-height: 1.5rem;
+      font-weight: 500;
       color: #0f172a; /* slate-900 — matches main question label color */
     }
   </style>
@@ -303,12 +308,12 @@
         const group = btn.closest('.radio-group');
         group.querySelectorAll('.radio-btn').forEach(b => {
           b.classList.remove('border-2', 'border-av-blue');
-          b.classList.add('border', 'border-slate-400');
+          b.classList.add('border', 'border-gray-500');
           b.querySelector('.radio-dot').classList.remove('bg-av-blue');
           b.querySelector('.radio-dot').classList.add('bg-white');
           b.querySelector('.radio-inner')?.classList.add('hidden');
         });
-        btn.classList.remove('border', 'border-slate-400');
+        btn.classList.remove('border', 'border-gray-500');
         btn.classList.add('border-2', 'border-av-blue');
         btn.querySelector('.radio-dot').classList.remove('bg-white');
         btn.querySelector('.radio-dot').classList.add('bg-av-blue');
@@ -443,7 +448,7 @@
           if (lasivakuutusGroup) {
             lasivakuutusGroup.querySelectorAll('.radio-btn').forEach(b => {
               b.classList.remove('border-2', 'border-av-blue');
-              b.classList.add('border', 'border-slate-400');
+              b.classList.add('border', 'border-gray-500');
               b.querySelector('.radio-dot')?.classList.remove('bg-av-blue');
               b.querySelector('.radio-dot')?.classList.add('bg-white');
               b.querySelector('.radio-inner')?.classList.add('hidden');
@@ -471,7 +476,7 @@
         if (hide) {
           document.getElementById('book-type-group')?.querySelectorAll('.radio-btn').forEach(b => {
             b.classList.remove('border-2', 'border-av-blue');
-            b.classList.add('border', 'border-slate-400');
+            b.classList.add('border', 'border-gray-500');
             b.querySelector('.radio-dot')?.classList.remove('bg-av-blue');
             b.querySelector('.radio-dot')?.classList.add('bg-white');
             b.querySelector('.radio-inner')?.classList.add('hidden');
@@ -632,10 +637,10 @@
       btn.classList.toggle('border-2', on);
       btn.classList.toggle('border-av-blue', on);
       btn.classList.toggle('border', !on);
-      btn.classList.toggle('border-slate-400', !on);
+      btn.classList.toggle('border-gray-500', !on);
       var dot = btn.querySelector('.tiedot-fetch-dot');
       var inner = btn.querySelector('.tiedot-fetch-inner');
-      if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-slate-400', !on); }
+      if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-gray-500', !on); }
       if (inner) inner.classList.toggle('hidden', !on);
     }
 
@@ -646,10 +651,10 @@
       btn.classList.toggle('border-av-blue', on);
       btn.classList.toggle('bg-white', true);
       btn.classList.toggle('border', !on);
-      btn.classList.toggle('border-slate-400', !on);
+      btn.classList.toggle('border-gray-500', !on);
       var dot = btn.querySelector('.tiedot-no-dot');
       var inner = btn.querySelector('.tiedot-no-inner');
-      if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-slate-400', !on); }
+      if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-gray-500', !on); }
       if (inner) inner.classList.toggle('hidden', !on);
     }
   </script>
@@ -698,40 +703,40 @@
         </nav>
 
         <!-- Headline -->
-        <h1 class="font-barlow font-bold text-slate-900 text-[30px] leading-8" data-i18n="service.title">Huollot</h1>
+        <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="service.title">Huollot</h1>
 
         <!-- ── Form ── -->
         <form class="w-full flex flex-col gap-10 md:gap-16" novalidate>
 
           <!-- Huoltohistoria -->
           <div id="history-section" class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+            <div class="font-dm font-bold text-xl text-slate-900 flex gap-1">
               <span data-i18n="service.historyLabel">Huoltohistoria</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="history-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFull">Täydellinen merkkiliikkeen historia</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.historyFull">Täydellinen merkkiliikkeen historia</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyFullOther">Täysi – muissa huoltamoissa</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.historyFullOther">Täysi – muissa huoltamoissa</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyPartial">Osittainen</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.historyPartial">Osittainen</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.historyNone">Ei huoltokirjaa</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.historyNone">Ei huoltokirjaa</span>
               </div>
             </div>
           </div>
@@ -739,33 +744,33 @@
           <!-- Huoltokirjan tyyppi — hidden when Huoltohistoria = "Ei huoltokirjaa"
                (mirrors prod ServiceInfo.vue:33 v-if service_book !== no_service_book) -->
           <div id="book-type-section" class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+            <div class="font-dm font-medium text-base leading-none text-slate-900 flex gap-1">
               <span data-i18n="service.bookTypeLabel">Huoltokirjan tyyppi</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="book-type-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="digital">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="digital">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookDigital">Sähköinen huoltokirja</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.bookDigital">Sähköinen huoltokirja</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="paper">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="paper">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookPaper">Paperinen huoltokirja</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.bookPaper">Paperinen huoltokirja</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="both">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="both">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookBoth">Molemmat</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.bookBoth">Molemmat</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-book-type="unknown">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="unknown">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.bookUnknown">En tiedä</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.bookUnknown">En tiedä</span>
               </div>
             </div>
 
@@ -782,9 +787,9 @@
             </div>
             <div id="tiedot-options" class="flex flex-col gap-2">
             <!-- Option 1: Hae sähköinen huoltohistoria -->
-            <div id="tiedot-fetch-btn" class="flex flex-col gap-[10px] p-4 border border-slate-400 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectFetch()">
+            <div id="tiedot-fetch-btn" class="flex flex-col gap-[10px] p-4 border border-gray-500 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectFetch()">
               <div id="tiedot-fetch-header" class="flex items-center gap-[10px]">
-                <div class="tiedot-fetch-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                <div class="tiedot-fetch-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="tiedot-fetch-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <div class="flex flex-col flex-1 min-w-0">
@@ -816,8 +821,8 @@
               </button>
             </div>
             <!-- Option 2: Ei kiitos -->
-            <div id="tiedot-no-btn" class="flex items-center gap-[10px] p-4 border border-slate-400 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectNo()">
-              <div class="tiedot-no-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+            <div id="tiedot-no-btn" class="flex items-center gap-[10px] p-4 border border-gray-500 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectNo()">
+              <div class="tiedot-no-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                 <div class="tiedot-no-inner w-2 h-2 rounded-full bg-white hidden"></div>
               </div>
               <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.tiedot.optionNo">Ei kiitos</span>
@@ -828,27 +833,27 @@
 
           <!-- Viimeisin huolto -->
           <div id="last-service-section" class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+            <div class="font-dm font-bold text-xl text-slate-900 flex gap-1">
               <span data-i18n="service.lastServiceLabel">Viimeisin huolto</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="last-service-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-last-service="6mo">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="6mo">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.lastService6mo">Viimeisen 6 kuukauden aikana</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.lastService6mo">Viimeisen 6 kuukauden aikana</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-last-service="older">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="older">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.lastServiceOlder">Yli 6 kuukautta sitten</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.lastServiceOlder">Yli 6 kuukautta sitten</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer" data-last-service="unsure">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="unsure">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.lastServiceUnsure">En ole varma</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.lastServiceUnsure">En ole varma</span>
               </div>
             </div>
 
@@ -858,7 +863,7 @@
               <div class="flex flex-col gap-2">
                 <div class="font-dm followup-label" data-i18n="service.lastServiceMonthLabel">Viimeisin huoltokuukausi</div>
                 <div class="relative">
-                  <select id="last-service-month" class="w-full border border-slate-400 rounded-lg px-4 py-3 font-dm text-base text-slate-900 bg-white appearance-none cursor-pointer focus:outline-none focus:border-av-blue transition-colors">
+                  <select id="last-service-month" class="w-full h-14 border border-gray-500 rounded-lg px-4 font-dm text-base text-slate-900 bg-white appearance-none cursor-pointer focus:outline-none focus:border-av-blue transition-colors">
                     <option value="" data-i18n="service.lastServiceMonthPlaceholder">Valitse kuukausi</option>
                   </select>
                   <svg class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 text-slate-700" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
@@ -868,7 +873,7 @@
               <div class="flex flex-col gap-2">
                 <div class="font-dm followup-label" data-i18n="service.lastServiceYearLabel">Viimeisin huoltovuosi</div>
                 <div class="relative">
-                  <select id="last-service-year" class="w-full border border-slate-400 rounded-lg px-4 py-3 font-dm text-base text-slate-900 bg-white appearance-none cursor-pointer focus:outline-none focus:border-av-blue transition-colors">
+                  <select id="last-service-year" class="w-full h-14 border border-gray-500 rounded-lg px-4 font-dm text-base text-slate-900 bg-white appearance-none cursor-pointer focus:outline-none focus:border-av-blue transition-colors">
                     <option value=""></option>
                   </select>
                   <svg class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none w-5 h-5 text-slate-700" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>
@@ -877,7 +882,7 @@
               <!-- Km (optional) -->
               <div class="flex flex-col gap-2">
                 <div class="font-dm followup-label" data-i18n="service.lastServiceKmLabel">Huoltohetken kilometrimäärä (valinnainen)</div>
-                <div class="flex items-center border border-slate-400 rounded-lg bg-white overflow-hidden">
+                <div class="flex items-center border border-gray-500 rounded-lg bg-white overflow-hidden">
                   <input type="number" id="last-service-km" placeholder="10000" data-i18n-placeholder="service.lastServiceKmPlaceholder" min="0" class="flex-1 font-dm text-base text-slate-900 placeholder:text-slate-300 outline-none bg-transparent px-4 py-3 min-w-0" />
                   <span class="font-dm font-medium text-base text-slate-500 pr-4 flex-shrink-0">km</span>
                 </div>
@@ -886,31 +891,31 @@
           </div>
 
           <!-- Section divider: Kunto -->
-          <h2 class="font-barlow font-bold text-slate-900 text-[30px] leading-8 pt-2" data-i18n="service.conditionTitle">Kunto</h2>
+          <h2 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px] pt-2" data-i18n="service.conditionTitle">Kunto</h2>
 
           <!-- Tuulilasin kunto -->
           <div class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+            <div class="font-dm font-bold text-xl text-slate-900 flex gap-1">
               <span data-i18n="service.windshieldLabel">Tuulilasin kunto</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="tuulilasi-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.windshieldOk">Ehjä</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.windshieldOk">Ehjä</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.windshieldChips">Kiveniskemiä</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.windshieldChips">Kiveniskemiä</span>
               </div>
-              <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.windshieldCracked">Halki</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="service.windshieldCracked">Halki</span>
               </div>
             </div>
 
@@ -920,23 +925,23 @@
                 <span data-i18n="service.glassInsurance">Löytyykö sinulta lasivakuutus?</span> <span class="text-red-500 font-medium">*</span>
               </div>
               <div class="flex flex-col gap-2 radio-group">
-                <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                  <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                  <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                     <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                   </div>
-                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.yes">Kyllä</span>
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="service.yes">Kyllä</span>
                 </div>
-                <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                  <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                  <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                     <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                   </div>
-                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.no">Ei</span>
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="service.no">Ei</span>
                 </div>
-                <div class="radio-btn flex w-full border border-slate-400 rounded-lg bg-white px-4 py-3 items-center gap-2.5 cursor-pointer">
-                  <div class="radio-dot w-4 h-4 rounded-full border border-slate-400 bg-white flex-shrink-0 flex items-center justify-center">
+                <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                  <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                     <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                   </div>
-                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="service.unknown">En tiedä</span>
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="service.unknown">En tiedä</span>
                 </div>
               </div>
             </div>
@@ -945,18 +950,18 @@
           <!-- Lisätiedot -->
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+              <div class="font-dm font-bold text-xl text-slate-900 flex gap-1">
                 <span data-i18n="service.additionalLabel">Korjaukset ja viat</span> <span class="text-red-500 font-medium">*</span>
               </div>
               <div class="flex items-start gap-2">
                 <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-                <p class="font-dm text-base leading-5 text-black" data-i18n="service.additionalBody">Mainitse merkittävät viat, korjaukset, kolhut tai vauriot sekä kulumat, joista ostajien tulisi olla tietoisia.</p>
+                <p class="font-dm text-base text-black" data-i18n="service.additionalBody">Mainitse merkittävät viat, korjaukset, kolhut tai vauriot sekä kulumat, joista ostajien tulisi olla tietoisia.</p>
               </div>
             </div>
             <div class="relative w-full">
               <textarea id="korjaukset" name="korjaukset" maxlength="1500" rows="6"
                 placeholder="Esim. Jakohihna vaihdettu, kuljettajan istuimessa kulumaa, pieniä lommoja tai naarmuja, poikkeavia ääniä, sähkövikoja..." data-i18n-placeholder="service.additionalPlaceholder"
-                class="w-full border border-slate-400 rounded-lg bg-white px-3 pt-2.5 pb-8 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors resize-y min-h-[150px]"></textarea>
+                class="w-full border border-gray-500 rounded-lg bg-white p-4 pb-8 font-dm text-base leading-[21px] text-slate-900 placeholder:text-slate-300 transition-colors resize-y min-h-[150px]"></textarea>
               <div class="absolute bottom-2 right-3 flex items-center gap-1 pointer-events-none">
                 <span id="word-count" class="font-dm text-xs leading-[14px] text-slate-600">0/1500</span>
                 <!-- resize corner icon -->

@@ -6,7 +6,7 @@
   <title>Kuvat – AutoVex</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -44,6 +44,9 @@
       }
     }
   </script>
+  <!-- Prod scale tokens (fontSize 3xl+, screens, spacing). One shared
+       definition; must follow the config block above, which it merges into. -->
+  <script src="tw-tokens.js"></script>
   <style>
     .prog-ring { transition: stroke-dashoffset 0.12s linear; }
     /* Field validation error */
@@ -58,6 +61,26 @@
        arm is stamped on <html> in <head>, so control never paints it. Written by
        hand because the Tailwind Play CDN only generates utilities present at
        first paint. */
+    /* Empty-slot hover. Prod (ImagePreview.vue) scales the card and puts
+       t('tenderform.add_image') on the button's `title`, i.e. a native tooltip —
+       delayed, and invisible on touch. The scale is reproduced with prod's own
+       hover:scale-102; this label makes the same copy visible immediately, which
+       is a deliberate addition rather than a transcription. */
+    .slot-add-label {
+      position: absolute;
+      left: 0; right: 0; bottom: 6px;
+      text-align: center;
+      font-family: "DM Sans", sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #334155;
+      opacity: 0;
+      transition: opacity 150ms ease-out;
+      pointer-events: none;
+    }
+    .placeholder-slot:hover .slot-add-label,
+    .add-slot:hover .slot-add-label { opacity: 1; }
+
     html:not([data-files-arm="v1"]) #files-section { display: none; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/libheif-js@1.18.2/libheif-web.js" onerror="console.warn('[AutoVex] libheif-js failed to load')"></script>
@@ -860,6 +883,25 @@
       }
       /* The limits line is built from the caps, not from a static string, so a
          language switch has to rebuild it. */
+      /* Empty slots carry prod's own hover copy (ImagePreview.vue puts
+         t('tenderform.add_image') on the upload button's title). Applied from
+         translations, not frozen in the markup, so it follows a language switch. */
+      function syncSlotTitles() {
+        var label = t('photos.addImage');
+        [].forEach.call(document.querySelectorAll('[data-title-i18n="photos.addImage"]'), function (el) {
+          el.title = label;
+          var badge = el.querySelector('.slot-add-label');
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'slot-add-label';
+            el.appendChild(badge);
+          }
+          badge.textContent = label;
+        });
+      }
+      syncSlotTitles();
+      document.addEventListener('av:langchange', syncSlotTitles);
+
       document.addEventListener('av:langchange', renderFiles);
 
       // Show tuulilasi photo section only when windshield has damage
@@ -927,7 +969,7 @@
 
         <!-- Headline + intro -->
         <div class="flex flex-col gap-2.5 w-full">
-          <h1 class="font-barlow font-bold text-slate-900 text-2xl leading-[26px]" data-i18n="photos.title">Lisää vielä kuvat</h1>
+          <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="photos.title">Lisää vielä kuvat</h1>
           <p class="font-dm text-base leading-5 text-black" data-i18n="photos.subtitle">Viisi selkeää, puhelimella otettua kuvaa riittää hyvin.</p>
           <button onclick="openPhotoTipsModal()" class="flex items-center gap-1.5 mt-1">
             <img src="assets/0edf1f20-ec72-4fd0-b1e9-e9b2f798ef2d.svg" class="w-3.5 h-3.5" alt="" />
@@ -940,16 +982,16 @@
 
         <!-- Ulkopuoli -->
         <div id="section-ulkopuoli" class="w-full flex flex-col gap-2">
-          <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+          <div class="font-dm font-medium text-base text-slate-900 flex gap-1">
             <span data-i18n="photos.exterior">Ulkopuoli</span> <span class="text-red-500 font-medium">*</span>
           </div>
           <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
             <div class="photo-grid flex flex-wrap gap-4">
-              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/f31f1c0c-6c0a-47c0-8d94-61ba2b021a1d.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/42e9d6b8-61c9-4729-9154-3de054d86680.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/64075db4-9ebd-4c4a-b04a-a5a9b5b964f7.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/11db3357-b60f-4312-97a0-953e518025b1.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/f31f1c0c-6c0a-47c0-8d94-61ba2b021a1d.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/42e9d6b8-61c9-4729-9154-3de054d86680.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/64075db4-9ebd-4c4a-b04a-a5a9b5b964f7.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/11db3357-b60f-4312-97a0-953e518025b1.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
             </div>
             <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
           </div>
@@ -957,13 +999,13 @@
 
         <!-- Sisätilat -->
         <div id="section-sisatilat" class="w-full flex flex-col gap-2">
-          <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+          <div class="font-dm font-medium text-base text-slate-900 flex gap-1">
             <span data-i18n="photos.interior">Sisätilat</span> <span class="text-red-500 font-medium">*</span>
           </div>
           <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
             <div class="photo-grid flex flex-wrap gap-4">
-              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/18f3969c-4149-4d1e-ac00-6eda86313a87.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-              <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
+              <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/18f3969c-4149-4d1e-ac00-6eda86313a87.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+              <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
             </div>
             <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
           </div>
@@ -978,12 +1020,11 @@
 
           <!-- Huoltokirja -->
           <div class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.serviceBook">Huoltokirja</div>
-            <p class="font-dm text-xs text-slate-500 -mt-1" data-i18n="photos.serviceBookHint">Voit ladata kuvia tai PDF-tiedostoja</p>
+            <div class="font-dm font-medium text-base text-slate-900" data-i18n="photos.serviceBook">Huoltokirja</div>
             <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
               <div class="photo-grid flex flex-wrap gap-4">
-                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/f09754df-5293-4176-ad94-b407336adfb8.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/f09754df-5293-4176-ad94-b407336adfb8.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
@@ -991,11 +1032,11 @@
 
           <!-- Renkaat -->
           <div class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.tyres">Renkaat</div>
+            <div class="font-dm font-medium text-base text-slate-900" data-i18n="photos.tyres">Renkaat</div>
             <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
               <div class="photo-grid flex flex-wrap gap-4">
-                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/8454b159-fd20-48ea-b9ad-e56f903c727e.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/8454b159-fd20-48ea-b9ad-e56f903c727e.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
@@ -1003,12 +1044,12 @@
 
           <!-- Naarmut tai kolhut -->
           <div class="flex flex-col gap-2">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.scratches">Naarmut tai kolhut</div>
+            <div class="font-dm font-medium text-base text-slate-900" data-i18n="photos.scratches">Naarmut tai kolhut</div>
             <p class="font-dm text-xs text-slate-500 -mt-1" data-i18n="photos.scratchesHint">Lisää kuvat, jos autossa on vaurioita.</p>
             <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
               <div class="photo-grid flex flex-wrap gap-4">
-                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/47d03926-fe55-47b1-8e34-677c13e776d9.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/47d03926-fe55-47b1-8e34-677c13e776d9.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
@@ -1016,11 +1057,11 @@
 
           <!-- Tuulilasin vauriot (shown only when tuulilasi is not Ehjä) -->
           <div id="tuulilasi-photo-section" class="flex flex-col gap-2" style="display:none;">
-            <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="photos.windshield">Tuulilasin vauriot</div>
+            <div class="font-dm font-medium text-base text-slate-900" data-i18n="photos.windshield">Tuulilasin vauriot</div>
             <div class="section-container w-full border-2 border-dashed border-gray-500 rounded-lg p-4">
               <div class="photo-grid flex flex-wrap gap-4">
-                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/205e2397-44f2-41f8-bc68-7ea08bb6c108.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
-                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition" style="width:calc(50% - 8px)" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
+                <div class="placeholder-slot flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="triggerSection(this.closest('.section-container'))"><div class="slot-hint"><img class="absolute inset-0 w-full h-full object-contain opacity-30 pointer-events-none mix-blend-multiply" src="assets/205e2397-44f2-41f8-bc68-7ea08bb6c108.png" alt="" /><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div></div>
+                <div class="add-slot hidden flex-shrink-0 aspect-[2/1] bg-gray-100 border rounded overflow-hidden relative cursor-pointer shadow-md hover:shadow-lg transition hover:scale-102" style="width:calc(50% - 8px)" data-title-i18n="photos.addImage" onclick="event.stopPropagation(); triggerSection(this.closest('.section-container'))"><div class="absolute top-1.5 right-1.5 w-[17px] h-[17px]"><img src="assets/c18d5687-8e30-43c2-af03-e94b03d707b3.svg" class="w-full h-full" alt="" /></div></div>
               </div>
               <input type="file" accept="image/jpeg,image/png,image/heic,image/heif,image/x-adobe-dng" multiple class="section-input hidden" onchange="handleSectionUpload(this)" />
             </div>
@@ -1039,7 +1080,7 @@
              it only the outer column's gap-6 and made it read as glued to
              Tuulilasi above it. -->
         <div id="files-section" class="w-full flex flex-col gap-2">
-          <div class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="files.title">Muut dokumentit</div>
+          <div class="font-dm font-medium text-base text-slate-900" data-i18n="files.title">Muut dokumentit</div>
           <!-- Hint + limits combined into one paragraph (was two <p> elements) —
                this section should read as a footnote next to the photo sections
                above it, not compete with them for attention. -->

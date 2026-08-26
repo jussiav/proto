@@ -6,7 +6,7 @@
   <title>Autosi tiedot – AutoVex</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -46,6 +46,9 @@
       }
     }
   </script>
+  <!-- Prod scale tokens (fontSize 3xl+, screens, spacing). One shared
+       definition; must follow the config block above, which it merges into. -->
+  <script src="tw-tokens.js"></script>
   <style>
     /* Control-variant range slider (mirrors the production noUiSlider look) */
     #delivery-control-slider {
@@ -451,7 +454,7 @@
       function setDeliveryInputErr(on) {
         deliveryCustomInput.classList.toggle('border-red-500', on);
         deliveryCustomInput.classList.toggle('bg-red-50', on);
-        deliveryCustomInput.classList.toggle('border-slate-400', !on);
+        deliveryCustomInput.classList.toggle('border-gray-500', !on);
         deliveryCustomInput.classList.toggle('bg-white', !on);
       }
       function deliveryEmptyError() { setDeliveryInputErr(true); showDeliveryMsg('error', t('details.deliveryMsgEmpty')); }
@@ -813,7 +816,7 @@
         </nav>
 
         <!-- Headline + subtext -->
-        <h1 class="font-barlow font-bold text-slate-900 text-[30px] leading-8" data-i18n="details.title">Löysimme autosi tiedot!</h1>
+        <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="details.title">Löysimme autosi tiedot!</h1>
         <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="details.subtitle">Tarkista ja täydennä tarkemmat tiedot, jotta voimme valmistella ilmoituksesi autoliikkeille.</p>
 
         <!-- Car illustration -->
@@ -835,7 +838,7 @@
         </div>
 
         <!-- Car details card -->
-        <div class="w-full border border-slate-400 rounded-lg p-4 flex flex-col gap-3">
+        <div class="w-full border border-gray-500 rounded-lg p-4 flex flex-col gap-3">
           <div class="flex items-start justify-between gap-4">
             <span id="card-merkki" class="font-dm font-bold text-xl leading-[23px] text-black flex-1">Mercedes-Benz</span>
             <button id="muokkaa-btn" onclick="document.getElementById('car-edit-fields').style.display='flex'; this.style.display='none';"
@@ -875,7 +878,7 @@
               </label>
               <div class="select-wrapper relative w-full">
                 <select id="merkki" name="merkki" required
-                  class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
+                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
                   <option value="">Valitse merkki</option>
                   <option>Audi</option>
                   <option>BMW</option>
@@ -908,7 +911,7 @@
               </label>
               <div class="select-wrapper relative w-full">
                 <select id="malli" name="malli" required disabled
-                  class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors disabled:text-slate-300 disabled:cursor-not-allowed">
+                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors disabled:text-slate-300 disabled:cursor-not-allowed">
                   <option value="" data-i18n="details.modelPlaceholder">Valitse ensin merkki</option>
                 </select>
               </div>
@@ -920,7 +923,7 @@
                 <span data-i18n="details.trim">Mallitarkennus</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <input id="mallitarkennus" name="mallitarkennus" type="text" value="1,33 Dual VVT-i Stop &amp; Start Linea Sol Multidrive S" required
-                class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
+                class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
             </div>
 
             <!-- Vuosimalli -->
@@ -929,7 +932,7 @@
                 <span data-i18n="details.year">Vuosimalli</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <input id="vuosimalli" name="vuosimalli" type="number" min="1980" max="2025" value="2011" required
-                class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
+                class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
             </div>
 
             <!-- Polttoaine -->
@@ -939,7 +942,7 @@
               </label>
               <div class="select-wrapper relative w-full">
                 <select id="polttoaine" name="polttoaine" required
-                  class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
+                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
                   <option value="" data-i18n="details.fuelPlaceholder">Valitse polttoaine</option>
                   <option selected data-i18n="details.fuelPetrol">Bensiini</option>
                   <option data-i18n="details.fuelDiesel">Diesel</option>
@@ -962,7 +965,7 @@
               </label>
               <div class="select-wrapper relative w-full">
                 <select id="vetotapa" name="vetotapa" required
-                  class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
+                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
                   <option value="" data-i18n="details.drivetrainPlaceholder">Valitse vetotapa</option>
                   <option selected data-i18n="details.drivetrainFront">Etuveto</option>
                   <option data-i18n="details.drivetrainRear">Takaveto</option>
@@ -979,17 +982,17 @@
                 <span data-i18n="details.transmission">Vaihteisto</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <div id="vaihteisto-options" class="flex flex-col gap-2">
-                <label class="flex items-center gap-2.5 h-14 border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                   <input type="radio" name="vaihteisto" value="Manuaali" class="w-4 h-4 accent-av-blue cursor-pointer" />
-                  <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n="details.manual">Manuaali</span>
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="details.manual">Manuaali</span>
                 </label>
-                <label class="flex items-center gap-2.5 h-14 border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                   <input type="radio" name="vaihteisto" value="Automaatti" class="w-4 h-4 accent-av-blue cursor-pointer" />
-                  <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n="details.automatic">Automaatti</span>
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="details.automatic">Automaatti</span>
                 </label>
-                <label class="flex items-center gap-2.5 h-14 border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                   <input type="radio" name="vaihteisto" value="Portaaton" class="w-4 h-4 accent-av-blue cursor-pointer" />
-                  <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n="details.cvt">Portaaton</span>
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="details.cvt">Portaaton</span>
                 </label>
               </div>
             </div>
@@ -998,7 +1001,7 @@
 
           <!-- Auto yrityskäytössä -->
           <div class="flex flex-col gap-3">
-            <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.companyUse">Auto yrityskäytössä?</p>
+            <p class="font-dm font-bold text-xl text-slate-900" data-i18n="details.companyUse">Auto yrityskäytössä?</p>
             <label class="flex items-center gap-2.5 cursor-pointer">
               <input type="checkbox" id="yrityskaytto" name="yrityskaytto" />
               <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n="details.companyUseLabel">Auto on yrityskäytössä ja ALV-vähennyskelpoinen</span>
@@ -1007,11 +1010,11 @@
 
           <!-- Missä autosi sijaitsee -->
           <div class="flex flex-col gap-2">
-            <label for="sijainti" class="font-dm font-bold text-base leading-5 text-slate-900">
+            <label for="sijainti" class="font-dm font-bold text-xl text-slate-900">
               <span data-i18n="details.location">Missä autosi sijaitsee?</span> <span class="text-red-500 font-medium">*</span>
             </label>
             <input id="sijainti" name="sijainti" type="text" inputmode="numeric" maxlength="5" placeholder="Postinumero" data-i18n-placeholder="details.postalCode" required
-              class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
+              class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
           </div>
 
           <!-- Toimitusmatka — A/B test arms, switched via ?delivery= (control | v1 | v2 | cards) -->
@@ -1020,7 +1023,7 @@
                  Label uses the same size/weight as the other question labels: that fix is global,
                  shipping to all arms, so it is not a difference between control and the variants. -->
             <div id="delivery-variant-control" class="hidden flex-col gap-3">
-              <label for="delivery-control-km" class="font-dm font-bold text-base leading-5 text-slate-900">
+              <label for="delivery-control-km" class="font-dm font-medium text-base leading-none text-slate-900">
                 <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <div class="relative w-full h-4 flex items-center">
@@ -1030,7 +1033,7 @@
               </div>
               <div class="relative">
                 <input id="delivery-control-km" type="number" inputmode="numeric" min="50" max="500"
-                  class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 transition-colors" />
+                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 transition-colors" />
                 <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
               </div>
               <div class="flex items-start gap-2">
@@ -1040,12 +1043,12 @@
             </div>
             <!-- VARIANT 1: control minus the slider and minus the default value; range shown as placeholder -->
             <div id="delivery-variant-v1" class="hidden flex-col gap-3">
-              <label for="delivery-v1-km" class="font-dm font-bold text-base leading-5 text-slate-900">
+              <label for="delivery-v1-km" class="font-dm font-medium text-base leading-none text-slate-900">
                 <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <div class="relative">
                 <input id="delivery-v1-km" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
-                  class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors" />
+                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors" />
                 <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
               </div>
               <p id="delivery-v1-msg" class="av-neutral-msg" style="display:none"></p>
@@ -1056,7 +1059,7 @@
             </div>
             <!-- VARIANT 2: ±50 km steppers + fixed impact block (default) -->
             <div id="delivery-variant-stepper" class="hidden flex-col gap-3">
-              <label for="delivery-step-km" class="font-dm font-bold text-base leading-5 text-slate-900">
+              <label for="delivery-step-km" class="font-dm font-medium text-base leading-none text-slate-900">
                 <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <div class="flex items-stretch gap-2">
@@ -1065,7 +1068,7 @@
                 <div data-av-stepper="minus" class="flex-shrink-0"></div>
                 <div class="relative flex-1">
                   <input id="delivery-step-km" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
-                    class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-center text-slate-900 placeholder:text-slate-300 transition-colors" />
+                    class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-center text-slate-900 placeholder:text-slate-300 transition-colors" />
                   <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
                 </div>
                 <div data-av-stepper="plus" class="flex-shrink-0"></div>
@@ -1080,49 +1083,49 @@
             </div>
             <!-- CARDS: option cards (concept 11A) — explored, not part of the A/B test -->
             <div id="delivery-variant-cards" class="hidden flex-col gap-3">
-            <label class="font-dm font-bold text-base leading-5 text-slate-900">
+            <label class="font-dm font-bold text-xl text-slate-900">
               <span data-i18n="details.deliveryRangeCards">Voin toimittaa auton itse</span> <span class="text-red-500 font-medium">*</span>
             </label>
             <div id="delivery-options" class="flex flex-col gap-2">
-              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="toimitus" value="500" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery500">Minne vain Suomessa</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery500Desc">Eniten tarjouksia ilman noutoa – korkeampi hinta</span>
+                  <span class="block font-barlow font-semibold text-base text-black" data-i18n="details.delivery500">Minne vain Suomessa</span>
+                  <span class="block font-barlow text-sm text-black" data-i18n="details.delivery500Desc">Eniten tarjouksia ilman noutoa – korkeampi hinta</span>
                 </span>
               </label>
-              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="toimitus" value="300" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery300">Laajalti Suomessa</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery300Desc">Useimmat tarjoukset ilman noutoa</span>
+                  <span class="block font-barlow font-semibold text-base text-black" data-i18n="details.delivery300">Laajalti Suomessa</span>
+                  <span class="block font-barlow text-sm text-black" data-i18n="details.delivery300Desc">Useimmat tarjoukset ilman noutoa</span>
                 </span>
                 <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">300 km</span>
               </label>
-              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="toimitus" value="100" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery100">Oman seudun sisällä</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery100Desc">Moni liike hakee auton puolestasi</span>
+                  <span class="block font-barlow font-semibold text-base text-black" data-i18n="details.delivery100">Oman seudun sisällä</span>
+                  <span class="block font-barlow text-sm text-black" data-i18n="details.delivery100Desc">Moni liike hakee auton puolestasi</span>
                 </span>
                 <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">100 km</span>
               </label>
-              <label class="flex items-center gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="toimitus" value="50" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="flex-1">
-                  <span class="block font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.delivery50">Vain lähialueelle</span>
-                  <span class="block font-dm text-base leading-5 text-slate-900" data-i18n="details.delivery50Desc">Lähes kaikki liikkeet hakevat auton puolestasi</span>
+                  <span class="block font-barlow font-semibold text-base text-black" data-i18n="details.delivery50">Vain lähialueelle</span>
+                  <span class="block font-barlow text-sm text-black" data-i18n="details.delivery50Desc">Lähes kaikki liikkeet hakevat auton puolestasi</span>
                 </span>
                 <span class="font-dm font-medium text-sm leading-5 text-slate-900 whitespace-nowrap flex-shrink-0">50 km</span>
               </label>
-              <div id="delivery-custom-card" class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <div id="delivery-custom-card" class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <label class="flex items-center gap-2.5 cursor-pointer">
                   <input type="radio" name="toimitus" value="custom" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                  <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.deliveryOther">Muu etäisyys</span>
+                  <span class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="details.deliveryOther">Muu etäisyys</span>
                 </label>
                 <div class="relative">
                   <input id="delivery-custom-km" name="toimitus_km" type="number" inputmode="numeric" placeholder="50–500"
-                    class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
+                    class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
                   <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
                 </div>
                 <p id="delivery-msg" class="av-error-msg" style="display:none"></p>
@@ -1138,49 +1141,49 @@
 
           <!-- Kesärenkaat -->
           <div class="flex flex-col gap-2">
-            <p class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.summerTyres">Kesärenkaat</span> <span class="text-red-500 font-medium">*</span></p>
+            <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.summerTyres">Kesärenkaat</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="kesarenkaat-options" class="flex flex-col gap-2">
-              <label class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <div class="w-full h-[100px] rounded-md overflow-hidden bg-av-cream">
                   <img src="assets/tire-summer-good.png" class="w-full h-full object-cover object-center" alt="" />
                 </div>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="kesarenkaat" value="Hyvät" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
-                    <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreGood">Hyvät</p>
-                    <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreGoodDesc">Renkaissa voi olla kulumaa, mutta kulutuspintaa on hyvin jäljellä</p>
+                    <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreGood">Hyvät</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreGoodDesc">Renkaissa voi olla kulumaa, mutta kulutuspintaa on hyvin jäljellä</p>
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <div class="w-full h-[100px] rounded-md overflow-hidden bg-av-cream">
                   <img src="assets/tire-summer-fair.png" class="w-full h-full object-cover object-center" alt="" />
                 </div>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="kesarenkaat" value="Kohtalaiset" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
-                    <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreFair">Kohtalaiset</p>
-                    <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreFairDesc">Renkaissa on huomattavaa kulumaa, mutta kulutuspintaa on vielä jäljellä</p>
+                    <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreFair">Kohtalaiset</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreFairDesc">Renkaissa on huomattavaa kulumaa, mutta kulutuspintaa on vielä jäljellä</p>
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <div class="w-full h-[100px] rounded-md overflow-hidden bg-av-cream">
                   <img src="assets/tire-summer-worn.png" class="w-full h-full object-cover object-center" alt="" />
                 </div>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="kesarenkaat" value="Uusimisen tarpeessa" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
-                    <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreWorn">Uusimisen tarpeessa</p>
-                    <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreWornDesc">Renkaissa on merkittävää kulumaa ja matala kulutuspinta, mikä voi vaikuttaa turvallisuuteen</p>
+                    <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreWorn">Uusimisen tarpeessa</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreWornDesc">Renkaissa on merkittävää kulumaa ja matala kulutuspinta, mikä voi vaikuttaa turvallisuuteen</p>
                   </div>
                 </div>
               </label>
-              <label class="flex items-center gap-2.5 h-[68px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[68px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="kesarenkaat" value="Ei ole" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <div>
-                  <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreNone">Ei ole</p>
-                  <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreNoneDescSummer">Kesärenkaita ei ole ollenkaan</p>
+                  <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreNone">Ei ole</p>
+                  <p class="font-barlow text-sm text-black" data-i18n="details.tyreNoneDescSummer">Kesärenkaita ei ole ollenkaan</p>
                 </div>
               </label>
             </div>
@@ -1190,16 +1193,16 @@
                (trueFalse: rounded-l-lg + rounded-r-lg, min-w-1/2, illustration right of label).
                Hidden when kesärenkaat = "Ei ole", matching EquipmentInfo.vue:188. -->
           <div id="kesavanteet-group" class="flex flex-col gap-2">
-            <p class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.rimsWithSummer">Vanteet (kesä)</span> <span class="text-red-500 font-medium">*</span></p>
+            <p class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="details.rimsWithSummer">Vanteet (kesä)</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="kesavanteet-options" class="flex flex-row w-full">
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="kesavanteet" value="Vanteilla" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWith">Vanteilla</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWith">Vanteilla</span>
                 <img src="assets/rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="kesavanteet" value="Ilman vanteita" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWithout">Ilman vanteita</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWithout">Ilman vanteita</span>
                 <img src="assets/no-rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
             </div>
@@ -1207,49 +1210,49 @@
 
           <!-- Talvirenkaat -->
           <div class="flex flex-col gap-2">
-            <p class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.winterTyres">Talvirenkaat</span> <span class="text-red-500 font-medium">*</span></p>
+            <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.winterTyres">Talvirenkaat</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="talvirenkaat-options" class="flex flex-col gap-2">
-              <label class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <div class="w-full h-[100px] rounded-md overflow-hidden bg-[#b9e0ff]">
                   <img src="assets/tire-winter-good.png" class="w-full h-full object-cover object-center" alt="" />
                 </div>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="talvirenkaat" value="Hyvät" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
-                    <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreGood">Hyvät</p>
-                    <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreGoodDesc">Renkaissa voi olla kulumaa, mutta kulutuspintaa on hyvin jäljellä.</p>
+                    <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreGood">Hyvät</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreGoodDesc">Renkaissa voi olla kulumaa, mutta kulutuspintaa on hyvin jäljellä.</p>
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <div class="w-full h-[100px] rounded-md overflow-hidden bg-[#b9e0ff]">
                   <img src="assets/tire-winter-fair.png" class="w-full h-full object-cover object-center" alt="" />
                 </div>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="talvirenkaat" value="Kohtalaiset" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
-                    <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreFair">Kohtalaiset</p>
-                    <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreFairDesc">Renkaissa on huomattavaa kulumaa, mutta kulutuspintaa on vielä jäljellä.</p>
+                    <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreFair">Kohtalaiset</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreFairDesc">Renkaissa on huomattavaa kulumaa, mutta kulutuspintaa on vielä jäljellä.</p>
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-slate-400 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <div class="w-full h-[100px] rounded-md overflow-hidden bg-[#b9e0ff]">
                   <img src="assets/tire-summer-worn.png" class="w-full h-full object-cover object-center" alt="" />
                 </div>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="talvirenkaat" value="Uusimisen tarpeessa" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
-                    <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreWorn">Uusimisen tarpeessa</p>
-                    <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreWornDesc">Renkaissa on merkittävää kulumaa ja matala kulutuspinta, mikä voi vaikuttaa turvallisuuteen</p>
+                    <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreWorn">Uusimisen tarpeessa</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreWornDesc">Renkaissa on merkittävää kulumaa ja matala kulutuspinta, mikä voi vaikuttaa turvallisuuteen</p>
                   </div>
                 </div>
               </label>
-              <label class="flex items-center gap-2.5 h-[68px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[68px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="talvirenkaat" value="Ei ole" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <div>
-                  <p class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.tyreNone">Ei ole</p>
-                  <p class="font-dm text-base leading-5 text-slate-900" data-i18n="details.tyreNoneDescWinter">Talvirenkaita ei ole ollenkaan</p>
+                  <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreNone">Ei ole</p>
+                  <p class="font-barlow text-sm text-black" data-i18n="details.tyreNoneDescWinter">Talvirenkaita ei ole ollenkaan</p>
                 </div>
               </label>
             </div>
@@ -1258,16 +1261,16 @@
           <!-- Vanteet (talvi) — same chip pair as summer; hidden when talvirenkaat = "Ei ole"
                (mirrors EquipmentInfo.vue:222). -->
           <div id="talvivanteet-group" class="flex flex-col gap-2">
-            <p class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.rimsWithWinter">Vanteet (talvi)</span> <span class="text-red-500 font-medium">*</span></p>
+            <p class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="details.rimsWithWinter">Vanteet (talvi)</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="talvivanteet-options" class="flex flex-row w-full">
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="talvivanteet" value="Vanteilla" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWith">Vanteilla</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWith">Vanteilla</span>
                 <img src="assets/rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-slate-400 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="talvivanteet" value="Ilman vanteita" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.rimsWithout">Ilman vanteita</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWithout">Ilman vanteita</span>
                 <img src="assets/no-rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
             </div>
@@ -1275,15 +1278,15 @@
 
           <!-- Avaimet -->
           <div class="flex flex-col gap-2">
-            <p class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.keys">Avaimet</span> <span class="text-red-500 font-medium">*</span></p>
+            <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.keys">Avaimet</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="avaimet-options" class="flex flex-col gap-1.5">
-              <label class="flex items-center gap-2.5 h-[52px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[52px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="avaimet" value="Yksi" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.keysOne">Yksi</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="details.keysOne">Yksi</span>
               </label>
-              <label class="flex items-center gap-2.5 h-[52px] border border-slate-400 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[52px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
                 <input type="radio" name="avaimet" value="2 tai enemmän" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
-                <span class="font-dm font-bold text-base leading-5 text-slate-900" data-i18n="details.keysTwo">2 tai enemmän</span>
+                <span class="font-barlow font-semibold text-base text-black" data-i18n="details.keysTwo">2 tai enemmän</span>
               </label>
             </div>
           </div>
@@ -1293,7 +1296,7 @@
                Visual pattern copied from "Korjaukset ja viat" on services.html. -->
           <div class="flex flex-col gap-3">
             <div class="flex flex-col gap-1">
-              <div class="font-dm font-bold text-base leading-5 text-slate-900 flex gap-1">
+              <div class="font-dm font-bold text-xl text-slate-900 flex gap-1">
                 <span data-i18n="details.accessoriesLabel">Varustelu</span>
               </div>
               <div class="flex items-start gap-2">
@@ -1304,7 +1307,7 @@
             <div class="relative w-full">
               <textarea id="varustelu" name="varustelu" maxlength="1500" rows="6"
                 placeholder="Vetokoukku, lasikatto, ratinlämmitin, mobiiliyhteys..." data-i18n-placeholder="details.accessoriesPlaceholder"
-                class="w-full border border-slate-400 rounded-lg bg-white px-3 pt-2.5 pb-8 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors resize-y min-h-[150px]"></textarea>
+                class="w-full border border-gray-500 rounded-lg bg-white px-3 pt-2.5 pb-8 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors resize-y min-h-[150px]"></textarea>
               <div class="absolute bottom-2 right-3 flex items-center gap-1 pointer-events-none">
                 <span id="varustelu-count" class="font-dm text-xs leading-[14px] text-slate-600">0/1500</span>
                 <img src="assets/f04530ef-8002-4d64-9b8d-430e507bf370.svg" class="w-2.5 h-2.5 opacity-40" alt="" />
