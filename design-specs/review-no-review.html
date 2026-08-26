@@ -462,7 +462,7 @@
           <li><b><code>dac7.step2Title/Body</code></b>, which promised the review call on a page that has no next-steps component.</li>
           <li><b>Still alive on purpose:</b> the whole <code>nextSteps.*</code> namespace, since the price step renders it in <code>control</code>. It goes when <code>v1</code> promotes — the lifecycle note below already says so.</li>
         </ul>
-        <p class="font-dm text-sm leading-6 text-slate-700 mt-3"><b>Found while doing it, out of scope:</b> the <code>success</code> namespace contained duplicate <code>step1Title</code>/<code>step1Body</code> keys, where the later pair silently won — resolved by the deletion. And <code>dac7.html</code> has no <code>data-i18n</code> at all, so its remaining ~30 keys are dead too; that is a bigger cleanup than this initiative should make quietly.</p>
+        <p class="font-dm text-sm leading-6 text-slate-700 mt-3"><b>Found while doing it:</b> the <code>success</code> namespace contained duplicate <code>step1Title</code>/<code>step1Body</code> keys, where the later pair silently won — resolved by the deletion. And <code>dac7.html</code> had no <code>data-i18n</code> at all, so its whole namespace was unreachable; that page is now wired (23 attributes, including its placeholders and its submit-time validation message) and its own dead keys — a completed screen and a next-steps list it does not have — are gone. Where a never-rendered key disagreed with what the page had been showing, the page won.</p>
       </div>
       </div>
     </section>

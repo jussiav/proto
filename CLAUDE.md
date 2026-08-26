@@ -348,8 +348,13 @@ page badge and card badge agree. Change 5 deleted the copy that promised the cal
 and rendered nowhere — the old `success` confirmation set (including a stale
 duplicate of the price step's next-steps list, and a duplicate `step1*` pair that
 silently shadowed itself) plus `dac7.step2*`, 53 lines across both languages.
-`nextSteps.*` stays until `v1` promotes. Noted while there, deliberately left
-alone: `dac7.html` has no `data-i18n` at all, so its remaining keys are dead too.
+`nextSteps.*` stays until `v1` promotes. `dac7.html`, which had no `data-i18n` at all,
+is now wired to its namespace — 23 attributes covering headings, field labels,
+placeholders, the FAQ bodies and the submit-time "Täytä tämä kenttä" message,
+which the page's own handler now reads through `t()`. Its dead keys went with it
+(a completed screen and a next-steps list the page does not have), and where a
+never-rendered key disagreed with the copy the page was actually showing, the
+page won: `pageTitle`, `intro2` and `submitBtn`.
 
 Change 2 takes the promise out of the **contact step's submit button**:
 prod's `personal_info.submit` reads "Lähetä tarkastukseen" with no `can_review`
