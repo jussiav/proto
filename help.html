@@ -48,6 +48,7 @@
        definition; must follow the config block above, which it merges into. -->
   <script src="tw-tokens.js"></script>
   <script src="translations.js"></script>
+  <script src="faq-content.js"></script>
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
@@ -191,400 +192,9 @@
           <p class="font-dm text-slate-500 text-xl text-center leading-6" data-i18n="help.faqHeader.subtitle">Selaa aiheittain tai hae vastausta yllä olevalla hakukentällä.</p>
         </div>
 
-        <!-- Group 1: Yleiset kysymykset palvelusta -->
-        <div id="faq-g1" class="faq-group bg-white rounded-3xl border border-slate-200 overflow-hidden">
-          <button class="group-toggle w-full flex items-center justify-between gap-4 px-6 pt-5 pb-4 text-left hover:bg-slate-50 transition-colors" aria-expanded="false">
-            <h2 class="font-barlow font-bold text-slate-900 text-lg leading-tight md:text-xl" data-i18n="help.g1.title">Yleiset kysymykset palvelusta</h2>
-            <svg class="group-chevron w-6 h-6 text-av-blue flex-shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
-          </button>
-          <div class="group-body"><div>
-          <div class="divide-y divide-slate-100">
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miksi auton myynti AutoVexin kautta kannattaa?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">AutoVex on suomalainen kilpailutuspalvelu, jossa autoliikkeet kilpailevat tarjouksista. Etuja ovat vaivattomuus (myy kotisohvalta), paras tarjous kilpailun kautta sekä luotettavuus — sadat tunnetut liikkeet ja yli 70 000 myytyä autoa. Palvelu on myyjälle täysin ilmainen.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miten myyntiprosessi etenee?</span>
-              </button>
-              <div class="faq-body"><div>
-                <ol class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5 list-decimal list-inside space-y-1">
-                  <li>Ilmoituksen luominen — perustiedot haetaan automaattisesti rekisterinumerosta</li>
-                  <li>Asiantuntijan puhelinsoitto (n. 5 min)</li>
-                  <li>Tarjouskilpailu (tyypillisesti 36 tuntia)</li>
-                  <li>Päätöksenteko</li>
-                  <li>Kaupat ostavan liikkeen kanssa</li>
-                </ol>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Onko AutoVex ilmainen palvelu?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Kyllä, täysin ilmainen myyjälle. Autoliikkeet maksavat välityspalkkion toteutuneista kaupoista.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Sitoudunko myymään autoni?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Ei. Tarjouspyyntö ei velvoita myyntiin. Sinulla on 24 tuntia hyväksyä tarjous — sen jälkeen se raukeaa automaattisesti.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Mitkä autoliikkeet ovat mukana palvelussa?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Mukana ovat kaikki suurimmat autoliikeketjut sekä satoja keskisuuria ja paikallisia autoliikkeitä ympäri Suomea.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Kuinka vanhoja autoja palvelussa voi myydä?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Alle 250 000 km ajettuja autoja. Ikärajaa ei ole, mutta suurin kiinnostus kohdistuu alle 10 vuotta vanhoihin ja alle 150 000 km ajettuihin autoihin.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miten AutoVexiin saa yhteyden?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Sähköpostitse: <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>. Palvelu arkisin klo 10–16. Asiakaspalvelu auttaa koko prosessin ajan.</p>
-              </div></div>
-            </div>
-
-          </div>
-          </div></div>
-        </div>
-
-        <!-- Group 2: Ennen auton myyntiä -->
-        <div id="faq-g2" class="faq-group bg-white rounded-3xl border border-slate-200 overflow-hidden">
-          <button class="group-toggle w-full flex items-center justify-between gap-4 px-6 pt-5 pb-4 text-left hover:bg-slate-50 transition-colors" aria-expanded="false">
-            <h2 class="font-barlow font-bold text-slate-900 text-lg leading-tight md:text-xl" data-i18n="help.g2.title">Ennen auton myyntiä</h2>
-            <svg class="group-chevron w-6 h-6 text-av-blue flex-shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
-          </button>
-          <div class="group-body"><div>
-          <div class="divide-y divide-slate-100">
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miten tiedän autoni arvon?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Asiantuntija antaa henkilökohtaisen konsultaation puhelimitse auton markkina-arvosta ennen kilpailutuksen käynnistymistä.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Autossani on vikoja, voinko silti myydä sen?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Kyllä. On erittäin tärkeää kertoa kaikki viat, kolhut, puutteet ja korjaukset rehellisesti. Lisää selkeät kuvat vaurioista ja huoltokirjan merkinnöistä.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Voinko myydä auton toisen puolesta?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Kyllä, ilman erillisiä valtuutuksia. Luovutuksessa ostaja varmistaa myyjän oikeuden: omistaja joko tekee valtakirjan tai on paikalla.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Voinko myydä autoa samanaikaisesti muualla?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Voit, mutta sitä ei suositella. Rinnakkainen myynti vähentää kilpailua ja voi vaikuttaa negatiivisesti lopputulokseen.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Olen vaihtamassa autoa, voinko käyttää AutoVexiä?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Ehdottomasti. Usein teet paremmat kaupat myymällä ensin nykyisen autosi parhaaseen markkinahintaan ja ostamalla uuden käteiskaupalla.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Haittaako auton loppuvelka myyntiä?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Ei. Kaupan yhteydessä rahoitusyhtiön velka maksetaan pois ja erotus tilitetään sinulle tai veloitetaan sinulta.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Voiko yritys myydä auton?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Kyllä, kunhan yrityksen toimiala ei ole henkilöautojen vähittäiskauppa. Merkitse tarvittaessa auto ALV-vähennyskelpoiseksi.</p>
-              </div></div>
-            </div>
-
-          </div>
-          </div></div>
-        </div>
-
-        <!-- Group 3: Myynti-ilmoituksen tekeminen -->
-        <div id="faq-g3" class="faq-group bg-white rounded-3xl border border-slate-200 overflow-hidden">
-          <button class="group-toggle w-full flex items-center justify-between gap-4 px-6 pt-5 pb-4 text-left hover:bg-slate-50 transition-colors" aria-expanded="false">
-            <h2 class="font-barlow font-bold text-slate-900 text-lg leading-tight md:text-xl" data-i18n="help.g3.title">Myynti-ilmoituksen tekeminen</h2>
-            <svg class="group-chevron w-6 h-6 text-av-blue flex-shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
-          </button>
-          <div class="group-body"><div>
-          <div class="divide-y divide-slate-100">
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Mitä tietoja tarvitsen autoni myyntiä varten?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Perustiedot haetaan automaattisesti rekisterinumerosta. Lisäksi tarvitaan: ajokilometrit, huoltohistoria, varusteet, mahdolliset viat, renkaiden kunto sekä kattavat kuvat sisältä ja ulkoa.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Millaiset kuvat otan autostani?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Ota selkeät kuvat ulkoa (kaikki kulmat, puskurit, sivut) ja sisältä (kojelauta, keskikonsoli, penkit). Kuvaa renkaat, huoltokirja ja mahdolliset vauriot lähikuvina. Autoa ei tarvitse pestä.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Voinko uusia aikaisemman ilmoituksen?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Kyllä. Ota yhteyttä <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>, niin asiakaspalvelu auttaa kilpailutuksen käynnistämisessä.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Lomakkeen täyttäminen ei onnistu</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Kokeile: 1) vaihda selain (Chrome toimii parhaiten), 2) käytä yksityistä selaustilaa. Jos ongelma jatkuu, ota yhteyttä <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Kuvien tallentaminen tai lisääminen ei onnistu</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Vähintään viisi kuvaa vaaditaan. Jos lataaminen ei onnistu, ota yhteyttä <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miten saan autoliikkeet kiinnostumaan autostani?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Laadi kattava, selkeä ilmoitus. Lisää kuvat sisältä ja ulkoa, kuvaa vauriot avoimesti, liitä huoltohistoria ja aseta realistinen pyyntihinta.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miksi ilmoitukseni on tarkistuksessa?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">AutoVex varmistaa parhaan hinnan. Asiantuntija soittaa ja käy läpi ajokilometrit, varusteet, huoltohistorian, renkaiden kunnon sekä mahdolliset viat (n. 5 min). Samalla käydään läpi hinta-arvio.</p>
-              </div></div>
-            </div>
-
-          </div>
-          </div></div>
-        </div>
-
-        <!-- Group 4: Kilpailutus ja tarjoukset -->
-        <div id="faq-g4" class="faq-group bg-white rounded-3xl border border-slate-200 overflow-hidden">
-          <button class="group-toggle w-full flex items-center justify-between gap-4 px-6 pt-5 pb-4 text-left hover:bg-slate-50 transition-colors" aria-expanded="false">
-            <h2 class="font-barlow font-bold text-slate-900 text-lg leading-tight md:text-xl" data-i18n="help.g4.title">Kilpailutus ja tarjoukset</h2>
-            <svg class="group-chevron w-6 h-6 text-av-blue flex-shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
-          </button>
-          <div class="group-body"><div>
-          <div class="divide-y divide-slate-100">
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miten kilpailutus toimii?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Kun julkaiset tarjouspyynnön, sadat luotettavat autoliikkeet näkevät autosi tiedot ja voivat tehdä tarjouksia noin 36 tunnin ajan. Liikkeet kilpailevat keskenään ja saat sähköpostipäivityksiä. Kilpailutuksen päätyttyä näet parhaan tarjouksen.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Kuinka kauan kilpailutus kestää?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Tarjouskilpailun kesto on tyypillisesti 36 tuntia. Sinulla on sen jälkeen 24 tuntia hyväksyä tarjous tai tehdä vastatarjous.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Näenkö tarjoukset kilpailutuksen aikana?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Voit seurata tehtyjen tarjousten ja tarjoajien määrää reaaliajassa. Kilpailutuksen päätyttyä näet parhaan tarjouksen ja mahdollisesti vaihtoehtoisen tarjouksen kotinoudolle.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miksi tarjousten määrä on korkeampi kuin tarjoajien?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Palvelu toimii huutokauppaperiaatteella — sama autoliike voi tehdä useita korotuksia. Tarjouskilpailun päätyttyä näet korkeimman tarjouksen.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Mitä jos en ole tyytyväinen korkeimpaan tarjoukseen?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Sinun ei tarvitse myydä. Suosittelemme tekemään vastatarjouksen korkeimmalle tarjoajalle — tätä kautta päästään usein kauppoihin.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Autoliike ei reagoi vastatarjoukseeni</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Autoliikkeet reagoivat yleensä noin yhden arkipäivän kuluessa. Jos ei vastausta, ota yhteyttä <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Tarjous on päässyt vanhentumaan. Pitääkö kilpailuttaa uudelleen?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Ota yhteyttä <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>. Asiakaspalvelu voi ottaa yhteyttä tarjouksen tehneeseen liikkeeseen tai käynnistää uuden kilpailutuksen.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Mitä tapahtuu, kun hyväksyn tarjouksen?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Autoliike ottaa sinuun yhteyttä noin yhden arkipäivän kuluessa ja sovitte luovutuksesta: aikataulu, paikka, ostosopimus, maksu ja loppuvelan lunastaminen.</p>
-              </div></div>
-            </div>
-
-          </div>
-          </div></div>
-        </div>
-
-        <!-- Group 5: Kaupan toteutuminen -->
-        <div id="faq-g5" class="faq-group bg-white rounded-3xl border border-slate-200 overflow-hidden">
-          <button class="group-toggle w-full flex items-center justify-between gap-4 px-6 pt-5 pb-4 text-left hover:bg-slate-50 transition-colors" aria-expanded="false">
-            <h2 class="font-barlow font-bold text-slate-900 text-lg leading-tight md:text-xl" data-i18n="help.g5.title">Kaupan toteutuminen</h2>
-            <svg class="group-chevron w-6 h-6 text-av-blue flex-shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5 8 10 13 15 8"/></svg>
-          </button>
-          <div class="group-body"><div>
-          <div class="divide-y divide-slate-100">
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Minulla on rahoitusta jäljellä autostani, miten toimin?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Autoliike maksaa loppuvelan suoraan rahoitusyhtiölle kaupan yhteydessä. Jos velka ylittää tarjouksen, maksat erotuksen. Jos tarjous ylittää velan, saat ylimenevän osuuden.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Milloin autoliike on minuun yhteydessä?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Yleensä arkipäivän kuluessa hyväksynnästä — tavallisesti puhelimitse. Viikonloppuisin yhteydenotto voi siirtyä seuraavalle arkipäivälle. Jos et kuule muutamaan arkipäivään, ota yhteyttä <a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miten auton luovutus tapahtuu?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Autoliike ottaa yhteyttä ja sovitte luovutuksesta yhdessä. Sovittu etäisyys näkyy tarjouksella, mutta liike voi myös noutaa auton kotipihaltasi. Luovutuksessa liike hoitaa paperityöt ja siirtää rahat.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miten saan maksun myymästäni autosta?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Ostava autoliike hoitaa maksu- ja paperiasiat. Saat maksun sovitusti tilillesi kun luovutus on tehty.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Voiko autoliike perua kaupat?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Liike voi perua, jos autossa ilmenee merkittäviä vikoja joita ei ilmoitettu. Tämä on harvinaista. Rehellinen kuvaus autosta on tärkeä.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Miksi minulta kysytään henkilötietoja kaupan jälkeen?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">EU:n DAC7-verodirektiivin vuoksi. Direktiivi velvoittaa verkkoalustoja ilmoittamaan tietyt tiedot asiakkaidensa myynneistä veroviranomaisille. Tiedot kerätään lakisääteisen velvoitteen täyttämiseksi.</p>
-              </div></div>
-            </div>
-
-            <div class="faq-item">
-              <button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">
-                <span>Kenen tulee täyttää DAC7-lomake?</span>
-              </button>
-              <div class="faq-body"><div>
-                <p class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5">Lomake täytetään sen henkilön tiedoilla, joka on luonut myynti-ilmoituksen palveluumme — tämä voi olla eri henkilö kuin auton omistaja.</p>
-              </div></div>
-            </div>
-
-          </div>
-          </div></div>
-        </div>
+        <!-- Groups are rendered from faq-content.js (the production CMS entry),
+             so the copy lives in one place per language instead of in markup. -->
+        <div id="faq-groups" class="flex flex-col gap-8"></div>
 
         <!-- Tertiary contact -->
         <div class="flex flex-col items-center gap-4 pt-8 text-center">
@@ -612,122 +222,83 @@
     var AH = function(text) { return { q: text[0], a: text[1], html: true }; };
     var EM = '<a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>';
 
-    var helpFaqData = {
-      fi: {
-        g1: [
-          A(['Miksi auton myynti AutoVexin kautta kannattaa?', 'AutoVex on suomalainen kilpailutuspalvelu, jossa autoliikkeet kilpailevat tarjouksista. Etuja ovat vaivattomuus (myy kotisohvalta), paras tarjous kilpailun kautta sekä luotettavuus — sadat tunnetut liikkeet ja yli 70 000 myytyä autoa. Palvelu on myyjälle täysin ilmainen.']),
-          AH(['Miten myyntiprosessi etenee?', '<li>Ilmoituksen luominen — perustiedot haetaan automaattisesti rekisterinumerosta</li><li>Asiantuntijan puhelinsoitto (n. 5 min)</li><li>Tarjouskilpailu (tyypillisesti 36 tuntia)</li><li>Päätöksenteko</li><li>Kaupat ostavan liikkeen kanssa</li>']),
-          A(['Onko AutoVex ilmainen palvelu?', 'Kyllä, täysin ilmainen myyjälle. Autoliikkeet maksavat välityspalkkion toteutuneista kaupoista.']),
-          A(['Sitoudunko myymään autoni?', 'Ei. Tarjouspyyntö ei velvoita myyntiin. Sinulla on 24 tuntia hyväksyä tarjous — sen jälkeen se raukeaa automaattisesti.']),
-          A(['Mitkä autoliikkeet ovat mukana palvelussa?', 'Mukana ovat kaikki suurimmat autoliikeketjut sekä satoja keskisuuria ja paikallisia autoliikkeitä ympäri Suomea.']),
-          A(['Kuinka vanhoja autoja palvelussa voi myydä?', 'Alle 250 000 km ajettuja autoja. Ikärajaa ei ole, mutta suurin kiinnostus kohdistuu alle 10 vuotta vanhoihin ja alle 150 000 km ajettuihin autoihin.']),
-          AH(['Miten AutoVexiin saa yhteyden?', 'Sähköpostitse: ' + EM + '. Palvelu arkisin klo 10–16. Asiakaspalvelu auttaa koko prosessin ajan.'])
-        ],
-        g2: [
-          A(['Miten tiedän autoni arvon?', 'Asiantuntija antaa henkilökohtaisen konsultaation puhelimitse auton markkina-arvosta ennen kilpailutuksen käynnistymistä.']),
-          A(['Autossani on vikoja, voinko silti myydä sen?', 'Kyllä. On erittäin tärkeää kertoa kaikki viat, kolhut, puutteet ja korjaukset rehellisesti. Lisää selkeät kuvat vaurioista ja huoltokirjan merkinnöistä.']),
-          A(['Voinko myydä auton toisen puolesta?', 'Kyllä, ilman erillisiä valtuutuksia. Luovutuksessa ostaja varmistaa myyjän oikeuden: omistaja joko tekee valtakirjan tai on paikalla.']),
-          A(['Voinko myydä autoa samanaikaisesti muualla?', 'Voit, mutta sitä ei suositella. Rinnakkainen myynti vähentää kilpailua ja voi vaikuttaa negatiivisesti lopputulokseen.']),
-          A(['Olen vaihtamassa autoa, voinko käyttää AutoVexiä?', 'Ehdottomasti. Usein teet paremmat kaupat myymällä ensin nykyisen autosi parhaaseen markkinahintaan ja ostamalla uuden käteiskaupalla.']),
-          A(['Haittaako auton loppuvelka myyntiä?', 'Ei. Kaupan yhteydessä rahoitusyhtiön velka maksetaan pois ja erotus tilitetään sinulle tai veloitetaan sinulta.']),
-          A(['Voiko yritys myydä auton?', 'Kyllä, kunhan yrityksen toimiala ei ole henkilöautojen vähittäiskauppa. Merkitse tarvittaessa auto ALV-vähennyskelpoiseksi.'])
-        ],
-        g3: [
-          A(['Mitä tietoja tarvitsen autoni myyntiä varten?', 'Perustiedot haetaan automaattisesti rekisterinumerosta. Lisäksi tarvitaan: ajokilometrit, huoltohistoria, varusteet, mahdolliset viat, renkaiden kunto sekä kattavat kuvat sisältä ja ulkoa.']),
-          A(['Millaiset kuvat otan autostani?', 'Ota selkeät kuvat ulkoa (kaikki kulmat, puskurit, sivut) ja sisältä (kojelauta, keskikonsoli, penkit). Kuvaa renkaat, huoltokirja ja mahdolliset vauriot lähikuvina. Autoa ei tarvitse pestä.']),
-          AH(['Voinko uusia aikaisemman ilmoituksen?', 'Kyllä. Ota yhteyttä ' + EM + ', niin asiakaspalvelu auttaa kilpailutuksen käynnistämisessä.']),
-          AH(['Lomakkeen täyttäminen ei onnistu', 'Kokeile: 1) vaihda selain (Chrome toimii parhaiten), 2) käytä yksityistä selaustilaa. Jos ongelma jatkuu, ota yhteyttä ' + EM + '.']),
-          AH(['Kuvien tallentaminen tai lisääminen ei onnistu', 'Vähintään viisi kuvaa vaaditaan. Jos lataaminen ei onnistu, ota yhteyttä ' + EM + '.']),
-          A(['Miten saan autoliikkeet kiinnostumaan autostani?', 'Laadi kattava, selkeä ilmoitus. Lisää kuvat sisältä ja ulkoa, kuvaa vauriot avoimesti, liitä huoltohistoria ja aseta realistinen pyyntihinta.']),
-          A(['Miksi ilmoitukseni on tarkistuksessa?', 'AutoVex varmistaa parhaan hinnan. Asiantuntija soittaa ja käy läpi ajokilometrit, varusteet, huoltohistorian, renkaiden kunnon sekä mahdolliset viat (n. 5 min). Samalla käydään läpi hinta-arvio.'])
-        ],
-        g4: [
-          A(['Miten kilpailutus toimii?', 'Kun julkaiset tarjouspyynnön, sadat luotettavat autoliikkeet näkevät autosi tiedot ja voivat tehdä tarjouksia noin 36 tunnin ajan. Liikkeet kilpailevat keskenään ja saat sähköpostipäivityksiä. Kilpailutuksen päätyttyä näet parhaan tarjouksen.']),
-          A(['Kuinka kauan kilpailutus kestää?', 'Tarjouskilpailun kesto on tyypillisesti 36 tuntia. Sinulla on sen jälkeen 24 tuntia hyväksyä tarjous tai tehdä vastatarjous.']),
-          A(['Näenkö tarjoukset kilpailutuksen aikana?', 'Voit seurata tehtyjen tarjousten ja tarjoajien määrää reaaliajassa. Kilpailutuksen päätyttyä näet parhaan tarjouksen ja mahdollisesti vaihtoehtoisen tarjouksen kotinoudolle.']),
-          A(['Miksi tarjousten määrä on korkeampi kuin tarjoajien?', 'Palvelu toimii huutokauppaperiaatteella — sama autoliike voi tehdä useita korotuksia. Tarjouskilpailun päätyttyä näet korkeimman tarjouksen.']),
-          A(['Mitä jos en ole tyytyväinen korkeimpaan tarjoukseen?', 'Sinun ei tarvitse myydä. Suosittelemme tekemään vastatarjouksen korkeimmalle tarjoajalle — tätä kautta päästään usein kauppoihin.']),
-          AH(['Autoliike ei reagoi vastatarjoukseeni', 'Autoliikkeet reagoivat yleensä noin yhden arkipäivän kuluessa. Jos ei vastausta, ota yhteyttä ' + EM + '.']),
-          AH(['Tarjous on päässyt vanhentumaan. Pitääkö kilpailuttaa uudelleen?', 'Ota yhteyttä ' + EM + '. Asiakaspalvelu voi ottaa yhteyttä tarjouksen tehneeseen liikkeeseen tai käynnistää uuden kilpailutuksen.']),
-          A(['Mitä tapahtuu, kun hyväksyn tarjouksen?', 'Autoliike ottaa sinuun yhteyttä noin yhden arkipäivän kuluessa ja sovitte luovutuksesta: aikataulu, paikka, ostosopimus, maksu ja loppuvelan lunastaminen.'])
-        ],
-        g5: [
-          A(['Minulla on rahoitusta jäljellä autostani, miten toimin?', 'Autoliike maksaa loppuvelan suoraan rahoitusyhtiölle kaupan yhteydessä. Jos velka ylittää tarjouksen, maksat erotuksen. Jos tarjous ylittää velan, saat ylimenevän osuuden.']),
-          AH(['Milloin autoliike on minuun yhteydessä?', 'Yleensä arkipäivän kuluessa hyväksynnästä — tavallisesti puhelimitse. Viikonloppuisin yhteydenotto voi siirtyä seuraavalle arkipäivälle. Jos et kuule muutamaan arkipäivään, ota yhteyttä ' + EM + '.']),
-          A(['Miten auton luovutus tapahtuu?', 'Autoliike ottaa yhteyttä ja sovitte luovutuksesta yhdessä. Sovittu etäisyys näkyy tarjouksella, mutta liike voi myös noutaa auton kotipihaltasi. Luovutuksessa liike hoitaa paperityöt ja siirtää rahat.']),
-          A(['Miten saan maksun myymästäni autosta?', 'Ostava autoliike hoitaa maksu- ja paperiasiat. Saat maksun sovitusti tilillesi kun luovutus on tehty.']),
-          A(['Voiko autoliike perua kaupat?', 'Liike voi perua, jos autossa ilmenee merkittäviä vikoja joita ei ilmoitettu. Tämä on harvinaista. Rehellinen kuvaus autosta on tärkeä.']),
-          A(['Miksi minulta kysytään henkilötietoja kaupan jälkeen?', 'EU:n DAC7-verodirektiivin vuoksi. Direktiivi velvoittaa verkkoalustoja ilmoittamaan tietyt tiedot asiakkaidensa myynneistä veroviranomaisille. Tiedot kerätään lakisääteisen velvoitteen täyttämiseksi.']),
-          A(['Kenen tulee täyttää DAC7-lomake?', 'Lomake täytetään sen henkilön tiedoilla, joka on luonut myynti-ilmoituksen palveluumme — tämä voi olla eri henkilö kuin auton omistaja.'])
-        ]
-      },
-      en: {
-        g1: [
-          A(['Why sell a car through AutoVex?', 'AutoVex is a Finnish bidding service where dealerships compete for your car. Benefits include convenience (sell from your sofa), the best offer through competition, and reliability — hundreds of well-known dealerships and over 70,000 cars sold. The service is completely free for sellers.']),
-          AH(['How does the selling process work?', '<li>Create a listing — basic details fetched automatically from the registration number</li><li>Expert phone call (~5 min)</li><li>Bidding period (typically 36 hours)</li><li>Decision</li><li>Sale with the buying dealership</li>']),
-          A(['Is AutoVex a free service?', 'Yes, completely free for the seller. Dealerships pay a commission on completed sales.']),
-          A(['Do I commit to selling my car?', 'No. A bid request does not obligate you to sell. You have 24 hours to accept an offer — after that it expires automatically.']),
-          A(['Which dealerships participate?', 'All the largest dealership chains participate, along with hundreds of medium-sized and local dealerships across Finland.']),
-          A(['How old can a car be to sell through the service?', 'Cars with under 250,000 km. There is no age limit, but the greatest interest is in cars less than 10 years old and under 150,000 km.']),
-          AH(['How can I contact AutoVex?', 'By email: ' + EM + '. Available on weekdays 10am–4pm. Customer service assists throughout the process.'])
-        ],
-        g2: [
-          A(['How do I know my car\'s value?', 'An expert provides a personal phone consultation about the car\'s market value before the bidding starts.']),
-          A(['My car has defects — can I still sell it?', 'Yes. It\'s very important to honestly disclose all defects, dents, issues and repairs. Add clear photos of any damage and service history entries.']),
-          A(['Can I sell a car on someone else\'s behalf?', 'Yes, without any separate authorisation. At handover, the buyer confirms the seller\'s right: the owner either provides a power of attorney or is present.']),
-          A(['Can I sell the car elsewhere at the same time?', 'You can, but it\'s not recommended. Parallel selling reduces competition and can negatively affect the outcome.']),
-          A(['I\'m changing cars — can I use AutoVex?', 'Absolutely. You often get a better deal by first selling your current car at the best market price and buying the new one with cash.']),
-          A(['Does outstanding finance affect selling the car?', 'No. At the time of sale, the finance debt is paid off and the difference is transferred to you or charged to you.']),
-          A(['Can a company sell a car?', 'Yes, as long as the company\'s line of business is not the retail sale of passenger cars. Mark the car as VAT-deductible if applicable.'])
-        ],
-        g3: [
-          A(['What information do I need to sell my car?', 'Basic details are fetched automatically from the registration number. You\'ll also need: mileage, service history, features, any defects, tyre condition and comprehensive photos inside and out.']),
-          A(['What photos should I take of my car?', 'Take clear photos from outside (all angles, bumpers, sides) and inside (dashboard, centre console, seats). Photograph the tyres, service book and any damage up close. The car doesn\'t need to be washed.']),
-          AH(['Can I renew a previous listing?', 'Yes. Contact ' + EM + ' and customer service will help restart the bidding.']),
-          AH(['The form doesn\'t work', 'Try: 1) switch browser (Chrome works best), 2) use private browsing mode. If the problem continues, contact ' + EM + '.']),
-          AH(['Uploading photos doesn\'t work', 'A minimum of five photos is required. If uploading fails, contact ' + EM + '.']),
-          A(['How do I get dealerships interested in my car?', 'Create a comprehensive, clear listing. Add photos inside and out, document damage openly, include service history and set a realistic asking price.']),
-          A(['Why is my listing under review?', 'AutoVex ensures the best price. An expert calls to verify the mileage, features, service history, tyre condition and any defects (~5 min). The price estimate is also discussed.'])
-        ],
-        g4: [
-          A(['How does the bidding work?', 'When you publish a bid request, hundreds of reliable dealerships see your car\'s details and can make offers for approximately 36 hours. Dealerships compete and you receive email updates. Once bidding ends, you see the best offer.']),
-          A(['How long does the bidding last?', 'The bidding period is typically 36 hours. After that, you have 24 hours to accept the offer or make a counter-offer.']),
-          A(['Can I see the offers during the bidding?', 'You can follow the number of offers and bidders in real time. Once bidding ends, you see the best offer and possibly an alternative offer for home collection.']),
-          A(['Why is the number of offers higher than bidders?', 'The service works on auction principles — the same dealership can make several raises. Once bidding ends, you see the highest offer.']),
-          A(['What if I\'m not happy with the highest offer?', 'You don\'t have to sell. We recommend making a counter-offer to the highest bidder — this often leads to a deal.']),
-          AH(['The dealership isn\'t responding to my counter-offer', 'Dealerships usually respond within one working day. If there\'s no response, contact ' + EM + '.']),
-          AH(['An offer has expired. Do I need to bid again?', 'Contact ' + EM + '. Customer service can reach out to the dealership that made the offer or start a new bidding round.']),
-          A(['What happens when I accept an offer?', 'The dealership will contact you within approximately one working day and you\'ll agree on the handover: schedule, location, purchase contract, payment and settlement of any outstanding finance.'])
-        ],
-        g5: [
-          A(['I have outstanding finance — what should I do?', 'The dealership pays the remaining debt directly to the finance company at the time of sale. If the debt exceeds the offer, you pay the difference. If the offer exceeds the debt, you receive the surplus.']),
-          AH(['When will the dealership contact me?', 'Usually within one working day of acceptance — typically by phone. Over weekends it may move to the next working day. If you haven\'t heard in a few working days, contact ' + EM + '.']),
-          A(['How does the handover work?', 'The dealership gets in touch and you agree on the handover together. The agreed distance is shown on the offer, but the dealership can also collect from your home. At handover, the dealership handles the paperwork and transfers the money.']),
-          A(['How do I receive payment for my car?', 'The buying dealership handles all payment and paperwork. You receive payment as agreed into your account when the handover is complete.']),
-          A(['Can the dealership cancel the deal?', 'The dealership can cancel if significant undisclosed defects are found. This is rare. An honest description of the car is important.']),
-          A(['Why am I asked for personal details after the sale?', 'Due to the EU\'s DAC7 tax directive. The directive requires online platforms to report certain details about customers\' sales to tax authorities. Data is collected to fulfil a statutory obligation.']),
-          A(['Who should fill in the DAC7 form?', 'The form is completed with the details of the person who created the listing — this may be a different person from the car\'s owner.'])
-        ]
+    
+    /* The whole FAQ — groups and items — is built from the shared content, so the
+       set of questions follows the CMS entry rather than the markup. Group cards
+       keep the same classes the collapse and accordion handlers expect; both are
+       (re)bound after every render. */
+    /* ── "Review/No review" initiative ────────────────────────────────────────
+       Change 4: five of these items present the review call as something every
+       seller gets. The v1 arm shows the revised copy; control keeps the current
+       CMS text, so the two read side by side. In production there is no arm — the
+       CMS entry is edited when the change ships. */
+    var REVIEW_NO_REVIEW_ARM = (function () {
+      var ARMS = ['control', 'v1'];
+      var arm = window.protoVariant ? window.protoVariant('review-no-review', 'control') : 'control';
+      if (ARMS.indexOf(arm) === -1) {
+        if (window.protoVariantSet) window.protoVariantSet('review-no-review', null);
+        return 'control';
       }
-    };
+      return arm;
+    }());
 
-    function applyHelpFaqTranslations(lang) {
-      var data = helpFaqData[lang] || helpFaqData['fi'];
-      ['g1','g2','g3','g4','g5'].forEach(function(g) {
-        var groupEl = document.getElementById('faq-' + g);
-        if (!groupEl || !data[g]) return;
-        var items = groupEl.querySelectorAll('.faq-item');
-        data[g].forEach(function(item, i) {
-          var el = items[i];
-          if (!el) return;
-          var qEl = el.querySelector('.faq-trigger span');
-          var aEl = el.querySelector('.faq-body > div > *');
-          if (qEl) qEl.textContent = item.q;
-          if (aEl) {
-            if (item.html) aEl.innerHTML = item.a;
-            else aEl.textContent = item.a;
-          }
+    function renderHelpFaq() {
+      var host = document.getElementById('faq-groups');
+      if (!host) return;
+      var set = (window.FAQ_CONTENT && window.FAQ_CONTENT.support) || { fi: [], en: [] };
+      var groups = set[window.getLang ? getLang() : 'fi'] || set.fi;
+      var armAnswer = function (item) {
+        return (REVIEW_NO_REVIEW_ARM === 'v1' && item.v1) ? item.v1 : item.a;
+      };
+      host.innerHTML = groups.map(function (group, gi) {
+        var items = group.items.map(function () {
+          return '<div class="faq-item">' +
+            '<button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 hover:bg-slate-50 transition-colors" aria-expanded="false">' +
+              '<span></span>' +
+              '<svg class="w-5 h-5 text-av-blue flex-shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>' +
+            '</button>' +
+            '<div class="faq-body"><div>' +
+              '<div class="px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5 space-y-2"></div>' +
+            '</div></div>' +
+          '</div>';
+        }).join('');
+        return '<div id="faq-g' + (gi + 1) + '" class="faq-group bg-white rounded-3xl border border-slate-200 overflow-hidden' + (gi === 0 ? ' open' : '') + '">' +
+          '<button class="group-toggle w-full flex items-center justify-between gap-4 px-6 pt-5 pb-4 text-left hover:bg-slate-50 transition-colors" aria-expanded="' + (gi === 0 ? 'true' : 'false') + '">' +
+            '<h2 class="font-barlow font-bold text-slate-900 text-lg leading-tight md:text-xl"></h2>' +
+            '<svg class="group-chevron w-6 h-6 text-av-blue flex-shrink-0" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="5 8 10 13 15 8"/></svg>' +
+          '</button>' +
+          '<div class="group-body"><div><div class="divide-y divide-slate-100">' + items + '</div></div></div>' +
+        '</div>';
+      }).join('');
+
+      groups.forEach(function (group, gi) {
+        var card = document.getElementById('faq-g' + (gi + 1));
+        card.querySelector('.group-toggle h2').textContent = group.group;
+        var rows = card.querySelectorAll('.faq-item');
+        group.items.forEach(function (item, i) {
+          rows[i].querySelector('.faq-trigger span').textContent = item.q;
+          rows[i].querySelector('.faq-body div div').innerHTML = armAnswer(item);
         });
+      });
+      bindHelpFaq();
+    }
+
+    function bindHelpFaq() {
+      document.querySelectorAll('.group-toggle').forEach(function (btn) {
+        btn.onclick = function () {
+          var group = btn.closest('.faq-group');
+          var isOpen = group.classList.contains('open');
+          group.classList.toggle('open', !isOpen);
+          btn.setAttribute('aria-expanded', String(!isOpen));
+        };
+      });
+      document.querySelectorAll('.faq-trigger').forEach(function (trigger) {
+        trigger.onclick = function () {
+          var item = trigger.closest('.faq-item');
+          var isOpen = item.classList.contains('open');
+          item.classList.toggle('open', !isOpen);
+          trigger.setAttribute('aria-expanded', String(!isOpen));
+        };
       });
     }
 
@@ -735,31 +306,25 @@
     var _origSetLang = window.setLang;
     window.setLang = function(lang) {
       _origSetLang(lang);
-      applyHelpFaqTranslations(lang);
+      renderHelpFaq();
     };
 
-    // Apply on load for non-Finnish users
-    applyHelpFaqTranslations(window.getLang ? window.getLang() : 'fi');
+    /* The bar's Variants row: this page renders Change 4 of the initiative, so the
+       arm is switchable here as well as in the funnel. Set before the bar reads it. */
+    window.protoPage = {
+      initiatives: [
+        {
+          slug:    'review-no-review',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — today\'s CMS copy' },
+            { id: 'v1',      label: 'Variant 1 — call is conditional' }
+          ]
+        }
+      ]
+    };
 
-    /* ── Group collapse ── */
-    document.querySelectorAll('.group-toggle').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var group = btn.closest('.faq-group');
-        var isOpen = group.classList.contains('open');
-        group.classList.toggle('open', !isOpen);
-        btn.setAttribute('aria-expanded', String(!isOpen));
-      });
-    });
-
-    /* ── Accordion ── */
-    document.querySelectorAll('.faq-trigger').forEach(function (trigger) {
-      trigger.addEventListener('click', function () {
-        var item = trigger.closest('.faq-item');
-        var isOpen = item.classList.contains('open');
-        item.classList.toggle('open', !isOpen);
-        trigger.setAttribute('aria-expanded', String(!isOpen));
-      });
-    });
+    renderHelpFaq();
 
     /* ── AI widget: chips populate input ── */
     document.querySelectorAll('.ai-chip').forEach(function (chip) {

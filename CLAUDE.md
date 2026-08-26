@@ -75,6 +75,18 @@ These rules apply to all new pages and components in this prototype, without exc
    keeps the proto's `border-2 border-av-blue` rather than prod's `outline-2`;
    same result, and the proto's JS toggles borders everywhere.
 
+   **Column widths.** Prod's funnel is two halves of `max-w-screen-xxl`
+   (`TenderRequestDraftForm.vue`: `lg:w-1/2` each, no padding or gap on the row —
+   each half carries its own). Inside the left half every step is
+   `w-full max-w-md` = **448px, centred** (`flex flex-col items-center`), the
+   ProgressBar is the one wider element at `max-w-lg` = **512px**, and the logo
+   sits at the half's left edge. The proto reproduces this with a `.funnel-col`
+   class plus `.funnel-logo` / `.funnel-steps` markers and three hand-written
+   rules — utilities would mean editing ~40 direct children across six pages. The
+   cream sidebar is `lg:w-[calc(50%-3rem)] lg:m-6`, which is prod's
+   `lg:w-1/2 lg:p-6` around a filling card expressed on one element. Below `lg`
+   the halves stack and the proto's own `px-8`/`gap-8` and `max-md:px-5` apply.
+
    Watch for labels that look like field labels but are group legends in prod:
    `location_title` ("Missä autosi sijaitsee?") and
    `damage_and_service_information_title` ("Korjaukset ja viat") are both
@@ -324,6 +336,43 @@ hand-written CSS keyed to `body[data-rnr-arm]`, not `max-md:hidden` — the
 Tailwind Play CDN only generates utilities present at first paint. Default is `control`, so with no
 param the proto stays prod-faithful. See the Review Segment section above for
 the `can_review` chain this is about.
+
+Change 3 is documentation, not code: the four post-submit landings were walked
+organically (price → contact → submit → verification link) and match prod's own
+routing — `waitingForReview` → `Review.vue` for a review-called seller either side
+of verification, `waitingForEmailVerificationBeforePublishing` →
+`PublishQueue.vue` for a no-call seller who has not verified, `success` →
+`Success.vue` once they have. The pairing worth remembering: **no-call +
+unverified lands on the queued screen, which mentions no call at all**, and the
+page badge and card badge agree. Change 5 deleted the copy that promised the call
+and rendered nowhere — the old `success` confirmation set (including a stale
+duplicate of the price step's next-steps list, and a duplicate `step1*` pair that
+silently shadowed itself) plus `dac7.step2*`, 53 lines across both languages.
+`nextSteps.*` stays until `v1` promotes. Noted while there, deliberately left
+alone: `dac7.html` has no `data-i18n` at all, so its remaining keys are dead too.
+
+Change 2 takes the promise out of the **contact step's submit button**:
+prod's `personal_info.submit` reads "Lähetä tarkastukseen" with no `can_review`
+branch, which is already false outside the review segment and becomes false
+inside it once a seller-intent answer can downgrade someone. The `v1` arm renders
+`contact.submitBtnNeutral` ("Lähetä ilmoitus") for everyone — **one copy, no
+outcome branching**, because three outcome-specific copies would leak the decision
+a step before we state it. `contact.html` reads the arm in `<head>` and owns the
+label itself; the `data-i18n` attribute was removed so a language switch cannot
+overwrite the arm's string. The offers-return case keeps its plain "Valmis" in
+both arms.
+
+Change 4 of the same initiative reaches the **support page's FAQ**, not the app:
+five items presented the review call as something every seller gets. The revised
+copy makes it conditional with one word — `tarvittaessa`, or `tapauskohtaisesti`
+where the sentence is about our own process — so nothing is promised and nothing
+is denied. An item in `faq-content.js` may carry a `v1` field beside its CMS `a`
+text; `help.html` reads the arm through `protoVariant` and picks the override, so
+control still shows exactly what the CMS shows today. The page declares the
+initiative in its own `protoPage`, so the arm is switchable there too. In
+production there is no arm — the CMS entry is edited when the change ships. A
+sixth item ("why wasn't I called?") was considered and dropped: once nothing is
+promised, there is no broken expectation to explain.
 
 **Seller file upload** adds a documents section to the photos step — PDF, Word or
 images, listed by filename with no thumbnails, each linking to the file in a new
@@ -738,6 +787,36 @@ Default scenario (no param): `new-offers` — matches the post-funnel flow from 
 
 **Later phases (not started):**
 - Phase 5: Supabase migration (replaces localStorage; enables QR cross-device photo upload)
+
+## FAQ content — `faq-content.js`
+
+All FAQ copy is the **production CMS text**, in one shared file, per language:
+
+| Set | Rendered by | CMS entry |
+|---|---|---|
+| `FAQ_CONTENT.front` | `index.html` (9 items) | front page, "Usein kysyttyä" |
+| `FAQ_CONTENT.offers` | `offers.html` + `decision.html` (15 items) | one entry, two pages |
+| `FAQ_CONTENT.support` | `help.html` (5 groups, 36 items) | the /tuki page |
+
+Finnish is the CMS text verbatim, paragraph for paragraph; English is a working
+translation, because the CMS has none. `a` is an HTML string and every consumer
+renders it with `innerHTML`, so lists and bolded lead-ins survive.
+
+Two deliberate deviations: inline "Lue lisää täältä" links point at blog and info
+pages this proto does not have, so the sentence stays and the link goes (the
+support address is the exception and stays a real `mailto`); and structure is
+plain HTML rather than the CMS's rich-text nodes.
+
+**Pages render, they do not store.** `index.html` and `help.html` used to hold the
+questions as markup — ~400 lines on the support page alone — with a parallel JS
+copy for the language switch. Both now build their accordions from this file and
+re-render on `av:langchange`, so a CMS change is a one-file edit. The old
+`faq.q1`…`a7` keys are gone from `translations.js`; only the section's own
+title/subtitle/link keys remain there.
+
+**The front page has no question groups.** The "Yleiset kysymykset palvelusta"
+heading it used to show was borrowed from the support page; the real CMS entry is
+a flat list.
 
 ## Design Spec Pages (`design-specs/`)
 

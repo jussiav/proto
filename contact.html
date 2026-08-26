@@ -86,10 +86,38 @@
     }
     .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
     .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
-  </style>
+      /* ── Funnel content column ───────────────────────────────────────────────
+       Prod caps every step at max-w-md = 448px and CENTRES it in the left half
+       (TenderRequestDraftForm.vue's `lg:w-1/2` half + each step component's own
+       `w-full max-w-md` inside a `flex flex-col items-center` wrapper). The
+       ProgressBar is the one wider element at max-w-lg = 512px, and the logo sits
+       at the half's left edge. Hand-written rather than utilities on ~40 children,
+       one rule per role. */
+    .funnel-col > *             { width: 100%; max-width: 28rem; }
+    .funnel-col > .funnel-logo  { width: auto; max-width: none; align-self: flex-start; }
+    .funnel-col > .funnel-steps { max-width: 32rem; }
+</style>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
+  <script>
+    /* ── "Review/No review" initiative, Change 2 ───────────────────────────
+       design-specs/review-no-review.html. Prod's submit copy is
+       "Lähetä tarkastukseen" — it names an outcome this step can no longer
+       predict, and after the seller-intent question it may be false. The v1 arm
+       renders one neutral copy for every seller; no branching on the outcome, so
+       nothing is promised and nothing is denied. control keeps prod's wording. */
+    var REVIEW_NO_REVIEW_ARM = (function () {
+      var ARMS = ['control', 'v1'];
+      var a = window.protoVariant ? window.protoVariant('review-no-review', 'control') : 'control';
+      if (ARMS.indexOf(a) === -1) {
+        if (window.protoVariantSet) window.protoVariantSet('review-no-review', null);
+        return 'control';
+      }
+      return a;
+    }());
+    document.documentElement.dataset.rnrArm = REVIEW_NO_REVIEW_ARM;
+  </script>
   <script src="proto-mock.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
@@ -302,6 +330,16 @@
       if (d.markkinointi !== undefined) document.getElementById('markkinointi').checked  = d.markkinointi;
     }
 
+    /* Owned here rather than by data-i18n, so the arm survives a language switch.
+       Not applied when the page is opened from the offers flow, where the button
+       is a plain "Valmis". */
+    function applySubmitLabel() {
+      var el = document.getElementById('contact-submit-label');
+      if (!el || _offersScenario) return;
+      el.textContent = t(REVIEW_NO_REVIEW_ARM === 'v1' ? 'contact.submitBtnNeutral' : 'contact.submitBtn');
+    }
+    document.addEventListener('av:langchange', applySubmitLabel);
+
     window.addEventListener('DOMContentLoaded', () => {
       loadContact();
       initStepNav('contact');
@@ -315,8 +353,24 @@
 
       if (_offersScenario) {
         document.getElementById('contact-submit-label').textContent = 'Valmis';
+      } else {
+        applySubmitLabel();
       }
     });
+
+    /* The bar's Variants row — this step renders Change 2 of the initiative. */
+    window.protoPage = {
+      initiatives: [
+        {
+          slug:    'review-no-review',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — "Lähetä tarkastukseen"' },
+            { id: 'v1',      label: 'Variant 1 — neutral submit copy' }
+          ]
+        }
+      ]
+    };
 
     window.addEventListener('pageshow', function(e) {
       if (e.persisted) {
@@ -329,20 +383,20 @@
 <body class="font-dm bg-white min-h-screen">
 
   <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
-    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 max-md:flex-col max-md:px-0 max-md:gap-0">
+    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 lg:px-0 lg:gap-0 max-md:flex-col max-md:px-0 max-md:gap-0">
 
       <!-- ── Left column ── -->
-      <div class="flex-1 flex flex-col items-start gap-6 max-w-[512px] max-md:max-w-full max-md:w-full max-md:px-5 max-md:pt-5 max-md:pb-8">
+      <div class="funnel-col w-full lg:w-1/2 md:px-4 flex flex-col items-center gap-6 max-md:w-full max-md:px-5 max-md:pt-5 max-md:pb-8">
 
         <!-- Logo -->
-        <a href="index.html" aria-label="Takaisin etusivulle">
+        <a class="funnel-logo" href="index.html" aria-label="Takaisin etusivulle">
           <img src="assets/27d3e903-c743-4381-b374-6416dff1c0f2.svg"
                alt="AutoVex"
                class="w-[88px] h-[18px] object-contain block" />
         </a>
 
         <!-- Step navigation -->
-        <nav aria-label="Vaiheet" class="w-full flex items-start pb-3">
+        <nav aria-label="Vaiheet" class="funnel-steps w-full flex items-start pb-3">
           <div data-step="details" class="flex flex-col items-center gap-2 flex-1 min-w-0">
             <div class="w-7 h-7 flex-shrink-0"></div>
             <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.details">Varusteet</span>
@@ -434,7 +488,7 @@
           <!-- CTA -->
           <button type="submit"
             class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors mt-1">
-            <span id="contact-submit-label" data-i18n="contact.submitBtn">Lähetä tarkastukseen</span>
+            <span id="contact-submit-label">Lähetä tarkastukseen</span>
             <img src="assets/2298f807-f79d-4913-a748-1d256742f181.svg" class="w-6 h-6" alt="" />
           </button>
 
@@ -451,7 +505,7 @@
       <!-- No "what happens next" panel here: prod's Sidebar.vue does not show WhatHappensNext
            during the providingPersonalInfo step (only providingPriceInfo / waitingForReview /
            waitingForEmailVerificationBeforePublishing / success+published gate it). -->
-      <div class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+      <div class="w-full lg:w-[calc(50%-3rem)] lg:m-6 bg-av-cream rounded-xl p-8 flex flex-col gap-6 md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
 
         <!-- Car preview — prod shows the draft preview during providingPersonalInfo
              (Sidebar.vue canPreviewDraft). Mid-funnel variant: no "under review" badge.
