@@ -22,17 +22,76 @@ These rules apply to all new pages and components in this prototype, without exc
 
 4. **Production color scale.** The `blue-*` Tailwind scale in this prototype is overridden to match `tailwind.config.js` in the project root (e.g. `blue-50 = #EEF6FA`, `blue-600 = #0B6DFF`). Never use the CDN Tailwind default blue. All new pages must include this override in their `tailwind.config` block.
 
-5. **Production fonts.** Every page must define `font-display` (Barlow + system fallbacks) and `font-body` (DM Sans + system fallbacks) in the Tailwind config block. Apply `font-display` to all section headings (`<h2>` etc). Apply `font-body` to `<body>`. Serve pages over HTTP (`http://localhost:8080`) — Google Fonts does not load reliably over `file://`.
+5. **Production type scale — `tw-tokens.js`.** Prod's `tailwind.config.js`
+   replaces several default scales, so a class copied out of a prod component
+   used to render at a different size here. Every page loads `tw-tokens.js`
+   directly after its own `tailwind.config` block; it merges in prod's
+   `fontSize` from `3xl` up (28/32/40/48/56/64, where the CDN defaults are
+   30/36/48/60/72/96), prod's `screens` (`xxs` 360, `xs` 460, `sm` 620,
+   `md` 768, `lg` 992, `xl` 1200, `xxl` 1440) and prod's half-step `spacing`.
+   **Prod's `lineHeight` scale is deliberately NOT ported** — prod's `leading-5`
+   is 30px against the default 20px, and the proto has ~235 uses written against
+   the default meaning. Transcribe a prod leading as pixels instead
+   (`leading-[30px]`). Prod's numbers: 1:16 2:21 3:24 4:28 5:30 6:36 7:40 8:48
+   9:52 10:56.
 
-6. **Reference pages before building.** For any new page or component, first read the corresponding archived Astro page source and production Vue component files, then replicate. Code first, verify in browser (`http://localhost:8080`), adjust.
+   Fonts: prod's `<body>` is `font-body`, i.e. **DM Sans is the base** and Barlow
+   appears only where a component says `font-display`. Barlow is loaded at
+   400/600/700, matching prod's own faces — the proto used to load 700 alone, so
+   every Barlow `font-medium` silently rendered bold.
 
-7. **One page, all scenarios.** Never create separate HTML files for different states of the same page. Each page handles all its scenarios via a `?scenario=` URL param — same names as the Astro prototype (e.g. `live-no-bids`, `new-offers`, `auction-live`). JS reads the param, builds mock data matching the Vue app's data shape, then drives all conditional rendering from that. Every scenario page includes a floating tester panel listing all named scenarios for that page.
+6. **Funnel field and heading conventions, transcribed from prod.** Use these
+   rather than inventing a size; each is a real prod class string:
 
-8. **UiButton colors.** Default (no color prop) = blue variants: `secondary` → `bg-blue-100 hover:bg-blue-200 text-blue-800`, `ghost` → `bg-transparent hover:bg-blue-50 text-blue-600`. Slate variants only when `color="slate"` is explicit in the Vue component.
+   | Role | Prod source | Classes |
+   |---|---|---|
+   | Step title | `<h2 class="heading-2 font-bold">` (`ServiceInfo`, `ImageSections`, `PersonalInfo`, `EquipmentInfo`) | `font-barlow font-bold text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]` |
+   | Price step title | `PriceInfo.vue` — a `<div role="heading">`, NOT an `h*` | `font-dm font-bold text-2xl lg:text-3xl leading-[30px]` |
+   | Group legend | `<legend class="text-xl font-bold mb-4">` | `font-dm font-bold text-xl` |
+   | Field label / sub-legend | `Input.vue`, `NumberInput.vue`, `labels.rims`, `labels.maximum_distance` | `font-dm font-medium text-base leading-none` |
+   | Photo section title | `ImageSections.vue` `<legend class="text-base font-medium">` | `font-dm font-medium text-base` |
+   | Option card | `Chip.vue` / `RadioButtons.vue` | `border border-gray-500 rounded-lg bg-white p-4`, 14px apart |
+   | Option label — heavier | `Chip.vue` `<span class="font-semibold">` inside a `font-display` label | `font-barlow font-semibold text-base text-black` |
+   | Option label — lighter | `RadioButtons.vue` `<span class="ml-2 font-medium">` | `font-barlow font-medium text-base text-black` |
+   | Option description | `Chip.vue` `<span class="text-sm">` | `font-barlow text-sm text-black` |
+   | Text input | `NumberInput.vue` | `h-14 px-4 border border-gray-500 rounded-lg text-base` |
+   | Textarea | `TextArea.vue` | `p-4 text-base leading-[21px] border border-gray-500` |
+   | Info / hint line | `PriceInfo.vue` `<div class="text-sm">`, `ServiceInfo` tip `<div class="text-base">` | `font-dm text-sm` / `font-dm text-base` |
 
-9. **Accordion/FAQ.** Use the MAccordion pattern: `<details class="group peer">` + sibling content div with `grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity]`. Item wrapper: `bg-white p-3 rounded-md`. Title: `text-sm text-gray-700 group-open:font-bold`. Icons: `caret-down`/`caret-up` 16×16 `text-slate-500`. List gap: `space-y-2.5`. FAQ content comes from `faq.sellers_profile_faqs` in `vue-i18n-locales.generated.js` — all items, exact HTML.
+   **Headings are Barlow because of the tag, not a class.** `custom.scss` applies
+   `font-display` to `h1`–`h5`, so every step title — an `<h2>` in prod — is
+   Barlow, while the price step's `<div role="heading">` is DM Sans. Reproduce the
+   family explicitly here; the proto has no such element rule.
 
-10. **Nav bar — one shared definition, `site-nav.js`.** Never inline nav markup in a page and never re-add nav HTML to `layout.js`. A page opts in with `<div id="site-nav"></div>` followed immediately by `<script src="site-nav.js"></script>` (the script must come right after the mount so the nav exists before any inline page script that reads `#nav-login-label`).
+   **Two option-label weights, and the difference is the component.** `Chips`
+   (Barlow **semibold**) is what the funnel uses — service book, service history,
+   windscreen, tyres, rims, keys. `RadioButtons` (Barlow **medium**, which lands
+   on 400 since prod ships no 500 face) appears only on `ReplacementQuestions` and
+   `ReferralSource`, steps this proto has no copy of — so it is the right analogue
+   for a NEW question added to the funnel, which is why the seller-intent options
+   use it. Do not mix them within one group.
+
+   Field borders are **`gray-500`** (#6B7280), not `slate-400`. Radio selection
+   keeps the proto's `border-2 border-av-blue` rather than prod's `outline-2`;
+   same result, and the proto's JS toggles borders everywhere.
+
+   Watch for labels that look like field labels but are group legends in prod:
+   `location_title` ("Missä autosi sijaitsee?") and
+   `damage_and_service_information_title` ("Korjaukset ja viat") are both
+   `text-xl font-bold`, while `labels.rims` ("Vanteet (kesä/talvi)") and
+   `labels.maximum_distance` are sub-labels under a legend.
+
+7. **Production fonts.** Every page must define `font-display` (Barlow + system fallbacks) and `font-body` (DM Sans + system fallbacks) in the Tailwind config block. Apply `font-display` to all section headings (`<h2>` etc). Apply `font-body` to `<body>`. Serve pages over HTTP (`http://localhost:8080`) — Google Fonts does not load reliably over `file://`.
+
+8. **Reference pages before building.** For any new page or component, first read the corresponding archived Astro page source and production Vue component files, then replicate. Code first, verify in browser (`http://localhost:8080`), adjust.
+
+9. **One page, all scenarios.** Never create separate HTML files for different states of the same page. Each page handles all its scenarios via a `?scenario=` URL param — same names as the Astro prototype (e.g. `live-no-bids`, `new-offers`, `auction-live`). JS reads the param, builds mock data matching the Vue app's data shape, then drives all conditional rendering from that. Every scenario page includes a floating tester panel listing all named scenarios for that page.
+
+10. **UiButton colors.** Default (no color prop) = blue variants: `secondary` → `bg-blue-100 hover:bg-blue-200 text-blue-800`, `ghost` → `bg-transparent hover:bg-blue-50 text-blue-600`. Slate variants only when `color="slate"` is explicit in the Vue component.
+
+11. **Accordion/FAQ.** Use the MAccordion pattern: `<details class="group peer">` + sibling content div with `grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity]`. Item wrapper: `bg-white p-3 rounded-md`. Title: `text-sm text-gray-700 group-open:font-bold`. Icons: `caret-down`/`caret-up` 16×16 `text-slate-500`. List gap: `space-y-2.5`. FAQ content comes from `faq.sellers_profile_faqs` in `vue-i18n-locales.generated.js` — all items, exact HTML.
+
+12. **Nav bar — one shared definition, `site-nav.js`.** Never inline nav markup in a page and never re-add nav HTML to `layout.js`. A page opts in with `<div id="site-nav"></div>` followed immediately by `<script src="site-nav.js"></script>` (the script must come right after the mount so the nav exists before any inline page script that reads `#nav-login-label`).
 
     Blue variant, matching prod `ONavigationBar.vue` with `color="blue"`: spacer `<div class="h-20 bg-av-blue">` then a single `fixed h-20 bg-av-blue z-50` header, inner `nav` at `max-w-[1440px] mx-auto px-6` (prod's `max-w-screen-xxl`; `screens.xxl = 1440px`). White logo, menu items pushed right with `ml-16`, "Aloita kilpailutus" CTA (`lg:` and up only) + account icon + "Kirjaudu" label on the right.
 
@@ -195,6 +254,60 @@ actually declares.
 | Delivery distance A/B test | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
 | Review/No review | `review-no-review` | `control` | `control` | `price.html` | `design-specs/review-no-review.html` |
 | Seller file upload | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
+| Seller intent | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
+
+**Seller intent** asks one question per arm on the price step, below the
+estimate field, to learn how ready the seller actually is to sell — today the
+review call is decided from the car alone (`can_review`), so two identical cars
+get identical treatment whether the seller is handing the keys over next week or
+idly curious. Arms: `v1` handover timing as five options, `v2` the same question
+verbatim as a native date field (min today, max +1 year) and nothing else, `v3`
+selling situation as five options. `control` asks nothing.
+
+**Its own initiative, not an arm of Review/No review, because it ships first.**
+It therefore does NOT hide `#price-what-happens-next` and does NOT change the
+contact step's submit copy — both belong to that initiative, both stay exactly as
+prod has them on every intent arm. Folding the question into `review-no-review`
+would have made the first thing out of the door depend on changes that land after
+it, and would have collided with promotion: arms are deleted per initiative, and
+these two have different winners.
+
+**Phase 1 is inert, deliberately.** The answer is stored and nothing branches on
+it: every seller who sees a question is still review-called, exactly as control.
+Which answers should downgrade a seller is what the A/B exists to learn, so
+guessing the mapping now would bake the guess into the result. `deriveOutcome({
+inSegment, intentAnswer })` in `price.html` is the single place phase 2 edits; it
+ignores `intentAnswer` today. Its three-valued return (`review` | `publish` |
+`reject`) keeps `reject` declared and unreachable — the rejection path is parked
+until the `rejected` success screen is redesigned (a later initiative), and prod's
+`rejected` status today means "a human looked and it needs fixing", which a
+low-intent decline is not.
+
+The question is asked **only inside the review segment** — a car outside it is not
+review-called either way, so `?scenario=asking-price` renders no question on any
+arm. It is **optional and marked so** by an info-icon line under the answers
+(`intent.note`), the same treatment the estimate field above uses for its own
+note — not a suffix on the question label; a skip is treated exactly like never
+being asked. Answers
+are stored **by stable id**, `sellerIntentQuestion` + `sellerIntentAnswer`
+(`seller_intent_question` / `seller_intent_answer` in the dev contract, both
+nullable) — not by label text, which is what `services.html`'s `radioGroups`
+does and why its mock data has to match rendered copy character for character.
+Switching arm or leaving the segment clears the answer: an answer exists only
+where the question was asked. Nothing about the answer reaches the ad preview
+sheet or the car card; it describes the seller's situation, not the ad. All FI/EN copy is
+a draft pending approval, FI as specified by the team.
+
+Two presentation details. The step's headings sit one Tailwind notch above where
+the proto had them — `#price-headline` at `text-3xl leading-9`, which matches
+prod's own `lg:text-3xl` (`PriceInfo.vue` is `text-2xl lg:text-3xl`), and the
+intent section header at `text-2xl leading-8`, keeping it one step below the
+page's own question. And **the date field's Finnish placeholder is drawn by the
+page**: a native `<input type="date">` takes its hint text, month names and
+picker buttons from the BROWSER's locale, not the page's `lang`, so
+`.intent-date:not(.has-value)::-webkit-datetime-edit` hides the field's own text
+while empty and a span shows `pp.kk.vvvv` over it. The picker popup itself stays
+browser-locale — nothing on the page can reach inside it.
 
 **Review/No review** makes funnel communication match whether the seller's car
 is in the review segment. Change 1 removes the "Mitä tapahtuu seuraavaksi?"
@@ -319,8 +432,19 @@ file looks uploaded until the next reload.
 Shipped alongside it: the proto's Huoltokirja section used to accept
 `application/pdf` with a "kuvia tai PDF-tiedostoja" hint, which prod's
 image-only `ImageUpload.vue` never did. Both arms now use prod's exact accept
-list and prod's own service-section copy, so the PDF capability belongs to v1
-alone. **All FI/EN copy for this initiative is a draft pending approval** — prod
+list, so the PDF capability belongs to v1 alone — and the hint line is gone
+entirely, since prod's `ImageSections.vue` renders no description under a section
+title (`photos.serviceBookHint` was deleted with it).
+
+**Empty photo slots carry prod's hover copy.** `ImagePreview.vue` scales an
+unaccepted slot (`hover:scale-102 transition hover:shadow-lg`) and puts
+`t('tenderform.add_image')` on the upload button's `title`. Both are reproduced —
+`photos.addImage` holds prod's exact "Lisää kuva" — plus one deliberate addition:
+a `.slot-add-label` span that fades the same copy in on hover, because a native
+tooltip is delayed and invisible on touch. It is hand-written CSS, not utilities,
+since the label is injected by JS and the Play CDN only generates classes present
+at first paint; `syncSlotTitles()` keeps both the title and the label in step with
+the language. **All FI/EN copy for this initiative is a draft pending approval** — prod
 has none, since the feature does not exist there.
 
 ### Initiative lifecycle

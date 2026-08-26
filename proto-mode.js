@@ -120,6 +120,12 @@
       name: 'Seller file upload',
       spec: 'design-specs/seller-file-upload.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'seller-intent',
+      name: 'Seller intent A/B',
+      spec: 'design-specs/seller-intent.html',
+      prodArm: 'control'
     }
   ];
 

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller intent · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · ad creation funnel</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Seller intent</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Whether a seller gets a review call is decided today from the car alone — fuel type, model year, mileage. Nothing in the funnel asks the seller how ready they actually are to sell. This initiative tests three ways of asking, one per arm, on the price step. Phase 1 only collects the answer: which answers should change the outcome is what the test is meant to tell us.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: ready to review — copy pending approval
+        </span>
+        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1 · v2 · v3</span>
+        <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype param: <code>?seller-intent=</code></span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- Why -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Why ask at all</h2>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What decides the call today</p>
+          <p class="font-dm text-sm leading-6 text-slate-800 mb-3">One boolean, <code>can_review</code>, computed from the car: <code>TenderRequestReviewSettings</code> (fuel types, model-year band, mileage band) → <code>EvaluateDraftForReview</code>. It is a whitelist — the car has to fall <b>inside</b> the band.</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">So two sellers with identical cars are treated identically, even when one is handing the keys over next week and the other is idly curious what the car is worth. The advisor discovers the difference on the call, which is the most expensive possible place to discover it.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Why the price step</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>It is the last step before contact details</b>, so an answer here costs the seller nothing extra — they are already committing to submit.</li>
+            <li><b>It already asks about expectation</b>, not about the car. The price estimate and "how soon could you hand it over" are the same kind of question; the equipment and photo steps are not.</li>
+            <li><b>It is where the review decision becomes unknowable.</b> Once intent can influence the outcome, no screen at or before this step can honestly tell the seller what happens next — which is the subject of the separate <a class="text-av-blue underline font-medium" href="review-no-review.html">Review/No review</a> initiative.</li>
+          </ul>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- The arms -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Three arms, one question each</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Every arm adds exactly one question below the price estimate, under a shared section header. <b>v1 and v2 ask the same question in two formats</b> — a five-option list against a date field — so the pair measures the input, not the wording. v3 asks a different question entirely.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mb-5">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Arm</th>
+              <th class="px-5 py-3 font-medium">Question id</th>
+              <th class="px-5 py-3 font-medium">Asks</th>
+              <th class="px-5 py-3 font-medium">Input</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">control</td><td class="px-5 py-3">—</td><td class="px-5 py-3">Nothing. Today's price step, unchanged. The default with no parameter.</td><td class="px-5 py-3">—</td></tr>
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">v1</td><td class="px-5 py-3"><code>handover-timing</code></td><td class="px-5 py-3">How soon the car could change hands</td><td class="px-5 py-3">5 single-select options</td></tr>
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">v2</td><td class="px-5 py-3"><code>handover-date</code></td><td class="px-5 py-3">The same question, verbatim</td><td class="px-5 py-3">Date field (today … +1 year), nothing else</td></tr>
+            <tr><td class="px-5 py-3 font-bold whitespace-nowrap">v3</td><td class="px-5 py-3"><code>selling-situation</code></td><td class="px-5 py-3">What the seller's situation is</td><td class="px-5 py-3">5 single-select options</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">v1 — inert replica</p>
+          <div class="flex flex-col gap-4">
+            <h3 class="w-full font-dm font-bold text-black text-xl lg:text-2xl leading-[28px] text-center" data-i18n="intent.header">—</h3>
+            <div class="flex flex-col gap-2">
+              <div class="font-dm text-base text-slate-900" id="spec-v1-question">—</div>
+              <div class="flex flex-col gap-3.5" id="spec-v1-options"></div>
+              <div class="flex items-start gap-2">
+                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="15" cy="15.3" r="12"/></svg>
+                <p class="font-dm text-sm text-slate-700" data-i18n="intent.note">—</p>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Option rows are the funnel's existing radio pattern, reused verbatim from the equipment and service steps — no new component. Copy is read live from the prototype's <code>translations.js</code>, so this replica cannot drift from what the step renders.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">v2 — inert replica</p>
+          <div class="flex flex-col gap-4">
+            <h3 class="w-full font-dm font-bold text-black text-xl lg:text-2xl leading-[28px] text-center" data-i18n="intent.header">—</h3>
+            <div class="flex flex-col gap-2">
+              <div class="font-dm text-base text-slate-900" id="spec-v2-question">—</div>
+              <div class="w-full h-14 border border-slate-400 rounded-lg bg-white px-4 flex items-center">
+                <span class="font-dm text-base text-slate-300">pp.kk.vvvv</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="15" cy="15.3" r="12"/></svg>
+                <p class="font-dm text-sm text-slate-700" data-i18n="intent.note">—</p>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">A date and nothing else: no options beside it, so the answer is a date or a skip. <b>The Finnish placeholder is drawn by the page, not the field.</b> A native <code>&lt;input type="date"&gt;</code> takes its own hint text, month names and picker buttons from the <b>browser's</b> locale, not the page's <code>lang</code> — so the prototype hides the field's internal text while it is empty and shows <code>pp.kk.vvvv</code> over it. Inside the picker popup nothing on the page can reach: on a Finnish-language browser it is Finnish already, on an English one it is not.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">v3 — inert replica</p>
+          <div class="flex flex-col gap-4">
+            <h3 class="w-full font-dm font-bold text-black text-xl lg:text-2xl leading-[28px] text-center" data-i18n="intent.header">—</h3>
+            <div class="flex flex-col gap-2">
+              <div class="font-dm text-base text-slate-900" id="spec-v3-question">—</div>
+              <div class="flex flex-col gap-3.5" id="spec-v3-options"></div>
+              <div class="flex items-start gap-2">
+                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><circle cx="15" cy="15.3" r="12"/></svg>
+                <p class="font-dm text-sm text-slate-700" data-i18n="intent.note">—</p>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">A different question, not a reformat of v1's: it asks what the seller is doing rather than when. Five options, so the arm is comparable to v1 on effort while testing whether situation predicts better than timing.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- Behaviour -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Behaviour rules</h2>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
+          <li><b>Phase 1 changes no outcome.</b> The answer is recorded and nothing branches on it. Every seller who sees a question is still review-called, exactly as in control. Which answers should downgrade a seller is what the test exists to learn — guessing it now would bake the guess into the result.</li>
+          <li><b>Optional, and visibly so.</b> An info-icon line under the answers reads "Vastaaminen on vapaaehtoista eikä velvoita myymään." — the same treatment the estimate field above already uses for its own note, so both optional fields on the step say so the same way rather than one carrying a suffix on its label. Skipping is silent: no validation, no nudge, no blocked Continue.</li>
+          <li><b>A skip is not an answer.</b> A seller who skips is treated exactly as one who was never asked — for a review-segment car, that means the review call.</li>
+          <li><b>Review segment only.</b> A car outside the segment is not review-called either way, so it gets no question on any arm — it sees the asking-price step exactly as control renders it.</li>
+          <li><b>Stored by id, not by label.</b> Both the question and the answer are stable identifiers, so rewording an option never changes what was recorded and never invalidates collected data.</li>
+          <li><b>The date arm has one control.</b> A date or a skip — no options beside the field, so there is no second way to answer and no state where two answers disagree.</li>
+          <li><b>Date bounds are today … today + 1 year.</b> A handover date in the past is not meaningful, and a date beyond a year is indistinguishable from "later" for any routing purpose.</li>
+          <li><b>Not part of the ad.</b> The answer never appears on the ad preview sheet or the car card. It is information about the seller's situation, not content the buyer sees.</li>
+          <li><b>The answer survives the walk.</b> It is stored on selection, so going back to the price step re-selects it, and switching arm or leaving the segment clears it — an answer exists only where the question was actually asked.</li>
+        </ol>
+      </div>
+      </div>
+    </section>
+
+    <!-- Options and outcomes -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Answer options, and what they will eventually mean</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The <b>Outcome</b> column is deliberately unfilled. Phase 1 records answers and routes nobody; phase 2 fills this column from what the data shows. It is here as the shape of the decision, not as a proposal — a guess in this column would be read as a decision by everyone who opens this page.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Question</th>
+              <th class="px-5 py-3 font-medium">Option id</th>
+              <th class="px-5 py-3 font-medium">Finnish</th>
+              <th class="px-5 py-3 font-medium">Outcome (phase 2)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800" id="option-table"></tbody>
+        </table>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl">Three outcomes exist in the model: <b>review</b> (the call), <b>publish</b> (autopublished, no call) and <b>reject</b> (not published at all). <code>reject</code> is declared and unreachable — the rejection path is parked until the screen a rejected seller lands on has been redesigned, which is its own initiative. For the date question, phase 2 needs thresholds rather than a per-option mapping; the prototype carries none, since it routes nobody.</p>
+      </div>
+    </section>
+
+    <!-- Data contract -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Data contract</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Aspect</th>
+              <th class="px-5 py-3 font-medium">Rule</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Two fields</td><td class="px-5 py-3"><code>seller_intent_question</code> and <code>seller_intent_answer</code>, stored separately on the draft. Keeping the question alongside the answer is what lets three arms write into one pair of fields and still be told apart later. The prototype uses <code>sellerIntentQuestion</code> / <code>sellerIntentAnswer</code>.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Values</td><td class="px-5 py-3">Question: <code>handover-timing</code> · <code>handover-date</code> · <code>selling-situation</code>. Answer: an option id from the table above, or an ISO date (<code>YYYY-MM-DD</code>) for <code>handover-date</code>, where <code>dont-know</code> is also a valid answer.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Both nullable</td><td class="px-5 py-3">Absent means not asked or not answered, and the two are not distinguished on the draft — the arm assignment already records who was asked. Any consumer must handle null; most drafts will have it, since control is an arm too.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">The outcome is server-derived</td><td class="px-5 py-3">In production the review decision stays where it is today — computed server-side when the draft is submitted. The answer is an input to that decision, never a decision itself, and the client must not be trusted to say what happens to an ad.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Prototype-only mechanic</td><td class="px-5 py-3">The prototype derives the outcome client-side in one function, <code>deriveOutcome({ inSegment, intentAnswer })</code>, purely so the funnel is walkable end to end. It ignores <code>intentAnswer</code> today. That function is the single place phase 2 edits.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Analytics</td><td class="px-5 py-3">The arm has to be recorded alongside the answer for the test to be readable at all — v1 and v2 produce different answer shapes for the same question, and control produces none.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Scope boundary -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">What this initiative deliberately does not touch</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">This test ships first, so it must not depend on changes that land later. Two things on the very same screen belong to <a class="text-av-blue underline font-medium" href="review-no-review.html">Review/No review</a> and are left exactly as production has them.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The "Mitä tapahtuu seuraavaksi?" panel stays</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">It still promises the review call beside the question, on every arm. That promise is a real problem — it is Change 1 of the other initiative — but it is a problem that predates this test and applies equally to control, so removing it here would change what the arms are comparing.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The submit button copy stays</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">The contact step still reads "Lähetä tarkastukseen". In phase 1 that is still true for everyone who sees a question — they all get the call. It stops being true the moment intent affects the outcome, and the neutral wording is specced with the other initiative.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <!-- Copy -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy (FI / EN) — drafts, pending approval</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Production has none of this copy — the feature does not exist there. The Finnish is as specified by the team; the English is a working translation. Generated from the prototype's own <code>translations.js</code>, so the table is what the step actually renders.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-5 py-3 font-medium">Key (intent.*)</th>
+              <th class="px-5 py-3 font-medium">Finnish</th>
+              <th class="px-5 py-3 font-medium">English</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800" id="copy-table"></tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Demo -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Try it</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Prototype: <a class="text-av-blue underline font-medium" href="https://jussiav.github.io/proto">https://jussiav.github.io/proto</a>. Switch arms from the <b>Variants</b> row on the prototype bar, grouped under <b>Seller intent A/B</b>, or open one directly. The arm is remembered as you walk the funnel, and the row's first option puts everything back to production behaviour.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Arm</th>
+              <th class="px-4 py-3 font-medium">Car</th>
+              <th class="px-4 py-3 font-medium">What you see</th>
+              <th class="px-4 py-3 font-medium">Link</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-4 py-3 whitespace-nowrap font-bold">control</td><td class="px-4 py-3">In segment</td><td class="px-4 py-3">Today's price step. No question.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?seller-intent=control&amp;scenario=price-estimate">price.html?seller-intent=control&amp;scenario=price-estimate</a></td></tr>
+            <tr class="bg-blue-50"><td class="px-4 py-3 whitespace-nowrap font-bold">v1</td><td class="px-4 py-3">In segment</td><td class="px-4 py-3">Timing question, five options.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?seller-intent=v1&amp;scenario=price-estimate">price.html?seller-intent=v1&amp;scenario=price-estimate</a></td></tr>
+            <tr class="bg-blue-50"><td class="px-4 py-3 whitespace-nowrap font-bold">v2</td><td class="px-4 py-3">In segment</td><td class="px-4 py-3">Same question, as a date field.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?seller-intent=v2&amp;scenario=price-estimate">price.html?seller-intent=v2&amp;scenario=price-estimate</a></td></tr>
+            <tr class="bg-blue-50"><td class="px-4 py-3 whitespace-nowrap font-bold">v3</td><td class="px-4 py-3">In segment</td><td class="px-4 py-3">Situation question, five options.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?seller-intent=v3&amp;scenario=price-estimate">price.html?seller-intent=v3&amp;scenario=price-estimate</a></td></tr>
+            <tr><td class="px-4 py-3 whitespace-nowrap font-bold">any</td><td class="px-4 py-3">Outside segment</td><td class="px-4 py-3">No question on any arm — the asking-price step, unchanged.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?seller-intent=v1&amp;scenario=asking-price">price.html?seller-intent=v1&amp;scenario=asking-price</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl">Walk any arm through to the confirmation screen and you land on <b>Tarkastus käynnissä</b> whatever you answered. That is phase 1 working as specified, not an unfinished wire.</p>
+      </div>
+    </section>
+
+    <!-- Open questions -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Open questions</h2>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>How the winner is chosen — TBD.</b> Three arms produce three different data shapes, so "which question won" needs a stated metric before the test starts, not after.</li>
+          <li><b>Phase 2's mapping and the date thresholds.</b> Both come from the data. The date question in particular needs bands, not a per-option table.</li>
+          <li><b>Does the question become required?</b> Optional keeps the funnel frictionless but leaves the most interesting sellers unclassified. Worth revisiting once the skip rate is known.</li>
+          <li><b>All Finnish copy</b> in the table above is a draft awaiting approval, English included.</li>
+          <li><b>The rejection path is parked, not dropped.</b> When it returns it needs a backend decision too: prod's <code>rejected</code> status today means "a human looked and it needs fixing" — one of its states is actionable and says <i>Tietoja tarvitaan</i>. A seller declined for low intent has nothing to fix, so reusing that status may collide with the offers listing, notifications and resubmission.</li>
+        </ul>
+      </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Seller intent</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+
+  <script src="../translations.js"></script>
+  <script src="../i18n.js"></script>
+  <script src="../proto-mode.js"></script>
+  <script src="../proto-mock.js"></script>
+  <script>
+    /* Same approach as the other spec pages: replicas render the Finnish strings
+       straight from translations.js, and this page never writes av_lang. */
+    const FI = (window.TRANSLATIONS && window.TRANSLATIONS.fi) || {};
+    const EN = (window.TRANSLATIONS && window.TRANSLATIONS.en) || {};
+    function pick(tree, key) {
+      const v = key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), tree);
+      return v == null ? key : v;
+    }
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = pick(FI, el.getAttribute('data-i18n')); });
+    document.documentElement.lang = 'en';
+
+    /* The questions, as the step defines them: ids are the data contract, so this
+       page and price.html must agree on them exactly. */
+    const QUESTIONS = [
+      { arm: 'v1', id: 'handover-timing', stem: 'intent.timingQuestion', options: [
+        ['asap', 'intent.timingAsap'], ['within-week', 'intent.timingWithinWeek'],
+        ['coming-months', 'intent.timingComingMonths'], ['later', 'intent.timingLater'],
+        ['just-exploring', 'intent.timingJustExploring']
+      ]},
+      { arm: 'v2', id: 'handover-date', stem: 'intent.timingQuestion', options: [] },
+      { arm: 'v3', id: 'selling-situation', stem: 'intent.situationQuestion', options: [
+        ['buying-another', 'intent.situationBuyingAnother'], ['not-buying', 'intent.situationNotBuying'],
+        ['curious-value', 'intent.situationCuriousValue'], ['exploring-service', 'intent.situationExploring'],
+        ['other', 'intent.situationOther']
+      ]}
+    ];
+
+    const stem = q => pick(FI, q.stem);
+
+    /* Inert replicas — the same radio card markup the funnel uses. */
+    /* Mirrors the step exactly: prod RadioButtons.vue geometry (p-4, 14px apart,
+       gray-500) with its lighter Barlow font-medium label — the weight that marks
+       a NEW question, as opposed to Chips' semibold used by the car-detail groups. */
+    function optionRow(labelKey) {
+      return '<div class="flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2">' +
+        '<div class="w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0"></div>' +
+        '<span class="font-barlow font-medium text-base text-black">' + pick(FI, labelKey) + '</span></div>';
+    }
+    ['v1', 'v2', 'v3'].forEach(arm => {
+      const q = QUESTIONS.find(x => x.arm === arm);
+      document.getElementById('spec-' + arm + '-question').textContent = stem(q);
+      const list = document.getElementById('spec-' + arm + '-options');
+      if (list) list.innerHTML = q.options.map(([, key]) => optionRow(key)).join('');
+    });
+
+    /* Generated, not typed: the option table is the review artefact. */
+    document.getElementById('option-table').innerHTML = QUESTIONS.map(q =>
+      q.options.map(([id, key], i) =>
+        '<tr>' +
+        (i === 0 ? '<td class="px-5 py-3 font-bold align-top whitespace-nowrap" rowspan="' + q.options.length + '"><code>' + q.id + '</code><br><span class="font-normal text-xs text-slate-500">' + q.arm + '</span></td>' : '') +
+        '<td class="px-5 py-3"><code>' + id + '</code></td>' +
+        '<td class="px-5 py-3">' + pick(FI, key) + '</td>' +
+        (i === 0 ? '<td class="px-5 py-3 align-top text-slate-500" rowspan="' + q.options.length + '">TBD</td>' : '') +
+        '</tr>'
+      ).join('')
+    ).join('') +
+      '<tr><td class="px-5 py-3 font-bold whitespace-nowrap"><code>handover-date</code><br><span class="font-normal text-xs text-slate-500">v2</span></td>' +
+      '<td class="px-5 py-3"><i>a date</i></td><td class="px-5 py-3 text-slate-500">today … today + 1 year</td>' +
+      '<td class="px-5 py-3 text-slate-500">TBD — needs bands, not options</td></tr>';
+
+    (function buildCopyTable() {
+      const keys = ['header','note','timingQuestion','timingAsap','timingWithinWeek','timingComingMonths',
+                    'timingLater','timingJustExploring','situationQuestion','situationBuyingAnother',
+                    'situationNotBuying','situationCuriousValue','situationExploring','situationOther'];
+      document.getElementById('copy-table').innerHTML = keys.map(k =>
+        '<tr><td class="px-5 py-3"><code>' + k + '</code></td>' +
+        '<td class="px-5 py-3">' + pick(FI, 'intent.' + k) + '</td>' +
+        '<td class="px-5 py-3">' + pick(EN, 'intent.' + k) + '</td></tr>'
+      ).join('');
+    })();
+  </script>
+  <script src="../proto-bar.js"></script>
+</body>
+</html>
