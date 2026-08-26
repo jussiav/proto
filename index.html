@@ -1332,47 +1332,6 @@
     });
   </script>
 
-  <!-- ── Vend banner ── -->
-  <div id="vend-banner"
-       class="flex items-center justify-center px-10 max-md:px-5"
-       style="background:#EFE5E5; position:fixed; bottom:0; left:0; right:0; z-index:40;">
-    <div class="flex items-center justify-between w-full max-w-[1366px]
-                py-5 max-md:py-[17px] gap-6
-                max-md:flex-col max-md:items-center max-md:gap-3 max-md:text-center">
-      <img src="assets/Vend_Markkinapaikat.svg" alt="Vend Markkinapaikat"
-           class="flex-shrink-0 w-[140px] h-auto md:w-auto md:h-5 xl:h-6" />
-      <p class="font-dm text-xs leading-4 text-slate-700 xl:text-sm xl:leading-5 max-md:text-center">
-        <span data-i18n="vend.body">AutoVex on osa Vend-konsernia. Vend on vastuussa tietojesi käsittelystä tällä sivustolla.</span>
-        <a href="#" class="underline ml-1" data-i18n="vend.readMore">Lue lisää</a>
-      </p>
-    </div>
-  </div>
-
-  <script>
-    (function () {
-      var b      = document.getElementById('vend-banner');
-      var footer = document.querySelector('footer');
-      if (!b || !footer) return;
-
-      // Push footer up so the fixed banner doesn't overlap it
-      function applyOffset() {
-        footer.style.paddingBottom = b.offsetHeight + 'px';
-      }
-      applyOffset();
-      window.addEventListener('resize', applyOffset);
-
-      setTimeout(function () {
-        // Remove offset, make banner static (it follows footer naturally)
-        footer.style.paddingBottom = '';
-        window.removeEventListener('resize', applyOffset);
-        b.style.position = '';
-        b.style.bottom   = '';
-        b.style.left     = '';
-        b.style.right    = '';
-        b.style.zIndex   = '';
-      }, 10000);
-    })();
-  </script>
   <script src="proto-bar.js"></script>
 </body>
 </html>

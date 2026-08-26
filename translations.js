@@ -226,10 +226,6 @@ window.TRANSLATIONS = {
       faq3Body:         'Tietojen vahvistaminen on edellytys AutoVexin käytön jatkamiselle. Tietoja käytetään vain lakisääteiseen raportointiin eikä niiden toimittaminen vaikuta verotukseesi.',
     },
 
-    vend: {
-      body:     'AutoVex on osa Vend-konsernia. Vend on vastuussa tietojesi käsittelystä tällä sivustolla.',
-      readMore: 'Lue lisää',
-    },
 
     footer: {
       colAutoVex:     'AutoVex',
@@ -853,10 +849,6 @@ window.TRANSLATIONS = {
       faq3Body:         'Confirming your details is a requirement for continuing to use AutoVex. The information is used only for statutory reporting and providing it does not affect your taxation.',
     },
 
-    vend: {
-      body:     'AutoVex is part of the Vend group. Vend is responsible for processing your data on this site.',
-      readMore: 'Read more',
-    },
 
     footer: {
       colAutoVex:     'AutoVex',
