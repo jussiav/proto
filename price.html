@@ -80,7 +80,17 @@
     @media (max-width: 767px) {
       html[data-rnr-arm="v1"] #price-sidebar { display: none; }
     }
-  </style>
+      /* ── Funnel content column ───────────────────────────────────────────────
+       Prod caps every step at max-w-md = 448px and CENTRES it in the left half
+       (TenderRequestDraftForm.vue's `lg:w-1/2` half + each step component's own
+       `w-full max-w-md` inside a `flex flex-col items-center` wrapper). The
+       ProgressBar is the one wider element at max-w-lg = 512px, and the logo sits
+       at the half's left edge. Hand-written rather than utilities on ~40 children,
+       one rule per role. */
+    .funnel-col > *             { width: 100%; max-width: 28rem; }
+    .funnel-col > .funnel-logo  { width: auto; max-width: none; align-self: flex-start; }
+    .funnel-col > .funnel-steps { max-width: 32rem; }
+</style>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
@@ -139,20 +149,20 @@
 <body class="font-dm bg-white min-h-screen">
 
   <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
-    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 max-md:flex-col max-md:px-0 max-md:gap-0">
+    <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 lg:px-0 lg:gap-0 max-md:flex-col max-md:px-0 max-md:gap-0">
 
       <!-- ── Left column ── -->
-      <div class="flex-1 flex flex-col items-start gap-6 max-w-[512px] max-md:max-w-full max-md:w-full max-md:gap-10 max-md:px-5 max-md:pt-5 max-md:pb-8">
+      <div class="funnel-col w-full lg:w-1/2 md:px-4 flex flex-col items-center gap-6 max-md:w-full max-md:gap-10 max-md:px-5 max-md:pt-5 max-md:pb-8">
 
         <!-- Logo -->
-        <a href="index.html" aria-label="Takaisin etusivulle">
+        <a class="funnel-logo" href="index.html" aria-label="Takaisin etusivulle">
           <img src="assets/474ac962-2072-4176-9367-f62c20fadb0f.svg"
                alt="AutoVex"
                class="w-[88px] h-[18px] object-contain block" />
         </a>
 
         <!-- Step navigation -->
-        <nav aria-label="Vaiheet" class="w-full flex items-start pb-3">
+        <nav aria-label="Vaiheet" class="funnel-steps w-full flex items-start pb-3">
           <div data-step="details" class="flex flex-col items-center gap-2 flex-1 min-w-0">
             <div class="w-7 h-7 flex-shrink-0"></div>
             <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="steps.details">Varusteet</span>
@@ -269,7 +279,7 @@
       </div>
 
       <!-- ── Right column (cream) ── -->
-      <div id="price-sidebar" class="flex-1 bg-av-cream rounded-xl p-8 flex flex-col gap-6 max-w-[48%] md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
+      <div id="price-sidebar" class="w-full lg:w-[calc(50%-3rem)] lg:m-6 bg-av-cream rounded-xl p-8 flex flex-col gap-6 md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
 
         <!-- The whole "what happens next" component — heading included — is one unit,
              because the "Review/No review" initiative removes it as one unit. The
