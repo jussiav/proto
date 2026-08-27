@@ -91,6 +91,7 @@
     { href: 'decision.html',  label: 'Decision' },
     { href: 'dac7.html',      label: 'DAC7' },
     { href: 'help.html',      label: 'Support' },
+    { href: 'emails.html',    label: 'Transactional emails' },
     { href: 'components.html', label: 'Component gallery' }
   ];
 

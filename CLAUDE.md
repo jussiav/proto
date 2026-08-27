@@ -823,6 +823,105 @@ title/subtitle/link keys remain there.
 heading it used to show was borrowed from the support page; the real CMS entry is
 a flat list.
 
+## Transactional emails — `emails.html` + `email-content.js`
+
+An inbox-style tool for every transactional email the **consumer seller** can
+receive: list on the left grouped by the state that sends it, meta and rendered
+email on the right. Scope is deliberately narrow — **Finnish, C2B,
+seller-facing**. Sweden, B2B and every dealer-facing email are out; a different
+team owns those.
+
+**Blade cannot be executed here, so the split matters.** Body copy and subjects
+are plain text in the dump (`resources/views/mail/…` plus
+`resources/lang/fi/email.php`), so the COPY is verbatim and stays checkable
+against every future dump. What cannot be reproduced is the rendering:
+`<x-mail::message>`, `<x-mail::button>` and the `{{ $tenderRequest->… }}`
+interpolations. The mail shell in `emails.html` is therefore an **approximation**
+transcribed from `resources/views/vendor/mail/html` + `themes/autovex.css`
+(570px body, Avenir, h1 19px, copy 16px/1.5 `#74787E`, button `#0B6DFF` r8), and
+the page says so. Prod's own `app/Filament/Pages/TransactionalEmails.php` renders
+the real thing; an export from it replaces the shell without touching the copy.
+
+**Two template shapes, and .eml captures are what revealed the difference.**
+`shape: 'markdown'` — the notification calls `->markdown('mail.transactional…')`
+with a full blade template, so the chrome is header, body, footer and nothing
+else. `shape: 'mailmessage'` — the mail is built from
+`->greeting()/->line()/->action()`, and Laravel then adds the greeting as the
+`<h1>`, the shared `email.regards` salutation and an `email.subcopy` block
+repeating the button URL as text. Reading `resources/views/mail` alone cannot
+show this, and it also **hides whole emails**: `NewQuestion` (a dealership asks
+the seller for more information, dispatched from `TenderQuestionApiController`)
+has no blade template at all and was found only from a captured .eml.
+
+**Three senders, and only one of them is ours.** Captures from a real inbox show
+the codebase's transactional emails going out through **Mailgun**
+(`mg.autovex.fi`, `From: AutoVex <tiimi@autovex.fi>`, with the code's own
+`X-Mailgun-Tag` values: `type:…`, `market:c2b`, `role:seller` — shown per entry in
+the tool). The lifecycle and marketing emails a seller also receives — draft
+nurture, photo tips, asking-price help, "soitamme sinulle pian" — arrive via
+**SendGrid** and exist nowhere in the codebase, alongside the Klaviyo events the
+code triggers. Anything not referenced in the dump stays out of the tool.
+
+**Old .eml captures are useful for chrome, never for copy.** The 2024 MailHog
+captures verified the shell — 570px, Avenir, 35px content padding, the
+`images.autovex.fi/logo.png` header — and exposed the shape difference above. Their
+copy is stale: the verification email's own list has changed since, and its CTA
+label was "Jatka auton myyntiä" where the current lang file says "Vahvista
+sähköposti tästä". Copy always comes from the newest dump.
+
+**Two footers and two subcopy rules, both per entry rather than per shape.**
+`mail::message` prints `© <year> AutoVex`; `mail.layout` uses `email.footer`,
+which ends "Kaikki oikeudet pidätetään.". And the fallback-URL subcopy appears on
+every MailMessage-built email *and* on the verification email, because
+`mail.layout` renders one from the action label and url — no blade template sets
+`$subcopy` itself. Entries carry `subcopy: true` / `footer: 'rights'` instead of
+the renderer guessing from the shape.
+
+**The button is white-on-blue, and bold only where the template bolds it.**
+`.em-body a` (link blue `#006ec3`) outranks a bare `.em-btn`, which is why the
+label first rendered blue on blue; the rule is scoped to `.em-body a.em-btn`. The
+verification template wraps its label in `<b>`, the `<x-mail::button>` templates
+do not, so boldness is a per-entry flag (`ctaBold`) rather than a shell default.
+
+**One template styles itself.** `tender-form/email-verification.blade.php` carries
+inline styles instead of the theme's: 20px `<h1>`, every paragraph centred, body
+copy `#1e293b`, and a "Tarvitsetko neuvoja?" help block at the end. That entry is
+marked `centred: true`.
+
+**Every interpolated value is a placeholder, never a fixture value.** A rendered
+"Matti" reads as part of the copy, which defeats the purpose of reviewing what an
+email says. Bodies carry `<var data-src="…">[first name]</var>` and the meta
+panel lists each placeholder with its source expression. No Finnish template
+interpolates a date; the only time arithmetic lives in the notification classes
+and shows up in each entry's `timing` (e.g. `auction_ends_at + 4 h`).
+
+**Nothing conditional lives in the templates.** None of the eleven FI templates
+contains an `@if` — every branch is in the notification class, which produces two
+shapes: a different template per state (the four `auction-ended-*` emails, chosen
+by comparing the highest offer against `asking_price`) becomes separate entries
+each carrying its `condition`, and the same template with different strings per
+state (email verification's new vs returning seller) becomes one entry with
+`states`.
+
+**Klaviyo emails are listed, never rendered.** Nineteen seller-facing events are
+`AbstractKlaviyoNotification` subclasses: the repo holds the event name and
+payload, the copy lives in Klaviyo and is owned by Marketing. Omitting them would
+read as "no email is sent here", which is worse than an unrenderable row.
+
+**Arms work as they do everywhere else, but the row is per EMAIL.** An email — or
+one of its `states` — may carry `v1` (`{ subject, body }`) beside the production
+copy; the page reads the arm through `protoVariant`, badges list rows an arm
+changes, and states in the meta panel which copy is on screen. The page declares
+the initiative **only when the email currently open has an override**, so the bar
+shows its greyed `none on this page` for every other email — the same answer any
+page gives when it takes no part in an initiative. Offering an arm that renders
+identically to control reads as "the change is in and it looks the same", which
+is worse than no arm at all. An `initiative` field links an email to the spec page that
+owns the change and carries the reason it is a candidate before any copy exists.
+
+The tool is dev-only: reachable from the bar's **Go to** row, absent from every
+seller-facing nav, and replaced by a short notice in `?mode=test`.
+
 ## Design Spec Pages (`design-specs/`)
 
 Public dev-facing spec pages on GH Pages (e.g. `design-specs/delivery-distance.html`) document design changes: previous issues, live demo, states, behavior rules, data contract, copy. They are delivered to devs and discussed with the team.

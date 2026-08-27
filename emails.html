@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transactional emails – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <!-- Prod scale tokens (fontSize 3xl+, screens, spacing). One shared
+       definition; must follow the config block above, which it merges into. -->
+  <script src="tw-tokens.js"></script>
+  <style>
+    /* ── The mail shell ────────────────────────────────────────────────────────
+       An approximation of production's own mail chrome —
+       resources/views/vendor/mail/html/{layout,message,button} with
+       themes/autovex.css — reproduced here because blade cannot be executed in
+       the prototype. Values below are transcribed from that theme: 570px inner
+       body, Avenir/Helvetica, h1 19px, h2 16px, h3 14px, body copy 16px/1.5
+       #74787E, links #006ec3, button #0B6DFF with an 8px radius.
+
+       It is an APPROXIMATION on purpose, and the page says so: the copy is
+       exact, the chrome is replaced the moment a rendered export lands. */
+    .em-shell { background: #ffffff; }
+    /* mail::header — logo centred above the body, 25px above and below. */
+    .em-header {
+      width: 570px;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 25px 0;
+      text-align: center;
+    }
+    .em-header img { width: 150px; max-width: 100%; border: none; }
+    .em-shell-body {
+      background: #ffffff;
+      border-top: 1px solid #EDEFF2;
+      border-bottom: 1px solid #EDEFF2;
+    }
+    .em-body {
+      width: 570px;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 35px;
+      font-family: Avenir, Helvetica, Arial, sans-serif;
+      color: #74787E;
+      line-height: 1.4;
+    }
+    .em-body h1 { color: #2F3133; font-size: 19px; font-weight: bold; margin: 0 0 16px; text-align: left; }
+    .em-body h2 { color: #2F3133; font-size: 16px; font-weight: bold; margin: 24px 0 12px; text-align: left; }
+    .em-body h3 { color: #2F3133; font-size: 14px; font-weight: bold; margin: 18px 0 8px; text-align: left; }
+    .em-body p  { color: #74787E; font-size: 16px; line-height: 1.5em; margin: 0 0 16px; text-align: left; }
+    .em-body ol, .em-body ul { color: #74787E; font-size: 16px; line-height: 1.5em; margin: 0 0 16px; padding-left: 22px; }
+    .em-body li { margin-bottom: 8px; }
+    .em-body a  { color: #006ec3; }
+    .em-body .em-center { text-align: center; }
+    .em-body .em-lead   { font-size: 18px; color: #1e293b; }
+    .em-body .em-small  { font-size: 12px; }
+    /* The verification template styles itself rather than using the theme:
+       20px h1, everything centred, body copy in #1e293b. */
+    .em-body.is-centred, .em-body.is-centred p, .em-body.is-centred h1 { text-align: center; }
+    .em-body.is-centred h1 { font-size: 20px; }
+    .em-body.is-centred p, .em-body.is-centred ol, .em-body.is-centred ul { color: #1e293b; }
+    .em-body.is-centred ol, .em-body.is-centred ul { text-align: left; display: inline-block; }
+    .em-help { margin: 16px 0; color: #080808; }
+    .em-help p { color: #080808; margin: 0 0 4px; }
+    /* mail::subcopy — only on MailMessage-built emails. */
+    .em-subcopy { border-top: 1px solid #EDEFF2; margin-top: 25px; padding-top: 25px; }
+    .em-subcopy p { font-size: 12px; color: #74787E; margin: 0; }
+    .em-btn-row { text-align: center; margin: 28px 0; }
+    .em-body a.em-btn, .em-btn {
+      display: inline-block;
+      background: #0B6DFF;
+      color: #ffffff !important;
+      font-size: 16px;
+      border-radius: 8px;
+      padding: 10px 18px;
+      text-decoration: none;
+    }
+    /* Bold only where the template wraps the label in <b> — the verification
+       email does, the <x-mail::button> ones do not. */
+    .em-btn.is-bold { font-weight: bold; }
+    .em-footer {
+      width: 570px;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 35px;
+      text-align: center;
+      font-family: Avenir, Helvetica, Arial, sans-serif;
+    }
+    .em-footer p { color: #AEAEAE; font-size: 12px; text-align: center; margin: 0; }
+
+    /* Interpolated values. Deliberately styled so they cannot read as copy —
+       the whole point of showing [first name] instead of a fixture's "Matti". */
+    .em-body var, .em-var {
+      font-style: normal;
+      font-family: "DM Sans", sans-serif;
+      font-size: 0.9em;
+      background: #EEF6FA;
+      border: 1px dashed #88CFFF;
+      border-radius: 4px;
+      padding: 0 4px;
+      color: #0F47BE;
+      white-space: nowrap;
+      cursor: help;
+    }
+
+    /* Selected row in the list */
+    .em-row.is-active { background: #EEF6FA; box-shadow: inset 3px 0 0 #0B6DFF; }
+  </style>
+  <script src="proto-mode.js"></script>
+  <script src="email-content.js"></script>
+</head>
+<body class="font-dm bg-slate-100 min-h-screen">
+
+  <!-- Proto tooling: hidden in test mode, like every other dev surface. -->
+  <div id="test-mode-notice" class="hidden min-h-screen flex items-center justify-center px-6">
+    <p class="font-dm text-base text-slate-600 text-center max-w-md">
+      This is a prototype tool, not part of the test. Ask the moderator if you reached it by accident.
+    </p>
+  </div>
+
+  <div id="tool" class="max-w-[1440px] mx-auto px-6 py-8 max-md:px-4">
+
+    <!-- Header -->
+    <div class="flex flex-col gap-2 mb-6">
+      <div class="flex items-baseline gap-3 flex-wrap">
+        <h1 class="font-barlow font-bold text-black text-3xl leading-9">Transactional emails</h1>
+        <span class="font-dm text-sm text-slate-500">seller-facing · Finland · C2B</span>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-600 max-w-3xl">
+        Every transactional email the consumer seller can receive, in the order the journey sends them.
+        Copy is transcribed verbatim from the production dump; the surrounding mail chrome is an
+        approximation, since blade cannot be executed here — it gets replaced when a rendered export lands.
+        Marketing emails in Klaviyo are listed but never rendered: their copy is not in the codebase.
+      </p>
+    </div>
+
+    <div class="flex gap-6 items-start max-lg:flex-col">
+
+      <!-- ── List ── -->
+      <aside class="w-[340px] flex-shrink-0 max-lg:w-full bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200">
+          <p class="font-dm font-bold text-sm text-slate-900">Inbox</p>
+          <p id="list-count" class="font-dm text-xs text-slate-500"></p>
+        </div>
+        <div id="email-list" class="max-h-[70vh] overflow-y-auto"></div>
+      </aside>
+
+      <!-- ── Reading pane ── -->
+      <section class="flex-1 min-w-0 flex flex-col gap-4">
+
+        <!-- Meta -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div class="px-5 py-4 border-b border-slate-200">
+            <p id="meta-subject" class="font-dm font-bold text-lg leading-6 text-slate-900"></p>
+            <p id="meta-line" class="font-dm text-sm text-slate-500 mt-1"></p>
+          </div>
+          <div class="px-5 py-4">
+            <table class="w-full font-dm text-sm text-left">
+              <tbody id="meta-table" class="divide-y divide-slate-100 text-slate-800"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- The email -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div class="px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-3 flex-wrap">
+            <p class="font-dm font-medium text-sm text-slate-700">Rendered email</p>
+            <p class="font-dm text-xs text-slate-500">Chrome checked against rendered captures · copy verbatim from the dump</p>
+          </div>
+          <div id="email-render" class="bg-slate-50 py-8 px-4"></div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+
+  <script src="proto-bar.js"></script>
+  <script>
+    (function () {
+      /* Tooling is hidden in test mode — same rule as the bar and the scenario
+         switchers. The page still exists, it just does not show the tool. */
+      if (!window.protoDev) {
+        document.getElementById('tool').classList.add('hidden');
+        document.getElementById('test-mode-notice').classList.remove('hidden');
+        return;
+      }
+
+      var DATA = window.EMAIL_CONTENT;
+      var params = new URLSearchParams(window.location.search);
+
+      /* Initiative arms. An email may carry a v1 override; control always shows
+         what production sends today, so the two read side by side. Read through
+         protoVariant so a link, the bar and the funnel all agree on the arm. */
+      var ARMS = ['control', 'v1'];
+      var REVIEW_NO_REVIEW_ARM = (function () {
+        var a = window.protoVariant ? window.protoVariant('review-no-review', 'control') : 'control';
+        if (ARMS.indexOf(a) === -1) {
+          if (window.protoVariantSet) window.protoVariantSet('review-no-review', null);
+          return 'control';
+        }
+        return a;
+      }());
+
+      /* An override exists only where an initiative has approved copy for it. */
+      function armOf(v) {
+        if (REVIEW_NO_REVIEW_ARM !== 'v1') return null;
+        if (v.mail.initiative && v.mail.initiative.slug !== 'review-no-review') return null;
+        return v.v1 || null;
+      }
+      function armSubject(v) { var a = armOf(v); return (a && a.subject) || v.subject; }
+      function armBody(v)    { var a = armOf(v); return (a && a.body)    || v.body; }
+
+      /* One entry per rendered view: an email with `states` contributes one view
+         per state, because those states are what the seller actually receives. */
+      function views() {
+        var out = [];
+        DATA.emails.forEach(function (mail) {
+          if (mail.states) {
+            mail.states.forEach(function (st) {
+              out.push({
+                key: mail.id + ':' + st.id,
+                id: mail.id,
+                stateId: st.id,
+                mail: mail,
+                subject: st.subject,
+                body: st.body,
+                cta: st.cta,
+                condition: st.condition,
+                stateLabel: st.label,
+                v1: st.v1 || null
+              });
+            });
+          } else {
+            out.push({
+              key: mail.id,
+              id: mail.id,
+              mail: mail,
+              subject: mail.subject,
+              body: mail.body,
+              cta: mail.cta,
+              condition: mail.condition,
+              stateLabel: null,
+              v1: mail.v1 || null
+            });
+          }
+        });
+        return out;
+      }
+
+      var VIEWS = views();
+
+      function currentView() {
+        var wanted = params.get('email');
+        var state  = params.get('state');
+        if (wanted) {
+          var exact = VIEWS.filter(function (v) { return v.id === wanted; });
+          if (exact.length) {
+            if (state) {
+              var withState = exact.filter(function (v) { return v.stateId === state; });
+              if (withState.length) return withState[0];
+            }
+            return exact[0];
+          }
+        }
+        return VIEWS[0];
+      }
+
+      function esc(s) {
+        return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      /* ── The list ─────────────────────────────────────────────────────────── */
+      function renderList(active) {
+        var host = document.getElementById('email-list');
+        host.innerHTML = '';
+
+        var groups = [];
+        VIEWS.forEach(function (v) {
+          var g = groups.filter(function (x) { return x.name === v.mail.group; })[0];
+          if (!g) { g = { name: v.mail.group, items: [] }; groups.push(g); }
+          g.items.push(v);
+        });
+
+        groups.forEach(function (g) {
+          var head = document.createElement('p');
+          head.className = 'px-4 pt-4 pb-1 font-dm text-xs font-bold uppercase tracking-wide text-slate-400';
+          head.textContent = g.name;
+          host.appendChild(head);
+
+          g.items.forEach(function (v) {
+            var row = document.createElement('a');
+            row.className = 'em-row block px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors no-underline' +
+              (v.key === active.key ? ' is-active' : '');
+            row.href = 'emails.html?email=' + encodeURIComponent(v.id) +
+              (v.stateId ? '&state=' + encodeURIComponent(v.stateId) : '');
+            row.innerHTML =
+              '<span class="block font-dm font-medium text-sm text-slate-900 leading-5">' + esc(armSubject(v)) + '</span>' +
+              '<span class="block font-dm text-xs text-slate-500 mt-0.5">' + esc(v.mail.state) + '</span>' +
+              (v.stateLabel ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-0.5">' + esc(v.stateLabel) + '</span>' : '') +
+              (armOf(v) ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-green-100 text-green-800 rounded-full px-2 py-0.5">v1 differs</span>' : '') +
+              (!armOf(v) && v.mail.initiative ? '<span class="inline-block mt-1 font-dm text-xs bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">candidate</span>' : '');
+            host.appendChild(row);
+          });
+        });
+
+        /* Klaviyo — listed, never rendered. Leaving them out would read as
+           "no email is sent here", which is worse than an unrenderable row. */
+        var kHead = document.createElement('p');
+        kHead.className = 'px-4 pt-5 pb-1 font-dm text-xs font-bold uppercase tracking-wide text-slate-400';
+        kHead.textContent = 'Klaviyo — copy not in the codebase';
+        host.appendChild(kHead);
+
+        DATA.klaviyo.forEach(function (k) {
+          var row = document.createElement('div');
+          row.className = 'px-4 py-2.5 border-b border-slate-100';
+          row.innerHTML =
+            '<span class="block font-dm text-sm text-slate-500 leading-5">' + esc(k.cls) + '</span>' +
+            '<span class="block font-dm text-xs text-slate-400 mt-0.5">' + esc(k.state) + '</span>' +
+            '<code class="inline-block mt-1 font-mono text-[11px] text-slate-400">' + esc(k.event) + '</code>';
+          host.appendChild(row);
+        });
+
+        document.getElementById('list-count').textContent =
+          VIEWS.length + ' rendered · ' + DATA.klaviyo.length + ' in Klaviyo';
+      }
+
+      /* ── Meta panel ───────────────────────────────────────────────────────── */
+      function metaRow(label, value, mono) {
+        if (!value) return '';
+        return '<tr>' +
+          '<td class="py-2 pr-4 align-top font-medium text-slate-500 whitespace-nowrap w-[130px]">' + esc(label) + '</td>' +
+          '<td class="py-2 align-top' + (mono ? ' font-mono text-xs break-all' : '') + '">' + value + '</td>' +
+          '</tr>';
+      }
+
+      function renderMeta(v) {
+        var m = v.mail;
+        document.getElementById('meta-subject').textContent = armSubject(v);
+        document.getElementById('meta-line').textContent =
+          DATA.from.name + ' <' + DATA.from.address + '> → ' + DATA.recipient;
+
+        var rows = '';
+        rows += metaRow('Seller state', esc(m.state));
+        if (v.condition) rows += metaRow('Sent when', '<code class="font-mono text-xs">' + esc(v.condition) + '</code>');
+        rows += metaRow('Trigger', esc(m.trigger), true);
+        rows += metaRow('Timing', esc(m.timing));
+        rows += metaRow('CTA', v.cta ? esc(v.cta.label) + ' → <a class="text-av-blue underline" href="' + v.cta.target + '">' + esc(v.cta.target) + '</a>' : '<span class="text-slate-500">none — the seller is asked to reply to the message</span>');
+        rows += metaRow('Built as', m.shape === 'mailmessage'
+          ? 'MailMessage — greeting, lines, action; Laravel adds the salutation and a fallback-URL subcopy'
+          : 'Blade template via ->markdown() — header, body, footer only');
+        if (m.tags) rows += metaRow('Mailgun tags', m.tags.map(function (t) {
+          return '<code class="font-mono text-xs">' + esc(t) + '</code>';
+        }).join('<br>'));
+        rows += metaRow('Template', esc(m.template), true);
+        rows += metaRow('Copy keys', (m.langKeys || []).map(esc).join('<br>'), true);
+        if (m.initiative) {
+          var link = m.initiative.spec
+            ? '<a class="text-av-blue underline" href="' + m.initiative.spec + '">' + esc(m.initiative.slug) + '</a>'
+            : '<span class="text-slate-500">not yet assigned to an initiative</span>';
+          rows += metaRow('Initiative', link + '<br><span class="text-slate-700">' + esc(m.initiative.why) + '</span>');
+        }
+        rows += metaRow('Arm', armOf(v)
+          ? '<b>v1</b> — showing the initiative\'s revised copy'
+          : (REVIEW_NO_REVIEW_ARM === 'v1'
+              ? 'v1 selected, but this email has no override yet — showing production copy'
+              : 'control — production copy'));
+        var vars = dynamicFields(v);
+        if (vars) rows += metaRow('Dynamic fields', vars);
+        if (m.note) rows += metaRow('Note', '<span class="text-slate-700">' + esc(m.note) + '</span>');
+        document.getElementById('meta-table').innerHTML = rows;
+      }
+
+      /* Placeholders, read back out of the body so this list is always what the
+         email actually renders. Subject placeholders come from the lang string's
+         own :parameters, which blade never sees. */
+      var SUBJECT_SOURCES = {
+        '[first name]': ':first_name',
+        '[reg. no]':    ':registration_number'
+      };
+
+      function dynamicFields(v) {
+        var found = [];
+        var host = document.createElement('div');
+        host.innerHTML = armBody(v);
+        [].forEach.call(host.querySelectorAll('var'), function (el) {
+          var token = el.textContent, src = el.getAttribute('data-src') || '';
+          if (!found.some(function (f) { return f.token === token; })) {
+            found.push({ token: token, src: src, where: 'body' });
+          }
+        });
+        Object.keys(SUBJECT_SOURCES).forEach(function (token) {
+          if (v.subject.indexOf(token) !== -1) {
+            found.push({ token: token, src: SUBJECT_SOURCES[token], where: 'subject' });
+          }
+        });
+        if (!found.length) return '';
+        return found.map(function (f) {
+          return '<span class="em-var">' + esc(f.token) + '</span> ' +
+                 '<code class="font-mono text-xs text-slate-500">' + f.src + '</code>' +
+                 '<span class="text-slate-400 text-xs"> · ' + f.where + '</span>';
+        }).join('<br>');
+      }
+
+      /* ── The email ────────────────────────────────────────────────────────── */
+      function renderEmail(v) {
+        var button = v.cta
+          ? '<div class="em-btn-row"><a class="em-btn' + (v.mail.ctaBold ? ' is-bold' : '') +
+            '" href="' + v.cta.target + '">' + esc(v.cta.label) + '</a></div>'
+          : '';
+        var body = armBody(v).replace('{{BUTTON}}', button);
+
+        /* Chrome from vendor/mail/html/message.blade.php: header logo, bordered
+           body, footer. The salutation and the fallback-URL subcopy belong to the
+           MailMessage shape ONLY — message.blade.php renders a subcopy just when
+           the notification sets one, which no blade template here does. The 2024
+           captures show both because those notifications use ->line()/->action(). */
+        var extras = '';
+        if (v.mail.shape === 'mailmessage') {
+          extras += '<p>' + DATA.shared.regards + '</p>';
+        }
+        /* The fallback-URL subcopy appears wherever the layout renders one: every
+           MailMessage-built email, and the verification email, which goes through
+           mail.layout rather than mail::message. Verified against 2026 captures. */
+        if ((v.mail.shape === 'mailmessage' || v.mail.subcopy) && v.cta) {
+          extras += '<div class="em-subcopy"><p>' +
+            DATA.shared.subcopy.replace(':action', esc(v.cta.label)) +
+            ': <a href="' + v.cta.target + '">' + esc(v.cta.target) + '</a></p></div>';
+        }
+
+        /* Two footers: mail::footer prints "© <year> AutoVex"; mail.layout uses
+           email.footer, which adds "Kaikki oikeudet pidätetään.". */
+        var footer = '© ' + new Date().getFullYear() + ' AutoVex' +
+          (v.mail.footer === 'rights' ? '. Kaikki oikeudet pidätetään.' : '');
+
+        document.getElementById('email-render').innerHTML =
+          '<div class="em-shell">' +
+            '<div class="em-header"><img src="https://images.autovex.fi/logo.png" alt="AutoVex" /></div>' +
+            '<div class="em-shell-body"><div class="em-body' + (v.mail.centred ? ' is-centred' : '') + '">' +
+              body + extras +
+            '</div></div>' +
+            '<div class="em-footer"><p>' + footer + '</p></div>' +
+          '</div>';
+      }
+
+      var active = currentView();
+      renderList(active);
+      renderMeta(active);
+      renderEmail(active);
+
+      /* The bar drives selection through its Scenario row, so the whole set is
+         reachable without scrolling the list. `state` is cleared when an option
+         does not set it, so switching away never leaves a stale one behind. */
+      window.protoPage = {
+        /* Declared only when THIS email actually has an override. Every other
+           page shows a greyed "none on this page" when it takes no part in an
+           initiative, and an email with no revised copy is in exactly that
+           position — so the row answers "does this email change?" at a glance
+           instead of offering an arm that renders identically to control. */
+        initiatives: active.v1 ? [
+          {
+            slug:    'review-no-review',
+            default: 'control',
+            variants: [
+              { id: 'control', label: 'Control — production copy' },
+              { id: 'v1',      label: 'Variant 1 — revised email copy' }
+            ]
+          }
+        ] : [],
+        scenarioParam: 'email',
+        scenarioExtraParams: ['state'],
+        scenarios: (function () {
+          var groups = [];
+          VIEWS.forEach(function (v) {
+            var g = groups.filter(function (x) { return x.group === v.mail.group; })[0];
+            if (!g) { g = { group: v.mail.group, items: [] }; groups.push(g); }
+            g.items.push({
+              id: v.id,
+              label: v.stateLabel ? v.subject + ' — ' + v.stateLabel : v.subject,
+              params: v.stateId ? { state: v.stateId } : {}
+            });
+          });
+          return groups;
+        }())
+      };
+    }());
+  </script>
+</body>
+</html>
