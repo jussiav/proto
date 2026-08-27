@@ -203,8 +203,15 @@
               <td class="px-4 py-3">both</td>
               <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Done</span></td>
             </tr>
+            <tr>
+              <td class="px-4 py-3">6</td>
+              <td class="px-4 py-3">Transactional emails — <code>resources/views/mail/</code><br><span class="text-xs text-slate-500">prototype: <code>emails.html</code></span></td>
+              <td class="px-4 py-3">Three seller emails promise or assume the review call</td>
+              <td class="px-4 py-3">v1</td>
+              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Awaiting copy</span></td>
+            </tr>
             <tr class="text-slate-500">
-              <td class="px-4 py-3">6+</td>
+              <td class="px-4 py-3">7+</td>
               <td class="px-4 py-3" colspan="4">Appended here as each change is specced. See <b>Candidates</b> below for what is still under discussion.</td>
             </tr>
           </tbody>
@@ -369,32 +376,38 @@
       </div>
     </section>
 
-    <!-- Control-arm fidelity -->
+    <!-- Change 2 -->
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Already correct in production — do not change</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Things the prototype used to get wrong about a no-review seller, all verified against the current code. They are listed here because they look like initiative material and are not: production already behaves correctly, and the prototype's control arm was corrected to match. Nothing to build.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 2 — the contact step stops naming an outcome</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The last click before submitting reads <b>"Lähetä tarkastukseen"</b> — <code>personal_info.submit</code> in <code>PersonalInfo.vue</code>, with no <code>can_review</code> branch. It is already wrong for a seller outside the review segment, and once the <a class="text-av-blue underline font-medium" href="seller-intent.html">seller-intent</a> answer can downgrade a seller it is wrong for some inside it too. The arm replaces it with one neutral copy.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The call is not promised after the price step</p>
-          <p class="font-dm text-sm leading-6 text-slate-800"><code>PublishDraft</code> marks a draft for review only when <code>EvaluateDraftForReview</code> passes. Otherwise an unverified seller is queued (<code>queued_for_publishing_after_verification</code>) and a verified one publishes outright — and <b>both</b> of those statuses take <code>WhatHappensNext</code> branches that drop the review step (<code>[allNextSteps[0], ...slice(2)]</code> and <code>slice(3)</code> respectively). So the email-confirmation screen never promises the call to a no-review seller. The price step is the only screen that does, which is exactly the scope of Change 1.</p>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">One copy, not three</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">An earlier draft varied the button by outcome — send for review / publish / submit. That was dropped deliberately: three copies would leak the decision one step before we are ready to state it, and the seller would learn their outcome from a button. <b>One neutral copy promises nothing and denies nothing</b>, which is also why nothing on this step branches on the outcome at all.</p>
         </div>
         <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The car card is not shown on every screen</p>
-          <p class="font-dm text-sm leading-6 text-slate-800"><code>shouldShowPreview</code> is <code>isWaitingForReviewInReview || canPreviewDraft</code>, and <code>canPreviewDraft</code> does not include <code>success</code> or a rejected draft in <code>waitingForReview</code> — while <code>Success.vue</code> draws no card of its own. So the card appears on the in-review and email-verification screens and <b>nowhere else</b>: a rejected or published draft shows none. That is also why <code>Preview.vue</code>'s <code>draftStatusConfig.published</code> — the untranslated literal <code>'Published'</code> with a warning-octagon icon — never renders, and should be read as dead config rather than as a badge anyone sees.</p>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy (FI approved · EN draft)</p>
+          <table class="w-full font-dm text-sm text-left">
+            <tbody class="divide-y divide-slate-100 text-slate-800">
+              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap">control</td><td class="py-2">Lähetä tarkastukseen<br><span class="text-slate-500">Submit for review</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap">v1</td><td class="py-2"><b>Lähetä ilmoitus</b><br><span class="text-slate-500">Submit listing</span></td></tr>
+            </tbody>
+          </table>
+          <p class="font-dm text-xs text-slate-500 mt-3">Prototype keys: <code>contact.submitBtn</code> and <code>contact.submitBtnNeutral</code> in <code>translations.js</code>. Production key: <code>tenderform.personal_info.submit</code>.</p>
         </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The estimate field carries no label</p>
-          <p class="font-dm text-sm leading-6 text-slate-800">In <code>PriceInfo.vue</code> the reviewable seller's estimate is a bare <code>NumberInput</code> with a placeholder and <b>no</b> <code>label</code> prop — only the asking-price field passes one (<code>asking_price_label</code>, marked required). The prototype used to draw a label above both. Corrected in the control arm: the estimate variant now shows the question in the placeholder (<i>Oma arvio (vapaaehtoinen)</i>) and its info line reads <i>Ei vaikuta tarjouskilpailuun eikä velvoita myymään.</i>, both from production; the asking-price variant keeps its label and star. The label difference between the two variants is production's, not this initiative's.</p>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The seller's own price is never echoed back</p>
-          <p class="font-dm text-sm leading-6 text-slate-800"><code>Preview.vue</code> passes <code>asking_price</code> into <code>CarCard</code>, and <code>CarCard</code> never renders it — the prop is declared and unused. <code>CarDetailsCard</code>, the modal behind the card's own CTA, has no price field either. (<code>PreviewModal.vue</code> does render one, but no component imports it.) So neither the contact step nor the confirmation screen shows the asking price or the estimate back to the seller.</p>
-        </div>
+      </div>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Implementation notes</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>No outcome branching.</b> The arm decides the string; the seller's segment and intent answer are not consulted on this step.</li>
+          <li><b>The arm owns the element, not <code>data-i18n</code>.</b> The attribute was removed and the label is applied by the page, so a language switch cannot overwrite the arm's copy — the same pattern the price step uses for its own variant strings.</li>
+          <li><b>The offers-return case is untouched.</b> When the step is opened from the offers flow the button is a plain "Valmis" and stays that way in both arms.</li>
+          <li>Try it: <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/contact.html?review-no-review=v1">contact.html?review-no-review=v1</a> against <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/contact.html?review-no-review=control">?review-no-review=control</a>.</li>
+        </ul>
       </div>
       </div>
     </section>
-
 
     <!-- Change 3 -->
     <section class="av-band av-band-grey">
@@ -447,55 +460,6 @@
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">How this was verified</p>
         <p class="font-dm text-sm leading-6 text-slate-800">All four walked from the price step through the contact step to the confirmation screen, with no <code>?scenario=</code> forcing anything — the prototype derives the state from the same two facts production does (was the car in the review segment, has the email been confirmed). The verification email's link is followed for the two verified rows. The pairing worth stating: a <b>no-call seller who has not yet verified</b> lands on the queued screen, which mentions no call at all, and the page badge and the card badge agree.</p>
-      </div>
-      </div>
-    </section>
-
-    <!-- Change 5 -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 5 — copy that promised the call and rendered nowhere</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Harmless to a seller, misleading to anyone reading the copy file to find out what the funnel says. Deleted in both languages, 53 lines in total. Nothing rendered any of them — checked key by key against every page.</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>The old confirmation-screen set:</b> <code>success.headlineDefault</code>, <code>subtextDefault</code>, <code>badgeInReview</code>, <code>headlineEmailVerified</code>, <code>subtextEmailVerified</code>, <code>headlineVerifyEmail</code>, <code>subtextVerifyEmail</code>, <code>verifiedStep1–3 Title/Body</code> and a full dead <code>step1–5 Title/Body</code> list — a stale duplicate of the price step's own next-steps copy. The <code>missingStep*</code> keys stay: the missing-photos screen still renders them.</li>
-          <li><b><code>dac7.step2Title/Body</code></b>, which promised the review call on a page that has no next-steps component.</li>
-          <li><b>Still alive on purpose:</b> the whole <code>nextSteps.*</code> namespace, since the price step renders it in <code>control</code>. It goes when <code>v1</code> promotes — the lifecycle note below already says so.</li>
-        </ul>
-        <p class="font-dm text-sm leading-6 text-slate-700 mt-3"><b>Found while doing it:</b> the <code>success</code> namespace contained duplicate <code>step1Title</code>/<code>step1Body</code> keys, where the later pair silently won — resolved by the deletion. And <code>dac7.html</code> had no <code>data-i18n</code> at all, so its whole namespace was unreachable; that page is now wired (23 attributes, including its placeholders and its submit-time validation message) and its own dead keys — a completed screen and a next-steps list it does not have — are gone. Where a never-rendered key disagreed with what the page had been showing, the page won.</p>
-      </div>
-      </div>
-    </section>
-
-    <!-- Change 2 -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 2 — the contact step stops naming an outcome</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The last click before submitting reads <b>"Lähetä tarkastukseen"</b> — <code>personal_info.submit</code> in <code>PersonalInfo.vue</code>, with no <code>can_review</code> branch. It is already wrong for a seller outside the review segment, and once the <a class="text-av-blue underline font-medium" href="seller-intent.html">seller-intent</a> answer can downgrade a seller it is wrong for some inside it too. The arm replaces it with one neutral copy.</p>
-      <div class="grid md:grid-cols-2 gap-5 items-start">
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">One copy, not three</p>
-          <p class="font-dm text-sm leading-6 text-slate-800">An earlier draft varied the button by outcome — send for review / publish / submit. That was dropped deliberately: three copies would leak the decision one step before we are ready to state it, and the seller would learn their outcome from a button. <b>One neutral copy promises nothing and denies nothing</b>, which is also why nothing on this step branches on the outcome at all.</p>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy (FI approved · EN draft)</p>
-          <table class="w-full font-dm text-sm text-left">
-            <tbody class="divide-y divide-slate-100 text-slate-800">
-              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap">control</td><td class="py-2">Lähetä tarkastukseen<br><span class="text-slate-500">Submit for review</span></td></tr>
-              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap">v1</td><td class="py-2"><b>Lähetä ilmoitus</b><br><span class="text-slate-500">Submit listing</span></td></tr>
-            </tbody>
-          </table>
-          <p class="font-dm text-xs text-slate-500 mt-3">Prototype keys: <code>contact.submitBtn</code> and <code>contact.submitBtnNeutral</code> in <code>translations.js</code>. Production key: <code>tenderform.personal_info.submit</code>.</p>
-        </div>
-      </div>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Implementation notes</p>
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>No outcome branching.</b> The arm decides the string; the seller's segment and intent answer are not consulted on this step.</li>
-          <li><b>The arm owns the element, not <code>data-i18n</code>.</b> The attribute was removed and the label is applied by the page, so a language switch cannot overwrite the arm's copy — the same pattern the price step uses for its own variant strings.</li>
-          <li><b>The offers-return case is untouched.</b> When the step is opened from the offers flow the button is a plain "Valmis" and stays that way in both arms.</li>
-          <li>Try it: <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/contact.html?review-no-review=v1">contact.html?review-no-review=v1</a> against <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/contact.html?review-no-review=control">?review-no-review=control</a>.</li>
-        </ul>
       </div>
       </div>
     </section>
@@ -682,6 +646,145 @@
       <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl">In the prototype all three entries are one shared file, <code>faq-content.js</code>, rendered by <code>index.html</code>, <code>help.html</code>, <code>offers.html</code> and <code>decision.html</code>. Finnish is the CMS text verbatim; English is a working translation, since the CMS has none. Inline "Lue lisää täältä" links point at blog pages the prototype does not have, so those sentences keep their text and lose the link.</p>
       </div>
     </section>
+
+    <!-- Change 5 -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 5 — copy that promised the call and rendered nowhere</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Harmless to a seller, misleading to anyone reading the copy file to find out what the funnel says. Deleted in both languages, 53 lines in total. Nothing rendered any of them — checked key by key against every page.</p>
+      <div class="bg-white rounded-lg p-5 border border-slate-200">
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>The old confirmation-screen set:</b> <code>success.headlineDefault</code>, <code>subtextDefault</code>, <code>badgeInReview</code>, <code>headlineEmailVerified</code>, <code>subtextEmailVerified</code>, <code>headlineVerifyEmail</code>, <code>subtextVerifyEmail</code>, <code>verifiedStep1–3 Title/Body</code> and a full dead <code>step1–5 Title/Body</code> list — a stale duplicate of the price step's own next-steps copy. The <code>missingStep*</code> keys stay: the missing-photos screen still renders them.</li>
+          <li><b><code>dac7.step2Title/Body</code></b>, which promised the review call on a page that has no next-steps component.</li>
+          <li><b>Still alive on purpose:</b> the whole <code>nextSteps.*</code> namespace, since the price step renders it in <code>control</code>. It goes when <code>v1</code> promotes — the lifecycle note below already says so.</li>
+        </ul>
+        <p class="font-dm text-sm leading-6 text-slate-700 mt-3"><b>Found while doing it:</b> the <code>success</code> namespace contained duplicate <code>step1Title</code>/<code>step1Body</code> keys, where the later pair silently won — resolved by the deletion. And <code>dac7.html</code> had no <code>data-i18n</code> at all, so its whole namespace was unreachable; that page is now wired (23 attributes, including its placeholders and its submit-time validation message) and its own dead keys — a completed screen and a next-steps list it does not have — are gone. Where a never-rendered key disagreed with what the page had been showing, the page won.</p>
+      </div>
+      </div>
+    </section>
+
+    <!-- Change 6 -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 6 — the transactional emails</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Every seller-facing transactional email now has a rendered view in the prototype: <a class="text-av-blue underline font-medium" href="../emails.html">emails.html</a>, grouped by the state that sends it, with sender, trigger, timing and template path beside each one. Reading them end to end turned up three that promise or assume the review call. Copy for the revised versions is <b>awaiting approval</b>; the arm mechanism is already in place, so a <code>v1</code> lands as data rather than as new code.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Email</th>
+              <th class="px-4 py-3 font-medium">What it says</th>
+              <th class="px-4 py-3 font-medium">Why it is a candidate</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold"><a class="text-av-blue underline" href="../emails.html?email=email-verification&amp;state=new-seller">Email verification</a><br><span class="text-xs font-normal text-slate-500">new seller</span></td>
+              <td class="px-4 py-3">Step 1 of the numbered list: "Kun olet vahvistanut sähköpostiosoitteesi ja <b>tiimimme on tarkastanut ilmoituksesi</b>, se julkaistaan…"</td>
+              <td class="px-4 py-3"><b>The first email a seller ever receives</b>, and it states the review as a step everyone goes through — the same promise Change 1 removed from the price step. The returning-seller variant of the same template has no such clause, so only one string changes.</td>
+            </tr>
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold"><a class="text-av-blue underline" href="../emails.html?email=draft-add-images">Draft add images</a></td>
+              <td class="px-4 py-3">"Lataa puuttuvat kuvat <b>asiantuntijamme kanssa käymäsi puhelun mukaisesti</b>."</td>
+              <td class="px-4 py-3">Assumes the call already happened. True today, since only an advisor can send it from the review page — but it breaks the moment image chasing is automated for a car that was never reviewed.</td>
+            </tr>
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold"><a class="text-av-blue underline" href="../emails.html?email=auction-ended-no-offers">Auction ended · no offers</a></td>
+              <td class="px-4 py-3">Lists reasons no offers came, ending with "Auton kilometrimäärä on yli 200tkm tai ikää on yli 10 vuotta".</td>
+              <td class="px-4 py-3">States the review segment's own band back to the seller as a reason dealerships were not interested. Worth deciding whether that is the message we want when the same numbers decide who gets called.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>How the arm works:</b> an email in <code>email-content.js</code> may carry <code>v1</code> — subject and body — beside its production copy. <code>emails.html</code> reads the arm through <code>protoVariant</code>, badges the list rows an arm changes, and says in the meta panel which copy is on screen. An email with no override renders production copy even under <code>v1</code>, so a half-finished arm can never be mistaken for a decision.</p>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">Marketing and lifecycle emails — verify, then fix</h3>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A seller's inbox contains more than the codebase sends. Captures from a real seller's mailbox show a second family of emails going out through <b>SendGrid</b>, with copy that exists nowhere in the repository — alongside the Klaviyo events the code triggers. They cannot be rendered in the prototype and they are not this team's to edit, but they are part of the same journey and at least two of them contradict what the funnel is being changed to say. <b>They need an owner, a review and a fix.</b></p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Subject seen in a seller's inbox</th>
+              <th class="px-4 py-3 font-medium">Sent via</th>
+              <th class="px-4 py-3 font-medium">Why it matters</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold">"Ilmoituksesi on nyt valmis tarkastettavaksi – <span class="underline">soitamme sinulle pian</span>!"</td>
+              <td class="px-4 py-3">SendGrid</td>
+              <td class="px-4 py-3"><b>Promises the review call outright, in the subject line.</b> Sent from a platform the product team does not control, to sellers who may never be called. This is the strongest instance of the problem this initiative exists to fix, and it sits outside every surface the initiative can reach.</td>
+            </tr>
+            <tr class="bg-warning-50">
+              <td class="px-4 py-3 font-bold">"Autamme sinua asettamaan autollesi pyyntihinnan"</td>
+              <td class="px-4 py-3">SendGrid</td>
+              <td class="px-4 py-3">Belongs to the <b>asking-price</b> initiative: it promises help setting a price the team intends to remove from the product.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3">"Luonnoksesi on tallessa. Viimeistele auton tiedot!" · "Melkein valmista, laita autosi myyntiin jo tänään!" · "Viedään tarjouspyyntösi maaliin!"</td>
+              <td class="px-4 py-3">SendGrid</td>
+              <td class="px-4 py-3">Draft-abandonment nurture. Worth checking that none of them describes the process in a way the funnel no longer matches.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3">"Näin otat laadukkaat kuvat autostasi"</td>
+              <td class="px-4 py-3">SendGrid</td>
+              <td class="px-4 py-3">Photo guidance. No conflict found, listed for completeness.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What to look for when reviewing them</p>
+        <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
+          <li><b>Any promise of a phone call.</b> "Soitamme sinulle", "asiantuntijamme ottaa yhteyttä", "puhelu kestää noin 5 minuuttia". Each needs the same treatment the support FAQ got: conditional wording, or nothing.</li>
+          <li><b>Any claim that a listing is reviewed before publishing.</b> "Valmis tarkastettavaksi", "kun ilmoitus on tarkistettu". Most ads will publish without it.</li>
+          <li><b>Any mention of an asking price or a price estimate</b> — <i>pyyntihinta</i>, <i>hinta-arvio</i>, help with pricing. The asking price is being removed; a nurture email offering help with it will outlive the feature.</li>
+          <li><b>Process descriptions with a fixed number of steps.</b> A five-step list that includes the call is wrong for a seller who is never called, exactly as the support page's was.</li>
+          <li><b>Timing claims</b> — "36 tuntia", "1,5 työpäivää", "24 tuntia" — which must agree with what the product screens and the transactional emails say.</li>
+          <li><b>Who owns the send.</b> Three senders reach the same seller: Mailgun for the codebase's transactional emails, SendGrid for lifecycle and marketing, and Klaviyo for the events the code triggers. A copy change agreed with one owner does not reach the other two.</li>
+        </ol>
+      </div>
+
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">A design observation, worth its own initiative</h3>
+      <p class="font-dm text-sm leading-6 text-slate-700 mb-4 max-w-3xl">The emails a seller receives are not one design. Even inside the codebase there are <b>two shells</b>: the eleven markdown templates render through <code>mail::message</code> — left-aligned, 19px heading, no help block, footer "© 2026 AutoVex" — while the verification email renders through <code>mail.layout</code>, which centres everything, sizes its heading at 20px, bolds its button label, adds a "Tarvitsetko neuvoja?" block and a fallback-URL subcopy, and ends "Kaikki oikeudet pidätetään.". The SendGrid family is a third style again, with far more graphic treatment. Both prototype renderings are faithful to their template, which is exactly what makes the inconsistency visible. <b>Unifying them is not part of this initiative</b> — it is a separate piece of work, and worth naming before someone assumes the differences are intentional.</p>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Four more findings from the same read — not this initiative's</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>Which auction-ended email a seller gets is computed from the asking price</b> (thresholds at 0.9× and 1×), so the asking-price initiative reaches into the email logic, not just the UI.</li>
+          <li><b><code>auction-ended-good-offers</code> and <code>-great-offers</code> have identical bodies</b> — two templates, one text, different subjects.</li>
+          <li><b><code>negotiation-closed</code> fires twice:</b> the blade email and the Klaviyo <code>CloseNegotiation</code> notification, from the same listener.</li>
+          <li><b>Part of the journey is authored outside the codebase.</b> Nineteen seller-facing events are Klaviyo-triggered — negotiation, offer accepted or rejected, delivery date, failed sale — so their copy cannot be reviewed here and is owned by Marketing.</li>
+        </ul>
+      </div>
+      </div>
+    </section>
+
+    <!-- Control-arm fidelity -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Already correct in production — do not change</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Things the prototype used to get wrong about a no-review seller, all verified against the current code. They are listed here because they look like initiative material and are not: production already behaves correctly, and the prototype's control arm was corrected to match. Nothing to build.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The call is not promised after the price step</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><code>PublishDraft</code> marks a draft for review only when <code>EvaluateDraftForReview</code> passes. Otherwise an unverified seller is queued (<code>queued_for_publishing_after_verification</code>) and a verified one publishes outright — and <b>both</b> of those statuses take <code>WhatHappensNext</code> branches that drop the review step (<code>[allNextSteps[0], ...slice(2)]</code> and <code>slice(3)</code> respectively). So the email-confirmation screen never promises the call to a no-review seller. The price step is the only screen that does, which is exactly the scope of Change 1.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The car card is not shown on every screen</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><code>shouldShowPreview</code> is <code>isWaitingForReviewInReview || canPreviewDraft</code>, and <code>canPreviewDraft</code> does not include <code>success</code> or a rejected draft in <code>waitingForReview</code> — while <code>Success.vue</code> draws no card of its own. So the card appears on the in-review and email-verification screens and <b>nowhere else</b>: a rejected or published draft shows none. That is also why <code>Preview.vue</code>'s <code>draftStatusConfig.published</code> — the untranslated literal <code>'Published'</code> with a warning-octagon icon — never renders, and should be read as dead config rather than as a badge anyone sees.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The estimate field carries no label</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">In <code>PriceInfo.vue</code> the reviewable seller's estimate is a bare <code>NumberInput</code> with a placeholder and <b>no</b> <code>label</code> prop — only the asking-price field passes one (<code>asking_price_label</code>, marked required). The prototype used to draw a label above both. Corrected in the control arm: the estimate variant now shows the question in the placeholder (<i>Oma arvio (vapaaehtoinen)</i>) and its info line reads <i>Ei vaikuta tarjouskilpailuun eikä velvoita myymään.</i>, both from production; the asking-price variant keeps its label and star. The label difference between the two variants is production's, not this initiative's.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The seller's own price is never echoed back</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><code>Preview.vue</code> passes <code>asking_price</code> into <code>CarCard</code>, and <code>CarCard</code> never renders it — the prop is declared and unused. <code>CarDetailsCard</code>, the modal behind the card's own CTA, has no price field either. (<code>PreviewModal.vue</code> does render one, but no component imports it.) So neither the contact step nor the confirmation screen shows the asking price or the estimate back to the seller.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
 
     <!-- Audit -->
     <section class="av-band av-band-grey">
