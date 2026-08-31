@@ -24,7 +24,20 @@
  *     initiatives: [ { slug, default, variants: [ { id, label } ] } ],
  *     fields:    [ { key, label, placeholder, width, keepEmpty } ],  // URL overrides
  *     actions:   [ { label, title, run } ],                          // state mutations
+ *     panelLabel: 'Auction settings',   // names the button they collapse into
+ *     fieldsLabel: 'Prices €', actionsLabel: 'Negotiation',   // headings inside it
  *   };
+ *
+ * ── fields and actions live in ONE popover, not on the bar ──────────────────
+ * Both used to render inline, so decision.html alone put three text inputs, an
+ * Apply and three buttons on the strip — more controls than the rest of the bar
+ * put together, and each one only meaningful on that page. They now collapse
+ * into a single button named by panelLabel, so page-specific tooling costs one
+ * slot however much of it a page declares.
+ *
+ * Collapsing hides state, so the button says when an override is in force: it
+ * takes the dark chip styling and a count, with the values in its tooltip.
+ * Otherwise a hand-written ?asking= would be invisible behind a closed panel.
  *
  * Scenario = which state of the world (a real seller could be in it).
  * Variant   = which design candidate (exists only because we are proposing it).
@@ -126,16 +139,41 @@
       '#proto-bar button{height:20px;padding:0 7px;border:1px solid #c3c3c7;border-radius:3px;',
       '  background:#fff;color:#1d1d20;cursor:pointer;}',
       '#proto-bar button:hover{background:#e9e9eb;}',
+      /* An override is in force behind a closed panel — same chip colour as the
+         Prototype badge, so "something is set" reads at a glance. */
+      '#proto-bar button.pb-on{background:#4a4a4f;border-color:#4a4a4f;color:#fff;}',
+      '#proto-bar button.pb-on:hover{background:#5a5a60;}',
+      '#proto-bar .pb-tools{position:relative;display:inline-flex;}',
+      '#proto-bar .pb-panel{position:absolute;left:0;bottom:calc(100% + 6px);min-width:300px;',
+      '  padding:9px 10px 10px;background:#f1f1f2;border:1px solid #d3d3d6;border-radius:4px;',
+      '  box-shadow:0 2px 10px rgba(0,0,0,.18);display:none;flex-direction:column;gap:9px;',
+      '  text-align:left;cursor:default;}',
+      '#proto-bar .pb-panel[data-open]{display:flex;}',
+      '#proto-bar .pb-panel h4{margin:0 0 5px;font-size:10px;font-weight:600;letter-spacing:.05em;',
+      '  text-transform:uppercase;color:#8a8a90;}',
+      '#proto-bar .pb-panel .pb-row{display:flex;align-items:flex-end;gap:6px;flex-wrap:wrap;}',
+      /* Apply gets its own right-aligned line. Sitting it after the inputs put it
+         beside whichever field happened to wrap, which read as an accident. */
+      '#proto-bar .pb-panel .pb-apply{display:flex;justify-content:flex-end;margin-top:6px;}',
+      '#proto-bar .pb-panel .pb-stack{display:flex;flex-direction:column;gap:4px;}',
+      '#proto-bar .pb-panel .pb-stack button{width:100%;text-align:left;}',
+      '#proto-bar .pb-field{display:flex;flex-direction:column;gap:2px;}',
+      '#proto-bar .pb-field > span{color:#6b6b70;font-size:10px;}',
       'body.proto-bar-on{padding-bottom:' + BAR_H + 'px;}'
     ].join('');
     document.head.appendChild(css);
 
     /* ── helpers ── */
+    /* null/undefined removes the param; anything else is set, EMPTY STRING
+       INCLUDED. A falsy test here would delete `second=`, which is how
+       decision.html spells "force a single offer" — so the keepEmpty fields
+       documented below could never actually survive an Apply. Every caller
+       already passes null to clear, so nothing relies on '' meaning delete. */
     function withParams(changes) {
       var p = new URLSearchParams(window.location.search);
       Object.keys(changes).forEach(function (k) {
         var v = changes[k];
-        if (v) p.set(k, v); else p.delete(k);
+        if (v === null || v === undefined) p.delete(k); else p.set(k, v);
       });
       var q = p.toString();
       return window.location.pathname + (q ? '?' + q : '');
@@ -395,54 +433,134 @@
       bar.appendChild(vWrap);
     }
 
-    /* Numeric/text overrides — decision.html drives its offer amounts this way.
-       Applied together on Enter or via Apply, since they are read from the URL
-       at page load. An empty value clears the param, except where the page has
-       declared keepEmpty (decision needs "second=" present-but-empty to mean
-       "force a single offer"). */
-    if (cfg.fields && cfg.fields.length) {
-      var fWrap = document.createElement('label');
-      fWrap.appendChild(document.createTextNode(cfg.fieldsLabel || 'Overrides'));
-      var inputs = [];
-      cfg.fields.forEach(function (f) {
-        var inp = document.createElement('input');
-        inp.type = 'text';
-        inp.className = 'pb-input';
-        inp.placeholder = f.placeholder || f.label || f.key;
-        inp.title = f.label || f.key;
-        inp.value = params.get(f.key) || '';
-        if (f.width) inp.style.width = f.width;
-        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFields(); });
-        inputs.push({ f: f, el: inp });
-        fWrap.appendChild(inp);
-      });
-      function applyFields() {
-        var changes = {};
-        inputs.forEach(function (i) {
-          var v = i.el.value.trim();
-          changes[i.f.key] = v ? v : (i.f.keepEmpty ? '' : null);
-        });
-        window.location.href = withParams(changes);
-      }
-      var applyBtn = document.createElement('button');
-      applyBtn.type = 'button';
-      applyBtn.textContent = 'Apply';
-      applyBtn.addEventListener('click', applyFields);
-      fWrap.appendChild(applyBtn);
-      bar.appendChild(fWrap);
-    }
+    /* ── One popover for everything page-specific ────────────────────────────
+       fields = URL overrides the page reads at load (decision.html's offer
+       amounts), applied together on Enter or via Apply; an empty value clears
+       the param unless the field declares keepEmpty (decision needs "second="
+       present-but-empty to mean "force a single offer").
+       actions = things that mutate simulated state rather than navigate, e.g.
+       "Simulate dealer reply".
 
-    /* Page-supplied actions — things that mutate simulated state rather than
-       navigate, e.g. decision.html's "Simulate dealer reply". */
-    if (cfg.actions && cfg.actions.length) {
-      cfg.actions.forEach(function (a) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.textContent = a.label;
-        if (a.title) b.title = a.title;
-        b.addEventListener('click', function () { a.run(); });
-        bar.appendChild(b);
+       They share one button because they are one thought — "set this page's
+       situation up" — and because inline they crowded out the rows that are on
+       every page. */
+    var hasFields  = !!(cfg.fields && cfg.fields.length);
+    var hasActions = !!(cfg.actions && cfg.actions.length);
+
+    if (hasFields || hasActions) {
+      var tools = document.createElement('span');
+      tools.className = 'pb-tools';
+
+      var panel = document.createElement('div');
+      panel.className = 'pb-panel';
+      panel.setAttribute('role', 'group');
+
+      var toolsBtn = document.createElement('button');
+      toolsBtn.type = 'button';
+      toolsBtn.setAttribute('aria-expanded', 'false');
+
+      /* Which overrides are actually set, named in the tooltip so a closed panel
+         cannot hide them. keepEmpty fields count when present-but-empty — that
+         IS their meaning. */
+      var activeFields = hasFields ? cfg.fields.filter(function (f) { return params.has(f.key); }) : [];
+      var panelName = cfg.panelLabel || 'Page tools';
+      toolsBtn.textContent = panelName + (activeFields.length ? ' (' + activeFields.length + ')' : '') + ' \u25BE';
+      if (activeFields.length) {
+        toolsBtn.className = 'pb-on';
+        toolsBtn.title = panelName + ' — in force: ' + activeFields.map(function (f) {
+          var v = params.get(f.key);
+          return (f.label || f.key) + ' = ' + (v === '' ? '(empty)' : v);
+        }).join(', ');
+      } else {
+        toolsBtn.title = cfg.panelTitle || (panelName + ' — set this page up');
+      }
+
+      function setPanelOpen(open) {
+        if (open) panel.setAttribute('data-open', ''); else panel.removeAttribute('data-open');
+        toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      toolsBtn.addEventListener('click', function () {
+        setPanelOpen(!panel.hasAttribute('data-open'));
       });
+      document.addEventListener('click', function (e) {
+        if (!tools.contains(e.target)) setPanelOpen(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && panel.hasAttribute('data-open')) { setPanelOpen(false); toolsBtn.focus(); }
+      });
+
+      if (hasFields) {
+        var fSec = document.createElement('div');
+        var fHead = document.createElement('h4');
+        fHead.textContent = cfg.fieldsLabel || 'Overrides';
+        fSec.appendChild(fHead);
+        var fRow = document.createElement('div');
+        fRow.className = 'pb-row';
+        var inputs = [];
+        cfg.fields.forEach(function (f) {
+          /* Real labels rather than the bar's cryptic placeholders — the panel
+             has the room the strip never had. */
+          var field = document.createElement('label');
+          field.className = 'pb-field';
+          var cap = document.createElement('span');
+          cap.textContent = f.label || f.key;
+          field.appendChild(cap);
+          var inp = document.createElement('input');
+          inp.type = 'text';
+          inp.className = 'pb-input';
+          inp.placeholder = f.placeholder || f.key;
+          inp.value = params.get(f.key) || '';
+          if (f.width) inp.style.width = f.width;
+          inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFields(); });
+          inputs.push({ f: f, el: inp });
+          field.appendChild(inp);
+          fRow.appendChild(field);
+        });
+        function applyFields() {
+          var changes = {};
+          inputs.forEach(function (i) {
+            var v = i.el.value.trim();
+            changes[i.f.key] = v ? v : (i.f.keepEmpty ? '' : null);
+          });
+          window.location.href = withParams(changes);
+        }
+        fSec.appendChild(fRow);
+        var applyRow = document.createElement('div');
+        applyRow.className = 'pb-apply';
+        var applyBtn = document.createElement('button');
+        applyBtn.type = 'button';
+        applyBtn.textContent = 'Apply';
+        applyBtn.title = 'Reload with these values in the URL';
+        applyBtn.addEventListener('click', applyFields);
+        applyRow.appendChild(applyBtn);
+        fSec.appendChild(applyRow);
+        panel.appendChild(fSec);
+      }
+
+      if (hasActions) {
+        var aSec = document.createElement('div');
+        var aHead = document.createElement('h4');
+        aHead.textContent = cfg.actionsLabel || 'Actions';
+        aSec.appendChild(aHead);
+        var aStack = document.createElement('div');
+        aStack.className = 'pb-stack';
+        cfg.actions.forEach(function (a) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.textContent = a.label;
+          if (a.title) b.title = a.title;
+          /* An action mutates state and re-renders in place, so the panel would
+             otherwise stay open over the result it just produced. */
+          b.addEventListener('click', function () { setPanelOpen(false); a.run(); });
+          aStack.appendChild(b);
+        });
+        aSec.appendChild(aStack);
+        panel.appendChild(aSec);
+      }
+
+      tools.appendChild(toolsBtn);
+      tools.appendChild(panel);
+      bar.appendChild(tools);
     }
 
     /* Built-in data actions. Available everywhere PROTO_MOCK is loaded, because
