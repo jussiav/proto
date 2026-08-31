@@ -17,6 +17,17 @@
     try { return (localStorage.getItem('av_lang') || 'fi') !== 'en'; } catch (_) { return true; }
   }
 
+  /* The funnel step's own column. `.funnel-col` is a MARKER class the funnel
+     pages carry for exactly this purpose (see CLAUDE.md, "Column widths"), not a
+     utility chain — this used to look for `.flex-1.flex.flex-col.items-start`,
+     which stopped matching when the photos step's column was retuned. Nothing
+     errored: every caller guards on a falsy result, so the email previews simply
+     rendered underneath a still-visible photos step, and the mobile-layout rule
+     below silently stopped applying. */
+  function muwLeftCol() {
+    return document.querySelector('.funnel-col');
+  }
+
   function whenReady(fn) {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', fn);
@@ -52,7 +63,8 @@
     mobileStyle.id = 'muw-mobile-style';
     mobileStyle.textContent = [
       'html,body{overflow-x:hidden;max-width:100vw;}',
-      '.flex-1.flex.flex-col.items-start{',
+      /* Same marker class as muwLeftCol — this rule had gone dormant too. */
+      '.funnel-col{',
         'padding-left:20px!important;padding-right:20px!important;',
         'box-sizing:border-box!important;max-width:100%!important;',
         'width:100%!important;overflow-x:hidden!important;',
@@ -84,7 +96,7 @@
     ].forEach(function (el) { if (el) el.style.display = 'none'; });
 
     // Make left column full-width — let Tailwind max-md classes handle padding/width
-    var leftCol = document.querySelector('.flex-1.flex.flex-col.items-start');
+    var leftCol = muwLeftCol();
     if (leftCol) {
       leftCol.style.minWidth  = '0';
       leftCol.style.overflowX = 'hidden';
@@ -106,7 +118,7 @@
       .filter(Boolean).join(' ');
 
     // Stash and hide all current left-column children
-    var leftCol = document.querySelector('.flex-1.flex.flex-col.items-start');
+    var leftCol = muwLeftCol();
     if (leftCol) {
       Array.from(leftCol.children).forEach(function (child) {
         child.style.display    = 'none';
@@ -204,7 +216,7 @@
     try { st = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (_) {}
     var recipientEmail = (st.contact || {}).sahkoposti || '';
 
-    var leftCol = document.querySelector('.flex-1.flex.flex-col.items-start');
+    var leftCol = muwLeftCol();
     if (leftCol) {
       Array.from(leftCol.children).forEach(function (child) {
         child.style.display    = 'none';

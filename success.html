@@ -605,10 +605,37 @@
        seller is never promised the call on this screen.
 
        `reviewable` is written by the price step; default true, the common case. */
+    /* Which of the four post-submit states the draft is in: the review outcome
+       crossed with whether the email has been confirmed. */
     function draftScenario(store) {
-      var reviewable = store.reviewable !== false;
+      var reviewable = effectiveReviewable(store);
       if (store.loggedIn) return reviewable ? 'in-review-verified' : 'published';
       return reviewable ? 'in-review-unverified' : 'queued';
+    }
+
+    /* The review outcome, preferring a scenario the tester forced over the store.
+
+       A forced `?scenario=` has to survive the one action this page offers. Pick
+       "Queued — waiting for email verification" on the bar, click through the
+       verification email, and reading `store.reviewable` alone would land you on
+       `in-review-verified` — the review path, from a scenario that says the ad
+       was never reviewed — because forcing the param sets what renders, not what
+       the funnel decided. Only these four scenarios imply an outcome; every other
+       one on this page (rejected, missing photos) leaves it to the store, as does
+       the organic walk with no param at all. */
+    var SCENARIO_REVIEWABLE = {
+      'in-review-unverified': true,
+      'in-review-verified':   true,
+      'queued':               false,
+      'published':            false
+    };
+
+    function effectiveReviewable(store) {
+      var forced = new URLSearchParams(window.location.search).get('scenario');
+      if (forced && Object.prototype.hasOwnProperty.call(SCENARIO_REVIEWABLE, forced)) {
+        return SCENARIO_REVIEWABLE[forced];
+      }
+      return store.reviewable !== false;
     }
 
     // Handle emailVerified URL param (landing from virtual email CTA)
