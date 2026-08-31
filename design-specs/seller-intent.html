@@ -99,9 +99,9 @@
         <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Whether a seller gets a review call is decided today from the car alone — fuel type, model year, mileage. Nothing in the funnel asks the seller how ready they actually are to sell. This initiative tests three ways of asking, one per arm, on the price step. Phase 1 only collects the answer: which answers should change the outcome is what the test is meant to tell us.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
-        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+        <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: ready to review — copy pending approval
+          Status: running as an A/B test in production — awaiting results
         </span>
         <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1 · v2 · v3</span>
         <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype param: <code>?seller-intent=</code></span>
@@ -301,8 +301,8 @@
     <!-- Copy -->
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy (FI / EN) — drafts, pending approval</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Production has none of this copy — the feature does not exist there. The Finnish is as specified by the team; the English is a working translation. Generated from the prototype's own <code>translations.js</code>, so the table is what the step actually renders.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy (FI / EN)</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The Finnish below is <b>exactly what the live production A/B test is running</b>, as specified by the team; the English is a working translation. Generated from the prototype's own <code>translations.js</code>, so the table is what the step actually renders — and, in Finnish, what production renders too.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
@@ -355,7 +355,7 @@
           <li><b>How the winner is chosen — TBD.</b> Three arms produce three different data shapes, so "which question won" needs a stated metric before the test starts, not after.</li>
           <li><b>Phase 2's mapping and the date thresholds.</b> Both come from the data. The date question in particular needs bands, not a per-option table.</li>
           <li><b>Does the question become required?</b> Optional keeps the funnel frictionless but leaves the most interesting sellers unclassified. Worth revisiting once the skip rate is known.</li>
-          <li><b>All Finnish copy</b> in the table above is a draft awaiting approval, English included.</li>
+          <li><b>The Finnish copy is exactly what the live production A/B test is running.</b> English is a working translation.</li>
           <li><b>The rejection path is parked, not dropped.</b> When it returns it needs a backend decision too: prod's <code>rejected</code> status today means "a human looked and it needs fixing" — one of its states is actionable and says <i>Tietoja tarvitaan</i>. A seller declined for low intent has nothing to fix, so reusing that status may collide with the offers listing, notifications and resubmission.</li>
         </ul>
       </div>

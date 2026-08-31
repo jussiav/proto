@@ -102,9 +102,9 @@
         <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The delivery-distance question in ad creation, tested in three arms: the current design as <b class="text-white">control</b>, a <b class="text-white">minimal-change Variant&nbsp;1</b>, and a <b class="text-white">Variant&nbsp;2</b> that adds steppers and states what the distance does in the auction.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
-        <span class="bg-success-100 text-success-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+        <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: ready to build
+          Status: running as an A/B test in production — awaiting results
         </span>
         <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Scope: 3 arms — control · V1 · V2</span>
         <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Data key unchanged: delivery_distance</span>
@@ -430,8 +430,7 @@
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangePlaceholder</code><br><span class="text-xs text-slate-500">V1 + V2</span></td><td class="px-5 py-3">50–500</td><td class="px-5 py-3">50–500</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpactNote</code><br><span class="text-xs text-slate-500">V2 info line</span></td><td class="px-5 py-3">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</td><td class="px-5 py-3">Within your area, dealers can make an offer without collection. Dealers outside your area include collection in their offer.</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>err.required</code><br><span class="text-xs text-slate-500">submit, V1 + V2</span></td><td class="px-5 py-3">Pakollinen kenttä.</td><td class="px-5 py-3">Required field.</td></tr>
-            <tr><td class="px-5 py-3"><code>deliveryMsgEmpty</code></td><td class="px-5 py-3">Anna kilometrimäärä välillä 50–500 km.</td><td class="px-5 py-3">Enter a distance between 50–500 km.</td></tr>
-            <tr><td class="px-5 py-3"><code>deliveryMsgFixed</code><br><span class="text-xs text-slate-500">also used by V1 + V2 on auto-correct</span></td><td class="px-5 py-3">Arvo korjattiin välille 50–500 km.</td><td class="px-5 py-3">Value adjusted to the 50–500 km range.</td></tr>
+            <tr><td class="px-5 py-3"><code>deliveryMsgFixed</code><br><span class="text-xs text-slate-500">control, V1 and V2, on auto-correct</span></td><td class="px-5 py-3">Arvo korjattiin välille 50–500 km.</td><td class="px-5 py-3">Value adjusted to the 50–500 km range.</td></tr>
           </tbody>
         </table>
       </div>
