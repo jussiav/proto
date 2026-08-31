@@ -773,6 +773,19 @@ Because rows are hidden rather than re-rendered, the numbered badges are
 reassigned by visible position (`renumberSteps`) — they are pre-rendered SVGs,
 where prod's `MNumberedSteps` prints `index + 1` and renumbers for free.
 
+**The front page's returning-seller hero does NOT respect this.** It shows
+`hero.underReview` — "Ilmoitustasi tarkastetaan parhaillaan" — for any logged-in
+seller with a draft, whatever the review outcome, so seeding the no-review car and
+verifying the email leaves the front page claiming the ad is under review while
+`success.html` correctly says published. It is a **prototype-only state**: prod has
+one existing-draft hero ("Laitetaan :model liikkeelle!") and drops the draft once
+it is published, so there is nothing here to match. Recorded because the bar's
+`268 000 km (No review)` seed now reaches it in one click, and it reads as a bug in
+that seed rather than as the pre-existing gap it is. **Parked deliberately:** what
+the front page should say to a returning seller whose ad published without a
+review is a design question, not a fidelity fix, and it belongs to a later
+initiative. Do not "correct" it in passing.
+
 **`auto_rejected` is a different mechanism** — `AutoRejectsUnfitVehicle` with its
 own `unfit_cars_auto_rejection` config, disabled for Finland. Not the review
 filters; easy to conflate.
@@ -811,9 +824,27 @@ Solves two things the bar could not reach on its own:
   every page.
 
 **Seed car and Reset prototype are named states, not a separate mechanism.**
-Seed car = `draft-complete`; Reset prototype = `empty`, and it always returns to
-`index.html` — clearing in place would leave you on a mid-funnel or offers page
-with nothing to render.
+Reset prototype = `empty`, and it always returns to `index.html` — clearing in
+place would leave you on a mid-funnel or offers page with nothing to render.
+
+**Seed car offers two, through the same popover the page's own tooling uses**
+(`makePopover` in `proto-bar.js`, shared so the two controls open and read
+identically). Both are a submitted, email-unverified draft with every funnel field
+filled; they differ only in mileage, which is the thing that decides the review
+outcome:
+
+| Option | State | Mileage | Funnel | Success |
+|---|---|---|---|---|
+| 148 000 km (Review) | `draft-complete` | inside the band | optional estimate | in review |
+| 268 000 km (No review) | `draft-complete-no-review` | over 240 000 | required asking price | queued → published |
+
+Both write `store.reviewable` explicitly rather than leaving it to default: the
+price step writes it on submit and a seeded draft is past that step, so the two
+states differ by exactly the flag the outcome turns on. `draft-complete-no-review`
+is **seed-only** — deliberately not in `PROTO_MOCK.states`, so it stays out of the
+front page's scenario menu where it would render identically, and `detect()`
+reports it as `draft-complete`. `SEED_OPTIONS` is what the bar reads; the bar
+falls back to a single plain button if it is absent.
 
 **Seed car's photos are the same assets `photos.html`'s own "Photos filled"
 scenario uses** (`SCENARIO_PHOTOS` in `proto-mock.js`, mirroring
