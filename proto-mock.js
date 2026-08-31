@@ -133,6 +133,33 @@
       s.photosVisited = true;
       s.priceVisited = true;
       s.successVisited = true;
+      /* Written explicitly rather than left to default. The price step writes
+         this on submit, and a seeded draft is past that step — so the two seed
+         states differ by exactly the thing the seller's outcome turns on, and
+         success.html does not have to infer it. 148 000 km is inside the review
+         band, so this car IS review-called. */
+      s.reviewable = true;
+      write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
+    },
+    /* The same submitted draft on the other side of the review decision. A
+       seed-only state: it is NOT in LABELS, so it stays out of the front page's
+       scenario menu, where it would render identically to draft-complete — that
+       page's hero does not branch on the review outcome, only the funnel and the
+       success screen do. detect() reports it as draft-complete for the same
+       reason.
+
+       268 000 km clears price.html's 240 000 km band (isReviewable), so the
+       funnel asks this seller for an asking price instead of an estimate and
+       success.html lands them on queued → published rather than in review. The
+       car is otherwise identical, so the two seeds isolate the outcome. */
+    'draft-complete-no-review': function () {
+      var s = clone(CAR);
+      s.hero.km = '268 000';
+      s.detailsLeft = true;
+      s.photosVisited = true;
+      s.priceVisited = true;
+      s.successVisited = true;
+      s.reviewable = false;
       write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
     },
     'in-review': function () {                  // "underReview" -> success.html
@@ -200,6 +227,19 @@
        states rather than a separate mechanism is what stops the bar's scenario
        selection and the actual store from disagreeing. */
     SEED_STATE: 'draft-complete',
+    /* What the bar's Seed car popover offers, in order. Two submitted drafts
+       differing only in mileage, which is what decides the review outcome — so a
+       tester can walk both halves of Review/No review without touching the
+       funnel. Labels name the mileage first because that is the visible cause
+       and the outcome is the consequence. */
+    SEED_OPTIONS: [
+      { state: 'draft-complete',
+        label: '148 000 km (Review)',
+        title: 'Submitted draft inside the review band — funnel asks for an estimate, success lands in review' },
+      { state: 'draft-complete-no-review',
+        label: '268 000 km (No review)',
+        title: 'Submitted draft outside the review band — funnel asks for an asking price, success queues then publishes' }
+    ],
     CLEAR_STATE: 'empty',
     seed: function (name) {
       var b = BUILDERS[name];

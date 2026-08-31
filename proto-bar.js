@@ -244,6 +244,61 @@
       return sel;
     }
 
+    /* One popover, used by every control that needs one — the page's own tooling
+       and Seed car both go through this, so they open, close and read the same.
+       Returns { wrap, button, panel, setOpen }; the caller fills the panel.
+       Closes on outside click and on Escape. */
+    function makePopover(label, title) {
+      var wrap = document.createElement('span');
+      wrap.className = 'pb-tools';
+
+      var panel = document.createElement('div');
+      panel.className = 'pb-panel';
+      panel.setAttribute('role', 'group');
+
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.setAttribute('aria-expanded', 'false');
+      button.textContent = label + ' \u25BE';
+      if (title) button.title = title;
+
+      function setOpen(open) {
+        if (open) panel.setAttribute('data-open', ''); else panel.removeAttribute('data-open');
+        button.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+      button.addEventListener('click', function () { setOpen(!panel.hasAttribute('data-open')); });
+      document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) setOpen(false); });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && panel.hasAttribute('data-open')) { setOpen(false); button.focus(); }
+      });
+
+      wrap.appendChild(button);
+      wrap.appendChild(panel);
+      return { wrap: wrap, button: button, panel: panel, setOpen: setOpen };
+    }
+
+    /* A stack of full-width buttons inside a popover, under a small heading —
+       the shape both the Negotiation actions and the Seed car options use. */
+    function popoverSection(panel, heading, items) {
+      var sec = document.createElement('div');
+      var h = document.createElement('h4');
+      h.textContent = heading;
+      sec.appendChild(h);
+      var stack = document.createElement('div');
+      stack.className = 'pb-stack';
+      items.forEach(function (it) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = it.label;
+        if (it.title) b.title = it.title;
+        b.addEventListener('click', it.run);
+        stack.appendChild(b);
+      });
+      sec.appendChild(stack);
+      panel.appendChild(sec);
+      return sec;
+    }
+
     /* ── the bar ── */
     var bar = document.createElement('div');
     bar.id = 'proto-bar';
@@ -448,46 +503,24 @@
     var hasActions = !!(cfg.actions && cfg.actions.length);
 
     if (hasFields || hasActions) {
-      var tools = document.createElement('span');
-      tools.className = 'pb-tools';
-
-      var panel = document.createElement('div');
-      panel.className = 'pb-panel';
-      panel.setAttribute('role', 'group');
-
-      var toolsBtn = document.createElement('button');
-      toolsBtn.type = 'button';
-      toolsBtn.setAttribute('aria-expanded', 'false');
-
       /* Which overrides are actually set, named in the tooltip so a closed panel
          cannot hide them. keepEmpty fields count when present-but-empty — that
          IS their meaning. */
       var activeFields = hasFields ? cfg.fields.filter(function (f) { return params.has(f.key); }) : [];
       var panelName = cfg.panelLabel || 'Page tools';
-      toolsBtn.textContent = panelName + (activeFields.length ? ' (' + activeFields.length + ')' : '') + ' \u25BE';
-      if (activeFields.length) {
-        toolsBtn.className = 'pb-on';
-        toolsBtn.title = panelName + ' — in force: ' + activeFields.map(function (f) {
-          var v = params.get(f.key);
-          return (f.label || f.key) + ' = ' + (v === '' ? '(empty)' : v);
-        }).join(', ');
-      } else {
-        toolsBtn.title = cfg.panelTitle || (panelName + ' — set this page up');
-      }
-
-      function setPanelOpen(open) {
-        if (open) panel.setAttribute('data-open', ''); else panel.removeAttribute('data-open');
-        toolsBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      }
-      toolsBtn.addEventListener('click', function () {
-        setPanelOpen(!panel.hasAttribute('data-open'));
-      });
-      document.addEventListener('click', function (e) {
-        if (!tools.contains(e.target)) setPanelOpen(false);
-      });
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && panel.hasAttribute('data-open')) { setPanelOpen(false); toolsBtn.focus(); }
-      });
+      var toolsPop = makePopover(
+        panelName + (activeFields.length ? ' (' + activeFields.length + ')' : ''),
+        activeFields.length
+          ? panelName + ' — in force: ' + activeFields.map(function (f) {
+              var v = params.get(f.key);
+              return (f.label || f.key) + ' = ' + (v === '' ? '(empty)' : v);
+            }).join(', ')
+          : (cfg.panelTitle || (panelName + ' — set this page up'))
+      );
+      var tools   = toolsPop.wrap;
+      var panel   = toolsPop.panel;
+      var setPanelOpen = toolsPop.setOpen;
+      if (activeFields.length) toolsPop.button.className = 'pb-on';
 
       if (hasFields) {
         var fSec = document.createElement('div');
@@ -558,8 +591,6 @@
         panel.appendChild(aSec);
       }
 
-      tools.appendChild(toolsBtn);
-      tools.appendChild(panel);
       bar.appendChild(tools);
     }
 
@@ -584,14 +615,39 @@
         window.location.href = window.location.pathname + (q ? '?' + q : '');
       }
 
-      var seedBtn = document.createElement('button');
-      seedBtn.type = 'button';
-      seedBtn.textContent = 'Seed car';
-      seedBtn.title = 'Fill every funnel field — submitted, email not yet verified';
-      seedBtn.addEventListener('click', function () {
-        applyMockState(window.PROTO_MOCK.SEED_STATE);
-      });
-      bar.appendChild(seedBtn);
+      /* Seed car offers a choice, through the same popover the page's own tooling
+         uses. Both seeds fill every funnel field on a submitted, unverified
+         draft; they differ only in mileage, which is what decides whether the
+         seller is review-called — so the two options are the two halves of
+         Review/No review, reachable in one click each rather than by walking the
+         funnel twice with different numbers.
+
+         Falls back to a plain button if PROTO_MOCK declares no options, so an
+         older mock file still works. */
+      var seedOptions = window.PROTO_MOCK.SEED_OPTIONS;
+      if (seedOptions && seedOptions.length) {
+        var seedPop = makePopover('Seed car', 'Fill every funnel field — pick the review outcome');
+        popoverSection(seedPop.panel, 'Submitted draft, email not verified',
+          seedOptions.map(function (o) {
+            return {
+              label: o.label,
+              title: o.title,
+              /* Close before seeding: seeding navigates, and a panel left open
+                 over a page that is about to reload reads as a hung click. */
+              run: function () { seedPop.setOpen(false); applyMockState(o.state); }
+            };
+          }));
+        bar.appendChild(seedPop.wrap);
+      } else {
+        var seedBtn = document.createElement('button');
+        seedBtn.type = 'button';
+        seedBtn.textContent = 'Seed car';
+        seedBtn.title = 'Fill every funnel field — submitted, email not yet verified';
+        seedBtn.addEventListener('click', function () {
+          applyMockState(window.PROTO_MOCK.SEED_STATE);
+        });
+        bar.appendChild(seedBtn);
+      }
 
       /* Reset takes you back to the true initial state: no ad started, and on
          the front page, wherever you happened to be. Clearing in place would
