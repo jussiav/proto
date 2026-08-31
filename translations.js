@@ -372,19 +372,7 @@ window.TRANSLATIONS = {
       location:          'Missä autosi sijaitsee?',
       postalCode:        'Postinumero',
       deliveryRange:     'Kuinka kauas voit toimittaa auton?',
-      deliveryRangeCards:'Voin toimittaa auton itse',
       deliveryRangeNoteCurrent: 'Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.',
-      deliveryRangeNote: 'Ilmoituksesi näkyy autoliikkeille koko Suomessa. Autoliike huomioi noudon kustannuksen tarjouksessaan.',
-      delivery500:       'Minne vain Suomessa',
-      delivery500Desc:   'Eniten tarjouksia ilman noutoa – korkeampi hinta',
-      delivery300:       'Laajalti Suomessa',
-      delivery300Desc:   'Useimmat tarjoukset ilman noutoa',
-      delivery100:       'Oman seudun sisällä',
-      delivery100Desc:   'Moni liike hakee auton puolestasi',
-      delivery50:        'Vain lähialueelle',
-      delivery50Desc:    'Lähes kaikki liikkeet hakevat auton puolestasi',
-      deliveryOther:     'Muu etäisyys',
-      deliveryMsgEmpty:  'Anna kilometrimäärä välillä 50–500 km.',
       deliveryMsgFixed:  'Arvo korjattiin välille 50–500 km.',
       deliveryRangePlaceholder: '50–500',
       deliveryStepMinus: 'Vähennä 50 km',
@@ -582,9 +570,10 @@ window.TRANSLATIONS = {
 
     /* ── Seller intent A/B (design-specs/seller-intent.html) ──
        One question per arm, below the price estimate, for sellers inside the
-       review segment only. ALL COPY HERE IS A DRAFT PENDING APPROVAL — prod has
-       no equivalent, the feature does not exist there. FI is as specified by the
-       team; EN is a working translation.
+       review segment only. The FI copy here is EXACTLY what prod's live A/B test
+       (VWO `104_combi`) ships — verified against the 2026-08-31 dump, string for
+       string. Change one and change the other. EN is a working translation; prod
+       has no English for this yet.
 
        Option keys are the stable ids the data contract uses (asap, within-week,
        …), so renaming a label never changes what was stored. */
@@ -987,19 +976,7 @@ window.TRANSLATIONS = {
       location:          'Where is your car located?',
       postalCode:        'Postal code',
       deliveryRange:     'How far can you deliver the car?',
-      deliveryRangeCards:'I can deliver the car myself',
       deliveryRangeNoteCurrent: 'The distance affects how many dealers can make offers. Dealers offering collection can also bid from outside your area.',
-      deliveryRangeNote: 'Your listing is visible to dealers across Finland. Dealers factor collection costs into their offers.',
-      delivery500:       'Anywhere in Finland',
-      delivery500Desc:   'The most offers without collection – higher price',
-      delivery300:       'Widely across Finland',
-      delivery300Desc:   'Most offers without collection',
-      delivery100:       'Within my own region',
-      delivery100Desc:   'Many dealers collect the car for you',
-      delivery50:        'Local area only',
-      delivery50Desc:    'Nearly all dealers collect the car for you',
-      deliveryOther:     'Other distance',
-      deliveryMsgEmpty:  'Enter a distance between 50–500 km.',
       deliveryMsgFixed:  'Value adjusted to the 50–500 km range.',
       deliveryRangePlaceholder: '50–500',
       deliveryStepMinus: 'Decrease by 50 km',
@@ -1158,7 +1135,7 @@ window.TRANSLATIONS = {
       askingError:        'Enter the asking price as numbers, e.g. 12,500.',
     },
 
-    /* Seller intent A/B — draft copy pending approval, see the FI block. */
+    /* Seller intent A/B — working translation; prod ships FI only. See the FI block. */
     intent: {
       header:            'So we can serve you best:',
       note:              'Answering is optional and does not commit you to selling.',
