@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-08-27)
+## Reference Source Locations (updated 2026-08-31)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-08-26-1ee95731e59f/` (previous: `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-08-31-3064d348fba0/` (previous: `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -92,6 +92,16 @@ These rules apply to all new pages and components in this prototype, without exc
    `damage_and_service_information_title` ("Korjaukset ja viat") are both
    `text-xl font-bold`, while `labels.rims` ("Vanteet (kesä/talvi)") and
    `labels.maximum_distance` are sub-labels under a legend.
+
+   **`labels.maximum_distance` is the exception — and it is now prod.** The
+   delivery-distance question renders at `text-xl font-bold`, the group-legend
+   size, not the sub-label size its neighbours use. This was the **Delivery
+   distance A/B test**'s global change, and **it shipped**: the 2026-08-31 dump has
+   `<legend class="text-xl font-bold mb-2 required">` where 08-26 had
+   `text-base font-medium`, applied outside the experiment's own `v-if` so every
+   arm gets it. The proto matches. It had been reverted to the old size during a
+   prod-matching sweep — worth knowing, because that revert looked correct against
+   the dump of the day and was not.
 
 7. **Production fonts.** Every page must define `font-display` (Barlow + system fallbacks) and `font-body` (DM Sans + system fallbacks) in the Tailwind config block. Apply `font-display` to all section headings (`<h2>` etc). Apply `font-body` to `<body>`. Serve pages over HTTP (`http://localhost:8080`) — Google Fonts does not load reliably over `file://`.
 
@@ -319,12 +329,20 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 
 **Live initiatives:**
 
-| Initiative | Slug / param | Page default | Prod arm | Pages | Spec |
-|---|---|---|---|---|---|
-| Delivery distance A/B test | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
-| Review/No review | `review-no-review` | `control` | `control` | `price.html` | `design-specs/review-no-review.html` |
-| Seller file upload | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
-| Seller intent | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
+| Initiative | Stage | Slug / param | Page default | Prod arm | Pages | Spec |
+|---|---|---|---|---|---|---|
+| Delivery distance A/B test | **In production A/B test** | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
+| Review/No review | Live | `review-no-review` | `control` | `control` | `price.html` | `design-specs/review-no-review.html` |
+| Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
+| Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
+
+**Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
+and Seller intent (VWO `104_combi`), both present in the 2026-08-31 dump —
+so their arms are being measured against real sellers and neither has a winner
+yet. Their `prodArm` stays `control` and their page default stays `control`: that
+is what the proto renders unasked, which is what a user-test participant must land
+in, and it is the arm the eventual result gets read against. Nothing gets deleted
+until one is promoted.
 
 **Seller intent** asks one question per arm on the price step, below the
 estimate field, to learn how ready the seller actually is to sell — today the
@@ -364,9 +382,19 @@ are stored **by stable id**, `sellerIntentQuestion` + `sellerIntentAnswer`
 nullable) — not by label text, which is what `services.html`'s `radioGroups`
 does and why its mock data has to match rendered copy character for character.
 Switching arm or leaving the segment clears the answer: an answer exists only
-where the question was asked. Nothing about the answer reaches the ad preview
+where the question was asked.
+
+**Prod's live test stores it differently, and that is NOT a divergence to fix.**
+VWO `104_combi` writes `user_intent: { variant, value }` into its own side table,
+with option keys matching PHP enums. That shape exists because the test is
+temporary; if the data proves valuable and collection continues outside an A/B,
+the answer moves into the draft proper — which is the shape the spec and the proto
+describe. So the spec documents the intended end state, deliberately, and neither
+it nor the proto should be rewritten to match the scaffolding. Nothing about the answer reaches the ad preview
 sheet or the car card; it describes the seller's situation, not the ad. All FI/EN copy is
-a draft pending approval, FI as specified by the team.
+exactly what the live production A/B test is running — FI as specified by the
+team, English a working translation. The proto and prod are in step on this copy;
+if one changes, change the other.
 
 Two presentation details. The step's headings sit one Tailwind notch above where
 the proto had them — `#price-headline` at `text-3xl leading-9`, which matches
@@ -563,13 +591,23 @@ has none, since the feature does not exist there.
 
 1. **Live** — spec page status chip says *ready to build* / *in test*; the arms
    are switchable from the initiative's bar row.
-2. **Promoted** — the winning arm becomes the only code. Delete the losing arms,
+2. **In production A/B test** — the arms are running against real sellers and the
+   initiative is waiting on results and a decision. Chip says *running as an A/B
+   test in production — awaiting results*. Nothing about the proto changes: the
+   arms stay switchable and `control` stays the default, because a user test still
+   has to start from one known state. What DOES change is what "production
+   behaviour" means — prod is now serving several arms at once, so the bar's
+   `— none —` option and the registry's `prodArm` both mean *the arm matching
+   production's control*, not *what a given seller sees*. Say which when it
+   matters. Do not delete anything at this stage; a losing arm is still needed to
+   read the result against.
+3. **Promoted** — the winning arm becomes the only code. Delete the losing arms,
    the page's `initiatives` declaration AND the registry entry (the option group
    disappears, the param stops being read), plus any copy nothing renders any
    more — if `v1` wins on
    Review/No review, the whole `nextSteps` namespace leaves `translations.js`,
    since `price.html` is its only consumer.
-3. **Completed** — the spec page stays, its chip changed to *completed — `<arm>`
+4. **Completed** — the spec page stays, its chip changed to *completed — `<arm>`
    promoted, `<month year>`* with a line naming what shipped, and the row above
    moves to a **Completed initiatives** list here. The record survives; the
    switch does not.
