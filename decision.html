@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -41,11 +40,47 @@
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+  <style>
+    /* NumberInput.vue's own <style> — the suffix (€) is drawn by the wrapper
+       inside the field, not placed in the label. Verbatim from prod. */
+    [data-suffix] { position: relative; }
+    [data-suffix]::after {
+      content: attr(data-suffix);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 1em;
+      display: flex;
+      align-items: center;
+    }
+
+    /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
+       Play CDN generates no utilities for a ::before, and the SCSS is scoped in
+       prod. Colours are prod's `bg-blue` (= blue-600, #0B6DFF) and the #E1E7F0
+       border literal the component itself uses. */
+    .speech-bubble { position: relative; }
+    .speech-bubble::before {
+      content: "";
+      height: .5rem;
+      width: .5rem;
+      display: block;
+      position: absolute;
+      bottom: .5rem;
+      transform: rotate(45deg);
+    }
+    .speech-bubble--left::before {
+      background: #fff;
+      left: -.25rem;
+      border-left: 1px solid #E1E7F0;
+      border-bottom: 1px solid #E1E7F0;
+    }
+    .speech-bubble--right::before {
+      background: #0B6DFF;
+      right: -.25rem;
+    }
+  </style>
 </head>
 <body class="font-body bg-blue-50 min-h-screen">
-  <!-- Confetti canvas — mirrors AConfetti.vue: fixed inset-0, pointer-events-none -->
-  <canvas id="confetti-canvas" class="fixed inset-0 h-full w-full pointer-events-none" style="display:none;z-index:9998"></canvas>
-
   <!-- Nav -->
   <div id="site-nav"></div>
   <script src="site-nav.js"></script>
@@ -227,6 +262,184 @@
       var hrs = Math.floor(diff / 60);
       if (hrs < 24) return hrs + ' t sitten';
       return Math.floor(hrs / 24) + ' pv sitten';
+    }
+    function escHtml(s) {
+      return (s + '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    /* ── Contact-info masking — NegotiationResource::replaceContactInfo ──
+       Prod masks phone numbers and email addresses out of every negotiation
+       message before the thread is ever returned to the browser, including
+       digits spelled out in Finnish, English and Swedish. Applied here at
+       render time, so the store keeps what the seller typed exactly as prod's
+       database does. This is what gives the "Ethän kirjoita puhelinnumeroasi"
+       line under the message field its teeth. */
+    function maskContactInfo(text) {
+      if (!text) return text;
+      return (text + '')
+        .replace(/\b\d{3,4}\s?\d{2,4}\s?\d{2,4}\b/g, '********')
+        .replace(/\b(?:four|five|six|seven|eight|nine)\b/gi, '***')
+        .replace(/\b(?:neljä|viisi|kuusi|seitsemän|kahdeksan|yhdeksän)\b/gi, '***')
+        .replace(/\b(?:fyra|fem|sex|sju|åtta|nio)\b/gi, '***')
+        .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g, '*******@*****.com');
+    }
+
+    /* NumberInput.vue's two model transformers, reproduced exactly, because the
+       difference between them decides WHICH validation error an empty field
+       produces.
+
+       The setter is `Number(value.replace(/\D/g, ''))` over the string the input
+       reports, so clearing a field the seller has typed in yields **0**, not
+       null. The getter formats 0 back as "0" (its guard is
+       `!value && value !== 0`), so a cleared field visibly snaps to zero.
+
+       `null` therefore survives only while the seller has never typed in the
+       field at all — which is the single path that reaches the `required`
+       error. Clearing a typed value reaches `between` instead. */
+    var NF_FI = new Intl.NumberFormat('fi-FI', { useGrouping: true });
+    function negAmountDigits(v) { return (v == null ? '' : v + '').replace(/\D/g, ''); }
+    function negAmountSet(inputValue) { return Number(negAmountDigits(inputValue)); }
+    function negAmountGet(v) {
+      var n = Number(v);
+      if ((!v && v !== 0) || isNaN(n)) return '';
+      return NF_FI.format(n);
+    }
+
+    /* prod computes the reaction deadline as expires_at + reactionTimeForOffers
+       in both the card and the modal (OfferActions.vue does it inline). The
+       proto additionally honours the shared expiry offers.html may have pinned
+       for this scenario, so both pages agree — one definition, used by the
+       cards and by the modal footer's timer. */
+    function offerExpiryTs(req) {
+      var store = {};
+      try { store = JSON.parse(localStorage.getItem('autovex_offers') || '{}'); } catch (e) { store = {}; }
+      return (store.sharedExpiryScenario === SCENARIO && store.sharedExpiry)
+        ? store.sharedExpiry
+        : (req.expires_at || 0) + REACTION;
+    }
+
+    /* prod's negotiation.status, derived from the thread the proto stores.
+       The seller's own POST creates the negotiation as STATUS_PENDING (0); a
+       dealer answer moves it to STATUS_COUNTER_OFFER_SENT (7); STATUS_STOPPED
+       is 8. OfferActions.vue gates the modal's accept button on this value,
+       not on "a negotiation exists". */
+    function negStatus(neg) {
+      var msgs = (neg && neg.messages) || [];
+      if (!msgs.length) return null;
+      if (neg.isStopped) return 8;
+      return msgs[msgs.length - 1].sender === 'dealer' ? 7 : 0;
+    }
+
+    /* prod's TenderRequest::wasReviewed() — an admin accepted the draft in
+       review, which is also the moment the asking price gets set: the review
+       page refuses to save without Pricing Tool data. The funnel's own price
+       step never writes asking_price for a review-segment car (PriceInfo.vue
+       posts customer_price_estimate there), so the closest signal the proto
+       has is the price step's own `reviewable` flag. Absent a funnel walk this
+       is true, which is the common case and keeps the ceiling demoable. */
+    function draftWasReviewed() {
+      try {
+        var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
+        return f.reviewable !== false;
+      } catch (e) { return true; }
+    }
+
+    /* ── Counter-offer validation — StoreNegotiationFormRequest ──
+       All of this is server-side in prod: the seller can type any number, Send
+       is never disabled by it, and the messages arrive with the failed POST to
+       render under the field.
+
+       The name behind :attribute comes from the FormRequest's own attributes(),
+       which maps `amount` to tender.asking_price ("Pyyntihinta") — NOT to the
+       field's own negotiation.counter_offer.amount label ("Vastatarjous"). So
+       prod's generic messages name a different field than the one on screen.
+       Kept as-is; it is what a seller sees today.
+
+       Deliberate deviation: prod's asking-price ceiling message ends
+       "Jos tarvitset apua, otathan yhteyttä asiakaspalveluumme." — dropped
+       here per team decision. Everything else is verbatim.
+
+       Not ported, both dead in prod: NegotiationFormRequest's
+       `min:tenderoffer.amount` / "Tarjoustasi ei voida laskea" (no route
+       reaches counterOfferSend), and the `negotiation`-keyed failures
+       (not_allowed / expired / stopped / wait_for_answer / end_of_rounds),
+       which are returned but rendered nowhere — Negotiate.vue reads only
+       `amount` and `message`. */
+    var NEG_AMOUNT_MAX = 9999999;
+
+    function validateCounterOffer(amount, req, offers, neg) {
+      var errors = [];
+
+      /* `required` — reachable only from a field the seller never typed in, where
+         Negotiate.vue's formData.amount is still its initial null. (If neither
+         field was touched, the deep watcher never fired at all and the POST body
+         has no `amount` key — Laravel's `required` fails either way.) */
+      if (amount === null) {
+        errors.push('Kenttä Pyyntihinta vaaditaan.');
+        return errors;
+      }
+      if (amount < 1 || amount > NEG_AMOUNT_MAX) {
+        errors.push('Kentän Pyyntihinta tulee olla välillä 1 - ' + NEG_AMOUNT_MAX + '.');
+        return errors;
+      }
+
+      var asking  = req.asking_price || 0;
+      var highest = req.highest_offer || (offers[0] ? offers[0].amount : 0);
+
+      /* The ceiling needs all four conditions, so it does NOT fire when the
+         highest offer already reached the asking price. */
+      if (asking > 100 && draftWasReviewed() && amount > asking && highest < asking) {
+        errors.push('Vastatarjouksesi ei voi olla asettamaasi pyyntihintaa korkeampi.');
+      }
+
+      /* Round two may not ask for more than round one did. */
+      var msgs = (neg && neg.messages) || [];
+      var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
+      if (lastSeller && amount > lastSeller.amount) {
+        errors.push('Pyyntihinta liian korkea');
+      }
+
+      return errors;
+    }
+
+    /* NumberInput.vue, transcribed. The label is the field's own name; the €
+       is the `suffix` prop and lands inside the input via [data-suffix]::after.
+       Error state swaps the border and tints the field, and each message is its
+       own <p> under it. prod's leading-1 is 16px (its lineHeight scale is not
+       ported to this proto — see CLAUDE.md), hence leading-[16px]. */
+    function buildNegAmountField(errors) {
+      var hasErr = !!(errors && errors.length);
+      var inputCls = 'text-base font-normal font-body leading-relaxed block w-full border rounded px-4 py-3.5 transition focus:outline-none focus:ring appearance-none ' +
+        (hasErr ? 'border-red-500 bg-red-500 bg-opacity-10' : 'border-slate-800 bg-white');
+
+      var html = '<label class="mb-3 block w-full relative">';
+      html += '<span class="mb-3 inline-block text-base leading-none font-medium lg:text-lg">Vastatarjous</span>';
+      html += '<div data-suffix="€"><input id="modal-neg-amount" type="text" inputmode="numeric" class="' + inputCls + '" /></div>';
+      (errors || []).forEach(function(msg) {
+        html += '<p class="text-red-500 text-sm leading-[16px] mt-1.5 !mb-0">' + escHtml(msg) + '</p>';
+      });
+      html += '</label>';
+      return html;
+    }
+
+    /* TextArea.vue, transcribed — including the character counter, which the
+       proto was missing. prod's leading-2 is 21px. */
+    function buildNegMessageField(errors) {
+      var hasErr = !!(errors && errors.length);
+      var taCls = 'p-4 text-base leading-[21px] block w-full border rounded-lg transition focus:outline-none focus:ring ' +
+        (hasErr ? 'border-red-500 bg-red-500 bg-opacity-10' : 'border-slate-400 bg-white');
+
+      var html = '<div class="relative">';
+      html += '<label>';
+      html += '<span class="mb-3 inline-block text-base font-medium leading-none lg:text-lg">Viesti</span>';
+      html += '<textarea id="modal-neg-message" rows="3" maxlength="2500" class="' + taCls + '"></textarea>';
+      html += '</label>';
+      html += '<div id="modal-neg-count" class="absolute right-3 bottom-1 text-sm">0 / 2500</div>';
+      (errors || []).forEach(function(msg) {
+        html += '<p class="text-red-500 text-sm my-1">' + escHtml(msg) + '</p>';
+      });
+      html += '</div>';
+      return html;
     }
 
     // ── Mock data ──
@@ -451,11 +664,20 @@
       var status = pos === 0 ? 'firstPlace' : pos === 1 ? 'secondPlace' : 'thirdPlace';
       var theme  = pos === 0 ? 'blue' : 'light';
 
+      /* Negotiation state comes from the live thread, not the scenario flag, and
+         prod distinguishes two states here (useC2BDecisionPageOfferMapping's
+         getOfferStatus): STOPPED gets its own `negotiation_stopped`, everything
+         else with a negotiation gets `negotiation`. The proto only ever produced
+         the latter, so a closed negotiation still read as one in progress. */
+      var negSt = negStatus(NEGOTIATIONS[offer.id]);
+      if (negSt === null && offer.negotiation_pending) negSt = 0;
+
       if (offer.auto_rejected)         { status = 'expired'; }
       else if (offer.status === 1)     { status = 'accepted';     theme = 'lime'; }
       else if (offer.status === 2)     { status = 'rejected'; }
       else if (offer.status === 3)     { status = 'finalOffer';   theme = 'amber'; }
-      else if (offer.negotiation_pending) { status = 'negotiation'; }
+      else if (negSt === 8)            { status = 'negotiation_stopped'; }
+      else if (negSt !== null)         { status = 'negotiation'; }
       else if (timeToReact <= 0)       { status = 'expired'; }
 
       var expired = offer.status !== 1 && (
@@ -463,16 +685,47 @@
         (offer.status !== 3 && timeToReact <= 0)
       );
 
-      return { status: status, theme: theme, expired: expired, timeToReact: timeToReact };
+      /* prod's `dealerRepliedToNegotiation`: a negotiation exists and is no longer
+         PENDING (useC2BDecisionPageOfferMapping). Derived once here so the card
+         and the banner cannot disagree. */
+      return {
+        status: status,
+        theme: theme,
+        expired: expired,
+        timeToReact: timeToReact,
+        dealerReplied: negSt !== null && negSt !== 0
+      };
     }
 
-    // ── Post-auction quality ──
+    /* ── Post-auction status — usePostAuctionStatus + postAuctionStatusPredicates ──
+       Precedence is prod's, in prod's order. The four price tiers still resolve
+       to distinct statuses here, exactly as prod still returns four constants —
+       but every one of them now maps to the SAME message config (see
+       OFFERS_PENDING_ACTION_* below), so the tier only survives as a label. */
     function postAuctionStatus(req, offers) {
-      if (!offers.length) return 'no_offers';
-      if (offers.every(function(o) { return o.auto_rejected; })) return 'offers_expired';
-      if (req.status === 2 || req.status === 4 || req.status === 6 || offers.some(function(o) { return o.status === 1; })) return 'offer_accepted';
-      if (offers[0] && offers[0].status === 3) return 'final_offer';
-      if (offers.every(function(o) { return o.status === 2; })) return 'offer_rejected';
+      if (!offers.length) return 'no_offers';                                                   // hasNoOffers
+      if (offers.every(function(o) { return o.auto_rejected; })) return 'offers_expired';        // allAutoRejected
+      if (req.status === 2 || req.status === 4 || req.status === 6 ||
+          offers.some(function(o) { return o.status === 1; })) return 'offer_accepted';          // isAuctionAccepted
+      if (offers[0] && offers[0].status === 3) return 'final_offer';                             // OFFER_FINAL
+
+      /* prod also treats a rejected HIGHEST offer (and any `rejected_by_seller`,
+         a flag this proto's mock shape does not carry) as offer_rejected — not
+         only the all-rejected case. */
+      if ((offers[0] && offers[0].status === 2) ||
+          offers.every(function(o) { return o.status === 2; })) return 'offer_rejected';
+
+      var negSt = offers[0] ? negStatus(NEGOTIATIONS[offers[0].id]) : null;
+
+      /* isExpiredByTime: past expires_at + reactionTimeForOffers. Prod checks it
+         BEFORE the negotiation branches, with one exception — a PENDING
+         negotiation (the seller's counter-offer still awaiting an answer) keeps
+         the auction alive past the deadline. The proto had no expiry branch at
+         all, so an expired-but-unrejected auction still read as a price tier. */
+      if (_now() > offerExpiryTs(req) && negSt !== 0) return 'offers_expired';
+
+      if (negSt === 8) return 'negotiation_stopped';
+
       var highest = req.highest_offer || (offers[0] ? offers[0].amount : 0);
       var asking  = req.asking_price || 0;
       if (highest > asking)        return 'excellent_auction';
@@ -528,51 +781,47 @@
       return out;
     }
 
-    // ── Confetti — mirrors AConfetti.vue ──
-    // Fires for excellent_auction, good_auction, matches_expectations
-    var CONFETTI_STATUSES = ['excellent_auction', 'good_auction', 'matches_expectations'];
-    var CONFETTI_COLORS   = ['#00F0DC', '#0B6DFF', '#F5AB84', '#FFD24A', '#FFFFFF'];
-    function fireConfetti() {
-      var canvas = document.getElementById('confetti-canvas');
-      if (!canvas || typeof confetti === 'undefined') return;
-      canvas.style.display = 'block';
-      var fire = confetti.create(canvas, { resize: true, useWorker: true, disableForReducedMotion: true });
-      var count = 6;
-      function burst() {
-        if (count <= 0) return;
-        fire({
-          colors: CONFETTI_COLORS,
-          particleCount: 100,
-          spread: 160,
-          startVelocity: 80,
-          scalar: 1.5,
-          ticks: 100,
-          origin: { x: (count % 3) / 2, y: 1 }
-        });
-        count--;
-        setTimeout(burst, 300);
-      }
-      burst();
-    }
+    /* ── Hero and warm-up copy — c2bPostAuctionMessages.js ──
+       **The outcome tiers no longer message differently.** prod defines ONE
+       `offersPendingActionConfig` and assigns the same object to
+       EXCELLENT_AUCTION, MATCHES_EXPECTATIONS, GOOD_AUCTION and
+       NOT_GOOD_AUCTION — its own comment says so, and C2BDecision.vue carries a
+       TODO noting `offerEstimateDifference` went dead with that unification
+       ("no hero config consumes the amount param anymore").
+
+       The proto still had the four separate tier heroes ("Sait yli odotusten!",
+       "Odotustesi mukainen tarjous", "Nyt ollaan hyvissä asemissa!", "Peli ei ole
+       vielä pelattu") and three separate warm-up cards. All of them are gone from
+       prod. Shared objects here rather than four copies, so they cannot drift
+       apart again. */
+    var HERO_OFFERS_PENDING = { title: 'Nyt on aikasi toimia!', desc: 'Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.' };
 
     var HERO_COPY = {
-      excellent_auction:    { title: 'Sait yli odotusten!',             desc: 'Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.' },
-      matches_expectations: { title: 'Odotustesi mukainen tarjous',     desc: 'Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.' },
-      good_auction:         { title: 'Nyt ollaan hyvissä asemissa!',    desc: 'Tuloksena oli vahva suoritus. Hyväksy tarjous ja liike on sinuun yhteydessä tai ehdota parempaa hintaa.' },
-      not_great_auction:    { title: 'Peli ei ole vielä pelattu',       desc: 'Voit hyväksyä, neuvotella tai jatkaa myyntiä yhdessä meidän kanssa.' },
+      excellent_auction:    HERO_OFFERS_PENDING,
+      matches_expectations: HERO_OFFERS_PENDING,
+      good_auction:         HERO_OFFERS_PENDING,
+      not_great_auction:    HERO_OFFERS_PENDING,
       offers_expired:       { title: 'Tarjoukset ovat umpeutuneet',     desc: 'Voimme todennäköisesti edelleen auttaa myymään autosi. Ota meihin yhteyttä, niin yritämme palauttaa tarjoukset – tai uusitaan tarjouskilpailu.' },
-      no_offers:            { title: 'Tarjouksia ei tullut',            desc: 'Yleisimpiä syitä ovat puutteellinen ilmoitus, epäedullinen markkinatilanne tai liian korkea hintaodotus.' },
+      no_offers:            { title: 'Tarjouksia ei tullut',            desc: 'Yleisimpiä syitä ovat puutteellinen ilmoitus tai epäedullinen markkinatilanne.' },
       offer_accepted:       { title: 'Onneksi olkoon!',                 desc: 'Autoliike ottaa sinuun yhteyttä mahdollisimman pian kaupan viimeistelyä varten.' },
       offer_rejected:       { title: 'Tarjoukset hylätty',             desc: 'Tarjoukset eivät olleet sinulle sopivia. Me ymmärrämme – parannellaan ilmoitusta yhdessä tai kokeillaan uudelleen paremmalla hetkellä.' },
       final_offer:          { title: 'Lopullinen tarjous',             desc: 'Pidämme tätä reiluna hintana, joka vastaa tämänhetkisiä markkinoita. Hyväksy, niin liike ottaa sinuun yhteyttä.' },
+      negotiation_stopped:  { title: 'Neuvottelu päättyi',              desc: 'Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen tai jatkaa myyntiä kanssamme.' },
     };
 
+    /* Three warm-up cards in prod, not five: the four tiers share
+       `warm_up_card.auction_ended`, and no_offers and expired_offers keep their
+       own. `ok_auction.png` is no longer referenced by anything — prod's configs
+       only use excellent_auction.png and not_great_auction.png. */
+    var WARMUP_AUCTION_ENDED = { heading: 'Hyvä tarjouskilpailu takana!', message: 'Autosi kävi läpi koko tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.', image: 'excellent_auction.png' };
+
     var WARMUP_COPY = {
-      excellent_auction:    { heading: 'Mahtavia uutisia!',              message: 'Korkea kysyntä autostasi nosti sen hintaa! Kurkataan tarkemmin.', image: 'excellent_auction.png' },
-      matches_expectations: { heading: 'Mahtavia uutisia!',              message: 'Korkea kysyntä autostasi nosti sen hintaa! Kurkataan tarkemmin.', image: 'excellent_auction.png' },
-      good_auction:         { heading: 'Hyvä tarjouskilpailu takana!',   message: 'Autosi kävi läpi koko tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.', image: 'excellent_auction.png' },
-      not_great_auction:    { heading: 'Aina ei päädytä ilotulitukseen', message: 'Tulos jäi odotettua alemmas, mutta autosi oli mukana oikeassa kisassa.', image: 'ok_auction.png' },
-      no_offers:            { heading: 'Ei tarjouksia tällä kertaa',     message: 'Tällä kertaa kysyntää ei ollut tarpeeksi. Katsotaanpa, miten sinun kannattaa toimia seuraavaksi.', image: 'not_great_auction.png' },
+      excellent_auction:    WARMUP_AUCTION_ENDED,
+      matches_expectations: WARMUP_AUCTION_ENDED,
+      good_auction:         WARMUP_AUCTION_ENDED,
+      not_great_auction:    WARMUP_AUCTION_ENDED,
+      no_offers:            { heading: 'Ei tarjouksia tällä kertaa',                     message: 'Tällä kertaa kysyntää ei ollut tarpeeksi. Katsotaanpa, miten sinun kannattaa toimia seuraavaksi.', image: 'not_great_auction.png' },
+      offers_expired:       { heading: 'Tarjoukset ovat umpeutuneet, mutta vielä on toivoa', message: 'Katsotaan, saataisiinko kaupat kuitenkin syntymään.', image: 'not_great_auction.png' },
     };
 
     // ── Component builders ──
@@ -634,22 +883,33 @@
         '<span class="mt-0.5">' + ICO_HG_HIGH + '</span><span>Umpeutuu:</span><span class="font-mono">' + fmtTime(timeToReact) + '</span></div>';
     }
 
+    /* partials/Negotiation.vue with point-of-view="seller" — the component the
+       seller's negotiate modal renders. Container, bubble classes, the rotated
+       tail and the amount/message/timestamp order are all prod's; the tail
+       itself is in the page's <style> block. */
     function buildChatThread(msgs) {
       if (!msgs || msgs.length === 0) return '';
-      var html = '<div class="bg-gray-100 rounded-lg overflow-hidden py-1 mb-4">';
+      var html = '<div class="negotiation-container bg-gray-100 bg-opacity-60 relative"><div class="pt-2 pb-2">';
       msgs.forEach(function(msg) {
         var isSeller = msg.sender === 'seller';
-        html += '<div class="px-2 py-1 flex">';
-        html += '<div class="' + (isSeller ? 'ml-auto bg-blue-600 text-white' : 'mr-auto bg-white border border-gray-200') + ' p-2 rounded shadow-sm text-sm" style="max-width:75%">';
-        html += '<div class="font-bold">' + fmtCurrency(msg.amount) + '</div>';
-        if (msg.message) {
-          html += '<div class="mt-1 break-words">' + (msg.message + '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+        var side = isSeller
+          ? 'speech-bubble--right bg-blue-600 text-white ml-auto'
+          : 'speech-bubble--left bg-white mr-auto';
+        html += '<div class="p-2 flex">';
+        html += '<div class="speech-bubble text-sm text-left p-2 rounded shadow-sm border border-gray-200 ' + side + '" style="max-width:75%">';
+        html += '<div class="m-0 text-sm leading-tight">';
+        html += '<div class="flex items-center"><div class="font-bold">' + fmtCurrency(msg.amount) + '</div>';
+        if (!isSeller && msg.pickup) {
+          html += '<div class="font-bold ml-1">+ nouto pihasta</div>';
         }
-        html += '<div class="mt-2 text-xs text-right ' + (isSeller ? 'text-blue-200' : 'text-gray-400') + '">' + fmtRelativeTime(msg.created_at) + '</div>';
         html += '</div>';
-        html += '</div>';
+        if (msg.message) {
+          html += '<div class="mt-2 break-words">' + escHtml(maskContactInfo(msg.message)) + '</div>';
+        }
+        html += '<div class="mt-4 float-right text-xs">' + fmtRelativeTime(msg.created_at) + '</div>';
+        html += '</div></div></div>';
       });
-      html += '</div>';
+      html += '</div></div>';
       return html;
     }
 
@@ -664,7 +924,21 @@
       var showAccept  = !expired && ['firstPlace','secondPlace','thirdPlace','finalOffer','negotiation_stopped','negotiation'].indexOf(status) !== -1;
       var showNeg     = !expired && ['firstPlace','negotiation','negotiation_stopped'].indexOf(status) !== -1;
       var isAccepted  = status === 'accepted';
-      var negBtnLabel = (status === 'negotiation' && dealerReplied) ? 'Näytä vastaus' : status === 'negotiation' ? 'Vastatarjous lähetetty' : status === 'negotiation_stopped' ? 'Näytä vastaus' : 'Tee vastatarjous';
+
+      /* Was read before its own `var` further down, so it was always undefined
+         and the label never left "Vastatarjous lähetetty" — even once the dealer
+         had answered. Derived here, before first use.
+         prod: negotiation.status !== NEGOTIATION_PENDING. */
+      var _neg = NEGOTIATIONS[offer.id];
+      var _negMsgs = (_neg && _neg.messages) || [];
+      var _negSt = negStatus(_neg);
+      var dealerReplied = _negSt !== null
+        ? (_negSt !== 0)
+        : !!offer.dealer_replied;
+
+      var negBtnLabel = status === 'negotiation_stopped' ? 'Näytä vastaus'
+        : status === 'negotiation' ? (dealerReplied ? 'Näytä vastaus' : 'Vastatarjous lähetetty')
+        : 'Tee vastatarjous';
       var acceptText  = status === 'finalOffer' ? 'Hyväksy lopullinen tarjous' : (status === 'firstPlace' || status === 'negotiation' || status === 'negotiation_stopped') ? 'Hyväksy korkein tarjous' : 'Hyväksy alhaisempi tarjous';
 
       var html = '<div class="w-full flex justify-center">' +
@@ -685,12 +959,7 @@
       }
 
       // Amount — use latest dealer counter-offer amount regardless of subsequent seller messages
-      var _neg = NEGOTIATIONS[offer.id];
-      var _negMsgs = (_neg && _neg.messages) || [];
-      var _lastNegMsg = _negMsgs.slice(-1)[0] || null;
       var _lastDealerMsg = _negMsgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0] || null;
-      // dealerReplied: live NEGOTIATIONS wins — true only when the LAST message is from dealer
-      var dealerReplied = _negMsgs.length > 0 ? !!(_lastNegMsg && _lastNegMsg.sender === 'dealer') : !!offer.dealer_replied;
       var effectiveAmount = Math.max(_lastDealerMsg && _lastDealerMsg.amount ? _lastDealerMsg.amount : offer.amount, offer.amount);
       html += '<div class="text-5xl font-bold font-display text-center ' + amtColor + '">' + fmtCurrency(effectiveAmount) + '</div>';
 
@@ -713,10 +982,14 @@
         html += '<div class="relative">' +
           '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' + negBtnLabel + '</button>' +
           (dealerReplied ? '<div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 bg-lime-600 rounded-full text-xs text-black animate-pulse">1</div>' : '') +
-          '<div class="flex text-xs mt-2 mb-2 space-x-2 text-left">' +
-            '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>' +
-            '<span class="text-slate-700">Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen.</span>' +
-          '</div>' +
+          /* prod sets negotiationInfoText: null for negotiation_stopped — the
+             help text promises the offer survives a counter-offer, and once the
+             dealer has closed there is no counter-offer left to make. */
+          (status === 'negotiation_stopped' ? '' :
+            '<div class="flex text-xs mt-2 mb-2 space-x-2 text-left">' +
+              '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>' +
+              '<span class="text-slate-700">Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen.</span>' +
+            '</div>') +
         '</div>';
       }
 
@@ -806,10 +1079,17 @@
       var endFmt     = new Date(req.auction_ends_at * 1000).toLocaleDateString('fi-FI', { day: 'numeric', month: 'long', year: 'numeric' });
 
       // Stats row — mirrors <dl class="flex flex-row divide-x divide-slate-200 text-center">
+      /* prod's `auction_details.bids` and `.buyers` are plural forms —
+         "Tarjousta|Tarjous|Tarjousta" and "Autoliikettä|Autoliike|Autoliikettä",
+         i.e. the singular is used at exactly 1. The proto hardcoded the plural,
+         which is wrong on a single-offer auction (reachable with `second=`). */
+      var bidsLabel   = offerCount === 1 ? 'Tarjous'   : 'Tarjousta';
+      var buyersLabel = buyers === 1     ? 'Autoliike' : 'Autoliikettä';
+
       var html = '<dl class="flex flex-row divide-x divide-slate-200 text-center">';
-      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Tarjousta</dt><dd class="font-bold text-slate-800">' + offerCount + '</dd></div>';
-      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Autoliikettä</dt><dd class="font-bold text-slate-800">' + buyers + '</dd></div>';
-      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Oma arviosi</dt><dd class="font-bold text-slate-800">' + askingFmt + '</dd></div>';
+      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">' + bidsLabel + '</dt><dd class="font-bold text-slate-800">' + offerCount + '</dd></div>';
+      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">' + buyersLabel + '</dt><dd class="font-bold text-slate-800">' + buyers + '</dd></div>';
+      html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Odotettu hinta</dt><dd class="font-bold text-slate-800">' + askingFmt + '</dd></div>';
       html += '</dl>';
 
       // Chart — uses req.insights_data (pre-generated bid progression, mirrors offers.astro formula)
@@ -916,13 +1196,28 @@
       var offers = data.offers || [];
       var pas   = postAuctionStatus(req, offers);
 
-      var showWarmup = !req.offers_seen_at && (SCENARIO === 'new-offers' || SCENARIO === 'no-offers');
+      /* prod's gate is `! request.offers_seen_at && ! shouldSkipWarmup`, and
+         shouldSkipWarmup is `isB2BRequest` — so for a consumer seller it is the
+         `offers_seen_at` timestamp ALONE, with no dependence on the outcome. The
+         proto also allow-listed two scenarios, which hid the warm-up on
+         `offers-expired-unseen` and `offers-auto-rejected` even though both have
+         `offers_seen_at: null` and prod would show it there.
+
+         The outcome decides the CONTENT, not whether the card appears. */
+      var showWarmup = !req.offers_seen_at;
 
       var warmupEl = document.getElementById('state-warmup');
       var mainEl   = document.getElementById('state-main');
 
       if (showWarmup) {
-        var wc = WARMUP_COPY[pas] || WARMUP_COPY.good_auction;
+        /* prod has NO warmUp config for offer_accepted, offer_rejected,
+           final_offer or negotiation_stopped, and no fallback either — reaching
+           the card in one of those states renders it with undefined heading,
+           message and image. Unreachable in practice (all of them imply the
+           seller already saw the offers) and unreachable here (every scenario
+           with `offers_seen_at: null` resolves to a status that has content), so
+           this keeps a guard rather than reproducing a blank card. */
+        var wc = WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED;
         document.getElementById('warmup-heading').textContent = wc.heading;
         document.getElementById('warmup-message').textContent = wc.message;
         document.getElementById('warmup-img').src = 'assets/' + wc.image;
@@ -971,16 +1266,23 @@
         if (!carPhoto) { var keys = Object.keys(photoMap); if (keys.length) carPhoto = photoMap[keys[0]]; }
       } catch(e) {}
 
-      // Confetti — fire for positive auction statuses (mirrors AConfetti.vue v-if in index.vue)
-      if (CONFETTI_STATUSES.indexOf(pas) !== -1) fireConfetti();
+      /* No confetti. `AConfetti.vue` exists in prod's design system, but NOTHING
+         imports it — the only references in the 2026-08-14, -08-20 and -08-26
+         dumps are its own Storybook story and MDX page. So prod fires confetti
+         nowhere, on this page or any other, and the comment this replaced cited
+         an `AConfetti` v-if in index.vue that does not exist.
+
+         It also fired from renderMain, which runs on load, on the warm-up
+         reveal, after every counter-offer and after every simulated dealer
+         action — so it re-celebrated on each action and on each return to the
+         page. Even if prod DID mount the atom, its confetti runs onMounted, i.e.
+         once per mount, never per re-render. Restoring it means wiring the atom
+         first; the transcription is one commit back in git. */
 
       // Hero + offer cards — all direct children of #offers-grid
       var grid     = document.getElementById('offers-grid');
       var selected = selectOffers(offers);
-      var _offersStore = (function() { try { return JSON.parse(localStorage.getItem('autovex_offers') || '{}'); } catch(e) { return {}; } })();
-      var expiryTs = (_offersStore.sharedExpiryScenario === SCENARIO && _offersStore.sharedExpiry)
-        ? _offersStore.sharedExpiry
-        : (req.expires_at || 0) + REACTION;
+      var expiryTs = offerExpiryTs(req);
       var hc       = HERO_COPY[pas] || HERO_COPY.good_auction;
 
       grid.innerHTML = '';
@@ -1002,8 +1304,15 @@
       // Banner logic
       var allRejected = offers.length > 0 && offers.every(function(o) { return o.status === 2; });
       var hasAccepted = offers.some(function(o) { return o.status === 1; });
-      var highestIsNegotiating = selected.length > 0 && offerDisplayProps(selected[0], offers, expiryTs).status === 'negotiation';
-      var dealerRepliedOnHighest = selected.length > 0 && !!selected[0].dealer_replied;
+      /* prod hides the reject-all banner only while the seller is WAITING on the
+         dealer (`highestOfferIsBeingNegotiated` = negotiation && waitingForDealer),
+         so a closed negotiation shows it again — which is the point of the
+         hero's "tai jatkaa myyntiä kanssamme". Both flags come from the same
+         derivation the card uses, so the two cannot disagree; `dealer_replied` is
+         a static scenario flag and went stale the moment a dealer replied live. */
+      var highestProps = selected.length > 0 ? offerDisplayProps(selected[0], offers, expiryTs) : null;
+      var highestIsNegotiating = !!highestProps && highestProps.status === 'negotiation';
+      var dealerRepliedOnHighest = !!highestProps && highestProps.dealerReplied;
 
       var bannerTopSec = document.getElementById('section-banner-top');
       var bannerBotSec = document.getElementById('section-banner-bottom');
@@ -1012,13 +1321,21 @@
 
       if (allRejected || hasAccepted) {
         // Top banner: phone CTA (ACTIONABLE/DEFAULT)
-        bannerTopEl.innerHTML = buildBannerHelper({
-          title:    hasAccepted ? 'Tarvitsetko apua?' : 'Muutitko mielesi?',
-          message:  hasAccepted
-            ? 'Jos sinuun ei ole otettu yhteyttä yhden arkipäivän kuluessa, soita meille numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)'
-            : 'Asiantuntijamme ovat valmiina auttamaan. Soita numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
+        /* banner_helper.card.accepted / .rejected — note the DIFFERENT phone
+           numbers: prod's `accepted`, `helper` and `decline` variants carry
+           +358 40 040 7002, while `rejected` and `expired` carry
+           +358 44 901 5285. The proto used the first number everywhere. */
+        bannerTopEl.innerHTML = buildBannerHelper(hasAccepted ? {
+          title:    'Tarvitsetko apua?',
+          message:  'Jos sinuun ei ole otettu yhteyttä yhden arkipäivän kuluessa, soita meille numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
           btnText:  'Soita meille',
           btnHref:  'tel:+358400407002',
+          destructive: false,
+        } : {
+          title:    'Muutitko mielesi?',
+          message:  'Asiantuntijamme ovat valmiina auttamaan. Soita numeroon <a href="tel:+358449015285" class="text-blue-600">+358 44 901 5285</a> (arkisin klo 10–16)',
+          btnText:  'Soita meille',
+          btnHref:  'tel:+358449015285',
           destructive: false,
         });
         bannerTopSec.classList.remove('hidden');
@@ -1029,22 +1346,45 @@
       } else {
         bannerTopSec.classList.add('hidden');
         // Bottom banner
-        var isHelperScenario = (pas === 'no_offers' || pas === 'offers_expired');
-        bannerBotEl.innerHTML = buildBannerHelper(isHelperScenario ? {
-          title:    'Me voimme auttaa!',
-          message:  'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
-          btnText:  'Soita meille',
-          btnHref:  'tel:+358400407002',
-          destructive: false,
-        } : {
-          title:       'Eikö hinta miellytä?',
-          message:     'Asiantuntijamme auttavat mielellään! Soita numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
-          btnText:     'Hylkää tarjouskilpailu',
-          btnHref:     null,
-          destructive: true,
-          dataAction:  'reject-all',
-          subTextWarning: 'Hylättyäsi tuloksen et voi enää hyväksyä sitä myöhemmin.',
-        });
+        /* Three variants, not two. prod picks the banner from the status's own
+           config: no_offers → `helper`, offers_expired → `expired` (same words,
+           different phone number), and every status whose config declares only a
+           `variant` — the four price tiers, final_offer, negotiation_stopped —
+           falls through to usePostAuctionMessaging's default, `decline`.
+
+           The proto shared one "helper" block across no_offers AND
+           offers_expired, and titled the decline banner "Eikö hinta miellytä?",
+           which is not prod's copy — `decline.title` is "Tarvitsetko apua?",
+           the same title the accepted banner uses. */
+        var bannerVariant = pas === 'no_offers' ? 'helper'
+          : pas === 'offers_expired' ? 'expired'
+          : 'decline';
+        var BOTTOM_BANNERS = {
+          helper: {
+            title:    'Me voimme auttaa!',
+            message:  'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
+            btnText:  'Soita meille',
+            btnHref:  'tel:+358400407002',
+            destructive: false,
+          },
+          expired: {
+            title:    'Me voimme auttaa!',
+            message:  'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a href="tel:+358449015285" class="text-blue-600">+358 44 901 5285</a> (arkisin klo 10–16)',
+            btnText:  'Soita meille',
+            btnHref:  'tel:+358449015285',
+            destructive: false,
+          },
+          decline: {
+            title:       'Tarvitsetko apua?',
+            message:     'Asiantuntijamme auttavat mielellään! Soita numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
+            btnText:     'Hylkää tarjouskilpailu',
+            btnHref:     null,
+            destructive: true,
+            dataAction:  'reject-all',
+            subTextWarning: 'Hylättyäsi tuloksen et voi enää hyväksyä sitä myöhemmin.',
+          }
+        };
+        bannerBotEl.innerHTML = buildBannerHelper(BOTTOM_BANNERS[bannerVariant]);
         bannerBotSec.classList.remove('hidden');
       }
 
@@ -1059,7 +1399,10 @@
     }
 
     // ── Interactive modal state ──
-    var MODAL = { action: null, offerId: null };
+    /* `errors`, `amount` and `message` mirror OfferActions.vue's own component
+       state (formData + errors), which it resets in closeReveal so one action's
+       submission cannot leak into the next. */
+    var MODAL = { action: null, offerId: null, errors: {}, amount: null, message: '' };
     var NEGOTIATIONS = {};
     var ACCEPTED_OFFER          = _savedState.acceptedOffer          || null;
     var ACCEPTED_OFFERS_SNAPSHOT = _savedState.acceptedOffersSnapshot || null;
@@ -1088,15 +1431,28 @@
     function openModal(action, offerId) {
       MODAL.action = action;
       MODAL.offerId = offerId;
+      MODAL.errors = {};
       renderModal();
       document.getElementById('offer-modal').classList.remove('hidden');
       document.body.style.overflow = 'hidden';
+      /* QuickNegotiate's NumberInput carries :focus="true". It has to happen
+         here rather than in the render: the reveal is still display:none while
+         renderModal runs, and a hidden input cannot take focus. Prod focuses
+         once per mount, which is once per open — a re-render after a failed
+         submit must NOT steal focus back. */
+      if (action === 'QuickNegotiate') {
+        var amtEl = document.getElementById('modal-neg-amount');
+        if (amtEl) amtEl.focus();
+      }
     }
 
     function closeModal() {
       document.getElementById('offer-modal').classList.add('hidden');
       document.body.style.overflow = '';
       MODAL.action = null;
+      /* closeReveal resets the shared form in prod, so a half-typed counter
+         offer cannot reappear in the next action's modal. */
+      MODAL.errors = {}; MODAL.amount = null; MODAL.message = '';
     }
 
     function renderModal() {
@@ -1140,13 +1496,20 @@
 
     function renderNegotiateModal(body, footer, fWrap, offer, neg, isQuick) {
       var data        = getData();
-      var offersCount = (data.offers || []).length;
+      var req         = data.request || {};
+      var offers      = data.offers || [];
+      var offersCount = offers.length;
       var msgs        = (neg && neg.messages) || [];
       var sellerRounds = msgs.filter(function(m) { return m.sender === 'seller'; }).length;
       var lastMsg     = msgs[msgs.length - 1];
       var isStopped   = !!(neg && neg.isStopped);
       var sellerCanSend = sellerRounds < 2 && (!lastMsg || lastMsg.sender !== 'seller') && !isStopped;
       var hasNegotiation = msgs.length > 0;
+      var waitingForSeller = !!(lastMsg && lastMsg.sender === 'dealer') && !isStopped;
+      var status      = negStatus(neg);
+      /* Errors survive a re-render of the same modal — the seller must see what
+         the failed submit said. Cleared on open and on a successful send. */
+      var errors      = MODAL.errors || {};
 
       var html = '';
 
@@ -1166,7 +1529,7 @@
           html += '</div>';
         } else {
           html += '<h2 class="text-lg leading-4">' + (hasNegotiation ? 'Tee uusi vastatarjous' : 'Tee vastatarjous') + '</h2>';
-          html += '<ul class="list-disc list-inside mt-2 mb-4 text-sm">';
+          html += '<ul class="list-disc list-inside mt-2 mb-4">';
           html += '<li>' + (hasNegotiation ? 'Tee uusi vastatarjous eniten tarjonneelle' : 'Tee vastatarjous eniten tarjonneelle') + '</li>';
           html += '<li>Et menetä jo saamaasi tarjousta.</li>';
           html += '<li>Vastatarjouksen avulla päästään usein kauppoihin.</li>';
@@ -1174,19 +1537,21 @@
         }
         if (hasNegotiation) {
           html += buildChatThread(msgs);
-          html += '<p class="mt-4 mb-4 p-4 flex items-center gap-2 text-white bg-blue-600 rounded-lg">';
+          html += '<p class="mt-4 p-4 flex items-center text-white bg-blue-600 rounded-lg">';
           html += '<span class="mr-2 flex items-center text-white flex-shrink-0">' + ICO_INFO_FILL + '</span>';
           html += '<span class="text-base leading-normal">Vastatarjouksia ei tämän jälkeen tehdä enempää.</span>';
           html += '</p>';
         }
+        /* The amount field and its live asking-price warning are one block in
+           prod (Negotiate.vue's first div.my-4), the warning a sibling of the
+           NumberInput rather than one of its errors. */
         html += '<div class="my-4">';
-        html += '<label class="block text-sm font-medium text-slate-700 mb-1">Vastatarjous <span class="font-normal text-slate-500">€</span></label>';
-        html += '<input type="number" id="modal-neg-amount" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />';
+        html += buildNegAmountField(errors.amount);
+        html += '<div id="modal-neg-asking-warning" class="text-red-500 hidden">Pyyntihintasi oli ' + fmtCurrency(req.asking_price) + '</div>';
         html += '</div>';
         if (!isQuick) {
           html += '<div class="my-4">';
-          html += '<label class="block text-sm font-medium text-slate-700 mb-1">Viesti</label>';
-          html += '<textarea id="modal-neg-message" rows="3" maxlength="2500" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>';
+          html += buildNegMessageField(errors.message);
           html += '</div>';
           html += '<p class="text-sm text-gray-700">Ethän kirjoita puhelinnumeroasi tai sähköpostiosoitettasi viestikenttään.</p>';
         }
@@ -1195,37 +1560,66 @@
         // Waiting for dealer
         if (isQuick && sellerRounds === 1) {
           html += '<h2 class="text-lg leading-4">Eikö autoliike ole ollut yhteydessä?</h2>';
-          html += '<ul class="list-disc list-inside mt-2 mb-4 text-sm">';
+          html += '<ul class="list-disc list-inside mt-2 mb-4">';
           html += '<li>Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä).</li>';
           html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
           html += '</ul>';
         } else if (sellerRounds === 1) {
           html += '<div class="mb-4">';
           html += '<h2 class="text-lg leading-4">Hyvä! Nyt odotellaan autoliikkeen vastausta.</h2>';
-          html += '<ul class="list-disc list-inside mt-2 mb-4 text-sm">';
+          html += '<ul class="list-disc list-inside mt-2 mb-4">';
           html += '<li>Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä).</li>';
           html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
           html += '</ul>';
           html += '</div>';
-        } else if (sellerRounds >= 2) {
-          html += '<p class="text-sm text-slate-700">Nyt odotellaan taas autoliikkeen vastausta. Tämän jälkeen voit hyväksyä tai hylätä autoliikkeen tarjouksen, vastatarjouksia ei tehdä enempää. Toivottavasti pääsette kauppoihin!</p>';
+        } else if (sellerRounds === 2) {
+          /* Two rounds used and the dealer has already answered: prod stops
+             talking about waiting and points at the accept button instead. */
+          html += waitingForSeller
+            ? '<p>Voit hyväksyä tarjouksen</p>'
+            : '<p>Nyt odotellaan taas autoliikkeen vastausta. Tämän jälkeen voit hyväksyä tai hylätä autoliikkeen tarjouksen, vastatarjouksia ei tehdä enempää. Toivottavasti pääsette kauppoihin!</p>';
         }
         html += buildChatThread(msgs);
       }
 
       body.innerHTML = html;
 
-      // Footer
-      var showAccept = hasNegotiation;
+      /* ── Footer, from OfferActions.vue ──
+         Accept is gated on the negotiation's STATUS, not on its existence: right
+         after the seller sends, status is PENDING and prod hides the button
+         until the dealer answers. QuickNegotiate never shows Accept at all. */
+      var showAccept = !isQuick && hasNegotiation && status !== 0;
       var showSend   = sellerCanSend;
-      var showClose  = !sellerCanSend || isStopped;
+      var showClose  = !sellerCanSend;
+
+      /* Reaction window. Static, like every other timer on this page — prod's
+         useServertimeDifference ticks, the proto renders once. */
+      var reactionSecs = offerExpiryTs(req) - _now();
+      var hasPendingNegotiation = hasNegotiation && status === 0;
+      var buttonDisabled = reactionSecs <= 0 && !hasPendingNegotiation;
+      var showTimer  = reactionSecs < 181 && sellerCanSend;
+
+      var disabledCls = ' bg-gray-200 text-gray-500 border-2 border-gray-200 cursor-not-allowed';
 
       var fRight = '';
+      if (showTimer) {
+        fRight += '<div class="flex items-center justify-center gap-2 text-sm lg:mb-2 font-medium text-center text-red-500">';
+        fRight += !buttonDisabled
+          ? '<span class="mt-0.5">' + ICO_HG_HIGH + '</span><span>Umpeutuu:</span><span class="font-mono">' + fmtTime(reactionSecs) + '</span>'
+          : '<span class="mt-0.5">' + ICO_HG_LOW + '</span><span>Umpeutunut</span>';
+        fRight += '</div>';
+      }
       if (showAccept) {
-        fRight += '<button id="modal-btn-accept-from-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Hyväksy tarjous</button>';
+        fRight += '<button id="modal-btn-accept-from-neg"' + (buttonDisabled ? ' disabled' : '') +
+          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
+          (buttonDisabled ? disabledCls : 'bg-green-600 hover:bg-green-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
+          '">Hyväksy tarjous</button>';
       }
       if (showSend) {
-        fRight += '<button id="modal-btn-send-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Lähetä</button>';
+        fRight += '<button id="modal-btn-send-neg"' + (buttonDisabled ? ' disabled' : '') +
+          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
+          (buttonDisabled ? disabledCls : 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
+          '">Lähetä</button>';
       }
       if (showClose) {
         fRight += '<button id="modal-btn-close" class="inline-flex items-center justify-center px-6 h-10 rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 text-sm font-medium">Sulje</button>';
@@ -1236,25 +1630,74 @@
       // production OfferActions.vue
       var fLeft = '';
       if (isQuick) {
-        fLeft = '<button id="modal-btn-reject-from-neg" class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium">Hylkää tarjous</button>';
+        fLeft = '<button id="modal-btn-reject-from-neg"' + (buttonDisabled ? ' disabled' : '') +
+          ' class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-sm font-medium ' +
+          (buttonDisabled ? disabledCls : 'text-red-600 hover:bg-red-50') +
+          '">Hylkää tarjous</button>';
       }
+      var fRightWrap = '<div class="lg:flex lg:justify-end text-center space-x-1 lg:space-y-0 space-y-1' +
+        (isQuick ? ' text-right' : '') + '">' + fRight + '</div>';
       footer.innerHTML = fLeft
-        ? '<div class="flex justify-between items-center gap-1">' + fLeft + '<div class="flex items-center gap-1">' + fRight + '</div></div>'
-        : '<div class="flex justify-end items-center gap-1">' + fRight + '</div>';
+        ? '<div class="flex justify-between items-end space-x-1"><div>' + fLeft + '</div>' + fRightWrap + '</div>'
+        : '<div class="flex justify-center lg:justify-end">' + fRightWrap + '</div>';
 
       var closeBtn       = document.getElementById('modal-btn-close');
       var acceptFromNeg  = document.getElementById('modal-btn-accept-from-neg');
       var sendBtn        = document.getElementById('modal-btn-send-neg');
       var rejectFromNeg  = document.getElementById('modal-btn-reject-from-neg');
+      var amountEl       = document.getElementById('modal-neg-amount');
+      var messageEl      = document.getElementById('modal-neg-message');
+      var countEl        = document.getElementById('modal-neg-count');
+      var warningEl      = document.getElementById('modal-neg-asking-warning');
 
-      if (rejectFromNeg) rejectFromNeg.addEventListener('click', function() { MODAL.action = 'RejectConfirm'; renderModal(); });
+      /* NumberInput.vue: digits only through the keypress guard, fi-FI grouping
+         on the way back out. The live asking-price warning is unconditional in
+         prod — it fires on amount > asking_price alone, so it can appear on a
+         value the ceiling would let through. Reproduced as-is. */
+      if (amountEl) {
+        amountEl.value = negAmountGet(MODAL.amount);
+        amountEl.addEventListener('keypress', function(ev) {
+          var allowed = ['0','1','2','3','4','5','6','7','8','9','Backspace','Enter'];
+          if (allowed.indexOf(ev.key) === -1) ev.preventDefault();
+        });
+        var showAskingWarning = function() {
+          if (!warningEl) return;
+          var over = MODAL.amount !== null && MODAL.amount > (req.asking_price || 0);
+          warningEl.classList.toggle('hidden', !over);
+        };
+        /* Bound to input only, never called on render: an untouched field has to
+           keep its null, the way prod's setter is not called until the seller
+           types. Running it once at render would turn null into 0 and lose the
+           `required` path entirely. */
+        amountEl.addEventListener('input', function() {
+          MODAL.amount = negAmountSet(amountEl.value);
+          amountEl.value = negAmountGet(MODAL.amount);
+          showAskingWarning();
+        });
+        showAskingWarning();
+      }
+
+      if (messageEl) {
+        messageEl.value = MODAL.message || '';
+        var syncCount = function() {
+          MODAL.message = messageEl.value;
+          if (countEl) countEl.textContent = messageEl.value.length + ' / 2500';
+        };
+        messageEl.addEventListener('input', syncCount);
+        syncCount();
+      }
+
+      if (rejectFromNeg && !buttonDisabled) rejectFromNeg.addEventListener('click', function() { MODAL.action = 'RejectConfirm'; renderModal(); });
       if (closeBtn)      closeBtn.addEventListener('click', closeModal);
-      if (acceptFromNeg) acceptFromNeg.addEventListener('click', function() { openModal('Accept', MODAL.offerId); });
-      if (sendBtn) sendBtn.addEventListener('click', function() {
-        var amountEl  = document.getElementById('modal-neg-amount');
-        var messageEl = document.getElementById('modal-neg-message');
-        var amount = amountEl ? parseFloat(amountEl.value) || null : null;
-        if (!amount) { if (amountEl) amountEl.focus(); return; }
+      if (acceptFromNeg && !buttonDisabled) acceptFromNeg.addEventListener('click', function() { openModal('Accept', MODAL.offerId); });
+      if (sendBtn && !buttonDisabled) sendBtn.addEventListener('click', function() {
+        var amount = MODAL.amount;
+        var amountErrors = validateCounterOffer(amount, req, offers, neg);
+        if (amountErrors.length) {
+          MODAL.errors = { amount: amountErrors };
+          renderModal();
+          return;
+        }
         var message = messageEl ? (messageEl.value || '')
           : (offersCount === 1
               ? 'Hei! Autostani ei syntynyt hintakilpailua. Millä hinnalla olette valmiita kauppoihin?'
@@ -1263,6 +1706,7 @@
         cur.messages = cur.messages || [];
         cur.messages.push({ sender: 'seller', amount: amount, message: message, created_at: new Date().toISOString() });
         NEGOTIATIONS[MODAL.offerId] = cur;
+        MODAL.errors = {}; MODAL.amount = null; MODAL.message = '';
         SCENARIO = 'counter-offer-sent'; saveState();
         var _negUrl = new URL(window.location.href);
         _negUrl.searchParams.set('scenario', 'counter-offer-sent');
@@ -1519,8 +1963,10 @@
         { id: 'final-offer',           label: 'Final offer' },
         { id: 'no-offers',             label: 'No offers' },
         { id: 'offers-expired-unseen', label: 'Expired, unseen' },
+        { id: 'offers-auto-rejected',  label: 'Expired, auto-rejected' },
         { id: 'counter-offer-sent',    label: 'Counter-offer sent' },
         { id: 'dealer-replied',        label: 'Dealer replied' },
+        { id: 'negotiation-stopped',   label: 'Negotiation closed by dealer' },
         { id: 'all-rejected',          label: 'All rejected' },
       ]},
       { group: 'Deal completed', items: [
@@ -1532,7 +1978,16 @@
     /* Restored: this lived inside the old scenario drawer, so deleting that
        drawer also deleted it — breaking ?trigger=dealer-reply and the scenario
        seeding below, which both call it. */
-    function computeDealerReply(offer, neg, deterministic) {
+    /* opts.deterministic drops the randomness (scenario seeding needs a stable
+       thread); opts.close makes this the reply that CLOSES the negotiation.
+
+       Closing used to be a 40% dice roll here, and because `sticks` is true for
+       any counter under about 103% of the standing offer, that roll fired on most
+       first replies and took the seller's second round away — prod gives them two.
+       Whether the dealer closes is a distinct thing to demo, so it is now the
+       caller's explicit choice: the bar has a separate action for it. */
+    function computeDealerReply(offer, neg, opts) {
+      opts = opts || {};
       var msgs = (neg && neg.messages) || [];
       var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
       var lastDealer = msgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0];
@@ -1542,69 +1997,170 @@
       // Never above the seller's counter-offer; reaching it means the dealer agrees to it
       var amount = Math.min(proposed, counter);
       var meets = amount === counter;
-      var sticks = !meets && (amount <= floor || (!deterministic && Math.random() < 0.3));
+      var sticks = !meets && (amount <= floor || (!opts.deterministic && Math.random() < 0.3));
       if (sticks) amount = floor;
-      var endsNegotiation = sticks && !deterministic && Math.random() < 0.4;
-      return {
-        amount: amount,
-        endsNegotiation: endsNegotiation,
-        message: meets
+      /* A close NEVER moves the price: CloseNegotiation copies
+         `tenderOffer->amount` as-is. So it always lands on the standing offer,
+         whatever the seller asked — and it closes unconditionally, rather than
+         quietly declining to when it could have met the counter. */
+      var closes = !!opts.close;
+      if (closes) amount = floor;
+
+      /* The repeated AMOUNT is prod. An ordinary reply only has to satisfy
+         `amount >= tenderOffer.amount` (DealerNegotiationMessageAmount — equal
+         passes), and prod names that case outright: `$isKeepOffer` in
+         StoreDealerNegotiation. A reply also updates `tenderOffer.amount`, which
+         the close then copies — so "dealer keeps their offer, then closes" shows
+         the same figure twice by construction, not by accident.
+
+         The TEXT is different: prod's dealer types it, `nullable|string|max:999`,
+         and nothing server-side ever repeats their previous message. So a second
+         sticking reply sends the amount with no message rather than the same
+         sentence twice.
+
+         opts.silent is the dealer clearing the box — `message` is nullable and
+         CloseNegotiation stores exactly what arrived, so an amount-only bubble is
+         a real prod shape, not a proto shortcut. Otherwise the close carries
+         prod's own `close_negotiation.message_pre_filled`, which
+         CloseNegotiation.vue pre-fills and most dealers will send untouched. */
+      var repeatSticks = sticks && !!lastDealer && lastDealer.amount === amount;
+      var text = opts.silent ? ''
+        : meets
           ? 'Hei! Käy kaupaksi — hyväksymme ehdottamasi hinnan. Toivottavasti pääsemme kauppoihin!'
-          : endsNegotiation
-            ? 'Hei! Emme valitettavasti pysty korottamaan tarjoustamme. Tämä jää lopulliseksi tarjoukseksemme.'
-            : sticks
-              ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
-              : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!'
-      };
+          : closes
+            ? 'Hei ja kiitos viestistäsi. Tämä on korkein tarjous, jonka voimme autostasi tällä hetkellä antaa. Kiitos, että harkitset tarjoustamme.'
+            : repeatSticks
+              ? ''
+              : sticks
+                ? 'Hei! Pysymme aiemmassa tarjouksessamme — tämä on paras tarjous, jonka voimme antaa.'
+                : 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!';
+      return { amount: amount, closes: closes, message: text };
     }
 
-    /* Consumed by proto-bar.js. Restores what the old scenario drawer offered
-       beyond the scenario list: the three price overrides (persisted in the URL,
-       read at load) and the two negotiation actions (mutate simulated state,
-       then re-render). `second` uses keepEmpty because present-but-empty means
-       "force a single offer", distinct from the param being absent. */
+    /* prod's useNegotiation().dealerCanSendMessage — two rounds each, and neither
+       side may send twice in a row. The simulate actions honour it so repeated
+       clicks cannot stack dealer messages the app would never produce. */
+    function dealerCanReply(neg) {
+      var msgs = (neg && neg.messages) || [];
+      var dealerRounds = msgs.filter(function(m) { return m.sender === 'dealer'; }).length;
+      var lastMsg = msgs[msgs.length - 1];
+      return dealerRounds < 2 && (!lastMsg || lastMsg.sender !== 'dealer') && !(neg && neg.isStopped);
+    }
+
+    /* The scenarios that only exist BECAUSE a negotiation happened. Resetting
+       has to leave them, or the cards keep saying "Vastatarjous lähetetty" over
+       a thread that is gone — and the seeding blocks would rebuild the thread on
+       the next load. `seen-offers` is the same world without the negotiation:
+       identical request shape (ACTIVE window, offers already revealed), no
+       negotiation_pending on any offer. */
+    var NEGOTIATION_SCENARIOS = ['counter-offer-sent', 'dealer-replied', 'negotiation-stopped'];
+
+    /* Reset used to clear NEGOTIATIONS and re-render in place, which left the
+       modal open over the thread it had just deleted and left SCENARIO on a
+       negotiation state. It now navigates, so every card, badge, scenario menu
+       and the modal rebuild from one consistent state — the offers view a seller
+       sees before they negotiate. A scenario the tester deliberately picked and
+       that is not negotiation-derived (final-offer, all-rejected, …) is kept:
+       reset undoes the negotiation, not their setup. */
+    function resetNegotiations() {
+      NEGOTIATIONS = {};
+      var target = NEGOTIATION_SCENARIOS.indexOf(SCENARIO) !== -1 ? 'seen-offers' : SCENARIO;
+      SCENARIO = target;
+      saveState();
+      var url = new URL(window.location.href);
+      url.searchParams.set('scenario', target);
+      window.location.href = url.toString();
+    }
+
+    /* Every dealer-side action on the bar. opts.close ends the negotiation
+       (prod's STATUS_STOPPED); opts.silent sends the amount with no message.
+       A plain reply leaves it open so the seller keeps their second round.
+
+       The turn/round guard applies to closing too, and that IS prod: the dealer's
+       CloseNegotiation control is rendered `v-if="dealerCanSendMessage"`
+       (Negotiation.vue), so the close is reachable exactly where a reply is —
+       instead of answering the seller, never straight after their own reply. The
+       API itself has no such check; the UI is the gate. */
+    function simulateDealerReply(opts) {
+      opts = opts || {};
+      var _h = (getData().offers || [])[0];
+      if (!_h) return;
+      var _neg  = NEGOTIATIONS[_h.id] || { messages: [], isStopped: false };
+      var _msgs = _neg.messages || [];
+      if (!_msgs.filter(function (m) { return m.sender === 'seller'; }).length) {
+        alert('Send a counter-offer first');
+        return;
+      }
+      if (!dealerCanReply(_neg)) {
+        alert(_neg.isStopped
+          ? 'The negotiation is closed — reset counter offers to start over'
+          : 'Not the dealer\u2019s turn. In prod their reply and close controls both\n' +
+            'require dealerCanSendMessage, so they act only after your counter-offer,\n' +
+            'and only twice. Send a counter-offer, or reset counter offers.');
+        return;
+      }
+      var _reply = computeDealerReply(_h, _neg, { close: opts.close, silent: opts.silent });
+      _neg.messages.push({
+        sender: 'dealer',
+        amount: _reply.amount,
+        message: _reply.message,
+        created_at: new Date().toISOString()
+      });
+      /* Only an explicit close stops it. Running out of rounds does NOT:
+         prod's STATUS_STOPPED means the dealer closed the negotiation, while a
+         thread where both sides used both rounds is still COUNTER_OFFER_SENT —
+         and the seller's modal then takes Negotiate.vue's
+         `rounds == 2 && waitingForSeller` branch rather than the stopped one. */
+      if (_reply.closes) _neg.isStopped = true;
+      NEGOTIATIONS[_h.id] = _neg;
+      SCENARIO = _neg.isStopped ? 'negotiation-stopped' : 'dealer-replied';
+      saveState();
+      renderPage();
+      openModal('Negotiate', _h.id);
+    }
+
+    /* Consumed by proto-bar.js. Everything beyond the scenario list lives behind
+       the bar's single **Auction settings** button: the three price overrides
+       (persisted in the URL, read at load) and the three negotiation actions
+       (mutate simulated state, then re-render). Inline they were seven controls
+       on a strip shared with every page's own rows — see proto-bar.js.
+       `second` uses keepEmpty because present-but-empty means "force a single
+       offer", distinct from the param being absent. */
     window.protoPage = {
       scenarios: SCENARIO_GROUPS,
+      panelLabel: 'Auction settings',
+      panelTitle: 'Auction prices and simulated dealer responses',
       fieldsLabel: 'Prices €',
       fields: [
         { key: 'asking',  label: 'Asking price €',  placeholder: 'asking' },
         { key: 'highest', label: 'Highest offer €', placeholder: 'highest' },
-        { key: 'second',  label: '2nd highest € (empty = single offer)', placeholder: '2nd', keepEmpty: true }
+        { key: 'second',  label: '2nd highest €', placeholder: 'empty = 1 offer', width: '110px', keepEmpty: true }
       ],
+      actionsLabel: 'Dealer response',
       actions: [
         {
-          label: 'Simulate dealer reply',
-          title: 'Dealer replies to your latest counter-offer',
-          run: function () {
-            var _d = getData();
-            var _h = (_d.offers || [])[0];
-            if (!_h) return;
-            var _neg  = NEGOTIATIONS[_h.id] || { messages: [], isStopped: false };
-            var _msgs = _neg.messages || [];
-            if (!_msgs.filter(function (m) { return m.sender === 'seller'; }).length) {
-              alert('Send a counter-offer first');
-              return;
-            }
-            var _rounds = _msgs.filter(function (m) { return m.sender === 'seller'; }).length;
-            var _reply = computeDealerReply(_h, _neg);
-            _neg.messages.push({
-              sender: 'dealer',
-              amount: _reply.amount,
-              message: _reply.message,
-              created_at: new Date().toISOString()
-            });
-            if (_rounds >= 2 || _reply.endsNegotiation) _neg.isStopped = true;
-            NEGOTIATIONS[_h.id] = _neg;
-            SCENARIO = _neg.isStopped ? 'negotiation-stopped' : 'dealer-replied';
-            saveState();
-            renderPage();
-            openModal('Negotiate', _h.id);
-          }
+          label: 'Reply, negotiation continues',
+          title: 'Dealer answers your counter-offer and leaves the negotiation open',
+          run: function () { simulateDealerReply({ close: false }); }
+        },
+        {
+          /* prod's CloseNegotiation.vue pre-fills close_negotiation.message_pre_filled,
+             so this is what a seller sees when the dealer sends it untouched. */
+          label: 'Close, with message',
+          title: 'Dealer closes at their standing offer, sending prod\u2019s pre-filled closing message',
+          run: function () { simulateDealerReply({ close: true }); }
+        },
+        {
+          /* `message` is nullable and CloseNegotiation stores what arrived, so a
+             dealer who clears the box closes with the amount alone. */
+          label: 'Close, no message',
+          title: 'Dealer clears the message box and closes — the bubble carries only the amount',
+          run: function () { simulateDealerReply({ close: true, silent: true }); }
         },
         {
           label: 'Reset counter offers',
-          title: 'Clear all negotiation messages',
-          run: function () { NEGOTIATIONS = {}; saveState(); renderPage(); }
+          title: 'Clear the negotiation and reload on the offers view, before any counter-offer',
+          run: function () { resetNegotiations(); }
         }
       ]
     };
@@ -1659,15 +2215,13 @@
           // Negotiation exists from prior scenario — add dealer reply if none present
           var _hasDealerReply = NEGOTIATIONS[o.id].messages.some(function(m) { return m.sender === 'dealer'; });
           if (!_hasDealerReply) {
-            var _priorSellerRounds = NEGOTIATIONS[o.id].messages.filter(function(m) { return m.sender === 'seller'; }).length;
-            var _seedReply = computeDealerReply(o, NEGOTIATIONS[o.id], true);
+            var _seedReply = computeDealerReply(o, NEGOTIATIONS[o.id], { deterministic: true });
             NEGOTIATIONS[o.id].messages.push({
               sender: 'dealer',
               amount: _seedReply.amount,
               message: _seedReply.message,
               created_at: new Date((_now()-1*3600)*1000).toISOString()
             });
-            if (_priorSellerRounds >= 2) { NEGOTIATIONS[o.id].isStopped = true; }
           }
         }
       });
@@ -1709,10 +2263,10 @@
         var _tNeg = NEGOTIATIONS[o.id] || { messages: [], isStopped: false };
         var _tHasDealer = _tNeg.messages.some(function(m) { return m.sender === 'dealer'; });
         if (!_tHasDealer) {
-          var _tSellerRounds = _tNeg.messages.filter(function(m) { return m.sender === 'seller'; }).length;
+          /* The email link never closes the negotiation — it is an answer the
+             seller is being invited to respond to. */
           var _tReply = computeDealerReply(o, _tNeg);
           _tNeg.messages.push({ sender: 'dealer', amount: _tReply.amount, message: _tReply.message, created_at: new Date().toISOString() });
-          if (_tSellerRounds >= 2 || _tReply.endsNegotiation) { _tNeg.isStopped = true; }
           NEGOTIATIONS[o.id] = _tNeg;
           var _tScenario = _tNeg.isStopped ? 'negotiation-stopped' : 'dealer-replied';
           SCENARIO = _tScenario;

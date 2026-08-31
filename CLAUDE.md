@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-08-20)
+## Reference Source Locations (updated 2026-08-27)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-08-20-99ed8bef6330/` (previous: `autovex-2026-08-14-435a41f68ebc/`). Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-08-26-1ee95731e59f/` (previous: `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -151,10 +151,11 @@ success, dac7), the delivery-variant switcher on details, and the footer's
 the only funnel page with one, and it existed solely to host that drawer.
 
 Shows: a `Prototype` identity chip, **Mode**, **Scenario**, **Variants** (one
-row for the whole page, options grouped under the initiative that proposes them)
-and **Go to**. No page name, no collapse control — the bar stays visible. The
-Mode row is thin value while there are only two modes; it earns its place once
-there are more.
+row for the whole page, options grouped under the initiative that proposes them),
+the page's own tooling popover if it declares any, **Seed car** / **Reset
+prototype**, and **Go to**. No page name, no collapse control — the bar stays
+visible. The Mode row is thin value while there are only two modes; it earns its
+place once there are more.
 
 **Pending:** a dedicated scenario-reference page, with each scenario
 collapsible. The old single modal listing every scenario of every page was
@@ -177,12 +178,57 @@ window.protoPage = {
 };
 ```
 
-`fields` render as text inputs plus an Apply button, for params the page reads
-at load (decision.html's offer-price overrides). `keepEmpty` keeps a
-present-but-empty param, which decision uses to mean "force a single offer" as
-distinct from the param being absent. `actions` render as buttons for things
-that mutate simulated state rather than navigate (decision's "Simulate dealer
-reply", "Reset counter offers").
+**Page-specific tooling is ONE popover, not a row each.** A page's `fields` and
+`actions` collapse behind a single button named by `panelLabel`, so whatever a
+page declares costs one slot on the strip:
+
+```js
+window.protoPage = {
+  panelLabel:  'Auction settings',   // the button; `panelTitle` is its tooltip
+  fieldsLabel: 'Prices €',      fields:  [ { key, label, placeholder, width, keepEmpty } ],
+  actionsLabel: 'Negotiation',  actions: [ { label, title, run } ]
+};
+```
+
+`fields` are URL params the page reads at load (decision.html's offer prices),
+applied together on Enter or via Apply. `keepEmpty` keeps a present-but-empty
+param, which decision uses to mean "force a single offer" as distinct from the
+param being absent. `actions` mutate simulated state rather than navigate
+(decision's four **Dealer response** actions: reply-and-continue, close with
+prod's pre-filled message, close with no message at all, and reset); picking one
+closes the popover, which would otherwise sit over the result it just produced.
+
+The two close variants exist because prod's closing `message` is
+`nullable|string|max:999` and `CloseNegotiation` stores exactly what arrived —
+`CloseNegotiation.vue` pre-fills `close_negotiation.message_pre_filled`, but a
+dealer who clears the box closes with the amount alone. Both are what a seller
+can really receive, so both are testable. A close never moves the price (it
+copies `tenderOffer->amount`), and prod gates the dealer's close control on
+`dealerCanSendMessage` exactly as it gates their reply, so closing is reachable
+only in place of answering a counter-offer — never straight after their own
+reply.
+
+**Reset counter offers navigates, it does not clear in place.** Clearing
+`NEGOTIATIONS` and re-rendering left the modal open over the thread it had just
+deleted, and left the page on a negotiation-derived scenario whose cards still
+said "Vastatarjous lähetetty" — which the seeding blocks would then rebuild on
+the next load. Reset now drops the negotiation, returns `counter-offer-sent` /
+`dealer-replied` / `negotiation-stopped` to **`seen-offers`** (the same world
+without a negotiation: same request shape, offers already revealed, reaction
+window open) and reloads. Any other scenario is kept — reset undoes the
+negotiation, not the tester's setup.
+
+Inline, these were seven controls on a strip shared with every page's own rows —
+decision.html alone put more on the bar than the rest of it held. The cost of
+collapsing is that an override becomes invisible, so **the button reports one**:
+it takes the dark chip styling plus a count, and names the values in its
+tooltip. Without that a hand-written `?asking=` would be hidden behind a closed
+panel.
+
+`keepEmpty` only started working when `withParams` stopped treating an empty
+string as "delete the param" — it had been deleting `second=` on every Apply, so
+"force a single offer" was reachable only by hand-writing the URL. Callers pass
+`null` to clear; `''` now means set-and-keep.
 
 An item may carry `params: { copy: 'soon' }` to set more than one param at
 once — `success.html` needs `scenario=` and `copy=` together for the
@@ -258,6 +304,18 @@ localStorage and leave the bar's row on `— none —` while the page rendered
 something else. A page maps or clears it with `window.protoVariantSet(name,
 value)` (`null` forgets), and the bar only ever selects a value the initiative
 actually declares.
+
+**The spec page lists five changes, numbered 1–5** — price step, contact step,
+support FAQ, transactional emails, SendGrid lifecycle emails. It was cut from 942
+lines to ~490: the sections explaining why the initiative exists, how to try the
+arms, the data contract, the post-submit routing (no code change), the copy
+cleanup (done), the already-correct-in-prod list, the audit and the candidates
+all came out, along with every prototype file name and arm id. It is a list of
+what production has to change, nothing else — the proto-side detail lives here in
+CLAUDE.md instead. Two of the old numbers no longer have a section, so the
+numbering shifted: old Change 4 (support FAQ) is now **3**, old Change 6
+(transactional emails) is now **4**, and the SendGrid family was promoted from a
+sub-heading to **5** so it appears in the change log as work with no owner.
 
 **Live initiatives:**
 
@@ -337,14 +395,14 @@ Tailwind Play CDN only generates utilities present at first paint. Default is `c
 param the proto stays prod-faithful. See the Review Segment section above for
 the `can_review` chain this is about.
 
-Change 3 is documentation, not code: the four post-submit landings were walked
+The four post-submit landings were walked
 organically (price → contact → submit → verification link) and match prod's own
 routing — `waitingForReview` → `Review.vue` for a review-called seller either side
 of verification, `waitingForEmailVerificationBeforePublishing` →
 `PublishQueue.vue` for a no-call seller who has not verified, `success` →
 `Success.vue` once they have. The pairing worth remembering: **no-call +
 unverified lands on the queued screen, which mentions no call at all**, and the
-page badge and card badge agree. Change 5 deleted the copy that promised the call
+page badge and card badge agree. A copy cleanup deleted the strings that promised the call
 and rendered nowhere — the old `success` confirmation set (including a stale
 duplicate of the price step's next-steps list, and a duplicate `step1*` pair that
 silently shadowed itself) plus `dac7.step2*`, 53 lines across both languages.
@@ -367,7 +425,7 @@ label itself; the `data-i18n` attribute was removed so a language switch cannot
 overwrite the arm's string. The offers-return case keeps its plain "Valmis" in
 both arms.
 
-Change 4 of the same initiative reaches the **support page's FAQ**, not the app:
+Change 3 of the same initiative reaches the **support page's FAQ**, not the app:
 five items presented the review call as something every seller gets. The revised
 copy makes it conditional with one word — `tarvittaessa`, or `tapauskohtaisesti`
 where the sentence is about our own process — so nothing is promised and nothing
@@ -754,6 +812,189 @@ window.PROTO_MOCK.states              // { name: label }, consumed by the bar
 
 Selecting a mock scenario **overwrites funnel progress** — that is the point,
 the scenario *is* the state, but it means a half-finished walkthrough is lost.
+
+## Negotiation states on the decision page
+
+Prod has **three** of them, and the difference is the negotiation's status, not a
+flag on the offer. `useC2BDecisionPageOfferMapping`'s `getOfferStatus` derives the
+card status and `usePostAuctionStatus` derives the hero:
+
+| negotiation | card status | badge | negotiate CTA | help line under it | hero |
+|---|---|---|---|---|---|
+| `PENDING` (0) — seller sent, waiting | `negotiation` | Odotetaan liikkeen vastausta · clock · amber | **Vastatarjous lähetetty** | shown | price tier |
+| `COUNTER_OFFER_SENT` (7) — dealer answered | `negotiation` | Liikkeeltä on tullut vastaus · chats · lime | **Näytä vastaus** | shown | price tier |
+| `STOPPED` (8) — dealer closed it | `negotiation_stopped` | Umpeutuu: mm:ss · hourglass · red | **Näytä vastaus** | **dropped** | **Neuvottelu päättyi** |
+
+So yes — prod does communicate a closed negotiation on the decision page, in three
+places at once: the hero swaps to `auction.auction_hero.negotiation_stopped`
+("Neuvottelu päättyi" / "Autoliike on päättänyt neuvottelun. Voit edelleen
+hyväksyä voimassa olevan tarjouksen tai jatkaa myyntiä kanssamme."), the badge
+reverts to the reaction countdown, and `negotiationInfoText` is set to `null` —
+the help text promises the standing offer survives a counter-offer, and once the
+dealer has closed there is no counter-offer left to make. The reject-all banner
+comes back too, because `highestOfferIsBeingNegotiated` is `waitingForDealer`,
+false once stopped.
+
+The negotiate button still renders (`showNegotiate: canBeNegotiated`) — it is how
+the seller opens the thread to read the closing message.
+
+**The proto reached none of this.** `offerDisplayProps` only ever produced
+`negotiation`, so the `negotiation_stopped` branches that already existed in
+`buildOfferCard` were dead; `HERO_COPY` had no entry, so the hero fell back to
+`good_auction`; and `negBtnLabel` read `dealerReplied` **above its own `var`**, so
+the hoisted `undefined` pinned the label to "Vastatarjous lähetetty" for the whole
+negotiation — the dealer's reply never changed it. All four now derive from the
+live `NEGOTIATIONS` thread through `negStatus`, which is also what the modal and
+the bar's simulate actions use, so the card, the badge, the hero and the banner
+cannot disagree.
+
+One prod ordering NOT reproduced: prod checks expiry *before* both negotiation
+branches (`dayjs().isAfter(expiry) && !hasPending`), so an expired offer with a
+stopped negotiation reads `expired`. The proto keeps the negotiation status
+ahead of its own expiry check. Unreachable today — every negotiation scenario
+uses an `ACTIVE()` window — but it is a real divergence if that changes.
+
+## Offers + decision audit against the 2026-08-26 dump
+
+A full sweep of the offers page, the warm-up and the decision page. What matched
+is worth recording too, so the next sweep can skip it.
+
+**Matched already, verbatim:** all five offers-page section titles
+(`Tarjouskauppa käynnissä`, `Ajankohtaista`, `Keskeneräiset ilmoituksesi`,
+`Julkaistut ilmoituksesi`, `Usein kysytyt kysymykset`); every
+`status_updates.*` notification title, body and CTA the proto renders; the
+decision page's own section titles; the warm-up badge and CTA; `time_to_answer`.
+
+**Fixed — decision page:**
+- The reject-all banner's title was "Eikö hinta miellytä?", which is not prod
+  copy. `banner_helper.card.decline.title` is **"Tarvitsetko apua?"** — the same
+  title the accepted banner uses.
+- prod has **three** bottom-banner variants where the proto had two:
+  `no_offers` → `helper`, `offers_expired` → `expired`, everything else →
+  `decline`. `helper` and `expired` are the same sentence with **different phone
+  numbers**.
+- **The phone numbers differ per variant** and the proto used one everywhere:
+  `helper`, `accepted` and `decline` carry **+358 40 040 7002**; `expired` and
+  `rejected` carry **+358 44 901 5285**.
+- `auction_details.bids` / `.buyers` are plural forms
+  (`Tarjousta|Tarjous|Tarjousta`), so the insights row reads "Tarjous" /
+  "Autoliike" at exactly one. The proto hardcoded the plural. Not reachable by
+  any current scenario — `offer_count` is request-level and no scenario sets it
+  to 1 — but the guard is in place.
+
+**Fixed — offers page:**
+- `offerAccepted` carried the label "Kauppa vahvistettu", so a freshly accepted
+  offer already read as a confirmed deal. prod has TWO states with the same icon
+  and colour: **"Tarjous hyväksytty"** until the request reaches
+  `REQUEST_COMPLETED` (4), then **"Kauppa vahvistettu"**. `dealCompleted` added,
+  and the `deal-completed` scenario now actually sets `status: 4` — it was
+  byte-identical to `accepted` before.
+- The `needs_dac7` → `offerAccepted` short-circuit is gone. prod derives the card
+  state from the offers alone and surfaces DAC7 as a notification. The `dac7`
+  scenario carried NO offers, which under prod's logic makes `every(REJECTED)`
+  vacuously true and would badge it "Ei hyväksyttyjä tarjouksia"; it now carries
+  the accepted offer a real DAC7 request has.
+
+**A dead notification in prod, matched deliberately.** `updates/main.vue`
+renders a `requestsNegotiationStopped` block — `ph-hand-palm-fill`,
+`status_updates.negotiation_stopped` copy, its own CTA — but that prop is
+**neither declared in its own `defineProps` nor passed by `C2B.vue`**, so the
+`v-for` iterates `undefined` and nothing paints. Almost certainly an oversight;
+everything else about it is finished. What a stopped negotiation actually hits is
+`requestsEndedSeen`, which excludes `NEGOTIATION_PENDING` and
+`NEGOTIATION_COUNTER_OFFER_SENT` and says nothing about `STOPPED` — so it shows
+**offersValidity** ("Toimi nyt! Viimeistele kaupat"). The proto now does the
+same; the `negotiationStopped` config stays in `offers.html` marked UNREACHABLE
+so re-enabling is one line if prod is fixed. The card badge is
+"Neuvottelut käynnissä" in both — prod's `computeRequestState` *does* include
+`NEGOTIATION_STOPPED` in `negotiations`.
+
+**More dead prod copy found while sweeping** (do not build against it):
+`auctions_in_progress.pick_up_offered` ("Noutopalvelua tarjoavat") — `Timer.vue`
+renders only `total_bids` and `bidders`. Add it to the list with `AConfetti`,
+`AConfetti`'s canvas-confetti dependency, `Preview.vue`'s `published` badge
+config, and `NegotiationFormRequest`'s `counterOfferSend` rules.
+
+**Not ported, deliberately:** prod's decision page has a full-page `Spinner`
+while `isLoading` and a literal `Something went wrong!!!` fallback; neither means
+anything in a static prototype.
+
+## Warm-up card and hero copy — the outcome tiers were unified
+
+**The warm-up still exists in prod**, and its gate has nothing to do with the
+auction outcome. `C2BDecision.vue` renders it on
+`! request?.offers_seen_at && ! shouldSkipWarmup`, and
+`shouldSkipWarmup` is `isB2BRequest` — so for a consumer seller it is the
+`offers_seen_at` timestamp alone. The outcome decides the card's CONTENT, not
+whether it appears. The badge (`warm_up_card.badge` = "Tarjouskilpailu on
+päättynyt", `ph-gavel-bold`, light_lime) and CTA (`warm_up_card.cta` = "Katso
+tulokset") are the same in every variant.
+
+**What changed:** `c2bPostAuctionMessages.js` now defines ONE
+`offersPendingActionConfig` and assigns the same object to all four price tiers —
+`EXCELLENT_AUCTION`, `MATCHES_EXPECTATIONS`, `GOOD_AUCTION`, `NOT_GOOD_AUCTION`.
+Its own comment says "the outcome tiers no longer message differently", and
+`C2BDecision.vue` carries a matching TODO: `offerEstimateDifference` is dead
+because "no hero config consumes the amount param anymore". The tier constants
+still exist and are still returned; they just all resolve to one hero and one
+warm-up.
+
+| status | warm-up | hero |
+|---|---|---|
+| the four price tiers | **Hyvä tarjouskilpailu takana!** · excellent_auction.png | **Nyt on aikasi toimia!** |
+| `no_offers` | Ei tarjouksia tällä kertaa · not_great_auction.png | Tarjouksia ei tullut |
+| `offers_expired` | Tarjoukset ovat umpeutuneet, mutta vielä on toivoa · not_great_auction.png | Tarjoukset ovat umpeutuneet |
+| `offer_accepted` · `offer_rejected` · `final_offer` · `negotiation_stopped` | **none in prod** | own hero each |
+
+`ok_auction.png` is referenced by nothing any more. And prod has **no fallback**
+for the four warm-up-less statuses: reaching the card in one of them renders
+undefined heading/message/image. Unreachable in practice (each implies the seller
+already saw the offers), so the proto keeps a guard instead of copying the gap.
+
+**What the proto had wrong**, all now fixed: four separate tier heroes ("Sait yli
+odotusten!", "Odotustesi mukainen tarjous", "Nyt ollaan hyvissä asemissa!", "Peli
+ei ole vielä pelattu") and three separate warm-up cards, none of which exist any
+more; a stale `no_offers` hero (prod dropped "tai liian korkea hintaodotus");
+no `offers_expired` warm-up at all; and a warm-up gate that also allow-listed two
+scenarios, hiding the card on `offers-expired-unseen` and `offers-auto-rejected`
+even though both have `offers_seen_at: null`. Shared objects now back the tier
+entries, so they cannot drift apart again.
+
+`postAuctionStatus` also gained the two prod branches it was missing:
+`isExpiredByTime` → `offers_expired` (past `expires_at + reactionTimeForOffers`,
+unless a PENDING negotiation is keeping the auction alive), which is why
+`offers-expired-unseen` used to read as a price tier; and a rejected HIGHEST
+offer counting as `offer_rejected`, not only the all-rejected case. Prod's
+`rejected_by_seller` leg is not ported — the proto's mock offers have no such
+field.
+
+Two scenarios that existed in the page but not on the bar are now listed:
+`offers-auto-rejected` ("Expired, auto-rejected") and `negotiation-stopped`
+("Negotiation closed by dealer").
+
+## No confetti anywhere — prod never fires it
+
+`AConfetti.vue` is a real atom in prod's design system, but **nothing imports
+it**: across the 2026-08-14, -08-20 and -08-26 dumps the only references are its
+own Storybook story and MDX page. `canvas-confetti` is a dependency; no
+application code calls it. So production celebrates nothing, on the decision page
+or any other.
+
+`decision.html` used to fire it for `excellent_auction`, `good_auction` and
+`matches_expectations` from `renderMain` — which runs on load, on the warm-up
+reveal, after every counter-offer and after every simulated dealer action, so it
+re-celebrated on each action and on each return to the page. Removed: the CDN
+script, the canvas, `fireConfetti`, `CONFETTI_STATUSES`/`CONFETTI_COLORS` and the
+call.
+
+Two things worth keeping straight if it is ever proposed for real. The atom's
+burst runs `onMounted` and cleans up `onBeforeUnmount`, so even wired it would
+fire **once per mount, never per re-render** — a Vue page that re-renders on every
+action would not re-celebrate, which is exactly the behaviour the proto got wrong.
+And the transcription itself was accurate (6 bursts, 300 ms apart, the atom's own
+colours, `spread: 160`, `startVelocity: 80`, `scalar: 1.5`, 100 particles), so
+restoring it is a `git revert` away — the mistake was the trigger, not the
+parameters.
 
 ## Current Work: Offers + Decision Pages
 

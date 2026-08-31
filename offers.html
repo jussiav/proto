@@ -402,6 +402,9 @@
       'deal-completed': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
         offer_count: 3, buyers: 3,
+        /* REQUEST_COMPLETED — the only thing separating this from `accepted`,
+           and what turns the badge into "Kauppa vahvistettu". */
+        status: 4,
         offers: [{id:201,status:1},{id:202,status:2},{id:203,status:2}],
         offers_seen_at: new Date((_now() - 3*86400) * 1000).toISOString(), has_final_offer: false,
       })], negotiations: [] }; },
@@ -444,7 +447,9 @@
       })], negotiations: [] }; },
       'dac7': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
-        offer_count: 0, buyers: 0, offers: [], offers_seen_at: null, has_final_offer: false,
+        offer_count: 3, buyers: 3,
+        offers: [{id:201,status:1},{id:202,status:2},{id:203,status:2}],
+        offers_seen_at: new Date((_now() - 3*86400) * 1000).toISOString(), has_final_offer: false,
         needs_dac7: true,
       })], negotiations: [] }; },
       'blank': function() { return { requests: [], negotiations: [], drafts: [] }; },
@@ -498,12 +503,21 @@
     var OFFER_ACCEPTED = 1, OFFER_REJECTED = 2, OFFER_FINAL = 3;
     var NEG_PENDING = 0, NEG_COUNTER_SENT = 7, NEG_STOPPED = 8;
 
+    /* TenderRequests.computeRequestState, transcribed. Two changes from what the
+       proto had: an accepted offer splits on `request.status === REQUEST_COMPLETED`
+       (4), and there is no `needs_dac7` short-circuit — prod derives the card
+       state from the offers alone and surfaces DAC7 as a NOTIFICATION, not a card
+       state. (The proto's dac7 scenario used to carry no offers at all, which in
+       prod's logic makes `every(REJECTED)` vacuously true and would badge it
+       "Ei hyväksyttyjä tarjouksia"; the scenario now carries the accepted offer a
+       real DAC7 request has.) */
     function computeRequestState(req, negotiations) {
       if (_now() <= req.auction_ends_at) return 'auctionOngoing';
-      if (req.needs_dac7) return 'offerAccepted';
       var offers = req.offers || [];
       if (offers.every(function(o) { return o.status === OFFER_REJECTED; })) return 'offersRejected';
-      if (offers.some(function(o) { return o.status === OFFER_ACCEPTED; })) return 'offerAccepted';
+      if (offers.some(function(o) { return o.status === OFFER_ACCEPTED; })) {
+        return req.status === 4 ? 'dealCompleted' : 'offerAccepted';
+      }
       var neg = (negotiations || []).filter(function(n) { return n.tender_id === req.id; })[0];
       if (neg && [NEG_PENDING, NEG_COUNTER_SENT, NEG_STOPPED].indexOf(neg.status) !== -1) return 'negotiations';
       return 'auctionEnded';
@@ -679,7 +693,13 @@
       auctionOngoing:  { label: 'Tarjouskauppa käynnissä',   icon: ICON_BROADCAST,  badge: 'bg-cyan-100 border-cyan-300 text-cyan-700',   primaryText: 'Muokkaa tietoja',              primaryHref: null,            ghostText: 'Avaa tiedot' },
       auctionEnded:    { label: 'Tarjouskauppa on päättynyt', icon: ICON_GAVEL,      badge: 'bg-lime-50 border-lime-400 text-lime-700',    primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
       negotiations:    { label: 'Neuvottelut käynnissä',      icon: ICON_CHATS,      badge: 'bg-amber-50 border-amber-400 text-amber-700', primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
-      offerAccepted:   { label: 'Kauppa vahvistettu',         icon: ICON_SEAL_CHECK, badge: 'bg-lime-300 border-lime-400 text-lime-800',   primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
+      /* prod's TenderRequests.requestStateConfig has BOTH, same icon and colour,
+         different label: an accepted offer is "Tarjous hyväksytty" until the
+         request itself reaches REQUEST_COMPLETED (4), which is "Kauppa
+         vahvistettu". The proto had one entry carrying the completed label, so
+         a freshly accepted offer already read as a confirmed deal. */
+      offerAccepted:   { label: 'Tarjous hyväksytty',         icon: ICON_SEAL_CHECK, badge: 'bg-lime-300 border-lime-400 text-lime-800',   primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
+      dealCompleted:   { label: 'Kauppa vahvistettu',         icon: ICON_SEAL_CHECK, badge: 'bg-lime-300 border-lime-400 text-lime-800',   primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
       offersRejected:  { label: 'Ei hyväksyttyjä tarjouksia', icon: ICON_PROHIBIT,   badge: 'bg-red-500 border-red-700 text-white',        primaryText: 'Näytä tarjouskaupan tulokset', primaryHref: 'decision.html', ghostText: 'Avaa tiedot' },
     };
 
@@ -713,6 +733,8 @@
         ctaText: 'Näytä vastatarjous', ctaHref: 'decision.html',
         timeLeftTitle: 'Tarjous umpeutuu',
       },
+      /* UNREACHABLE — kept as the record of prod's intended-but-dead
+         negotiation-stopped notification. See computeNotificationType. */
       negotiationStopped: {
         themeBase: 'border-blue-400 bg-blue-100', iconColor: 'text-blue-500', regNoPlate: 'bg-white border-none',
         icon: NICON_HAND_PALM,
@@ -757,9 +779,27 @@
       }
       if (state === 'negotiations') {
         var neg = negs.filter(function(n) { return n.tender_id === req.id; })[0];
-        if (neg && neg.status === NEG_STOPPED)       return 'negotiationStopped';
         if (neg && neg.status === NEG_COUNTER_SENT)  return 'counterOfferResponse';
-        // NEG_PENDING = we sent counter, waiting for dealer — no notification
+
+        /* NEG_STOPPED does NOT get its own notification in prod, even though the
+           template has one. `updates/main.vue` renders a
+           `requestsNegotiationStopped` block — icon ph-hand-palm-fill,
+           status_updates.negotiation_stopped copy — but that prop is neither
+           declared in its `defineProps` nor passed by `C2B.vue`, so the v-for
+           iterates undefined and nothing paints. Almost certainly an oversight
+           (the copy, the icon and the CTA are all in place), but it is dead.
+
+           What a stopped negotiation actually hits: `requestsEndedSeen` excludes
+           NEGOTIATION_PENDING and NEGOTIATION_COUNTER_OFFER_SENT and says nothing
+           about STOPPED, so the request lands there and shows **offersValidity**
+           ("Toimi nyt! Viimeistele kaupat" → "Tee päätös"). Same as any other
+           seen-offers request awaiting a decision, which is what it now is.
+
+           NEG_PENDING — our counter is still with the dealer — has no
+           notification at all. */
+        if (neg && neg.status === NEG_STOPPED) {
+          return req.offers_seen_at ? 'offersValidity' : 'auctionCompleted';
+        }
         return null;
       }
       return null;
