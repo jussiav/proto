@@ -89,7 +89,7 @@
 </head>
 <body class="font-body text-slate-900" style="background:#f5f5f5">
 
-  <!-- Hero — same treatment as every spec page (see delivery-distance.html). -->
+  <!-- Hero -->
   <header class="av-hero overflow-hidden">
     <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
       <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
@@ -97,15 +97,13 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · ad creation funnel</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Review / No review</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The funnel tells every seller the same story about what happens after they submit — including the call from our team. For sellers outside the review segment that call never comes. This initiative makes funnel communication match the process the seller is actually in, one change at a time.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The funnel, the support page and the emails all tell the seller that our team reviews the ad and calls them. For sellers outside the review segment that call never comes — and most ads will soon publish without one. This page lists the changes that make our communication match the process the seller is actually in.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: live — 1 change ready to build
+          Status: live — 3 ready to build, 2 blocked on copy
         </span>
-        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1</span>
-        <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype param: <code>?review-no-review=</code></span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
       </div>
     </div>
@@ -116,119 +114,70 @@
 
   <main>
 
-    <!-- Why -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Why this initiative exists</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Production already knows, at the price step, whether a seller's car is inside the review segment. It just doesn't tell the seller a matching story.</p>
-      <div class="grid md:grid-cols-2 gap-5 items-start">
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">What production computes</p>
-          <p class="font-dm text-sm leading-6 text-slate-800 mb-3">One boolean, resolved server-side and handed to the frontend on the draft resource:</p>
-          <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-3 font-mono text-xs leading-relaxed mb-3">TenderRequestReviewSettings <span class="text-slate-400">(Filament: enabled, fuel_types,<br>&nbsp;&nbsp;min/max_model_year, min/max_mileage)</span><br>&nbsp;&nbsp;→ EvaluateDraftForReview<br>&nbsp;&nbsp;→ resource: <b class="text-white">can_review</b></div>
-          <p class="font-dm text-sm leading-6 text-slate-800">The settings are a <b>whitelist</b> — <code>ReviewIfPreferredSegment</code> checks the car falls <i>inside</i> the configured band, so a high-mileage or old car is <b>not</b> review-called. <code>PriceInfo.vue</code> is the only component that reads <code>can_review</code>: it swaps the optional price estimate for a required asking price, and submitting publishes the draft instead of sending it to review.</p>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">What the seller is told</p>
-          <p class="font-dm text-sm leading-6 text-slate-800 mb-3"><code>WhatHappensNext.vue</code> takes three props — <code>draftStatus</code>, <code>isVerified</code>, <code>missingImages</code>. There is <b>no <code>can_review</code> anywhere in it</b>. At the price step the draft status is still <code>open</code>, so every seller gets the full five-step list, bullet 2 of which is:</p>
-          <div class="bg-blue-50 border border-blue-200 rounded-md px-4 py-3 mb-3">
-            <p class="font-dm font-bold text-sm text-black" data-i18n="nextSteps.step2Title">—</p>
-            <p class="font-dm text-sm leading-5 text-black" data-i18n="nextSteps.step2Body">—</p>
-          </div>
-          <p class="font-dm text-sm leading-6 text-slate-800">A seller whose car is outside the segment reads that promise on the same screen where we ask them for an asking price <i>because</i> they are outside it. Their ad publishes on submit; nobody calls. The promise is broken by the next click.</p>
-        </div>
-      </div>
-      <div class="bg-warning-50 border-2 border-warning-300 rounded-lg p-5 mt-5">
-        <p class="font-dm text-xs font-bold uppercase tracking-widest text-warning-800 mb-3 inline-flex items-center gap-2">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.75" r="0.85" fill="currentColor"/></svg>
-          The list already varies — just on the wrong input
-        </p>
-        <p class="font-dm text-sm leading-6 text-slate-900">The five bullets drop to four when the seller is logged in (<code>isVerified</code> removes <i>verify your email</i>). So the component <b>does</b> branch — on session state, never on whether the seller's car gets reviewed. The one branch that omits the review bullet is <code>queued_for_publishing_after_verification</code>, which is exactly the status a non-reviewable seller reaches <i>after</i> submitting. The correct information exists one screen too late.</p>
-      </div>
-      </div>
-    </section>
-
-    <!-- Change log -->
+    <!-- Change log — the table of contents -->
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
-      <div class="bg-info-50 border border-info-200 rounded-lg p-4 mb-4 max-w-3xl">
-        <p class="font-dm text-sm leading-6 text-slate-800"><b>A sibling initiative ships first.</b> <a class="text-av-blue underline font-medium" href="seller-intent.html">Seller intent</a> adds one question per arm to the same price step, testing how ready the seller is to sell. It deliberately leaves this initiative's two changes alone — the "Mitä tapahtuu seuraavaksi?" panel stays and the submit copy stays — so it does not depend on work that lands later. Once intent can influence the outcome, Change 1 stops being a fidelity fix and becomes necessary: no screen at or before the price step can honestly say what happens next.</p>
-      </div>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The initiative spans several funnel steps. Each change is specced, built and reviewed on its own; new ones are appended to this table and get their own section below. One arm parameter covers all of them, so a walkthrough is always in one consistent world.</p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Everything this initiative asks for, in one list. Each row links to its own section below.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
             <tr class="border-b border-slate-200 text-slate-500">
               <th class="px-4 py-3 font-medium">#</th>
-              <th class="px-4 py-3 font-medium">Step / component</th>
-              <th class="px-4 py-3 font-medium">Change</th>
-              <th class="px-4 py-3 font-medium">Arm</th>
+              <th class="px-4 py-3 font-medium">What needs to change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
               <th class="px-4 py-3 font-medium">Status</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr>
               <td class="px-4 py-3 font-bold">1</td>
-              <td class="px-4 py-3">Price step — <code>Sidebar.vue</code> / <code>WhatHappensNext.vue</code><br><span class="text-xs text-slate-500">prototype: <code>price.html</code></span></td>
-              <td class="px-4 py-3">Remove the "Mitä tapahtuu seuraavaksi?" component from the price step entirely</td>
-              <td class="px-4 py-3"><code>v1</code></td>
-              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Ready to build</span></td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-1">Remove the "Mitä tapahtuu seuraavaksi?" panel entirely</a></td>
+              <td class="px-4 py-3">Price step</td>
+              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
             </tr>
             <tr>
-              <td class="px-4 py-3">2</td>
-              <td class="px-4 py-3">Contact step — <code>PersonalInfo.vue</code><br><span class="text-xs text-slate-500">prototype: <code>contact.html</code></span></td>
-              <td class="px-4 py-3">Submit button stops naming an outcome: one neutral copy for every seller</td>
-              <td class="px-4 py-3">v1</td>
-              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Built</span></td>
+              <td class="px-4 py-3 font-bold">2</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-2">Submit button stops naming an outcome — one neutral copy for every seller</a></td>
+              <td class="px-4 py-3">Contact step</td>
+              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
             </tr>
             <tr>
-              <td class="px-4 py-3">3</td>
-              <td class="px-4 py-3">Post-submit screens — <code>Review.vue</code> / <code>PublishQueue.vue</code> / <code>Success.vue</code><br><span class="text-xs text-slate-500">prototype: <code>success.html</code></span></td>
-              <td class="px-4 py-3">No code change — the four flows are documented and verified end to end</td>
-              <td class="px-4 py-3">both</td>
-              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Verified</span></td>
+              <td class="px-4 py-3 font-bold">3</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-3">Five FAQ items stop presenting the review call as something every seller gets</a></td>
+              <td class="px-4 py-3">Support page · CMS</td>
+              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
             </tr>
             <tr>
-              <td class="px-4 py-3">4</td>
-              <td class="px-4 py-3">Support-page FAQ — CMS<br><span class="text-xs text-slate-500">prototype: <code>faq-content.js</code> via <code>help.html</code></span></td>
-              <td class="px-4 py-3">Five items stop presenting the review call as something every seller gets</td>
-              <td class="px-4 py-3">v1</td>
-              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Built — copy approved</span></td>
+              <td class="px-4 py-3 font-bold">4</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-4">Three seller emails promise or assume the review call</a></td>
+              <td class="px-4 py-3">Transactional emails</td>
+              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Awaiting copy</span></td>
             </tr>
             <tr>
-              <td class="px-4 py-3">5</td>
-              <td class="px-4 py-3">Copy cleanup — <code>translations.js</code></td>
-              <td class="px-4 py-3">Strings that promise the call but render nowhere are deleted</td>
-              <td class="px-4 py-3">both</td>
-              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Done</span></td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3">6</td>
-              <td class="px-4 py-3">Transactional emails — <code>resources/views/mail/</code><br><span class="text-xs text-slate-500">prototype: <code>emails.html</code></span></td>
-              <td class="px-4 py-3">Three seller emails promise or assume the review call</td>
-              <td class="px-4 py-3">v1</td>
-              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs">Awaiting copy</span></td>
-            </tr>
-            <tr class="text-slate-500">
-              <td class="px-4 py-3">7+</td>
-              <td class="px-4 py-3" colspan="4">Appended here as each change is specced. See <b>Candidates</b> below for what is still under discussion.</td>
+              <td class="px-4 py-3 font-bold">5</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-5">Lifecycle emails contradict the change — one promises the call in its subject line</a></td>
+              <td class="px-4 py-3">SendGrid · outside the codebase</td>
+              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Needs an owner</span></td>
             </tr>
           </tbody>
         </table>
+      </div>
+      <div class="bg-info-50 border border-info-200 rounded-lg p-4 mt-5 max-w-3xl">
+        <p class="font-dm text-sm leading-6 text-slate-800"><b>A sibling initiative ships first.</b> <a class="text-av-blue underline font-medium" href="seller-intent.html">Seller intent</a> adds one question to the same price step, testing how ready the seller is to sell. It deliberately leaves Changes 1 and 2 alone so it does not depend on work that lands later. Once the intent answer can influence who gets called, Change 1 stops being a fidelity fix and becomes necessary: no screen at or before the price step can honestly say what happens next.</p>
       </div>
       </div>
     </section>
 
     <!-- Change 1 -->
-    <section class="av-band av-band-grey">
+    <section class="av-band av-band-grey" id="change-1">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 1 — remove "what happens next" from the price step</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The panel's whole content is a promise about a process the seller may not be in. Rather than branch it on <code>can_review</code> at this step, it comes out: the price step's job is the price question, and the process story belongs where the process is actually known. Below, the copy comes from the app's own <code>translations.js</code>, so these replicas can't drift from the prototype.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">1 — Price step: remove "Mitä tapahtuu seuraavaksi?"</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The panel's whole content is a promise about a process the seller may not be in. Bullet 2 promises the review call to <b>every</b> seller — including the one being asked for an asking price precisely <i>because</i> their car is outside the review segment. Their ad publishes on submit and nobody calls, so the promise is broken by the next click. The panel comes out: the price step's job is the price question, and the process story belongs where the process is actually known.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
 
         <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Control — today (<code>?review-no-review=control</code>)</p>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Today</p>
           <div class="bg-av-cream rounded-xl p-5 flex flex-col gap-5">
             <p class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="nextSteps.title">—</p>
             <div class="flex gap-2 items-start">
@@ -267,355 +216,110 @@
               </div>
             </div>
           </div>
-          <p class="font-dm text-xs text-slate-500 mt-3">Five bullets while not logged in, four once logged in. Every seller sees bullet 2's review call, whichever price question they were asked.</p>
+          <p class="font-dm text-xs text-slate-500 mt-3">Five bullets while not logged in, four once logged in — the list already varies, just on session state rather than on whether the car gets reviewed. Bullet 2's review call is shown to everyone, whichever price question they were asked.</p>
         </div>
 
         <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Variant 1 — the change (<code>?review-no-review=v1</code>)</p>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">After the change</p>
           <div class="bg-av-cream rounded-xl p-5 min-h-[220px] flex items-center justify-center">
-            <p class="font-dm text-sm text-slate-500 italic text-center max-w-[16rem]">On desktop the column keeps its place and its width. In the prototype it is empty; in production it keeps whatever <code>Sidebar.vue</code> already renders at this step (see below). On mobile the column is not rendered at all.</p>
+            <p class="font-dm text-sm text-slate-500 italic text-center max-w-[16rem]">Heading and all five bullets are gone. Nothing replaces them, and no new copy is written.</p>
           </div>
-          <p class="font-dm text-xs text-slate-500 mt-3">Heading and all five bullets go. Nothing replaces them, and nothing new is written.</p>
+          <p class="font-dm text-xs text-slate-500 mt-3">On desktop the column keeps its place and its width, showing whatever else it already renders at this step.</p>
         </div>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-5 items-start mt-5">
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Production implementation — exhaustive</p>
-          <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
-            <li><b>One line in <code>Sidebar.vue</code>.</b> Drop <code>|| props.formState.matches('providingPriceInfo')</code> from <code>shouldShowWhatHappensNext</code>. Nothing else in that computed changes, and <code>WhatHappensNext.vue</code> itself is not touched — it still serves the review, verification, publish-queue and success states.</li>
-            <li><b>Decide the mobile case deliberately.</b> <code>shouldShowSidebarOnMobile</code> is <code>shouldShowWhatHappensNext || providingPersonalInfo</code>, so removing the price step from the first also stops the sidebar rendering on mobile at that step. That is a consequence, not a decision — confirm it is what you want before shipping. On mobile the step then shows the price question alone.</li>
-            <li><b>Do not fill the gap.</b> <code>VehicleMetrics</code> is already in that column (<code>v-if="vehicleMetrics?.brand"</code>) at every step, so on desktop production keeps showing it after the panel goes. No new component, no new copy.</li>
-            <li><b>Leave <code>can_review</code> alone.</b> This change adds no new consumer of it. <code>PriceInfo.vue</code> stays the only one.</li>
-          </ol>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Prototype implementation</p>
-          <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
-            <li><b>The panel is one unit.</b> Heading and bullets sit in <code>#price-what-happens-next</code>; the arm toggles that wrapper. The wrapper repeats the column's own <code>gap-6</code>, so nesting it changed no spacing in control.</li>
-            <li><b>The column stays on desktop, goes on mobile.</b> Same <code>flex-1 max-w-[48%]</code> cream panel at full height, holding only the (dormant) save-draft mount. Below 768&nbsp;px it is hidden instead: stacked under the form it would be a bare 64&nbsp;px strip of cream padding, and production hides the sidebar there anyway for the same reason (point 2 opposite).</li>
-            <li><b>The empty desktop column is a prototype artefact.</b> <code>VehicleMetrics</code> was never ported to this step, so the panel reads blank here while production keeps showing that card. Do not treat the blank column as the specified design.</li>
-            <li><b>Control keeps all of its logic.</b> The login-state bullet drop and the badge renumbering are untouched, and the <code>nextSteps.*</code> strings stay in <code>translations.js</code>. In the v1 arm that work is skipped rather than run against a hidden panel.</li>
-            <li><b>Orthogonal to the page's scenarios.</b> <code>?scenario=price-estimate|asking-price</code> still chooses the price question; the arm chooses the communication. All four combinations are reachable.</li>
-          </ol>
-        </div>
-      </div>
-      </div>
-    </section>
-
-    <!-- How to test -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">How to try it</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Prototype: <a class="text-av-blue underline font-medium" href="https://jussiav.github.io/proto">https://jussiav.github.io/proto</a>. Switch arms from the <b>Variants</b> row on the prototype bar at the bottom of the page — the options are grouped under <b>Review/No review</b> — or open one directly. The arm is remembered as you walk the funnel, so a whole run stays in one arm, and the row's first option (<i>— none — production behaviour</i>) puts everything back.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">Arm</th>
-              <th class="px-4 py-3 font-medium">Segment scenario</th>
-              <th class="px-4 py-3 font-medium">What you should see</th>
-              <th class="px-4 py-3 font-medium">Link</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr><td class="px-4 py-3 whitespace-nowrap font-bold">control</td><td class="px-4 py-3">Reviewable</td><td class="px-4 py-3">Optional estimate + the five-bullet panel. Today's design, and what renders with no parameter at all.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=control&amp;scenario=price-estimate">price.html?review-no-review=control&amp;scenario=price-estimate</a></td></tr>
-            <tr><td class="px-4 py-3 whitespace-nowrap font-bold">control</td><td class="px-4 py-3">Outside the segment</td><td class="px-4 py-3">Required asking price <b>and</b> the promise of a review call — the mismatch this initiative attacks.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=control&amp;scenario=asking-price">price.html?review-no-review=control&amp;scenario=asking-price</a></td></tr>
-            <tr class="bg-blue-50"><td class="px-4 py-3 whitespace-nowrap font-bold">v1</td><td class="px-4 py-3">Reviewable</td><td class="px-4 py-3">Optional estimate, no panel.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=v1&amp;scenario=price-estimate">price.html?review-no-review=v1&amp;scenario=price-estimate</a></td></tr>
-            <tr class="bg-blue-50"><td class="px-4 py-3 whitespace-nowrap font-bold">v1</td><td class="px-4 py-3">Outside the segment</td><td class="px-4 py-3">Required asking price, no panel — no promise that cannot be kept.</td><td class="px-4 py-3"><a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/price.html?review-no-review=v1&amp;scenario=asking-price">price.html?review-no-review=v1&amp;scenario=asking-price</a></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl">The parameter can be appended to <b>any</b> prototype page, not just the ones this initiative changes — put it on the funnel's first step and the whole run stays in that arm. It also works with <code>?mode=test</code>, which hides all prototype tooling: that combination is how a moderator pins a participant to one arm for a session.</p>
-      </div>
-    </section>
-
-    <!-- Data contract -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Data contract</h2>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-5 py-3 font-medium">Aspect</th>
-              <th class="px-5 py-3 font-medium">Rule</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Stored fields</td><td class="px-5 py-3"><b>None added or changed.</b> Change 1 removes a presentational component; nothing about it is persisted, on the draft or anywhere else.</td></tr>
-            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">API surface</td><td class="px-5 py-3">Unchanged. <code>can_review</code> keeps its current single consumer; no new resource field, no new endpoint.</td></tr>
-            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Draft state machine</td><td class="px-5 py-3">Untouched. <code>CONFIRM_PRICE_INFO</code> still goes to review or straight to submitting exactly as it does today.</td></tr>
-            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Copy</td><td class="px-5 py-3">No new strings. The five <code>what_happens_next.complete.*</code> steps stay in the translation files — the component still uses them in the review, verification, publish-queue and success states.</td></tr>
-            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Analytics</td><td class="px-5 py-3">No new events. If step-level engagement is tracked, expect the price step's sidebar impressions to stop — that is the change, not a regression.</td></tr>
-          </tbody>
-        </table>
-      </div>
-      </div>
-    </section>
-
-    <!-- Copy affected -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy no longer shown at this step (FI / EN)</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Nothing is rewritten. These are the strings the price step stops rendering in the v1 arm. Prototype keys are <code>nextSteps.*</code> in <code>translations.js</code>; production keys are <code>tenderform.what_happens_next.complete.*</code>, which other draft states still use.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-5 py-3 font-medium">Key (nextSteps.*)</th>
-              <th class="px-5 py-3 font-medium">Finnish</th>
-              <th class="px-5 py-3 font-medium">English</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800" id="copy-table">
-            <!-- filled from translations.js so this table cannot drift -->
-          </tbody>
-        </table>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What must be true afterwards</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>The heading and all five bullets no longer appear on the price step, in either price variant.</li>
+          <li><b>Nothing takes their place.</b> No replacement panel, no new copy, no shortened list.</li>
+          <li>The same panel keeps working, unchanged, on the screens after submitting — in review, awaiting email verification, publish queue and success. Only this step loses it.</li>
+          <li><b>Decide the mobile case deliberately.</b> On mobile this panel is the only reason the side column renders at this step, so removing it also removes the column and the step shows the price question alone. That is a consequence of the change, not a separate decision — confirm it is what you want before shipping.</li>
+          <li>Nothing else about the step changes: which price question the seller is asked, and where submitting takes them, are both untouched. No new stored fields, no new API surface, no new copy.</li>
+        </ul>
       </div>
       </div>
     </section>
 
     <!-- Change 2 -->
-    <section class="av-band av-band-grey">
+    <section class="av-band av-band-grey" id="change-2">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 2 — the contact step stops naming an outcome</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The last click before submitting reads <b>"Lähetä tarkastukseen"</b> — <code>personal_info.submit</code> in <code>PersonalInfo.vue</code>, with no <code>can_review</code> branch. It is already wrong for a seller outside the review segment, and once the <a class="text-av-blue underline font-medium" href="seller-intent.html">seller-intent</a> answer can downgrade a seller it is wrong for some inside it too. The arm replaces it with one neutral copy.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">2 — Contact step: the submit button stops naming an outcome</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The last click before submitting reads <b>"Lähetä tarkastukseen"</b>, for every seller. It is already wrong for a seller outside the review segment, and once the <a class="text-av-blue underline font-medium" href="seller-intent.html">seller-intent</a> answer can downgrade a seller it is wrong for some inside it too. Replace it with one neutral copy.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">One copy, not three</p>
-          <p class="font-dm text-sm leading-6 text-slate-800">An earlier draft varied the button by outcome — send for review / publish / submit. That was dropped deliberately: three copies would leak the decision one step before we are ready to state it, and the seller would learn their outcome from a button. <b>One neutral copy promises nothing and denies nothing</b>, which is also why nothing on this step branches on the outcome at all.</p>
-        </div>
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy (FI approved · EN draft)</p>
           <table class="w-full font-dm text-sm text-left">
             <tbody class="divide-y divide-slate-100 text-slate-800">
-              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap">control</td><td class="py-2">Lähetä tarkastukseen<br><span class="text-slate-500">Submit for review</span></td></tr>
-              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap">v1</td><td class="py-2"><b>Lähetä ilmoitus</b><br><span class="text-slate-500">Submit listing</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap align-top">Today</td><td class="py-2">Lähetä tarkastukseen<br><span class="text-slate-500">Submit for review</span></td></tr>
+              <tr><td class="py-2 pr-3 font-bold whitespace-nowrap align-top">Change</td><td class="py-2"><b>Lähetä ilmoitus</b><br><span class="text-slate-500">Submit listing</span></td></tr>
             </tbody>
           </table>
-          <p class="font-dm text-xs text-slate-500 mt-3">Prototype keys: <code>contact.submitBtn</code> and <code>contact.submitBtnNeutral</code> in <code>translations.js</code>. Production key: <code>tenderform.personal_info.submit</code>.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">One copy, not three</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">An earlier draft varied the button by outcome — send for review / publish / submit. That was dropped deliberately: three copies would leak the decision one step before we are ready to state it, and the seller would learn their outcome from a button. <b>One neutral copy promises nothing and denies nothing</b>, which is why nothing on this step branches on the outcome at all.</p>
         </div>
       </div>
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Implementation notes</p>
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What must be true afterwards</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>No outcome branching.</b> The arm decides the string; the seller's segment and intent answer are not consulted on this step.</li>
-          <li><b>The arm owns the element, not <code>data-i18n</code>.</b> The attribute was removed and the label is applied by the page, so a language switch cannot overwrite the arm's copy — the same pattern the price step uses for its own variant strings.</li>
-          <li><b>The offers-return case is untouched.</b> When the step is opened from the offers flow the button is a plain "Valmis" and stays that way in both arms.</li>
-          <li>Try it: <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/contact.html?review-no-review=v1">contact.html?review-no-review=v1</a> against <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/contact.html?review-no-review=control">?review-no-review=control</a>.</li>
+          <li>Every seller sees the same label. The segment and the intent answer are not consulted on this step.</li>
+          <li>When this step is opened from the offers flow the button is a plain <b>"Valmis"</b> — that case is untouched.</li>
         </ul>
       </div>
       </div>
     </section>
 
     <!-- Change 3 -->
-    <section class="av-band av-band-grey">
+    <section class="av-band av-band-grey" id="change-3">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 3 — where a seller lands after submitting</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">No code change: production already routes these four cases correctly, and so does the prototype. It is written down because the routing is the thing the rest of the initiative depends on — and because it is the answer to "so when <i>is</i> the seller told about the call". Both sides are named, since the prototype's URLs mean nothing in the codebase and the state names mean nothing in the prototype.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">Outcome</th>
-              <th class="px-4 py-3 font-medium">Email</th>
-              <th class="px-4 py-3 font-medium">Production state → component</th>
-              <th class="px-4 py-3 font-medium">Prototype</th>
-              <th class="px-4 py-3 font-medium">Says about the call</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr>
-              <td class="px-4 py-3 font-bold">Review call</td>
-              <td class="px-4 py-3">not verified</td>
-              <td class="px-4 py-3"><code>waitingForReview</code> → <code>Review.vue</code>, <code>review.email_not_verified.*</code></td>
-              <td class="px-4 py-3"><code>success.html?scenario=in-review-unverified</code><br><span class="text-xs text-slate-500">badge: Tarkastus käynnissä</span></td>
-              <td class="px-4 py-3">Promises it — correctly</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">Review call</td>
-              <td class="px-4 py-3">verified</td>
-              <td class="px-4 py-3"><code>waitingForReview</code> → <code>Review.vue</code>, <code>review.email_verified.*</code></td>
-              <td class="px-4 py-3"><code>?scenario=in-review-verified</code><br><span class="text-xs text-slate-500">badge: Tarkastus käynnissä</span></td>
-              <td class="px-4 py-3">Promises it — correctly</td>
-            </tr>
-            <tr class="bg-blue-50">
-              <td class="px-4 py-3 font-bold">No call</td>
-              <td class="px-4 py-3">not verified</td>
-              <td class="px-4 py-3"><code>waitingForEmailVerificationBeforePublishing</code> → <code>PublishQueue.vue</code>, <code>publish_queue.*</code></td>
-              <td class="px-4 py-3"><code>?scenario=queued</code><br><span class="text-xs text-slate-500">badge: Vaatii toimenpiteitä</span></td>
-              <td class="px-4 py-3"><b>Nothing</b> — verified end to end: no "Soitamme sinulle" anywhere on the page</td>
-            </tr>
-            <tr class="bg-blue-50">
-              <td class="px-4 py-3 font-bold">No call</td>
-              <td class="px-4 py-3">verified</td>
-              <td class="px-4 py-3"><code>success</code> → <code>Success.vue</code></td>
-              <td class="px-4 py-3"><code>?scenario=published</code><br><span class="text-xs text-slate-500">badge: Odotetaan tarjouksia, no car card</span></td>
-              <td class="px-4 py-3"><b>Nothing</b></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">How this was verified</p>
-        <p class="font-dm text-sm leading-6 text-slate-800">All four walked from the price step through the contact step to the confirmation screen, with no <code>?scenario=</code> forcing anything — the prototype derives the state from the same two facts production does (was the car in the review segment, has the email been confirmed). The verification email's link is followed for the two verified rows. The pairing worth stating: a <b>no-call seller who has not yet verified</b> lands on the queued screen, which mentions no call at all, and the page badge and the card badge agree.</p>
-      </div>
-      </div>
-    </section>
-
-    <!-- Marketing and support copy -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Marketing and support copy — what promises the call outside the funnel</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The prototype now carries the <b>production CMS text</b> for all three FAQ entries (front page, offers/decision, support), so this is a reading of the live copy rather than of a prototype approximation. Result: the front page and the offers/decision entry promise nothing about a review call. Every unconditional promise sits on the <b>support page</b>. None of these are arms — the fix is a CMS edit, owned by whoever owns that copy.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">FAQ entry</th>
-              <th class="px-4 py-3 font-medium">Item</th>
-              <th class="px-4 py-3 font-medium">What it says</th>
-              <th class="px-4 py-3 font-medium">Verdict</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">Support</td>
-              <td class="px-4 py-3">Miten myyntiprosessi etenee?</td>
-              <td class="px-4 py-3">Step 2 of 5 is "<b>Asiantuntijan yhteydenotto</b> — Asiantuntijamme ottaa sinuun yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia)", and step 3 opens "Kun ilmoitus on tarkistettu, se julkaistaan…"</td>
-              <td class="px-4 py-3"><b>Needs a CMS edit.</b> The call is presented as a mandatory stage of the process. Once most ads autopublish, the numbered list is wrong for the majority of sellers.</td>
-            </tr>
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">Support</td>
-              <td class="px-4 py-3">Miten AutoVexiin saa yhteyden?</td>
-              <td class="px-4 py-3">"…käymme lomakkeelle täyttämäsi tiedot kanssasi lyhyesti läpi puhelimitse <b>jo ennen myynti-ilmoituksen julkaisua</b>."</td>
-              <td class="px-4 py-3"><b>Needs a CMS edit.</b> Stated as something we always do.</td>
-            </tr>
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">Support</td>
-              <td class="px-4 py-3">Miten tiedän autoni arvon?</td>
-              <td class="px-4 py-3">"Saat asiantuntijaltamme <b>puhelimitse henkilökohtaisen konsultaation</b> auton markkina-arvosta ennen kilpailutuksen käynnistymistä."</td>
-              <td class="px-4 py-3"><b>Needs a CMS edit.</b> This is the answer to "what is my car worth", so for an autopublished seller it removes the only stated way of finding out — the replacement has to say something, not just drop the sentence.</td>
-            </tr>
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">Support</td>
-              <td class="px-4 py-3">Miten saan autoliikkeet kiinnostumaan autostani?</td>
-              <td class="px-4 py-3">Closes with the same promise: "Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä."</td>
-              <td class="px-4 py-3"><b>Needs a CMS edit</b>, and the same wording as the item above so the two stay consistent.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">Support</td>
-              <td class="px-4 py-3">Miksi ilmoitukseni on tarkistuksessa?</td>
-              <td class="px-4 py-3">A whole item explaining the review: the expert calls, confirms kilometres, equipment, service history, tyres and faults, discusses the estimate, ~5 minutes, contact by the next working day.</td>
-              <td class="px-4 py-3"><b>Keep, don't remove.</b> It answers a question only a seller who <i>is</i> in review would ask, and it is accurate for them. Worth reframing so it reads as conditional ("kun ilmoituksesi on tarkistuksessa") rather than universal.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">Front page</td>
-              <td class="px-4 py-3">—</td>
-              <td class="px-4 py-3">Nine items; none mentions a review or a call. "Miten kilpailutus toimii?" goes straight from publishing the request to dealerships seeing the car.</td>
-              <td class="px-4 py-3"><b>No change.</b> The five-step process list with "Asiantuntijan puhelinsoitto (n. 5 min)" that the prototype used to show here is not in the CMS entry at all — it was a prototype invention borrowed from the support page.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">Offers / decision</td>
-              <td class="px-4 py-3">—</td>
-              <td class="px-4 py-3">Fifteen items. The only expert mention is "AutoVexin omat asiantuntijat auttavat sinua koko prosessin ajan" — support in general, not a scheduled call.</td>
-              <td class="px-4 py-3"><b>No change.</b></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">Change 4 — the five support-page items, one by one</h3>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Delivery is a CMS edit, but the prototype carries the revised copy on the <code>v1</code> arm so the whole communication change can be reviewed in one walkthrough. Each row says what the replacement has to achieve. <b>The strings themselves are awaiting approval</b> and appear in the copy table below once written.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">3 — Support page: five FAQ items present the call as universal</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Every unconditional promise of a review call outside the funnel sits on the support page. The pattern for the fix is one word doing the work — <b>tarvittaessa</b>, or <b>tapauskohtaisesti</b> where the sentence is about our own process. Nothing is promised and nothing is denied. Finnish is approved copy; English is a working translation.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
             <tr class="border-b border-slate-200 text-slate-500">
               <th class="px-4 py-3 font-medium">#</th>
               <th class="px-4 py-3 font-medium">Item</th>
-              <th class="px-4 py-3 font-medium">What changes</th>
-              <th class="px-4 py-3 font-medium">What the new copy must achieve</th>
+              <th class="px-4 py-3 font-medium">Today</th>
+              <th class="px-4 py-3 font-medium">Change</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr>
-              <td class="px-4 py-3 font-bold">4.1</td>
-              <td class="px-4 py-3">Miten myyntiprosessi etenee?</td>
-              <td class="px-4 py-3">Step 2 of the five-step list, and step 3's opening clause "Kun ilmoitus on tarkistettu…"</td>
-              <td class="px-4 py-3">The list has to describe a process where the call happens <b>for some sellers</b>. Either the call becomes a conditional step or it leaves the numbered list and is mentioned around it — either way the remaining steps must still read as a complete process for a seller who is never called.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">4.2</td>
-              <td class="px-4 py-3">Miten AutoVexiin saa yhteyden?</td>
-              <td class="px-4 py-3">The clause "…käymme lomakkeelle täyttämäsi tiedot kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua"</td>
-              <td class="px-4 py-3">This answer is about <i>how to reach us</i>; the pre-publication call is an aside that currently reads as a guarantee. It can become conditional or go entirely, as long as the email route and the opening hours stay.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">4.3</td>
-              <td class="px-4 py-3">Miten tiedän autoni arvon?</td>
-              <td class="px-4 py-3">The first paragraph, which is the promise of a phone consultation</td>
-              <td class="px-4 py-3"><b>A replacement, not a deletion.</b> This is the only place the copy answers "what is my car worth". A seller who is not called still needs an answer — the funnel's own price estimate and the result of the bidding are what they have.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">4.4</td>
-              <td class="px-4 py-3">Miten saan autoliikkeet kiinnostumaan autostani?</td>
-              <td class="px-4 py-3">The closing paragraph, which repeats 4.3's promise while discussing the asking price</td>
-              <td class="px-4 py-3">Same substance as 4.3, ideally the same sentence, so the two answers cannot drift apart.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">4.5</td>
-              <td class="px-4 py-3">Miksi ilmoitukseni on tarkistuksessa?</td>
-              <td class="px-4 py-3">Framing only — the four paragraphs stay accurate</td>
-              <td class="px-4 py-3">Reframe from universal to conditional, so it reads as the answer for a seller whose ad <i>is</i> in review rather than a description of what happens to everyone.</td>
-            </tr>
-            <tr class="bg-blue-50">
-              <td class="px-4 py-3 font-bold">4.6</td>
-              <td class="px-4 py-3"><i>New item — considered, dropped</i></td>
-              <td class="px-4 py-3">Nothing anywhere answers "my ad was published without a call"</td>
-              <td class="px-4 py-3"><b>Decided: not added.</b> After 4.1–4.5 the copy no longer promises a call anywhere — it only refers to one <i>tarvittaessa</i> / <i>tapauskohtaisesti</i>. With nothing promised, there is no broken expectation to explain, and a "why weren't you called" item would draw attention to a distinction the seller does not otherwise notice.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">Change 4 — copy, control against v1</h3>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Only the changed sentences are shown; everything else in each answer is untouched. The pattern is one word doing the work — <b>tarvittaessa</b>, or <b>tapauskohtaisesti</b> where the sentence is about our own process. Nothing is promised and nothing is denied. Finnish is approved copy; English is a working translation.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">#</th>
-              <th class="px-4 py-3 font-medium">control — today's CMS text</th>
-              <th class="px-4 py-3 font-medium">v1</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr>
-              <td class="px-4 py-3 font-bold align-top">4.1<br><span class="font-normal text-xs text-slate-500">step 2</span></td>
-              <td class="px-4 py-3">Asiantuntijamme ottaa sinuun <b>yhteyttä</b> puhelimitse (puhelu kestää noin 5 minuuttia).</td>
+              <td class="px-4 py-3 font-bold align-top">3.1<br><span class="font-normal text-xs text-slate-500">step 2</span></td>
+              <td class="px-4 py-3 align-top">Miten myyntiprosessi etenee?</td>
+              <td class="px-4 py-3">Asiantuntijamme ottaa sinuun yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia).</td>
               <td class="px-4 py-3">Asiantuntijamme ottaa sinuun <b>tarvittaessa</b> yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia).</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 font-bold align-top">4.1<br><span class="font-normal text-xs text-slate-500">step 3</span></td>
+              <td class="px-4 py-3 font-bold align-top">3.1<br><span class="font-normal text-xs text-slate-500">step 3</span></td>
+              <td class="px-4 py-3 align-top">Miten myyntiprosessi etenee?</td>
               <td class="px-4 py-3"><b>Tarjouskilpailu:</b> Kun ilmoitus on <b>tarkistettu</b>, se julkaistaan…</td>
               <td class="px-4 py-3"><b>Tarjouskilpailu:</b> Kun ilmoitus on <b>valmis</b>, se julkaistaan…</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 font-bold align-top">4.2</td>
+              <td class="px-4 py-3 font-bold align-top">3.2</td>
+              <td class="px-4 py-3 align-top">Miten AutoVexiin saa yhteyden?</td>
               <td class="px-4 py-3">…joten käymme lomakkeelle täyttämäsi tiedot kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua.</td>
               <td class="px-4 py-3">…joten käymme lomakkeelle täyttämäsi tiedot <b>tarvittaessa</b> kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua.</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 font-bold align-top">4.3</td>
+              <td class="px-4 py-3 font-bold align-top">3.3</td>
+              <td class="px-4 py-3 align-top">Miten tiedän autoni arvon?</td>
               <td class="px-4 py-3">Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä.</td>
               <td class="px-4 py-3">Saat <b>tarvittaessa</b> asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä.</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 font-bold align-top">4.4</td>
+              <td class="px-4 py-3 font-bold align-top">3.4</td>
+              <td class="px-4 py-3 align-top">Miten saan autoliikkeet kiinnostumaan autostani?</td>
               <td class="px-4 py-3"><s>Myös realistisen pyyntihinnan asettaminen on tärkeää ja me tuemme sinua tässä.</s> Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</td>
               <td class="px-4 py-3">Saat asiantuntijaltamme <b>tarvittaessa</b> puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä. <span class="text-slate-500">(first sentence removed)</span></td>
             </tr>
             <tr>
-              <td class="px-4 py-3 font-bold align-top">4.5</td>
+              <td class="px-4 py-3 font-bold align-top">3.5</td>
+              <td class="px-4 py-3 align-top">Miksi ilmoitukseni on tarkistuksessa?</td>
               <td class="px-4 py-3">Siksi käymme ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</td>
               <td class="px-4 py-3">Siksi käymme <b>tapauskohtaisesti</b> ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</td>
             </tr>
@@ -627,107 +331,100 @@
           <thead>
             <tr class="border-b border-slate-200 text-slate-500">
               <th class="px-4 py-3 font-medium">#</th>
-              <th class="px-4 py-3 font-medium">English (draft) — v1</th>
+              <th class="px-4 py-3 font-medium">English (draft)</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr><td class="px-4 py-3 font-bold">4.1</td><td class="px-4 py-3">Our expert calls you <b>if necessary</b> (the call takes about 5 minutes). · <b>Bidding:</b> Once the listing is <b>ready</b>, it is published…</td></tr>
-            <tr><td class="px-4 py-3 font-bold">4.2</td><td class="px-4 py-3">…so <b>if necessary</b> we go through the details you filled in briefly with you by phone before the listing is published.</td></tr>
-            <tr><td class="px-4 py-3 font-bold">4.3</td><td class="px-4 py-3"><b>If necessary</b> you get a personal consultation from our expert by phone about the car's market value before bidding starts.</td></tr>
-            <tr><td class="px-4 py-3 font-bold">4.4</td><td class="px-4 py-3"><b>If necessary</b> you get a personal consultation from our expert by phone about the car's market value before the competition starts.</td></tr>
-            <tr><td class="px-4 py-3 font-bold">4.5</td><td class="px-4 py-3">That is why we go through the listing details briefly, <b>case by case</b>, before publishing it.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">3.1</td><td class="px-4 py-3">Our expert calls you <b>if necessary</b> (the call takes about 5 minutes). · <b>Bidding:</b> Once the listing is <b>ready</b>, it is published…</td></tr>
+            <tr><td class="px-4 py-3 font-bold">3.2</td><td class="px-4 py-3">…so <b>if necessary</b> we go through the details you filled in briefly with you by phone before the listing is published.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">3.3</td><td class="px-4 py-3"><b>If necessary</b> you get a personal consultation from our expert by phone about the car's market value before bidding starts.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">3.4</td><td class="px-4 py-3"><b>If necessary</b> you get a personal consultation from our expert by phone about the car's market value before the competition starts.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">3.5</td><td class="px-4 py-3">That is why we go through the listing details briefly, <b>case by case</b>, before publishing it.</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Try it:</b> <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/help.html?review-no-review=v1">help.html?review-no-review=v1</a> against <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/help.html?review-no-review=control">?review-no-review=control</a>, or switch from the <b>Variants</b> row on the prototype bar — the support page declares this initiative too, so the arm is switchable there as well as in the funnel.</p>
-
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>How the arm works in the prototype:</b> an item in <code>faq-content.js</code> may carry a <code>v1</code> override beside its CMS text. The renderer uses the override when the arm is on, so <code>control</code> keeps showing exactly what the CMS shows today and the two read side by side. Production has no arm — the CMS entry is simply edited when the change ships.</p>
-
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl">In the prototype all three entries are one shared file, <code>faq-content.js</code>, rendered by <code>index.html</code>, <code>help.html</code>, <code>offers.html</code> and <code>decision.html</code>. Finnish is the CMS text verbatim; English is a working translation, since the CMS has none. Inline "Lue lisää täältä" links point at blog pages the prototype does not have, so those sentences keep their text and lose the link.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start mt-5">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">3.3 and 3.4 need a replacement, not a deletion</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">"Miten tiedän autoni arvon?" is the only place the copy answers what the car is worth. A seller who is never called still needs an answer, so the sentence stays and becomes conditional rather than disappearing. 3.4 repeats the same promise while discussing the asking price — it takes the same wording, so the two answers cannot drift apart.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Two decisions already taken</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>3.5 keeps all four paragraphs.</b> It answers a question only a seller who <i>is</i> in review would ask, and it is accurate for them. Only the framing moves from universal to conditional.</li>
+            <li><b>No new "why wasn't I called?" item.</b> After 3.1–3.5 nothing promises a call any more, so there is no broken expectation to explain — and a new item would draw attention to a distinction the seller does not otherwise notice.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-5 max-w-3xl"><b>Nothing to change elsewhere.</b> The front-page FAQ mentions no review and no call, and the offers/decision FAQ's only expert mention is general support rather than a scheduled call. Both were checked against the live CMS text.</p>
       </div>
     </section>
 
-    <!-- Change 5 -->
-    <section class="av-band av-band-grey">
+    <!-- Change 4 -->
+    <section class="av-band av-band-grey" id="change-4">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 5 — copy that promised the call and rendered nowhere</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Harmless to a seller, misleading to anyone reading the copy file to find out what the funnel says. Deleted in both languages, 53 lines in total. Nothing rendered any of them — checked key by key against every page.</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>The old confirmation-screen set:</b> <code>success.headlineDefault</code>, <code>subtextDefault</code>, <code>badgeInReview</code>, <code>headlineEmailVerified</code>, <code>subtextEmailVerified</code>, <code>headlineVerifyEmail</code>, <code>subtextVerifyEmail</code>, <code>verifiedStep1–3 Title/Body</code> and a full dead <code>step1–5 Title/Body</code> list — a stale duplicate of the price step's own next-steps copy. The <code>missingStep*</code> keys stay: the missing-photos screen still renders them.</li>
-          <li><b><code>dac7.step2Title/Body</code></b>, which promised the review call on a page that has no next-steps component.</li>
-          <li><b>Still alive on purpose:</b> the whole <code>nextSteps.*</code> namespace, since the price step renders it in <code>control</code>. It goes when <code>v1</code> promotes — the lifecycle note below already says so.</li>
-        </ul>
-        <p class="font-dm text-sm leading-6 text-slate-700 mt-3"><b>Found while doing it:</b> the <code>success</code> namespace contained duplicate <code>step1Title</code>/<code>step1Body</code> keys, where the later pair silently won — resolved by the deletion. And <code>dac7.html</code> had no <code>data-i18n</code> at all, so its whole namespace was unreachable; that page is now wired (23 attributes, including its placeholders and its submit-time validation message) and its own dead keys — a completed screen and a next-steps list it does not have — are gone. Where a never-rendered key disagreed with what the page had been showing, the page won.</p>
-      </div>
-      </div>
-    </section>
-
-    <!-- Change 6 -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change 6 — the transactional emails</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Every seller-facing transactional email now has a rendered view in the prototype: <a class="text-av-blue underline font-medium" href="../emails.html">emails.html</a>, grouped by the state that sends it, with sender, trigger, timing and template path beside each one. Reading them end to end turned up three that promise or assume the review call. Copy for the revised versions is <b>awaiting approval</b>; the arm mechanism is already in place, so a <code>v1</code> lands as data rather than as new code.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">4 — Three transactional emails promise or assume the call</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Found by reading every seller-facing transactional email end to end. Revised copy is <b>awaiting approval</b>; what each one has to stop saying is settled.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
             <tr class="border-b border-slate-200 text-slate-500">
               <th class="px-4 py-3 font-medium">Email</th>
-              <th class="px-4 py-3 font-medium">What it says</th>
-              <th class="px-4 py-3 font-medium">Why it is a candidate</th>
+              <th class="px-4 py-3 font-medium">What it says today</th>
+              <th class="px-4 py-3 font-medium">Why it has to change</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold"><a class="text-av-blue underline" href="../emails.html?email=email-verification&amp;state=new-seller">Email verification</a><br><span class="text-xs font-normal text-slate-500">new seller</span></td>
+              <td class="px-4 py-3 font-bold align-top">Email verification<br><span class="text-xs font-normal text-slate-500">new seller only</span></td>
               <td class="px-4 py-3">Step 1 of the numbered list: "Kun olet vahvistanut sähköpostiosoitteesi ja <b>tiimimme on tarkastanut ilmoituksesi</b>, se julkaistaan…"</td>
-              <td class="px-4 py-3"><b>The first email a seller ever receives</b>, and it states the review as a step everyone goes through — the same promise Change 1 removed from the price step. The returning-seller variant of the same template has no such clause, so only one string changes.</td>
+              <td class="px-4 py-3"><b>The first email a seller ever receives</b>, and it states the review as a step everyone goes through — the same promise Change 1 removes from the price step. The returning-seller wording has no such clause, so only one string changes.</td>
             </tr>
             <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold"><a class="text-av-blue underline" href="../emails.html?email=draft-add-images">Draft add images</a></td>
+              <td class="px-4 py-3 font-bold align-top">Draft add images</td>
               <td class="px-4 py-3">"Lataa puuttuvat kuvat <b>asiantuntijamme kanssa käymäsi puhelun mukaisesti</b>."</td>
-              <td class="px-4 py-3">Assumes the call already happened. True today, since only an advisor can send it from the review page — but it breaks the moment image chasing is automated for a car that was never reviewed.</td>
+              <td class="px-4 py-3">Assumes the call already happened. True today, since only an advisor can send it — but it breaks the moment image chasing is automated for a car that was never reviewed.</td>
             </tr>
             <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold"><a class="text-av-blue underline" href="../emails.html?email=auction-ended-no-offers">Auction ended · no offers</a></td>
+              <td class="px-4 py-3 font-bold align-top">Auction ended · no offers</td>
               <td class="px-4 py-3">Lists reasons no offers came, ending with "Auton kilometrimäärä on yli 200tkm tai ikää on yli 10 vuotta".</td>
-              <td class="px-4 py-3">States the review segment's own band back to the seller as a reason dealerships were not interested. Worth deciding whether that is the message we want when the same numbers decide who gets called.</td>
+              <td class="px-4 py-3">States the review segment's own band back to the seller as a reason dealerships were not interested. Decide whether that is the message we want when the same numbers decide who gets called.</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>How the arm works:</b> an email in <code>email-content.js</code> may carry <code>v1</code> — subject and body — beside its production copy. <code>emails.html</code> reads the arm through <code>protoVariant</code>, badges the list rows an arm changes, and says in the meta panel which copy is on screen. An email with no override renders production copy even under <code>v1</code>, so a half-finished arm can never be mistaken for a decision.</p>
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">Marketing and lifecycle emails — verify, then fix</h3>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A seller's inbox contains more than the codebase sends. Captures from a real seller's mailbox show a second family of emails going out through <b>SendGrid</b>, with copy that exists nowhere in the repository — alongside the Klaviyo events the code triggers. They cannot be rendered in the prototype and they are not this team's to edit, but they are part of the same journey and at least two of them contradict what the funnel is being changed to say. <b>They need an owner, a review and a fix.</b></p>
+      </div>
+    </section>
+
+    <!-- Change 5 -->
+    <section class="av-band av-band-grey" id="change-5">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">5 — Lifecycle emails contradict the change, and nobody here owns them</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A seller's inbox contains more than the codebase sends. Captures from a real seller's mailbox show a second family of emails going out through <b>SendGrid</b>, with copy that exists nowhere in the repository. At least two of them contradict what this initiative is changing everything else to say — including one that promises the call outright, in its subject line. <b>They need an owner, a review and a fix.</b></p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
             <tr class="border-b border-slate-200 text-slate-500">
               <th class="px-4 py-3 font-medium">Subject seen in a seller's inbox</th>
-              <th class="px-4 py-3 font-medium">Sent via</th>
               <th class="px-4 py-3 font-medium">Why it matters</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">"Ilmoituksesi on nyt valmis tarkastettavaksi – <span class="underline">soitamme sinulle pian</span>!"</td>
-              <td class="px-4 py-3">SendGrid</td>
-              <td class="px-4 py-3"><b>Promises the review call outright, in the subject line.</b> Sent from a platform the product team does not control, to sellers who may never be called. This is the strongest instance of the problem this initiative exists to fix, and it sits outside every surface the initiative can reach.</td>
+              <td class="px-4 py-3 font-bold align-top">"Ilmoituksesi on nyt valmis tarkastettavaksi – <span class="underline">soitamme sinulle pian</span>!"</td>
+              <td class="px-4 py-3"><b>Promises the review call outright, in the subject line</b>, to sellers who may never be called. The strongest instance of the problem this initiative exists to fix, and it sits outside every surface the initiative can otherwise reach.</td>
             </tr>
             <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">"Autamme sinua asettamaan autollesi pyyntihinnan"</td>
-              <td class="px-4 py-3">SendGrid</td>
-              <td class="px-4 py-3">Belongs to the <b>asking-price</b> initiative: it promises help setting a price the team intends to remove from the product.</td>
+              <td class="px-4 py-3 font-bold align-top">"Autamme sinua asettamaan autollesi pyyntihinnan"</td>
+              <td class="px-4 py-3">Promises help setting a price the team intends to remove from the product. Belongs to the <b>asking-price</b> initiative, but the same review applies.</td>
             </tr>
             <tr>
-              <td class="px-4 py-3">"Luonnoksesi on tallessa. Viimeistele auton tiedot!" · "Melkein valmista, laita autosi myyntiin jo tänään!" · "Viedään tarjouspyyntösi maaliin!"</td>
-              <td class="px-4 py-3">SendGrid</td>
-              <td class="px-4 py-3">Draft-abandonment nurture. Worth checking that none of them describes the process in a way the funnel no longer matches.</td>
+              <td class="px-4 py-3 align-top">"Luonnoksesi on tallessa. Viimeistele auton tiedot!" · "Melkein valmista, laita autosi myyntiin jo tänään!" · "Viedään tarjouspyyntösi maaliin!"</td>
+              <td class="px-4 py-3">Draft-abandonment nurture. Check that none of them describes the process in a way the funnel no longer matches.</td>
             </tr>
             <tr>
-              <td class="px-4 py-3">"Näin otat laadukkaat kuvat autostasi"</td>
-              <td class="px-4 py-3">SendGrid</td>
-              <td class="px-4 py-3">Photo guidance. No conflict found, listed for completeness.</td>
+              <td class="px-4 py-3 align-top">"Näin otat laadukkaat kuvat autostasi"</td>
+              <td class="px-4 py-3">Photo guidance. No conflict found; listed for completeness.</td>
             </tr>
           </tbody>
         </table>
@@ -735,155 +432,18 @@
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What to look for when reviewing them</p>
         <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
-          <li><b>Any promise of a phone call.</b> "Soitamme sinulle", "asiantuntijamme ottaa yhteyttä", "puhelu kestää noin 5 minuuttia". Each needs the same treatment the support FAQ got: conditional wording, or nothing.</li>
-          <li><b>Any claim that a listing is reviewed before publishing.</b> "Valmis tarkastettavaksi", "kun ilmoitus on tarkistettu". Most ads will publish without it.</li>
-          <li><b>Any mention of an asking price or a price estimate</b> — <i>pyyntihinta</i>, <i>hinta-arvio</i>, help with pricing. The asking price is being removed; a nurture email offering help with it will outlive the feature.</li>
+          <li><b>Any promise of a phone call</b> — "Soitamme sinulle", "asiantuntijamme ottaa yhteyttä", "puhelu kestää noin 5 minuuttia". Each needs the same treatment as the support FAQ: conditional wording, or nothing.</li>
+          <li><b>Any claim that a listing is reviewed before publishing</b> — "valmis tarkastettavaksi", "kun ilmoitus on tarkistettu". Most ads will publish without it.</li>
+          <li><b>Any mention of an asking price or a price estimate.</b> The asking price is being removed; a nurture email offering help with it will outlive the feature.</li>
           <li><b>Process descriptions with a fixed number of steps.</b> A five-step list that includes the call is wrong for a seller who is never called, exactly as the support page's was.</li>
           <li><b>Timing claims</b> — "36 tuntia", "1,5 työpäivää", "24 tuntia" — which must agree with what the product screens and the transactional emails say.</li>
-          <li><b>Who owns the send.</b> Three senders reach the same seller: Mailgun for the codebase's transactional emails, SendGrid for lifecycle and marketing, and Klaviyo for the events the code triggers. A copy change agreed with one owner does not reach the other two.</li>
-        </ol>
-      </div>
-
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">A design observation, worth its own initiative</h3>
-      <p class="font-dm text-sm leading-6 text-slate-700 mb-4 max-w-3xl">The emails a seller receives are not one design. Even inside the codebase there are <b>two shells</b>: the eleven markdown templates render through <code>mail::message</code> — left-aligned, 19px heading, no help block, footer "© 2026 AutoVex" — while the verification email renders through <code>mail.layout</code>, which centres everything, sizes its heading at 20px, bolds its button label, adds a "Tarvitsetko neuvoja?" block and a fallback-URL subcopy, and ends "Kaikki oikeudet pidätetään.". The SendGrid family is a third style again, with far more graphic treatment. Both prototype renderings are faithful to their template, which is exactly what makes the inconsistency visible. <b>Unifying them is not part of this initiative</b> — it is a separate piece of work, and worth naming before someone assumes the differences are intentional.</p>
-
-      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Four more findings from the same read — not this initiative's</p>
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>Which auction-ended email a seller gets is computed from the asking price</b> (thresholds at 0.9× and 1×), so the asking-price initiative reaches into the email logic, not just the UI.</li>
-          <li><b><code>auction-ended-good-offers</code> and <code>-great-offers</code> have identical bodies</b> — two templates, one text, different subjects.</li>
-          <li><b><code>negotiation-closed</code> fires twice:</b> the blade email and the Klaviyo <code>CloseNegotiation</code> notification, from the same listener.</li>
-          <li><b>Part of the journey is authored outside the codebase.</b> Nineteen seller-facing events are Klaviyo-triggered — negotiation, offer accepted or rejected, delivery date, failed sale — so their copy cannot be reviewed here and is owned by Marketing.</li>
-        </ul>
-      </div>
-      </div>
-    </section>
-
-    <!-- Control-arm fidelity -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Already correct in production — do not change</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Things the prototype used to get wrong about a no-review seller, all verified against the current code. They are listed here because they look like initiative material and are not: production already behaves correctly, and the prototype's control arm was corrected to match. Nothing to build.</p>
-      <div class="grid md:grid-cols-2 gap-5 items-start">
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The call is not promised after the price step</p>
-          <p class="font-dm text-sm leading-6 text-slate-800"><code>PublishDraft</code> marks a draft for review only when <code>EvaluateDraftForReview</code> passes. Otherwise an unverified seller is queued (<code>queued_for_publishing_after_verification</code>) and a verified one publishes outright — and <b>both</b> of those statuses take <code>WhatHappensNext</code> branches that drop the review step (<code>[allNextSteps[0], ...slice(2)]</code> and <code>slice(3)</code> respectively). So the email-confirmation screen never promises the call to a no-review seller. The price step is the only screen that does, which is exactly the scope of Change 1.</p>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The car card is not shown on every screen</p>
-          <p class="font-dm text-sm leading-6 text-slate-800"><code>shouldShowPreview</code> is <code>isWaitingForReviewInReview || canPreviewDraft</code>, and <code>canPreviewDraft</code> does not include <code>success</code> or a rejected draft in <code>waitingForReview</code> — while <code>Success.vue</code> draws no card of its own. So the card appears on the in-review and email-verification screens and <b>nowhere else</b>: a rejected or published draft shows none. That is also why <code>Preview.vue</code>'s <code>draftStatusConfig.published</code> — the untranslated literal <code>'Published'</code> with a warning-octagon icon — never renders, and should be read as dead config rather than as a badge anyone sees.</p>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The estimate field carries no label</p>
-          <p class="font-dm text-sm leading-6 text-slate-800">In <code>PriceInfo.vue</code> the reviewable seller's estimate is a bare <code>NumberInput</code> with a placeholder and <b>no</b> <code>label</code> prop — only the asking-price field passes one (<code>asking_price_label</code>, marked required). The prototype used to draw a label above both. Corrected in the control arm: the estimate variant now shows the question in the placeholder (<i>Oma arvio (vapaaehtoinen)</i>) and its info line reads <i>Ei vaikuta tarjouskilpailuun eikä velvoita myymään.</i>, both from production; the asking-price variant keeps its label and star. The label difference between the two variants is production's, not this initiative's.</p>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The seller's own price is never echoed back</p>
-          <p class="font-dm text-sm leading-6 text-slate-800"><code>Preview.vue</code> passes <code>asking_price</code> into <code>CarCard</code>, and <code>CarCard</code> never renders it — the prop is declared and unused. <code>CarDetailsCard</code>, the modal behind the card's own CTA, has no price field either. (<code>PreviewModal.vue</code> does render one, but no component imports it.) So neither the contact step nor the confirmation screen shows the asking price or the estimate back to the seller.</p>
-        </div>
-      </div>
-      </div>
-    </section>
-
-
-    <!-- Audit -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Audit — every place the seller is told about the review call</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A sweep of the whole prototype, each hit checked against production. The question for each: <b>is this promise gated on the review decision, or does every seller see it?</b> Ungated ones are the initiative's remaining scope.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">Where</th>
-              <th class="px-4 py-3 font-medium">What it says</th>
-              <th class="px-4 py-3 font-medium">Gated on the decision?</th>
-              <th class="px-4 py-3 font-medium">Matches prod?</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">Price step<br><span class="text-xs font-normal text-slate-500">sidebar</span></td>
-              <td class="px-4 py-3">"Ilmoituksesi tarkistetaan — Tiimimme käy läpi ilmoituksesi. <b>Soitamme sinulle</b>…"</td>
-              <td class="px-4 py-3"><b>No</b> — every seller, both price variants</td>
-              <td class="px-4 py-3">Yes. <b>Change 1</b> removes it.</td>
-            </tr>
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">Contact step<br><span class="text-xs font-normal text-slate-500">submit button</span></td>
-              <td class="px-4 py-3">"<b>Lähetä tarkastukseen</b>" — the last click before submitting</td>
-              <td class="px-4 py-3"><b>No</b> — every seller</td>
-              <td class="px-4 py-3">Yes — <code>personal_info.submit</code>, and <code>PersonalInfo.vue</code> has no <code>can_review</code> branch. <b>Open candidate.</b></td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">Front page<br><span class="text-xs font-normal text-slate-500">FAQ</span></td>
-              <td class="px-4 py-3">Nothing about a review or a call</td>
-              <td class="px-4 py-3">n/a</td>
-              <td class="px-4 py-3"><b>Resolved.</b> The prototype now carries the real CMS entry, which has no process list — see the section above. The promises live on the support page instead.</td>
-            </tr>
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold">Front page<br><span class="text-xs font-normal text-slate-500">returning-seller hero</span></td>
-              <td class="px-4 py-3">"Ilmoitustasi tarkastetaan parhaillaan"</td>
-              <td class="px-4 py-3"><b>No</b> — gated only on being logged in</td>
-              <td class="px-4 py-3"><b>No.</b> Prod has one existing-draft hero ("Laitetaan :model liikkeelle!") and drops the draft once it is published. Prototype-only state.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">Offers page<br><span class="text-xs font-normal text-slate-500">status update</span></td>
-              <td class="px-4 py-3">"Tarjouspyyntösi on vastaanotettu - Tarkastus on käynnissä!" + <code>review_comms_content</code></td>
-              <td class="px-4 py-3">Yes — only <code>in_review</code> drafts</td>
-              <td class="px-4 py-3">Yes — prod filters <code>drafts.filter(status === 'in_review')</code>; a queued draft gets no notification.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">Post-submit screens</td>
-              <td class="px-4 py-3">Step lists, page badge, card badge</td>
-              <td class="px-4 py-3">Yes — by draft status</td>
-              <td class="px-4 py-3">Yes, since the control-arm corrections above.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold">DAC7 page</td>
-              <td class="px-4 py-3">—</td>
-              <td class="px-4 py-3">n/a</td>
-              <td class="px-4 py-3">Yes — neither prod nor the prototype shows next-steps there.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Also found:</b> a set of translation strings that promise the call but are rendered nowhere — the prototype's old success-page keys (<code>headlineDefault</code>, <code>subtextDefault</code>, <code>badgeInReview</code>, <code>verifiedStep*</code>, <code>headlineEmailVerified</code>) and <code>dac7.step2*</code>. Harmless to a test participant, misleading to a developer reading the copy file. Worth deleting when the initiative next touches them.</p>
-      </div>
-    </section>
-
-    <!-- Candidates -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Candidates — under discussion, not specced</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Listed so the initiative's shape is visible, not as work to pick up. Nothing here is decided, and none of it is in the prototype yet.</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>Where the process story belongs instead.</b> If the price step no longer carries it, the seller still needs to know what happens after submitting — and by the success step the draft status makes the answer accurate for free.</li>
-          <li><b>The bullet list keyed to login state.</b> Today the five/four split is driven by <code>isVerified</code>; the review bullet itself never varies. Whether the list should branch on the segment wherever it does appear is an open question.</li>
-          <li><b>The submitted-state copy.</b> <code>review_comms_content</code> exists only for drafts in review, so a non-reviewable seller's post-submit screen is already a different path — worth reading end to end before adding anything new.</li>
-          <li><b>Dead config worth deleting.</b> <code>Preview.vue</code>'s <code>draftStatusConfig.published</code> entry cannot render (see above). Cleanup, not a seller-facing change — listed so nobody rediscovers it and mistakes it for a live bug.</li>
-        </ul>
-      </div>
-      </div>
-    </section>
-
-    <!-- Lifecycle -->
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Initiative lifecycle</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">How this page and the prototype stay honest as the initiative moves. The same rules apply to every initiative — they are recorded in the prototype's <code>CLAUDE.md</code>.</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200">
-        <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
-          <li><b>Live.</b> The status chip in this page's header says <i>ready to build</i> or <i>in test</i>; the arms are switchable in the prototype from the initiative's own bar row.</li>
-          <li><b>Promoted.</b> When an arm becomes the default, the losing arms are deleted along with the initiative's entry in <code>window.protoPage</code> — the bar row disappears and the parameter stops being read. Copy that nothing renders any more goes too: if <code>v1</code> wins here, the whole <code>nextSteps</code> namespace leaves <code>translations.js</code>, since the price step is its only consumer.</li>
-          <li><b>Completed.</b> This page stays, with the header chip changed to <i>completed — &lt;arm&gt; promoted, &lt;month year&gt;</i> and a line naming what shipped. In <code>CLAUDE.md</code> the initiative moves to the completed list as one line. The record survives; the switch does not.</li>
+          <li><b>Who owns the send.</b> Three senders reach the same seller: the codebase's own transactional emails, SendGrid for lifecycle and marketing, and Klaviyo for events the code triggers. A copy change agreed with one owner does not reach the other two.</li>
         </ol>
       </div>
       </div>
     </section>
 
   </main>
-
   <!-- Footer — same structure as the prototype's site footer (layout.js). -->
   <footer class="bg-av-blue overflow-hidden">
     <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -913,7 +473,6 @@
     // av_lang, so opening this page cannot change the language of the reader's own
     // funnel session. Same approach as delivery-distance.html.
     const FI = (window.TRANSLATIONS && window.TRANSLATIONS.fi) || {};
-    const EN = (window.TRANSLATIONS && window.TRANSLATIONS.en) || {};
     function pick(tree, key) {
       const v = key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), tree);
       return v == null ? key : v;
@@ -921,20 +480,6 @@
     (function renderFinnishReplicaCopy() {
       document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = pick(FI, el.getAttribute('data-i18n')); });
       document.documentElement.lang = 'en'; // page prose is English; only the replica strings are Finnish
-    })();
-
-    /* The copy table is generated rather than typed: the strings it lists are the
-       ones the step stops showing, so a hand-written copy of them would be the one
-       place this page could silently disagree with the prototype. */
-    (function buildCopyTable() {
-      const rows = ['title'];
-      for (let i = 1; i <= 5; i++) rows.push('step' + i + 'Title', 'step' + i + 'Body');
-      const tbody = document.getElementById('copy-table');
-      tbody.innerHTML = rows.map(function (k) {
-        return '<tr><td class="px-5 py-3"><code>' + k + '</code></td>' +
-               '<td class="px-5 py-3">' + pick(FI, 'nextSteps.' + k) + '</td>' +
-               '<td class="px-5 py-3">' + pick(EN, 'nextSteps.' + k) + '</td></tr>';
-      }).join('');
     })();
   </script>
   <script src="../proto-bar.js"></script>
