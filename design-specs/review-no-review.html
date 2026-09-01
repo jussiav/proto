@@ -126,6 +126,7 @@
               <th class="px-4 py-3 font-medium">#</th>
               <th class="px-4 py-3 font-medium">What needs to change</th>
               <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Scenario</th>
               <th class="px-4 py-3 font-medium">Status</th>
             </tr>
           </thead>
@@ -134,30 +135,35 @@
               <td class="px-4 py-3 font-bold">1</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-1">Remove the "Mitä tapahtuu seuraavaksi?" panel entirely</a></td>
               <td class="px-4 py-3">Price step</td>
+              <td class="px-4 py-3 text-slate-600">Both price questions</td>
               <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">2</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-2">Submit button stops naming an outcome — one neutral copy for every seller</a></td>
               <td class="px-4 py-3">Contact step</td>
+              <td class="px-4 py-3 text-slate-600">Every seller</td>
               <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">3</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-3">Five FAQ items stop presenting the review call as something every seller gets</a></td>
               <td class="px-4 py-3">Support page · CMS</td>
+              <td class="px-4 py-3 text-slate-600">Any visitor</td>
               <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">4</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-4">Three seller emails promise or assume the review call</a></td>
               <td class="px-4 py-3">Transactional emails</td>
+              <td class="px-4 py-3 text-slate-600">Draft created · image chasing · auction ended</td>
               <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Awaiting copy</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">5</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-5">Lifecycle emails contradict the change — one promises the call in its subject line</a></td>
               <td class="px-4 py-3">SendGrid · outside the codebase</td>
+              <td class="px-4 py-3 text-slate-600">Draft nurture · marketing</td>
               <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Needs an owner</span></td>
             </tr>
           </tbody>
@@ -173,6 +179,12 @@
     <section class="av-band av-band-grey" id="change-1">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">1 — Price step: remove "Mitä tapahtuu seuraavaksi?"</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Funnel · price step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Both price questions</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Delete the <b>&ldquo;Mitä tapahtuu seuraavaksi?&rdquo;</b> panel — heading and all five bullets — from the price step.</li><li><b>Nothing replaces it.</b> No shortened list, no new copy.</li><li>The same panel stays untouched on every screen after submitting.</li><li>On mobile the side column disappears with it, leaving the price question alone.</li></ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../price.html?scenario=price-estimate&review-no-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the price step with the panel removed; switch the variant row to <i>Control</i> to see it today</span></p>
+      </div>
       <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The panel's whole content is a promise about a process the seller may not be in. Bullet 2 promises the review call to <b>every</b> seller — including the one being asked for an asking price precisely <i>because</i> their car is outside the review segment. Their ad publishes on submit and nobody calls, so the promise is broken by the next click. The panel comes out: the price step's job is the price question, and the process story belongs where the process is actually known.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
 
@@ -229,7 +241,7 @@
       </div>
 
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What must be true afterwards</p>
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>The heading and all five bullets no longer appear on the price step, in either price variant.</li>
           <li><b>Nothing takes their place.</b> No replacement panel, no new copy, no shortened list.</li>
@@ -245,6 +257,12 @@
     <section class="av-band av-band-grey" id="change-2">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">2 — Contact step: the submit button stops naming an outcome</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Funnel · contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>The submit button reads <b>&ldquo;Lähetä ilmoitus&rdquo;</b> instead of <b>&ldquo;Lähetä tarkastukseen&rdquo;</b>.</li><li><b>One copy for everyone</b> — it does not branch on whether the car will be reviewed.</li><li>The offers-return case keeps its own plain <i>Valmis</i>, unchanged.</li></ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../contact.html?review-no-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the contact step with the neutral label</span></p>
+      </div>
       <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The last click before submitting reads <b>"Lähetä tarkastukseen"</b>, for every seller. It is already wrong for a seller outside the review segment, and once the <a class="text-av-blue underline font-medium" href="seller-intent.html">seller-intent</a> answer can downgrade a seller it is wrong for some inside it too. Replace it with one neutral copy.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
@@ -262,7 +280,7 @@
         </div>
       </div>
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What must be true afterwards</p>
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>Every seller sees the same label. The segment and the intent answer are not consulted on this step.</li>
           <li>When this step is opened from the offers flow the button is a plain <b>"Valmis"</b> — that case is untouched.</li>
@@ -275,6 +293,12 @@
     <section class="av-band av-band-grey" id="change-3">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">3 — Support page: five FAQ items present the call as universal</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Support page · CMS</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Any visitor</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Five FAQ answers stop stating the review call as something every seller gets.</li><li>The fix is one word per sentence — <b>tarvittaessa</b>, or <b>tapauskohtaisesti</b> where the sentence is about our own process.</li><li>Edited in the CMS entry; <b>no code change</b>. Nothing is promised and nothing is denied.</li></ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../help.html?review-no-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the support page with the revised answers</span></p>
+      </div>
       <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Every unconditional promise of a review call outside the funnel sits on the support page. The pattern for the fix is one word doing the work — <b>tarvittaessa</b>, or <b>tapauskohtaisesti</b> where the sentence is about our own process. Nothing is promised and nothing is denied. Finnish is approved copy; English is a working translation.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
@@ -364,6 +388,12 @@
     <section class="av-band av-band-grey" id="change-4">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">4 — Three transactional emails promise or assume the call</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Transactional emails</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Draft created · image chasing · auction ended</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Three seller emails state or assume the review call. Each is listed below with the exact sentence.</li><li>What each has to stop saying is settled; <b>the revised Finnish is still awaiting approval</b>.</li><li>Only the new-seller wording of the verification email changes — the returning-seller version has no such clause.</li></ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../emails.html?email=email-verification&state=new-seller&review-no-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the email tool, with this initiative&rsquo;s variant selected</span></p>
+      </div>
       <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Found by reading every seller-facing transactional email end to end. Revised copy is <b>awaiting approval</b>; what each one has to stop saying is settled.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
@@ -400,6 +430,12 @@
     <section class="av-band av-band-grey" id="change-5">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">5 — Lifecycle emails contradict the change, and nobody here owns them</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">SendGrid · outside the codebase</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Draft nurture · marketing</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>A second family of emails reaches the same seller through <b>SendGrid</b>, with copy that exists nowhere in the repository.</li><li>At least two contradict this initiative — one <b>promises the call in its subject line</b>.</li><li><b>This change needs an owner before it needs a fix.</b> Nobody on this team can edit them.</li></ul>
+        <p class="mt-4 text-slate-500">Not in the prototype — these emails are outside the codebase, so the email tool does not carry them.</p>
+      </div>
       <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A seller's inbox contains more than the codebase sends. Captures from a real seller's mailbox show a second family of emails going out through <b>SendGrid</b>, with copy that exists nowhere in the repository. At least two of them contradict what this initiative is changing everything else to say — including one that promises the call outright, in its subject line. <b>They need an owner, a review and a fix.</b></p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">

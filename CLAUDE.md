@@ -327,6 +327,13 @@ read Finnish. **No production file names, component names or translation keys
 appear on it**; colour tokens and copy do. Section titles name the solution
 ("3 — Negotiation modal header"), never the reasoning.
 
+**Both spec pages now share that shape.** `review-no-review.html` was given the
+same treatment — a Where/Scenario chip pair under each heading, a short
+**What changes** card before the detail, and a prototype link per change (its
+long "what must be true afterwards" lists became **Acceptance criteria**, so the
+short card is not read as a duplicate). Its change log gained a Scenario column
+to match. Use this shape for the next spec page rather than inventing a third.
+
 **It is numbered 1–16 in BUILD order**, which is not the order the work happened
 in — change 1 is the help block because changes 2, 3 and 9 put copy inside it, and
 the thread and its first bubble sit together. Two of the old numbers are gone: the
