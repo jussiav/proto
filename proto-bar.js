@@ -125,7 +125,16 @@
       '  font:12px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;',
       '  background:#f1f1f2;border-top:1px solid #d3d3d6;color:#3c3c43;',
       '  display:flex;align-items:center;gap:10px;padding:0 10px;height:' + BAR_H + 'px;',
-      '  box-sizing:border-box;box-shadow:0 -1px 3px rgba(0,0,0,.05);}',
+      '  box-sizing:border-box;box-shadow:0 -1px 3px rgba(0,0,0,.05);',
+      /* The bar carries a dozen controls and a phone is 375px wide, so it scrolls
+         sideways rather than squashing or wrapping. The scrollbar itself is
+         hidden: at 30px tall it would eat half the bar, and a touch device does
+         not draw one anyway. */
+      '  overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;',
+      '  scrollbar-width:none;-ms-overflow-style:none;}',
+      '#proto-bar::-webkit-scrollbar{display:none;}',
+      /* Nothing shrinks — a squeezed row is what made the bar unusable narrow. */
+      '#proto-bar > *{flex:0 0 auto;}',
       '#proto-bar *{font:inherit;box-sizing:border-box;}',
       '#proto-bar .pb-chip{display:inline-flex;align-items:center;gap:4px;padding:1px 6px;border-radius:3px;',
       '  background:#4a4a4f;color:#fff;font-size:10px;font-weight:600;letter-spacing:.04em;}',
@@ -144,7 +153,15 @@
       '#proto-bar button.pb-on{background:#4a4a4f;border-color:#4a4a4f;color:#fff;}',
       '#proto-bar button.pb-on:hover{background:#5a5a60;}',
       '#proto-bar .pb-tools{position:relative;display:inline-flex;}',
-      '#proto-bar .pb-panel{position:absolute;left:0;bottom:calc(100% + 6px);min-width:300px;',
+      /* FIXED, not absolute: the bar is a horizontal scroller now, and an
+         absolutely positioned panel inside one is clipped by it — `overflow-x`
+         forces the other axis to compute as `auto` too. Fixed escapes any
+         ancestor's overflow (the bar sets no transform), so the panel is placed
+         by JS at open time instead. Also keeps it inside the viewport on a phone,
+         where a 300px panel hanging off a button near the right edge would
+         otherwise run off-screen. */
+      '#proto-bar .pb-panel{position:fixed;left:0;bottom:' + (BAR_H + 6) + 'px;min-width:300px;',
+      '  max-width:calc(100vw - 16px);max-height:calc(100vh - ' + (BAR_H + 22) + 'px);overflow-y:auto;',
       '  padding:9px 10px 10px;background:#f1f1f2;border:1px solid #d3d3d6;border-radius:4px;',
       '  box-shadow:0 2px 10px rgba(0,0,0,.18);display:none;flex-direction:column;gap:9px;',
       '  text-align:left;cursor:default;}',
@@ -262,10 +279,26 @@
       button.textContent = label + ' \u25BE';
       if (title) button.title = title;
 
+      /* The panel is `position:fixed`, so its left edge is set here rather than
+         inherited from the button: aligned to the button, then clamped into the
+         viewport so it cannot hang off either edge on a narrow screen. */
+      function place() {
+        if (!panel.hasAttribute('data-open')) return;
+        var b = button.getBoundingClientRect();
+        var w = panel.offsetWidth;
+        var left = Math.min(b.left, window.innerWidth - w - 8);
+        panel.style.left = Math.max(8, left) + 'px';
+      }
+
       function setOpen(open) {
         if (open) panel.setAttribute('data-open', ''); else panel.removeAttribute('data-open');
         button.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (open) place();
       }
+      /* Follow the button when the bar is scrolled sideways or the window
+         resizes; both move the anchor without closing the panel. */
+      window.addEventListener('resize', place);
+      document.addEventListener('scroll', place, true);
       button.addEventListener('click', function () { setOpen(!panel.hasAttribute('data-open')); });
       document.addEventListener('click', function (e) { if (!wrap.contains(e.target)) setOpen(false); });
       document.addEventListener('keydown', function (e) {
