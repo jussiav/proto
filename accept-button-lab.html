@@ -113,10 +113,10 @@
 
   <h1>Accept button — contrast lab</h1>
   <p class="lede">Temporary page. Candidates for the offer card / negotiation modal accept button, all drawn from the brand palette, all measured against <b>WCAG 2.0 AA for normal text (4.5:1)</b> — the button's label is 14px medium, so the 3:1 large-text allowance does not apply.</p>
-  <p class="lede">Every ratio below is computed by this page from the button's own rendered text colour and its background. Gradients are measured at their <b>lightest</b> stop, which is the worst case.</p>
+  <p class="lede">Every ratio below is computed by this page from the button's own rendered text colour and its background, so the numbers cannot drift from what is drawn. Hover any button and its hover state is re-measured.</p>
 
   <h2>Where we are</h2>
-  <p class="sub">The current button and the one before it. Both fail, which is worth knowing: going back to the darker green would not have fixed this either.</p>
+  <p class="sub">The accept green in production today. It fails too, which is the thing to know before reading the rest: this is not a regression to undo, it is a problem to solve.</p>
   <div class="grid" id="g-now"></div>
 
   <h2>Light fill, dark label</h2>
@@ -124,7 +124,7 @@
   <div class="grid" id="g-dark"></div>
 
   <h2>Deeper fill, white label</h2>
-  <p class="sub">The other way round, for comparison. White text needs a considerably darker fill than anything above.</p>
+  <p class="sub">The other way round, for comparison. White text needs a considerably darker fill than anything above — the two at the end show where it stops working.</p>
   <div class="grid" id="g-white"></div>
 
   <div class="callout">
@@ -147,12 +147,9 @@
   /* Candidates. `bg` is the value contrast is measured against: for a flat fill
      it is the fill, for a gradient the lightest stop. */
   var CANDIDATES = [
-    { g:'g-now', cls:'b-now', name:'Current — green-500 + white',
-      tokens:'#22C55E + #FFFFFF', bg:'#22C55E', hoverBg:'#16A34A',
-      note:'What the prototype renders today.' },
-    { g:'g-now', cls:'b-600w', name:'Previous — green-600 + white',
+    { g:'g-now', cls:'b-600w', name:'Current — green-600 + white',
       tokens:'#16A34A + #FFFFFF', bg:'#16A34A',
-      note:'The production accept colour. Also short of 4.5:1.' },
+      note:'The accept green production uses in the negotiation modal today. Everything below is a candidate to replace it.' },
     { g:'g-dark', cls:'b-g500-950', name:'green-500 + green-950',
       tokens:'#22C55E + #052E16', bg:'#22C55E', hoverBg:'#4ADE80',
       note:'Today&rsquo;s exact fill, kept. Only the label changes.' },
@@ -212,7 +209,10 @@
       note:'The olive end of the success ramp.' },
     { g:'g-white', cls:'b-s600-w', name:'success-600 + white',
       tokens:'#65A30D + #FFFFFF', bg:'#65A30D',
-      note:'One step lighter — and it drops below the line. The boundary in the lime ramp.' }
+      note:'One step lighter — and it drops below the line. The boundary in the lime ramp.' },
+    { g:'g-white', cls:'b-now', name:'green-500 + white',
+      tokens:'#22C55E + #FFFFFF', bg:'#22C55E', hoverBg:'#16A34A',
+      note:'The brighter green with a white label. What the prototype happens to render right now, and the reason this page exists — it is the worst score here.' }
   ];
 
   function srgb(c) { c = c / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
