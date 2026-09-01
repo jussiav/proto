@@ -512,10 +512,12 @@ never carries the in-bubble accept (`isAuctionResult`), and it reads `offer.amou
 thread rather than overwriting the offer.
 
 **Change 14 keeps prod's pulsing "1"** — replacing it with an icon alone was
-weaker, not stronger. The button gets the chats icon; the signal's weight comes
-from change 15's amber instead. A lime button was tried in between and dropped:
-it tied the button to the reply signal and put a third colour on a card that
-already had two meanings for blue.
+weaker, not stronger. The signal's weight comes from the colour instead: the count
+and the status line above it are both red-500. Two things were tried and dropped —
+a lime button (tied the button to the reply signal and put a third colour on a
+card that already had two meanings for blue) and a chats icon inside the button
+(the line above already carries that icon, and the label already says a reply
+arrived). The button keeps prod's secondary fill and its plain label.
 
 **Change 15 is the colour system the rest of the batch exposed.** Accept is
 primary blue on the card and green-600 in the modal — the same act in two

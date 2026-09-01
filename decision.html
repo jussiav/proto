@@ -1370,18 +1370,14 @@
              next to the green, the second time to give the count a white field.
              The count no longer needs one — red carries itself on pale blue. */
           '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-sm font-medium bg-blue-100 hover:bg-blue-200 text-blue-800' +
-            '" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' +
-            (EN_V1 && dealerReplied ? '<span class="mr-2 flex items-center">' + ICO_CHATS + '</span>' : '') + negBtnLabel + '</button>' +
-          /* Change 14. The pulsing lime "1" stays — it is prod's, and it is the
-             only thing on the card that moves. What it sits on is the problem:
-             a `bg-blue-100` secondary button, the same weight as any other
-             secondary on the page, for the one action with something new behind
-             it. In v1 the button takes UiButton's `secondary` + `intent="success"`
-             (`bg-lime-200 hover:bg-lime-300 text-lime-700`) and the chats icon,
-             so it matches the lime "Liikkeeltä on tullut vastaus" line directly
-             above it and the blob on its own corner. Accept keeps primary blue,
-             so the hierarchy is unchanged: blue commits, lime is the unread
-             reply. */
+            '" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' + negBtnLabel + '</button>' +
+          /* Change 12 (spec). The pulsing count stays — it is prod's, and it is
+             the only thing on the card that moves. What changes is its colour and
+             the status line above it, both now red-500, so the two read as one
+             notification. The button itself keeps prod's secondary fill and its
+             plain label: a chats icon inside it was tried and dropped, since the
+             line above already carries that icon and the label already says a
+             reply arrived. */
           /* The count is a notification, so it takes the notification colour every
              phone already uses: UiBadge's own `red` fill, `bg-red-500` with white
              on it. Lime read as decorative and amber as a status; red is the only
