@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accept button — contrast lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* TEMPORARY working page. Not linked from anywhere, not part of the proto.
+       Every colour below is a brand token: the AutoVex blue scale, the design
+       library's success scale (tokens.css --color-success-*, which is Tailwind's
+       lime ramp), Tailwind's green ramp as shipped in the product's config, and
+       av-turquoise. Nothing here is invented.
+
+       Contrast is measured by the page itself from each button's own computed
+       text colour and its declared background, so the numbers cannot drift from
+       what is rendered. Gradients declare their LIGHTEST stop — that is the
+       worst case, and the one that has to pass. */
+    :root {
+      --white:#FFFFFF; --black:#000000; --slate-900:#0F172A;
+      --av-blue:#0B6DFF; --av-dark-blue:#08234D;
+      --green-200:#BBF7D0; --green-300:#86EFAC; --green-400:#4ADE80;
+      --green-500:#22C55E; --green-600:#16A34A; --green-700:#15803D;
+      --green-800:#166534; --green-900:#14532D; --green-950:#052E16;
+      --success-200:#D9F99D; --success-300:#BEF264; --success-400:#A3E635;
+      --success-500:#84CC16; --success-600:#65A30D; --success-700:#4D7C0F;
+      --success-900:#365314;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: #FFFFFF; color: #0F172A;
+      font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+      padding: 48px 24px 96px;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    h1 { font-family: Barlow, sans-serif; font-size: 32px; line-height: 1.15; margin: 0 0 8px; }
+    .lede { font-size: 15px; line-height: 1.6; color: #475569; max-width: 62ch; margin: 0 0 8px; }
+    h2 { font-family: Barlow, sans-serif; font-size: 20px; margin: 48px 0 4px; }
+    .sub { font-size: 13px; color: #64748B; margin: 0 0 20px; max-width: 62ch; line-height: 1.6; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 20px; }
+    .tile { border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px; }
+    .tile .name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .tile .tokens { font-size: 11px; color: #64748B; margin-bottom: 14px; font-variant-numeric: tabular-nums; }
+    .meta { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+    .ratio { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .verdict { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+               border-radius: 999px; padding: 3px 8px; }
+    .pass  { background: #DCFCE7; color: #14532D; }
+    .aaa   { background: #BBF7D0; color: #14532D; }
+    .fail  { background: #FEE2E2; color: #7F1D1D; }
+    .note  { font-size: 11px; line-height: 1.5; color: #64748B; margin-top: 10px; }
+
+    /* The button, at the size the offer card uses: full width, 56px, 14px medium.
+       Everything except colour is the production button — same radius, same
+       inner highlight — so the comparison is only about colour. */
+    .btn {
+      width: 100%; height: 56px; border: 0; border-radius: 8px; cursor: pointer;
+      font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 500;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.20);
+      transition: background .15s, box-shadow .15s;
+    }
+    .btn.sm { height: 40px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
+    .row .btn { width: auto; padding: 0 32px; }
+
+    /* ── candidates ─────────────────────────────────────────────────────── */
+    .b-now      { background: var(--green-500); color: var(--white); }
+    .b-now:hover{ background: var(--green-600); }
+    .b-600w     { background: var(--green-600); color: var(--white); }
+
+    /* Light fill, dark label */
+    .b-g500-950 { background: var(--green-500);   color: var(--green-950); }
+    .b-g500-950:hover { background: var(--green-400); }
+    .b-g500-blk { background: var(--green-500);   color: var(--black); }
+    .b-g500-nav { background: var(--green-500);   color: var(--av-dark-blue); }
+    .b-g500-sl  { background: var(--green-500);   color: var(--slate-900); }
+    .b-g400-950 { background: var(--green-400);   color: var(--green-950); }
+    .b-g400-950:hover { background: var(--green-300); }
+    .b-g400-blk { background: var(--green-400);   color: var(--black); }
+    .b-g300-950 { background: var(--green-300);   color: var(--green-950); }
+    .b-g200-900 { background: var(--green-200);   color: var(--green-900); }
+    .b-g600-blk { background: var(--green-600);   color: var(--black); }
+    .b-s400-900 { background: var(--success-400); color: var(--success-900); }
+    .b-s400-900:hover { background: var(--success-300); }
+    .b-s400-blk { background: var(--success-400); color: var(--black); }
+    .b-s400-nav { background: var(--success-400); color: var(--av-dark-blue); }
+    .b-s300-900 { background: var(--success-300); color: var(--success-900); }
+    .b-s300-blk { background: var(--success-300); color: var(--black); }
+    .b-s200-900 { background: var(--success-200); color: var(--success-900); }
+    .b-s500-blk { background: var(--success-500); color: var(--black); }
+
+    /* Deeper fill, white label */
+    .b-g700-w   { background: var(--green-700);   color: var(--white); }
+    .b-g700-w:hover { background: var(--green-800); }
+    .b-g800-w   { background: var(--green-800);   color: var(--white); }
+    .b-s700-w   { background: var(--success-700); color: var(--white); }
+    .b-s600-w   { background: var(--success-600); color: var(--white); }
+
+    .callout { border: 1px solid #E2E8F0; border-left: 4px solid #0B6DFF; border-radius: 8px;
+               padding: 16px 18px; margin: 28px 0 0; max-width: 72ch; }
+    .callout p { margin: 0 0 8px; font-size: 13px; line-height: 1.65; color: #334155; }
+    .callout p:last-child { margin-bottom: 0; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+           background: #F1F5F9; padding: 1px 5px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Accept button — contrast lab</h1>
+  <p class="lede">Temporary page. Candidates for the offer card / negotiation modal accept button, all drawn from the brand palette, all measured against <b>WCAG 2.0 AA for normal text (4.5:1)</b> — the button's label is 14px medium, so the 3:1 large-text allowance does not apply.</p>
+  <p class="lede">Every ratio below is computed by this page from the button's own rendered text colour and its background. Gradients are measured at their <b>lightest</b> stop, which is the worst case.</p>
+
+  <h2>Where we are</h2>
+  <p class="sub">The current button and the one before it. Both fail, which is worth knowing: going back to the darker green would not have fixed this either.</p>
+  <div class="grid" id="g-now"></div>
+
+  <h2>Light fill, dark label</h2>
+  <p class="sub">The main direction: keep a bright, cheerful green and let the label carry the contrast. Every one of these is a brand fill from either the green ramp or the design library's success ramp, with the label in a dark tone from the same family — or in black, navy or slate where that reads cleaner.</p>
+  <div class="grid" id="g-dark"></div>
+
+  <h2>Deeper fill, white label</h2>
+  <p class="sub">The other way round, for comparison. White text needs a considerably darker fill than anything above.</p>
+  <div class="grid" id="g-white"></div>
+
+  <div class="callout">
+    <p><b>Text shadows, borders, glows and outlines do not change a WCAG contrast ratio.</b> The ratio is computed from the text colour against the background directly behind it. A shadow can make text feel more legible on a photo; it does not make a failing button pass.</p>
+    <p><b>Nor does making the button bigger — at this size.</b> The 3:1 large-text allowance starts at 18.66px bold or 24px regular. The card's label is 14px medium, so it needs the full 4.5:1.</p>
+    <p><b>Hover states need to pass too.</b> Each candidate's hover is wired here; hover any of them and the ratio re-measures live.</p>
+  </div>
+
+  <h2>Side by side, at both sizes</h2>
+  <p class="sub">The passing candidates only — card size (56px) above, modal footer size (40px) below.</p>
+  <div class="row" id="row-lg"></div>
+  <div class="row" id="row-sm"></div>
+
+</div>
+
+<script>
+(function () {
+  var LABEL = 'Hyväksy korkein tarjous';
+
+  /* Candidates. `bg` is the value contrast is measured against: for a flat fill
+     it is the fill, for a gradient the lightest stop. */
+  var CANDIDATES = [
+    { g:'g-now', cls:'b-now', name:'Current — green-500 + white',
+      tokens:'#22C55E + #FFFFFF', bg:'#22C55E', hoverBg:'#16A34A',
+      note:'What the prototype renders today.' },
+    { g:'g-now', cls:'b-600w', name:'Previous — green-600 + white',
+      tokens:'#16A34A + #FFFFFF', bg:'#16A34A',
+      note:'The production accept colour. Also short of 4.5:1.' },
+    { g:'g-dark', cls:'b-g500-950', name:'green-500 + green-950',
+      tokens:'#22C55E + #052E16', bg:'#22C55E', hoverBg:'#4ADE80',
+      note:'Today&rsquo;s exact fill, kept. Only the label changes.' },
+    { g:'g-dark', cls:'b-g500-blk', name:'green-500 + black',
+      tokens:'#22C55E + #000000', bg:'#22C55E',
+      note:'Same fill, flat black label — a touch harder than the deep green.' },
+    { g:'g-dark', cls:'b-g500-nav', name:'green-500 + av-dark-blue',
+      tokens:'#22C55E + #08234D', bg:'#22C55E',
+      note:'Same fill, the brand navy. Ties the button to the rest of the page.' },
+    { g:'g-dark', cls:'b-g500-sl', name:'green-500 + slate-900',
+      tokens:'#22C55E + #0F172A', bg:'#22C55E',
+      note:'Same fill, the slate the product already writes body copy in.' },
+    { g:'g-dark', cls:'b-g400-950', name:'green-400 + green-950',
+      tokens:'#4ADE80 + #052E16', bg:'#4ADE80', hoverBg:'#86EFAC',
+      note:'One step lighter and friendlier than today.' },
+    { g:'g-dark', cls:'b-g400-blk', name:'green-400 + black',
+      tokens:'#4ADE80 + #000000', bg:'#4ADE80',
+      note:'Same lighter fill, black label.' },
+    { g:'g-dark', cls:'b-g300-950', name:'green-300 + green-950',
+      tokens:'#86EFAC + #052E16', bg:'#86EFAC',
+      note:'Mint. Very soft — check it still reads as the primary action next to the blue secondary.' },
+    { g:'g-dark', cls:'b-g200-900', name:'green-200 + green-900',
+      tokens:'#BBF7D0 + #14532D', bg:'#BBF7D0',
+      note:'Softest here. Almost certainly too quiet for the main action, included to mark the far end.' },
+    { g:'g-dark', cls:'b-g600-blk', name:'green-600 + black',
+      tokens:'#16A34A + #000000', bg:'#16A34A',
+      note:'The production green, rescued by a black label instead of a darker fill.' },
+    { g:'g-dark', cls:'b-s400-900', name:'success-400 + success-900',
+      tokens:'#A3E635 + #365314', bg:'#A3E635', hoverBg:'#BEF264',
+      note:'The design library&rsquo;s own success button — this pairing already exists as a component variant.' },
+    { g:'g-dark', cls:'b-s400-blk', name:'success-400 + black',
+      tokens:'#A3E635 + #000000', bg:'#A3E635',
+      note:'Same lime, black label.' },
+    { g:'g-dark', cls:'b-s400-nav', name:'success-400 + av-dark-blue',
+      tokens:'#A3E635 + #08234D', bg:'#A3E635',
+      note:'Lime with the brand navy.' },
+    { g:'g-dark', cls:'b-s300-900', name:'success-300 + success-900',
+      tokens:'#BEF264 + #365314', bg:'#BEF264',
+      note:'Lighter lime. Reads as fresh rather than loud.' },
+    { g:'g-dark', cls:'b-s300-blk', name:'success-300 + black',
+      tokens:'#BEF264 + #000000', bg:'#BEF264',
+      note:'Same, black label.' },
+    { g:'g-dark', cls:'b-s200-900', name:'success-200 + success-900',
+      tokens:'#D9F99D + #365314', bg:'#D9F99D',
+      note:'The lime equivalent of green-200 — the quiet end of the ramp.' },
+    { g:'g-dark', cls:'b-s500-blk', name:'success-500 + black',
+      tokens:'#84CC16 + #000000', bg:'#84CC16',
+      note:'Deeper lime. Black label rescues the pairing that failed with success-900.' },
+    { g:'g-white', cls:'b-g700-w', name:'green-700 + white',
+      tokens:'#15803D + #FFFFFF', bg:'#15803D', hoverBg:'#166534',
+      note:'The lightest green that carries white text at this size.' },
+    { g:'g-white', cls:'b-g800-w', name:'green-800 + white',
+      tokens:'#166534 + #FFFFFF', bg:'#166534',
+      note:'Sober. Reads more like a bank than a marketplace.' },
+    { g:'g-white', cls:'b-s700-w', name:'success-700 + white',
+      tokens:'#4D7C0F + #FFFFFF', bg:'#4D7C0F',
+      note:'The olive end of the success ramp.' },
+    { g:'g-white', cls:'b-s600-w', name:'success-600 + white',
+      tokens:'#65A30D + #FFFFFF', bg:'#65A30D',
+      note:'One step lighter — and it drops below the line. The boundary in the lime ramp.' }
+  ];
+
+  function srgb(c) { c = c / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+  function lum(rgb) { return 0.2126 * srgb(rgb[0]) + 0.7152 * srgb(rgb[1]) + 0.0722 * srgb(rgb[2]); }
+  function parse(v) {
+    if (v.charAt(0) === '#') {
+      var h = v.slice(1);
+      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+    }
+    var m = v.match(/\d+/g);
+    return [ +m[0], +m[1], +m[2] ];
+  }
+  function ratio(fg, bg) {
+    var a = lum(parse(fg)), b = lum(parse(bg));
+    var hi = Math.max(a, b), lo = Math.min(a, b);
+    return (hi + 0.05) / (lo + 0.05);
+  }
+
+  function verdictFor(r) {
+    if (r >= 7)   return { cls:'aaa',  text:'AAA' };
+    if (r >= 4.5) return { cls:'pass', text:'AA' };
+    return { cls:'fail', text:'fails AA' };
+  }
+
+  CANDIDATES.forEach(function (c) {
+    var host = document.getElementById(c.g);
+    var tile = document.createElement('div');
+    tile.className = 'tile';
+
+    var name = document.createElement('p');
+    name.className = 'name'; name.textContent = c.name;
+    var tok = document.createElement('p');
+    tok.className = 'tokens'; tok.textContent = c.tokens;
+
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn ' + c.cls;
+    btn.textContent = LABEL;
+
+    var meta = document.createElement('div');
+    meta.className = 'meta';
+    var num = document.createElement('span'); num.className = 'ratio';
+    var vd  = document.createElement('span'); vd.className = 'verdict';
+    meta.appendChild(num); meta.appendChild(vd);
+
+    var note = document.createElement('p');
+    note.className = 'note'; note.textContent = c.note;
+
+    tile.appendChild(name); tile.appendChild(tok); tile.appendChild(btn);
+    tile.appendChild(meta); tile.appendChild(note);
+    host.appendChild(tile);
+
+    /* Measured from what is actually rendered: the button's own computed text
+       colour against the declared background. Re-measured on hover, because a
+       hover state that fails is still a failure. */
+    function measure(bg) {
+      var fg = getComputedStyle(btn).color;
+      var r  = ratio(fg, bg);
+      var v  = verdictFor(r);
+      num.textContent = r.toFixed(2) + ':1';
+      vd.className = 'verdict ' + v.cls;
+      vd.textContent = v.text;
+      c.measured = r;
+    }
+    measure(c.bg);
+    btn.addEventListener('mouseenter', function () { measure(c.hoverBg || c.bg); });
+    btn.addEventListener('mouseleave', function () { measure(c.bg); });
+  });
+
+  /* The passing set, side by side, at both real sizes. */
+  var lg = document.getElementById('row-lg'), sm = document.getElementById('row-sm');
+  CANDIDATES.filter(function (c) { return c.measured >= 4.5; }).forEach(function (c) {
+    ['', 'sm'].forEach(function (size) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn ' + size + ' ' + c.cls;
+      b.textContent = LABEL;
+      (size ? sm : lg).appendChild(b);
+    });
+  });
+}());
+</script>
+</body>
+</html>
