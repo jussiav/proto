@@ -954,6 +954,22 @@ hidden (`scrollbar-width:none` + the WebKit pseudo-element): at 30px tall it wou
 eat half the bar. `.pb-spacer` keeps `flex:1 1 auto` and still pushes **Go to**
 right whenever the row fits.
 
+**Below 620px it collapses to the chip.** Sideways scrolling keeps every control
+reachable but a phone shows about two at a time, so under prod's own `sm`
+breakpoint `#proto-bar` takes `.pb-mobile`: everything but the `Prototype` chip is
+hidden, and tapping the chip adds `.is-open`, which turns the bar into a capped,
+scrollable column with one full-width control per row. The chip carries
+`role="button"`, a caret, and Enter/Space. Open state persists
+(`autovex_proto_bar_open`) so switching scenario — which navigates — does not
+close the bar the tester is working in, and the page keeps its 30px of padding
+either way: the open bar overlays the page rather than reflowing it.
+
+The layout is re-synced on the media query's `change` AND on `window.resize` —
+the query's own event does not always arrive when the viewport is resized by
+tooling rather than by a user, which leaves the bar stuck in its phone layout on
+a desktop-width window. (The in-app browser pane resizes without dispatching
+either, so dynamic resize cannot be verified there; the load-time path can.)
+
 **Popovers had to become `position:fixed` for that to work.** An absolutely
 positioned panel inside a horizontal scroller is clipped by it — setting
 `overflow-x` makes the other axis compute as `auto` too — so the panel would have
@@ -961,7 +977,9 @@ been unreachable. Fixed escapes any ancestor's overflow (the bar sets no
 transform), and `makePopover`'s `place()` sets `left` from the button's rect,
 clamped 8px inside the viewport, on open and on every resize or bar scroll. That
 clamp is also what keeps a 300px panel on screen when its button sits near the
-right edge of a phone.
+right edge of a phone. It sets `bottom` from the button too, not from the bar:
+once the bar opens into a column its rows sit at different heights, and a panel
+pinned to the bar's top edge would cover the control that opened it.
 
 **Adding proto-only UI:** prefer putting it on the bar. If it must be its own
 element, mark the root with `data-proto-dev` AND skip building it when

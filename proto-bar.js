@@ -176,7 +176,33 @@
       '#proto-bar .pb-panel .pb-stack button{width:100%;text-align:left;}',
       '#proto-bar .pb-field{display:flex;flex-direction:column;gap:2px;}',
       '#proto-bar .pb-field > span{color:#6b6b70;font-size:10px;}',
-      'body.proto-bar-on{padding-bottom:' + BAR_H + 'px;}'
+      'body.proto-bar-on{padding-bottom:' + BAR_H + 'px;}',
+
+      /* ── Narrow screens ──────────────────────────────────────────────────
+         Sideways scrolling keeps every control reachable, but a phone shows
+         about two of them at a time and the rest have to be hunted for. Below
+         620px (prod's own `sm`) the bar collapses to the Prototype chip and
+         opens downwards into a stacked list, one control per row. The page
+         keeps its 30px of padding either way — the open bar overlays the page
+         rather than reflowing it, so opening the bar never moves the thing the
+         tester was looking at. */
+      '#proto-bar.pb-mobile{flex-wrap:wrap;overflow-x:hidden;}',
+      '#proto-bar.pb-mobile .pb-chip{cursor:pointer;user-select:none;}',
+      '#proto-bar.pb-mobile .pb-chip::after{content:"\\25B8";margin-left:4px;font-size:9px;}',
+      '#proto-bar.pb-mobile.is-open .pb-chip::after{content:"\\25BE";}',
+      /* Collapsed: the chip alone, at the bar's normal height. */
+      '#proto-bar.pb-mobile:not(.is-open) > *:not(.pb-chip){display:none;}',
+      /* Open: a column. Capped and scrollable, since the Go to row must stay
+         reachable on a short screen in landscape. */
+      '#proto-bar.pb-mobile.is-open{height:auto;max-height:70vh;overflow-y:auto;',
+      '  align-items:stretch;padding:8px 10px;gap:8px;}',
+      '#proto-bar.pb-mobile.is-open > *{flex:0 0 100%;}',
+      '#proto-bar.pb-mobile.is-open .pb-chip{align-self:flex-start;flex:0 0 auto;}',
+      '#proto-bar.pb-mobile.is-open label{width:100%;justify-content:space-between;}',
+      '#proto-bar.pb-mobile.is-open select{flex:1 1 auto;max-width:none;min-width:0;margin-left:8px;}',
+      '#proto-bar.pb-mobile.is-open .pb-tools,',
+      '#proto-bar.pb-mobile.is-open .pb-tools > button{width:100%;}',
+      '#proto-bar.pb-mobile .pb-spacer{display:none;}'
     ].join('');
     document.head.appendChild(css);
 
@@ -288,6 +314,10 @@
         var w = panel.offsetWidth;
         var left = Math.min(b.left, window.innerWidth - w - 8);
         panel.style.left = Math.max(8, left) + 'px';
+        /* Sit above the BUTTON rather than above the bar: once the bar opens
+           into a column its rows are at different heights, and a panel pinned
+           to the bar's own top edge would cover the control that opened it. */
+        panel.style.bottom = Math.max(8, window.innerHeight - b.top + 6) + 'px';
       }
 
       function setOpen(open) {
@@ -342,6 +372,56 @@
     chip.textContent = 'Prototype';
     chip.title = 'Prototype tooling — not part of the product UI';
     bar.appendChild(chip);
+
+    /* Narrow screens: the chip is the bar's own open/close control. It stays a
+       plain chip above 620px, where the row fits and there is nothing to
+       toggle. The open state is remembered so switching scenario — which
+       navigates — does not close the bar the tester is working in. */
+    var MOBILE_MQ  = window.matchMedia('(max-width: 619px)');
+    var OPEN_KEY   = 'autovex_proto_bar_open';
+    var barOpen    = false;
+    try { barOpen = localStorage.getItem(OPEN_KEY) === '1'; } catch (e) {}
+
+    function syncBarOpen() {
+      bar.classList.toggle('is-open', barOpen);
+      chip.setAttribute('aria-expanded', barOpen ? 'true' : 'false');
+      chip.title = MOBILE_MQ.matches
+        ? (barOpen ? 'Hide the prototype controls' : 'Show the prototype controls')
+        : 'Prototype tooling — not part of the product UI';
+    }
+
+    function syncBarLayout() {
+      var mobile = MOBILE_MQ.matches;
+      bar.classList.toggle('pb-mobile', mobile);
+      if (mobile) {
+        chip.setAttribute('role', 'button');
+        chip.setAttribute('tabindex', '0');
+      } else {
+        chip.removeAttribute('role');
+        chip.removeAttribute('tabindex');
+        chip.removeAttribute('aria-expanded');
+      }
+      syncBarOpen();
+    }
+
+    function toggleBar() {
+      if (!MOBILE_MQ.matches) return;
+      barOpen = !barOpen;
+      try { localStorage.setItem(OPEN_KEY, barOpen ? '1' : '0'); } catch (e) {}
+      syncBarOpen();
+    }
+
+    chip.addEventListener('click', toggleBar);
+    chip.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleBar(); }
+    });
+    if (MOBILE_MQ.addEventListener) MOBILE_MQ.addEventListener('change', syncBarLayout);
+    else if (MOBILE_MQ.addListener) MOBILE_MQ.addListener(syncBarLayout);
+    /* And on resize, because the media query's own change event does not always
+       arrive when the viewport is resized by tooling rather than by the user —
+       leaving the bar stuck in its phone layout on a desktop-width window.
+       Toggling to the value it already has costs nothing. */
+    window.addEventListener('resize', syncBarLayout);
 
     /* Mode */
     var modeWrap = document.createElement('label');
@@ -728,5 +808,6 @@
 
     document.body.appendChild(bar);
     document.body.classList.add('proto-bar-on');
+    syncBarLayout();
   });
 }());
