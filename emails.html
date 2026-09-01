@@ -227,25 +227,43 @@
 
       /* Initiative arms. An email may carry a v1 override; control always shows
          what production sends today, so the two read side by side. Read through
-         protoVariant so a link, the bar and the funnel all agree on the arm. */
-      var ARMS = ['control', 'v1'];
-      var REVIEW_NO_REVIEW_ARM = (function () {
-        var a = window.protoVariant ? window.protoVariant('review-no-review', 'control') : 'control';
+         protoVariant so a link, the bar and the funnel all agree on the arm.
+
+         Keyed to the EMAIL's own initiative, not to one slug: more than one
+         initiative now proposes changes here (review-no-review revises copy,
+         enhanced-negotiations swaps a link target), and an email answers only
+         for the initiative it declares. */
+      /* An arm this page does not itself distinguish still has to be LISTED, or
+         merely opening the email tool would clear it and silently reset the
+         initiative — `armFor` forgets anything not named here. Hence also the
+         `!== 'control'` tests below rather than `=== 'v1'`: an initiative whose
+         second arm differs only elsewhere still shows its email override. */
+      var ARMS = ['control', 'v1', 'v2'];
+      function armFor(slug) {
+        var a = window.protoVariant ? window.protoVariant(slug, 'control') : 'control';
         if (ARMS.indexOf(a) === -1) {
-          if (window.protoVariantSet) window.protoVariantSet('review-no-review', null);
+          if (window.protoVariantSet) window.protoVariantSet(slug, null);
           return 'control';
         }
         return a;
-      }());
+      }
 
       /* An override exists only where an initiative has approved copy for it. */
       function armOf(v) {
-        if (REVIEW_NO_REVIEW_ARM !== 'v1') return null;
-        if (v.mail.initiative && v.mail.initiative.slug !== 'review-no-review') return null;
-        return v.v1 || null;
+        var ini = v.mail.initiative;
+        if (!ini || !v.v1) return null;
+        return armFor(ini.slug) !== 'control' ? v.v1 : null;
+      }
+      /* True when the arm is on but this email has nothing to swap for it. */
+      function armSelectedWithoutOverride(v) {
+        var ini = v.mail.initiative;
+        return !!ini && !armOf(v) && armFor(ini.slug) !== 'control';
       }
       function armSubject(v) { var a = armOf(v); return (a && a.subject) || v.subject; }
       function armBody(v)    { var a = armOf(v); return (a && a.body)    || v.body; }
+      /* Change 7 of Enhanced negotiations is a link target, not copy — so an
+         override may carry a cta and no body at all. */
+      function armCta(v)     { var a = armOf(v); return (a && a.cta)     || v.cta; }
 
       /* One entry per rendered view: an email with `states` contributes one view
          per state, because those states are what the seller actually receives. */
@@ -381,7 +399,11 @@
         if (v.condition) rows += metaRow('Sent when', '<code class="font-mono text-xs">' + esc(v.condition) + '</code>');
         rows += metaRow('Trigger', esc(m.trigger), true);
         rows += metaRow('Timing', esc(m.timing));
-        rows += metaRow('CTA', v.cta ? esc(v.cta.label) + ' → <a class="text-av-blue underline" href="' + v.cta.target + '">' + esc(v.cta.target) + '</a>' : '<span class="text-slate-500">none — the seller is asked to reply to the message</span>');
+        var c = armCta(v);
+        rows += metaRow('CTA', c
+          ? esc(c.label) + ' → <a class="text-av-blue underline" href="' + c.target + '">' + esc(c.target) + '</a>' +
+            (c.route ? '<br><code class="font-mono text-xs text-slate-500">' + esc(c.route) + '</code>' : '')
+          : '<span class="text-slate-500">none — the seller is asked to reply to the message</span>');
         rows += metaRow('Built as', m.shape === 'mailmessage'
           ? 'MailMessage — greeting, lines, action; Laravel adds the salutation and a fallback-URL subcopy'
           : 'Blade template via ->markdown() — header, body, footer only');
@@ -397,9 +419,9 @@
           rows += metaRow('Initiative', link + '<br><span class="text-slate-700">' + esc(m.initiative.why) + '</span>');
         }
         rows += metaRow('Arm', armOf(v)
-          ? '<b>v1</b> — showing the initiative\'s revised copy'
-          : (REVIEW_NO_REVIEW_ARM === 'v1'
-              ? 'v1 selected, but this email has no override yet — showing production copy'
+          ? '<b>' + esc(armFor(v.mail.initiative.slug)) + '</b> — showing the initiative\'s revised version'
+          : (armSelectedWithoutOverride(v)
+              ? esc(armFor(v.mail.initiative.slug)) + ' selected, but this email has no override yet — showing production copy'
               : 'control — production copy'));
         var vars = dynamicFields(v);
         if (vars) rows += metaRow('Dynamic fields', vars);
@@ -440,9 +462,10 @@
 
       /* ── The email ────────────────────────────────────────────────────────── */
       function renderEmail(v) {
-        var button = v.cta
+        var cta = armCta(v);
+        var button = cta
           ? '<div class="em-btn-row"><a class="em-btn' + (v.mail.ctaBold ? ' is-bold' : '') +
-            '" href="' + v.cta.target + '">' + esc(v.cta.label) + '</a></div>'
+            '" href="' + cta.target + '">' + esc(cta.label) + '</a></div>'
           : '';
         var body = armBody(v).replace('{{BUTTON}}', button);
 
@@ -458,10 +481,10 @@
         /* The fallback-URL subcopy appears wherever the layout renders one: every
            MailMessage-built email, and the verification email, which goes through
            mail.layout rather than mail::message. Verified against 2026 captures. */
-        if ((v.mail.shape === 'mailmessage' || v.mail.subcopy) && v.cta) {
+        if ((v.mail.shape === 'mailmessage' || v.mail.subcopy) && cta) {
           extras += '<div class="em-subcopy"><p>' +
-            DATA.shared.subcopy.replace(':action', esc(v.cta.label)) +
-            ': <a href="' + v.cta.target + '">' + esc(v.cta.target) + '</a></p></div>';
+            DATA.shared.subcopy.replace(':action', esc(cta.label)) +
+            ': <a href="' + cta.target + '">' + esc(cta.target) + '</a></p></div>';
         }
 
         /* Two footers: mail::footer prints "© <year> AutoVex"; mail.layout uses
@@ -493,13 +516,15 @@
            initiative, and an email with no revised copy is in exactly that
            position — so the row answers "does this email change?" at a glance
            instead of offering an arm that renders identically to control. */
-        initiatives: active.v1 ? [
+        initiatives: (active.v1 && active.mail.initiative) ? [
           {
-            slug:    'review-no-review',
+            slug:    active.mail.initiative.slug,
             default: 'control',
             variants: [
-              { id: 'control', label: 'Control — production copy' },
-              { id: 'v1',      label: 'Variant 1 — revised email copy' }
+              { id: 'control', label: 'Control — production behaviour' },
+              { id: 'v1',      label: active.v1.body
+                  ? 'Variant 1 — revised email copy'
+                  : 'Variant 1 — revised link target' }
             ]
           }
         ] : [],

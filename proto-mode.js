@@ -116,6 +116,12 @@
       prodArm: 'control'
     },
     {
+      slug: 'enhanced-negotiations',
+      name: 'Enhanced negotiations',
+      spec: 'design-specs/enhanced-negotiations.html',
+      prodArm: 'control'
+    },
+    {
       slug: 'seller-file-upload',
       name: 'Seller file upload',
       spec: 'design-specs/seller-file-upload.html',

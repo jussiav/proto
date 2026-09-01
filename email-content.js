@@ -85,8 +85,12 @@
     subcopy: 'Jos sinulla on ongelmia ":action" napin kanssa, kopioi alla oleva URL ja liitä se selaimeesi.'
   };
 
-  function btn(label, target) {
-    return { label: label, target: target };
+  /* `route` is the prod route the button actually points at. Recorded because
+     change 7 of Enhanced negotiations is exactly a route swap, and without it a
+     proto target of `decision.html` would read as prod behaviour — every FI
+     seller email in the dump goes to route('user.offers'), the LIST. */
+  function btn(label, target, route) {
+    return { label: label, target: target, route: route || null };
   }
 
   /* ── Blade-templated, seller-facing, Finnish ───────────────────────────────
@@ -134,7 +138,7 @@
             '</ol>' +
             '<p class="em-center">Auton myynti ei voisi olla tämän helpompaa!</p>' +
             '<div class="em-help"><p class="em-help-title"><b>Tarvitsetko neuvoja?</b></p><p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p></div>',
-          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1')
+          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1', '$verificationUrl')
         },
         {
           id: 'existing-seller',
@@ -151,7 +155,7 @@
             '<p class="em-center">Sinä voit rentoutua ja odotella parasta tarjousta!</p>' +
             '<p class="em-center">Auton myynti ei voisi olla tämän helpompaa!</p>' +
             '<div class="em-help"><p class="em-help-title"><b>Tarvitsetko neuvoja?</b></p><p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p></div>',
-          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1')
+          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1', '$verificationUrl')
         }
       ]
     },
@@ -172,7 +176,7 @@
         '<h1>Terve <var data-src="$notifiable-&gt;name">[name]</var></h1>' +
         '<p>Autostasi kiinnostunut autoliike on pyytänyt sinulta lisätietoja.</p>' +
         '{{BUTTON}}',
-      cta: btn('Vastaa kysymykseen', 'offers.html')
+      cta: btn('Vastaa kysymykseen', 'offers.html', "route('user.offers')")
     },
 
     {
@@ -197,7 +201,7 @@
         '<p>Melkein valmista! Lataa puuttuvat kuvat asiantuntijamme kanssa käymäsi puhelun mukaisesti. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>' +
         '<p>Klikkaa alla olevaa painiketta lisätäksesi kuvat. Myydään autosi yhdessä!</p>' +
         '{{BUTTON}}',
-      cta: btn('Lisää kuvat', 'photos.html')
+      cta: btn('Lisää kuvat', 'photos.html', '$draft->imageUploadLink()')
     },
 
     {
@@ -217,7 +221,7 @@
         '<p>Nyt voit ottaa rennosti ja odottaa tarjouksia. Tarjouskilpailu on käynnissä 1,5 työpäivää ensimmäisen tarjouksen saatuasi.</p>' +
         '<p>Pidämme sinut ajan tasalla sähköpostitse koko prosessin ajan. Toivomme, että autosi myynti on helppoa ja nopeaa!</p>' +
         '{{BUTTON}}',
-      cta: btn('Profiiliin', 'offers.html')
+      cta: btn('Profiiliin', 'offers.html', "route('user.offers')")
     },
 
     {
@@ -279,7 +283,7 @@
         '{{BUTTON}}' +
         '<h2>Mitä tapahtuu seuraavaksi?</h2>' +
         '<p>Kun hyväksyt tarjouksen, autoliike on sinuun lähipäivinä yhteydessä puhelimitse. Yhdistämme sinut autoliikkeen ostajaan ja pääsette sopimaan käytännön asioista, kuten auton luovutuksen aikataulusta ja paikasta.</p>',
-      cta: btn('Tutustu tarjoukseen tästä', 'offers.html')
+      cta: btn('Tutustu tarjoukseen tästä', 'offers.html', "route('user.offers')")
     },
 
     {
@@ -310,7 +314,7 @@
         '<h2>Mitä seuraavaksi tapahtuu?</h2>' +
         '<p>Kun hyväksyt parhaan tarjouksen, autoliike on sinuun pian yhteydessä puhelimitse.</p>' +
         '<p>Pääsette sopimaan käytännön asioista, kuten aikataulusta, luovutuspaikasta, maksusta sekä mahdollisesta loppuvelan lunastamisesta.</p>',
-      cta: btn('Katso tarjoukset', 'offers.html')
+      cta: btn('Katso tarjoukset', 'offers.html', "route('user.offers')")
     },
 
     {
@@ -341,7 +345,7 @@
         '<h2>Mitä seuraavaksi tapahtuu?</h2>' +
         '<p>Kun hyväksyt parhaan tarjouksen, autoliike on sinuun pian yhteydessä puhelimitse.</p>' +
         '<p>Pääsette sopimaan käytännön asioista, kuten aikataulusta, luovutuspaikasta, maksusta sekä mahdollisesta loppuvelan lunastamisesta.</p>',
-      cta: btn('Katso tarjoukset', 'offers.html')
+      cta: btn('Katso tarjoukset', 'offers.html', "route('user.offers')")
     },
 
     {
@@ -362,11 +366,16 @@
         '<p>Jos olet tyytyväinen lopputulokseen, käythän hyväksymässä tarjouksen pian. Tarjous on voimassa 24 tuntia päättymishetkestä.</p>' +
         '<p>Mikäli hinta vielä mietityttää, voit tehdä autoliikkeelle vastatarjouksen. Alkuperäinen tarjous pysyy silti voimassa.</p>' +
         '{{BUTTON}}',
-      cta: btn('Tutustu tarjoukseen tästä', 'offers.html')
+      cta: btn('Tutustu tarjoukseen tästä', 'offers.html', "route('user.offers')")
     },
 
     {
       id: 'negotiation-dealer-replied-round-1',
+      initiative: {
+        slug: 'enhanced-negotiations',
+        spec: 'design-specs/enhanced-negotiations.html',
+        why: 'The button lands on the offers LIST, from where the seller has to find the car and work out that the dealer\'s reply is behind a secondary button. The initiative lands it on the decision page for that car instead.'
+      },
       rendered: true,
       group: 'Counter-offer',
       state: 'Dealer answered the seller\'s first counter-offer',
@@ -382,11 +391,19 @@
         '<p>Voit nyt hyväksyä autoliikkeen tarjouksen tai tehdä uuden vastatarjouksen profiilissasi.</p>' +
         '<p>Tarjous on voimassa 24 tuntia.</p>' +
         '{{BUTTON}}',
-      cta: btn('Katso tarjous', 'decision.html')
+      cta: btn('Katso tarjous', 'offers.html', "route('user.offers')"),
+      v1: {
+        cta: btn('Katso tarjous', 'decision.html?scenario=dealer-replied', "route('user.offers.decision', $tenderRequest)")
+      }
     },
 
     {
       id: 'negotiation-dealer-replied-round-2',
+      initiative: {
+        slug: 'enhanced-negotiations',
+        spec: 'design-specs/enhanced-negotiations.html',
+        why: 'The button lands on the offers LIST, from where the seller has to find the car and work out that the dealer\'s reply is behind a secondary button. The initiative lands it on the decision page for that car instead.'
+      },
       rendered: true,
       group: 'Counter-offer',
       state: 'Dealer answered the second counter-offer — no more counters allowed',
@@ -402,7 +419,10 @@
         '<p>Sinulla on 24 tuntia aikaa hyväksyä tarjous. Vastatarjouksia ei voi tehdä enempää.</p>' +
         '{{BUTTON}}' +
         '<p>Toivottavasti pääsette kauppoihin!</p>',
-      cta: btn('Katso tarjous', 'decision.html')
+      cta: btn('Katso tarjous', 'offers.html', "route('user.offers')"),
+      v1: {
+        cta: btn('Katso tarjous', 'decision.html?scenario=dealer-replied', "route('user.offers.decision', $tenderRequest)")
+      }
     },
 
     {
@@ -414,17 +434,23 @@
       timing: 'Immediately',
       template: 'resources/views/mail/transactional/finland/final-offer-sent.blade.php',
       langKeys: ['email.transactional.final_offer_sent.subject'],
+      note: 'Lands on the offers list like every other seller email, but it is NOT part of change 7: a final offer is a raise on the highest offer (FinalOffer updates tender_offers directly), not a negotiation message, so there is no thread for the link to open.',
       subject: 'Mahtavia uutisia!',
       body:
         '<h1>Moikka <var data-src="$tenderRequest-&gt;user-&gt;firstName()">[first name]</var>!</h1>' +
         '<p>Mahtavia uutisia! Korkein tarjoaja on edelleen kiinnostunut tekemään kaupat autostasi ja korotettu tarjous löytyy nyt profiilistasi.</p>' +
         '<p>Tarjous on voimassa vain 24 tuntia. Siirry profiiliin katsomaan korotettu tarjous.</p>' +
         '{{BUTTON}}',
-      cta: btn('Katso tarjous', 'decision.html')
+      cta: btn('Katso tarjous', 'offers.html', "route('user.offers')")
     },
 
     {
       id: 'negotiation-closed',
+      initiative: {
+        slug: 'enhanced-negotiations',
+        spec: 'design-specs/enhanced-negotiations.html',
+        why: 'The button lands on the offers LIST, from where the seller has to find the car and work out that the dealer\'s reply is behind a secondary button. The initiative lands it on the decision page for that car instead.'
+      },
       rendered: true,
       group: 'Counter-offer',
       state: 'Negotiation closed, an offer is waiting for the seller',
@@ -439,7 +465,10 @@
         '<p>Neuvottelu on päättynyt.</p>' +
         '<p>Tarjous odottaa hyväksyntääsi.</p>' +
         '{{BUTTON}}',
-      cta: btn('Katso tarjous', 'decision.html')
+      cta: btn('Katso tarjous', 'offers.html', "route('user.offers')"),
+      v1: {
+        cta: btn('Katso tarjous', 'decision.html?scenario=negotiation-stopped', "route('user.offers.decision', $tenderRequest)")
+      }
     },
 
     {
@@ -461,7 +490,7 @@
         '{{BUTTON}}' +
         '<p class="em-small">Velvoitteesta johtuen, tämä sähköposti lähetetään sinulle kolme kertaa tai kunnes tiedot on täytetty.</p>' +
         '<p class="em-small">Olemme apunasi osoitteessa tiimi@autovex.fi (arkisin 10-16)</p>',
-      cta: btn('Täytä tietosi tästä', 'dac7.html')
+      cta: btn('Täytä tietosi tästä', 'dac7.html', "route('user.personal-information')")
     },
 
     {
@@ -479,7 +508,7 @@
         '<p>AutoVex-profiilisi on ollut pitkään käyttämättä. Poistamme profiilin ja siihen liittyvät tiedot pian, ellet kirjaudu sisään.</p>' +
         '<p>Kirjaudu sisään seuraavan 30 päivän aikana, niin säilytät tiedot aiemmista ilmoituksistasi ja vastaanotat meiltä viestintää myös jatkossa.</p>' +
         '{{BUTTON}}',
-      cta: btn('Kirjaudu profiiliisi', 'offers.html')
+      cta: btn('Kirjaudu profiiliisi', 'offers.html', "route('user.offers')")
     }
   ];
 

@@ -54,6 +54,33 @@
       align-items: center;
     }
 
+    /* DeliveryDateModal.vue's help block: `text-sm text-slate-600 bg-[#FAEADA]
+       border border-[#FAEADA] p-4 rounded-md`, plus its list. Hand-written for
+       the usual reason — the Play CDN only generates utilities present at first
+       paint, and every class in this modal is injected by JS, so the arbitrary
+       `bg-[#FAEADA]` produced no rule at all. Values are prod's, verbatim. */
+    .modal-help {
+      font-size: .875rem;
+      line-height: 1.25rem;
+      color: #475569;            /* slate-600 */
+      background: #FAEADA;
+      border: 1px solid #FAEADA;
+      padding: 1rem;             /* p-4 */
+      border-radius: .375rem;    /* rounded-md */
+    }
+    /* Change 18: the block is the tallest thing above the thread, and on a phone
+       every 8px of padding is a line of conversation pushed under the fold. */
+    @media (max-width: 620px) { .modal-help { padding: .75rem; } }
+    .modal-help ul { list-style: disc outside; padding-left: 1rem; margin: 0; }
+    .modal-help li + li { margin-top: .25rem; }
+
+    /* NegotiationMessage.vue's `max-h-[325px] overflow-y-auto`. The utility
+       classes stay on the element for the record, but the cap is duplicated here
+       because the Play CDN generates JIT classes ASYNCHRONOUSLY when JS injects
+       them: on the first open the rule arrived after the render, so the list was
+       briefly uncapped and the scroll-to-bottom had nothing to scroll. */
+    .neg-thread { max-height: 325px; overflow-y: auto; }
+
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
        Play CDN generates no utilities for a ::before, and the SCSS is scoped in
        prod. Colours are prod's `bg-blue` (= blue-600, #0B6DFF) and the #E1E7F0
@@ -187,6 +214,88 @@
     var _now = function() { return Math.floor(Date.now() / 1000); };
     var REACTION = 7200;
     var _params  = new URLSearchParams(window.location.search);
+
+    /* ── "Enhanced negotiations" arm ──────────────────────────────────────────
+       Read through protoVariant so it behaves like every other initiative:
+       remembered across pages, working in test mode. Unrecognised values are
+       forgotten rather than left in storage, which would leave the bar's row on
+       "— none —" while the page rendered something else.
+
+       Batch 1: the copy-only changes — standing offer by the field, the
+       offer-can-only-rise fact, the binding statement, the 24-hour deadline, the
+       last-round wording.
+       Batch 2: change 4 — the thread rendered as `NegotiationMessage.vue` does
+       it, with accept inside the dealership's last message, the history reveal on
+       a stopped negotiation, and the rounds count moved onto the send button the
+       way the dealership's own form does it.
+       Batch 3: change 7, findability.
+       Spec: design-specs/enhanced-negotiations.html */
+    var EN_ARMS = ['control', 'v1'];
+    var EN_ARM = (function () {
+      var arm = window.protoVariant('enhanced-negotiations', 'control');
+      if (EN_ARMS.indexOf(arm) === -1) { window.protoVariantSet('enhanced-negotiations', null); return 'control'; }
+      return arm;
+    }());
+    var EN_V1 = EN_ARM === 'v1';
+
+    /* Change 17. The accept colour, in one place because it appears on the card,
+       in the modal footer and inside the dealership's last bubble, and the three
+       have to agree.
+
+       `green-500` — the brand green. prod's own accept is `green-600`, half a
+       step darker; 500 is the lighter, cleaner green and it sits better beside
+       the card's blues. The front page hero's brand teal was tried as its own arm
+       and dropped: it is the marketing accent, it carries no yes/confirm meaning
+       of its own, and beside the amber reply signal it competed rather than
+       layered. */
+    function acceptCls() {
+      return 'bg-green-500 hover:bg-green-600 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
+    }
+
+    /* All FI copy below is a DRAFT PENDING APPROVAL — prod has none of it, since
+       the feature does not exist there. Kept inline rather than in
+       translations.js because this page has no data-i18n at all and hardcodes
+       its Finnish; adding one arm's strings to the corpus would make this the
+       only translated copy on the page. */
+    var EN_COPY = {
+      /* Change 1 — the field's reference figure. Label is prod's own
+         offer_card.first_place, so only the layout is new here. */
+      standingOfferLabel: 'Korkein tarjous',
+
+      /* Changes 2 and 3, now ONE sentence pair. It states all three outcomes of a
+         counter offer in the order they matter: accepted and the sale closes
+         (change 3 — an accepted counter offer runs the same accept action the
+         seller's own does), raised, or held (change 2 — a reply is validated
+         against the standing amount and a close preserves it). The separate
+         binding bullet went with it; it now says the same thing twice. */
+      counterOutcomes: 'Autoliike voi hyväksyä vastatarjouksesi, jolloin kaupat syntyvät. Se voi myös nostaa tai pitäytyä tarjouksessaan.',
+
+      /* The waiting state's second line. It used to be change 5's deadline —
+         24 hours of business time, then the auto-close — and now answers a
+         different question: the standing offer is still yours while you wait, so
+         waiting costs nothing. See the spec: change 5 no longer has copy of its
+         own in the modal. */
+      acceptAnyTime: 'Voit hyväksyä tarjouksen myös neuvottelujen aikana.',
+
+      /* Prod's own reply-time line (negotiation_round_one.first_list_item), which
+         spends most of its length on hedging. The hours are the fact. */
+      replyHours: 'Liikkeet vastaavat arkisin klo 10–16.',
+
+      /* Change 18 — prod's contact_info_not_allowed is a full sentence on its own
+         paragraph under the textarea. As the label row's hint it has to fit
+         beside "Viesti" at 360px, so it states the rule and nothing else. */
+      noContactInfo: 'Älä jätä yhteystietoja',
+
+      /* Closed state. The title says the negotiation ended, so the help line does
+         not repeat it — it answers what happens next instead, which control never
+         states anywhere. The decision page's own hero body was used here first
+         and read as a second announcement of the same fact. */
+      stoppedHelp: 'Hyväksyttyäsi tarjouksen, autoliike ottaa sinuun yhteyttä.'
+
+      /* Change 6 needs no string of its own: batch 2 replaced batch 1's hint
+         line with prod's rounds-carrying send button
+         (tender.button.deal.reply_to_negotiation), built in the footer. */
+    };
 
     // ── Persistent state (localStorage) ──
     var _STATE_KEY = 'autovex_decision';
@@ -375,7 +484,11 @@
          field was touched, the deep watcher never fired at all and the POST body
          has no `amount` key — Laravel's `required` fails either way.) */
       if (amount === null) {
-        errors.push('Kenttä Pyyntihinta vaaditaan.');
+        /* Change 10. prod's message is Laravel's `required` rendered against the
+           attribute name `Pyyntihinta` — the ASKING PRICE — on a field labelled
+           `Vastatarjous`, so it names a field that is not on screen. v1 shows
+           prod's own generic `tenderform.*.mandatory_information`. */
+        errors.push(EN_V1 ? 'Pakollinen tieto' : 'Kenttä Pyyntihinta vaaditaan.');
         return errors;
       }
       if (amount < 1 || amount > NEG_AMOUNT_MAX) {
@@ -400,6 +513,87 @@
       }
 
       return errors;
+    }
+
+    /* Changes 11 and 12, both transcribed from DeliveryDateModal.vue — the one
+       consumer modal that builds a real header inside this same Reveal shell.
+
+       Control's negotiate modal opens with `<h2 class="text-lg leading-4">` and
+       runs straight into a bulleted list at body size, so the title, the tips and
+       the form all read as one block. DeliveryDateModal states its title at
+       `text-xl font-bold` on its own row, then puts its help text in a peach
+       block, then the content. The close control stays the Reveal's own × rather
+       than the header icon that modal draws for itself (it passes
+       `:show-close-button="false"`; this modal does not). */
+    function buildModalHeader(title, trailing) {
+      var html = '<div class="mb-4">';
+      html += '<div class="flex items-center gap-3 pb-3">';
+      html += '<div class="flex-1 font-dm text-xl font-bold text-slate-900">' + title + '</div>';
+      html += trailing || '';
+      html += '</div>';
+      return html; // caller adds the help block, then closes the wrapper
+    }
+
+    /* NegotiationMessage.vue scrolls its list to the bottom `onMounted` and again
+       whenever the message count changes. The proto re-renders the whole modal on
+       every change, so one call per render is the same thing — and it matters
+       because the list is height-capped: landing at the top with no visible
+       scrollbar hides the newest message, the one the seller opened the modal to
+       read. Called after the reveal is shown as well as after each render: a
+       display:none element cannot be scrolled, exactly as it cannot take focus. */
+    function scrollThreadToEnd() {
+      var list = document.getElementById('neg-thread-list');
+      if (!list) return;
+      /* Repeated, which prod has no need to do: its CSS is compiled, so a thread's
+         height is final the moment it renders. Here the Play CDN generates the
+         bubbles' own utilities asynchronously after JS injects them, so the list
+         keeps growing after the render and a single assignment lands short of the
+         end — on a phone, where everything wraps, it landed a whole button short.
+
+         So the pin follows the content until it stops moving. Proto artifact,
+         not prod behaviour. */
+      var lastPinned = -1;
+      var pin = function () {
+        var el = document.getElementById('neg-thread-list');
+        if (!el || el.dataset.userScrolled === '1') return;
+        el.scrollTop = el.scrollHeight;
+        lastPinned = el.scrollTop;
+      };
+      pin();
+      requestAnimationFrame(pin);
+      /* And keep pinning while the list is still growing. A ResizeObserver was
+         the obvious tool and does not fire at all in this environment — not even
+         the initial callback the spec promises on observe — so this polls
+         instead: every 100ms, stopping after half a second of unchanged height
+         or as soon as the seller scrolls. It is a prototype-only workaround for
+         a prototype-only problem (the CDN generating utilities late); prod's CSS
+         is compiled and its `nextTick` is enough. */
+      (function () {
+        var lastH = -1, stable = 0;
+        (function tick() {
+          var el = document.getElementById('neg-thread-list');
+          if (!el || el.dataset.userScrolled === '1') return;
+          if (el.scrollHeight === lastH) { stable++; } else { lastH = el.scrollHeight; stable = 0; }
+          pin();
+          if (stable < 5) setTimeout(tick, 100);
+        }());
+      }());
+      list.addEventListener('scroll', function () {
+        /* A scroll event is the seller's only if the position is not the one we
+           last set. Testing "is it at the bottom?" instead looked right and was
+           wrong: the list grows AFTER we pin it, so our own position stops being
+           the bottom, the handler read that as a user scroll and switched the
+           pinning off — which is exactly how the last bubble ended up cut off on
+           a phone. */
+        if (Math.abs(list.scrollTop - lastPinned) > 1) list.dataset.userScrolled = '1';
+      });
+
+    }
+
+    /* DeliveryDateModal's `handover_date_help_text` block, verbatim: the one
+       place prod separates a modal's guidance from its body copy. */
+    function buildModalHelp(inner) {
+      return '<div class="modal-help">' + inner + '</div>';
     }
 
     /* NumberInput.vue, transcribed. The label is the field's own name; the €
@@ -431,8 +625,22 @@
 
       var html = '<div class="relative">';
       html += '<label>';
-      html += '<span class="mb-3 inline-block text-base font-medium leading-none lg:text-lg">Viesti</span>';
-      html += '<textarea id="modal-neg-message" rows="3" maxlength="2500" class="' + taCls + '"></textarea>';
+      /* Change 18. Control puts the contact-info warning on its own paragraph
+         BELOW the textarea, where it costs a line (two on a phone) at the bottom
+         of an already tall modal. v1 makes it the label row's right-hand hint —
+         the rule applies while typing, so it belongs beside the field's name,
+         and shortened it fits next to "Viesti" at 360px. */
+      html += EN_V1
+        ? '<span class="mb-3 flex items-baseline justify-between gap-3">' +
+            '<span class="text-base font-medium leading-none lg:text-lg">Viesti</span>' +
+            '<span class="text-xs text-slate-500 leading-none">' + EN_COPY.noContactInfo + '</span>' +
+          '</span>'
+        : '<span class="mb-3 inline-block text-base font-medium leading-none lg:text-lg">Viesti</span>';
+      /* v1 borrows the dealer form's own placeholder (app.negotiations
+         .counter_offer_message) — existing prod copy that says the message is
+         optional and what it is for. Control has no placeholder at all. */
+      var taPlaceholder = EN_V1 ? ' placeholder="Jos haluat, perustele tässä vastatarjouksesi."' : '';
+      html += '<textarea id="modal-neg-message" rows="3" maxlength="2500"' + taPlaceholder + ' class="' + taCls + '"></textarea>';
       html += '</label>';
       html += '<div id="modal-neg-count" class="absolute right-3 bottom-1 text-sm">0 / 2500</div>';
       (errors || []).forEach(function(msg) {
@@ -809,6 +1017,55 @@
       negotiation_stopped:  { title: 'Neuvottelu päättyi',              desc: 'Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen tai jatkaa myyntiä kanssamme.' },
     };
 
+    /* Change 19 — the hero speaks for the negotiation too.
+
+       prod already gives the hero its own copy for every other end state the
+       seller can be in: no offers, expired, accepted, rejected, a final offer,
+       and a closed negotiation. A LIVE negotiation is the gap. While the seller
+       waits for a reply, and again once the reply lands, the hero still says
+       "Nyt on aikasi toimia! — Hyväksy tarjous, niin autoliike ottaa sinuun
+       yhteyttä", which is the auction-ended message and is now wrong twice over:
+       the seller has already acted, and what they are waiting for is not stated
+       anywhere except a line on the card.
+
+       The tiers no longer differentiate the auction result (see above), so this
+       is the content earning its place back — the same slot, used for the status
+       the seller is actually in.
+
+       PLACEHOLDER COPY, pending review. */
+    var HERO_NEGOTIATION = {
+      pending: {
+        title: 'Vastatarjous lähetetty',
+        desc:  'Liikkeet vastaavat arkisin klo 10–16. Voit hyväksyä nykyisen tarjouksen myös neuvottelun aikana.'
+      },
+      /* Two of them, because what the seller can do next depends on whether a
+         round is left — the same distinction the send button already carries. */
+      repliedCanCounter: {
+        title: 'Autoliike vastasi',
+        desc:  'Avaa neuvottelu ja katso liikkeen tarjous. Voit hyväksyä sen tai tehdä vielä yhden vastatarjouksen.'
+      },
+      repliedLastRound: {
+        title: 'Autoliike vastasi',
+        desc:  'Avaa neuvottelu ja katso liikkeen tarjous. Vastatarjouksia ei tehdä enempää, joten voit hyväksyä tarjouksen tai hylätä sen.'
+      }
+    };
+
+    /* Kept out of `postAuctionStatus`, which stays a transcription of prod's own
+       predicates and also drives the warm-up card and the bottom banner. This
+       only swaps what the HERO renders, and only in v1. */
+    function heroCopy(pas, offers) {
+      var hc = HERO_COPY[pas] || HERO_COPY.good_auction;
+      if (!EN_V1) return hc;
+      var neg = offers[0] ? NEGOTIATIONS[offers[0].id] : null;
+      var st  = negStatus(neg);
+      if (st === 0) return HERO_NEGOTIATION.pending;
+      if (st === 7) {
+        var sellerRounds = ((neg && neg.messages) || []).filter(function (m) { return m.sender === 'seller'; }).length;
+        return sellerRounds >= 2 ? HERO_NEGOTIATION.repliedLastRound : HERO_NEGOTIATION.repliedCanCounter;
+      }
+      return hc;
+    }
+
     /* Three warm-up cards in prod, not five: the four tiers share
        `warm_up_card.auction_ended`, and no_offers and expired_offers keep their
        own. `ok_auction.png` is no longer referenced by anything — prod's configs
@@ -875,18 +1132,131 @@
       if (status === 'rejected')  return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' + ICO_X_CIRCLE + '<span>Hylätty</span></div>';
       if (status === 'expired')   return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' + ICO_HG_LOW + '<span>Umpeutunut</span></div>';
       if (status === 'negotiation') {
-        if (dealerReplied) return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-lime-700 text-center">' + ICO_CHATS + '<span>Liikkeeltä on tullut vastaus</span></div>';
-        return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-amber-600 text-center">' + ICO_CLOCK_USR + '<span>Odotetaan liikkeen vastausta</span></div>';
+        /* Change 15's third colour, and it is not a new one: a car in negotiation
+           is already tagged `Neuvottelut käynnissä` on the offers page in
+           UiBadge's `amber` (bg-amber-50 / border-amber-400 / text-amber-700),
+           for BOTH negotiation statuses. v1 gives the decision page the same
+           amber for the same status, so a seller arriving from the offers list
+           sees one colour follow the car. Control splits them — waiting amber-600,
+           replied lime — which matches neither the tag nor itself.
+
+           Waiting keeps that amber, because waiting IS the tag's status. The
+           replied line does not: once there is something unread it stops being a
+           status and becomes a notification, so it takes `red-500` — the same
+           red as the count on the button below it, and the colour a seller reads
+           as "new" without being taught. The icons stay prod's own, clock while
+           waiting and chats once there is something to read.
+
+           The line stays a line rather than becoming a chip: the decision page
+           writes every status that way (Umpeutuu, Hylätty), and the tag is a
+           different component on a different page. Note that red is also the
+           page's expiry colour, so a second card counting down carries red for a
+           different reason — see the spec. */
+        if (dealerReplied) return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-center ' + (EN_V1 ? 'text-red-500' : 'text-lime-700') + '">' + ICO_CHATS + '<span>Liikkeeltä on tullut vastaus</span></div>';
+        return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-center ' + (EN_V1 ? 'text-amber-700' : 'text-amber-600') + '">' + ICO_CLOCK_USR + '<span>Odotetaan liikkeen vastausta</span></div>';
       }
       // active: firstPlace / secondPlace / thirdPlace / finalOffer / negotiation_stopped
       return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' +
         '<span class="mt-0.5">' + ICO_HG_HIGH + '</span><span>Umpeutuu:</span><span class="font-mono">' + fmtTime(timeToReact) + '</span></div>';
     }
 
-    /* partials/Negotiation.vue with point-of-view="seller" — the component the
-       seller's negotiate modal renders. Container, bubble classes, the rotated
-       tail and the amount/message/timestamp order are all prod's; the tail
-       itself is in the page's <style> block. */
+    /* ── Batch 2 — the thread, as the newer component renders it ──────────────
+       `negotiations/NegotiationMessage.vue` already declares a `pointOfView`
+       prop that accepts 'seller'. It was built for both sides; the seller was
+       simply never switched over and still renders the legacy
+       `partials/Negotiation.vue`. So this is a prop flip in prod, not a redesign,
+       and here it is a transcription of a component that already exists.
+
+       Differences from the legacy thread, all prod's:
+         · bubbles are bordered and soft — own `border-blue-300 bg-blue-50`,
+           other `border-gray-200 bg-white` — not a solid blue-600 fill
+         · one corner is squared toward the sender (rounded-tr-none / -tl-none)
+           instead of a rotated tail pseudo-element
+         · p-4 and rounded-xl, min-w-[14rem], max-w-[75%]
+         · the list is height-capped and scrolls, so a long thread stops pushing
+           the form off screen
+         · a stopped negotiation collapses behind "Avaa neuvotteluhistoria" —
+           which is also the seller's route back in after it ends
+         · the last message from the other side carries the accept action */
+    function buildChatThreadV1(msgs, opts) {
+      opts = opts || {};
+      msgs = msgs || [];
+
+      /* Change 13, second attempt. A grey badge above the field stated the
+         standing offer as a hint; it still read as a separate widget bolted to
+         the form. The auction result IS the first thing the dealership said, so
+         it becomes the first bubble and the negotiation continues from it — one
+         thread, in order, instead of a figure quoted next to it. It stays as the
+         thread grows: it is what the seller is countering FROM, and their own
+         later replies never overwrite it.
+
+         `offer.amount` is the auction result and stays put — a dealer reply
+         updates `tenderOffer.amount` in prod, but the proto keeps replies in the
+         thread and reads the latest from there (`effectiveAmount`). */
+      if (opts.auctionOffer) {
+        msgs = [{
+          sender: 'dealer',
+          amount: opts.auctionOffer.amount,
+          message: opts.auctionOffer.label,
+          created_at: opts.auctionOffer.created_at,
+          isAuctionResult: true
+        }].concat(msgs);
+      }
+      if (msgs.length === 0) return '';
+
+      /* NegotiationMessage collapses a stopped thread behind
+         `negotiation.open_message_history`, and this deliberately does NOT.
+         That component lives on the dealership's screen, where the negotiation is
+         one panel among many and collapsing it buys back room. Here the modal
+         exists for nothing else — the seller opened it to read the thread, so
+         hiding it behind a second click is a step for no gain. */
+      var html = '<div class="relative bg-gray-100/60">';
+      html += '<div id="neg-thread-list" class="neg-thread max-h-[325px] overflow-y-auto p-2 space-y-2 border-y border-slate-200">';
+      var lastMsg = msgs[msgs.length - 1];
+      msgs.forEach(function(msg) {
+        var isSeller = msg.sender === 'seller';
+        /* pointOfView = 'seller', so the seller's own messages are the ones that
+           align right and take the blue treatment. */
+        var bubble = isSeller
+          ? 'ml-auto rounded-tr-none border-blue-300 bg-blue-50'
+          : 'mr-auto rounded-tl-none border-gray-200 bg-white';
+        html += '<div class="flex px-2 py-1">';
+        html += '<div class="relative max-w-[75%] min-w-[14rem] text-sm p-4 rounded-xl shadow-sm border ' + bubble + '">';
+        html += '<div class="flex flex-col gap-3 text-sm leading-tight">';
+        html += '<div class="flex items-start gap-2">';
+        html += '<div class="font-bold">' + fmtCurrency(msg.amount);
+        if (!isSeller && msg.pickup) {
+          html += ' <span class="font-bold text-xs text-blue-500">+ Nouto</span>';
+        }
+        html += '</div>';
+        if (msg.created_at) {
+          html += '<div class="ml-auto mt-1 text-xs text-gray-500">' + fmtRelativeTime(msg.created_at) + '</div>';
+        }
+        html += '</div>';
+        if (msg.message) {
+          html += '<div class="break-words">' + escHtml(maskContactInfo(msg.message)) + '</div>';
+        }
+        /* Change 4 — accept inside the message, on the LAST one from the
+           dealership only, exactly where DealerAcceptCounterOfferAction sits on
+           their side. Full-width success button; the confirmation step the modal
+           already has names the amount. */
+        if (!isSeller && msg === lastMsg && opts.canAccept && !msg.isAuctionResult) {
+          /* Same label and same colour as the card's accept. The amount is not
+             repeated: it is the bold figure at the top of this very bubble, and
+             the button's placement inside it is what says which price it takes.
+             Naming it again made the two accepts read as different actions. */
+          html += '<button type="button" data-action="neg-accept-inline" class="w-full inline-flex items-center justify-center px-5 h-10 rounded-lg text-sm font-medium ' + acceptCls() + '">Hyväksy korkein tarjous</button>';
+        }
+        html += '</div></div></div>';
+      });
+      html += '<div class="h-1"></div></div></div>';
+      return html;
+    }
+
+    /* partials/Negotiation.vue with point-of-view="seller" — the LEGACY component
+       the seller's negotiate modal renders in control. Container, bubble classes,
+       the rotated tail and the amount/message/timestamp order are all prod's; the
+       tail itself is in the page's <style> block. */
     function buildChatThread(msgs) {
       if (!msgs || msgs.length === 0) return '';
       var html = '<div class="negotiation-container bg-gray-100 bg-opacity-60 relative"><div class="pt-2 pb-2">';
@@ -968,10 +1338,23 @@
 
       // Accept button
       if (showAccept) {
+        /* Change 15. Control paints accept primary blue on the card and
+           green in the modal, for the same act — and the modal's two buttons
+           are green accept + blue send, so the card teaches the seller one
+           meaning for blue and the modal immediately teaches another. v1 fixes
+           the meaning instead of the shade: GREEN accepts, BLUE negotiates,
+           everywhere. The green is `acceptCls()`, shared with the modal footer
+           and the in-thread accept — see change 17 for which green. */
         html += '<div>' +
-          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]" data-action="accept-offer" data-offer-id="' + offer.id + '">' + acceptText + '</button>' +
+          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-sm font-medium ' +
+            (EN_V1 ? acceptCls() : 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
+            '" data-action="accept-offer" data-offer-id="' + offer.id + '">' + acceptText + '</button>' +
+          /* Change 16. The (i) is a blue-600 disc against a green button, on a
+             line that is already the quietest thing on the card — it pulls the
+             eye to a footnote and reintroduces blue where change 15 just removed
+             it. The sentence stands on its own. */
           '<div class="flex text-xs mt-2 mb-2 space-x-2 text-left">' +
-            '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>' +
+            (EN_V1 ? '' : '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>') +
             '<span class="text-slate-700">Autoliike ottaa sinuun yhteyttä kaupan viimeistelyä varten.</span>' +
           '</div>' +
         '</div>';
@@ -980,14 +1363,38 @@
       // Negotiate button
       if (showNeg) {
         html += '<div class="relative">' +
-          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-800 text-sm font-medium" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' + negBtnLabel + '</button>' +
-          (dealerReplied ? '<div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 bg-lime-600 rounded-full text-xs text-black animate-pulse">1</div>' : '') +
+          /* Negotiating is blue in both places, and on the card it is prod's
+             `secondary` fill — the quieter, less busy of the two, with the green
+             accept above it as the only filled button that matters. An outlined
+             white version was tried twice: the first time it read as disabled
+             next to the green, the second time to give the count a white field.
+             The count no longer needs one — red carries itself on pale blue. */
+          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-sm font-medium bg-blue-100 hover:bg-blue-200 text-blue-800' +
+            '" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' +
+            (EN_V1 && dealerReplied ? '<span class="mr-2 flex items-center">' + ICO_CHATS + '</span>' : '') + negBtnLabel + '</button>' +
+          /* Change 14. The pulsing lime "1" stays — it is prod's, and it is the
+             only thing on the card that moves. What it sits on is the problem:
+             a `bg-blue-100` secondary button, the same weight as any other
+             secondary on the page, for the one action with something new behind
+             it. In v1 the button takes UiButton's `secondary` + `intent="success"`
+             (`bg-lime-200 hover:bg-lime-300 text-lime-700`) and the chats icon,
+             so it matches the lime "Liikkeeltä on tullut vastaus" line directly
+             above it and the blob on its own corner. Accept keeps primary blue,
+             so the hierarchy is unchanged: blue commits, lime is the unread
+             reply. */
+          /* The count is a notification, so it takes the notification colour every
+             phone already uses: UiBadge's own `red` fill, `bg-red-500` with white
+             on it. Lime read as decorative and amber as a status; red is the only
+             one a seller does not have to learn. The status line above it is
+             written in the same red, so the two are one signal. */
+          (dealerReplied ? '<div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 rounded-full text-xs animate-pulse ' +
+            (EN_V1 ? 'bg-red-500 text-white' : 'bg-lime-600 text-black') + '">1</div>' : '') +
           /* prod sets negotiationInfoText: null for negotiation_stopped — the
              help text promises the offer survives a counter-offer, and once the
              dealer has closed there is no counter-offer left to make. */
           (status === 'negotiation_stopped' ? '' :
             '<div class="flex text-xs mt-2 mb-2 space-x-2 text-left">' +
-              '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>' +
+              (EN_V1 ? '' : '<span class="flex items-center text-blue-600">' + ICO_INFO_SM + '</span>') +
               '<span class="text-slate-700">Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen.</span>' +
             '</div>') +
         '</div>';
@@ -1283,7 +1690,7 @@
       var grid     = document.getElementById('offers-grid');
       var selected = selectOffers(offers);
       var expiryTs = offerExpiryTs(req);
-      var hc       = HERO_COPY[pas] || HERO_COPY.good_auction;
+      var hc       = heroCopy(pas, offers);
 
       grid.innerHTML = '';
 
@@ -1444,6 +1851,7 @@
         var amtEl = document.getElementById('modal-neg-amount');
         if (amtEl) amtEl.focus();
       }
+      scrollThreadToEnd();
     }
 
     function closeModal() {
@@ -1477,7 +1885,7 @@
       body.innerHTML = '<p class="text-base text-slate-700">Mahtavaa, olet nyt hyväksymässä autoliikkeen tarjouksen!</p>';
       footer.innerHTML =
         '<div class="flex justify-end">' +
-          '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-green-600 hover:bg-green-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Hyväksy tarjous</button>' +
+          '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' + acceptCls() + '">Hyväksy tarjous</button>' +
         '</div>';
       document.getElementById('modal-btn-accept').addEventListener('click', function() {
         var _acceptNeg = NEGOTIATIONS[offer.id];
@@ -1513,34 +1921,96 @@
 
       var html = '';
 
+      /* Batch 2 routes the thread through the newer component in v1. canAccept
+         mirrors prod's own gate for the in-bubble action: a negotiation exists
+         and it is not the seller's turn to be waited on — i.e. exactly when the
+         footer's accept button would have shown. */
+      function thread() {
+        if (!EN_V1) return buildChatThread(msgs);
+        return buildChatThreadV1(msgs, {
+          canAccept: hasNegotiation && status !== 0,
+          auctionOffer: {
+            amount: offer.amount,
+            label: EN_COPY.standingOfferLabel,
+            created_at: req.auction_ends_at ? new Date(req.auction_ends_at * 1000).toISOString() : null
+          }
+        });
+      }
+
       if (isStopped) {
         // Negotiation stopped — seller accepts or closes
-        html += '<h2 class="text-sm leading-4 mb-3">Voit hyväksyä tarjouksen</h2>';
-        html += buildChatThread(msgs);
+        if (EN_V1) {
+          /* Change 12. Control says only "Voit hyväksyä tarjouksen" at
+             `text-sm` — the modal never states that the negotiation is over, so
+             the one fact the seller opened it to check is the one thing missing.
+             The dealership's side marks a close by REMOVING affordances: their
+             reply button disappears (`canShowReplyButton`) and the thread
+             collapses behind `negotiation.open_message_history`. The seller gets
+             the same collapse in v1, and the header now names the state with the
+             decision page's own hero copy, so it is stated rather than inferred
+             from a missing button. prod's line stays as the help text. */
+          html += buildModalHeader('Neuvottelu päättyi');
+          html += buildModalHelp(EN_COPY.stoppedHelp) + '</div>';
+        } else {
+          html += '<h2 class="text-sm leading-4 mb-3">Voit hyväksyä tarjouksen</h2>';
+        }
+        html += thread();
 
       } else if (sellerCanSend) {
         // Seller's turn to send
         if (isQuick) {
-          html += '<div class="text-lg leading-4">';
-          html += '<h2 class="text-lg leading-4">Tee vielä vastatarjous autoliikkeelle</h2>';
-          html += '<p class="mt-2">' + (offersCount === 1
+          var quickBody = offersCount === 1
             ? 'Autostasi ei valitettavasti syntynyt tarjouskilpailua. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.'
-            : 'Korkein tarjoaja haluaa ostaa autosi, älä jätä peliä vielä kesken. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.') + '</p>';
-          html += '</div>';
+            : 'Korkein tarjoaja haluaa ostaa autosi, älä jätä peliä vielä kesken. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.';
+          if (EN_V1) {
+            html += buildModalHeader('Tee vielä vastatarjous autoliikkeelle');
+            html += buildModalHelp(quickBody) + '</div>';
+          } else {
+            html += '<div class="text-lg leading-4">';
+            html += '<h2 class="text-lg leading-4">Tee vielä vastatarjous autoliikkeelle</h2>';
+            html += '<p class="mt-2">' + quickBody + '</p>';
+            html += '</div>';
+          }
         } else {
-          html += '<h2 class="text-lg leading-4">' + (hasNegotiation ? 'Tee uusi vastatarjous' : 'Tee vastatarjous') + '</h2>';
-          html += '<ul class="list-disc list-inside mt-2 mb-4">';
-          html += '<li>' + (hasNegotiation ? 'Tee uusi vastatarjous eniten tarjonneelle' : 'Tee vastatarjous eniten tarjonneelle') + '</li>';
-          html += '<li>Et menetä jo saamaasi tarjousta.</li>';
-          html += '<li>Vastatarjouksen avulla päästään usein kauppoihin.</li>';
-          html += '</ul>';
+          var negTitle = hasNegotiation ? 'Tee uusi vastatarjous' : 'Tee vastatarjous';
+          if (EN_V1) { html += buildModalHeader(negTitle); }
+          else { html += '<h2 class="text-lg leading-4">' + negTitle + '</h2>'; }
+          if (EN_V1) {
+            /* Changes 2 and 3, now one sentence pair rather than a list. Control's
+               three bullets all go: two of them because they restate the action
+               the seller has already taken and encourage more counter offers,
+               which is explicitly not this initiative's goal, and the third
+               because the pair below already contains it — a separate "kauppa
+               syntyy tällä hinnalla" line said the same thing twice.
+
+               Change 11 still applies: the guidance sits in DeliveryDateModal's
+               help block at `text-sm`, separated from the modal's own copy. With
+               one item there is nothing to bullet, so it is a paragraph. */
+            html += buildModalHelp(EN_COPY.counterOutcomes) + '</div>';
+          } else {
+            html += '<ul class="list-disc list-inside mt-2 mb-4">';
+            html += '<li>' + (hasNegotiation ? 'Tee uusi vastatarjous eniten tarjonneelle' : 'Tee vastatarjous eniten tarjonneelle') + '</li>';
+            html += '<li>Et menetä jo saamaasi tarjousta.</li>';
+            html += '<li>Vastatarjouksen avulla päästään usein kauppoihin.</li>';
+            html += '</ul>';
+          }
         }
-        if (hasNegotiation) {
-          html += buildChatThread(msgs);
-          html += '<p class="mt-4 p-4 flex items-center text-white bg-blue-600 rounded-lg">';
-          html += '<span class="mr-2 flex items-center text-white flex-shrink-0">' + ICO_INFO_FILL + '</span>';
-          html += '<span class="text-base leading-normal">Vastatarjouksia ei tämän jälkeen tehdä enempää.</span>';
-          html += '</p>';
+        /* v1 renders the thread even with no negotiation yet — it opens with the
+           auction result, which is the message the seller is answering. */
+        if (hasNegotiation || EN_V1) {
+          html += thread();
+          /* Change 6. Control's filled blue block sits directly above the form
+             and reads as forbidding it. v1 drops it entirely — the rounds left
+             ride on the send button instead, which is what the dealership's own
+             side already does (tender.button.deal.reply_to_negotiation), so the
+             seller reads the count at the moment they press rather than as a
+             notice over the field. */
+          if (!EN_V1) {
+            html += '<p class="mt-4 p-4 flex items-center text-white bg-blue-600 rounded-lg">';
+            html += '<span class="mr-2 flex items-center text-white flex-shrink-0">' + ICO_INFO_FILL + '</span>';
+            html += '<span class="text-base leading-normal">Vastatarjouksia ei tämän jälkeen tehdä enempää.</span>';
+            html += '</p>';
+          }
         }
         /* The amount field and its live asking-price warning are one block in
            prod (Negotiate.vue's first div.my-4), the warning a sibling of the
@@ -1553,36 +2023,64 @@
           html += '<div class="my-4">';
           html += buildNegMessageField(errors.message);
           html += '</div>';
-          html += '<p class="text-sm text-gray-700">Ethän kirjoita puhelinnumeroasi tai sähköpostiosoitettasi viestikenttään.</p>';
+          if (!EN_V1) html += '<p class="text-sm text-gray-700">Ethän kirjoita puhelinnumeroasi tai sähköpostiosoitettasi viestikenttään.</p>';
         }
 
       } else {
         // Waiting for dealer
         if (isQuick && sellerRounds === 1) {
-          html += '<h2 class="text-lg leading-4">Eikö autoliike ole ollut yhteydessä?</h2>';
-          html += '<ul class="list-disc list-inside mt-2 mb-4">';
-          html += '<li>Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä).</li>';
+          if (EN_V1) { html += buildModalHeader('Eikö autoliike ole ollut yhteydessä?'); }
+          else { html += '<h2 class="text-lg leading-4">Eikö autoliike ole ollut yhteydessä?</h2>'; }
+          html += EN_V1
+            ? '<div class="modal-help"><ul>'
+            : '<ul class="list-disc list-inside mt-2 mb-4">';
+          html += '<li>' + (EN_V1 ? EN_COPY.replyHours : 'Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä).') + '</li>';
           html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
-          html += '</ul>';
+          html += EN_V1 ? '</ul></div></div>' : '</ul>';
         } else if (sellerRounds === 1) {
-          html += '<div class="mb-4">';
-          html += '<h2 class="text-lg leading-4">Hyvä! Nyt odotellaan autoliikkeen vastausta.</h2>';
-          html += '<ul class="list-disc list-inside mt-2 mb-4">';
-          html += '<li>Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä).</li>';
-          html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
-          html += '</ul>';
-          html += '</div>';
+          if (EN_V1) { html += buildModalHeader('Hyvä! Nyt odotellaan autoliikkeen vastausta.'); }
+          else {
+            html += '<div class="mb-4">';
+            html += '<h2 class="text-lg leading-4">Hyvä! Nyt odotellaan autoliikkeen vastausta.</h2>';
+          }
+          html += EN_V1
+            ? '<div class="modal-help"><ul>'
+            : '<ul class="list-disc list-inside mt-2 mb-4">';
+          html += '<li>' + (EN_V1 ? EN_COPY.replyHours : 'Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä).') + '</li>';
+          if (EN_V1) {
+            /* The waiting state's second line. The support-email line goes —
+               change 8's reading is that the modal should answer the question
+               rather than route it to a phone call, and this is the state where
+               there is nothing for the seller to decide anyway. What replaces it
+               is the fact that removes the pressure: the standing offer is still
+               theirs while they wait. */
+            html += '<li>' + EN_COPY.acceptAnyTime + '</li>';
+          } else {
+            html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
+          }
+          html += EN_V1 ? '</ul></div></div>' : '</ul></div>';
         } else if (sellerRounds === 2) {
           /* Two rounds used and the dealer has already answered: prod stops
              talking about waiting and points at the accept button instead. */
-          html += waitingForSeller
-            ? '<p>Voit hyväksyä tarjouksen</p>'
-            : '<p>Nyt odotellaan taas autoliikkeen vastausta. Tämän jälkeen voit hyväksyä tai hylätä autoliikkeen tarjouksen, vastatarjouksia ei tehdä enempää. Toivottavasti pääsette kauppoihin!</p>';
+          var r2 = waitingForSeller
+            ? 'Voit hyväksyä tarjouksen'
+            : 'Nyt odotellaan taas autoliikkeen vastausta. Tämän jälkeen voit hyväksyä tai hylätä autoliikkeen tarjouksen, vastatarjouksia ei tehdä enempää. Toivottavasti pääsette kauppoihin!';
+          if (EN_V1) {
+            /* Both rounds used. Same treatment as every other state: the title
+               names where the negotiation is, prod's own sentence becomes the
+               help text under it. Titles are existing copy — the waiting side
+               reuses the round-one title, the finished side the hero's. */
+            html += buildModalHeader(waitingForSeller ? 'Neuvottelu päättyi' : 'Hyvä! Nyt odotellaan autoliikkeen vastausta.');
+            html += buildModalHelp(r2) + '</div>';
+          } else {
+            html += '<p>' + r2 + '</p>';
+          }
         }
-        html += buildChatThread(msgs);
+        html += thread();
       }
 
       body.innerHTML = html;
+      scrollThreadToEnd();
 
       /* ── Footer, from OfferActions.vue ──
          Accept is gated on the negotiation's STATUS, not on its existence: right
@@ -1609,17 +2107,32 @@
           : '<span class="mt-0.5">' + ICO_HG_LOW + '</span><span>Umpeutunut</span>';
         fRight += '</div>';
       }
-      if (showAccept) {
+      /* v1 moves accept into the dealership's last message — but only when that
+         message IS the last one. prod's stopped and replied threads both end on
+         the dealership, so this holds; the footer keeps the button otherwise
+         rather than leaving the seller no way to accept. */
+      var acceptIsInThread = EN_V1 && hasNegotiation && msgs.length > 0 &&
+        msgs[msgs.length - 1].sender === 'dealer';
+      if (showAccept && !acceptIsInThread) {
         fRight += '<button id="modal-btn-accept-from-neg"' + (buttonDisabled ? ' disabled' : '') +
           ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
-          (buttonDisabled ? disabledCls : 'bg-green-600 hover:bg-green-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
+          (buttonDisabled ? disabledCls : acceptCls()) +
           '">Hyväksy tarjous</button>';
       }
       if (showSend) {
+        /* Change 6, solved the way the dealership's side already solves it:
+           `tender.button.deal.reply_to_negotiation` is
+           "Lähetä vastatarjous (:roundsLeft jäljellä)", so the count rides on the
+           action instead of sitting in a notice above the field. That removes
+           control's filled blue block AND batch 1's hint line — the seller reads
+           how many they have left at the moment they press. */
+        var sendLabel = EN_V1
+          ? 'Lähetä vastatarjous (' + Math.max(0, 2 - sellerRounds) + ' jäljellä)'
+          : 'Lähetä';
         fRight += '<button id="modal-btn-send-neg"' + (buttonDisabled ? ' disabled' : '') +
           ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
           (buttonDisabled ? disabledCls : 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
-          '">Lähetä</button>';
+          '">' + sendLabel + '</button>';
       }
       if (showClose) {
         fRight += '<button id="modal-btn-close" class="inline-flex items-center justify-center px-6 h-10 rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 text-sm font-medium">Sulje</button>';
@@ -1686,6 +2199,12 @@
         messageEl.addEventListener('input', syncCount);
         syncCount();
       }
+
+      /* Accept from inside the bubble reaches the SAME confirmation step the
+         footer button used, which is the step that names the amount — prod's own
+         seller-side accept already confirms, and change 4 does not touch it. */
+      var acceptInline = body.querySelector('[data-action="neg-accept-inline"]');
+      if (acceptInline && !buttonDisabled) acceptInline.addEventListener('click', function() { openModal('Accept', MODAL.offerId); });
 
       if (rejectFromNeg && !buttonDisabled) rejectFromNeg.addEventListener('click', function() { MODAL.action = 'RejectConfirm'; renderModal(); });
       if (closeBtn)      closeBtn.addEventListener('click', closeModal);
@@ -1994,9 +2513,17 @@
       var counter = lastSeller ? lastSeller.amount : offer.amount;
       var floor = Math.max(offer.amount, lastDealer ? lastDealer.amount : 0);
       var proposed = Math.max(Math.round(counter * 0.97), floor);
-      // Never above the seller's counter-offer; reaching it means the dealer agrees to it
-      var amount = Math.min(proposed, counter);
-      var meets = amount === counter;
+      /* Never above the seller's counter-offer — reaching it means the dealer
+         agrees to it — and never below their own standing offer, which prod
+         enforces server-side: DealerNegotiationMessageAmount rejects any reply
+         under `tenderOffer.amount`. The floor wins, because the seller may
+         counter BELOW the standing offer (validation caps only the upper bound)
+         and `min(proposed, counter)` alone then produced a reply the API would
+         have refused. */
+      var amount = Math.max(Math.min(proposed, counter), floor);
+      /* `>=`, not `===`: a reply at or above the ask satisfies it. Equality alone
+         missed the clamped case, where the floor already exceeds the counter. */
+      var meets = amount >= counter;
       var sticks = !meets && (amount <= floor || (!opts.deterministic && Math.random() < 0.3));
       if (sticks) amount = floor;
       /* A close NEVER moves the price: CloseNegotiation copies
@@ -2024,6 +2551,28 @@
          prod's own `close_negotiation.message_pre_filled`, which
          CloseNegotiation.vue pre-fills and most dealers will send untouched. */
       var repeatSticks = sticks && !!lastDealer && lastDealer.amount === amount;
+      /* Auto-close. `negotiations:auto-close` runs at 12:00 on weekdays and
+         closes any negotiation past its `auto_close.at` — dueAt (the SLA in OPEN
+         hours) + 1 day at 12:00, skipped forward off non-business days. So the
+         copy's "24 tuntia arkiaikaa" is prod's own arithmetic.
+
+         What the seller reads is prod's oddity, reproduced: the scheduled
+         command passes `buyer_close_negotiation_reply`, the DEALER's pre-filled
+         message, so an unanswered negotiation closes with a sentence written as
+         if the dealership had replied ("kiitos viestistäsi"). The honest string
+         `auto_close_negotiation_reply` exists and is used by the sibling command
+         `requirements:auto-complete`, which is not scheduled anywhere in the
+         dump. Change 9 is that one-line swap, so v1 shows the seller a close
+         they can tell apart from a dealer's. */
+      if (opts.autoClose) {
+        return {
+          amount: floor,
+          closes: true,
+          message: EN_V1
+            ? 'Neuvottelu on nyt päättynyt. Viimeisin tarjous odottaa päätöstäsi.'
+            : 'Hei ja kiitos viestistäsi. Tämä on korkein tarjous, jonka voimme autostasi tällä hetkellä antaa. Kiitos, että harkitset tarjoustamme.'
+        };
+      }
       var text = opts.silent ? ''
         : meets
           ? 'Hei! Käy kaupaksi — hyväksymme ehdottamasi hinnan. Toivottavasti pääsemme kauppoihin!'
@@ -2099,7 +2648,7 @@
             'and only twice. Send a counter-offer, or reset counter offers.');
         return;
       }
-      var _reply = computeDealerReply(_h, _neg, { close: opts.close, silent: opts.silent });
+      var _reply = computeDealerReply(_h, _neg, { close: opts.close, silent: opts.silent, autoClose: opts.autoClose });
       _neg.messages.push({
         sender: 'dealer',
         amount: _reply.amount,
@@ -2128,6 +2677,16 @@
        offer", distinct from the param being absent. */
     window.protoPage = {
       scenarios: SCENARIO_GROUPS,
+      initiatives: [
+        {
+          slug:    'enhanced-negotiations',   // name + spec live in proto-mode's registry
+          default: 'control',                 // no param renders production
+          variants: [
+            { id: 'control', label: 'Control — current design' },
+            { id: 'v1',      label: 'Variant 1 — enhanced negotiation' }
+          ]
+        }
+      ],
       panelLabel: 'Auction settings',
       panelTitle: 'Auction prices and simulated dealer responses',
       fieldsLabel: 'Prices €',
@@ -2156,6 +2715,13 @@
           label: 'Close, no message',
           title: 'Dealer clears the message box and closes — the bubble carries only the amount',
           run: function () { simulateDealerReply({ close: true, silent: true }); }
+        },
+        {
+          /* The deadline expiring, not the dealer acting. Same STATUS_STOPPED,
+             and in prod today the same message — which is change 9's point. */
+          label: 'Auto-close (deadline passed)',
+          title: 'Nobody replied within 24 business hours, so negotiations:auto-close closed it at 12:00',
+          run: function () { simulateDealerReply({ close: true, autoClose: true }); }
         },
         {
           label: 'Reset counter offers',
@@ -2236,7 +2802,13 @@
             messages: [
               { sender: 'seller', amount: 11700, message: 'Hei! Haluaisin tästä hieman enemmän. Minkä verran joustoa teillä on?', created_at: new Date((_now()-5*3600)*1000).toISOString() },
               { sender: 'dealer', amount: 11600, message: 'Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa. Toivottavasti pääsemme kauppoihin!', created_at: new Date((_now()-3*3600)*1000).toISOString() },
-              { sender: 'seller', amount: 11650, message: 'Okei, voisiko 11 650 € onnistua?', created_at: new Date((_now()-1*3600)*1000).toISOString() }
+              { sender: 'seller', amount: 11650, message: 'Okei, voisiko 11 650 € onnistua?', created_at: new Date((_now()-2*3600)*1000).toISOString() },
+              /* The close itself. CloseNegotiation always creates a DEALER
+                 message carrying tenderOffer->amount unchanged, so a stopped
+                 thread always ends on the dealership — the seeded thread used to
+                 end on the seller, which prod cannot produce. Copy is prod's own
+                 close_negotiation.message_pre_filled. */
+              { sender: 'dealer', amount: 11600, message: 'Hei ja kiitos viestistäsi. Tämä on korkein tarjous, jonka voimme autostasi tällä hetkellä antaa. Kiitos, että harkitset tarjoustamme.', created_at: new Date((_now()-1*3600)*1000).toISOString() }
             ],
             isStopped: true
           };
@@ -2282,6 +2854,13 @@
         }
       });
     }
+
+    /* Change 11. The dealer-replied and negotiation-closed emails land on the
+       offers LIST today, so the seller has to find the car and then work out that
+       the reply is behind a secondary button. The link now lands on the decision
+       page for that car — and stops there. Opening the thread automatically was
+       tried and dropped: the seller should see the page they arrived at, decide
+       what to look at, and open the negotiation themselves. */
 
     // Boot
     saveState();
