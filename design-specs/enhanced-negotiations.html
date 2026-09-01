@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enhanced negotiations · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    /* Long unbroken identifiers have no break opportunity and pushed the page
+       20px wide at 375px. */
+    code { overflow-wrap: anywhere; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <!-- Hero -->
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · offers &amp; decision</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Enhanced negotiations</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Almost half of all offers go to a negotiation, and the usual reason one fails is the seller asking too much. Every fact that would tell them what is reasonable already exists — and none of it is on screen when they type a number.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Ready to build — Finnish copy pending approval
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-3">Goal</h2>
+      <ul class="font-dm text-base leading-7 text-slate-800 list-disc pl-5 space-y-1 max-w-3xl">
+        <li><b>More educated counter offers</b> — the seller can see what they are countering.</li>
+        <li><b>Fewer counter offers</b> — not discouraged, just better judged.</li>
+        <li><b>More acceptance, either side</b> — the tertial goal this belongs to.</li>
+      </ul>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Not a goal: more sellers countering.</b> Half of all offers already reach negotiation, which is a heavy load for dealerships. Each change is judged on the quality of an ask, not the likelihood of one.</p>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Negotiation logic does not change.</b> Two rounds each, the amount caps and what an acceptance does all stay exactly as they are. Everything below is what the seller sees.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Each numbered change is one self-contained piece of work — a candidate ticket. Every section states <b>what changes</b>, <b>where it is</b>, <b>which state the seller has to be in</b> to see it, and links straight to that state in the prototype. Finnish copy carries an English gloss for reference; the reasoning is in small print at the end and is context, not requirement.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Three surfaces are involved: the <b>negotiation modal</b>, the <b>offer card</b> and <b>hero</b> on the decision page, and three <b>emails</b>. Nothing else is touched.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl"><b>Order matters in one place:</b> change 1 creates the block that changes 2, 3 and 9 put copy into, and changes 4 and 5 are the same component. Everything else is independent.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-3">Change log</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">In build order.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">Change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Scenario</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-4 py-3 font-bold">1</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Guidance in a help block</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
+            <tr><td class="px-4 py-3 font-bold">2</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">Counter offer outcomes</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">Before sending</td></tr>
+            <tr><td class="px-4 py-3 font-bold">3</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c3">Negotiation modal header</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
+            <tr><td class="px-4 py-3 font-bold">4</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c4">Negotiation thread redesign</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">Any negotiation</td></tr>
+            <tr><td class="px-4 py-3 font-bold">5</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c5">Auction result as a bubble</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
+            <tr><td class="px-4 py-3 font-bold">6</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c6">Rounds left on the send button</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">Before sending</td></tr>
+            <tr><td class="px-4 py-3 font-bold">7</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c7">Counter offer field error</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">Empty field submit</td></tr>
+            <tr><td class="px-4 py-3 font-bold">8</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c8">Shorter modal</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">Before sending</td></tr>
+            <tr><td class="px-4 py-3 font-bold">9</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c9">Support contact stays off the modal</a></td><td class="px-4 py-3">Negotiation modal</td><td class="px-4 py-3 text-slate-600">Waiting for reply</td></tr>
+            <tr><td class="px-4 py-3 font-bold">10</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c10">Auto-close message</a></td><td class="px-4 py-3">Negotiation thread</td><td class="px-4 py-3 text-slate-600">Automatically closed</td></tr>
+            <tr><td class="px-4 py-3 font-bold">11</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c11">Emails link to the decision page</a></td><td class="px-4 py-3">Emails</td><td class="px-4 py-3 text-slate-600">Dealership replied · closed</td></tr>
+            <tr><td class="px-4 py-3 font-bold">12</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c12">Reply notification on the card</a></td><td class="px-4 py-3">Decision page · offer card</td><td class="px-4 py-3 text-slate-600">Dealership replied</td></tr>
+            <tr><td class="px-4 py-3 font-bold">13</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c13">Info icons removed</a></td><td class="px-4 py-3">Decision page · offer card</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
+            <tr><td class="px-4 py-3 font-bold">14</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c14">Colour consistency</a></td><td class="px-4 py-3">Decision page · card and modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
+            <tr><td class="px-4 py-3 font-bold">15</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c15">Updated green</a></td><td class="px-4 py-3">Decision page · card and modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
+            <tr><td class="px-4 py-3 font-bold">16</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c16">Hero shows status, not auction result</a></td><td class="px-4 py-3">Decision page · hero</td><td class="px-4 py-3 text-slate-600">Waiting · dealership replied</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c1">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 — Guidance in a help block</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">All states</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>A new contained block holds the modal&rsquo;s guidance: <b>peach background #FAEADA, 1px border of the same colour, 6px radius, 16px padding (12px below 620px), 14px slate-600 text</b>.</li><li>It sits directly under the header, above the thread and the form.</li><li>One item renders as a paragraph, several as a bulleted list.</li><li>Used in all three states — before sending, waiting for a reply, and closed. <b>Build this first</b>: changes 2, 3 and 9 all put their copy inside it.</li></ul>
+      </div>
+      <div class="mt-4 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">The block, before sending</p>
+        <div class="bg-slate-100 border border-slate-200 rounded-lg p-5">
+<div class="max-w-sm mx-auto"><div class="text-sm text-slate-600 bg-[#FAEADA] border border-[#FAEADA] p-3 rounded-md">Autoliike voi hyväksyä vastatarjouksesi, jolloin kaupat syntyvät. Se voi myös nostaa tai pitäytyä tarjouksessaan.</div></div>
+        </div>
+      </div>
+
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— open <i>Tee vastatarjous</i> on the highest offer</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> Guidance, heading and form currently run together as one column of body copy at the same size, with nothing marking where the explanation ends and the seller&rsquo;s task begins. The delivery-date modal in the product already uses this exact block for the same purpose.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 — Counter offer outcomes</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Before sending</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>The help block states what can happen to a counter offer, in one sentence pair:</li><li><b>&ldquo;Autoliike voi hyväksyä vastatarjouksesi, jolloin kaupat syntyvät. Se voi myös nostaa tai pitäytyä tarjouksessaan.&rdquo;</b><br><span class="text-slate-500">EN: The dealership can accept your counter offer, which closes the sale. It can also raise its offer or stand by it.</span></li><li>Both current bullets are removed: <i>&ldquo;Tee vastatarjous eniten tarjonneelle&rdquo;</i> and <i>&ldquo;Vastatarjouksen avulla päästään usein kauppoihin&rdquo;</i>.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— open <i>Tee vastatarjous</i> on the highest offer</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The first restates the action the seller has already taken; the second encourages more counter offers, which is explicitly not this initiative&rsquo;s goal. What is left are the two facts that decide whether an ask is reasonable: an accepted counter offer closes the sale on the spot, and the dealership&rsquo;s offer can never fall.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c3">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">3 — Negotiation modal header</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">All states</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Every state gets a real title row: <b>20px bold slate-900</b>, on its own line above the help block.</li><li>The modal keeps its existing close control — no second one in the header.</li><li>The closed state pairs its title with <b>&ldquo;Hyväksyttyäsi tarjouksen, autoliike ottaa sinuun yhteyttä.&rdquo;</b> <span class="text-slate-500">(EN: Once you accept the offer, the dealership will contact you.)</span> in the help block.</li></ul>
+      </div>
+      <div class="mt-4 max-w-3xl bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left"><thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-4 py-3 font-medium">State</th><th class="px-4 py-3 font-medium">Title (FI)</th><th class="px-4 py-3 font-medium">EN, for reference</th></tr></thead><tbody class="divide-y divide-slate-100 text-slate-800"><tr><td class="px-4 py-3 text-slate-600">Before the first counter offer</td><td class="px-4 py-3 font-bold">Tee vastatarjous</td><td class="px-4 py-3 text-slate-500">Make a counter offer</td></tr><tr><td class="px-4 py-3 text-slate-600">A negotiation already exists</td><td class="px-4 py-3 font-bold">Tee uusi vastatarjous</td><td class="px-4 py-3 text-slate-500">Make a new counter offer</td></tr><tr><td class="px-4 py-3 text-slate-600">Counter offer sent, waiting</td><td class="px-4 py-3 font-bold">Hyvä! Nyt odotellaan autoliikkeen vastausta.</td><td class="px-4 py-3 text-slate-500">Good! Now we wait for the dealership&rsquo;s reply.</td></tr><tr><td class="px-4 py-3 text-slate-600">Both rounds used, waiting</td><td class="px-4 py-3 font-bold">Hyvä! Nyt odotellaan autoliikkeen vastausta.</td><td class="px-4 py-3 text-slate-500">Good! Now we wait for the dealership&rsquo;s reply.</td></tr><tr><td class="px-4 py-3 text-slate-600">Negotiation closed</td><td class="px-4 py-3 font-bold">Neuvottelu päättyi</td><td class="px-4 py-3 text-slate-500">The negotiation has ended</td></tr><tr><td class="px-4 py-3 text-slate-600">Quick counter offer</td><td class="px-4 py-3 font-bold">Tee vielä vastatarjous autoliikkeelle</td><td class="px-4 py-3 text-slate-500">Make one more counter offer to the dealership</td></tr></tbody></table>
+      </div>
+
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=negotiation-stopped&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— negotiation closed — open <i>Näytä vastaus</i></span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The current heading is barely above body copy, and in the closed state it drops to 14px. Closed is where it matters most: today the modal never states that the negotiation is over, only that an offer can be accepted.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c4">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">4 — Negotiation thread redesign</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Any negotiation</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li><b>Reuse the negotiation thread component from the buyer (dealership) view.</b> It already supports a seller point of view; the seller side is simply still on the old one. This is a swap, not a new component.</li><li>Messages become bordered cards on a light background instead of solid blue fills with a tail: the seller&rsquo;s own right-aligned with a blue border and pale blue fill, the dealership&rsquo;s left-aligned with a grey border on white, each with the corner nearest the sender squared off.</li><li>The thread is <b>height-capped at 325px and scrolls</b>, and <b>opens scrolled to the newest message</b>.</li><li>The accept button sits <b>inside the dealership&rsquo;s last message</b>, as it does on the buyer side.</li></ul>
+      </div>
+      <div class="mt-4 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Thread — dealership has replied</p>
+        <div class="bg-slate-100 border border-slate-200 rounded-lg p-5">
+<div class="bg-gray-100/60 border border-slate-200 rounded-md p-1 max-w-sm mx-auto"><div class="flex px-1 py-1"><div class="max-w-[85%] min-w-[11rem] text-xs p-3 rounded-xl shadow-sm border mr-auto rounded-tl-none border-gray-200 bg-white"><div class="flex items-start gap-2"><div class="font-bold text-slate-900">11 500 €</div><div class="ml-auto text-[11px] text-gray-500">4 t sitten</div></div><div class="mt-2 text-slate-700">Korkein tarjous</div></div></div><div class="flex px-1 py-1"><div class="max-w-[85%] min-w-[11rem] text-xs p-3 rounded-xl shadow-sm border ml-auto rounded-tr-none border-blue-300 bg-blue-50"><div class="flex items-start gap-2"><div class="font-bold text-slate-900">11 700 €</div><div class="ml-auto text-[11px] text-gray-500">2 t sitten</div></div><div class="mt-2 text-slate-700">Hei! Haluaisin tästä hieman enemmän.</div></div></div><div class="flex px-1 py-1"><div class="max-w-[85%] min-w-[11rem] text-xs p-3 rounded-xl shadow-sm border mr-auto rounded-tl-none border-gray-200 bg-white"><div class="flex items-start gap-2"><div class="font-bold text-slate-900">11 600 €</div><div class="ml-auto text-[11px] text-gray-500">1 t sitten</div></div><div class="mt-2 text-slate-700">Hei! Tämä on paras tarjous, jonka voimme tällä hetkellä antaa.</div><div class="mt-2"><div class="w-full text-center bg-green-500 text-white text-xs font-medium rounded-lg py-2">Hyväksy korkein tarjous</div></div></div></div></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-2">First bubble is the auction result (change 5). Accept sits in the last dealership message.</p>
+      </div>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-4 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Differences from the buyer view</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1"><li>The in-message accept uses the <b>new green</b> and the seller&rsquo;s own label — see <a class="text-av-blue underline" href="#c15">change 15</a>.</li><li>A <b>closed negotiation stays expanded</b>. The buyer view collapses it behind a reveal; do not do that here.</li><li>The first bubble is the <b>auction result</b> (<a class="text-av-blue underline" href="#c5">change 5</a>), which the buyer view has no equivalent of.</li><li>Accepting still goes through the existing confirmation step — unchanged.</li></ul>
+      </div>
+
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the dealership has replied — open <i>Näytä vastaus</i></span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> Landing at the top of a capped list hid the newest message — the one the seller opened the modal to read. Everything else here already exists and is in daily use on the other side of the same negotiation.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c5">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">5 — Auction result as a bubble</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">All states</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>The winning auction offer renders as the <b>first message in the thread</b>, on the dealership&rsquo;s side, labelled <b>Korkein tarjous</b> <span class="text-slate-500">(EN: Highest offer)</span> with the amount in bold and the auction end time as its timestamp.</li><li>It is present <b>even when no negotiation exists yet</b>, so the modal always opens with a thread and the offer being countered is <b>always on screen while the seller types</b>.</li><li>It never changes as the negotiation continues, and never carries the accept button.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— open <i>Tee vastatarjous</i> on the highest offer</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> On a first counter offer the modal shows no figure at all today — and it covers the offer the seller was just reading, so they close it to check and reopen. As a bubble the negotiation reads in order: what was offered, what was asked, what came back. A figure quoted beside the form was tried twice, as a line and as a grey hint badge, and both read as a widget bolted onto the field.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c6">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">6 — Rounds left on the send button</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Before sending</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>The send button carries the rounds remaining: <b>&ldquo;Lähetä vastatarjous (2 jäljellä)&rdquo;</b>, then <b>&ldquo;(1 jäljellä)&rdquo;</b>. <span class="text-slate-500">(EN: Send counter offer — 2 left)</span></li><li>The blue notice above the field — <i>&ldquo;Vastatarjouksia ei tämän jälkeen tehdä enempää&rdquo;</i> — is removed.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the dealership has replied — open <i>Näytä vastaus</i></span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The count on the action is read at the moment the seller presses. As a filled block above the field it read as forbidding the field beneath it. The buyer view already words its button this way.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c7">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">7 — Counter offer field error</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Empty field submit</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Submitting with an empty amount shows <b>&ldquo;Pakollinen tieto&rdquo;</b> <span class="text-slate-500">(EN: Required)</span> under the field.</li><li>It currently shows <i>&ldquo;Kenttä Pyyntihinta vaaditaan.&rdquo;</i> — <i>the Asking price field is required</i>.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— open <i>Tee vastatarjous</i> on the highest offer, then submit with an empty amount</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The message names the asking price on a field labelled Vastatarjous — a field that is not on the screen. The generic required-field string the funnel already uses names no field, so it cannot name the wrong one.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c8">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">8 — Shorter modal</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Before sending</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>The contact-info rule moves from its own paragraph under the textarea to the <b>right end of the Viesti label row</b>, shortened to <b>&ldquo;Älä jätä yhteystietoja&rdquo;</b> <span class="text-slate-500">(EN: Do not leave contact details)</span>, 12px slate-500. It must fit on one line at 360px.</li><li>The help block&rsquo;s padding drops to <b>12px below 620px</b>.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— open <i>Tee vastatarjous</i> on the highest offer on a phone-width window</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> On a phone the guidance block and the warning together pushed the thread — the thing the seller opened the modal to read — below the fold. Measured at 375px, the block went from 194px to 110px.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c9">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">9 — Support contact stays off the modal</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Waiting for reply</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li><b>Remove</b> the support email line from the modal&rsquo;s waiting state (<i>&ldquo;Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa…&rdquo;</i>).</li><li><b>Leave the decision page exactly as it is</b> — the support block with the phone number stays where it is, unchanged.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=counter-offer-sent&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— counter offer sent, waiting for a reply</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> Help is currently offered twice. Inside the modal it appears in the state where there is nothing for the seller to decide, and it routes a question the modal itself should answer. Keeping the page route intact is also what makes the support-contact measure readable.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c10">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">10 — Auto-close message</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation thread</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Automatically closed</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>When a negotiation closes automatically because nobody answered in time, the closing message reads <b>&ldquo;Neuvottelu on nyt päättynyt. Viimeisin tarjous odottaa päätöstäsi.&rdquo;</b><br><span class="text-slate-500">EN: The negotiation has now ended. The latest offer is waiting for your decision.</span></li><li>It currently reuses the dealership&rsquo;s own pre-filled closing message, which begins <i>&ldquo;Hei ja kiitos viestistäsi…&rdquo;</i> — <i>Hello and thank you for your message…</i></li><li>A close made by the dealership keeps that message. Only the automatic one changes.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=counter-offer-sent&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— counter offer sent, then <i>Auction settings → Auto-close (deadline passed)</i> on the prototype bar</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> An unanswered negotiation currently ends with a message written as though the dealership had replied. The honest string already exists and is used by a sibling process; the seller cannot otherwise tell a dealership&rsquo;s decision from a deadline.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c11">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">11 — Emails link to the decision page</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Emails</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Dealership replied · closed</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Three emails currently send the seller to the offers <b>list</b>. They should open the <b>decision page for that car</b>: <b>dealership replied round 1</b>, <b>dealership replied round 2</b>, <b>negotiation closed</b>.</li><li>The link lands on the page and <b>stops there</b> — it does not open the negotiation modal.</li><li><b>No copy changes</b> in any of the three emails.</li><li>The <b>final offer</b> email keeps the list target — a final offer is a raise on the highest offer, not a negotiation, so there is no thread behind it.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../emails.html?email=negotiation-dealer-replied-round-1&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the email tool, with the initiative&rsquo;s variant selected</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> From the list the seller has to find the car, then work out that the reply is behind a secondary button. Landing on the right page removes the search; what to open is then theirs to choose.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c12">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">12 — Reply notification on the card</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · offer card</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Dealership replied</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>The count badge on the corner of the <b>Näytä vastaus</b> button stays, and becomes <b>red-500 with white text</b>.</li><li>The status line above it — <b>Liikkeeltä on tullut vastaus</b> <span class="text-slate-500">(EN: The dealership has replied)</span> — is written in the same <b>red-500</b>, with the chats icon.</li><li>The button keeps the standard secondary style and gains the <b>chats icon</b> before its label.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the dealership has replied — open <i>Näytä vastaus</i></span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The count is a notification, so it takes the colour every phone has already taught. Lime read as decorative and amber as another status.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c13">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">13 — Info icons removed</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · offer card</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">All states</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Remove the blue (i) icon from both help lines under the card&rsquo;s buttons. The sentences stay, unchanged and left-aligned.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the dealership has replied — open <i>Näytä vastaus</i></span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> It is the loudest mark on the quietest line, and it puts blue back beside a green button.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c14">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">14 — Colour consistency</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · card and modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">All states</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li><b>Green accepts. Blue negotiates. Amber is a running negotiation. Red is something unseen.</b></li><li>Accept is green everywhere it appears: the card&rsquo;s <b>Hyväksy korkein tarjous</b> and <b>Hyväksy alhaisempi tarjous</b>, the modal footer, and the in-message accept. It is primary blue on the card today.</li><li>Counter offer stays blue: the card&rsquo;s secondary button, the modal&rsquo;s primary send button.</li><li><b>Odotetaan liikkeen vastausta</b> <span class="text-slate-500">(EN: Waiting for the dealership&rsquo;s reply)</span> — amber-700, the same amber as the <i>Neuvottelut käynnissä</i> tag on the offers list.</li><li><b>Liikkeeltä on tullut vastaus</b> and the count badge — red-500 (<a class="text-av-blue underline" href="#c12">change 12</a>).</li></ul>
+      </div>
+      <div class="mt-4 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Offer card — dealership has replied</p>
+        <div class="bg-slate-100 border border-slate-200 rounded-lg p-5">
+<div class="bg-white rounded-xl border-2 border-blue-600 p-4 max-w-xs mx-auto font-dm text-center"><div class="text-xs font-bold text-blue-600 mb-1">Toimita liikkeeseen (15 km)</div><div class="text-3xl font-bold font-barlow text-slate-900 mb-2">11 600 €</div><div class="text-xs font-medium text-red-500 mb-2">Liikkeeltä on tullut vastaus</div><div class="bg-green-500 text-white text-xs font-medium rounded-lg py-2 mb-1">Hyväksy korkein tarjous</div><div class="text-[11px] text-slate-700 text-left mb-2">Autoliike ottaa sinuun yhteyttä kaupan viimeistelyä varten.</div><div class="relative"><div class="bg-blue-100 text-blue-800 text-xs font-medium rounded-lg py-2">Näytä vastaus</div><div class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center">1</div></div><div class="text-[11px] text-slate-700 text-left mt-2">Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen.</div></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-2">Green accept (14, 15), red status line and badge (12), no info icons (13).</p>
+      </div>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-4 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Considered and rejected</p>
+        <p class="font-dm text-sm leading-6 text-slate-800">A white, blue-outlined counter offer button (reads as disabled beside a filled green, and the card loses the soft blue block separating the two actions); a lime reply button (ties the button to the notification and puts a third colour on the card); brand teal for accept (the marketing accent, no yes/confirm meaning of its own, competes with the notification colour).</p>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the dealership has replied — open <i>Näytä vastaus</i></span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> Accepting is blue on the card and green in the modal — the same act in two colours — while the modal&rsquo;s own pair is green accept and blue send. The card teaches one meaning for blue and the modal immediately teaches another.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c15">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">15 — Updated green</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · card and modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">All states</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>Accept is <b>green-500 (#22C55E) with white text</b>, hover green-600.</li><li>Same value in <b>four</b> places: the card, the modal footer, the in-message accept, and the <b>confirmation button on the accept confirmation step</b> — the one shown after the seller presses the green button. That step&rsquo;s button is the old green today.</li><li>The in-message accept carries the card&rsquo;s own label — <b>Hyväksy korkein tarjous</b> — with <b>no amount</b> and no icon. The amount is the bold figure at the top of the same bubble.</li></ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the dealership has replied — open <i>Näytä vastaus</i>, then press the green accept to see the confirmation step</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The current accept green is a slightly darker shade; 500 is the brand green and sits better beside the card&rsquo;s blues. Repeating the amount on the button made the two accepts read as different actions.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c16">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">16 — Hero shows status, not auction result</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · hero</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Waiting · dealership replied</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1"><li>The copy under the round photo gets its own version for a <b>live</b> negotiation. It currently shows the auction-ended message in both states below.</li><li><b>Counter offer sent, waiting:</b> &ldquo;Vastatarjous lähetetty&rdquo; / &ldquo;Liikkeet vastaavat arkisin klo 10–16. Voit hyväksyä nykyisen tarjouksen myös neuvottelun aikana.&rdquo;<br><span class="text-slate-500">EN: Counter offer sent / Dealerships reply on weekdays 10–16. You can also accept the current offer while the negotiation is running.</span></li><li><b>Dealership replied, a round left:</b> &ldquo;Autoliike vastasi&rdquo; / &ldquo;Avaa neuvottelu ja katso liikkeen tarjous. Voit hyväksyä sen tai tehdä vielä yhden vastatarjouksen.&rdquo;<br><span class="text-slate-500">EN: The dealership replied / Open the negotiation and see their offer. You can accept it or make one more counter offer.</span></li><li><b>Dealership replied, no rounds left:</b> &ldquo;Autoliike vastasi&rdquo; / &ldquo;Avaa neuvottelu ja katso liikkeen tarjous. Vastatarjouksia ei tehdä enempää, joten voit hyväksyä tarjouksen tai hylätä sen.&rdquo;<br><span class="text-slate-500">EN: The dealership replied / Open the negotiation and see their offer. No further counter offers can be made, so you can accept or reject it.</span></li><li><b>Negotiation closed</b> already has its own hero — unchanged.</li><li>Styling is untouched. The Finnish above is <b>placeholder</b>, pending approval.</li></ul>
+      </div>
+      <div class="mt-4 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Hero — dealership has replied</p>
+        <div class="bg-slate-100 border border-slate-200 rounded-lg p-5">
+<div class="max-w-sm mx-auto text-center font-dm"><div class="w-20 h-20 rounded-full bg-blue-100 mx-auto mb-3"></div><div class="font-barlow font-bold text-xl text-slate-900 mb-1">Autoliike vastasi</div><div class="text-sm text-slate-600">Avaa neuvottelu ja katso liikkeen tarjous. Voit hyväksyä sen tai tehdä vielä yhden vastatarjouksen.</div></div>
+        </div>
+      </div>
+
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=counter-offer-sent&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— counter offer sent, waiting for a reply (and <a class="text-av-blue underline" href="../decision.html?scenario=dealer-replied&enhanced-negotiations=v1">the replied state</a>)</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The hero already has its own copy for no offers, expired, accepted, rejected, a final offer and a closed negotiation — a live negotiation is the gap. The auction result no longer changes this copy at all, so the slot is free for the status the seller is actually in. It also stops the reply being announced in one place only.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="open-questions">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Needs a decision before build</h2>
+      <div class="bg-warning-50 border border-warning-200 rounded-lg p-5 max-w-3xl">
+        <p class="font-dm text-base font-bold text-slate-900 mb-2">Should the seller be told the dealership&rsquo;s response deadline?</p>
+        <p class="font-dm text-sm leading-6 text-slate-800">A dealership has <b>24 hours of business time</b> to answer a counter offer. Miss it and the negotiation closes automatically at noon the next working day, with the standing offer left intact — that is the mechanic <a class="text-av-blue underline" href="#c10">change 10</a> rests on.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mt-3"><b>Today the consumer UI never states it.</b> The waiting state says only that replies usually come the same day; the 24 hours a seller does see in the round-1 and round-2 emails is how long <i>their</i> window to accept lasts, not how long the dealership has. The deadline is currently communicated to dealerships only.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mt-3">An earlier draft of this spec put it in the modal&rsquo;s waiting state. It was replaced by the line that now sits there — <i>&ldquo;Voit hyväksyä tarjouksen myös neuvottelujen aikana.&rdquo;</i> — which answers a different question. Both do not fit without the block growing again.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mt-3"><b>The call:</b> state the deadline and accept a taller waiting state, keep the current line and leave the deadline unstated, or find a shorter form that carries both. Nothing is built either way until this is decided.</p>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="copy">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Copy</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Everything the seller reads that changes. Finnish marked <b>New</b> is a draft <b>pending approval</b>; the rest already exists elsewhere in the product and only moves. English is for reference only — it is not shipped.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Change</th>
+              <th class="px-4 py-3 font-medium">Finnish</th>
+              <th class="px-4 py-3 font-medium">English</th>
+              <th class="px-4 py-3 font-medium">Replaces</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">5</td><td class="px-4 py-3">Korkein tarjous · <b>11 500 €</b></td><td class="px-4 py-3 text-slate-500">Highest offer</td><td class="px-4 py-3 text-slate-600">Nothing — no figure is shown today</td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">Existing label, new placement</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">2</td><td class="px-4 py-3">Autoliike voi hyväksyä vastatarjouksesi, jolloin kaupat syntyvät. Se voi myös nostaa tai pitäytyä tarjouksessaan.</td><td class="px-4 py-3 text-slate-500">The dealership can accept your counter offer, which closes the sale. It can also raise its offer or stand by it.</td><td class="px-4 py-3 text-slate-600"><i>Tee vastatarjous eniten tarjonneelle</i> · <i>Et menetä jo saamaasi tarjousta.</i> · <i>Vastatarjouksen avulla päästään usein kauppoihin.</i></td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">New</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">3</td><td class="px-4 py-3">Neuvottelu päättyi<br><span class="text-slate-600">Hyväksyttyäsi tarjouksen, autoliike ottaa sinuun yhteyttä.</span></td><td class="px-4 py-3 text-slate-500">The negotiation has ended<br>Once you accept the offer, the dealership will contact you.</td><td class="px-4 py-3 text-slate-600"><i>Voit hyväksyä tarjouksen</i> — and nothing that says the negotiation ended</td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">Title exists on the page already</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">6</td><td class="px-4 py-3">Lähetä vastatarjous (1 jäljellä)</td><td class="px-4 py-3 text-slate-500">Send counter offer (1 left)</td><td class="px-4 py-3 text-slate-600"><i>Lähetä</i>, and the blue <i>Vastatarjouksia ei tämän jälkeen tehdä enempää.</i> block</td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">Existing string</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">7</td><td class="px-4 py-3">Pakollinen tieto</td><td class="px-4 py-3 text-slate-500">Required</td><td class="px-4 py-3 text-slate-600"><i>Kenttä Pyyntihinta vaaditaan.</i></td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">Existing string</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">8</td><td class="px-4 py-3">Älä jätä yhteystietoja</td><td class="px-4 py-3 text-slate-500">Do not leave contact details</td><td class="px-4 py-3 text-slate-600"><i>Ethän kirjoita puhelinnumeroasi tai sähköpostiosoitettasi viestikenttään.</i></td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">New</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">9</td><td class="px-4 py-3">Liikkeet vastaavat arkisin klo 10–16.<br>Voit hyväksyä tarjouksen myös neuvottelujen aikana.</td><td class="px-4 py-3 text-slate-500">Dealerships reply on weekdays 10–16.<br>You can accept the offer while the negotiation is running.</td><td class="px-4 py-3 text-slate-600"><i>Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä).</i> and the support-email line</td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">New</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">10</td><td class="px-4 py-3">Neuvottelu on nyt päättynyt. Viimeisin tarjous odottaa päätöstäsi.</td><td class="px-4 py-3 text-slate-500">The negotiation has now ended. The latest offer is waiting for your decision.</td><td class="px-4 py-3 text-slate-600">The dealership&rsquo;s pre-filled closing message, on automatic closes only</td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">Existing string</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">15</td><td class="px-4 py-3">Hyväksy korkein tarjous <span class="text-slate-500">(in the message)</span></td><td class="px-4 py-3 text-slate-500">Accept the highest offer</td><td class="px-4 py-3 text-slate-600"><i>Hyväksy 11 600 €</i></td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">Existing label</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">16</td><td class="px-4 py-3">Vastatarjous lähetetty · Autoliike vastasi <span class="text-slate-500">+ bodies, see change 16</span></td><td class="px-4 py-3 text-slate-500">Counter offer sent · The dealership replied</td><td class="px-4 py-3 text-slate-600"><i>Nyt on aikasi toimia! / Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.</i></td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">New, placeholder</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-3 max-w-3xl">Changes 1, 4, 12, 13 and 14 need no copy — they move or restyle what is already there. Change 11 changes no copy in any email.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Out of scope</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Idea</th>
+              <th class="px-4 py-3 font-medium">Why not</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-4 py-3 font-bold">"Most deals close within X% of the highest offer"</td><td class="px-4 py-3">A nudge towards a number. It would have us setting the price rather than explaining the service.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">A suggested or prefilled counter offer</td><td class="px-4 py-3">Same, more strongly. Facts by the field; the seller names the price.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">Warning that the dealership may close the negotiation</td><td class="px-4 py-3">Reads as a threat, and presents a mitigation for over-asking as a rule of the game. Change 2 does the same work from the reassuring end.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">The "four or more offers" signal</td><td class="px-4 py-3">A car with four or more offers has reached market price. That belongs to steering the seller towards <b>accepting</b> and has its own initiatives; inside the negotiation modal it would steer them away from an action they have already chosen.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">Showing the seller's own estimate or asking price</td><td class="px-4 py-3">Never echoed back today, and both fields may be sunset.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">A seller confirmation when the dealership accepts</td><td class="px-4 py-3">Changes negotiation logic and adds a way for a deal to stall.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">The two-round structure and the amount caps</td><td class="px-4 py-3">This initiative explains the mechanics; it does not alter them.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Design goals</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-4">What this initiative is trying to move, and how we would see it.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Goal</th>
+              <th class="px-4 py-3 font-medium">Signal</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-4 py-3 font-bold">More offers accepted, either side</td><td class="px-4 py-3">Acceptance rate up. The outcome this belongs to.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">Counter offers land closer to what is achievable</td><td class="px-4 py-3">The counter offer against the standing offer — closer, less spread. The best signal the facts landed.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">Fewer negotiations killed by an unreachable ask</td><td class="px-4 py-3">Dealerships closing before the seller's second round — down.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">Fewer counter offers, better judged</td><td class="px-4 py-3">Volume down, and that is fine. Never read on its own.</td></tr>
+            <tr><td class="px-4 py-3 font-bold">Sellers stop asking us how a negotiation works</td><td class="px-4 py-3">Negotiation support contacts down. Needs change 9's decision-page route left intact.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>User testing should show it before the numbers do.</b> Several of these changes are plain usability fixes rather than persuasion — a thread that opens on its newest message, an error that names the right field, a status the seller can find without hunting. The next round of testing should show fewer of the struggles already recorded around the negotiation: leaving the modal to check the highest offer, not knowing whether a counter offer is binding, and not finding the dealership's reply after following an email.</p>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-3 max-w-3xl">No negotiation analytics exist today, so "sellers ask too much" is a known cause of unknown size. The counter-offer-against-standing-offer distribution is the number that would tell us whether facts alone can move it.</p>
+      </div>
+    </section>
+
+  </main>
+  <!-- Footer — same structure as the prototype's site footer (layout.js). -->
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Enhanced negotiations</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>

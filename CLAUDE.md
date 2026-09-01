@@ -315,6 +315,28 @@ something else. A page maps or clears it with `window.protoVariantSet(name,
 value)` (`null` forgets), and the bar only ever selects a value the initiative
 actually declares.
 
+**The Enhanced negotiations spec is written for ticket-writing, not for
+reading as an argument.** Its change log is `# | Change | Where | Scenario` — a
+dev needs the surface (negotiation modal · decision page card · decision page
+hero · emails) and the state that reaches it. Each section leads with **What
+changes** as a spec list, carries a small HTML mock of the affected block built
+from the same tokens the proto uses, links to the exact prototype URL for that
+state (`../decision.html?scenario=…&enhanced-negotiations=v1`), and ends with one
+small-print **Why:** line. Finnish copy carries an English gloss — the devs do not
+read Finnish. **No production file names, component names or translation keys
+appear on it**; colour tokens and copy do. Section titles name the solution
+("3 — Negotiation modal header"), never the reasoning.
+
+**It is numbered 1–16 in BUILD order**, which is not the order the work happened
+in — change 1 is the help block because changes 2, 3 and 9 put copy inside it, and
+the thread and its first bubble sit together. Two of the old numbers are gone: the
+"binding" change folded into change 2's sentence pair, and "standing offer visible
+while typing" folded into the auction-result bubble. The deadline is out of the
+numbered list entirely and sits in its own **Needs a decision before build**
+section, because prod tells the consumer nothing about the dealership's 24
+business hours today and the line that would have said so was replaced during the
+copy pass. The batch history lives here in CLAUDE.md instead.
+
 **The spec page lists five changes, numbered 1–5** — price step, contact step,
 support FAQ, transactional emails, SendGrid lifecycle emails. It was cut from 942
 lines to ~490: the sections explaining why the initiative exists, how to try the
@@ -334,6 +356,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Delivery distance A/B test | **In production A/B test** | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
 | Review/No review | Live | `review-no-review` | `control` | `control` | `price.html` | `design-specs/review-no-review.html` |
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
+| Enhanced negotiations | Live | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 
 **Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
@@ -343,6 +366,309 @@ yet. Their `prodArm` stays `control` and their page default stays `control`: tha
 is what the proto renders unasked, which is what a user-test participant must land
 in, and it is the arm the eventual result gets read against. Nothing gets deleted
 until one is promoted.
+
+**Enhanced negotiations** makes the negotiation's own mechanics legible in the
+modal, where today none of them are. Almost half of all offers reach a
+negotiation and the usual reason one fails is the seller asking too much — and
+every fact that would tell them what is reasonable exists but is off-screen when
+they type. **Built in batches**, one arm (`v1`) carrying all of them:
+
+| Batch | Changes | State |
+|---|---|---|
+| 1 | standing offer by the field · offer can only rise · counter offer is binding · 24 business hours + auto-close | in the proto |
+| 2 | the dealership's thread component · in-bubble accept · rounds on the send button | in the proto |
+| 3 | findability — email link target and the open-thread affordance · the auto-close's own voice | in the proto |
+| 4 | the modal's own presentation — header, contained guidance, hint badge, card affordance, required-error copy | in the proto |
+
+Three findings from prod hold the design up, all verified against the 2026-08-31
+dump. **A counter offer is binding**: `DealerAcceptCounterOfferApiController`
+runs the same `AcceptOffer` the seller's own accept does, so the sale closes at
+the counter price with no further step — the hesitancy sellers report is correct,
+and the copy says so rather than soothing it. **A dealer's offer can only rise**:
+`DealerNegotiationMessageAmount` rejects any reply below the standing amount and
+`CloseNegotiation` preserves it, so "up or unchanged" is a mechanic, not
+reassurance. And **the two sides run different thread components** — the seller
+is on the legacy `partials/Negotiation.vue` while the dealership has
+`partials/negotiations/NegotiationMessage.vue`, which already ships in-bubble
+accept naming the amount, `Avaa neuvotteluhistoria` on a closed negotiation, and
+a height-capped thread. Batch 2 is that swap, which is why it is reuse rather
+than design.
+
+**Batch 2 is four prod patterns, no new component.** `NegotiationMessage.vue`
+declares `pointOfView` with `'seller'` already an accepted value, so the swap is a
+prop flip prod never made: bubbles go from the legacy solid-blue fill plus a
+rotated CSS tail to bordered cards — own `border-blue-300 bg-blue-50
+rounded-tr-none ml-auto`, other `border-gray-200 bg-white rounded-tl-none
+mr-auto` — in a `max-h-[325px] overflow-y-auto` list. From the same stack:
+`NegotiationForm.vue`'s `label – <b>amount</b>` shape for change 1's standing
+offer, `tender.button.deal.reply_to_negotiation`
+("Lähetä vastatarjous (:roundsLeft jäljellä)") which puts the rounds on the
+action and **replaces change 6's own string entirely** — the blue
+"Vastatarjouksia ei tämän jälkeen tehdä enempää" block goes with it — and
+`app.negotiations.counter_offer_message` as the textarea placeholder.
+
+**The accept button moves into the dealership's last message** (`v1` only), per
+the same component, so it names the amount in the place that amount was offered
+instead of restating it in the footer. `acceptIsInThread` gates the footer copy
+off, and it is keyed on the thread's last message being a **dealer** one — not on
+the negotiation's status. That distinction is what caught a seeding bug: the
+proto's `negotiation-stopped` thread ended with a seller message, which prod
+cannot produce, because `CloseNegotiation` always appends a dealer message
+(`close_negotiation.message_pre_filled` when the dealer sends none). Fixed in the
+seed; the fallback stays, so a thread ending seller-side still shows a footer
+accept rather than none.
+
+**Batch 3 is a link target.** Every FI seller email in the dump points at
+`route('user.offers')` — the LIST — including both dealer-replied emails and the
+negotiation-closed one, so the seller lands on the offers page and has to find the
+car and then work out that the reply is behind a secondary button.
+`route('user.offers.decision', $tenderRequest)` already exists and takes the
+request, so `v1` lands there — and **stops there**, with **no copy change in any
+of the three emails**. An auto-open (`?negotiation=open`, read at boot) was built
+and removed: the seller should see the page they arrived at and choose what to
+open. `final-offer-sent` keeps the list target deliberately — a final offer is
+`FinalOffer` raising `tender_offers.amount`, not a negotiation message, so there
+is no thread to open.
+
+The proto's email tool was **pointing three of those at `decision.html` already**,
+which read as prod behaviour and would have made change 7 look like a no-op.
+Control now transcribes prod, and `btn()` carries the prod route beside the proto
+target so the meta panel states which one it is. `emails.html`'s arm handling was
+keyed to the single slug `review-no-review`; it now reads **the arm of whichever
+initiative the open email declares**, and an override may carry `cta` alone
+(`armCta`) rather than subject/body — change 7 changes no copy.
+
+**Change 9 came out of reading the auto-close.** `negotiations:auto-close` runs
+`->at('12:00')->weekdays()` and closes anything past `auto_close.at` — the SLA in
+`addOpenHours(..., HOLIDAYS_ARE_CLOSED)`, then `+1 day` at 12:00, skipped forward
+off non-business days, which is where change 5's "24 tuntia arkiaikaa" comes
+from. But the command passes **`buyer_close_negotiation_reply`** — the
+DEALERSHIP's pre-filled message — so a negotiation nobody answered ends with
+"Hei ja kiitos viestistäsi…", written as though they had replied. The honest
+string `auto_close_negotiation_reply` ("Neuvottelu on nyt päättynyt. Viimeisin
+tarjous odottaa päätöstäsi.") exists and is what the sibling `AutoCompleteRequirements`
+sends — and that command is **scheduled nowhere in the dump**. So the swap is one
+line at the scheduled call site with no new copy. The bar's **Auction settings**
+gained an `Auto-close (deadline passed)` action to demonstrate it; it goes through
+`dealerCanReply` like the others, which is right — auto-close only fires while the
+dealership owes a reply.
+
+**Batch 4 is presentation, and one wrong error string.** All of it is prod
+patterns applied to a modal that had none of them:
+
+| Change | What | Source |
+|---|---|---|
+| 10 | `Kenttä Pyyntihinta vaaditaan.` → `Pakollinen tieto` | `tenderform.*.mandatory_information` |
+| 11 | the tips move into a contained help block at `text-sm` | `DeliveryDateModal.vue` |
+| 12 | title row at `text-xl font-bold text-slate-900` | same modal |
+| 13 | standing offer becomes the thread's first bubble | the thread itself |
+| 14 | chats icon in the reply button; the pulsing "1" stays | the card's own status line |
+
+**These are the BATCH numbers, not the spec's.** The spec was renumbered 1–16 in
+build order for ticket-writing (see below); this section keeps the build history
+in the order it happened. Map by name, not by number.
+
+Change 10 is a real prod defect, not a preference: the message is Laravel's
+`required` rendered against the attribute name **Pyyntihinta** — the asking price
+— on a field labelled **Vastatarjous**, so it names a field that is not on the
+screen. Spec'd as its own change so it is not read as styling.
+
+**`DeliveryDateModal.vue` is the find worth remembering.** It is the only
+consumer modal that builds a real header inside the same `Reveal` shell the
+negotiate modal uses: a title row (`flex items-center gap-3`, title
+`flex-1 text-xl font-bold font-body text-slate-900`) and then its guidance in a
+peach block (`text-sm text-slate-600 bg-[#FAEADA] border border-[#FAEADA] p-4
+rounded-md`). `Reveal` itself renders no header at all — every consumer of it
+supplies its own, and the negotiate modal's is an `h2 text-lg leading-4` running
+straight into a bulleted list. The proto keeps the Reveal's own × rather than the
+header icon that modal draws for itself (it passes `:show-close-button="false"`).
+
+**The closed state is where change 12 earns its place.** Control says only
+"Voit hyväksyä tarjouksen" at `text-sm` — the modal never states that the
+negotiation is over, and that line says nothing about what the offer is still
+worth or what the alternative is. v1 takes the decision page's own hero for the
+same state: **"Neuvottelu päättyi"** as the title, its body
+("Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan
+tarjouksen tai jatkaa myyntiä kanssamme.") as the help text. Both strings exist;
+only the placement is new, and the seller now reads the same sentence on the page
+and in the modal.
+
+**The dealership's collapse is deliberately NOT taken.** `NegotiationMessage`
+hides a stopped thread behind `negotiation.open_message_history`, which buys back
+room on a screen where the negotiation is one panel among many. The seller's modal
+is only the negotiation, so a closed thread stays open — they opened it to read
+the messages. The dealership's other close signal, removing the reply button,
+happens here anyway.
+
+**Change 13 landed on its third shape.** A `text-base` line above the field (the
+dealership's own form) read as a second heading; a grey `UiBadge` hint fixed the
+weight but still sat beside the form as a separate widget quoting a number the
+thread was about to quote again. It is now the thread's **first bubble** — the
+auction result is what the dealership said first, so the negotiation continues
+from it, labelled with prod's `offer_card.first_place`. Consequences worth
+knowing: the thread renders even when there is no negotiation yet, the bubble
+never carries the in-bubble accept (`isAuctionResult`), and it reads `offer.amount`
+— which stays the auction result, because the proto keeps dealer replies in the
+thread rather than overwriting the offer.
+
+**Change 14 keeps prod's pulsing "1"** — replacing it with an icon alone was
+weaker, not stronger. The button gets the chats icon; the signal's weight comes
+from change 15's amber instead. A lime button was tried in between and dropped:
+it tied the button to the reply signal and put a third colour on a card that
+already had two meanings for blue.
+
+**Change 15 is the colour system the rest of the batch exposed.** Accept is
+primary blue on the card and green-600 in the modal — the same act in two
+colours — while the modal's own pair is green accept + blue send, so the card
+teaches one meaning for blue and the modal teaches another. v1 fixes the meaning,
+not the shade: **green accepts, blue negotiates, amber says something new
+arrived.** Card accepts (both the highest and the lower offer) take green-600;
+every other button keeps the colour it had.
+
+**A state is written in its action's colour**, which is what settled the two
+status lines. "Liikkeeltä on tullut vastaus" and the count on the button are
+**both amber-700** — the disc is FILLED with the colour the line is written in,
+because amber-400 over amber-700 text read as a yellow dot next to a brown
+sentence rather than as one signal. "Odotetaan liikkeen vastausta" leaves amber
+(otherwise the two negotiation states read alike) and goes **blue-800**, the text
+colour of the "Vastatarjous lähetetty" button directly under it. Slate was tried
+there and severed the pair: the state read as switched off while its own button
+did not.
+
+**Change 17 is one function, `acceptCls()`,** because accept appears on the card,
+in the modal footer and inside the dealership's last bubble and the three have to
+agree. It is `green-500` — prod's own accept is `green-600`, half a step darker.
+The in-message accept also carries the card's exact label,
+**"Hyväksy korkein tarjous"**: it needs no amount, since the figure is the bold
+number at the top of the same bubble and the button's placement is what says
+which price it takes. Naming it made the two accepts read as different actions.
+
+**The brand teal was built as `v2` and dropped.** It is the marketing accent,
+reserved for the front page's single CTA; it carries no yes/confirm meaning of its
+own; and beside the amber reply signal it competed rather than layered. Removing
+it took the arm with it — but `emails.html` keeps what the experiment exposed:
+its `ARMS` list is what decides whether a remembered arm is legitimate, and an
+unknown one is CLEARED, so with `v2` selected merely opening the email tool would
+have forgotten the arm and reset the whole initiative to control. It now lists
+`v2`, tests `!== 'control'` rather than `=== 'v1'`, and names the actual arm in
+the meta panel. **Any future arm has to be added there too.**
+
+**Amber is the status, red is the notification.** A car in negotiation is tagged
+`Neuvottelut käynnissä` on the offers page in UiBadge's `amber`
+(`bg-amber-50 / border-amber-400 / text-amber-700`), so the decision page writes
+`Odotetaan liikkeen vastausta` in that same `amber-700` — one colour follows the
+car from the list. But `Liikkeeltä on tullut vastaus` is not a status once it is
+unread: it and the count on the button are both **`red-500`** (UiBadge's own
+`red`, white on it), the notification convention every phone has already taught.
+So amber = your negotiation is running, red = something here you have not seen.
+Control splits it differently again (waiting amber-600, replied lime) and matches
+neither.
+
+**Known overload, accepted deliberately:** red-500 is also the page's expiry
+colour (`Umpeutuu:`, `Hylätty`), so two cards can show red for two different
+reasons. They never collide on the same card, and the notification convention is
+strong enough to carry it — recorded in the spec so it is a decision, not a slip.
+
+**A copy pass after change 18 rewrote most of the modal's own strings**, and two
+of them changed what the modal SAYS, not just how long it says it:
+
+| Was | Is |
+|---|---|
+| "Autoliikkeen tarjous voi vain nousta tai pysyä ennallaan." + a separate binding line | "Autoliike voi hyväksyä vastatarjouksesi, jolloin kaupat syntyvät. Se voi myös nostaa tai pitäytyä tarjouksessaan." — changes 2 and 3 in one sentence pair, so the pre-send block is a single paragraph, not a list |
+| "Vastausaika on 24 tuntia arkiaikaa. Sen jälkeen neuvottelu päättyy…" | "Voit hyväksyä tarjouksen myös neuvottelujen aikana." |
+| "Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä)." | "Liikkeet vastaavat arkisin klo 10–16." |
+| "Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä…" | "Hyväksyttyäsi tarjouksen, autoliike ottaa sinuun yhteyttä." |
+
+**Change 5 therefore has no copy in the UI any more.** The deadline was the
+waiting state's second line and that line now says something else. The mechanic
+is unchanged and change 9 still rests on it, but nothing tells the seller about
+the 24 business hours. Flagged in the spec, not silently dropped. The in-message
+accept also lost its checkmark icon.
+
+**Change 19 puts the negotiation in the hero.** The copy under the round photo
+already has its own version for no offers, expired, accepted, rejected, a final
+offer and a CLOSED negotiation — a live one is the gap, and prod shows the
+auction-ended "Nyt on aikasi toimia!" through both the waiting and the replied
+state. v1 adds three: waiting, replied-with-a-round-left, replied-on-the-last-
+round (the same distinction the send button carries). Placeholder copy, pending
+review. `postAuctionStatus` is NOT touched — it stays a transcription of prod's
+predicates and also drives the warm-up card and the bottom banner; a separate
+`heroCopy(pas, offers)` swaps only the hero, and only in v1.
+
+**Change 18 is about height, on a phone.** The guidance block and the
+contact-info warning together pushed the thread below the fold. Three moves, no
+fact lost: prod's `contact_info_not_allowed` paragraph under the textarea becomes
+the label row's right-hand hint beside **Viesti** ("Älä jätä yhteystietoja", one
+line at 360px); the **deadline leaves the pre-send block** and stays only in the
+waiting state, where change 5 already puts it and where it is the seller's actual
+question; and the two remaining facts lose a redundant negation and a redundant
+object. Measured at 375px the block goes **194px → 110px** and the modal body
+763px → 715px, with `.modal-help` padding dropping to 12px below 620px.
+
+**The card's counter-offer button is prod's `secondary` fill.** A white,
+blue-outlined version was tried twice — first as a hierarchy fix (it read as
+disabled next to the green), then to give the count a white field (red carries
+itself on pale blue, so it did not need one). The secondary is the quieter, less
+busy option, with the green accept as the only filled button that matters. The
+lime reply button from the first pass at change 14 stays dropped.
+
+**Three proto-only bugs fixed with it**, none of them design:
+
+- **The thread never scrolled to the newest message.** `NegotiationMessage.vue`
+  scrolls its list on mount and on every new message; the proto had transcribed
+  the capped list without the scroll, so the seller landed at the top of a
+  height-capped box with the newest bubble — the one they opened the modal to
+  read — below the fold and no scrollbar in view. `scrollThreadToEnd()` runs after
+  each render AND after the reveal is shown, because a `display:none` element
+  cannot be scrolled any more than it can take focus (the same reason
+  QuickNegotiate's focus call sits in `openModal`).
+- **Pinning the thread needed three attempts, and the middle one is instructive.**
+  Detecting "did the seller scroll?" as *is it no longer at the bottom* is wrong
+  here: the list keeps growing after we pin it, so our own position stops being
+  the bottom, the handler read that as a user scroll and switched pinning off —
+  which is how the last bubble ended up cut off on a phone. It now compares
+  against the position we last set. A `ResizeObserver` would be the right tool
+  for the growth and **does not fire at all in this environment**, not even the
+  initial callback the spec promises on observe, so the pin polls every 100 ms
+  until the height is stable for half a second.
+- **The Play CDN generates JIT classes asynchronously.** `max-h-[325px]` and
+  `bg-[#FAEADA]` are injected by JS, so their rules landed a tick AFTER the
+  render: the peach block painted transparent, and the thread was briefly
+  uncapped, which left the scroll with nothing to scroll. Both are now
+  hand-written CSS (`.modal-help`, `.neg-thread`, `.neg-hint`) with the utility
+  classes kept on the element for the record. The scroll also re-pins across two
+  frames and once more at 150 ms, and stops as soon as the seller scrolls
+  themselves — bubble heights keep changing while late utilities arrive. **This is
+  the general rule, restated: any arbitrary-value Tailwind class in JS-built
+  markup needs a hand-written rule.**
+- **A simulated dealer reply could come in BELOW their own standing offer.**
+  `computeDealerReply` did `min(proposed, counter)`, and the seller may counter
+  below the standing offer (validation caps only the upper bound), so the proto
+  produced a reply prod's `DealerNegotiationMessageAmount` would have rejected.
+  Now `max(min(proposed, counter), floor)`, and `meets` is `>=` rather than `===`
+  so the clamped case reads as the dealer accepting the ask.
+
+Batch 1's copy is **inline in `decision.html`, not in `translations.js`** — that
+page has no `data-i18n` at all and hardcodes its Finnish, so one arm's strings in
+the corpus would be the only translated copy on it. All of it is a draft pending
+approval except the standing-offer label, which is prod's own
+`offer_card.first_place` ("Korkein tarjous") with only its placement new.
+
+Two bullets are **removed and not replaced**: "Tee vastatarjous eniten
+tarjonneelle" restates the action already taken, and "Vastatarjouksen avulla
+päästään usein kauppoihin" is encouragement — and more counter offers is
+explicitly not the goal. Half of offers already reach negotiation; the initiative
+is judged on ask quality and acceptance, never on counter-offer volume.
+
+Deliberately out of scope, each for a reason worth keeping: any "most deals close
+within X%" band or suggested value (a nudge towards a number, and it would have
+us setting the price); warning that the dealership may close the negotiation
+(reads as a threat, and presents a mitigation for over-asking as a rule of the
+game — change 2 does the same work from the reassuring end); the **four-or-more
+offers signal**, which belongs to steering the seller towards *accepting* and to
+later initiatives, since inside the modal it would steer them away from an action
+they have already chosen; the seller's own estimate or asking price; a seller
+confirmation when the dealership accepts; and the two-round structure itself.
 
 **Seller intent** asks one question per arm on the price step, below the
 estimate field, to learn how ready the seller actually is to sell — today the
@@ -611,6 +937,22 @@ has none, since the feature does not exist there.
    promoted, `<month year>`* with a line naming what shipped, and the row above
    moves to a **Completed initiatives** list here. The record survives; the
    switch does not.
+
+**The bar scrolls sideways.** It carries a dozen controls and a phone is 375px,
+so `#proto-bar` is `overflow-x:auto` with `#proto-bar > *{flex:0 0 auto}` —
+nothing shrinks, the row just runs off the edge and is swiped. The scrollbar is
+hidden (`scrollbar-width:none` + the WebKit pseudo-element): at 30px tall it would
+eat half the bar. `.pb-spacer` keeps `flex:1 1 auto` and still pushes **Go to**
+right whenever the row fits.
+
+**Popovers had to become `position:fixed` for that to work.** An absolutely
+positioned panel inside a horizontal scroller is clipped by it — setting
+`overflow-x` makes the other axis compute as `auto` too — so the panel would have
+been unreachable. Fixed escapes any ancestor's overflow (the bar sets no
+transform), and `makePopover`'s `place()` sets `left` from the button's rect,
+clamped 8px inside the viewport, on open and on every resize or bar scroll. That
+clamp is also what keeps a 300px panel on screen when its button sits near the
+right edge of a phone.
 
 **Adding proto-only UI:** prefer putting it on the bar. If it must be its own
 element, mark the root with `data-proto-dev` AND skip building it when
