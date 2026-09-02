@@ -134,8 +134,53 @@
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Each numbered change is one self-contained piece of work — a candidate ticket. Every section states <b>what changes</b>, <b>where it is</b>, <b>which state the seller has to be in</b> to see it, and links straight to that state in the prototype. Finnish copy carries an English gloss for reference; the reasoning is in small print at the end and is context, not requirement.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Three surfaces are involved: the <b>negotiation modal</b>, the <b>offer card</b> and <b>hero</b> on the decision page, and three <b>emails</b>. Nothing else is touched.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Three surfaces are involved: the <b>negotiation modal</b>, the <b>offer card</b> and <b>hero</b> on the decision page, and three <b>emails</b>. Nothing else is touched. The modal has <b>two entry points</b> and the changes land on both — see the section below.</p>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl"><b>Order matters in one place:</b> change 1 sets up the guidance slot that changes 2, 3 and 9 put copy into, and changes 4 and 5 are the same component. Everything else is independent.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="reject-flow">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">The same modal serves the reject flow</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Worth stating plainly, because it doubles the reach of most of these changes: the negotiation modal is opened from <b>two</b> places, and the second one is the seller trying to walk away.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start mb-5">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Entry point 1 — negotiating</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><b>&ldquo;Tee vastatarjous&rdquo;</b> on the highest offer&rsquo;s card. The seller has decided to negotiate, and the modal opens on the counter-offer form.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Entry point 2 — rejecting</p>
+          <p class="font-dm text-sm leading-6 text-slate-800"><b>&ldquo;Hylkää tarjouskilpailu&rdquo;</b> in the reject banner. When the highest offer can still be negotiated and is not a final offer, the seller does <b>not</b> land on the reject confirmation — they get this same modal, asking for a counter offer first, with <i>Hylkää tarjous</i> still available beside it. Only once the negotiation is closed, unavailable, or the offer is final do they go straight to the reject survey.</p>
+        </div>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 max-w-3xl mb-5"><b>This routing, and every string in it, is production.</b> The initiative proposes no change to it: the titles (&ldquo;Tee vielä vastatarjous autoliikkeelle&rdquo;, &ldquo;Eikö autoliike ole ollut yhteydessä?&rdquo;), the two messages chosen by offer count, and the pre-filled message to the dealership are all existing copy. What changes is the <b>presentation</b> the sections below describe — and because the two entry points share one component, they arrive on the reject flow whether or not that was the intent.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Change</th>
+              <th class="px-4 py-3 font-medium">Reaches the reject flow?</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">1 — Guidance under the header</a></td><td class="px-4 py-3"><b>Yes.</b> Prod&rsquo;s own quick-negotiate message moves into the contained help block.</td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">2 — Counter offer outcomes</a></td><td class="px-4 py-3"><b>No.</b> This state keeps prod&rsquo;s own message about the auction instead — the seller is being asked to reconsider, not briefed on how a negotiation works.</td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c3">3 — Modal header</a></td><td class="px-4 py-3"><b>Yes.</b> Same title row, on the existing title.</td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c4">4 and 5 — Thread and auction-result bubble</a></td><td class="px-4 py-3"><b>Yes.</b> One thread component, so a seller who already negotiated sees the same redesigned thread here.</td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c6">6 — Rounds on the send button</a></td><td class="px-4 py-3"><b>Yes.</b> Shared footer.</td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c7">7 — Counter offer field error</a></td><td class="px-4 py-3"><b>Yes.</b> Same amount field.</td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c8">8 — Shorter modal</a></td><td class="px-4 py-3"><b>Partly.</b> The deadline line goes here too. The contact-info hint does not apply: this entry point has <b>no message field</b> — prod pre-fills the message to the dealership — so there was never a paragraph to move.</td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c9">9 — Support contact off the modal</a></td><td class="px-4 py-3"><b>Not yet — see the open point below.</b></td></tr>
+            <tr><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c14">14, 15 and 17 — Colour</a></td><td class="px-4 py-3"><b>Partly.</b> Only the send button: this entry point never shows Accept, as prod never shows it here. The <i>Hylkää tarjous</i> button beside it is unchanged.</td></tr>
+            <tr><td class="px-4 py-3">10, 11, 12, 13, 16</td><td class="px-4 py-3"><span class="text-slate-500">Not the modal — the auto-close command, the emails, the card and the hero.</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="bg-warning-50 border border-warning-200 rounded-lg p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-bold uppercase tracking-wide text-warning-800 mb-2">Open point — change 9 and the reject flow</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-2">Change 9 replaces the support-email line in the waiting state with the fact that the standing offer survives the wait. This entry point has its own waiting state — <b>&ldquo;Eikö autoliike ole ollut yhteydessä?&rdquo;</b> — and it still carries the support-email bullet, so the two waiting states now say different things.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-0">Change 9&rsquo;s reasoning applies here identically, so this is most likely an oversight rather than a decision. <b>Decide before change 9 is built:</b> apply it to both waiting states, or state why this one keeps the email.</p>
+      </div>
       </div>
     </section>
 

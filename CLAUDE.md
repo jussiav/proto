@@ -475,6 +475,30 @@ accept naming the amount, `Avaa neuvotteluhistoria` on a closed negotiation, and
 a height-capped thread. Batch 2 is that swap, which is why it is reuse rather
 than design.
 
+**The negotiation modal has TWO entry points, and the spec now says so.** The
+reject banner's "Hylkää tarjouskilpailu" does not go to the reject survey while
+the highest offer is still negotiable and not final — prod's
+`handleRejectAllOffers` routes to **QuickNegotiate**, the same modal, asking for
+a counter offer with "Hylkää tarjous" still beside it. So most of this
+initiative's presentation changes land on the reject flow too, whether or not
+that was the intent: 1, 3, 4, 5, 6 and 7 in full; 8 only for the deadline (this
+entry point has **no message field** — prod pre-fills the message — so there was
+never a contact-info paragraph to move); 14/15/17 only on the send button, since
+QuickNegotiate never shows Accept; and 2 deliberately NOT, because the seller
+here is being asked to reconsider rather than briefed on how a negotiation
+works. The routing and every string in it are prod's, verbatim — the titles, the
+two messages chosen by offer count, and the pre-filled message to the
+dealership. Documented as its own section on the spec page rather than a
+seventeenth change, since it is coverage rather than new work.
+
+**One open point came out of writing that down: change 9 misses this flow.**
+It replaces the waiting state's support-email line with "you can still accept
+the standing offer", but QuickNegotiate has its OWN waiting state
+("Eikö autoliike ole ollut yhteydessä?") and the proto still renders the
+support-email bullet there in both arms. Change 9's reasoning applies
+identically, so this is an oversight rather than a decision — flagged on the
+spec page as something to settle before change 9 is built, not silently fixed.
+
 **Batch 2 is four prod patterns, no new component.** `NegotiationMessage.vue`
 declares `pointOfView` with `'seller'` already an accepted value, so the swap is a
 prop flip prod never made: bubbles go from the legacy solid-blue fill plus a
