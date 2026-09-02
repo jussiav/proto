@@ -505,6 +505,20 @@ together — so v1 promotes prod's own question to the title row and puts the
 advice in the help block. `hasNeg` keeps prod's shorter variant a bare title
 with nothing under it. No new copy: one sentence split, one deleted.
 
+**The spec page names the two entry points and nothing more.** The reject-flow
+section is a short reminder — one sentence plus a card each for "Tee
+vastatarjous" on the card and "Hylkää tarjouskilpailu" in the banner — and it
+says every change applies to both unless its own section says otherwise. The
+routing conditions, the per-change coverage table and the dead-state note were
+all removed (2026-09-02): a dev reading a spec should see what has to change,
+not reason about which branch fires when, and legacy they can find for
+themselves. **The rule for these pages: no dead prod copy, no routing
+derivations.** The two decisions that lived only in that table moved into the
+changes they belong to — change 2 does not apply to the reject entry (that
+seller is being asked to reconsider, not briefed on negotiation mechanics), and
+change 8's label-row move has nothing to move there because prod pre-fills the
+message. Everything else below stays here rather than on the page.
+
 **"Eikö autoliike ole ollut yhteydessä?" is DEAD in prod — not a proto gap.**
 Worth knowing before anyone tries to reproduce it. `QuickNegotiate.vue`'s
 `!sellerCanSendMessage && negotiationRounds == 1` branch needs the reject banner
@@ -516,7 +530,8 @@ cannot both hold, and `offerAction = 'QuickNegotiate'` has exactly one caller.
 It is styled and specified with the rest so nothing is left behind if that
 banner rule changes, and recorded on the spec page as needing no test.
 
-**One reject-all routing divergence left alone, deliberately.** Prod skips the
+**One reject-all routing divergence left alone, and the team has confirmed it
+stays** (2026-09-02) — simplicity beats fidelity here. Prod skips the
 `amount > asking_price * 0.75` threshold when there is exactly ONE offer
 (`hasSingleOffer && dealerCanSendMessage`); the proto applies the threshold in
 both cases. So a lone low offer routes to `Reject` here where prod would offer
