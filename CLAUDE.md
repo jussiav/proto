@@ -772,8 +772,10 @@ predicates and also drives the warm-up card and the bottom banner; a separate
 **Change 18 is about height, on a phone.** The guidance block and the
 contact-info warning together pushed the thread below the fold. Three moves, no
 fact lost: prod's `contact_info_not_allowed` paragraph under the textarea becomes
-the label row's right-hand hint beside **Viesti** ("Älä jätä yhteystietoja", one
-line at 360px); the **deadline leaves the pre-send block** and stays only in the
+the label row's hint beside **Viesti** — **"(Älä lisää yhteystietojasi)"** after
+two revisions (`Älä jätä yhteystietoja` → `(Ei yhteystietoja)` → this, which the
+team picked when the initiative was presented on 2026-09-02; measured at 138px,
+one line at 360px); the **deadline leaves the pre-send block** and stays only in the
 waiting state, where change 5 already puts it and where it is the seller's actual
 question; and the two remaining facts lose a redundant negation and a redundant
 object. Measured at 375px the block goes **194px → 110px** and the modal body
