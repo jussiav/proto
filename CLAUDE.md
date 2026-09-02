@@ -346,20 +346,29 @@ leads with subject + greeting + when it is sent + which block changes, and
 `[square brackets]` mark a send-time value. Prod file names, component names and
 translation keys still never appear.
 
-**Change 4's three emails carry PLACEHOLDER copy, and the tool says so.** They
-were `candidate` — flagged, with no arm — which is right while nothing is
-written, but it leaves nothing to react to. A `v1` may now carry `draft: true`,
-and `emails.html` renders that in three places: the list badge (`v1 differs
-(draft)`), the bar's variant label (`… (placeholder)`) and the meta panel's Arm
-row (`placeholder copy, not approved`). Without it a green `v1 differs` asserts
-an approval nobody gave. 4.1 restores `ilmoituksesi` along with the deletion —
-the pronoun `se` referred to the noun inside the clause being removed, so
-deleting alone leaves the sentence subjectless. 4.2 is the bare deletion. **4.3
-takes a position the team has not taken**: of the spec's keep / soften / remove,
-the placeholder demonstrates SOFTEN — the thresholds leave the sub-heading, the
-paragraph under it is untouched because it already says the same thing without
-numbers. Recorded here and on the spec page as a placeholder rather than a
-recommendation.
+**Change 4 is now TWO emails, and its copy is approved** (2026-09-02). 4.1
+restores `ilmoituksesi` along with the deletion — the pronoun `se` referred to
+the noun inside the clause being removed, so deleting alone leaves the sentence
+subjectless; 4.2 is the bare deletion. **4.3 was decided KEEP.** The
+`>200tkm / >10 vuotta` paragraph in the no-offers email stays: it is honest, it
+is usually the real reason, and it is the only part of that email that answers
+the seller's question — softening it would cost the seller the explanation to
+spare us the awkwardness, and nothing in the email promises a review or a call
+anyway. Its `v1` and its `initiative` link are both gone from
+`email-content.js`, so the tool shows it with no badge at all; the reasoning
+lives on the spec page as a recorded decision and in the entry's own `note`, so
+nobody re-opens it as an oversight.
+
+**Two markers keep the tool honest about copy it is showing.** `draft: true` on
+a `v1` renders "placeholder copy, not approved" in the list badge, the bar's
+variant label and the meta panel — without it a green `v1 differs` asserts an
+approval nobody gave. Nothing carries it now that change 4 is approved; it stays
+for the next initiative that wants something to react to before sign-off. And
+`unchanged: true` on a STATE renders a slate `unchanged` badge instead of
+`candidate`: Review/No review reaches the verification email's new-seller
+version only, and `candidate` on the returning-seller version reported an open
+question that was in fact closed. The `initiative` field lives on the mail, so a
+per-state opt-out is the only way to say that.
 
 **The bar now shows arms in force on OTHER pages even when this page proposes
 nothing.** `elsewhere` in `proto-bar.js` used to be computed inside the branch
