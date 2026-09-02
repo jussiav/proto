@@ -39,6 +39,7 @@
             warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
             success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
             info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+            error:   { 50: '#FEF2F2', 100: '#FEE2E1', 200: '#FECACA', 700: '#B91C1B', 800: '#991B1B', 900: '#7F1C1D' },
           },
           fontFamily: {
             display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
@@ -85,6 +86,18 @@
     .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
     .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
     .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    /* Copy diffs. Colour is never the only signal — a deletion also carries a
+       line-through and an insertion is bold — so the marks survive greyscale
+       printing and colour-blind reading. Values are tokens.css error-700 and
+       success-800/100. */
+    .av-del { color: #B91C1B; text-decoration: line-through; text-decoration-thickness: 1px; }
+    .av-ins { color: #3F6212; background: #ECFCCB; font-weight: 700; border-radius: 2px; padding: 0 2px; }
+    /* A quoted production string: the Finnish is the copy itself, the grey line
+       under it is an English gloss for reading only. */
+    .av-copy  { font-family: "DM Sans", sans-serif; font-size: 0.9375rem; line-height: 1.65; color: #1e293b; margin: 0; }
+    .av-gloss { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.6; color: #64748B; margin: 0.25rem 0 0; }
+    .av-copy-label { font-family: "DM Sans", sans-serif; font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: #64748B; margin: 0 0 0.375rem; }
+    .av-copy-block + .av-copy-block { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #F1F5F9; }
   </style>
 </head>
 <body class="font-body text-slate-900" style="background:#f5f5f5">
@@ -102,7 +115,7 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: live — 3 ready to build, 2 blocked on copy
+          Status: live — 3 ready to build · 1 awaiting copy · 1 later, with Marketing
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
       </div>
@@ -156,15 +169,15 @@
               <td class="px-4 py-3 font-bold">4</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-4">Three seller emails promise or assume the review call</a></td>
               <td class="px-4 py-3">Transactional emails</td>
-              <td class="px-4 py-3 text-slate-600">Draft created · image chasing · auction ended</td>
+              <td class="px-4 py-3 text-slate-600">Email verification · add photos · no offers</td>
               <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Awaiting copy</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">5</td>
-              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-5">Lifecycle emails contradict the change — one promises the call in its subject line</a></td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-5">Lifecycle emails contradict the change — one promises the call in its subject line</a><br><span class="text-xs text-slate-500">Not part of this build — a separate piece of work with Marketing</span></td>
               <td class="px-4 py-3">SendGrid · outside the codebase</td>
               <td class="px-4 py-3 text-slate-600">Draft nurture · marketing</td>
-              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Needs an owner</span></td>
+              <td class="px-4 py-3"><span class="bg-slate-200 text-slate-700 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Later · with Marketing</span></td>
             </tr>
           </tbody>
         </table>
@@ -292,95 +305,146 @@
     <!-- Change 3 -->
     <section class="av-band av-band-grey" id="change-3">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">3 — Support page: five FAQ items present the call as universal</h2>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">3 — Support page: five FAQ answers present the call as universal</h2>
       <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Support page · CMS</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Any visitor</span></div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
-        <ul class="list-disc pl-5 space-y-1"><li>Five FAQ answers stop stating the review call as something every seller gets.</li><li>The fix is one word per sentence — <b>tarvittaessa</b>, or <b>tapauskohtaisesti</b> where the sentence is about our own process.</li><li>Edited in the CMS entry; <b>no code change</b>. Nothing is promised and nothing is denied.</li></ul>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>Five answers</b> stop stating the review call as something every seller gets. Each edit is listed below as a complete sentence, before and after.</li>
+          <li><b>Six edits in total</b> — one answer takes two. Four insert a single word, one replaces a word, one also deletes a whole sentence.</li>
+          <li>Edited in the CMS entry; <b>no code change, no new items, nothing else in these answers moves</b>.</li>
+        </ul>
         <p class="mt-4"><a class="text-av-blue underline font-medium" href="../help.html?review-no-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the support page with the revised answers</span></p>
       </div>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Every unconditional promise of a review call outside the funnel sits on the support page. The pattern for the fix is one word doing the work — <b>tarvittaessa</b>, or <b>tapauskohtaisesti</b> where the sentence is about our own process. Nothing is promised and nothing is denied. Finnish is approved copy; English is a working translation.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">#</th>
-              <th class="px-4 py-3 font-medium">Item</th>
-              <th class="px-4 py-3 font-medium">Today</th>
-              <th class="px-4 py-3 font-medium">Change</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr>
-              <td class="px-4 py-3 font-bold align-top">3.1<br><span class="font-normal text-xs text-slate-500">step 2</span></td>
-              <td class="px-4 py-3 align-top">Miten myyntiprosessi etenee?</td>
-              <td class="px-4 py-3">Asiantuntijamme ottaa sinuun yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia).</td>
-              <td class="px-4 py-3">Asiantuntijamme ottaa sinuun <b>tarvittaessa</b> yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia).</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold align-top">3.1<br><span class="font-normal text-xs text-slate-500">step 3</span></td>
-              <td class="px-4 py-3 align-top">Miten myyntiprosessi etenee?</td>
-              <td class="px-4 py-3"><b>Tarjouskilpailu:</b> Kun ilmoitus on <b>tarkistettu</b>, se julkaistaan…</td>
-              <td class="px-4 py-3"><b>Tarjouskilpailu:</b> Kun ilmoitus on <b>valmis</b>, se julkaistaan…</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold align-top">3.2</td>
-              <td class="px-4 py-3 align-top">Miten AutoVexiin saa yhteyden?</td>
-              <td class="px-4 py-3">…joten käymme lomakkeelle täyttämäsi tiedot kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua.</td>
-              <td class="px-4 py-3">…joten käymme lomakkeelle täyttämäsi tiedot <b>tarvittaessa</b> kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold align-top">3.3</td>
-              <td class="px-4 py-3 align-top">Miten tiedän autoni arvon?</td>
-              <td class="px-4 py-3">Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä.</td>
-              <td class="px-4 py-3">Saat <b>tarvittaessa</b> asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold align-top">3.4</td>
-              <td class="px-4 py-3 align-top">Miten saan autoliikkeet kiinnostumaan autostani?</td>
-              <td class="px-4 py-3"><s>Myös realistisen pyyntihinnan asettaminen on tärkeää ja me tuemme sinua tässä.</s> Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</td>
-              <td class="px-4 py-3">Saat asiantuntijaltamme <b>tarvittaessa</b> puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä. <span class="text-slate-500">(first sentence removed)</span></td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 font-bold align-top">3.5</td>
-              <td class="px-4 py-3 align-top">Miksi ilmoitukseni on tarkistuksessa?</td>
-              <td class="px-4 py-3">Siksi käymme ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</td>
-              <td class="px-4 py-3">Siksi käymme <b>tapauskohtaisesti</b> ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</td>
-            </tr>
-          </tbody>
-        </table>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Every unconditional promise of a review call outside the funnel sits on the support page. The pattern is one word doing the work — <b>tarvittaessa</b> (“if necessary”), or <b>tapauskohtaisesti</b> (“case by case”) where the sentence is about our own process. Nothing is promised and nothing is denied.</p>
+
+      <div class="bg-info-50 border border-info-200 rounded-lg p-4 mb-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <b>How to read the diffs.</b> <span class="av-del">Struck-through red</span> is text that goes, <span class="av-ins">green</span> is text that arrives, and everything unmarked stays exactly as it is. The Finnish is the copy itself and is what gets pasted into the CMS; the grey line beneath each sentence is an <b>English gloss for reading only</b> — do not publish it.
       </div>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mt-4">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">#</th>
-              <th class="px-4 py-3 font-medium">English (draft)</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr><td class="px-4 py-3 font-bold">3.1</td><td class="px-4 py-3">Our expert calls you <b>if necessary</b> (the call takes about 5 minutes). · <b>Bidding:</b> Once the listing is <b>ready</b>, it is published…</td></tr>
-            <tr><td class="px-4 py-3 font-bold">3.2</td><td class="px-4 py-3">…so <b>if necessary</b> we go through the details you filled in briefly with you by phone before the listing is published.</td></tr>
-            <tr><td class="px-4 py-3 font-bold">3.3</td><td class="px-4 py-3"><b>If necessary</b> you get a personal consultation from our expert by phone about the car's market value before bidding starts.</td></tr>
-            <tr><td class="px-4 py-3 font-bold">3.4</td><td class="px-4 py-3"><b>If necessary</b> you get a personal consultation from our expert by phone about the car's market value before the competition starts.</td></tr>
-            <tr><td class="px-4 py-3 font-bold">3.5</td><td class="px-4 py-3">That is why we go through the listing details briefly, <b>case by case</b>, before publishing it.</td></tr>
-          </tbody>
-        </table>
-      </div>
+
+      <!-- 3.1 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-4">
+          <span class="font-barlow font-bold text-black text-lg">3.1</span>
+          <span class="font-dm text-sm text-slate-800"><b>Miten myyntiprosessi etenee?</b> <span class="text-slate-500">— How does the selling process work?</span></span>
+          <span class="font-dm text-xs bg-slate-100 text-slate-700 rounded-full px-2.5 py-1 md:ml-auto">Two edits · numbered list, items 2 and 3</span>
+        </div>
+
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today — list item 2</p>
+          <p class="av-copy"><b>Asiantuntijan yhteydenotto:</b> Asiantuntijamme ottaa sinuun yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia). Varmistamme yhdessä, että ilmoituksen tiedot ovat kunnossa, ja ohjeistamme prosessin jatkosta.</p>
+          <p class="av-gloss"><b>The expert gets in touch:</b> Our expert calls you (the call takes about 5 minutes). Together we make sure the listing details are right, and we explain what happens next.</p>
+          <p class="av-copy-label mt-3">After — one word inserted</p>
+          <p class="av-copy"><b>Asiantuntijan yhteydenotto:</b> Asiantuntijamme ottaa sinuun <span class="av-ins">tarvittaessa</span> yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia). Varmistamme yhdessä, että ilmoituksen tiedot ovat kunnossa, ja ohjeistamme prosessin jatkosta.</p>
+          <p class="av-gloss"><b>The expert gets in touch:</b> Our expert calls you <span class="av-ins">if necessary</span> (the call takes about 5 minutes). Together we make sure the listing details are right, and we explain what happens next.</p>
+        </div>
+
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today — list item 3</p>
+          <p class="av-copy"><b>Tarjouskilpailu:</b> Kun ilmoitus on <span class="av-del">tarkistettu</span>, se julkaistaan autoliikkeiden tarjouskilpailuun, joka kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse kilpailutuksen ajan.</p>
+          <p class="av-gloss"><b>Bidding:</b> Once the listing <span class="av-del">has been checked</span>, it is published for dealerships to bid on, typically for 36 hours. We keep you up to date by email.</p>
+          <p class="av-copy-label mt-3">After — one word replaced</p>
+          <p class="av-copy"><b>Tarjouskilpailu:</b> Kun ilmoitus on <span class="av-ins">valmis</span>, se julkaistaan autoliikkeiden tarjouskilpailuun, joka kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse kilpailutuksen ajan.</p>
+          <p class="av-gloss"><b>Bidding:</b> Once the listing <span class="av-ins">is ready</span>, it is published for dealerships to bid on, typically for 36 hours. We keep you up to date by email.</p>
+        </div>
+
+        <p class="font-dm text-xs text-slate-500 mt-4">Unchanged in this answer: the intro line and list items 1, 4 and 5. The list keeps all five steps — step 2 becomes conditional rather than disappearing, so the seller who <i>is</i> called still sees it.</p>
+      </article>
+
+      <!-- 3.2 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-4">
+          <span class="font-barlow font-bold text-black text-lg">3.2</span>
+          <span class="font-dm text-sm text-slate-800"><b>Miten AutoVexiin saa yhteyden?</b> <span class="text-slate-500">— How can I get in touch with AutoVex?</span></span>
+          <span class="font-dm text-xs bg-slate-100 text-slate-700 rounded-full px-2.5 py-1 md:ml-auto">One word inserted</span>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today</p>
+          <p class="av-copy">Asiakaspalvelumme auttaa sinua mielellään koko myyntiprosessin ajan! Haluamme varmistaa, että saat autostasi parhaan mahdollisen tarjouksen, joten käymme lomakkeelle täyttämäsi tiedot kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua. Lisäksi voit olla meihin yhteydessä sähköpostitse osoitteessa <span class="text-slate-500">[support address]</span>. Palvelemme arkisin klo 10-16.</p>
+          <p class="av-gloss">Our customer service is glad to help you throughout the selling process. We want to make sure you get the best possible offer for your car, so we go through the details you filled in briefly with you by phone before the listing is published. You can also reach us by email at [support address]. We are available on weekdays 10-16.</p>
+          <p class="av-copy-label mt-3">After</p>
+          <p class="av-copy">Asiakaspalvelumme auttaa sinua mielellään koko myyntiprosessin ajan! Haluamme varmistaa, että saat autostasi parhaan mahdollisen tarjouksen, joten käymme lomakkeelle täyttämäsi tiedot <span class="av-ins">tarvittaessa</span> kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua. Lisäksi voit olla meihin yhteydessä sähköpostitse osoitteessa <span class="text-slate-500">[support address]</span>. Palvelemme arkisin klo 10-16.</p>
+          <p class="av-gloss">Our customer service is glad to help you throughout the selling process. We want to make sure you get the best possible offer for your car, so <span class="av-ins">if necessary</span> we go through the details you filled in briefly with you by phone before the listing is published. You can also reach us by email at [support address]. We are available on weekdays 10-16.</p>
+        </div>
+      </article>
+
+      <!-- 3.3 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-4">
+          <span class="font-barlow font-bold text-black text-lg">3.3</span>
+          <span class="font-dm text-sm text-slate-800"><b>Miten tiedän autoni arvon?</b> <span class="text-slate-500">— How do I know what my car is worth?</span></span>
+          <span class="font-dm text-xs bg-slate-100 text-slate-700 rounded-full px-2.5 py-1 md:ml-auto">One word inserted · first paragraph</span>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today</p>
+          <p class="av-copy">Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä. Tarjoamme realistisen arvion siitä, millä tasolla autosi arvo tällä hetkellä suunnilleen liikkuu.</p>
+          <p class="av-gloss">You get a personal consultation from our expert by phone about the car's market value before bidding starts. We give a realistic estimate of roughly where your car's value sits at the moment.</p>
+          <p class="av-copy-label mt-3">After</p>
+          <p class="av-copy">Saat <span class="av-ins">tarvittaessa</span> asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä. Tarjoamme realistisen arvion siitä, millä tasolla autosi arvo tällä hetkellä suunnilleen liikkuu.</p>
+          <p class="av-gloss"><span class="av-ins">If necessary</span> you get a personal consultation from our expert by phone about the car's market value before bidding starts. We give a realistic estimate of roughly where your car's value sits at the moment.</p>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">Unchanged: the second paragraph (“Haluatko ymmärtää tarkemmin, miten autoliikkeet hinnoittelevat autoja?”).</p>
+      </article>
+
+      <!-- 3.4 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-4">
+          <span class="font-barlow font-bold text-black text-lg">3.4</span>
+          <span class="font-dm text-sm text-slate-800"><b>Miten saan autoliikkeet kiinnostumaan autostani?</b> <span class="text-slate-500">— How do I get dealerships interested in my car?</span></span>
+          <span class="font-dm text-xs bg-error-100 text-error-800 rounded-full px-2.5 py-1 md:ml-auto">One sentence deleted · one word inserted</span>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today — third paragraph of four</p>
+          <p class="av-copy"><span class="av-del">Myös realistisen pyyntihinnan asettaminen on tärkeää ja me tuemme sinua tässä.</span> Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</p>
+          <p class="av-gloss"><span class="av-del">Setting a realistic asking price matters too, and we support you in that.</span> You get a personal consultation from our expert by phone about the car's market value before the competition starts.</p>
+          <p class="av-copy-label mt-3">After — the paragraph becomes one sentence</p>
+          <p class="av-copy">Saat asiantuntijaltamme <span class="av-ins">tarvittaessa</span> puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</p>
+          <p class="av-gloss"><span class="av-ins">If necessary</span> you get a personal consultation from our expert by phone about the car's market value before the competition starts.</p>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">The deleted sentence promises help with the asking price, which is being removed from the product — so it goes rather than becoming conditional. Unchanged: paragraphs 1, 2 and 4.</p>
+      </article>
+
+      <!-- 3.5 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-4">
+          <span class="font-barlow font-bold text-black text-lg">3.5</span>
+          <span class="font-dm text-sm text-slate-800"><b>Miksi ilmoitukseni on tarkistuksessa?</b> <span class="text-slate-500">— Why is my listing under review?</span></span>
+          <span class="font-dm text-xs bg-slate-100 text-slate-700 rounded-full px-2.5 py-1 md:ml-auto">One word inserted · first paragraph</span>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today</p>
+          <p class="av-copy">Haluamme varmistaa, että saat autostasi parhaan mahdollisen hinnan. Siksi käymme ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</p>
+          <p class="av-gloss">We want to make sure you get the best possible price for your car. That is why we go through the listing details briefly before publishing it.</p>
+          <p class="av-copy-label mt-3">After</p>
+          <p class="av-copy">Haluamme varmistaa, että saat autostasi parhaan mahdollisen hinnan. Siksi käymme <span class="av-ins">tapauskohtaisesti</span> ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</p>
+          <p class="av-gloss">We want to make sure you get the best possible price for your car. That is why we go through the listing details briefly, <span class="av-ins">case by case</span>, before publishing it.</p>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">Unchanged: paragraphs 2, 3 and 4 — they describe the call itself and are accurate for a seller who is in review, which is the only seller who asks this question. Only the framing moves from universal to conditional.</p>
+      </article>
+
       <div class="grid md:grid-cols-2 gap-5 items-start mt-5">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">3.3 and 3.4 need a replacement, not a deletion</p>
-          <p class="font-dm text-sm leading-6 text-slate-800">"Miten tiedän autoni arvon?" is the only place the copy answers what the car is worth. A seller who is never called still needs an answer, so the sentence stays and becomes conditional rather than disappearing. 3.4 repeats the same promise while discussing the asking price — it takes the same wording, so the two answers cannot drift apart.</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">“Miten tiedän autoni arvon?” is the only place the copy answers what the car is worth. A seller who is never called still needs an answer, so the sentence stays and becomes conditional rather than disappearing. 3.4 repeats the same promise while discussing the asking price, so it takes the same treatment and the two answers cannot drift apart.</p>
+          <p class="font-dm text-sm leading-6 text-slate-700 mt-3"><b>One open nit for the copywriter:</b> 3.3 reads <i>Saat tarvittaessa asiantuntijaltamme…</i> and 3.4 reads <i>Saat asiantuntijaltamme tarvittaessa…</i>. Same meaning, different word order. Say if they should be aligned; otherwise both ship as written.</p>
         </div>
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Two decisions already taken</p>
           <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-            <li><b>3.5 keeps all four paragraphs.</b> It answers a question only a seller who <i>is</i> in review would ask, and it is accurate for them. Only the framing moves from universal to conditional.</li>
-            <li><b>No new "why wasn't I called?" item.</b> After 3.1–3.5 nothing promises a call any more, so there is no broken expectation to explain — and a new item would draw attention to a distinction the seller does not otherwise notice.</li>
+            <li><b>3.5 keeps all four paragraphs.</b> It answers a question only a seller who <i>is</i> in review would ask, and it is accurate for them.</li>
+            <li><b>No new “why wasn’t I called?” item.</b> After 3.1–3.5 nothing promises a call any more, so there is no broken expectation to explain — and a new item would draw attention to a distinction the seller does not otherwise notice.</li>
           </ul>
         </div>
       </div>
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-5 max-w-3xl"><b>Nothing to change elsewhere.</b> The front-page FAQ mentions no review and no call, and the offers/decision FAQ's only expert mention is general support rather than a scheduled call. Both were checked against the live CMS text.</p>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>All six edits are live in the CMS entry, and no other sentence in those five answers has changed.</li>
+          <li>No FAQ item states or implies that every listing is reviewed, or that every seller is called, anywhere on the support page.</li>
+          <li>No item has been deleted and none added — the answer count is the same before and after.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-5 max-w-3xl"><b>Nothing to change elsewhere.</b> The front-page FAQ mentions no review and no call, and the offers/decision FAQ’s only expert mention is general support rather than a scheduled call. Both were checked against the live CMS text.</p>
       </div>
     </section>
 
@@ -388,55 +452,156 @@
     <section class="av-band av-band-grey" id="change-4">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">4 — Three transactional emails promise or assume the call</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Transactional emails</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Draft created · image chasing · auction ended</span></div>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Transactional emails · Finnish, consumer seller</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Email verification · add photos · no offers</span></div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
-        <ul class="list-disc pl-5 space-y-1"><li>Three seller emails state or assume the review call. Each is listed below with the exact sentence.</li><li>What each has to stop saying is settled; <b>the revised Finnish is still awaiting approval</b>.</li><li>Only the new-seller wording of the verification email changes — the returning-seller version has no such clause.</li></ul>
-        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../emails.html?email=email-verification&state=new-seller&review-no-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the email tool, with this initiative&rsquo;s variant selected</span></p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Three emails are affected. Each is identified below <b>by its subject line</b>, with the exact block that changes quoted in full.</li>
+          <li><b>What has to come out is settled</b> for all three — marked <span class="av-del">struck through</span> in the quotes.</li>
+          <li><b>The replacement Finnish is not approved yet.</b> Every wording below is a <b>placeholder</b> written to be reacted to — it is in the prototype, labelled <i>placeholder</i> everywhere it appears, and it is what needs replacing rather than what needs building.</li>
+          <li>Only the <b>new-seller</b> version of the verification email changes. The returning-seller version has no review clause and is untouched.</li>
+        </ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../emails.html?email=email-verification&state=new-seller&review-no-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the email tool with this initiative&rsquo;s variant selected, so you can flip between today&rsquo;s copy and the placeholder. The tool labels it <b>placeholder copy, not approved</b> in the email list, the variant switcher and the meta panel.</span></p>
       </div>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Found by reading every seller-facing transactional email end to end. Revised copy is <b>awaiting approval</b>; what each one has to stop saying is settled.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+
+      <div class="bg-info-50 border border-info-200 rounded-lg p-4 mb-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <b>How to read the diffs.</b> <span class="av-del">Struck-through red</span> is text that goes, <span class="av-ins">green</span> is text that arrives, unmarked text stays. Finnish is the copy that ships; the grey line beneath is an <b>English gloss for reading only</b>. <span class="text-slate-500">[square brackets]</span> mark a value the email fills in at send time.
+      </div>
+
+      <!-- 4.1 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3">
+          <span class="font-barlow font-bold text-black text-lg">4.1</span>
+          <span class="font-dm text-sm text-slate-800"><b>Email verification</b> <span class="text-slate-500">— new seller only</span></span>
+          <span class="font-dm text-xs bg-warning-100 text-warning-800 rounded-full px-2.5 py-1 md:ml-auto">Deletion settled · replacement awaiting copy</span>
+        </div>
+        <table class="w-full font-dm text-sm text-left mb-4">
+          <tbody class="align-top text-slate-800">
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap w-40">Subject line</td><td class="py-1"><b>“Vahvista sähköpostiosoitteesi ja jatka auton myyntiä”</b><br><span class="text-slate-500">Confirm your email address and continue selling your car</span></td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">Opens with</td><td class="py-1">“Hei ja tervetuloa AutoVexille!” <span class="text-slate-500">— the returning-seller version says “…tervetuloa takaisin…” and is a different body altogether</span></td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">When it is sent</td><td class="py-1">On submitting the funnel with an unconfirmed address. <b>The first email a new seller ever receives.</b></td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">Block to change</td><td class="py-1">Item 1 of the four-step list under the heading “Mitä seuraavaksi?” (<i>What happens next?</i>). Items 2–4 are untouched.</td></tr>
+          </tbody>
+        </table>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today — list item 1</p>
+          <p class="av-copy">Kun olet vahvistanut sähköpostiosoitteesi <span class="av-del">ja tiimimme on tarkastanut ilmoituksesi</span>, <span class="av-del">se</span> julkaistaan ja autoliikkeet alkavat kilpailla autostasi.</p>
+          <p class="av-gloss">Once you have confirmed your email address <span class="av-del">and our team has checked your listing</span>, <span class="av-del">it</span> is published and dealerships start competing for your car.</p>
+          <p class="av-copy-label mt-3">After — working draft, <span class="text-warning-800">not approved</span></p>
+          <p class="av-copy">Kun olet vahvistanut sähköpostiosoitteesi, <span class="av-ins">ilmoituksesi</span> julkaistaan ja autoliikkeet alkavat kilpailla autostasi.</p>
+          <p class="av-gloss">Once you have confirmed your email address, <span class="av-ins">your listing</span> is published and dealerships start competing for your car.</p>
+        </div>
+        <div class="bg-warning-50 border border-warning-200 rounded-md p-4 mt-4 font-dm text-sm leading-6 text-slate-800">
+          <b>Note for whoever writes the final line.</b> Deleting the clause alone is not enough: the pronoun <i>se</i> (“it”) referred to <i>ilmoituksesi</i> inside the deleted clause, so with the clause gone the sentence has no subject. The noun has to come back, as in the draft above — or the sentence be rewritten.
+        </div>
+        <p class="font-dm text-sm leading-6 text-slate-700 mt-4"><b>Why it has to change.</b> It states the review as a step every seller goes through — the same promise Change 1 removes from the price step, in the one email every new seller opens.</p>
+      </article>
+
+      <!-- 4.2 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3">
+          <span class="font-barlow font-bold text-black text-lg">4.2</span>
+          <span class="font-dm text-sm text-slate-800"><b>Missing photos reminder</b></span>
+          <span class="font-dm text-xs bg-warning-100 text-warning-800 rounded-full px-2.5 py-1 md:ml-auto">Deletion settled · replacement awaiting copy</span>
+        </div>
+        <table class="w-full font-dm text-sm text-left mb-4">
+          <tbody class="align-top text-slate-800">
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap w-40">Subject line</td><td class="py-1"><b>“<span class="text-slate-500">[first name]</span>, lisää vielä puuttuvat kuvat”</b><br><span class="text-slate-500">[first name], please add the missing photos</span></td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">Opens with</td><td class="py-1">“Hei <span class="text-slate-500">[first name]</span>, tarjouspyyntösi kaipaa vielä lisäkuvia!”</td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">When it is sent</td><td class="py-1">When photos are chased on a draft. <b>Today only an advisor can trigger it</b>, which is why the wording is currently true.</td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">Block to change</td><td class="py-1">The first body paragraph. The second paragraph and the button (“Lisää kuvat”) are untouched.</td></tr>
+          </tbody>
+        </table>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today — first body paragraph</p>
+          <p class="av-copy">Melkein valmista! Lataa puuttuvat kuvat <span class="av-del">asiantuntijamme kanssa käymäsi puhelun mukaisesti</span>. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>
+          <p class="av-gloss">Almost done! Upload the missing photos <span class="av-del">as agreed in your call with our expert</span>. After that everything is ready for the sale.</p>
+          <p class="av-copy-label mt-3">After — working draft, <span class="text-warning-800">not approved</span></p>
+          <p class="av-copy">Melkein valmista! Lataa puuttuvat kuvat. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>
+          <p class="av-gloss">Almost done! Upload the missing photos. After that everything is ready for the sale.</p>
+        </div>
+        <p class="font-dm text-sm leading-6 text-slate-700 mt-4"><b>Why it has to change.</b> It assumes the call already happened. That holds today, but it breaks the moment photo chasing is triggered for a car that was never reviewed — and it is the kind of sentence nobody thinks to revisit when the trigger changes. Deleting the clause leaves a grammatical sentence, so this is the cheapest of the three.</p>
+      </article>
+
+      <!-- 4.3 -->
+      <article class="bg-white rounded-lg border border-slate-200 p-5 mb-4">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3">
+          <span class="font-barlow font-bold text-black text-lg">4.3</span>
+          <span class="font-dm text-sm text-slate-800"><b>Auction ended · no offers</b></span>
+          <span class="font-dm text-xs bg-error-100 text-error-800 rounded-full px-2.5 py-1 md:ml-auto">Needs a decision before any copy</span>
+        </div>
+        <table class="w-full font-dm text-sm text-left mb-4">
+          <tbody class="align-top text-slate-800">
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap w-40">Subject line</td><td class="py-1"><b>“Tarjouskilpailu on ohi autostasi <span class="text-slate-500">[registration number]</span>”</b><br><span class="text-slate-500">The bidding on your [registration number] is over</span></td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">Opens with</td><td class="py-1">“Terve <span class="text-slate-500">[first name]</span>!” then “Tarjouskilpailu on nyt ohi. Valitettavasti et saanut autostasi tarjouksia.”</td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">When it is sent</td><td class="py-1">When the auction ends with zero offers. One of four end-of-auction emails; the other three are chosen by how the highest offer compares to the asking price and are not affected.</td></tr>
+            <tr><td class="py-1 pr-4 text-slate-500 whitespace-nowrap">Block to change</td><td class="py-1">The <b>third</b> of three reasons under the heading “Miksi tarjouksia ei tullut?” (<i>Why did no offers come?</i>) — its sub-heading and its one paragraph. The first two reasons (an incomplete request; the car listed elsewhere too) are untouched.</td></tr>
+          </tbody>
+        </table>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today — third reason, in full</p>
+          <p class="av-copy"><b>Auton kilometrimäärä on yli 200tkm tai ikää on yli 10 vuotta</b><br>Palvelussamme autoliikkeet ovat enimmäkseen kiinnostuneita vähemmän ajetuista ja uudemmista autoista.</p>
+          <p class="av-gloss"><b>The car has over 200,000 km or is more than 10 years old</b><br>In our service dealerships are mostly interested in lower-mileage, newer cars.</p>
+          <p class="av-copy-label mt-3">Placeholder — option 2 below, <span class="text-warning-800">not approved and not yet decided</span></p>
+          <p class="av-copy"><b><span class="av-del">Auton kilometrimäärä on yli 200tkm tai ikää on yli 10 vuotta</span> <span class="av-ins">Auton ikä ja ajokilometrit vaikuttavat kysyntään</span></b><br>Palvelussamme autoliikkeet ovat enimmäkseen kiinnostuneita vähemmän ajetuista ja uudemmista autoista.</p>
+          <p class="av-gloss"><b><span class="av-del">The car has over 200,000 km or is more than 10 years old</span> <span class="av-ins">A car&rsquo;s age and mileage affect demand</span></b><br>In our service dealerships are mostly interested in lower-mileage, newer cars.</p>
+          <p class="font-dm text-xs text-slate-500 mt-2">Only the sub-heading moves. The paragraph under it already says the same thing without quoting a threshold, so it is production copy and unchanged.</p>
+        </div>
+        <div class="bg-error-50 border border-error-200 rounded-md p-4 mt-4 font-dm text-sm leading-6 text-slate-800">
+          <p class="mb-2"><b>Why this one is a decision, not an edit.</b> The mileage and age it quotes sit right next to the band that decides who gets a review call. Once most listings publish with no review, this paragraph tells a seller we always knew their car was outside dealership interest — and published it anyway, without saying so. Whether that is the message we want is a product call, so no wording is proposed here.</p>
+          <p class="font-medium mb-1">Three options, with what each costs:</p>
+          <ol class="list-decimal pl-5 space-y-1">
+            <li><b>Keep it.</b> It is honest and it is often the real reason. Costs nothing to build; leaves the seller to work out that we knew.</li>
+            <li><b>Soften it</b> — drop the numbers, keep the reason (“autoliikkeiden kiinnostus painottuu vähemmän ajettuihin ja uudempiin autoihin”). Keeps the explanation without quoting a threshold back at the seller.</li>
+            <li><b>Remove the reason entirely.</b> Leaves two reasons, both of which the seller can act on. The strongest option if we would rather steer them to a next step than explain the past.</li>
+          </ol>
+          <p class="mt-3"><b>The prototype currently shows option 2</b>, so there is something concrete to react to — that is a placeholder, not a recommendation. Say which option you want and it changes.</p>
+        </div>
+      </article>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What is settled, and what this change is waiting on</p>
         <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">Email</th>
-              <th class="px-4 py-3 font-medium">What it says today</th>
-              <th class="px-4 py-3 font-medium">Why it has to change</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold align-top">Email verification<br><span class="text-xs font-normal text-slate-500">new seller only</span></td>
-              <td class="px-4 py-3">Step 1 of the numbered list: "Kun olet vahvistanut sähköpostiosoitteesi ja <b>tiimimme on tarkastanut ilmoituksesi</b>, se julkaistaan…"</td>
-              <td class="px-4 py-3"><b>The first email a seller ever receives</b>, and it states the review as a step everyone goes through — the same promise Change 1 removes from the price step. The returning-seller wording has no such clause, so only one string changes.</td>
-            </tr>
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold align-top">Draft add images</td>
-              <td class="px-4 py-3">"Lataa puuttuvat kuvat <b>asiantuntijamme kanssa käymäsi puhelun mukaisesti</b>."</td>
-              <td class="px-4 py-3">Assumes the call already happened. True today, since only an advisor can send it — but it breaks the moment image chasing is automated for a car that was never reviewed.</td>
-            </tr>
-            <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold align-top">Auction ended · no offers</td>
-              <td class="px-4 py-3">Lists reasons no offers came, ending with "Auton kilometrimäärä on yli 200tkm tai ikää on yli 10 vuotta".</td>
-              <td class="px-4 py-3">States the review segment's own band back to the seller as a reason dealerships were not interested. Decide whether that is the message we want when the same numbers decide who gets called.</td>
-            </tr>
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="py-2 pr-4 font-medium">#</th><th class="py-2 pr-4 font-medium">Settled</th><th class="py-2 font-medium">Still needed</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
+            <tr><td class="py-2 pr-4 font-bold">4.1</td><td class="py-2 pr-4">The review clause comes out of list item 1, and the sentence gets its subject back.</td><td class="py-2"><b>Approved Finnish</b> to replace the placeholder — or a nod that the placeholder is the copy.</td></tr>
+            <tr><td class="py-2 pr-4 font-bold">4.2</td><td class="py-2 pr-4">The reference to the phone call comes out; nothing replaces it.</td><td class="py-2"><b>Sign-off</b> that the plain deletion is the wording we want.</td></tr>
+            <tr><td class="py-2 pr-4 font-bold">4.3</td><td class="py-2 pr-4">Nothing — the placeholder takes a position the team has not taken.</td><td class="py-2"><b>A decision</b> between keep / soften / remove <i>first</i>, then copy if it is softened.</td></tr>
           </tbody>
         </table>
       </div>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>No Finnish seller email states that the listing is reviewed before publishing, or that a call has happened or will happen.</li>
+          <li>The returning-seller version of 4.1 is byte-identical to what it sends today.</li>
+          <li>The other three end-of-auction emails are untouched, and 4.3's first two reasons still render.</li>
+          <li>Every changed string is the approved copy, not the working drafts on this page.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-5 max-w-3xl"><b>Scope.</b> Finnish, consumer-seller, sent by the product itself. Sweden, the B2B marketplace and every dealership-facing email are out of scope, and so are the lifecycle emails in Change 5 — those come from a different sender and a different owner.</p>
       </div>
     </section>
 
     <!-- Change 5 -->
     <section class="av-band av-band-grey" id="change-5">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">5 — Lifecycle emails contradict the change, and nobody here owns them</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">SendGrid · outside the codebase</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Draft nurture · marketing</span></div>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">5 — Lifecycle emails contradict the change <span class="text-slate-500">(later, with Marketing)</span></h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-200 text-slate-700 font-bold rounded-full px-3 py-1">Later · with Marketing</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">SendGrid · outside the codebase</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Draft nurture · marketing</span></div>
+
+      <div class="bg-slate-100 border-l-4 border-slate-400 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-bold uppercase tracking-wide text-slate-600 mb-2">Not part of this build</p>
+        <p class="mb-2"><b>Nothing here is a dev task, and nothing here blocks Changes 1–4.</b> These emails are configured in <b>SendGrid</b> by the <b>Marketing team</b>; their copy exists nowhere in the repository and no one on this team can edit it.</p>
+        <p class="mb-2">The section stays on this page because the problem is real and the seller cannot tell the two senders apart: once Changes 1–4 ship, the product will have stopped promising the review call while at least one marketing email still promises it in a subject line. Fixing that needs <b>a joint session with Marketing</b>, not a ticket.</p>
+        <p class="mb-0"><b>What it needs, in order:</b> an owner on the Marketing side → a walkthrough of the emails below against the checklist at the end of this section → a decision per email → their own copy work. <b>Revisit once Changes 1–4 are live</b>, so the review is against what the product actually says by then.</p>
+      </div>
+
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
-        <ul class="list-disc pl-5 space-y-1"><li>A second family of emails reaches the same seller through <b>SendGrid</b>, with copy that exists nowhere in the repository.</li><li>At least two contradict this initiative — one <b>promises the call in its subject line</b>.</li><li><b>This change needs an owner before it needs a fix.</b> Nobody on this team can edit them.</li></ul>
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What this section is for</p>
+        <ul class="list-disc pl-5 space-y-1"><li>A record of <b>which</b> lifecycle emails conflict, captured from a real seller's inbox — the input for that session.</li><li>At least two contradict this initiative; one <b>promises the call in its subject line</b>.</li><li>No copy is proposed here: proposing wording for emails another team owns would be the wrong way round.</li></ul>
         <p class="mt-4 text-slate-500">Not in the prototype — these emails are outside the codebase, so the email tool does not carry them.</p>
       </div>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A seller's inbox contains more than the codebase sends. Captures from a real seller's mailbox show a second family of emails going out through <b>SendGrid</b>, with copy that exists nowhere in the repository. At least two of them contradict what this initiative is changing everything else to say — including one that promises the call outright, in its subject line. <b>They need an owner, a review and a fix.</b></p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A seller's inbox contains more than the codebase sends. Captures from a real seller's mailbox show a second family of emails going out through SendGrid. Listed below with what each one conflicts with; the last two are included for completeness rather than because a problem was found.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
