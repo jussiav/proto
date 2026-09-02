@@ -545,8 +545,24 @@ there and severed the pair: the state read as switched off while its own button
 did not.
 
 **Change 17 is one function, `acceptCls()`,** because accept appears on the card,
-in the modal footer and inside the dealership's last bubble and the three have to
-agree. It is `green-500` — prod's own accept is `green-600`, half a step darker.
+in the modal footer, inside the dealership's last bubble and on the accept
+confirmation step, and the four have to agree. It is **`green-400` with a black
+label**, hover `green-300`.
+
+**That pairing is forced by contrast, not chosen.** The label is 14px medium, so
+WCAG 2.0 AA wants 4.5:1 and the large-text allowance does not apply. White text
+cannot get there on a green bright enough to read as the primary action: prod's
+own accept green is **3.30:1**, and `green-500` — the first attempt here — is
+**2.28:1**. Both failed. Moving the contrast into the label rather than darkening
+the fill keeps the button bright: green-400 on black is **12.05:1**, AAA. A text
+shadow, border or glow changes none of those numbers — the ratio is text against
+background, full stop.
+
+**`accept-button-lab.html` is where that was decided** and is worth keeping until
+the team settles it: a temporary page, linked from nowhere, with 22 candidates
+from the brand palette that each measure their own ratio from their rendered
+colours (and re-measure on hover), so the numbers cannot drift from what is drawn.
+Green-400 + black is the current pick pending the team's view.
 The in-message accept also carries the card's exact label,
 **"Hyväksy korkein tarjous"**: it needs no amount, since the figure is the bold
 number at the top of the same bubble and the button's placement is what says
