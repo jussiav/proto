@@ -346,6 +346,19 @@ leads with subject + greeting + when it is sent + which block changes, and
 `[square brackets]` mark a send-time value. Prod file names, component names and
 translation keys still never appear.
 
+**Change 4 is marked "Ongoing work" — approved copy is not the same as cleared
+for development.** The status chip is `info`, not `success`, the section opens
+with a "do not pick this up yet" notice, and the first acceptance criterion is
+that the team has agreed it is going ahead and when. The emails are a shared
+surface, their timing is tied to when the funnel changes actually ship, and they
+overlap the Marketing-owned family in Change 5 — so a dev reading the page must
+not be able to mistake finished copy for a ready ticket. Changes 1–3 stay
+independently buildable, and the initiative reads
+`3 ready to build · 1 ongoing · 1 later, with Marketing`. **Use this status
+whenever a change is specified and agreed but not yet scheduled**; the previous
+`Ready to build` / `Awaiting copy` / `Later · with Marketing` chips do not cover
+it.
+
 **Change 4 is now TWO emails, and its copy is approved** (2026-09-02). 4.1
 restores `ilmoituksesi` along with the deletion — the pronoun `se` referred to
 the noun inside the clause being removed, so deleting alone leaves the sentence
