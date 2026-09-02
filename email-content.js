@@ -138,7 +138,29 @@
             '</ol>' +
             '<p class="em-center">Auton myynti ei voisi olla tämän helpompaa!</p>' +
             '<div class="em-help"><p class="em-help-title"><b>Tarvitsetko neuvoja?</b></p><p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p></div>',
-          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1', '$verificationUrl')
+          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1', '$verificationUrl'),
+          /* Review/No review, change 4.1. PLACEHOLDER — `draft: true` is what
+             makes the tool say so rather than presenting this as approved copy.
+             Only list item 1 changes: the review clause goes, and `ilmoituksesi`
+             comes back with it because the pronoun `se` referred to the noun
+             inside the deleted clause. Everything else is production copy. */
+          v1: {
+            draft: true,
+            body:
+              '<h1>Hei ja tervetuloa AutoVexille!</h1>' +
+              '<p>Kiva, että haluat myydä autosi kauttamme!</p>' +
+              '<p>Vahvistathan sähköpostiosoitteesi alla olevasta painikkeesta. Vahvistaminen on tärkeää, jotta pystymme pitämään sinut ajan tasalla auton myyntiprosessin kulusta.</p>' +
+              '{{BUTTON}}' +
+              '<p class="em-center em-lead"><b>Mitä seuraavaksi?</b></p>' +
+              '<ol>' +
+              '<li>Kun olet vahvistanut sähköpostiosoitteesi, ilmoituksesi julkaistaan ja autoliikkeet alkavat kilpailla autostasi.</li>' +
+              '<li>Autoliikkeet tekevät tarjouksia autostasi noin 36 tunnin ajan. Viikonloput ja arkipyhät pidentävät aikaa, jotta kaikki kiinnostuneet autoliikkeet ehtivät tekemään tarjouksen ja saat parhaan mahdollisen hinnan.</li>' +
+              '<li>Tarjouskilpailun päätyttyä näet parhaan tarjouksen. Saatat nähdä myös vaihtoehtoisen tarjouksen, mikäli toivot auton noutoa kotoasi.</li>' +
+              '<li>Hyväksyttyäsi tarjouksen yhdistämme sinut autoliikkeen kanssa. Voit turvallisin mielin tehdä kaupat luotettavan ostajan kanssa.</li>' +
+              '</ol>' +
+              '<p class="em-center">Auton myynti ei voisi olla tämän helpompaa!</p>' +
+              '<div class="em-help"><p class="em-help-title"><b>Tarvitsetko neuvoja?</b></p><p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p></div>'
+          }
         },
         {
           id: 'existing-seller',
@@ -201,7 +223,18 @@
         '<p>Melkein valmista! Lataa puuttuvat kuvat asiantuntijamme kanssa käymäsi puhelun mukaisesti. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>' +
         '<p>Klikkaa alla olevaa painiketta lisätäksesi kuvat. Myydään autosi yhdessä!</p>' +
         '{{BUTTON}}',
-      cta: btn('Lisää kuvat', 'photos.html', '$draft->imageUploadLink()')
+      cta: btn('Lisää kuvat', 'photos.html', '$draft->imageUploadLink()'),
+      /* Review/No review, change 4.2. PLACEHOLDER. The reference to the call
+         goes and nothing replaces it — the sentence is grammatical without it,
+         and the heading above already says why the email arrived. */
+      v1: {
+        draft: true,
+        body:
+          '<h1>Hei <var data-src="$draft-&gt;user?-&gt;firstName() ?? $draft-&gt;firstName()">[first name]</var>, tarjouspyyntösi kaipaa vielä lisäkuvia!</h1>' +
+          '<p>Melkein valmista! Lataa puuttuvat kuvat. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>' +
+          '<p>Klikkaa alla olevaa painiketta lisätäksesi kuvat. Myydään autosi yhdessä!</p>' +
+          '{{BUTTON}}'
+      }
     },
 
     {
@@ -255,7 +288,30 @@
         '<p>Parhaan hinnan saaminen autosta on aina kilpailun tuotosta. Mikäli auto on samaan aikaan myynnissä myös toisella alustalla, jakautuvat ostajat moneen osoitteeseen ja lopputulos on todennäköisesti heikompi.</p>' +
         '<h3>Auton kilometrimäärä on yli 200tkm tai ikää on yli 10 vuotta</h3>' +
         '<p>Palvelussamme autoliikkeet ovat enimmäkseen kiinnostuneita vähemmän ajetuista ja uudemmista autoista.</p>',
-      cta: null
+      cta: null,
+      /* Review/No review, change 4.3. PLACEHOLDER, and it takes a position the
+         team has not taken yet: of the three options on the spec page (keep /
+         soften / remove) this demonstrates SOFTEN. The thresholds leave the
+         heading — quoting a band back at a seller whose ad we published anyway
+         is the part that reads badly — while the paragraph under it, which
+         already states the same thing without numbers, is production copy and
+         unchanged. Switch this to the removal if that is the decision. */
+      v1: {
+        draft: true,
+        body:
+          '<h1>Terve <var data-src="$tenderRequest-&gt;user-&gt;firstName()">[first name]</var>!</h1>' +
+          '<p>Tarjouskilpailu on nyt ohi. Valitettavasti et saanut autostasi tarjouksia.</p>' +
+          '<p>Ota meihin yhteyttä vastaamalla tähän viestiin, niin voimme yhdessä selvittää, miksi autoliikkeet eivät tällä kertaa kiinnostuneet autostasi. Voimme myös uusia tarjouspyyntösi mahdollisilla muutoksilla.</p>' +
+          '<h2>Miksi tarjouksia ei tullut?</h2>' +
+          '<p>Yleisimpiä syitä hiljaiseen tarjouskilpailuun:</p>' +
+          '<h3>Tarjouspyyntö oli puutteellinen</h3>' +
+          '<p>Jos auton varusteista tai huolto- ja vauriotiedoista kerrotaan suppeasti, eivät autoliikkeet kovin mielellään tee tarjouksia.</p>' +
+          '<p>On tärkeää, että kuvat autosta on otettu huolellisesti ja kattavasti, jotta autoliike pystyy määrittelemään auton kunnon. Lisää kuvat myös huoltokirjasta ja renkaista.</p>' +
+          '<h3>Auto on myynnissä myös muualla netissä</h3>' +
+          '<p>Parhaan hinnan saaminen autosta on aina kilpailun tuotosta. Mikäli auto on samaan aikaan myynnissä myös toisella alustalla, jakautuvat ostajat moneen osoitteeseen ja lopputulos on todennäköisesti heikompi.</p>' +
+          '<h3>Auton ikä ja ajokilometrit vaikuttavat kysyntään</h3>' +
+          '<p>Palvelussamme autoliikkeet ovat enimmäkseen kiinnostuneita vähemmän ajetuista ja uudemmista autoista.</p>'
+      }
     },
 
     {

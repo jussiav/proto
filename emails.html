@@ -171,40 +171,58 @@
       </p>
     </div>
 
-    <div class="flex gap-6 items-start max-lg:flex-col">
+    <!-- `items-start` is what lets the pinned list sit at the top of a tall
+         column, but below `lg` the row becomes a COLUMN and align-items then
+         governs width — so the reading pane sized itself to the 570px mail
+         shell and scrolled the whole page sideways. Stretch it once stacked. -->
+    <div class="flex gap-6 items-start max-lg:flex-col max-lg:items-stretch">
 
       <!-- ── List ── -->
-      <aside class="w-[340px] flex-shrink-0 max-lg:w-full bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-200">
+      <!-- The list is the navigation, so it stays put: 22 emails against a page
+           that is taller than the viewport once an email is open, and scrolling
+           back up to switch was the whole friction. Sticky from `lg` only —
+           below that the two columns stack and a pinned list would eat the
+           screen. The header stays fixed inside the column while the rows
+           scroll, and the column is capped short of the viewport so the last row
+           clears the proto bar. -->
+      <aside class="w-[340px] flex-shrink-0 max-lg:w-full bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col lg:sticky lg:top-4 lg:max-h-[calc(100vh-4.5rem)]">
+        <div class="px-4 py-3 border-b border-slate-200 flex-shrink-0">
           <p class="font-dm font-bold text-sm text-slate-900">Inbox</p>
           <p id="list-count" class="font-dm text-xs text-slate-500"></p>
         </div>
-        <div id="email-list" class="max-h-[70vh] overflow-y-auto"></div>
+        <div id="email-list" class="overflow-y-auto flex-1 max-lg:max-h-[70vh]"></div>
       </aside>
 
       <!-- ── Reading pane ── -->
       <section class="flex-1 min-w-0 flex flex-col gap-4">
 
-        <!-- Meta -->
+        <!-- The email. Subject and sender are its header rather than a card of
+             their own: they are what the seller sees first, and the fifteen rows
+             of trigger/timing/template detail that used to sit between them and
+             the email now sit after it. -->
         <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <div class="px-5 py-4 border-b border-slate-200">
             <p id="meta-subject" class="font-dm font-bold text-lg leading-6 text-slate-900"></p>
             <p id="meta-line" class="font-dm text-sm text-slate-500 mt-1"></p>
+          </div>
+          <!-- The mail shell is a fixed 570px, as the real one is, so on a phone
+               it scrolls inside its own card rather than taking the page with it. -->
+          <div id="email-render" class="bg-slate-50 py-8 px-4 overflow-x-auto"></div>
+          <div class="px-5 py-2.5 border-t border-slate-200">
+            <p class="font-dm text-xs text-slate-500">Rendered email — chrome checked against rendered captures · copy verbatim from the dump</p>
+          </div>
+        </div>
+
+        <!-- Everything about how the email works, below the thing it describes -->
+        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div class="px-5 py-3 border-b border-slate-200">
+            <p class="font-dm font-medium text-sm text-slate-700">Details</p>
           </div>
           <div class="px-5 py-4">
             <table class="w-full font-dm text-sm text-left">
               <tbody id="meta-table" class="divide-y divide-slate-100 text-slate-800"></tbody>
             </table>
           </div>
-        </div>
-
-        <!-- The email -->
-        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <div class="px-5 py-3 border-b border-slate-200 flex items-center justify-between gap-3 flex-wrap">
-            <p class="font-dm font-medium text-sm text-slate-700">Rendered email</p>
-            <p class="font-dm text-xs text-slate-500">Chrome checked against rendered captures · copy verbatim from the dump</p>
-          </div>
-          <div id="email-render" class="bg-slate-50 py-8 px-4"></div>
         </div>
 
       </section>
@@ -352,11 +370,43 @@
               '<span class="block font-dm font-medium text-sm text-slate-900 leading-5">' + esc(armSubject(v)) + '</span>' +
               '<span class="block font-dm text-xs text-slate-500 mt-0.5">' + esc(v.mail.state) + '</span>' +
               (v.stateLabel ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-0.5">' + esc(v.stateLabel) + '</span>' : '') +
-              (armOf(v) ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-green-100 text-green-800 rounded-full px-2 py-0.5">v1 differs</span>' : '') +
+              (armOf(v) ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-green-100 text-green-800 rounded-full px-2 py-0.5">v1 differs' + (armOf(v).draft ? ' (draft)' : '') + '</span>' : '') +
               (!armOf(v) && v.mail.initiative ? '<span class="inline-block mt-1 font-dm text-xs bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">candidate</span>' : '');
             host.appendChild(row);
           });
         });
+
+        /* The list is a capped scroller, so an email late in the journey opens
+           with its own row out of sight — the row that says which of the 22 you
+           are looking at. Scrolled inside the container by arithmetic rather
+           than scrollIntoView, which would scroll the PAGE and undo the point
+           of pinning the column. Only when the row is actually out of view, so
+           a click near the top never shifts the list under the cursor. */
+        centreActiveRow(host);
+      }
+
+      /* Bring the open email's own row into view inside the list. Measured with
+         rects and applied as a DELTA to the current scroll: offsetTop resolves
+         against the nearest positioned ancestor, and the column is `sticky`, so
+         the row and its scroll container answer to different parents.
+
+         Deferred across two frames and once more at 150 ms because the column's
+         cap (`lg:max-h-[calc(...)]`) and `flex-1` are arbitrary-value utilities
+         the Play CDN generates asynchronously — at render time the list is still
+         uncapped, so the row measures as already visible and nothing scrolls.
+         Same reason decision.html re-pins its negotiation thread twice. */
+      function centreActiveRow(host) {
+        function run() {
+          var row = host.querySelector('.em-row.is-active');
+          if (!row || host.scrollHeight <= host.clientHeight) return;
+          var hostRect = host.getBoundingClientRect();
+          var rowRect  = row.getBoundingClientRect();
+          if (rowRect.top < hostRect.top || rowRect.bottom > hostRect.bottom) {
+            host.scrollTop += (rowRect.top - hostRect.top) - (host.clientHeight - rowRect.height) / 2;
+          }
+        }
+        requestAnimationFrame(function () { run(); requestAnimationFrame(run); });
+        setTimeout(run, 150);
 
         /* Klaviyo — listed, never rendered. Leaving them out would read as
            "no email is sent here", which is worse than an unrenderable row. */
@@ -419,7 +469,8 @@
           rows += metaRow('Initiative', link + '<br><span class="text-slate-700">' + esc(m.initiative.why) + '</span>');
         }
         rows += metaRow('Arm', armOf(v)
-          ? '<b>' + esc(armFor(v.mail.initiative.slug)) + '</b> — showing the initiative\'s revised version'
+          ? '<b>' + esc(armFor(v.mail.initiative.slug)) + '</b> — showing the initiative\'s revised version' +
+            (armOf(v).draft ? ' <span class="text-amber-800">(placeholder copy, not approved)</span>' : '')
           : (armSelectedWithoutOverride(v)
               ? esc(armFor(v.mail.initiative.slug)) + ' selected, but this email has no override yet — showing production copy'
               : 'control — production copy'));
@@ -522,9 +573,9 @@
             default: 'control',
             variants: [
               { id: 'control', label: 'Control — production behaviour' },
-              { id: 'v1',      label: active.v1.body
+              { id: 'v1',      label: (active.v1.body
                   ? 'Variant 1 — revised email copy'
-                  : 'Variant 1 — revised link target' }
+                  : 'Variant 1 — revised link target') + (active.v1.draft ? ' (placeholder)' : '') }
             ]
           }
         ] : [],
