@@ -547,7 +547,9 @@ did not.
 **Change 17 is one function, `acceptCls()`,** because accept appears on the card,
 in the modal footer, inside the dealership's last bubble and on the accept
 confirmation step, and the four have to agree. It is **`green-400` with a black
-label**, hover `green-300`.
+label**, hover `green-500` — DARKER on hover, like every other button on the
+page (blue-600 → blue-700, blue-100 → blue-200); lighter-on-hover read as the
+button switching off.
 
 **That pairing is forced by contrast, not chosen.** The label is 14px medium, so
 WCAG 2.0 AA wants 4.5:1 and the large-text allowance does not apply. White text
