@@ -491,13 +491,39 @@ two messages chosen by offer count, and the pre-filled message to the
 dealership. Documented as its own section on the spec page rather than a
 seventeenth change, since it is coverage rather than new work.
 
-**One open point came out of writing that down: change 9 misses this flow.**
-It replaces the waiting state's support-email line with "you can still accept
-the standing offer", but QuickNegotiate has its OWN waiting state
-("Eikö autoliike ole ollut yhteydessä?") and the proto still renders the
-support-email bullet there in both arms. Change 9's reasoning applies
-identically, so this is an oversight rather than a decision — flagged on the
-spec page as something to settle before change 9 is built, not silently fixed.
+**Change 9 now means EVERY state, and change 3 reaches the reject
+confirmation.** Both were widened after the reject flow was written up
+(2026-09-02). The modal routes the seller to customer support in three places
+and none of them survive: the waiting state's support-email bullet and
+QuickNegotiate's own (both **replaced** by `acceptAnyTime` — the standing offer
+is still theirs while they wait), and the reject confirmation's closing
+"Asiakaspalvelumme auttaa myös mielellään tarvittaessa", which is **deleted**
+rather than replaced because the sentence before it already says what to do
+instead. The `Reject` step also had no header at all — prod's whole
+confirmation is one `text-sm` paragraph with the question and the advice run
+together — so v1 promotes prod's own question to the title row and puts the
+advice in the help block. `hasNeg` keeps prod's shorter variant a bare title
+with nothing under it. No new copy: one sentence split, one deleted.
+
+**"Eikö autoliike ole ollut yhteydessä?" is DEAD in prod — not a proto gap.**
+Worth knowing before anyone tries to reproduce it. `QuickNegotiate.vue`'s
+`!sellerCanSendMessage && negotiationRounds == 1` branch needs the reject banner
+and a negotiation awaiting the dealership's reply at the same time — but
+`C2BDecision.vue` hides that banner while `negotiation && waitingForDealer`,
+which is exactly that state, and once the reply lands `dealerCanSendMessage` is
+false so `handleRejectAllOffers` routes to `Reject` instead. The two conditions
+cannot both hold, and `offerAction = 'QuickNegotiate'` has exactly one caller.
+It is styled and specified with the rest so nothing is left behind if that
+banner rule changes, and recorded on the spec page as needing no test.
+
+**One reject-all routing divergence left alone, deliberately.** Prod skips the
+`amount > asking_price * 0.75` threshold when there is exactly ONE offer
+(`hasSingleOffer && dealerCanSendMessage`); the proto applies the threshold in
+both cases. So a lone low offer routes to `Reject` here where prod would offer
+QuickNegotiate — reachable with `?second=` empty plus a low `?highest=`. Every
+other state agrees, because the proto's `!hasNeg` gate and prod's
+`dealerCanSendMessage` differ only in states the hidden banner makes
+unreachable.
 
 **Batch 2 is four prod patterns, no new component.** `NegotiationMessage.vue`
 declares `pointOfView` with `'seller'` already an accepted value, so the swap is a
@@ -1574,7 +1600,10 @@ so re-enabling is one line if prod is fixed. The card badge is
 
 **More dead prod copy found while sweeping** (do not build against it):
 `auctions_in_progress.pick_up_offered` ("Noutopalvelua tarjoavat") — `Timer.vue`
-renders only `total_bids` and `bidders`. Add it to the list with `AConfetti`,
+renders only `total_bids` and `bidders`; and `QuickNegotiate.vue`'s
+`negotiation_round_one_rejection.*` block, unreachable because the reject banner
+is hidden in the only state that would show it (see Enhanced negotiations).
+Add them to the list with `AConfetti`,
 `AConfetti`'s canvas-confetti dependency, `Preview.vue`'s `published` badge
 config, and `NegotiationFormRequest`'s `counterOfferSend` rules.
 

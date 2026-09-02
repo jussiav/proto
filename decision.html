@@ -2099,7 +2099,12 @@
             ? '<div class="modal-help"><ul>'
             : '<ul class="list-disc list-inside mt-2 mb-4">';
           html += '<li>' + (EN_V1 ? EN_COPY.replyHours : 'Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä).') + '</li>';
-          html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
+          /* Change 9 reaches this waiting state too. It had been left with the
+             support-email line while its sibling below lost it, which made the
+             two waiting states disagree — and change 9's reading is that the
+             modal answers the question rather than routing it to support. Same
+             replacement: the standing offer is still theirs while they wait. */
+          html += '<li>' + (EN_V1 ? EN_COPY.acceptAnyTime : 'Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi') + '</li>';
           html += EN_V1 ? '</ul></div></div>' : '</ul>';
         } else if (sellerRounds === 1) {
           if (EN_V1) { html += buildModalHeader('Hyvä! Nyt odotellaan autoliikkeen vastausta.'); }
@@ -2307,12 +2312,32 @@
       var isFinal    = offer && offer.status === 3;
       var showNeg    = !hasNeg && isHighest && !isFinal;
 
-      body.innerHTML =
-        '<p class="text-sm text-slate-700">' +
-          (hasNeg
-            ? 'Oletko varma että haluat hylätä tarjouksen?'
-            : 'Oletko varma että haluat hylätä tarjouksen? Suosittelemme tekemään vastatarjouksen autoliikkeelle jos haluat autollesi noudon, paremman hinnan tai muuta lisätietoa. Asiakaspalvelumme auttaa myös mielellään tarvittaessa.') +
-        '</p>';
+      /* Changes 3 and 9 reach this step as well — it is the other modal in the
+         reject flow, and control gives it no header at all: prod's whole
+         confirmation is one paragraph at `text-sm`, question and advice running
+         together. v1 promotes prod's own question to the title row and puts the
+         advice in the contained help block, the same treatment every other state
+         in this modal gets.
+
+         The support sentence goes with it ("Asiakaspalvelumme auttaa myös
+         mielellään tarvittaessa"): change 9 keeps the customer-support route out
+         of this modal in every state, and the advice above it already says what
+         to do instead. prod's `negotiation` variant is the bare question, so
+         there the title stands alone. */
+      if (EN_V1) {
+        var rejectHtml = buildModalHeader('Oletko varma että haluat hylätä tarjouksen?');
+        if (!hasNeg) {
+          rejectHtml += buildModalHelp('Suosittelemme tekemään vastatarjouksen autoliikkeelle jos haluat autollesi noudon, paremman hinnan tai muuta lisätietoa.') + '</div>';
+        }
+        body.innerHTML = rejectHtml;
+      } else {
+        body.innerHTML =
+          '<p class="text-sm text-slate-700">' +
+            (hasNeg
+              ? 'Oletko varma että haluat hylätä tarjouksen?'
+              : 'Oletko varma että haluat hylätä tarjouksen? Suosittelemme tekemään vastatarjouksen autoliikkeelle jos haluat autollesi noudon, paremman hinnan tai muuta lisätietoa. Asiakaspalvelumme auttaa myös mielellään tarvittaessa.') +
+          '</p>';
+      }
 
       var fHtml = '<div class="flex justify-between items-center">';
       if (showNeg) {
