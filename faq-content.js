@@ -240,7 +240,7 @@
         v1:
         '<p>Tärkeintä on laatia mahdollisimman kattava ja selkeä ilmoitus. Lisää autostasi kuvat sisältä ja ulkoa, kuvaa mahdolliset vauriot avoimesti ja liitä mukaan huoltohistoria. Erityisesti huoltokirjan merkinnät ja dokumentoidut huollot lisäävät autoliikkeiden luottamusta ja kiinnostusta.</p>' +
         '<p>Mitä tarkemmat tiedot annat auton kunnosta, varusteista ja historiasta, sitä helpompi autoliikkeiden on tehdä tarjous – ja sitä todennäköisemmin kilpailu nostaa hintaa.</p>' +
-        '<p>Saat asiantuntijaltamme tarvittaessa puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</p>' +
+        '<p>Saat tarvittaessa asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</p>' +
         '<p>Haluatko ymmärtää tarkemmin, miten autoliikkeet hinnoittelevat autoja? Lue aiheesta täältä.</p>' },
 
       { q: 'Miksi ilmoitukseni on tarkistuksessa?',
