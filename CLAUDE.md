@@ -327,6 +327,58 @@ read Finnish. **No production file names, component names or translation keys
 appear on it**; colour tokens and copy do. Section titles name the solution
 ("3 — Negotiation modal header"), never the reasoning.
 
+**Copy changes carry a diff, and it is a convention now.** `.av-del` (error-700,
+line-through) is text that goes, `.av-ins` (success-800 on success-100, bold) is
+text that arrives — colour is never the only signal, so the marks survive
+greyscale and colour-blind reading. **Deletions live in the "Today" line and
+insertions in the "After" line**, never mixed, and each quoted string carries a
+grey English gloss (`.av-gloss`) underneath, labelled as a reading aid rather
+than copy. The devs do not read Finnish, so a truncated `…` quote or a diff
+without the surrounding sentence is not reviewable: **quote the whole sentence,
+or the whole paragraph if a sentence is being deleted from it**, and state what
+stays untouched. Review/No review's changes 3 and 4 were rebuilt this way — six
+FAQ edits and three emails, one card each rather than a four-column table, since
+a full sentence pair plus two glosses does not fit a table cell.
+
+**Name an email by its subject line.** Change 4's rows used to say "Email
+verification", which does not identify anything in a mailbox. Each email now
+leads with subject + greeting + when it is sent + which block changes, and
+`[square brackets]` mark a send-time value. Prod file names, component names and
+translation keys still never appear.
+
+**Change 4's three emails carry PLACEHOLDER copy, and the tool says so.** They
+were `candidate` — flagged, with no arm — which is right while nothing is
+written, but it leaves nothing to react to. A `v1` may now carry `draft: true`,
+and `emails.html` renders that in three places: the list badge (`v1 differs
+(draft)`), the bar's variant label (`… (placeholder)`) and the meta panel's Arm
+row (`placeholder copy, not approved`). Without it a green `v1 differs` asserts
+an approval nobody gave. 4.1 restores `ilmoituksesi` along with the deletion —
+the pronoun `se` referred to the noun inside the clause being removed, so
+deleting alone leaves the sentence subjectless. 4.2 is the bare deletion. **4.3
+takes a position the team has not taken**: of the spec's keep / soften / remove,
+the placeholder demonstrates SOFTEN — the thresholds leave the sub-heading, the
+paragraph under it is untouched because it already says the same thing without
+numbers. Recorded here and on the spec page as a placeholder rather than a
+recommendation.
+
+**The bar now shows arms in force on OTHER pages even when this page proposes
+nothing.** `elsewhere` in `proto-bar.js` used to be computed inside the branch
+that runs only when a page declares an initiative, so a page with none rendered
+a disabled `none on this page` while a remembered arm was pinned for the whole
+prototype — the exact invisibility that group exists to prevent. It is hoisted
+above the branch; the disabled placeholder now appears only when there is
+nothing on this page AND nothing in force elsewhere, and the row's `— none —`
+clears every remembered arm from any page. Found because this spec page's own
+change-4 link carried `&review-no-review=v1` for an email that had no override:
+the link silently pinned the arm for `price`, `contact` and `help` while the
+email tool correctly showed production copy.
+
+**Change 5 is parked, not pending.** The SendGrid lifecycle emails are
+Marketing's, so the section opens with a slate "Not part of this build" callout
+(no dev task, blocks nothing, revisit after 1–4 ship) and its change-log status
+is `Later · with Marketing` rather than an amber `Needs an owner` — amber read as
+work waiting on us. No wording is proposed for emails another team owns.
+
 **Both spec pages now share that shape.** `review-no-review.html` was given the
 same treatment — a Where/Scenario chip pair under each heading, a short
 **What changes** card before the detail, and a prototype link per change (its
@@ -580,16 +632,24 @@ have forgotten the arm and reset the whole initiative to control. It now lists
 `v2`, tests `!== 'control'` rather than `=== 'v1'`, and names the actual arm in
 the meta panel. **Any future arm has to be added there too.**
 
-**Amber is the status, red is the notification.** A car in negotiation is tagged
-`Neuvottelut käynnissä` on the offers page in UiBadge's `amber`
-(`bg-amber-50 / border-amber-400 / text-amber-700`), so the decision page writes
-`Odotetaan liikkeen vastausta` in that same `amber-700` — one colour follows the
-car from the list. But `Liikkeeltä on tullut vastaus` is not a status once it is
-unread: it and the count on the button are both **`red-500`** (UiBadge's own
-`red`, white on it), the notification convention every phone has already taught.
-So amber = your negotiation is running, red = something here you have not seen.
-Control splits it differently again (waiting amber-600, replied lime) and matches
-neither.
+**Amber is the status, red is the notification — and the amber is prod's, kept.**
+`Odotetaan liikkeen vastausta` stays `text-amber-600` in BOTH arms: it reads well
+and needed no change, so the initiative deliberately leaves it alone. Only
+`Liikkeeltä on tullut vastaus` changes, because once it is unread it stops being
+a status and becomes a notification: it and the count on the button are both
+**`red-500`** (UiBadge's own `red`), the convention every phone has taught.
+Control has that line lime, which reads as decorative. So amber = your
+negotiation is running, red = something here you have not seen.
+
+An earlier pass moved waiting to `amber-700` to match the offers page's
+`Neuvottelut käynnissä` tag, and to `blue-800` before that to pair it with its
+own button. Both were reverted — **the tag alignment is not worth a change to a
+line that already works.** The waiting amber is ~3.4:1 against white and stays
+that way knowingly: so are this page's other status lines (`Umpeutuu`, `Hylätty`
+in red-500), the accept button was the one worth fixing because it is the
+decisive action, and fixing one status line of several would leave the set
+inconsistent. Recorded in the spec as work for an accessibility pass across all
+of them.
 
 **Known overload, accepted deliberately:** red-500 is also the page's expiry
 colour (`Umpeutuu:`, `Hylätty`), so two cards can show red for two different
@@ -1310,6 +1370,107 @@ stopped negotiation reads `expired`. The proto keeps the negotiation status
 ahead of its own expiry check. Unreachable today — every negotiation scenario
 uses an `ACTIVE()` window — but it is a real divergence if that changes.
 
+## Reject survey — prod's own, transcribed
+
+Rejecting is a survey, not a confirmation, and it is **not an initiative** — every
+question, answer and field below already ships. `RejectConfirm.vue` +
+`RejectConfirmThanks.vue` are the whole of it, reached from the decision page's
+reject-all banner through `OfferActions.vue`; the offers page never renders it.
+
+**Three steps, and the middle one is the survey.** `Reject` (the "are you sure"
+copy, or `QuickNegotiate` when the highest offer is still negotiable) →
+`RejectConfirm` → `RejectConfirmThanks`. The proto had the shape already; what it
+had wrong was the survey's presentation and its rating control.
+
+**The rating is five FACES, not stars.** `StarRating.vue` draws prod's own
+`rating-1`…`rating-5` icons — a scowl through a grin — and colours **the selected
+one only**: `getButtonClass` returns that face's colour for the chosen id and
+`text-gray-400` plus a hover colour for every other, so the row never fills up
+cumulatively the way a star rating does. Colours run red-500, red-400,
+yellow-400, green-500, green-700; the hover colour IS the selected colour. The
+proto had drawn five stars filling left-to-right at 30% opacity, which is a
+different question ("how many out of five") from the one prod asks ("which face
+is you"). The icons live in **`rating-icons.js`** — verbatim path data, wrapped
+the way prod's `spriteMap` wraps the same symbol (`fill-current` at 60×60, so
+every `currentColor` takes the button's text colour and the backing disc keeps
+its own `fill-opacity`). Their own file because five 5 kB literals inside
+decision.html read as noise, and decision.html is the only consumer — prod's
+`StarRating` has exactly one too.
+
+**Their colours are hand-written CSS.** The widget is injected by JS, and the
+Play CDN generated `text-green-700` a frame AFTER the click — the face flashed
+black on the way to green. Keyed on the button's own `data-rating` with an
+`.is-selected` marker; the prod utility classes stay on the element as the
+record. Same rule as `.modal-help` and `.neg-thread`, and it applies to
+`TextArea.vue`'s `leading-2` (21px on prod's scale) and the thank-you card's
+`bg-[rgb(250,234,218)]` for the same reason.
+
+**Nine blocks, all `v-if`, all derived.** Rendered in prod's order: the first
+question; the counter-offer price (only under "En halua myydä tarjotulla
+hinnalla"); the follow-up question; the free-text box (either OTHER); "kuinka
+paljon lisäaikaa"; "millaisen hinnan saat vaihdossa" (the three better-offer
+answers); the rating. The proto re-renders the whole survey on any radio or face
+click rather than toggling `hidden` on pre-rendered markup — which is what makes
+the follow-up question's own options and its tooltip a function of the answer
+above it. Text fields write back on `input` and never re-render, so typing cannot
+lose focus, and every value is restored from the state — which is why a field
+hidden by one answer still carries what was typed into it when a later answer
+brings it back, exactly as `v-model` does.
+
+**The first question's follow-up branches on the offer, not the answer.** "Olen
+epävarma" asks *"Kuinka voimme auttaa sinua?"* with one option when the offer
+clears **90 % of the seller's own estimate** (`price_estimation`, falling back to
+`asking_price`), and *"Miksi olet epävarma tarjouksesta?"* with two when it does
+not. Reachable in the proto with `?asking=` — 11 500 against 12 000 takes the
+first branch, against 20 000 the second.
+
+**`clearFields` runs on the FIRST question only.** prod clears the follow-up
+answer and the three numeric fields when the primary answer changes, and clears
+the free text as well when the new answer has no follow-up of its own (its
+computed does it in the same `default` branch that returns no options). Changing
+the follow-up answer clears nothing.
+
+**Two fields are sent, not one.** `rejected_reason` is the answer; `reason` is
+the legacy `tender_offers.negotiations_rejected_reason` a watcher maps it onto
+(`IM_NOT_SURE_ABOUT_OFFER`, `PRICE_DIFFERENCE_TOO_BIG`, `I_HAVE_A_BETTER_OFFER`,
+`CAR_SOLD`, `NEED_MORE_TIME`, `NOT_SELLING`, `OTHER`), and `rejectDisabled` reads
+both plus `StarRating`. One answer set has no field of its own: "milloin uskot
+voivasi myydä autosi" arrives as `otherReasonText`. The proto keeps the whole
+payload — `tracking_form_name: 'reject_feedback'` included — in its saved state
+as `rejectFeedback` so a tester can read back what the survey captured; nothing
+renders it, and prod POSTs the same shape to `offers/{id}/nps-tracking`.
+
+**The rating is what gates the button**, indirectly: it only appears once the
+follow-up is answered (or immediately for "Muu syy", which has none), and it is
+required — so an unanswered follow-up is what actually blocks the submission.
+Disabled is `Button.vue`'s own grey, not a dimmed primary.
+
+**The thank-you screen is two halves and two images.** `thank-you-banner.png`
+below `lg`, `thank-you-banner-desktop.png` above it — the desktop one is
+portrait, so it is swapped rather than scaled, and both are byte-identical copies
+of prod's. The card sits inside the Reveal's own padding (the proto's earlier
+version bled it out with negative margins, which prod does not do) and carries
+its own close button, since `OfferActions` renders no footer for this action.
+
+**Three prod details transcribed knowingly.** Its title is a **bare `<h2>`** —
+`custom.scss` gives it `font-display` and Tailwind's preflight strips size and
+weight, so prod states "Kiitos kun käytit palveluamme!" at body size in Barlow.
+Its mailto is written `href="mailto:{{ customerSuccessEmail }}"` — a mustache in
+an unbound attribute, so prod shows the right address behind a link that does not
+resolve; **the proto links it**, since a tester clicking a dead link learns
+nothing. And the rating's label carries prod's `for="score"`, which matches no
+element on the page.
+
+**Copy is prod's `tender.rejection_reason_for_seller.*`, verbatim and Finnish
+only** — there is no `en` entry for this namespace in the dump, and decision.html
+holds its Finnish inline, so nothing here belongs in `translations.js`.
+
+**Left alone deliberately:** the `Reject` step's own footer puts "Tee
+vastatarjous" left of "Hylkää tarjous" where prod orders them the other way
+inside a `justify-center lg:justify-end` row; and prod shows a toast
+(`app.offers.msg.reject`, "Tarjous hylätty.") after the survey posts, which the
+proto has no toast system for. Both are outside the survey itself.
+
 ## Offers + decision audit against the 2026-08-26 dump
 
 A full sweep of the offers page, the warm-up and the decision page. What matched
@@ -1538,6 +1699,32 @@ transcribed from `resources/views/vendor/mail/html` + `themes/autovex.css`
 (570px body, Avenir, h1 19px, copy 16px/1.5 `#74787E`, button `#0B6DFF` r8), and
 the page says so. Prod's own `app/Filament/Pages/TransactionalEmails.php` renders
 the real thing; an export from it replaces the shell without touching the copy.
+
+**The list is the navigation, so it is pinned.** From `lg` the column is
+`sticky top-4` with its own capped, scrolling body — 22 emails against a page
+that is taller than the viewport once one is open, and scrolling back up to
+switch was the whole friction. Below `lg` the columns stack and the pin is
+dropped; a pinned list on a phone would be the screen. The open email's row is
+centred inside the list on load, deferred across two frames and once more at
+150 ms: the column's cap is an arbitrary-value utility the Play CDN generates
+late, so at render time the list is still uncapped and the row measures as
+already visible. Measured with rects applied as a delta, not `offsetTop` — the
+column is `sticky`, so a row and its scroll container resolve against different
+offset parents, which is how the first version scrolled to the wrong place.
+
+**Subject and sender are the email's header; everything else follows the body.**
+Fifteen rows of state/trigger/timing/template used to sit between the page title
+and the email itself, so the thing the page exists to show started below the
+fold. They are now a **Details** card under the rendered email, and the mail
+chrome caveat is a footer strip on the email card.
+
+**Two pre-existing mobile faults came out with it.** The row is
+`flex items-start`, which is what lets the pinned column sit at the top — but
+below `lg` the row becomes a COLUMN and `align-items` then governs WIDTH, so the
+reading pane sized itself to the 570px mail shell and scrolled the whole page
+sideways (`max-lg:items-stretch` fixes it). And `#email-render` is now
+`overflow-x-auto`, so a shell wider than a phone scrolls inside its own card
+rather than taking the page with it.
 
 **Two template shapes, and .eml captures are what revealed the difference.**
 `shape: 'markdown'` — the notification calls `->markdown('mail.transactional…')`
