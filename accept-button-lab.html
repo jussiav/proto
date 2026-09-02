@@ -26,6 +26,7 @@
       --green-800:#166534; --green-900:#14532D; --green-950:#052E16;
       --success-200:#D9F99D; --success-300:#BEF264; --success-400:#A3E635;
       --success-500:#84CC16; --success-600:#65A30D; --success-700:#4D7C0F;
+      --success-800:#3F6212;
       --success-900:#365314;
     }
     * { box-sizing: border-box; }
@@ -44,7 +45,9 @@
     .tile { border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px; }
     .tile .name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
     .tile .tokens { font-size: 11px; color: #64748B; margin-bottom: 14px; font-variant-numeric: tabular-nums; }
-    .meta { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+    .meta { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .hover-meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; color: #64748B; }
+    .hover-meta .verdict { font-size: 9px; padding: 2px 6px; }
     .ratio { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
     .verdict { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
                border-radius: 999px; padding: 3px 8px; }
@@ -67,38 +70,60 @@
     .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
     .row .btn { width: auto; padding: 0 32px; }
 
-    /* ── candidates ─────────────────────────────────────────────────────── */
-    .b-now      { background: var(--green-500); color: var(--white); }
-    .b-now:hover{ background: var(--green-600); }
-    .b-600w     { background: var(--green-600); color: var(--white); }
+    /* ── candidates ─────────────────────────────────────────────────────────
+       Every hover goes one step DARKER on its own ramp, which is what the rest
+       of the product's buttons do (blue-600 → blue-700, blue-100 → blue-200).
+       The hover ratio is measured too and shown next to the resting one: a
+       candidate whose hover drops below 4.5:1 is out, however good it looks at
+       rest. */
+    .b-now      { background: var(--green-500);   color: var(--white); }
+    .b-now:hover      { background: var(--green-600); }
+    .b-600w     { background: var(--green-600);   color: var(--white); }
+    .b-600w:hover     { background: var(--green-700); }
 
     /* Light fill, dark label */
     .b-g500-950 { background: var(--green-500);   color: var(--green-950); }
-    .b-g500-950:hover { background: var(--green-400); }
+    .b-g500-950:hover { background: var(--green-600); }
     .b-g500-blk { background: var(--green-500);   color: var(--black); }
+    .b-g500-blk:hover { background: var(--green-600); }
     .b-g500-nav { background: var(--green-500);   color: var(--av-dark-blue); }
+    .b-g500-nav:hover { background: var(--green-600); }
     .b-g500-sl  { background: var(--green-500);   color: var(--slate-900); }
+    .b-g500-sl:hover  { background: var(--green-600); }
     .b-g400-950 { background: var(--green-400);   color: var(--green-950); }
-    .b-g400-950:hover { background: var(--green-300); }
+    .b-g400-950:hover { background: var(--green-500); }
     .b-g400-blk { background: var(--green-400);   color: var(--black); }
+    .b-g400-blk:hover { background: var(--green-500); }
     .b-g300-950 { background: var(--green-300);   color: var(--green-950); }
+    .b-g300-950:hover { background: var(--green-400); }
     .b-g200-900 { background: var(--green-200);   color: var(--green-900); }
+    .b-g200-900:hover { background: var(--green-300); }
     .b-g600-blk { background: var(--green-600);   color: var(--black); }
+    .b-g600-blk:hover { background: var(--green-700); }
     .b-s400-900 { background: var(--success-400); color: var(--success-900); }
-    .b-s400-900:hover { background: var(--success-300); }
+    .b-s400-900:hover { background: var(--success-500); }
     .b-s400-blk { background: var(--success-400); color: var(--black); }
+    .b-s400-blk:hover { background: var(--success-500); }
     .b-s400-nav { background: var(--success-400); color: var(--av-dark-blue); }
+    .b-s400-nav:hover { background: var(--success-500); }
     .b-s300-900 { background: var(--success-300); color: var(--success-900); }
+    .b-s300-900:hover { background: var(--success-400); }
     .b-s300-blk { background: var(--success-300); color: var(--black); }
+    .b-s300-blk:hover { background: var(--success-400); }
     .b-s200-900 { background: var(--success-200); color: var(--success-900); }
+    .b-s200-900:hover { background: var(--success-300); }
     .b-s500-blk { background: var(--success-500); color: var(--black); }
+    .b-s500-blk:hover { background: var(--success-600); }
 
     /* Deeper fill, white label */
     .b-g700-w   { background: var(--green-700);   color: var(--white); }
-    .b-g700-w:hover { background: var(--green-800); }
+    .b-g700-w:hover   { background: var(--green-800); }
     .b-g800-w   { background: var(--green-800);   color: var(--white); }
+    .b-g800-w:hover   { background: var(--green-900); }
     .b-s700-w   { background: var(--success-700); color: var(--white); }
+    .b-s700-w:hover   { background: var(--success-800); }
     .b-s600-w   { background: var(--success-600); color: var(--white); }
+    .b-s600-w:hover   { background: var(--success-700); }
 
     .callout { border: 1px solid #E2E8F0; border-left: 4px solid #0B6DFF; border-radius: 8px;
                padding: 16px 18px; margin: 28px 0 0; max-width: 72ch; }
@@ -113,7 +138,7 @@
 
   <h1>Accept button — contrast lab</h1>
   <p class="lede">Temporary page. Candidates for the offer card / negotiation modal accept button, all drawn from the brand palette, all measured against <b>WCAG 2.0 AA for normal text (4.5:1)</b> — the button's label is 14px medium, so the 3:1 large-text allowance does not apply.</p>
-  <p class="lede">Every ratio below is computed by this page from the button's own rendered text colour and its background, so the numbers cannot drift from what is drawn. Hover any button and its hover state is re-measured.</p>
+  <p class="lede">Every ratio below is computed by this page from the button's own rendered text colour and its background, so the numbers cannot drift from what is drawn. Hover any button and its hover state is re-measured — every hover goes <b>darker</b>, matching the rest of the product's buttons.</p>
 
   <h2>Where we are</h2>
   <p class="sub">The accept green in production today. It fails too, which is the thing to know before reading the rest: this is not a regression to undo, it is a problem to solve.</p>
@@ -130,11 +155,11 @@
   <div class="callout">
     <p><b>Text shadows, borders, glows and outlines do not change a WCAG contrast ratio.</b> The ratio is computed from the text colour against the background directly behind it. A shadow can make text feel more legible on a photo; it does not make a failing button pass.</p>
     <p><b>Nor does making the button bigger — at this size.</b> The 3:1 large-text allowance starts at 18.66px bold or 24px regular. The card's label is 14px medium, so it needs the full 4.5:1.</p>
-    <p><b>Hover states need to pass too.</b> Each candidate's hover is wired here; hover any of them and the ratio re-measures live.</p>
+    <p><b>Hover states need to pass too, and two candidates do not.</b> Every hover here goes one step darker on its own ramp — the direction the rest of the product's buttons use — and a darker fill under a dark label means less contrast, not more. <code>green-600 + black</code> drops to 4.19:1 and <code>success-400 + success-900</code> to 4.42:1, so both are out however well they read at rest. Each tile shows its hover ratio without you having to find it with the pointer.</p>
   </div>
 
   <h2>Side by side, at both sizes</h2>
-  <p class="sub">The passing candidates only — card size (56px) above, modal footer size (40px) below.</p>
+  <p class="sub">Only the candidates that pass at rest <b>and</b> on hover — card size (56px) above, modal footer size (40px) below.</p>
   <div class="row" id="row-lg"></div>
   <div class="row" id="row-sm"></div>
 
@@ -148,67 +173,67 @@
      it is the fill, for a gradient the lightest stop. */
   var CANDIDATES = [
     { g:'g-now', cls:'b-600w', name:'Current — green-600 + white',
-      tokens:'#16A34A + #FFFFFF', bg:'#16A34A',
+      tokens:'#16A34A + #FFFFFF', bg:'#16A34A', hoverBg:'#15803D',
       note:'The accept green production uses in the negotiation modal today. Everything below is a candidate to replace it.' },
     { g:'g-dark', cls:'b-g500-950', name:'green-500 + green-950',
-      tokens:'#22C55E + #052E16', bg:'#22C55E', hoverBg:'#4ADE80',
+      tokens:'#22C55E + #052E16', bg:'#22C55E', hoverBg:'#16A34A',
       note:'Today&rsquo;s exact fill, kept. Only the label changes.' },
     { g:'g-dark', cls:'b-g500-blk', name:'green-500 + black',
-      tokens:'#22C55E + #000000', bg:'#22C55E',
+      tokens:'#22C55E + #000000', bg:'#22C55E', hoverBg:'#16A34A',
       note:'Same fill, flat black label — a touch harder than the deep green.' },
     { g:'g-dark', cls:'b-g500-nav', name:'green-500 + av-dark-blue',
-      tokens:'#22C55E + #08234D', bg:'#22C55E',
+      tokens:'#22C55E + #08234D', bg:'#22C55E', hoverBg:'#16A34A',
       note:'Same fill, the brand navy. Ties the button to the rest of the page.' },
     { g:'g-dark', cls:'b-g500-sl', name:'green-500 + slate-900',
-      tokens:'#22C55E + #0F172A', bg:'#22C55E',
+      tokens:'#22C55E + #0F172A', bg:'#22C55E', hoverBg:'#16A34A',
       note:'Same fill, the slate the product already writes body copy in.' },
     { g:'g-dark', cls:'b-g400-950', name:'green-400 + green-950',
-      tokens:'#4ADE80 + #052E16', bg:'#4ADE80', hoverBg:'#86EFAC',
+      tokens:'#4ADE80 + #052E16', bg:'#4ADE80', hoverBg:'#22C55E',
       note:'One step lighter and friendlier than today.' },
     { g:'g-dark', cls:'b-g400-blk', name:'green-400 + black',
-      tokens:'#4ADE80 + #000000', bg:'#4ADE80',
+      tokens:'#4ADE80 + #000000', bg:'#4ADE80', hoverBg:'#22C55E',
       note:'Same lighter fill, black label.' },
     { g:'g-dark', cls:'b-g300-950', name:'green-300 + green-950',
-      tokens:'#86EFAC + #052E16', bg:'#86EFAC',
+      tokens:'#86EFAC + #052E16', bg:'#86EFAC', hoverBg:'#4ADE80',
       note:'Mint. Very soft — check it still reads as the primary action next to the blue secondary.' },
     { g:'g-dark', cls:'b-g200-900', name:'green-200 + green-900',
-      tokens:'#BBF7D0 + #14532D', bg:'#BBF7D0',
+      tokens:'#BBF7D0 + #14532D', bg:'#BBF7D0', hoverBg:'#86EFAC',
       note:'Softest here. Almost certainly too quiet for the main action, included to mark the far end.' },
     { g:'g-dark', cls:'b-g600-blk', name:'green-600 + black',
-      tokens:'#16A34A + #000000', bg:'#16A34A',
+      tokens:'#16A34A + #000000', bg:'#16A34A', hoverBg:'#15803D',
       note:'The production green, rescued by a black label instead of a darker fill.' },
     { g:'g-dark', cls:'b-s400-900', name:'success-400 + success-900',
-      tokens:'#A3E635 + #365314', bg:'#A3E635', hoverBg:'#BEF264',
+      tokens:'#A3E635 + #365314', bg:'#A3E635', hoverBg:'#84CC16',
       note:'The design library&rsquo;s own success button — this pairing already exists as a component variant.' },
     { g:'g-dark', cls:'b-s400-blk', name:'success-400 + black',
-      tokens:'#A3E635 + #000000', bg:'#A3E635',
+      tokens:'#A3E635 + #000000', bg:'#A3E635', hoverBg:'#84CC16',
       note:'Same lime, black label.' },
     { g:'g-dark', cls:'b-s400-nav', name:'success-400 + av-dark-blue',
-      tokens:'#A3E635 + #08234D', bg:'#A3E635',
+      tokens:'#A3E635 + #08234D', bg:'#A3E635', hoverBg:'#84CC16',
       note:'Lime with the brand navy.' },
     { g:'g-dark', cls:'b-s300-900', name:'success-300 + success-900',
-      tokens:'#BEF264 + #365314', bg:'#BEF264',
+      tokens:'#BEF264 + #365314', bg:'#BEF264', hoverBg:'#A3E635',
       note:'Lighter lime. Reads as fresh rather than loud.' },
     { g:'g-dark', cls:'b-s300-blk', name:'success-300 + black',
-      tokens:'#BEF264 + #000000', bg:'#BEF264',
+      tokens:'#BEF264 + #000000', bg:'#BEF264', hoverBg:'#A3E635',
       note:'Same, black label.' },
     { g:'g-dark', cls:'b-s200-900', name:'success-200 + success-900',
-      tokens:'#D9F99D + #365314', bg:'#D9F99D',
+      tokens:'#D9F99D + #365314', bg:'#D9F99D', hoverBg:'#BEF264',
       note:'The lime equivalent of green-200 — the quiet end of the ramp.' },
     { g:'g-dark', cls:'b-s500-blk', name:'success-500 + black',
-      tokens:'#84CC16 + #000000', bg:'#84CC16',
+      tokens:'#84CC16 + #000000', bg:'#84CC16', hoverBg:'#65A30D',
       note:'Deeper lime. Black label rescues the pairing that failed with success-900.' },
     { g:'g-white', cls:'b-g700-w', name:'green-700 + white',
       tokens:'#15803D + #FFFFFF', bg:'#15803D', hoverBg:'#166534',
       note:'The lightest green that carries white text at this size.' },
     { g:'g-white', cls:'b-g800-w', name:'green-800 + white',
-      tokens:'#166534 + #FFFFFF', bg:'#166534',
+      tokens:'#166534 + #FFFFFF', bg:'#166534', hoverBg:'#14532D',
       note:'Sober. Reads more like a bank than a marketplace.' },
     { g:'g-white', cls:'b-s700-w', name:'success-700 + white',
-      tokens:'#4D7C0F + #FFFFFF', bg:'#4D7C0F',
+      tokens:'#4D7C0F + #FFFFFF', bg:'#4D7C0F', hoverBg:'#3F6212',
       note:'The olive end of the success ramp.' },
     { g:'g-white', cls:'b-s600-w', name:'success-600 + white',
-      tokens:'#65A30D + #FFFFFF', bg:'#65A30D',
+      tokens:'#65A30D + #FFFFFF', bg:'#65A30D', hoverBg:'#4D7C0F',
       note:'One step lighter — and it drops below the line. The boundary in the lime ramp.' },
     { g:'g-white', cls:'b-now', name:'green-500 + white',
       tokens:'#22C55E + #FFFFFF', bg:'#22C55E', hoverBg:'#16A34A',
@@ -258,11 +283,21 @@
     var vd  = document.createElement('span'); vd.className = 'verdict';
     meta.appendChild(num); meta.appendChild(vd);
 
+    /* The hover ratio is shown at rest, not only while hovering — a failing
+       hover is easy to miss if you have to find it with the pointer. */
+    var hmeta = document.createElement('div');
+    hmeta.className = 'hover-meta';
+    var hnum = document.createElement('span');
+    var hvd  = document.createElement('span'); hvd.className = 'verdict';
+    hmeta.appendChild(hnum); hmeta.appendChild(hvd);
+
     var note = document.createElement('p');
     note.className = 'note'; note.textContent = c.note;
 
     tile.appendChild(name); tile.appendChild(tok); tile.appendChild(btn);
-    tile.appendChild(meta); tile.appendChild(note);
+    tile.appendChild(meta);
+    if (c.hoverBg) tile.appendChild(hmeta);
+    tile.appendChild(note);
     host.appendChild(tile);
 
     /* Measured from what is actually rendered: the button's own computed text
@@ -278,13 +313,21 @@
       c.measured = r;
     }
     measure(c.bg);
+    if (c.hoverBg) {
+      var hr = ratio(getComputedStyle(btn).color, c.hoverBg);
+      var hv = verdictFor(hr);
+      hnum.textContent = 'hover ' + hr.toFixed(2) + ':1';
+      hvd.className = 'verdict ' + hv.cls;
+      hvd.textContent = hv.text;
+      c.hoverMeasured = hr;
+    }
     btn.addEventListener('mouseenter', function () { measure(c.hoverBg || c.bg); });
     btn.addEventListener('mouseleave', function () { measure(c.bg); });
   });
 
   /* The passing set, side by side, at both real sizes. */
   var lg = document.getElementById('row-lg'), sm = document.getElementById('row-sm');
-  CANDIDATES.filter(function (c) { return c.measured >= 4.5; }).forEach(function (c) {
+  CANDIDATES.filter(function (c) { return c.measured >= 4.5 && (c.hoverMeasured === undefined || c.hoverMeasured >= 4.5); }).forEach(function (c) {
     ['', 'sm'].forEach(function (size) {
       var b = document.createElement('button');
       b.type = 'button';
