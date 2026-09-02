@@ -495,7 +495,22 @@
     var vWrap = document.createElement('label');
     vWrap.appendChild(document.createTextNode('Variants'));
 
-    if (!pageInitiatives.length) {
+    /* Arms in force on initiatives this page does not show — a hand-written URL,
+       or an arm picked on another page. Computed BEFORE the branch below, because
+       a page that proposes nothing of its own is exactly where a remembered arm
+       is most invisible: the row used to read "none on this page" while another
+       initiative was still pinned for the whole prototype. Listed disabled, with
+       a working "— none —" above it, so the state can at least be cleared from
+       any page. */
+    var elsewhere = (window.protoInitiatives || []).filter(function (reg) {
+      var shown = pageInitiatives.some(function (ini) { return ini.slug === reg.slug; });
+      if (shown) return false;
+      var stored = window.protoVariantStored && window.protoVariantStored(reg.slug);
+      var arm = params.get(reg.slug) || stored;
+      return arm && String(arm) !== String(reg.prodArm || '');
+    });
+
+    if (!pageInitiatives.length && !elsewhere.length) {
       var emptySel = document.createElement('select');
       emptySel.disabled = true;
       var emptyOpt = document.createElement('option');
@@ -534,17 +549,8 @@
         vSel.appendChild(group);
       });
 
-      /* Arms in force on initiatives this page does not show — a hand-written
-         URL, or an arm picked on another page. Listed, disabled, because they
-         change what the participant sees elsewhere and would otherwise be
-         invisible; picking anything in this row clears them. */
-      var elsewhere = (window.protoInitiatives || []).filter(function (reg) {
-        var shown = pageInitiatives.some(function (ini) { return ini.slug === reg.slug; });
-        if (shown) return false;
-        var stored = window.protoVariantStored && window.protoVariantStored(reg.slug);
-        var arm = params.get(reg.slug) || stored;
-        return arm && String(arm) !== String(reg.prodArm || '');
-      });
+      /* Picking anything in this row clears them, including from a page that
+         shows no initiative of its own. */
       if (elsewhere.length) {
         var elseGroup = document.createElement('optgroup');
         elseGroup.label = 'Active on other pages';
