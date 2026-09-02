@@ -475,6 +475,24 @@ accept naming the amount, `Avaa neuvotteluhistoria` on a closed negotiation, and
 a height-capped thread. Batch 2 is that swap, which is why it is reuse rather
 than design.
 
+**Change 17 is the reject entry reading as a choice** (2026-09-02, from the
+team walkthrough). Two halves of one problem. The title gains a **question
+mark** — "Tee vielä vastatarjous autoliikkeelle?" — because a seller who pressed
+"Hylkää tarjouskilpailu" and got a counter-offer form reads the statement as
+though rejecting is no longer available; the reviewer's instinct and the user's
+own first reaction agreed on that. And the footer **stacks below prod's `sm`
+(620px)**: change 6 put the rounds left on the send button, and
+"Lähetä vastatarjous (2 jäljellä)" collides with "Hylkää tarjous" beside it on a
+phone, which squeezes the seller's own choice. `flex-col-reverse` keeps prod's
+DOM order while rendering the primary action on top, both buttons `w-full
+sm:w-auto`; the row returns at 620px. v1 only.
+
+**`stackCls` has to be declared before the buttons are assembled.** It was
+written next to the footer markup at first, which is BELOW the button strings —
+`var` hoisted it as undefined and "undefined" landed in the class attribute. The
+footer's variables are built in order: `disabledCls`, then the buttons, then the
+wrappers.
+
 **The negotiation modal has TWO entry points, and the spec now says so.** The
 reject banner's "Hylkää tarjouskilpailu" does not go to the reject survey while
 the highest offer is still negotiable and not final — prod's

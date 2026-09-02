@@ -2026,7 +2026,12 @@
             ? 'Autostasi ei valitettavasti syntynyt tarjouskilpailua. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.'
             : 'Korkein tarjoaja haluaa ostaa autosi, älä jätä peliä vielä kesken. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.';
           if (EN_V1) {
-            html += buildModalHeader('Tee vielä vastatarjous autoliikkeelle');
+            /* Prod's own header, plus a question mark. The seller pressed
+               "Hylkää tarjouskilpailu" and got a counter-offer form, which as a
+               statement reads as though rejecting is no longer on offer — the
+               question mark makes it the alternative it actually is. The reject
+               button is right there in the footer. */
+            html += buildModalHeader('Tee vielä vastatarjous autoliikkeelle?');
             html += buildModalHelp(quickBody) + '</div>';
           } else {
             html += '<div class="text-lg leading-4">';
@@ -2167,6 +2172,10 @@
       var showTimer  = reactionSecs < 181 && sellerCanSend;
 
       var disabledCls = ' bg-gray-200 text-gray-500 border-2 border-gray-200 cursor-not-allowed';
+      /* Set here rather than beside the footer markup below: the buttons are
+         assembled first, so a `var` declared later hoists as undefined and lands
+         in the class string. fLeft exists exactly when isQuick does. */
+      var stackCls = (EN_V1 && isQuick) ? ' w-full sm:w-auto' : '';
 
       var fRight = '';
       if (showTimer) {
@@ -2199,7 +2208,7 @@
           ? 'Lähetä vastatarjous (' + Math.max(0, 2 - sellerRounds) + ' jäljellä)'
           : 'Lähetä';
         fRight += '<button id="modal-btn-send-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
+          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium' + stackCls + ' ' +
           (buttonDisabled ? disabledCls : 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
           '">' + sendLabel + '</button>';
       }
@@ -2213,14 +2222,25 @@
       var fLeft = '';
       if (isQuick) {
         fLeft = '<button id="modal-btn-reject-from-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-sm font-medium ' +
+          ' class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-sm font-medium' +
+          stackCls + ' ' +
           (buttonDisabled ? disabledCls : 'text-red-600 hover:bg-red-50') +
           '">Hylkää tarjous</button>';
       }
-      var fRightWrap = '<div class="lg:flex lg:justify-end text-center space-x-1 lg:space-y-0 space-y-1' +
+      /* Both actions on one row is prod's layout, and it stops working here:
+         the send button carries the rounds left ("Lähetä vastatarjous (2
+         jäljellä)"), so on a narrow modal it collides with "Hylkää tarjous"
+         beside it. Below prod's own `sm` the footer becomes a column —
+         `flex-col-reverse`, so the DOM keeps prod's order while the primary
+         action renders on top — and both buttons go full width. v1 only; the
+         row returns at 620px. */
+      var fRightWrap = '<div class="' + (stackCls ? 'w-full sm:w-auto ' : '') +
+        'lg:flex lg:justify-end text-center space-x-1 lg:space-y-0 space-y-1' +
         (isQuick ? ' text-right' : '') + '">' + fRight + '</div>';
       footer.innerHTML = fLeft
-        ? '<div class="flex justify-between items-end space-x-1"><div>' + fLeft + '</div>' + fRightWrap + '</div>'
+        ? (EN_V1
+            ? '<div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between sm:items-end sm:gap-0 sm:space-x-1"><div class="w-full sm:w-auto">' + fLeft + '</div>' + fRightWrap + '</div>'
+            : '<div class="flex justify-between items-end space-x-1"><div>' + fLeft + '</div>' + fRightWrap + '</div>')
         : '<div class="flex justify-center lg:justify-end">' + fRightWrap + '</div>';
 
       var closeBtn       = document.getElementById('modal-btn-close');
