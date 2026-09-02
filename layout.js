@@ -78,8 +78,8 @@
               '<option value="en">English</option>' +
             '</select>' +
           '</div>' +
-          '<span class="font-dm font-normal" data-i18n="footer.copyright">© 2025 All rights reserved</span>' +
-          '<span class="font-dm font-normal opacity-50 text-sm">Updated 2.09.26 klo 07.52</span>' +
+          '<span class="font-dm font-normal" data-i18n="footer.copyright">© 2026 All rights reserved</span>' +
+          '<span class="font-dm font-normal opacity-50 text-sm">Updated 2.09.26 klo 08.20</span>' +
         '</div>' +
       '</div>' +
       '<div class="w-full max-w-[1388px] px-5">' +

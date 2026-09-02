@@ -257,7 +257,7 @@ window.TRANSLATIONS = {
       terms:          'Käyttöehdot',
       privacy:        'Tietosuojakäytäntö',
       cookies:        'Evästekäytäntö',
-      copyright:      '© 2025 All rights reserved',
+      copyright:      '© :year All rights reserved',
       language:       'Kieli',
     },
 
@@ -869,7 +869,7 @@ window.TRANSLATIONS = {
       terms:          'Terms of service',
       privacy:        'Privacy policy',
       cookies:        'Cookie policy',
-      copyright:      '© 2025 All rights reserved',
+      copyright:      '© :year All rights reserved',
       language:       'Language',
     },
 

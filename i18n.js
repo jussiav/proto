@@ -39,7 +39,15 @@
     var parts = key.split('.');
     var val = lookup(tr[lang], parts);
     if (val == null && lang !== DEFAULT) val = lookup(tr[DEFAULT], parts);
-    return (val != null) ? val : key;
+    if (val == null) return key;
+    /* `:year` is filled at render time. Prod's footers both derive the year —
+       the blade one from now()->format('Y'), the Vue one from a computed — so a
+       hardcoded year in the corpus is a divergence that goes stale every January.
+       Same `:token` shape Laravel's own strings use. */
+    if (typeof val === 'string' && val.indexOf(':year') !== -1) {
+      val = val.replace(/:year/g, String(new Date().getFullYear()));
+    }
+    return val;
   }
 
   function applyTranslations() {
