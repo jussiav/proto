@@ -39,6 +39,8 @@
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
+  <!-- StarRating.vue's five faces, used only by the reject survey. -->
+  <script src="rating-icons.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <style>
     /* NumberInput.vue's own <style> — the suffix (€) is drawn by the wrapper
@@ -54,23 +56,22 @@
       align-items: center;
     }
 
-    /* DeliveryDateModal.vue's help block: `text-sm text-slate-600 bg-[#FAEADA]
-       border border-[#FAEADA] p-4 rounded-md`, plus its list. Hand-written for
-       the usual reason — the Play CDN only generates utilities present at first
-       paint, and every class in this modal is injected by JS, so the arbitrary
-       `bg-[#FAEADA]` produced no rule at all. Values are prod's, verbatim. */
+    /* The modal's guidance. It began as DeliveryDateModal.vue's peach block —
+       `text-sm text-slate-600 bg-[#FAEADA] border p-4 rounded-md` — and the fill,
+       border and padding came back out: the container was the tallest thing above
+       the thread and it drew weight away from the bubbles and the send button,
+       which are what the seller came for. What remains does the same job with
+       nothing around it: one step down in size, one step lighter in colour, so
+       it reads as guidance rather than as the modal's own copy.
+
+       Still hand-written rather than utilities, since every class in this modal
+       is injected by JS and the Play CDN only generates what is present at first
+       paint. */
     .modal-help {
       font-size: .875rem;
       line-height: 1.25rem;
       color: #475569;            /* slate-600 */
-      background: #FAEADA;
-      border: 1px solid #FAEADA;
-      padding: 1rem;             /* p-4 */
-      border-radius: .375rem;    /* rounded-md */
     }
-    /* Change 18: the block is the tallest thing above the thread, and on a phone
-       every 8px of padding is a line of conversation pushed under the fold. */
-    @media (max-width: 620px) { .modal-help { padding: .75rem; } }
     .modal-help ul { list-style: disc outside; padding-left: 1rem; margin: 0; }
     .modal-help li + li { margin-top: .25rem; }
 
@@ -105,6 +106,32 @@
       background: #0B6DFF;
       right: -.25rem;
     }
+
+    /* Reject survey. TextArea.vue's `leading-2` is 21px on prod's own scale
+       (the proto deliberately does not port that scale, so it is transcribed as
+       a pixel value), and the thank-you card's peach is prod's own
+       `bg-[rgb(250,234,218)]`. Both are arbitrary values in JS-injected markup,
+       which the Play CDN generates a tick too late — the same reason
+       `.modal-help` and `.neg-thread` are written out above. The prod class
+       strings stay on the elements as the record. */
+    .rej-textarea { line-height: 21px; }
+    .rej-thanks-media { background: rgb(250, 234, 218); }
+
+    /* StarRating.vue's own colours. Prod puts them on the button as
+       `text-gray-400` + `hover:text-red-500` … and swaps in the solid colour for
+       the selected face; here the whole widget is injected by JS, so the CDN
+       generated `text-green-700` a frame AFTER the click and the face flashed
+       black. Written out, keyed on the button's own rating, with the utility
+       classes left on the element as the record. Hover and selected share a
+       colour because prod's hover class IS that face's colour. */
+    .star-rating [data-rating] { color: #9CA3AF; }                 /* gray-400 */
+    .star-rating [data-rating] > span { transition: transform .15s; }
+    .star-rating [data-rating]:hover > span { transform: scale(1.1); }
+    .star-rating [data-rating="1"]:hover, .star-rating [data-rating="1"].is-selected { color: #EF4444; }  /* red-500 */
+    .star-rating [data-rating="2"]:hover, .star-rating [data-rating="2"].is-selected { color: #F87171; }  /* red-400 */
+    .star-rating [data-rating="3"]:hover, .star-rating [data-rating="3"].is-selected { color: #FACC15; }  /* yellow-400 */
+    .star-rating [data-rating="4"]:hover, .star-rating [data-rating="4"].is-selected { color: #22C55E; }  /* green-500 */
+    .star-rating [data-rating="5"]:hover, .star-rating [data-rating="5"].is-selected { color: #15803D; }  /* green-700 */
   </style>
 </head>
 <body class="font-body bg-blue-50 min-h-screen">
@@ -293,10 +320,12 @@
          spends most of its length on hedging. The hours are the fact. */
       replyHours: 'Liikkeet vastaavat arkisin klo 10–16.',
 
-      /* Change 18 — prod's contact_info_not_allowed is a full sentence on its own
-         paragraph under the textarea. As the label row's hint it has to fit
-         beside "Viesti" at 360px, so it states the rule and nothing else. */
-      noContactInfo: 'Älä jätä yhteystietoja',
+      /* prod's contact_info_not_allowed is a full sentence on its own paragraph
+         under the textarea. Beside the label it has to fit next to "Viesti" at
+         360px, so it states the rule and nothing else — parenthesised, because at
+         12px directly after the label it reads as an aside to it rather than as a
+         second label. */
+      noContactInfo: '(Ei yhteystietoja)',
 
       /* Closed state. The title says the negotiation ended, so the help line does
          not repeat it — it answers what happens next instead, which control never
@@ -314,7 +343,7 @@
     function _loadState() { try { return JSON.parse(localStorage.getItem(_STATE_KEY) || 'null') || {}; } catch(e) { return {}; } }
     function saveState() {
       try {
-        localStorage.setItem(_STATE_KEY, JSON.stringify({ scenario: SCENARIO, negotiations: NEGOTIATIONS, acceptedOffer: ACCEPTED_OFFER, acceptedOffersSnapshot: ACCEPTED_OFFERS_SNAPSHOT }));
+        localStorage.setItem(_STATE_KEY, JSON.stringify({ scenario: SCENARIO, negotiations: NEGOTIATIONS, acceptedOffer: ACCEPTED_OFFER, acceptedOffersSnapshot: ACCEPTED_OFFERS_SNAPSHOT, rejectFeedback: REJECT_FEEDBACK }));
         var _existingOffers = (function() { try { return JSON.parse(localStorage.getItem('autovex_offers') || '{}'); } catch(e) { return {}; } })();
         localStorage.setItem('autovex_offers', JSON.stringify(Object.assign({}, _existingOffers, { scenario: SCENARIO })));
       } catch(e) {}
@@ -539,7 +568,7 @@
        `:show-close-button="false"`; this modal does not). */
     function buildModalHeader(title, trailing) {
       var html = '<div class="mb-4">';
-      html += '<div class="flex items-center gap-3 pb-3">';
+      html += '<div class="flex items-center gap-3 pb-2">';
       html += '<div class="flex-1 font-dm text-xl font-bold text-slate-900">' + title + '</div>';
       html += trailing || '';
       html += '</div>';
@@ -602,8 +631,7 @@
 
     }
 
-    /* DeliveryDateModal's `handover_date_help_text` block, verbatim: the one
-       place prod separates a modal's guidance from its body copy. */
+    /* The guidance under the header — text only, no container. */
     function buildModalHelp(inner) {
       return '<div class="modal-help">' + inner + '</div>';
     }
@@ -637,13 +665,16 @@
 
       var html = '<div class="relative">';
       html += '<label>';
-      /* Change 18. Control puts the contact-info warning on its own paragraph
-         BELOW the textarea, where it costs a line (two on a phone) at the bottom
-         of an already tall modal. v1 makes it the label row's right-hand hint —
-         the rule applies while typing, so it belongs beside the field's name,
-         and shortened it fits next to "Viesti" at 360px. */
+      /* Control puts the contact-info warning on its own paragraph BELOW the
+         textarea, where it costs a line (two on a phone) at the bottom of an
+         already tall modal. Here it sits on the label row instead — the rule
+         applies while typing, so it belongs beside the field's name.
+
+         Directly after the label, not pushed to the right end: right-aligned it
+         sat alone in white space away from anything the eye was tracking and was
+         easy to miss entirely. Shortened, it fits next to "Viesti" at 360px. */
       html += EN_V1
-        ? '<span class="mb-3 flex items-baseline justify-between gap-3">' +
+        ? '<span class="mb-3 flex items-baseline gap-2">' +
             '<span class="text-base font-medium leading-none lg:text-lg">Viesti</span>' +
             '<span class="text-xs text-slate-500 leading-none">' + EN_COPY.noContactInfo + '</span>' +
           '</span>'
@@ -1144,28 +1175,30 @@
       if (status === 'rejected')  return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' + ICO_X_CIRCLE + '<span>Hylätty</span></div>';
       if (status === 'expired')   return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' + ICO_HG_LOW + '<span>Umpeutunut</span></div>';
       if (status === 'negotiation') {
-        /* Change 15's third colour, and it is not a new one: a car in negotiation
-           is already tagged `Neuvottelut käynnissä` on the offers page in
-           UiBadge's `amber` (bg-amber-50 / border-amber-400 / text-amber-700),
-           for BOTH negotiation statuses. v1 gives the decision page the same
-           amber for the same status, so a seller arriving from the offers list
-           sees one colour follow the car. Control splits them — waiting amber-600,
-           replied lime — which matches neither the tag nor itself.
+        /* The WAITING line is prod's own `amber-600` in both arms — the
+           initiative deliberately leaves it alone. It reads better than the
+           alternatives and needed no change, so changing it would have been
+           churn dressed up as a fix. It is not WCAG compliant against white at
+           this size (~3.4:1) and that is accepted knowingly: the accept button
+           was worth fixing because it is the page's decisive action, a status
+           line is not, and every other status on this page (Umpeutuu, Hylätty in
+           red-500) is in the same position. Worth a separate accessibility pass
+           across all of them rather than one-off inside this initiative.
 
-           Waiting keeps that amber, because waiting IS the tag's status. The
-           replied line does not: once there is something unread it stops being a
-           status and becomes a notification, so it takes `red-500` — the same
-           red as the count on the button below it, and the colour a seller reads
-           as "new" without being taught. The icons stay prod's own, clock while
-           waiting and chats once there is something to read.
+           v1 changes only the REPLIED line. Once there is something unread it
+           stops being a status and becomes a notification, so it takes `red-500`
+           — the same red as the count on the button below it, and the colour a
+           seller reads as "new" without being taught. Control has it lime, which
+           reads as decorative. The icons stay prod's own either way: clock while
+           waiting, chats once there is something to read.
 
-           The line stays a line rather than becoming a chip: the decision page
-           writes every status that way (Umpeutuu, Hylätty), and the tag is a
-           different component on a different page. Note that red is also the
-           page's expiry colour, so a second card counting down carries red for a
-           different reason — see the spec. */
+           Both stay lines rather than becoming chips — the decision page writes
+           every status that way, and the offers page's `Neuvottelut käynnissä`
+           tag is a different component on a different page. Note that red is
+           also this page's expiry colour, so a second card counting down carries
+           red for a different reason; see the spec. */
         if (dealerReplied) return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-center ' + (EN_V1 ? 'text-red-500' : 'text-lime-700') + '">' + ICO_CHATS + '<span>Liikkeeltä on tullut vastaus</span></div>';
-        return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-center ' + (EN_V1 ? 'text-amber-700' : 'text-amber-600') + '">' + ICO_CLOCK_USR + '<span>Odotetaan liikkeen vastausta</span></div>';
+        return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-amber-600 text-center">' + ICO_CLOCK_USR + '<span>Odotetaan liikkeen vastausta</span></div>';
       }
       // active: firstPlace / secondPlace / thirdPlace / finalOffer / negotiation_stopped
       return '<div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center">' +
@@ -1821,16 +1854,38 @@
     var NEGOTIATIONS = {};
     var ACCEPTED_OFFER          = _savedState.acceptedOffer          || null;
     var ACCEPTED_OFFERS_SNAPSHOT = _savedState.acceptedOffersSnapshot || null;
+    /* What the reject survey captured, kept so a tester can read it back.
+       prod POSTs the same payload to offers/{id}/nps-tracking. */
+    var REJECT_FEEDBACK          = _savedState.rejectFeedback          || null;
     // Restore negotiations from localStorage across all scenarios
     if (_savedState.negotiations) {
       Object.keys(_savedState.negotiations).forEach(function(k) {
         NEGOTIATIONS[parseInt(k, 10)] = _savedState.negotiations[k];
       });
     }
-    var rejectFormState = { reason: null, starRating: 0 };
+    /* RejectConfirm.vue's own formData, field for field. `rejected_reason` is
+       the answer to the first question; `reason` is the legacy
+       tender_offers.negotiations_rejected_reason its watcher maps that onto, and
+       both are sent — OfferActions.vue's rejectDisabled reads them separately. */
+    function emptyRejectForm() {
+      return {
+        reason: null,
+        otherReasonText: '',
+        additionalReason: '',
+        tracking_form_name: 'reject_feedback',
+        StarRating: '',
+        rejected_reason: null,
+        dynamic_question: null,
+        counter_offer_price: null,
+        time_need_to_think: null,
+        better_offer_in_hand: null
+      };
+    }
+    var rejectFormState = emptyRejectForm();
+    /* prod's showTheReasons: flipped by the first question and never flipped
+       back, which is what makes the follow-up block appear at all. */
+    var rejectShowReasons = false;
 
-    var ICO_STAR_EMPTY = '<svg width="32" height="32" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m234.5 114.38-45.1 39.36 13.51 58.6a16 16 0 0 1-23.84 17.34l-51.11-31-51 31a16 16 0 0 1-23.84-17.34l13.49-58.54-45.11-39.42a16 16 0 0 1 9.21-28.06l59.46-5.15 23.21-55.36a15.95 15.95 0 0 1 29.44 0L166.81 81l59.44 5.14a16 16 0 0 1 9.25 28.24Zm-16.83 6.22-59.46-5.14a8 8 0 0 1-6.67-4.88L128 55.71l-23.55 55.46a8 8 0 0 1-6.67 4.88l-59.46 5.14 45.11 39.42a8 8 0 0 1 2.55 7.91L72.49 227l51.11-31a7.94 7.94 0 0 1 8.12 0l51 31-13.47-58.41a8 8 0 0 1 2.53-7.83Z"/></svg>';
-    var ICO_STAR_FILL  = '<svg width="32" height="32" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m234.5 114.38-45.1 39.36 13.51 58.6a16 16 0 0 1-23.84 17.34l-51.11-31-51 31a16 16 0 0 1-23.84-17.34l13.49-58.54-45.11-39.42a16 16 0 0 1 9.21-28.06l59.46-5.15 23.21-55.36a15.95 15.95 0 0 1 29.44 0L166.81 81l59.44 5.14a16 16 0 0 1 9.25 28.24Z"/></svg>';
     var ICO_INFO_FILL  = '<svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>';
 
     var REJECT_REASONS = [
@@ -1991,9 +2046,10 @@
                because the pair below already contains it — a separate "kauppa
                syntyy tällä hinnalla" line said the same thing twice.
 
-               Change 11 still applies: the guidance sits in DeliveryDateModal's
-               help block at `text-sm`, separated from the modal's own copy. With
-               one item there is nothing to bullet, so it is a paragraph. */
+               The guidance sits under the header at `text-sm` in slate-600 —
+               separated from the modal's own copy by size and weight rather than
+               by a container. With one item there is nothing to bullet, so it is
+               a paragraph. */
             html += buildModalHelp(EN_COPY.counterOutcomes) + '</div>';
           } else {
             html += '<ul class="list-disc list-inside mt-2 mb-4">';
@@ -2332,122 +2388,298 @@
           ] };
     }
 
+    /* RejectConfirm.vue's watcher maps the first question's answer onto the
+       legacy tender_offers.negotiations_rejected_reason. Both fields travel with
+       the submission — OfferActions.vue's rejectDisabled reads each separately.
+       Values are constants.js's own REJECT_NEGOTIATIONS_* strings. */
+    var REJECT_LEGACY_REASON = {
+      I_AM_NOT_SURE_THIS_OFFER_IS_RIGHT:         'IM_NOT_SURE_ABOUT_OFFER',
+      I_DONT_WANT_TO_SELL_AT_THE_PRICE_OFFERED:  'PRICE_DIFFERENCE_TOO_BIG',
+      I_HAVE_A_BETTER_OFFER_FROM_ANOTHER_SOURCE: 'I_HAVE_A_BETTER_OFFER',
+      I_HAVE_ALREADY_SOLD_MY_CAR:                'CAR_SOLD',
+      I_CANT_SELL_THE_CAR_RIGHT_NOW:             'NEED_MORE_TIME',
+      I_WAS_NOT_INTERESTED_IN_SELLING_MY_CAR:    'NOT_SELLING',
+      OTHER:                                     'OTHER'
+    };
+    /* The three answers that ask for the competing price. */
+    var REJECT_BETTER_OFFER_ANSWERS = [
+      'I_HAVE_A_BETTER_EXCHANGE_OFFER_IN_HAND',
+      'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_DEALER',
+      'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_CONSUMER'
+    ];
+
+    function rejectAnswerLabel(reason, value) {
+      var fu = REJECT_FOLLOWUPS[reason];
+      var hit = fu && fu.options.filter(function(o) { return o.value === value; })[0];
+      return hit ? hit.label : value;
+    }
+
+    /* StarRating.vue — five FACES, not stars, and the colour is on the selected
+       one alone: getButtonClass returns that face's colour for the chosen id and
+       `text-gray-400` plus a hover colour for every other, so the row never
+       fills up cumulatively the way a star rating would. */
+    var RATING_COLORS = ['text-red-500', 'text-red-400', 'text-yellow-400', 'text-green-500', 'text-green-700'];
+    var RATING_HOVERS = ['hover:text-red-500', 'hover:text-red-400', 'hover:text-yellow-400', 'hover:text-green-500', 'hover:text-green-700'];
+
+    function buildStarRating(selected) {
+      var html = '<div class="star-rating flex items-center justify-center bg-gray-100 border border-gray-300 p-4 rounded h-24">';
+      html += '<div class="flex justify-between mx-auto sm:w-3/4">';
+      for (var i = 0; i < 5; i++) {
+        var isSel = selected === (i + 1);
+        var cls = 'cursor-pointer transition focus:outline-none group relative p-2 -m-2 ' +
+          (isSel ? RATING_COLORS[i] + ' is-selected' : 'text-gray-400 ' + RATING_HOVERS[i]);
+        html += '<button type="button" data-rating="' + (i + 1) + '" class="' + cls + '">';
+        html += '<span class="m-auto flex items-center justify-center transform transition group-hover:scale-110">' + ((window.RATING_ICONS || [])[i] || '') + '</span>';
+        html += '</button>';
+      }
+      return html + '</div></div>';
+    }
+
+    /* Every question in the survey carries the same label, and it is the one
+       shape in here that is NOT a field label: `text-base leading-none lg:text-lg
+       text-black font-medium`, one step up from the funnel's own field labels. */
+    function rejectQuestionLabel(text) {
+      return '<label class="mb-3 inline-block text-base leading-none lg:text-lg text-black font-medium">' +
+        text + ' <span class="text-red-500">*</span></label>';
+    }
+
+    function rejectOptionList(name, idPrefix, options, selected, withTooltips) {
+      var html = '<ol>';
+      options.forEach(function(opt, i) {
+        html += '<li class="mb-2 ml-2 text-gray-700 lg:text-lg">';
+        html += '<input id="' + idPrefix + i + '" name="' + name + '" type="radio" value="' + opt.value + '" class="mr-2"' + (selected === opt.value ? ' checked' : '') + '>';
+        html += '<label for="' + idPrefix + i + '" class="lg:inline-block cursor-pointer">' + opt.label + '</label>';
+        /* showTooltipForOption keeps ONE open at a time and only for the two
+           answers that have one, so the block is tied to the selection rather
+           than rendered hidden beside every answer. */
+        if (withTooltips && selected === opt.value && REJECT_TOOLTIPS[opt.value]) {
+          html += '<div class="bg-blue-100 text-blue-600 text-xs mt-2 mr-2 px-3 py-2 p-2 rounded shadow underline">' + REJECT_TOOLTIPS[opt.value] + '</div>';
+        }
+        html += '</li>';
+      });
+      return html + '</ol>';
+    }
+
+    /* Input.vue. The label wraps the field, which is where the block's own
+       `mb-4` comes from. */
+    function buildRejectInput(id, label, type, value) {
+      var html = '<label class="mb-4 block w-full">';
+      html += '<span class="mb-3 inline-block text-base leading-none font-medium lg:text-lg">' + label + '</span>';
+      html += '<div><input id="' + id + '" type="' + type + '" value="' + (value == null ? '' : String(value).replace(/"/g, '&quot;')) + '"';
+      html += ' class="text-base font-normal leading-relaxed block w-full border rounded-lg px-4 py-3.5 transition focus:outline-none focus:ring appearance-none border-slate-400 bg-white"></div>';
+      return html + '</label>';
+    }
+
+    /* TextArea.vue, called with nothing but a maxlength — so no label, prod's
+       default six rows, and the character counter the component draws itself. */
+    function buildRejectTextArea(value) {
+      var text = value || '';
+      var html = '<div class="relative"><label>';
+      html += '<textarea id="rej-other-text" rows="6" maxlength="150" class="rej-textarea p-4 text-base leading-2 block w-full border rounded-lg transition focus:outline-none focus:ring border-slate-400 bg-white">' +
+        text.replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</textarea>';
+      html += '</label><div id="rej-other-count" class="absolute right-3 bottom-1 text-sm">' + text.length + ' / 150</div></div>';
+      return html;
+    }
+
+    function syncRejectLegacyReason() {
+      var f = rejectFormState;
+      if (!f.rejected_reason) return;
+      f.reason = REJECT_LEGACY_REASON[f.rejected_reason] || 'OTHER';
+      /* The one answer set prod folds into the free-text field rather than
+         sending on its own: "when could you sell?" arrives as otherReasonText. */
+      if (f.rejected_reason === 'I_CANT_SELL_THE_CAR_RIGHT_NOW' && f.additionalReason) {
+        f.otherReasonText = rejectAnswerLabel(f.rejected_reason, f.additionalReason);
+      }
+    }
+
     function renderRejectConfirmModal(body, footer, offer) {
-      rejectFormState = { reason: null, additionalReason: '', starRating: 0 };
-      var starColors = ['text-red-500', 'text-red-400', 'text-yellow-400', 'text-green-500', 'text-green-700'];
+      rejectFormState = emptyRejectForm();
+      rejectShowReasons = false;
+      renderRejectSurvey(body, footer, offer);
+    }
+
+    /* One render for the whole survey, re-run whenever an answer changes — the
+       sections are prod's `v-if`s, so which of them exist is derived from the
+       form state rather than toggled on pre-rendered markup. Text fields are
+       written back to the state on input and never trigger a re-render, so
+       typing cannot lose focus; every value is restored from the state, which is
+       what keeps a hidden-then-shown field carrying what was typed into it, as
+       prod's v-model does. */
+    function renderRejectSurvey(body, footer, offer) {
       var req = getData().request;
+      var f   = rejectFormState;
+      var fu  = (rejectShowReasons && f.rejected_reason && f.rejected_reason !== 'OTHER')
+        ? rejectFollowupFor(f.rejected_reason, offer, req)
+        : null;
+      f.dynamic_question = fu ? fu.question : null;
+      syncRejectLegacyReason();
 
       var html = '';
-      html += '<div class="font-bold text-xl mb-1">Olet hylkäämässä tarjouksen autostasi.</div>';
-      html += '<div class="text-sm text-slate-600 mb-4">Ennen kuin vahvistat hylkäyksen, vastaisitko alla olevaan kysymykseen:</div>';
-      html += '<div class="border-t border-gray-300 mb-5"></div>';
-      html += '<div class="mb-6"><label class="block text-base font-medium text-black mb-3">Miksi haluat hylätä tämän tarjouksen? <span class="text-red-500">*</span></label><ol class="space-y-2">';
-      REJECT_REASONS.forEach(function(opt, i) {
-        html += '<li class="ml-2 text-slate-700"><input type="radio" id="rej-r-' + i + '" name="rej-reason" value="' + opt.value + '" class="mr-2 cursor-pointer"><label for="rej-r-' + i + '" class="cursor-pointer">' + opt.label + '</label></li>';
-      });
-      html += '</ol></div>';
-      html += '<div id="rej-counter-section" class="hidden mb-6"><label class="block text-sm font-medium text-slate-700 mb-1">Millä hinnalla olisit valmis tekemään kaupat?</label><input type="number" id="rej-counter-price" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>';
-      html += '<div id="rej-followup-section" class="hidden mb-6"></div>';
-      html += '<div id="rej-other-section" class="hidden mb-6"><textarea id="rej-other-text" rows="3" maxlength="150" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea></div>';
-      html += '<div id="rej-extra-input-section" class="hidden mb-6"><label id="rej-extra-input-label" class="block text-sm font-medium text-slate-700 mb-1"></label><input type="text" id="rej-extra-input" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500"></div>';
-      html += '<div id="rej-star-section" class="hidden mb-4">';
-      html += '<label class="block text-base font-medium text-black mb-3">Mitä pidit palvelustamme? <span class="text-red-500">*</span></label>';
-      html += '<div class="flex items-center justify-center bg-gray-100 border border-gray-300 p-4 rounded h-24"><div class="flex justify-between gap-4">';
-      for (var s = 1; s <= 5; s++) {
-        html += '<button type="button" data-star="' + s + '" class="star-btn ' + starColors[s-1] + ' opacity-30 hover:opacity-80 transition-opacity" style="width:32px;height:32px;">' + ICO_STAR_EMPTY + '</button>';
+      html += '<div class="pt-5 font-bold text-2xl">Olet hylkäämässä tarjouksen autostasi.</div>';
+      html += '<div class="pt-1 pb-4">Ennen kuin vahvistat hylkäyksen, vastaisitko alla olevaan kysymykseen:</div>';
+      html += '<span class="block pt-4 pb-3 border-t border-gray-300"></span>';
+      html += '<form>';
+
+      html += '<div class="mb-8">' + rejectQuestionLabel('Miksi haluat hylätä tämän tarjouksen?');
+      html += rejectOptionList('rej-reason', 'rej-r-', REJECT_REASONS, f.rejected_reason, false) + '</div>';
+
+      if (f.rejected_reason === 'I_DONT_WANT_TO_SELL_AT_THE_PRICE_OFFERED') {
+        html += '<div class="mb-8 text-black">' +
+          buildRejectInput('rej-counter-price', 'Millä hinnalla olisit valmis tekemään kaupat?', 'number', f.counter_offer_price) +
+          '</div>';
       }
-      html += '</div></div></div>';
+
+      if (fu) {
+        html += '<div class="mb-8">' + rejectQuestionLabel(fu.question);
+        html += rejectOptionList('rej-followup', 'rej-fu-', fu.options, f.additionalReason, true) + '</div>';
+      }
+
+      if (f.rejected_reason === 'OTHER' || f.additionalReason === 'OTHER') {
+        html += '<div class="mb-8 text-black">' + buildRejectTextArea(f.otherReasonText) + '</div>';
+      }
+
+      if (f.additionalReason === 'I_NEED_MORE_TIME_TO_THINK') {
+        html += '<div class="mb-8 text-black">' +
+          buildRejectInput('rej-time-need', 'Kuinka paljon lisäaikaa tarvitset?', 'text', f.time_need_to_think) +
+          '</div>';
+      }
+
+      if (REJECT_BETTER_OFFER_ANSWERS.indexOf(f.additionalReason) !== -1) {
+        html += '<div class="mb-8 text-black">' +
+          buildRejectInput('rej-better-offer', 'Millaisen hinnan saat autostasi vaihdossa?', 'text', f.better_offer_in_hand) +
+          '</div>';
+      }
+
+      /* The rating appears once the follow-up is answered, or straight away for
+         "Muu syy", which has no follow-up. Since it is also required, an
+         unanswered follow-up is what actually blocks the submission. */
+      if (f.additionalReason !== '' || f.rejected_reason === 'OTHER') {
+        html += '<div class="mb-4">';
+        /* prod's own `for="score"`, which matches no element on the page. */
+        html += '<label for="score" class="mb-3 inline-block text-base leading-none lg:text-lg text-black font-medium">Mitä pidit palvelustamme? <span class="text-red-500">*</span></label>';
+        html += buildStarRating(f.StarRating || 0);
+        html += '</div>';
+      }
+
+      html += '</form>';
       body.innerHTML = html;
 
-      function syncSections() {
-        var r = rejectFormState.reason, a = rejectFormState.additionalReason;
-        document.getElementById('rej-counter-section').classList.toggle('hidden', r !== 'I_DONT_WANT_TO_SELL_AT_THE_PRICE_OFFERED');
-        document.getElementById('rej-other-section').classList.toggle('hidden', !(r === 'OTHER' || a === 'OTHER'));
-        var extra = document.getElementById('rej-extra-input-section');
-        var extraLabel = document.getElementById('rej-extra-input-label');
-        if (a === 'I_NEED_MORE_TIME_TO_THINK') { extra.classList.remove('hidden'); extraLabel.textContent = 'Kuinka paljon lisäaikaa tarvitset?'; }
-        else if (a === 'I_HAVE_A_BETTER_EXCHANGE_OFFER_IN_HAND' || a === 'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_DEALER' || a === 'I_HAVE_A_BETTER_DIRECT_PURCHASE_OFFER_FROM_A_CONSUMER') { extra.classList.remove('hidden'); extraLabel.textContent = 'Millaisen hinnan saat autostasi vaihdossa?'; }
-        else { extra.classList.add('hidden'); }
-        // stars appear once a follow-up answer exists (or primary reason is OTHER) — as in production
-        document.getElementById('rej-star-section').classList.toggle('hidden', !(a !== '' || r === 'OTHER'));
-      }
-
-      function renderFollowup() {
-        var section = document.getElementById('rej-followup-section');
-        var fu = rejectFormState.reason && rejectFormState.reason !== 'OTHER' ? rejectFollowupFor(rejectFormState.reason, offer, req) : null;
-        if (!fu) { section.classList.add('hidden'); section.innerHTML = ''; return; }
-        var fh = '<label class="block text-base font-medium text-black mb-3">' + fu.question + ' <span class="text-red-500">*</span></label><ol class="space-y-2">';
-        fu.options.forEach(function(opt, i) {
-          fh += '<li class="ml-2 text-slate-700"><input type="radio" id="rej-fu-' + i + '" name="rej-followup" value="' + opt.value + '" class="mr-2 cursor-pointer"><label for="rej-fu-' + i + '" class="cursor-pointer">' + opt.label + '</label>';
-          fh += '<div id="rej-tip-' + opt.value + '" class="hidden bg-blue-100 text-blue-600 text-xs mt-2 mr-2 px-3 py-2 rounded shadow underline">' + (REJECT_TOOLTIPS[opt.value] || '') + '</div></li>';
-        });
-        fh += '</ol>';
-        section.innerHTML = fh;
-        section.classList.remove('hidden');
-        section.querySelectorAll('input[name="rej-followup"]').forEach(function(radio) {
-          radio.addEventListener('change', function() {
-            rejectFormState.additionalReason = this.value;
-            section.querySelectorAll('[id^="rej-tip-"]').forEach(function(tip) { tip.classList.add('hidden'); });
-            var tip = document.getElementById('rej-tip-' + this.value);
-            if (tip && REJECT_TOOLTIPS[this.value]) tip.classList.remove('hidden');
-            syncSections();
-            updateRejectFooter(footer);
-          });
-        });
-      }
+      function rerender() { renderRejectSurvey(body, footer, offer); }
 
       body.querySelectorAll('input[name="rej-reason"]').forEach(function(radio) {
         radio.addEventListener('change', function() {
-          rejectFormState.reason = this.value;
-          rejectFormState.additionalReason = '';
-          renderFollowup();
-          syncSections();
-          updateRejectFooter(footer);
-        });
-      });
-      body.querySelectorAll('.star-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var rating = parseInt(this.getAttribute('data-star'));
-          rejectFormState.starRating = rating;
-          body.querySelectorAll('.star-btn').forEach(function(b, idx) {
-            var filled = (idx + 1) <= rating;
-            b.innerHTML = filled ? ICO_STAR_FILL : ICO_STAR_EMPTY;
-            b.className = 'star-btn ' + starColors[idx] + (filled ? ' opacity-100' : ' opacity-30 hover:opacity-80') + ' transition-opacity';
-          });
-          updateRejectFooter(footer);
+          var next = this.value;
+          /* handleShowTheReasons: clearFields, then the follow-up block exists
+             from here on. The free text is cleared with them when the new answer
+             has no follow-up of its own — prod's computed does it in the same
+             default branch that returns no options. */
+          f.rejected_reason = next;
+          f.additionalReason = '';
+          f.counter_offer_price = null;
+          f.time_need_to_think = null;
+          f.better_offer_in_hand = null;
+          if (next === 'OTHER') f.otherReasonText = '';
+          rejectShowReasons = true;
+          rerender();
         });
       });
 
-      footer.innerHTML = '<div class="flex justify-end"><button id="modal-btn-do-reject" disabled class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 text-white text-sm font-medium opacity-40 cursor-not-allowed">Hylkää tarjous</button></div>';
+      body.querySelectorAll('input[name="rej-followup"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+          /* clearFields runs on the FIRST question only — prod leaves the
+             other fields alone here, so a value typed into one, hidden by a
+             different answer and then shown again still carries it. */
+          f.additionalReason = this.value;
+          rerender();
+        });
+      });
+
+      body.querySelectorAll('button[data-rating]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          f.StarRating = parseInt(this.getAttribute('data-rating'), 10);
+          rerender();
+        });
+      });
+
+      var counterEl = document.getElementById('rej-counter-price');
+      if (counterEl) counterEl.addEventListener('input', function() { f.counter_offer_price = this.value; });
+      var timeEl = document.getElementById('rej-time-need');
+      if (timeEl) timeEl.addEventListener('input', function() { f.time_need_to_think = this.value; });
+      var betterEl = document.getElementById('rej-better-offer');
+      if (betterEl) betterEl.addEventListener('input', function() { f.better_offer_in_hand = this.value; });
+      var otherEl = document.getElementById('rej-other-text');
+      if (otherEl) otherEl.addEventListener('input', function() {
+        f.otherReasonText = this.value;
+        var count = document.getElementById('rej-other-count');
+        if (count) count.textContent = this.value.length + ' / 150';
+      });
+
+      updateRejectFooter(footer);
     }
 
     function updateRejectFooter(footer) {
-      var enabled = !!(rejectFormState.reason && rejectFormState.starRating);
+      /* OfferActions.vue: `!formData.reason || !formData.rejected_reason ||
+         !formData.StarRating`. Button.vue's disabled state is its own grey, not
+         a dimmed primary. */
+      var f = rejectFormState;
+      var enabled = !!(f.reason && f.rejected_reason && f.StarRating);
       footer.innerHTML =
-        '<div class="flex justify-end"><button id="modal-btn-do-reject"' + (enabled ? '' : ' disabled') + ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' + (enabled ? '' : ' opacity-40 cursor-not-allowed') + '">Hylkää tarjous</button></div>';
-      if (enabled) {
-        document.getElementById('modal-btn-do-reject').addEventListener('click', function() {
-          SCENARIO = 'all-rejected'; saveState(); renderPage();
-          MODAL.action = 'RejectConfirmThanks';
-          renderModal();
-        });
-      }
+        '<div class="flex justify-center lg:justify-end"><button id="modal-btn-do-reject"' + (enabled ? '' : ' disabled') +
+        ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
+        (enabled
+          ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]'
+          : 'bg-gray-200 text-gray-500 border-2 border-gray-200 cursor-not-allowed') +
+        '">Hylkää tarjous</button></div>';
+      if (!enabled) return;
+      document.getElementById('modal-btn-do-reject').addEventListener('click', function() {
+        /* prod rejects every offer, then posts the survey to
+           offers/{id}/nps-tracking and only then swaps to the thank-you screen.
+           The proto keeps the payload so a tester can read back what the survey
+           captured; nothing on any page renders it. */
+        REJECT_FEEDBACK = Object.assign({}, rejectFormState, { submitted_at: new Date().toISOString() });
+        SCENARIO = 'all-rejected'; saveState(); renderPage();
+        MODAL.action = 'RejectConfirmThanks';
+        renderModal();
+      });
     }
 
+    /* RejectConfirmThanks.vue. Two halves below `lg`, side by side above it, and
+       the banner is two images — the portrait one is the desktop half, so it is
+       swapped rather than scaled. The Reveal renders no footer for this action,
+       which is why the card carries its own close button. */
     function renderRejectThanksModal(body, fWrap) {
       fWrap.style.display = 'none';
       body.innerHTML =
-        '<div class="rounded-lg overflow-hidden border-2 border-red-50 bg-white -mx-4 -mt-12 -mb-4">' +
-          '<div class="bg-[rgb(250,234,218)] p-6 flex items-center justify-center">' +
-            '<img src="assets/kasper.png" alt="" class="w-[50px] h-[50px] md:w-[76px] md:h-[76px] rounded-full object-cover border border-gray-200">' +
-          '</div>' +
-          '<div class="p-5">' +
-            '<h2 class="font-bold text-lg md:text-xl mb-2">Kiitos kun käytit palveluamme!</h2>' +
-            '<div class="text-sm text-slate-700">' +
-              '<p>Saat asiantuntijamme kiinni sähköpostitse <a href="mailto:tiimi@autovex.fi" class="text-blue-600 underline">tiimi@autovex.fi</a> tai puhelimitse <a href="tel:+358449015285" class="text-blue-600">+358 44 901 5285</a>. Voimme vielä saada kaupat maaliin.</p>' +
-              '<p class="text-slate-500 mt-1">Ark. klo 10–16</p>' +
+        '<div class="transition-all rounded-l-xl w-full border-2 border-red-50 bg-white shadow-sm">' +
+          '<div class="flex flex-col lg:flex-row">' +
+            '<div class="lg:basis-1/2 rej-thanks-media bg-[rgb(250,234,218)]">' +
+              '<div class="flex-shrink-0 rej-thanks-media bg-[rgb(250,234,218)] flex items-center justify-center">' +
+                '<img src="assets/thank-you-banner.png" alt="" class="max-h-full object-contain rounded-tl-lg rounded-bl-lg shadow-md block lg:hidden">' +
+                '<img src="assets/thank-you-banner-desktop.png" alt="" class="max-h-full object-contain rounded-tl-lg rounded-bl-lg shadow-md hidden lg:block">' +
+              '</div>' +
             '</div>' +
-            '<button id="modal-btn-thanks-close" class="mt-5 w-full inline-flex items-center justify-center px-6 h-10 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 text-sm font-medium">Sulje</button>' +
+            '<div class="lg:basis-1/2 lg:pt-4 lg:pl-4">' +
+              '<div class="m-5 lg:m-0 lg:flex-1 flex flex-col justify-center">' +
+                /* A bare <h2>: custom.scss gives it font-display and Tailwind's
+                   preflight strips the size and weight, so prod states this at
+                   body size in Barlow. */
+                '<h2 class="font-display">Kiitos kun käytit palveluamme!</h2>' +
+                '<div class="m-2 lg:ml-4 lg:mt-2">' +
+                  '<div class="text-gray-700 mt-4 text-left">' +
+                    '<div>Saat asiantuntijamme kiinni sähköpostitse</div>' +
+                    /* prod writes `href="mailto:{{ customerSuccessEmail }}"` —
+                       a mustache in an unbound attribute, so the address shows
+                       but the link does not resolve. The proto links it. */
+                    '<div><a href="mailto:tiimi@autovex.fi" class="text-blue-600">tiimi@autovex.fi</a> tai puhelimitse</div>' +
+                    '<div><a href="tel:+358449015285" class="text-blue-600">+358 44 901 5285.</a> Voimme vielä saada kaupat maaliin.</div>' +
+                  '</div>' +
+                  '<p class="text-gray-500 mt-2 text-left">Ark. klo 10–16</p>' +
+                '</div>' +
+                '<div class="mt-5 flex items-center justify-center">' +
+                  '<button id="modal-btn-thanks-close" class="w-full lg:w-auto lg:flex-1 inline-flex items-center justify-center px-5 h-10 rounded-lg bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-gray-300 hover:bg-opacity-50 text-sm font-medium tracking-wider">Sulje</button>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
           '</div>' +
         '</div>';
       document.getElementById('modal-btn-thanks-close').addEventListener('click', function() {
