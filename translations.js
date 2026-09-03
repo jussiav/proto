@@ -529,10 +529,17 @@ window.TRANSLATIONS = {
       description:    'Esimerkiksi huoltokirja, sähköauton akkutesti tai vahinkotarkastus. PDF-tiedostoja, enintään {size} per tiedosto, korkeintaan {count} tiedostoa.',
       addBtn:         'Lisää tiedosto',
       remove:         'Poista tiedosto',
-      errType:        'Tiedostomuotoa ei tueta. Valitse PDF-tiedosto.',
-      errSize:        'Tiedosto on liian suuri. Enimmäiskoko on {size}.',
+      /* Upload failures follow the photo uploader's own four states, in its own
+         voice — prod's `images_step.filesize`, `.format_error`, `.timeout` and
+         `.file_read_error`. Same lead ("Lataus epäonnistui."), same habit of
+         naming the accepted format at the end, and format/corrupt is one
+         message there as here: the seller cannot tell the two apart and the
+         action is the same either way. */
+      errType:        'Lataus epäonnistui. Tiedostomuoto ei ole tuettu tai tiedosto voi olla vioittunut. Käytä PDF-tiedostoa.',
+      errSize:        'Lataus epäonnistui. Tiedoston maksimikoko on {size}. Valitse pienempi tiedosto.',
+      errTimeout:     'Lataus epäonnistui. Tämä voi johtua hitaasta internetyhteydestä tai liian suuresta tiedostosta. Yritä uudelleen vakaalla yhteydellä tai pienemmällä tiedostolla.',
       errCount:       'Voit lisätä enintään {count} tiedostoa.',
-      errRead:        'Tiedostoa ei voitu lukea. Valitse toinen tai yritä uudelleen.',
+      errRead:        'Tiedostoa ei voitu lukea. Valitse PDF-tiedosto.',
       errStorage:     'Tiedostoa ei voitu tallentaa. Yritä myöhemmin uudelleen.',
       /* Byte units are translated, not hardcoded in the formatter: Finnish
          abbreviates megatavu/kilotavu as Mt/kt, not MB/kB. They fill {size} in
@@ -1112,10 +1119,11 @@ window.TRANSLATIONS = {
       description:    'For example the service book, an EV battery test or a damage inspection. PDF files, up to {size} per file, {count} files at most.',
       addBtn:         'Add file',
       remove:         'Remove file',
-      errType:        'That file type is not supported. Choose a PDF file.',
-      errSize:        'The file is too large. The maximum size is {size}.',
+      errType:        'Upload failed. The file type is not supported, or the file may be corrupt. Use a PDF file.',
+      errSize:        'Upload failed. The maximum file size is {size}. Choose a smaller file.',
+      errTimeout:     'Upload failed. This may be due to a slow internet connection or too large a file. Try again on a stable connection or with a smaller file.',
       errCount:       'You can add at most {count} files.',
-      errRead:        'The file could not be read. Choose another or try again.',
+      errRead:        'The file could not be read. Choose a PDF file.',
       errStorage:     'The file could not be saved. Try again later.',
       unitMb:         'MB',
       unitKb:         'kB',

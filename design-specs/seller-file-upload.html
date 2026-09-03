@@ -239,11 +239,53 @@
       </div>
     </section>
 
+    <!-- Upload failures -->
+    <section class="av-band av-band-grey" id="failures">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Upload failures behave exactly as photo uploads do</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-4">No new error design. <code>ImageUpload.vue</code> already has a considered model for this, and documents reuse it whole — same banner, same placement, same four states, same voice. What follows is a description of that existing behaviour, so nothing has to be invented while building.</p>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">How a failure is shown</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>One banner per failed file</b>, stacked above the section, each carrying <b>the filename in semibold</b> and the message beneath it. A batch where two of five files fail says which two.</li>
+          <li><b>Each is dismissible on its own</b>, with a close button in the top right. They persist until dismissed — they are not toasts.</li>
+          <li>The failed file <b>does not appear in the list</b>. Nothing is half-added.</li>
+          <li>There is <b>no retry</b>. The seller picks the file again, which is what the photo uploader does too.</li>
+        </ul>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mb-5">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">What happened</th>
+              <th class="px-4 py-3 font-medium">How it is detected</th>
+              <th class="px-4 py-3 font-medium">Photo equivalent</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
+            <tr><td class="px-4 py-3 font-medium">Corrupt file, or not a PDF at all</td><td class="px-4 py-3">The <b>first bytes are read and checked</b> against the PDF signature (<code>%PDF</code>) before the file is accepted — so a renamed or damaged file is caught by its content, not its extension or its mime type.</td><td class="px-4 py-3 text-slate-600"><code>format_error</code>, from the same signature check in <code>getMimeType</code></td></tr>
+            <tr><td class="px-4 py-3 font-medium">Empty or unreadable file</td><td class="px-4 py-3">A read that returns nothing, or fails outright.</td><td class="px-4 py-3 text-slate-600"><code>file_read_error</code></td></tr>
+            <tr><td class="px-4 py-3 font-medium">Too large</td><td class="px-4 py-3">Size checked before the file is read at all.</td><td class="px-4 py-3 text-slate-600"><code>filesize</code></td></tr>
+            <tr><td class="px-4 py-3 font-medium">Connection lost, or the upload times out</td><td class="px-4 py-3">The uploader's own request timeout. <b>One message covers both</b> a dropped connection and a timeout, because the seller cannot tell them apart and the advice is the same.</td><td class="px-4 py-3 text-slate-600"><code>timeout</code> — the photo uploader already uses one string for its <code>onerror</code> and <code>ontimeout</code> alike</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Seeing them in the prototype</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-2">These are the states nobody can produce on demand — a corrupt PDF has to be crafted, and the prototype has no network to lose. The bar's <b>Upload errors</b> panel raises each one through the real code path, so the copy and the layout are reviewable without rigging a file.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-0">The corrupt case is also genuinely testable: rename any non-PDF to <code>.pdf</code> and add it. The signature check rejects it, and the file is not stored.</p>
+      </div>
+      </div>
+    </section>
+
     <!-- Copy -->
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy (FI / EN) — drafts, pending approval</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">This feature has no production copy, so every string below is a draft written for review. The two upload errors are adapted from production's own <code>images_step.filesize</code> and <code>.file_read_error</code> so the voice matches what the funnel already says. <code>{size}</code> and <code>{count}</code> are filled from the configured limits — the copy never hardcodes a number the code could contradict.</p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">This feature has no production copy, so every string below is a draft written for review. The upload errors are modelled on the photo uploader's own — <code>images_step.filesize</code>, <code>.format_error</code>, <code>.timeout</code> and <code>.file_read_error</code> — so the voice matches what the funnel already says. <code>{size}</code> and <code>{count}</code> are filled from the configured limits — the copy never hardcodes a number the code could contradict.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
@@ -335,7 +377,7 @@
     /* Generated, not typed: the copy table is the review artefact, so it has to be
        the strings the prototype actually renders. */
     (function buildCopyTable() {
-      const keys = ['title','description','addBtn','remove','errType','errSize','errCount','errRead','errStorage','unitMb','unitKb'];
+      const keys = ['title','description','addBtn','remove','errType','errSize','errTimeout','errCount','errRead','errStorage','unitMb','unitKb'];
       document.getElementById('copy-table').innerHTML = keys.map(k =>
         '<tr><td class="px-5 py-3"><code>' + k + '</code></td>' +
         '<td class="px-5 py-3">' + pick(FI, 'files.' + k) + '</td>' +

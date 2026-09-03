@@ -1156,6 +1156,26 @@ into Finnish copy there. `renderFiles` is already bound to `av:langchange`, so
 the description re-renders with the right unit on a language switch. English
 doc prose on the spec page still says "1 MB"; that is documentation, not copy.
 
+**Upload failures reuse `ImageUpload.vue`'s model whole, because it already has
+one.** Prod keeps a LIST of errors, one per failed file — `bg-red-300 p-4 mb-2
+relative text-red-950`, filename semibold, its own close button, several at once,
+persisting until dismissed rather than a toast — and four strings:
+`images_step.filesize`, `.format_error`, `.timeout`, `.file_read_error`. Two
+details are the substance of it: **format and corrupt are ONE message** ("ei ole
+tuettu tai kuvatiedosto voi olla vioittunut"), and **`onerror` and `ontimeout`
+share the `timeout` string**, so a dropped connection and a slow one read alike.
+Corruption is caught by CONTENT: `getMimeType` reads the first 12 bytes and
+matches magic numbers, so a renamed or damaged file fails on its signature, not
+its extension. There is no retry, and the failed tile is dropped after 500 ms.
+
+The documents section now does the same: per-file dismissible banners with prod's
+classes, a `%PDF` signature check on an ArrayBuffer read before the data-URL read
+that stores it, an empty-read check, and `files.errTimeout` added to translations
+in prod's own wording. The 500 ms tile removal has no analogue — a document only
+gets a row once it is stored. **The bar's "Upload errors" panel** raises each
+state through the real renderer, since none of them can be produced on demand;
+the corrupt case is also genuinely testable by renaming any non-PDF to `.pdf`.
+
 Two proto-only mechanics worth knowing. The bytes are stored as data URLs in
 `localStorage`, which is why the cap is 1 MB per file / 5 files — base64 inflates
 by a third and the photo data URLs are already in there; production should allow

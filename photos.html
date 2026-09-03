@@ -744,11 +744,68 @@
       return FILE_EXTS.indexOf(ext) !== -1;
     }
 
-    function showFilesError(msg) {
-      var el = document.getElementById('files-error');
-      el.textContent = msg;
-      el.style.display = msg ? '' : 'none';
+    /* ImageUpload.vue keeps a LIST of errors, one per file that failed, each
+       carrying the filename and dismissible on its own — not a single shared
+       line. A batch where two of five files fail says which two. Classes are
+       prod's: `bg-red-300 p-4 mb-2 relative text-red-950`, filename semibold,
+       close button top-right.
+
+       prod also drops the failed file's tile after 500 ms (`delay` in its
+       `error()`); there is nothing to drop here, because a document only gets a
+       row once it is stored. */
+    var fileErrors = [];
+    var fileErrorSeq = 0;
+
+    /* prod's `getMimeType` reads the first 12 bytes and matches them against the
+       formats it accepts, so a renamed or corrupt file is caught by its content
+       rather than its extension. A PDF's is `%PDF`. */
+    function isPdfSignature(buffer) {
+      var head = new Uint8Array(buffer).subarray(0, 4);
+      return head[0] === 0x25 && head[1] === 0x50 && head[2] === 0x44 && head[3] === 0x46;
     }
+
+    function showFilesError(msg, name) {
+      if (!msg) { fileErrors = []; renderFilesErrors(); return; }
+      fileErrors.push({ id: ++fileErrorSeq, name: name || '', error: msg });
+      renderFilesErrors();
+    }
+
+    function dismissFileError(id) {
+      fileErrors = fileErrors.filter(function (e) { return e.id !== id; });
+      renderFilesErrors();
+    }
+    window.dismissFileError = dismissFileError;
+
+    /* Driven by the bar's "Upload errors" panel — same banners, same strings,
+       same renderer as a real failure. `sample.pdf` stands in for the filename a
+       real failure would carry. */
+    window.simulateFileError = function (kind) {
+      if (kind === 'clear') { showFilesError(''); return; }
+      var msg = kind === 'size'    ? fileFill(t('files.errSize'), { size: fileLabel(FILE_MAX_BYTES) })
+              : kind === 'timeout' ? t('files.errTimeout')
+              : kind === 'read'    ? t('files.errRead')
+              :                      t('files.errType');
+      showFilesError(msg, 'sample.pdf');
+      var host = document.getElementById('files-errors');
+      if (host) host.scrollIntoView({ block: 'center' });
+    };
+
+    function renderFilesErrors() {
+      var host = document.getElementById('files-errors');
+      if (!host) return;
+      host.innerHTML = fileErrors.map(function (e) {
+        return '<div class="bg-red-300 p-4 mb-2 relative text-red-950">' +
+          '<button type="button" class="absolute top-2 right-2" aria-label="Sulje" ' +
+            'onclick="dismissFileError(' + e.id + ')">' + ICO_CLOSE + '</button>' +
+          (e.name ? '<div class="font-semibold pr-6">' + fileEsc(e.name) + '</div>' : '') +
+          '<div class="pr-6">' + fileEsc(e.error) + '</div>' +
+        '</div>';
+      }).join('');
+      host.style.display = fileErrors.length ? '' : 'none';
+    }
+
+    /* prod's own `close` sprite. */
+    var ICO_CLOSE = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66 194.34a8 8 0 0 1-11.32 11.32L128 139.31l-66.34 66.35a8 8 0 0 1-11.32-11.32L116.69 128 50.34 61.66a8 8 0 0 1 11.32-11.32L128 116.69l66.34-66.35a8 8 0 0 1 11.32 11.32L139.31 128Z"/></svg>';
 
     /* A data: URL cannot be opened as a top-level document in Chrome, so each row
        links to a blob URL built from the stored bytes. Rebuilt on every render and
@@ -838,32 +895,53 @@
         var file = queue.shift();
 
         if (storedFiles().length >= FILE_MAX_COUNT) {
-          showFilesError(fileFill(t('files.errCount'), { count: FILE_MAX_COUNT }));
+          showFilesError(fileFill(t('files.errCount'), { count: FILE_MAX_COUNT }), file.name);
           renderFiles(); return;
         }
-        if (!fileTypeOk(file)) { showFilesError(t('files.errType')); return next(queue); }
+        if (!fileTypeOk(file)) { showFilesError(t('files.errType'), file.name); return next(queue); }
         if (file.size > FILE_MAX_BYTES) {
-          showFilesError(fileFill(t('files.errSize'), { size: fileLabel(FILE_MAX_BYTES) }));
+          showFilesError(fileFill(t('files.errSize'), { size: fileLabel(FILE_MAX_BYTES) }), file.name);
           return next(queue);
         }
 
-        var reader = new FileReader();
-        reader.onerror = function () { showFilesError(t('files.errRead')); next(queue); };
-        reader.onload = function (e) {
-          var s = getStore();
-          if (!Array.isArray(s.files)) s.files = [];
-          s.files.push({ name: file.name, size: file.size, type: file.type || '', data: e.target.result });
-          /* setStore swallows quota errors, so write strictly here: a silently
-             dropped file would look uploaded until the next reload. */
-          try {
-            localStorage.setItem(STORE_KEY, JSON.stringify(s));
-          } catch (err) {
-            showFilesError(t('files.errStorage'));
-            renderFiles(); return;
+        /* ImageUpload.vue reads the bytes BEFORE trusting the file: an empty
+           read is `file_read_error`, and a header that does not match a
+           supported signature is `format_error` — which is how it catches a
+           corrupt file whose name and mime type look right. Same two checks
+           here against the PDF signature, then a second read for the data URL
+           the prototype stores. */
+        var sniff = new FileReader();
+        sniff.onerror = function () { showFilesError(t('files.errRead'), file.name); next(queue); };
+        sniff.onload = function (ev) {
+          var buf = ev.target.result;
+          if (!buf || buf.byteLength === 0) {
+            showFilesError(t('files.errRead'), file.name);
+            return next(queue);
           }
-          next(queue);
+          if (!isPdfSignature(buf)) {
+            showFilesError(t('files.errType'), file.name);
+            return next(queue);
+          }
+
+          var reader = new FileReader();
+          reader.onerror = function () { showFilesError(t('files.errRead'), file.name); next(queue); };
+          reader.onload = function (e) {
+            var s = getStore();
+            if (!Array.isArray(s.files)) s.files = [];
+            s.files.push({ name: file.name, size: file.size, type: file.type || '', data: e.target.result });
+            /* setStore swallows quota errors, so write strictly here: a silently
+               dropped file would look uploaded until the next reload. */
+            try {
+              localStorage.setItem(STORE_KEY, JSON.stringify(s));
+            } catch (err) {
+              showFilesError(t('files.errStorage'), file.name);
+              renderFiles(); return;
+            }
+            next(queue);
+          };
+          reader.readAsDataURL(file);
         };
-        reader.readAsDataURL(file);
+        sniff.readAsArrayBuffer(file);
       }(picked));
     }
 
@@ -1108,7 +1186,7 @@
             <input type="file" id="files-input" class="hidden" multiple
                    accept=".pdf,application/pdf" />
           </div>
-          <p id="files-error" class="av-error-msg" style="display:none"></p>
+          <div id="files-errors" style="display:none"></div>
         </div>
 
         </div><!-- /photo sections -->
@@ -1277,6 +1355,25 @@
             { id: 'v1',      label: 'Variant 1 — documents section' }
           ]
         }
+      ],
+      /* Upload failures are the one thing a tester cannot produce on demand: a
+         corrupt PDF has to be crafted, and the prototype has no network to lose.
+         Each action raises the real banner through the real code path, so the
+         copy and the layout are reviewable without rigging a file. */
+      panelLabel:   'Upload errors',
+      panelTitle:   'Raise a document upload error, as a failed upload would',
+      actionsLabel: 'Simulate',
+      actions: [
+        { label: 'Corrupt or wrong format', title: 'What a file whose bytes are not a PDF produces',
+          run: function () { window.simulateFileError('type'); } },
+        { label: 'Too large',               title: 'Over the per-file size limit',
+          run: function () { window.simulateFileError('size'); } },
+        { label: 'Connection lost',         title: 'The photo uploader\'s timeout state, which PDFs share',
+          run: function () { window.simulateFileError('timeout'); } },
+        { label: 'Unreadable file',         title: 'A file the browser cannot read at all',
+          run: function () { window.simulateFileError('read'); } },
+        { label: 'Clear errors',            title: 'Dismiss all of them',
+          run: function () { window.simulateFileError('clear'); } }
       ]
     };
 
