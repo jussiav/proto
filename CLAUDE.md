@@ -914,6 +914,12 @@ is what stops a re-render stacking apps on one node. Its two icons
 data verbatim from prod's own SVGs — the users-three source wraps its path in a
 clipPath covering the whole artwork, which clips nothing and is dropped.
 
+**The chart's top rule goes with the new row.** prod's canvas is
+`my-3 py-3 border-y border-slate-200`, which is right while the row above has no
+frame — but `AuctionStats` brings its own, so the hairline lands 12px under it
+and reads as a doubled line. `v1` renders `border-b`; control keeps `border-y`.
+Same edit in `AuctionInsights.vue`, which shows the end state.
+
 **`AuctionInsights.vue` now renders the end state of BOTH changes**, per the
 team's call: it contains `AuctionStats` instead of its own three-column `dl`, and
 its chart lost the `Asking price` dataset along with the `askingPrice` prop. So

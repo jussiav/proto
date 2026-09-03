@@ -181,7 +181,8 @@
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
         <ul class="list-disc pl-5 space-y-1">
           <li>The three-column row above the chart is <b>replaced by the two-column stats block the offers page shows during a live auction</b> — same markup, same labels, same icons, same frame.</li>
-          <li>It stays <b>in the decision page&rsquo;s existing white card</b>, in the same place above the chart. The chart and the auction dates below it are untouched.</li>
+          <li>It stays <b>in the decision page&rsquo;s existing white card</b>, in the same place above the chart. The chart and the auction dates below it are untouched, with one exception below.</li>
+          <li><b>The chart loses its top rule.</b> The new block carries its own frame, so the hairline above the chart lands a few pixels beneath it and reads as a second line. The rule below the chart stays.</li>
           <li><b>The asking price leaves with the third column.</b> No replacement figure.</li>
           <li>The values are the same two numbers the row shows today — offers on this request, and how many dealerships they came from.</li>
         </ul>
@@ -249,7 +250,8 @@
           <li>The decision page and the offers page render the <b>same component</b> for these two figures — not two copies of the same markup. See <a class="text-av-blue underline" href="../components.html#AuctionStats" target="_blank" rel="noopener">AuctionStats</a> for the props and states it has to cover.</li>
           <li>The values are unchanged: offers on the request, and the number of dealerships behind them.</li>
           <li>No asking price, expected price or price estimate appears anywhere in the insights block.</li>
-          <li>The chart, the auction dates and the surrounding white card are untouched.</li>
+          <li>The chart, the auction dates and the surrounding white card are otherwise untouched — only its top rule goes.</li>
+          <li>There is <b>one</b> hairline between the stats block and the chart, not two.</li>
           <li>It reads correctly at 360px — both labels fit their column without clipping.</li>
         </ul>
       </div>

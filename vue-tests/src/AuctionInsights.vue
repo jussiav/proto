@@ -10,7 +10,7 @@
         />
         <canvas
             ref="auction-insights-chart"
-            class="my-3 py-3 border-y border-slate-200"
+            class="my-3 py-3 border-b border-slate-200"
         />
         <div class="flex flex-row justify-between text-xs">
             <div>{{ startDate.format('LL') }}</div>

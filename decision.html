@@ -1607,7 +1607,10 @@
            a dashed line the width of the chart, with its value in a box at the
            left edge. Both go in v1; the bids line, its fill, the end-value label
            and the date row below are untouched. */
-        html += '<div class="my-3 py-3 border-y border-slate-200 overflow-visible">' +
+        /* The stats block above carries its own frame in v1, so the chart's top
+           rule would sit a few pixels under it as a second line. Control keeps
+           prod's `border-y`, where the row above has no frame of its own. */
+        html += '<div class="my-3 py-3 ' + (APR_V1 ? 'border-b' : 'border-y') + ' border-slate-200 overflow-visible">' +
           '<svg viewBox="0 0 ' + W + ' ' + TOTAL_H + '" class="w-full" style="height:auto;display:block">' +
             // Fill area under bid line
             '<polygon points="' + fillPts + '" fill="#EEF6FA" opacity="0.8"/>' +
