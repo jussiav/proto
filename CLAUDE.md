@@ -439,6 +439,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
 | Enhanced negotiations | Live | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
+| Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 
 **Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
 and Seller intent (VWO `104_combi`), both present in the 2026-08-31 dump —
@@ -873,6 +874,39 @@ offers signal**, which belongs to steering the seller towards *accepting* and to
 later initiatives, since inside the modal it would steer them away from an action
 they have already chosen; the seller's own estimate or asking price; a seller
 confirmation when the dealership accepts; and the two-round structure itself.
+
+**Asking price removal** takes the asking price off the decision page's insights
+block, and unifies that block with the offers page while it is there. Change 1
+replaces the three-column `dl` (`Tarjousta` / `Autoliikettä` / `Odotettu hinta`)
+with the two-column stats grid `Timer.vue` already draws for a live auction —
+`auction.landing.auctions_in_progress.total_bids` / `.bidders`, the same icons
+(`ph-bold-chart-bar`, `ph-bold-users-three`), the same bordered and divided
+frame — inside the decision page's existing white card. The asking price leaves
+with the third column, and the plural-aware labels go with it: Timer's strings
+have no singular form. Change 2 drops the chart's dashed asking-price line and
+its left-hand price box; the bid line, its fill, the highest-bid label and the
+date row stay.
+
+**Prod already ships both removals behind `103_combi`.** `AuctionInsights.vue`
+takes a `hideExpectedPrice` prop (variation 2) that hides the third column AND
+the `Asking price` dataset — `borderDash: [5,5]`. So change 2 is close to
+promoting that arm, and half of change 1 with it. **The initiative is
+deliberately wider than the test:** the test removes a column, this replaces the
+row, so the two pages stop describing the same two numbers in different words
+and a different design. Recorded on the spec page as its own section rather than
+buried in a change.
+
+**The block is not a component.** It is markup inside `Timer.vue`, which also
+draws the progress bar, end date and reg badge — so the spec asks for the
+two-column grid to be **extracted** into something both pages use, rather than
+copied across. That ask is the whole point of the change; copying would drift.
+
+**Two things left out on purpose.** `103_combi`'s third arm hides the
+asking-price warning under the counter-offer field in `Negotiate.vue` and
+`QuickNegotiate.vue` — deferred, and listed on the spec's "Not in this
+initiative yet" section with the funnel. And a **second negotiation-modal A/B is
+coming in a future dump**, testing the ceiling on what a seller may counter-offer;
+worth knowing before anyone reads the modal's asking-price references as settled.
 
 **Seller intent** asks one question per arm on the price step, below the
 estimate field, to learn how ready the seller actually is to sell — today the

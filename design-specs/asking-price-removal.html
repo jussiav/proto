@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asking price removal · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    /* Long unbroken identifiers have no break opportunity and pushed the page
+       20px wide at 375px. */
+    code { overflow-wrap: anywhere; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <!-- Hero -->
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · decision page</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Asking price removal</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The asking price is on its way out of the seller journey. The decision page still shows it twice above the fold — as a column of its own, and as a dashed line across the chart — using a row that duplicates, in different words and a different design, what the offers page already shows the same seller.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Ready to build — 2 changes, no new copy
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+
+    <!-- How to read this -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Two changes, both on the <b>decision page&rsquo;s auction insights block</b> — the white card above the offers, holding a row of figures, a chart and the auction dates. Each section states <b>what changes</b>, links to that state in the prototype, and ends with a small-print <b>Why</b>.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>No new copy.</b> Change 1 adopts labels the offers page already ships; change 2 removes a line and a number. Nothing here needs a translation round.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">The changes are independent, but doing 1 first is cheaper: it replaces the row that holds the asking price, so change 2 is then the only place it still appears in this block.</p>
+      </div>
+    </section>
+
+    <!-- Relationship to the running test -->
+    <section class="av-band av-band-grey" id="ab-test">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Some of this already exists behind a flag</h2>
+      <div class="bg-info-50 border-l-4 border-info-200 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="mb-2"><b>Production already hides the expected-price column and the dashed line</b> for one arm of a live A/B test. The variant does exactly what change 2 asks for, and half of what change 1 asks for.</p>
+        <p class="mb-2">So the likely path is: <b>promote that variant</b> — delete the flag and the branch rather than write anything new — and then do change 1 on top.</p>
+        <p class="mb-0"><b>This initiative is wider than the test.</b> The test removes a column. This asks for the row to be <b>replaced</b> by the one the offers page already uses, so the two pages stop describing the same two numbers with different words, different icons and different framing. That part is new work whatever happens to the test.</p>
+      </div>
+      </div>
+    </section>
+
+    <!-- Change log -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Everything this initiative asks for. Each row links to its own section below.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">What needs to change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-bold">1</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">The figures row becomes the one the offers page already uses</a></td>
+              <td class="px-4 py-3">Decision page · insights block</td>
+              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">2</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">The chart drops the dashed asking-price line</a></td>
+              <td class="px-4 py-3">Decision page · chart</td>
+              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Change 1 -->
+    <section class="av-band av-band-grey" id="c1">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 — The figures row becomes the one the offers page already uses</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · insights block</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Auction ended, offers seen</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>The three-column row above the chart is <b>replaced by the two-column stats block the offers page shows during a live auction</b> — same markup, same labels, same icons, same frame.</li>
+          <li>It stays <b>in the decision page&rsquo;s existing white card</b>, in the same place above the chart. The chart and the auction dates below it are untouched.</li>
+          <li><b>The asking price leaves with the third column.</b> No replacement figure.</li>
+          <li>The values are the same two numbers the row shows today — offers on this request, and how many dealerships they came from.</li>
+        </ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&asking-price-removal=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— switch the variant off to compare with today</span></p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5 items-start mt-5">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Today — decision page</p>
+          <div class="border border-dashed border-slate-300 rounded-md p-3">
+            <dl class="flex flex-row divide-x divide-slate-200 text-center">
+              <div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 font-dm text-xs text-slate-500">Tarjousta</dt><dd class="font-dm font-bold text-slate-800">25</dd></div>
+              <div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 font-dm text-xs text-slate-500">Autoliikettä</dt><dd class="font-dm font-bold text-slate-800">25</dd></div>
+              <div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 font-dm text-xs text-slate-500">Odotettu hinta</dt><dd class="font-dm font-bold text-slate-800">12 000 €</dd></div>
+            </dl>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Three columns, divided by hairlines, no frame, no icons. Labels are plural-aware — singular at exactly one.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">After — the offers page&rsquo;s block</p>
+          <div class="border border-dashed border-slate-300 rounded-md p-3">
+            <div class="grid grid-cols-2 gap-2 border border-slate-200 rounded-lg divide-x">
+              <div class="flex flex-col p-2.5">
+                <span class="font-dm text-slate-500 text-xs sm:text-sm truncate">Tarjouksia yhteensä</span>
+                <div class="mt-auto w-full flex justify-between items-baseline">
+                  <span class="font-dm text-slate-800 text-sm sm:text-base">25</span>
+                  <svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><path d="M16.416 14.063h-.281V3.092a.844.844 0 0 0-.844-.843h-3.938a.844.844 0 0 0-.843.844v2.531H7.416a.844.844 0 0 0-.844.844V9H4.041a.844.844 0 0 0-.844.844v4.219h-.281a.844.844 0 0 0 0 1.687h13.5a.844.844 0 1 0 0-1.688ZM12.197 3.937h2.25v10.126h-2.25V3.937ZM8.26 7.313h2.25v6.75H8.26v-6.75Zm-3.375 2.531h2.25V14.063h-2.25v-4.22Z"/></svg>
+                </div>
+              </div>
+              <div class="flex flex-col p-2.5">
+                <span class="font-dm text-slate-500 text-xs sm:text-sm truncate">Tarjoajat</span>
+                <div class="mt-auto w-full flex justify-between items-baseline">
+                  <span class="font-dm text-slate-800 text-sm sm:text-base">25</span>
+                  <svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><clipPath id="spec-users"><path transform="translate(.332)" d="M0 0h18v18H0z"/></clipPath><g clip-path="url(#spec-users)"><path d="M11.89 12.734a3.655 3.655 0 1 0-5.116 0 5.337 5.337 0 0 0-2.109 2.031.844.844 0 0 0 1.461.844 3.726 3.726 0 0 1 6.414 0 .846.846 0 0 0 1.16.322.843.843 0 0 0 .301-1.166 5.336 5.336 0 0 0-2.11-2.03Zm-4.526-2.608a1.969 1.969 0 1 1 3.937 0 1.969 1.969 0 0 1-3.937 0Zm10.35.674a.844.844 0 0 1-1.181-.168c-.586-.78-1.396-1.378-2.063-1.522a.844.844 0 0 1-.128-1.61A1.407 1.407 0 1 0 12.6 5.51a.844.844 0 1 1-1.477-.816 3.094 3.094 0 1 1 5.153 3.4c.619.412 1.162.928 1.607 1.525a.844.844 0 0 1-.169 1.18ZM4.194 9.112c-.666.144-1.476.742-2.062 1.522A.844.844 0 1 1 .783 9.62 6.497 6.497 0 0 1 2.39 8.093a3.094 3.094 0 1 1 5.152-3.4.844.844 0 1 1-1.476.816A1.406 1.406 0 1 0 4.323 7.5a.844.844 0 0 1-.128 1.611v.002Z"/></g></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Two columns in a rounded frame, divided, label on top, value bottom-left, icon bottom-right. This is a copy of the offers page&rsquo;s own block, not a redraw.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">One thing to decide up front</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-2">The block is <b>not a component today</b> — it is markup inside the offers page&rsquo;s auction timer card, which also draws the progress bar, the end date and the registration badge.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-0"><b>Extract the two-column block into a shared component</b> and have both pages use it. Copying the markup across would work today and drift tomorrow, which is the thing this change exists to stop.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mt-5">
+        <table class="w-full font-dm text-sm text-left">
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-4 py-3 font-medium">Label today</th><th class="px-4 py-3 font-medium">Label after</th><th class="px-4 py-3 font-medium">EN, for reference</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-4 py-3">Tarjousta <span class="text-slate-500">/ Tarjous at one</span></td><td class="px-4 py-3 font-bold">Tarjouksia yhteensä</td><td class="px-4 py-3 text-slate-500">Offers in total</td></tr>
+            <tr><td class="px-4 py-3">Autoliikettä <span class="text-slate-500">/ Autoliike at one</span></td><td class="px-4 py-3 font-bold">Tarjoajat</td><td class="px-4 py-3 text-slate-500">Bidders</td></tr>
+            <tr><td class="px-4 py-3">Odotettu hinta</td><td class="px-4 py-3 text-slate-500">— removed —</td><td class="px-4 py-3 text-slate-500">Expected price</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Note:</b> the new labels have no singular form, so the plural handling the current row needs disappears with it. Both labels already exist — nothing to translate.</p>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>The decision page and the offers page render the <b>same component</b> for these two figures — not two copies of the same markup.</li>
+          <li>The values are unchanged: offers on the request, and the number of dealerships behind them.</li>
+          <li>No asking price, expected price or price estimate appears anywhere in the insights block.</li>
+          <li>The chart, the auction dates and the surrounding white card are untouched.</li>
+          <li>It reads correctly at 360px — both labels fit their column without clipping.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The same seller sees both pages within a day, and today they describe the same two numbers twice over, in different words, with different weight and different framing. Reusing the block settles that for free — and the column that has to go for the asking price to leave the page is one of the three it replaces, so the removal costs nothing extra.</p>
+      </div>
+    </section>
+
+    <!-- Change 2 -->
+    <section class="av-band av-band-grey" id="c2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 — The chart drops the dashed asking-price line</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · chart</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Auction ended, offers seen</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>The <b>dashed horizontal line</b> across the chart goes, along with <b>the price label</b> in the box at its left end.</li>
+          <li>Everything else stays: the rising bid line, the shaded fill beneath it, the highest-bid label at the right end, and the start and end dates below.</li>
+          <li>The chart&rsquo;s vertical scale no longer needs to reach the asking price — with the line gone, the bid progression is what sets the top of the range.</li>
+        </ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&asking-price-removal=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the chart with only the bid line</span></p>
+      </div>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>The chart draws one line, not two, in every auction state that renders it.</li>
+          <li>No price box appears at the left edge; the highest-bid box at the right edge is unchanged.</li>
+          <li>The bid line still fills the chart vertically when the highest bid is well below what the asking price used to set.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The line invites the seller to read the auction as a race against their own asking price — a number the product is removing, and one that was never a prediction of what dealerships would pay. With it gone the chart shows what actually happened.</p>
+      </div>
+    </section>
+
+    <!-- Not in scope -->
+    <section class="av-band av-band-grey" id="scope">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Not in this initiative yet</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-4">The asking price appears elsewhere in the seller journey. Those are separate pieces of work and are listed here only so nobody assumes they came with these two changes.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl">
+        <table class="w-full font-dm text-sm text-left">
+          <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
+            <tr><td class="px-4 py-3 font-medium whitespace-nowrap">Negotiation modal</td><td class="px-4 py-3">The warning under the counter-offer field that names the seller&rsquo;s asking price. Deliberately left for later.</td></tr>
+            <tr><td class="px-4 py-3 font-medium whitespace-nowrap">The funnel</td><td class="px-4 py-3">Where the asking price is asked for in the first place, and the screens that echo it back.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+  </main>
+  <!-- Footer — same structure as the prototype's site footer (layout.js). -->
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Asking price removal</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>

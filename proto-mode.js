@@ -132,6 +132,12 @@
       name: 'Seller intent A/B',
       spec: 'design-specs/seller-intent.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'asking-price-removal',
+      name: 'Asking price removal',
+      spec: 'design-specs/asking-price-removal.html',
+      prodArm: 'control'
     }
   ];
 
