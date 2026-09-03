@@ -2359,13 +2359,23 @@
           '</p>';
       }
 
-      var fHtml = '<div class="flex justify-between items-center">';
+      /* Change 17's stacking, for the other footer that pairs a primary action
+         with the destructive one. Measured at 360px the two sit at 296px in a
+         296px row — no overflow today, and no slack either, so the same rule
+         applies: a column below prod's `sm`, primary on top, both full width.
+         Here the DOM already leads with the primary button, so a plain
+         `flex-col` is enough. Only when both buttons are actually present. */
+      var rejStack = EN_V1 && showNeg;
+      var rejBtnCls = rejStack ? ' w-full sm:w-auto' : '';
+      var fHtml = '<div class="' + (rejStack
+        ? 'flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center sm:gap-0'
+        : 'flex justify-between items-center') + '">';
       if (showNeg) {
-        fHtml += '<button id="modal-btn-to-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Tee vastatarjous</button>';
+        fHtml += '<button id="modal-btn-to-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' + rejBtnCls + '">Tee vastatarjous</button>';
       } else {
         fHtml += '<span></span>';
       }
-      fHtml += '<button id="modal-btn-reject-confirm" class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium">Hylkää tarjous</button>';
+      fHtml += '<button id="modal-btn-reject-confirm" class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium' + rejBtnCls + '">Hylkää tarjous</button>';
       fHtml += '</div>';
       footer.innerHTML = fHtml;
 

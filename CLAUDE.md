@@ -487,6 +487,16 @@ phone, which squeezes the seller's own choice. `flex-col-reverse` keeps prod's
 DOM order while rendering the primary action on top, both buttons `w-full
 sm:w-auto`; the row returns at 620px. v1 only.
 
+**It covers TWO footers, and only two.** A sweep of every state found one other
+pair: the reject confirmation's `Tee vastatarjous` + `Hylkää tarjous`, measured
+at 360px as 163 + 133 = **296px in a 296px row** — no overflow, no slack either,
+so it stacks the same way. There the DOM already leads with the primary button,
+so plain `flex-col` is enough, and it applies only when both buttons are present
+(`showNeg`). Every other v1 state ends with a single button: `acceptIsInThread`
+moves accept out of the footer whenever the last message is the dealership's,
+which is exactly when the footer would have shown it, so accept + send never
+share a row in v1.
+
 **`stackCls` has to be declared before the buttons are assembled.** It was
 written next to the footer markup at first, which is BELOW the button strings —
 `var` hoisted it as undefined and "undefined" landed in the class attribute. The

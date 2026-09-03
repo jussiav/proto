@@ -187,7 +187,7 @@
             <tr><td class="px-4 py-3 font-bold">14</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c14">Colour consistency</a></td><td class="px-4 py-3">Decision page · card and modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
             <tr><td class="px-4 py-3 font-bold">15</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c15">Updated green</a></td><td class="px-4 py-3">Decision page · card and modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
             <tr><td class="px-4 py-3 font-bold">16</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c16">Hero shows status, not auction result</a></td><td class="px-4 py-3">Decision page · hero</td><td class="px-4 py-3 text-slate-600">Waiting · dealership replied</td></tr>
-            <tr><td class="px-4 py-3 font-bold">17</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c17">The reject entry reads as a choice</a></td><td class="px-4 py-3">Negotiation modal · reject entry</td><td class="px-4 py-3 text-slate-600">Rejecting a negotiable offer</td></tr>
+            <tr><td class="px-4 py-3 font-bold">17</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c17">The reject entry reads as a choice</a></td><td class="px-4 py-3">Negotiation modal · reject flow</td><td class="px-4 py-3 text-slate-600">Rejecting · reject confirmation</td></tr>
           </tbody>
         </table>
       </div>
@@ -479,16 +479,17 @@
     <section class="av-band av-band-grey" id="c17">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">17 — The reject entry reads as a choice</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal · reject entry</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Rejecting a negotiable offer</span></div>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Negotiation modal · reject flow</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Rejecting · reject confirmation</span></div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
         <ul class="list-disc pl-5 space-y-1">
           <li>The title gains a <b>question mark</b>: <b>&ldquo;Tee vielä vastatarjous autoliikkeelle?&rdquo;</b> <span class="text-slate-500">(EN: Make one more counter offer to the dealership?)</span> Nothing else about it changes.</li>
-          <li><b>The two footer actions stack on a narrow modal.</b> Below 620px the footer becomes a column with the <b>primary button on top, full width</b>, and <i>Hylkää tarjous</i> full width beneath it, 8px apart. At 620px and above the current row returns unchanged.</li>
+          <li><b>Wherever this modal pairs a primary action with <i>Hylkää tarjous</i>, the two stack on a narrow screen.</b> Below 620px the footer becomes a column with the <b>primary button on top, full width</b>, and <i>Hylkää tarjous</i> full width beneath it, 8px apart. At 620px and above the current row returns unchanged.</li>
+          <li>That is <b>two footers</b>: the counter-offer form reached from the reject banner, and the <b>reject confirmation</b> that pairs <i>Tee vastatarjous</i> with <i>Hylkää tarjous</i>. Every other state of this modal ends with a single button, so nothing else is affected.</li>
         </ul>
       </div>
       <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— press &ldquo;Hylkää tarjouskilpailu&rdquo;, then narrow the window below 620px</span></p>
-      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The seller pressed &ldquo;Hylkää tarjouskilpailu&rdquo; and got a counter-offer form. As a statement the title reads as though rejecting is no longer on offer; as a question it presents the counter offer as the alternative it actually is, with the reject button still in the footer. The stacking is the other half of the same problem: <a class="text-av-blue underline" href="#c6">change 6</a> puts the rounds left on the send button, and that longer label collides with <i>Hylkää tarjous</i> beside it on a phone — which leaves the seller&rsquo;s own choice as the thing that gets squeezed.</p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The seller pressed &ldquo;Hylkää tarjouskilpailu&rdquo; and got a counter-offer form. As a statement the title reads as though rejecting is no longer on offer; as a question it presents the counter offer as the alternative it actually is, with the reject button still in the footer. The stacking is the other half of the same problem: <a class="text-av-blue underline" href="#c6">change 6</a> puts the rounds left on the send button, and that longer label collides with <i>Hylkää tarjous</i> beside it on a phone — which leaves the seller&rsquo;s own choice as the thing that gets squeezed. The reject confirmation is included because it is the same pairing with no room to spare: measured at 360px its two buttons already fill the row exactly, so any longer label breaks it.</p>
       </div>
     </section>
 
