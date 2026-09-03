@@ -87,28 +87,11 @@
             <span id="timer-time-left" class="font-mono text-sm text-nowrap text-right font-medium text-slate-900">--:--:--</span>
           </div>
 
-          <!-- Stats grid -->
-          <div class="grid grid-cols-2 gap-2 border border-slate-200 rounded-lg divide-x">
-            <div class="flex flex-col p-2.5">
-              <span class="text-slate-500 text-xs sm:text-sm truncate">Tarjouksia yhteensä</span>
-              <div class="mt-auto w-full flex justify-between items-baseline">
-                <span id="timer-offers" class="text-slate-800 text-sm sm:text-base">_</span>
-                <svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true">
-                  <path d="M16.416 14.063h-.281V3.092a.844.844 0 0 0-.844-.843h-3.938a.844.844 0 0 0-.843.844v2.531H7.416a.844.844 0 0 0-.844.844V9H4.041a.844.844 0 0 0-.844.844v4.219h-.281a.844.844 0 0 0 0 1.687h13.5a.844.844 0 1 0 0-1.688ZM12.197 3.937h2.25v10.126h-2.25V3.937ZM8.26 7.313h2.25v6.75H8.26v-6.75Zm-3.375 2.531h2.25V14.063h-2.25v-4.22Z"/>
-                </svg>
-              </div>
-            </div>
-            <div class="flex flex-col p-2.5">
-              <span class="text-slate-500 text-xs sm:text-sm truncate">Tarjoajat</span>
-              <div class="mt-auto w-full flex justify-between items-baseline">
-                <span id="timer-bidders" class="text-slate-800 text-sm sm:text-base">_</span>
-                <svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true">
-                  <clipPath id="fia-offers"><path transform="translate(.332)" d="M0 0h18v18H0z"/></clipPath>
-                  <g clip-path="url(#fia-offers)"><path d="M11.89 12.734a3.655 3.655 0 1 0-5.116 0 5.337 5.337 0 0 0-2.109 2.031.844.844 0 0 0 1.461.844 3.726 3.726 0 0 1 6.414 0 .846.846 0 0 0 1.16.322.843.843 0 0 0 .301-1.166 5.336 5.336 0 0 0-2.11-2.03Zm-4.526-2.608a1.969 1.969 0 1 1 3.937 0 1.969 1.969 0 0 1-3.937 0Zm10.35.674a.844.844 0 0 1-1.181-.168c-.586-.78-1.396-1.378-2.063-1.522a.844.844 0 0 1-.128-1.61A1.407 1.407 0 1 0 12.6 5.51a.844.844 0 1 1-1.477-.816 3.094 3.094 0 1 1 5.153 3.4c.619.412 1.162.928 1.607 1.525a.844.844 0 0 1-.169 1.18ZM4.194 9.112c-.666.144-1.476.742-2.062 1.522A.844.844 0 1 1 .783 9.62 6.497 6.497 0 0 1 2.39 8.093a3.094 3.094 0 1 1 5.152-3.4.844.844 0 1 1-1.476.816A1.406 1.406 0 1 0 4.323 7.5a.844.844 0 0 1-.128 1.611v.002Z"/></g>
-                </svg>
-              </div>
-            </div>
-          </div>
+          <!-- Stats grid — the AuctionStats Vue component (vue-tests/dist/auction-stats.js).
+               The figures are written to the data attributes by the page's own JS;
+               the component re-renders from them. Same component the decision page
+               mounts, so the two pages cannot drift. -->
+          <div id="timer-stats" data-auction-stats data-offers="" data-bidders=""></div>
 
           <!-- Footer: date label + reg badge -->
           <div class="flex justify-between items-baseline">
@@ -971,8 +954,10 @@
         var hasOffers = req.offer_count > 0;
         var timerInfo = document.getElementById('timer-info');
         var timerPWrap = document.getElementById('timer-progress-wrap');
-        document.getElementById('timer-offers').textContent  = req.offer_count;
-        document.getElementById('timer-bidders').textContent = req.buyers;
+        /* The AuctionStats component reads these and re-renders itself. */
+        var timerStats = document.getElementById('timer-stats');
+        timerStats.dataset.offers  = req.offer_count;
+        timerStats.dataset.bidders = req.buyers;
 
         if (hasOffers) {
           timerInfo.classList.add('hidden');
@@ -1432,6 +1417,8 @@
     </div>
   </footer>
 
+  <!-- AuctionStats — shared with decision.html, so per-page rather than layout.js -->
+  <script src="vue-tests/dist/auction-stats.js"></script>
   <script src="proto-bar.js"></script>
 </body>
 </html>

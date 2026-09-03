@@ -896,10 +896,31 @@ row, so the two pages stop describing the same two numbers in different words
 and a different design. Recorded on the spec page as its own section rather than
 buried in a change.
 
-**The block is not a component.** It is markup inside `Timer.vue`, which also
-draws the progress bar, end date and reg badge — so the spec asks for the
+**The block is not a component in prod.** It is markup inside `Timer.vue`, which
+also draws the progress bar, end date and reg badge — so the spec asks for the
 two-column grid to be **extracted** into something both pages use, rather than
 copied across. That ask is the whole point of the change; copying would drift.
+
+**The proto did the extraction, so the shape is settled before prod opens the
+file.** `AuctionStats.vue` is a real component in `vue-tests/`, built to
+`dist/auction-stats.js`, and **both pages mount the same bundle** — offers.html
+unconditionally (it already had this design, so the swap is invisible) and
+decision.html in `v1` only, so the bar's switcher still shows a real
+before/after. It mounts into any `[data-auction-stats]` element and reads
+`data-offers` / `data-bidders`, with a `MutationObserver` for both the attributes
+and the DOM: both hosts rebuild their markup after load, and `dataset.vueMounted`
+is what stops a re-render stacking apps on one node. Its two icons
+(`ph-bold-chart-bar`, `ph-bold-users-three`) joined `iconRegistry.js` with path
+data verbatim from prod's own SVGs — the users-three source wraps its path in a
+clipPath covering the whole artwork, which clips nothing and is dropped.
+
+**`AuctionInsights.vue` now renders the end state of BOTH changes**, per the
+team's call: it contains `AuctionStats` instead of its own three-column `dl`, and
+its chart lost the `Asking price` dataset along with the `askingPrice` prop. So
+the gallery shows what is being proposed, not what prod does today — a
+deliberate choice, and the reason the spec links both cards. Gallery, COMPONENTS.md
+and components.html were updated in the same change, as the component process
+requires.
 
 **Two things left out on purpose.** `103_combi`'s third arm hides the
 asking-price warning under the counter-offer field in `Negotiate.vue` and

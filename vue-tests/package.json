@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && vite build --config vite.nav-icon.config.js && vite build --config vite.brand-logo.config.js && vite build --config vite.reg-badge.config.js && vite build --config vite.mileage.config.js && vite build --config vite.save-draft.config.js && vite build --config vite.save-draft-button.config.js && vite build --config vite.gallery.config.js && vite build --config vite.delivery-stepper.config.js",
+    "build": "vite build && vite build --config vite.nav-icon.config.js && vite build --config vite.brand-logo.config.js && vite build --config vite.reg-badge.config.js && vite build --config vite.mileage.config.js && vite build --config vite.save-draft.config.js && vite build --config vite.save-draft-button.config.js && vite build --config vite.gallery.config.js && vite build --config vite.delivery-stepper.config.js && vite build --config vite.auction-stats.config.js",
     "preview": "vite preview"
   },
   "dependencies": {

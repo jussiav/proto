@@ -1532,23 +1532,6 @@
       '</div>';
     }
 
-    /* Timer.vue's two stat icons, the same inline paths offers.html carries —
-       prod draws them from the sprite as `ph-bold-chart-bar` and
-       `ph-bold-users-three`. */
-    var ICO_CHART_BAR = '<svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><path d="M16.416 14.063h-.281V3.092a.844.844 0 0 0-.844-.843h-3.938a.844.844 0 0 0-.843.844v2.531H7.416a.844.844 0 0 0-.844.844V9H4.041a.844.844 0 0 0-.844.844v4.219h-.281a.844.844 0 0 0 0 1.687h13.5a.844.844 0 1 0 0-1.688ZM12.197 3.937h2.25v10.126h-2.25V3.937ZM8.26 7.313h2.25v6.75H8.26v-6.75Zm-3.375 2.531h2.25V14.063h-2.25v-4.22Z"/></svg>';
-    var ICO_USERS_THREE = '<svg class="text-blue-400 mt-1" width="18" height="18" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><clipPath id="apr-users"><path transform="translate(.332)" d="M0 0h18v18H0z"/></clipPath><g clip-path="url(#apr-users)"><path d="M11.89 12.734a3.655 3.655 0 1 0-5.116 0 5.337 5.337 0 0 0-2.109 2.031.844.844 0 0 0 1.461.844 3.726 3.726 0 0 1 6.414 0 .846.846 0 0 0 1.16.322.843.843 0 0 0 .301-1.166 5.336 5.336 0 0 0-2.11-2.03Zm-4.526-2.608a1.969 1.969 0 1 1 3.937 0 1.969 1.969 0 0 1-3.937 0Zm10.35.674a.844.844 0 0 1-1.181-.168c-.586-.78-1.396-1.378-2.063-1.522a.844.844 0 0 1-.128-1.61A1.407 1.407 0 1 0 12.6 5.51a.844.844 0 1 1-1.477-.816 3.094 3.094 0 1 1 5.153 3.4c.619.412 1.162.928 1.607 1.525a.844.844 0 0 1-.169 1.18ZM4.194 9.112c-.666.144-1.476.742-2.062 1.522A.844.844 0 1 1 .783 9.62 6.497 6.497 0 0 1 2.39 8.093a3.094 3.094 0 1 1 5.152-3.4.844.844 0 1 1-1.476.816A1.406 1.406 0 1 0 4.323 7.5a.844.844 0 0 1-.128 1.611v.002Z"/></g></svg>';
-
-    /* One cell of that grid: label on top, value bottom-left, icon bottom-right. */
-    function statCell(label, value, icon) {
-      return '<div class="flex flex-col p-2.5">' +
-        '<span class="text-slate-500 text-xs sm:text-sm truncate">' + label + '</span>' +
-        '<div class="mt-auto w-full flex justify-between items-baseline">' +
-          '<span class="text-slate-800 text-sm sm:text-base">' + (value == null ? '_' : value) + '</span>' +
-          icon +
-        '</div>' +
-      '</div>';
-    }
-
     // AuctionInsights — mirrors AuctionInsights.vue structure (dl + chart area + dates)
     function buildInsights(req, offers) {
       var offerCount = req.offer_count || offers.length;
@@ -1576,10 +1559,10 @@
          uses (prod's `ph-bold-chart-bar` and `ph-bold-users-three`). */
       var html;
       if (APR_V1) {
-        html = '<div class="grid grid-cols-2 gap-2 border border-slate-200 rounded-lg divide-x">';
-        html += statCell('Tarjouksia yhteensä', offerCount, ICO_CHART_BAR);
-        html += statCell('Tarjoajat', buyers, ICO_USERS_THREE);
-        html += '</div>';
+        /* The AuctionStats Vue component — the same one the offers page mounts,
+           so the two pages cannot drift. It reads its figures from the data
+           attributes and mounts itself when this markup lands in the DOM. */
+        html = '<div data-auction-stats data-offers="' + offerCount + '" data-bidders="' + buyers + '"></div>';
       } else {
         html = '<dl class="flex flex-row divide-x divide-slate-200 text-center">';
         html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">' + bidsLabel + '</dt><dd class="font-bold text-slate-800">' + offerCount + '</dd></div>';
@@ -3226,6 +3209,8 @@
   </script>
 
 
+  <!-- AuctionStats — shared with offers.html, so per-page rather than layout.js -->
+  <script src="vue-tests/dist/auction-stats.js"></script>
   <script src="proto-bar.js"></script>
 </body>
 </html>

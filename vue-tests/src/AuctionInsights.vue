@@ -1,31 +1,13 @@
 <template>
     <div>
-        <dl class="flex flex-row divide-x divide-slate-200 text-center">
-            <div class="flex-auto flex flex-col">
-                <dt class="order-1 text-xs">
-                    {{ t('auction.auction_details.bids', offerCount) }}
-                </dt>
-                <dd class="font-bold">
-                    {{ offerCount }}
-                </dd>
-            </div>
-            <div class="flex-auto flex flex-col">
-                <dt class="order-1 text-xs">
-                    {{ t('auction.auction_details.buyers', buyers) }}
-                </dt>
-                <dd class="font-bold">
-                    {{ buyers }}
-                </dd>
-            </div>
-            <div class="flex-auto flex flex-col">
-                <dt class="order-1 text-xs">
-                    {{ t('auction.auction_details.expected_price') }}
-                </dt>
-                <dd class="font-bold">
-                    {{ currency(askingPrice) }}
-                </dd>
-            </div>
-        </dl>
+        <!-- Asking price removal, change 1: the three-column row — bids, buyers
+             and the expected price — is replaced by the two-column block the
+             offers page already uses, so both pages describe the same figures
+             the same way. The asking price leaves with the third column. -->
+        <AuctionStats
+            :offers="offerCount"
+            :bidders="buyers"
+        />
         <canvas
             ref="auction-insights-chart"
             class="my-3 py-3 border-y border-slate-200"
@@ -41,7 +23,8 @@
 import { shallowRef, useTemplateRef, computed, watch, onMounted, onUnmounted } from 'vue'
 import { Chart, CategoryScale, Filler, LineController, LineElement, LinearScale, PointElement } from 'chart.js'
 import ChartDataLabels from 'chartjs-plugin-datalabels'
-import { t, currency } from './formatters.js'
+import { currency } from './formatters.js'
+import AuctionStats from './components/AuctionStats.vue'
 import Dayjs from 'dayjs'
 
 
@@ -69,10 +52,6 @@ const props = defineProps({
         default: 0
     },
 
-    askingPrice: {
-        type: Number,
-        default: 0
-    },
 
     insightsData: {
         type: Array,
@@ -99,19 +78,8 @@ const options = computed(() => ({
     data: {
         labels: bidsData.value,
         datasets: [
-            {
-                label: 'Asking price',
-                data: bidsData.value.map(() => props.askingPrice),
-                pointStyle: false,
-                borderColor: '#0B6DFF',
-                borderDash: [5,5],
-                datalabels: {
-                    display: ({ dataIndex }) => {
-                        return dataIndex === 0
-                    },
-                    align: -45
-                }
-            },
+            // Asking price removal, change 2: the dashed asking-price line and
+            // its left-hand label are gone. One line, the bids.
             {
                 label: 'Bids',
                 data: bidsData.value,
@@ -144,7 +112,7 @@ const options = computed(() => ({
                     display: false
                 },
                 ticks: {
-                    stepSize: Math.max(...bidsData.value, props.askingPrice)
+                    stepSize: Math.max(...bidsData.value)
                 }
             },
             x: {

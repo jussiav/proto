@@ -10,6 +10,7 @@ import ABrandLogo from './components/ABrandLogo.vue'
 import ARegistrationNumberBadge from './components/ARegistrationNumberBadge.vue'
 import AMileage from './components/AMileage.vue'
 import AuctionInsights from './AuctionInsights.vue'
+import AuctionStats from './components/AuctionStats.vue'
 
 dayjs.extend(localizedFormat)
 dayjs.locale('fi')
@@ -58,11 +59,14 @@ mountBtn('gallery-btn-default-md',  { variant: 'default', intent: 'default', siz
 mountBtn('gallery-btn-primary-lg',  { variant: 'primary', intent: 'default', size: 'lg' }, 'Jatka')
 mountBtn('gallery-btn-loading',     { intent: 'neutral', size: 'lg', loading: true }, 'Lähetä')
 
+// AuctionStats — on its own, and nested inside AuctionInsights below
+mount('gallery-auction-stats', AuctionStats, { offers: 12, bidders: 7 })
+mount('gallery-auction-stats-empty', AuctionStats, { offers: null, bidders: null })
+
 // AuctionInsights
 mount('gallery-auction-insights', AuctionInsights, {
   buyers: 7,
   offerCount: 12,
-  askingPrice: 18500,
   insightsData: [11000, 13500, 15200, 16800, 17400, 18500, 18500],
   startDate: dayjs('2024-05-15T11:53:00'),
   endDate: dayjs('2024-05-17T03:53:00'),

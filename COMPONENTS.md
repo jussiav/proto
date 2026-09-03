@@ -112,6 +112,37 @@ when the card's internals changed — `buildRegBadge()` renders the same markup
 
 ---
 
+## AuctionStats
+
+| Field | Value |
+|---|---|
+| **Status** | `prototype` |
+| **File** | `vue-tests/src/components/AuctionStats.vue` |
+| **Bundle** | `vue-tests/dist/auction-stats.js` |
+| **Prod equivalent** | Markup inside `resources/assets/js/pages/offers/components/Timer.vue` — not a component there yet |
+| **Figma** | _Add link_ |
+| **Storybook** | — |
+
+**Props:**
+| Prop | Type | Required | Notes |
+|---|---|---|---|
+| `offers` | Number | No | Offers on the request. `null` renders `_` |
+| `bidders` | Number | No | Dealerships behind them. `null` renders `_` |
+
+The two figures an auction is described by, in the frame the offers page has
+always used. Extracted so the decision page can show the same numbers the same
+way instead of its own three-column row — see the
+[Asking price removal](design-specs/asking-price-removal.html) initiative.
+
+Mounts itself into any `[data-auction-stats]` element and reads
+`data-offers` / `data-bidders`, re-rendering when those attributes change. Both
+host pages rebuild their markup after load, so the bundle watches for new mount
+points rather than running once.
+
+**Used on:** `offers.html`, `decision.html` (variant 1), `components.html`
+
+---
+
 ## AuctionInsights
 
 | Field | Value |
@@ -120,6 +151,7 @@ when the card's internals changed — `buildRegBadge()` renders the same markup
 | **File** | `vue-tests/src/AuctionInsights.vue` |
 | **Bundle** | `vue-tests/dist/auction-insights.js` |
 | **Prod equivalent** | `resources/assets/js/pages/offers/components/AuctionInsights.vue` |
+| **Contains** | [AuctionStats](#auctionstats) |
 | **Figma** | _Add link_ |
 | **Storybook** | — |
 
@@ -128,7 +160,6 @@ when the card's internals changed — `buildRegBadge()` renders the same markup
 |---|---|---|---|
 | `buyers` | Number | Yes | Active bidding dealers |
 | `offerCount` | Number | Yes | Total offers placed |
-| `askingPrice` | Number | Yes | Seller asking price in € |
 | `insightsData` | Number[] | Yes | Offer values for chart |
 | `startDate` | Dayjs | Yes | Auction start timestamp |
 | `endDate` | Dayjs | Yes | Auction end timestamp |

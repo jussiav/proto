@@ -227,7 +227,8 @@
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">One thing to decide up front</p>
         <p class="font-dm text-sm leading-6 text-slate-800 mb-2">The block is <b>not a component today</b> — it is markup inside the offers page&rsquo;s auction timer card, which also draws the progress bar, the end date and the registration badge.</p>
-        <p class="font-dm text-sm leading-6 text-slate-800 mb-0"><b>Extract the two-column block into a shared component</b> and have both pages use it. Copying the markup across would work today and drift tomorrow, which is the thing this change exists to stop.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-3"><b>Extract the two-column block into a shared component</b> and have both pages use it. Copying the markup across would work today and drift tomorrow, which is the thing this change exists to stop.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-0"><b>The prototype has done exactly that</b>, so the shape is settled before anyone opens the production file: <a class="text-av-blue underline font-medium" href="../components.html#AuctionStats" target="_blank" rel="noopener">AuctionStats</a> in the component gallery, with its two props and both states, mounted by the offers page and the decision page from one bundle. <a class="text-av-blue underline font-medium" href="../components.html#AuctionInsights" target="_blank" rel="noopener">AuctionInsights</a> renders it in place of its own row.</p>
       </div>
 
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mt-5">
@@ -245,7 +246,7 @@
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li>The decision page and the offers page render the <b>same component</b> for these two figures — not two copies of the same markup.</li>
+          <li>The decision page and the offers page render the <b>same component</b> for these two figures — not two copies of the same markup. See <a class="text-av-blue underline" href="../components.html#AuctionStats" target="_blank" rel="noopener">AuctionStats</a> for the props and states it has to cover.</li>
           <li>The values are unchanged: offers on the request, and the number of dealerships behind them.</li>
           <li>No asking price, expected price or price estimate appears anywhere in the insights block.</li>
           <li>The chart, the auction dates and the surrounding white card are untouched.</li>
@@ -269,6 +270,7 @@
           <li>The chart&rsquo;s vertical scale no longer needs to reach the asking price — with the line gone, the bid progression is what sets the top of the range.</li>
         </ul>
         <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&asking-price-removal=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the chart with only the bid line</span></p>
+        <p class="mt-2 font-dm text-sm text-slate-600">The <a class="text-av-blue underline font-medium" href="../components.html#AuctionInsights" target="_blank" rel="noopener">AuctionInsights</a> component in the gallery is already in this state: one dataset, and no asking-price prop.</p>
       </div>
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
