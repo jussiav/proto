@@ -81,18 +81,18 @@
       lastServiceDetail: { km: 132000, month: '5', year: '2025' }
     },
     photos: SCENARIO_PHOTOS,
-    /* Documents from the "Seller file upload" initiative. Real, openable files
-       rather than stubs — every surface links to them in a new tab, and a
-       placeholder would make that link look broken. Small on purpose: the bytes
-       live in localStorage alongside the photo data URLs.
+    /* Documents from the "Seller file upload" initiative — two PDFs, since the
+       team settled on PDF only. Real, openable files rather than stubs: every
+       surface links to them in a new tab, and a placeholder would make that link
+       look broken. Small on purpose — the bytes live in localStorage alongside
+       the photo data URLs.
        Seeded in every state that has a car, so the surfaces that list files can
        be demoed without walking the photos step. */
     files: [
       { name: 'huoltokirja.pdf', size: 444, type: 'application/pdf',
         data: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9NZWRpYUJveFswIDAgMzAwIDEyMF0vUmVzb3VyY2VzPDwvRm9udDw8L0YxIDQgMCBSPj4+Pi9Db250ZW50cyA1IDAgUj4+ZW5kb2JqCjQgMCBvYmo8PC9UeXBlL0ZvbnQvU3VidHlwZS9UeXBlMS9CYXNlRm9udC9IZWx2ZXRpY2E+PmVuZG9iago1IDAgb2JqPDwvTGVuZ3RoIDkwPj5zdHJlYW0KQlQgL0YxIDEyIFRmIDI0IDcyIFRkIChIdW9sdG9raXJqYSAtIEF1dG9WZXggcHJvdG90eXBlIHNhbXBsZSkgVGogMCAtMjAgVGQgKE5vdCBhIHJlYWwgZG9jdW1lbnQuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnRyYWlsZXI8PC9Sb290IDEgMCBSPj4=' },
-      { name: 'vahinkotarkastus.docx', size: 945,
-        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        data: 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,UEsDBBQAAAAIAFhLGF31KchK6wAAAK0BAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbH2QzU7DMBCEX8XyFcUOHBBCSXrg5wgcygOs7E1i1X/yuqV9ezZt6QFVPdqz38xoutU+eLHDQi7FXt6rVgqMJlkXp15+r9+bJymoQrTgU8ReHpDkaujWh4wkmI3Uy7nW/Kw1mRkDkEoZIytjKgEqP8ukM5gNTKgf2vZRmxQrxtrUxUMO3SuOsPVVvO35+9SDcSleTndLVC8hZ+8MVJb1ouqrXEFPN8BdtP/aNedmisnjDc0u09054ZOHKc6i+IJSPyCwnf5JxWqbzDZwhLpd9EpeGkdn8MIvbrkkg0S8ePDqogRw8a+HPs49/AJQSwMEFAAAAAgAWEsYXZv9N+qtAAAAKQEAAAsAAABfcmVscy8ucmVsc43POw7CMAwG4KtE3mlaBoRQ0y4IqSsqB7ASN61oHkrCo7cnAwNFDIy2f3+W6/ZpZnanECdnBVRFCYysdGqyWsClP232wGJCq3B2lgQsFKFt6jPNmPJKHCcfWTZsFDCm5A+cRzmSwVg4TzZPBhcMplwGzT3KK2ri27Lc8fBpwNpknRIQOlUB6xdP/9huGCZJRydvhmz6ceIrkWUMmpKAhwuKq3e7yCzwpuarF5sXUEsDBBQAAAAIAFhLGF1/7saRwQAAAAoBAAARAAAAd29yZC9kb2N1bWVudC54bWxFj8FOwzAMhl/Fyn1N4TChqu3EhSOnwd00Zq2WxFHsruvbkwwhLp9l/fJnuz/dg4cbZVk4DuapaQ1QnNgt8TKYj/Pb4cWAKEaHniMNZicxp7HfOsfTGigqFEGUbhvMrJo6a2WaKaA0nCiW7JtzQC1tvtiNs0uZJxIp/uDtc9sebcAlmqr8YrfXmipyhY6vq/In3aGMKeueCARD8gQHuOG8xCsr5iuKrtLAOysgZEIPf+c1va2ayvxgevB3lf1/Y/wBUEsBAhQDFAAAAAgAWEsYXfUpyErrAAAArQEAABMAAAAAAAAAAAAAAIABAAAAAFtDb250ZW50X1R5cGVzXS54bWxQSwECFAMUAAAACABYSxhdm/036q0AAAApAQAACwAAAAAAAAAAAAAAgAEcAQAAX3JlbHMvLnJlbHNQSwECFAMUAAAACABYSxhdf+7GkcEAAAAKAQAAEQAAAAAAAAAAAAAAgAHyAQAAd29yZC9kb2N1bWVudC54bWxQSwUGAAAAAAMAAwC5AAAA4gIAAAAA' }
+      { name: 'vahinkotarkastus.pdf', size: 449, type: 'application/pdf',
+        data: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9NZWRpYUJveFswIDAgMzAwIDEyMF0vUmVzb3VyY2VzPDwvRm9udDw8L0YxIDQgMCBSPj4+Pi9Db250ZW50cyA1IDAgUj4+ZW5kb2JqCjQgMCBvYmo8PC9UeXBlL0ZvbnQvU3VidHlwZS9UeXBlMS9CYXNlRm9udC9IZWx2ZXRpY2E+PmVuZG9iago1IDAgb2JqPDwvTGVuZ3RoIDEwOD4+c3RyZWFtCkJUIC9GMSAxMiBUZiAyNCA3MiBUZCAoVmFoaW5rb3Rhcmthc3R1cyAtIEF1dG9WZXggcHJvdG90eXBlIHNhbXBsZSkgVGogMCAtMjAgVGQgKE5vdCBhIHJlYWwgZG9jdW1lbnQuKSBUaiBFVAplbmRzdHJlYW0KZW5kb2JqCnRyYWlsZXI8PC9Sb290IDEgMCBSPj4=' }
     ],
     contact: {
       kokoNimi: 'Matti Meikäläinen',

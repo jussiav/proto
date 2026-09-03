@@ -714,13 +714,10 @@
        prototype never promises a size it cannot store. */
     var FILE_MAX_BYTES = 1024 * 1024;         // 1 MB per file — a proto storage limit
     var FILE_MAX_COUNT = 5;
-    var FILE_TYPES = {
-      'application/pdf': 'PDF',
-      'application/msword': 'DOC',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'DOCX',
-      'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/heic': 'HEIC', 'image/heif': 'HEIF'
-    };
-    var FILE_EXTS = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'heic', 'heif'];
+    /* PDF only — the team's decision. Word and images were accepted while the
+       shape of the feature was open; a single format is what ships. */
+    var FILE_TYPES = { 'application/pdf': 'PDF' };
+    var FILE_EXTS = ['pdf'];
 
     /* The unit comes from translations, not from this function: Finnish writes
        Mt/kt, not MB/kB. Called on render and on every rejected upload, so a
@@ -741,8 +738,8 @@
 
     function fileTypeOk(file) {
       if (FILE_TYPES[file.type]) return true;
-      /* Windows can hand over an empty or odd MIME type for .doc/.docx, so the
-         extension is the fallback rather than a hard rejection. */
+      /* A browser can hand over an empty or odd MIME type, so the extension is
+         the fallback rather than a hard rejection. */
       var ext = (file.name.split('.').pop() || '').toLowerCase();
       return FILE_EXTS.indexOf(ext) !== -1;
     }
@@ -1109,7 +1106,7 @@
               <span data-i18n="files.addBtn">Lisää tiedosto</span>
             </button>
             <input type="file" id="files-input" class="hidden" multiple
-                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/heic,image/heif" />
+                   accept=".pdf,application/pdf" />
           </div>
           <p id="files-error" class="av-error-msg" style="display:none"></p>
         </div>

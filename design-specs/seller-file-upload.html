@@ -96,7 +96,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · ad creation funnel</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Seller file upload</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Sellers have documents, not just photos — a service book PDF, a service report, a damage inspection. Today the funnel accepts images only, so those end up photographed page by page or not sent at all. This initiative adds one documents section to the photos step, and lists whatever was uploaded wherever the seller reviews their ad.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Sellers have documents, not just photos — a service book PDF, a service report, a damage inspection. Today the funnel accepts images only, so those end up photographed page by page or not sent at all. This initiative adds one documents section to the photos step — <b>PDF only</b> — and lists whatever was uploaded wherever the seller reviews their ad.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
@@ -175,7 +175,7 @@
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Behaviour rules</p>
           <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
-            <li><b>Filenames, no thumbnails.</b> A filename is what identifies a document; a rendered first page costs space and says less. This holds for images uploaded here too — attach a scanned receipt and it is listed by name like any other file.</li>
+            <li><b>Filenames, no thumbnails.</b> A filename is what identifies a document; a rendered first page costs space and says less.</li>
             <li><b>The limits are stated before uploading</b>, not discovered by failing: accepted types, size per file, and how many files — one short paragraph under the heading, not two, so the section stays a footnote next to the photo sections above it.</li>
             <li><b>The byte unit is translated, not formatted in code.</b> Finnish abbreviates megatavu as <b>Mt</b> and kilotavu as <b>kt</b> — not MB/kB. It fills <code>{size}</code> in both <code>description</code> and <code>errSize</code>, so a formatter that hardcodes "MB" leaks English into the one line where the seller reads the limit. Both units are translation keys (<code>files.unitMb</code>, <code>files.unitKb</code>) in the table below.</li>
             <li><b>The filename is the link.</b> It opens in a new tab; there is no separate open button.</li>
@@ -228,9 +228,9 @@
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr><td class="px-5 py-3 whitespace-nowrap font-bold">New collection</td><td class="px-5 py-3">Documents are their own collection on the draft, <b>not</b> images with a different mime type. Filename, size and content type are the fields the UI needs; the prototype stores <code>{ name, size, type, data }</code> under <code>files</code>.</td></tr>
-            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Accepted types</td><td class="px-5 py-3">PDF, Word (<code>.doc</code>, <code>.docx</code>) and images. Validate on <b>both</b> mime type and extension — Windows hands over an empty or non-standard mime for Word documents often enough that mime alone rejects valid files.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Accepted types</td><td class="px-5 py-3"><b>PDF only</b> — <code>accept=".pdf,application/pdf"</code>. Word and images were accepted while the shape of the feature was open; the team settled on one format. Validate on <b>both</b> mime type and extension: a browser can hand over an empty or non-standard mime often enough that mime alone rejects valid files.</td></tr>
             <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Limits</td><td class="px-5 py-3"><b>Open question for production:</b> the prototype caps at <b>1&nbsp;MB per file, 5 files</b>, because it stores the bytes in <code>localStorage</code> (see below). A real service-book scan is bigger — the suggested production limit is <b>10&nbsp;MB per file, 5 files</b>, to be confirmed. Whatever is chosen, the UI must state it: the seller should never learn a limit by hitting it.</td></tr>
-            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Image count</td><td class="px-5 py-3">Files never enter the <code>image_upload.min/max</code> count, even when the file is an image. Photo requirements are unchanged.</td></tr>
+            <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Image count</td><td class="px-5 py-3">Files never enter the <code>image_upload.min/max</code> count. Photo requirements are unchanged.</td></tr>
             <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Dealer side</td><td class="px-5 py-3">Out of scope here. Whether dealers see seller documents is a separate decision — this initiative covers the seller's own surfaces only.</td></tr>
             <tr><td class="px-5 py-3 whitespace-nowrap font-bold">Prototype-only mechanic</td><td class="px-5 py-3">The prototype keeps the real bytes as a data URL in <code>localStorage</code>, which is why its cap is small: base64 inflates by a third and the photo data URLs already live there. Quota failures are caught and surfaced as an error rather than swallowed, because a silently dropped file looks uploaded until the next reload. Links are built as blob URLs at render time, since Chrome refuses to open a <code>data:</code> URL as a top-level document.</td></tr>
           </tbody>
@@ -268,7 +268,7 @@
         <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/photos.html?seller-file-upload=control">…/photos.html?seller-file-upload=control</a><br>
         <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/photos.html?seller-file-upload=v1">…/photos.html?seller-file-upload=v1</a>
       </p>
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Seed car</b> on the prototype bar loads two sample documents (a PDF and a Word file), so the surfaces that list files can be seen without walking the photos step. They are real, openable files rather than stubs — a placeholder would make the links look broken. Seeded files show up wherever files are listed <b>regardless of arm</b>, which is deliberate: the listing is not part of the test.</p>
+      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl"><b>Seed car</b> on the prototype bar loads two sample documents — <code>huoltokirja.pdf</code> and <code>vahinkotarkastus.pdf</code> — so the surfaces that list files can be seen without walking the photos step. They are real, openable files rather than stubs — a placeholder would make the links look broken. Seeded files show up wherever files are listed <b>regardless of arm</b>, which is deliberate: the listing is not part of the test.</p>
       </div>
     </section>
 

@@ -1056,9 +1056,14 @@ production there is no arm — the CMS entry is edited when the change ships. A
 sixth item ("why wasn't I called?") was considered and dropped: once nothing is
 promised, there is no broken expectation to explain.
 
-**Seller file upload** adds a documents section to the photos step — PDF, Word or
-images, listed by filename with no thumbnails, each linking to the file in a new
-tab. `photos.html` gates the section on `html[data-files-arm="v1"]`, stamped in
+**Seller file upload** adds a documents section to the photos step — **PDF only**
+as of 2026-09-03, the team's decision; Word and images were accepted while the
+shape of the feature was open. Files are listed by filename with no thumbnails,
+each linking to the file in a new tab. `accept=".pdf,application/pdf"`,
+`FILE_TYPES` is one entry and `FILE_EXTS` one extension, the hint and `errType`
+name one format, and **Seed car** loads two PDFs (`huoltokirja.pdf`,
+`vahinkotarkastus.pdf`) rather than a PDF and a .docx. The extension fallback in
+`fileTypeOk` stays — a browser can still hand over an empty mime type. `photos.html` gates the section on `html[data-files-arm="v1"]`, stamped in
 `<head>` so control never paints it.
 
 Two things about it are deliberately NOT variants. **Listing is unconditional:**

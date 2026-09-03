@@ -522,13 +522,14 @@ window.TRANSLATIONS = {
 
          The section title stays "dokumentit"; the copy underneath went back to
          "tiedosto" by explicit correction — a deliberate split, not a leftover
-         from the earlier rename. Some error strings were shortened at the same
+         from the earlier rename. The team then settled on **PDF only**, so the
+         hint and errType name one format rather than three. Some error strings were shortened at the same
          time (errSize/errCount dropped their second sentence, errRead/errStorage
          got new second clauses) rather than just re-worded. */
-      description:    'Esimerkiksi huoltokirja, sähköauton akkutesti tai vahinkotarkastus. PDF, Word tai kuva, enintään {size} per tiedosto, korkeintaan {count} tiedostoa.',
+      description:    'Esimerkiksi huoltokirja, sähköauton akkutesti tai vahinkotarkastus. PDF-tiedostoja, enintään {size} per tiedosto, korkeintaan {count} tiedostoa.',
       addBtn:         'Lisää tiedosto',
       remove:         'Poista tiedosto',
-      errType:        'Tiedostomuotoa ei tueta. Valitse PDF-, Word- tai kuvatiedosto.',
+      errType:        'Tiedostomuotoa ei tueta. Valitse PDF-tiedosto.',
       errSize:        'Tiedosto on liian suuri. Enimmäiskoko on {size}.',
       errCount:       'Voit lisätä enintään {count} tiedostoa.',
       errRead:        'Tiedostoa ei voitu lukea. Valitse toinen tai yritä uudelleen.',
@@ -1108,10 +1109,10 @@ window.TRANSLATIONS = {
 
     files: {
       title:          'Other documents',
-      description:    'For example the service book, an EV battery test or a damage inspection. PDF, Word or an image, up to {size} per file, {count} files at most.',
+      description:    'For example the service book, an EV battery test or a damage inspection. PDF files, up to {size} per file, {count} files at most.',
       addBtn:         'Add file',
       remove:         'Remove file',
-      errType:        'That file type is not supported. Choose a PDF, Word or image file.',
+      errType:        'That file type is not supported. Choose a PDF file.',
       errSize:        'The file is too large. The maximum size is {size}.',
       errCount:       'You can add at most {count} files.',
       errRead:        'The file could not be read. Choose another or try again.',
