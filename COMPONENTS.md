@@ -128,16 +128,32 @@ when the card's internals changed — `buildRegBadge()` renders the same markup
 |---|---|---|---|
 | `offers` | Number | No | Offers on the request. `null` renders `_` |
 | `bidders` | Number | No | Dealerships behind them. `null` renders `_` |
+| `price` | Number | No | **B2B only.** Reserve price in €. `null` (default) hides the third cell and the row stays two columns |
+| `priceLabel` | String | No | Overrides that cell's label; defaults to production's `reserve_price` — **Hintavaraus** |
 
-The two figures an auction is described by, in the frame the offers page has
-always used. Extracted so the decision page can show the same numbers the same
-way instead of its own three-column row — see the
+The figures an auction is described by, in the frame the offers page has always
+used. Extracted so the decision page can show the same figures the same way
+instead of its own three-column row — see the
 [Asking price removal](design-specs/asking-price-removal.html) initiative.
 
+**The third cell is the B2B seller's reserve price**, and it exists because
+production already parameterises that column: `B2BDecision.vue` passes
+`AuctionInsights` a `priceLabel` plus the same `asking_price` the consumer page
+passes, so only the word differs. Keeping it available is what lets one
+component serve both markets — it is NOT the consumer's expected price, which
+the initiative removes. Pass `price` and the cell appears; omit it and the
+consumer auction stays two cells. No prototype surface passes it (there is no
+B2B seller here), so it is previewed in the gallery only.
+
+**Layout:** label on top, then the icon to the LEFT of the value, which is bold.
+Production right-aligns the icon and leaves the value at normal weight; this is
+a deliberate change, so the offers page is no longer byte-identical to prod —
+see the initiative's change 1.
+
 Mounts itself into any `[data-auction-stats]` element and reads
-`data-offers` / `data-bidders`, re-rendering when those attributes change. Both
-host pages rebuild their markup after load, so the bundle watches for new mount
-points rather than running once.
+`data-offers` / `data-bidders` / `data-price`, re-rendering when those attributes
+change. Both host pages rebuild their markup after load, so the bundle watches
+for new mount points rather than running once.
 
 **Used on:** `offers.html`, `decision.html` (variant 1), `components.html`
 

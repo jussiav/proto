@@ -6,6 +6,8 @@ export const t = (key, count) => {
     // AuctionStats — Timer.vue's own labels. No plural forms in production.
     'auction.landing.auctions_in_progress.total_bids': 'Tarjouksia yhteensä',
     'auction.landing.auctions_in_progress.bidders': 'Tarjoajat',
+    // The B2B reserve-price column's label, prod's own key.
+    'auction.auction_details.reserve_price': 'Hintavaraus',
   }
   return map[key] ?? key
 }

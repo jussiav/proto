@@ -8,6 +8,10 @@ export const iconPaths = {
   'minus': 'm21 11.75c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75z',
   'plus': 'm11 11h-7.25c-.414 0-.75.336-.75.75s.336.75.75.75h7.25v7.25c0 .414.336.75.75.75s.75-.336.75-.75v-7.25h7.25c.414 0 .75-.336.75-.75s-.336-.75-.75-.75h-7.25v-7.25c0-.414-.336-.75-.75-.75s-.75.336-.75.75z',
   'minus-new': 'M0 9C0 8.38125 0.50625 7.875 1.125 7.875H16.875C17.4937 7.875 18 8.38125 18 9C18 9.61875 17.4937 10.125 16.875 10.125H1.125C0.50625 10.125 0 9.61875 0 9Z',
+  // The reserve-price cell's icon, for AuctionStats' B2B column. Phosphor
+  // FILL, like the two below rather than the stroked `cash.svg`: UiIcon
+  // renders a filled path, so a stroke-only outline comes out as a blob.
+  'ph-fill-coins': 'M184,89.57V84c0-25.08-37.83-44-88-44S8,58.92,8,84v40c0,20.89,26.25,37.49,64,42.46V172c0,25.08,37.83,44,88,44s88-18.92,88-44V132C248,111.3,222.58,94.68,184,89.57ZM56,146.87C36.41,141.4,24,132.39,24,124V109.93c8.16,5.78,19.09,10.44,32,13.57Zm80-23.37c12.91-3.13,23.84-7.79,32-13.57V124c0,8.39-12.41,17.4-32,22.87Zm-16,71.37C100.41,189.4,88,180.39,88,172v-4.17c2.63.1,5.29.17,8,.17,3.88,0,7.67-.13,11.39-.35A121.92,121.92,0,0,0,120,171.41Zm0-44.62A163,163,0,0,1,96,152a163,163,0,0,1-24-1.75V126.46A183.74,183.74,0,0,0,96,128a183.74,183.74,0,0,0,24-1.54Zm64,48a165.45,165.45,0,0,1-48,0V174.4a179.48,179.48,0,0,0,24,1.6,183.74,183.74,0,0,0,24-1.54ZM232,172c0,8.39-12.41,17.4-32,22.87V171.5c12.91-3.13,23.84-7.79,32-13.57Z',
   // Auction stats icons. Path data verbatim from resources/assets/icons/. The
   // users-three source wraps its path in a clipPath whose rect covers the whole
   // artwork, so it clips nothing — dropped here rather than reproduced.
@@ -28,6 +32,7 @@ export const iconViewBoxes = {
   // viewBox (offset -3) reproduces that padding exactly: identical footprint to the light pair
   // and to Figma, with the bold stroke weight preserved. No path data is modified.
   // Upstream fix: republish minus-new/plus-new with a padded 24×24 viewBox.
+  'ph-fill-coins': '0 0 256 256',
   'ph-bold-chart-bar': '0 0 19 18',
   'ph-bold-users-three': '0 0 19 18',
   'minus-new': '-3 -3 24 24',

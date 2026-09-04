@@ -914,6 +914,40 @@ is what stops a re-render stacking apps on one node. Its two icons
 data verbatim from prod's own SVGs — the users-three source wraps its path in a
 clipPath covering the whole artwork, which clips nothing and is dropped.
 
+**B2B shows the same row with a THIRD column, and it must survive this change.**
+`B2BDecision.vue` renders the same `AuctionInsights` and passes
+`:price-label="t('auction.auction_details.reserve_price')"` — **Hintavaraus** —
+with the same `auctionResults.asking_price` the consumer page passes. So prod
+already parameterises that column; only the word differs, and there is no
+`reserve_price` DB column. B2B does **NOT** pass `hideExpectedPrice`, so
+`103_combi`'s hide-gate is consumer-only: promoting variation 2 removes the
+consumer column and leaves B2B's alone, which is correct — a B2B reserve price
+binds the seller when a bid meets it, so it is a live feature, not a field being
+sunset. Flagged on the spec page in its own amber notice so nobody tidies it
+away. **Surfaces, checked:** `AuctionInsights` has exactly two consumers, both
+decision pages; the two-figure block (`AuctionsProgress` → `Timer`) is imported
+by `C2B.vue` only, so the **B2B offers page shows neither block** and nothing
+there is affected. FI only — `lang/en/auction.php` has no `auction_details`
+block at all.
+
+**`AuctionStats` therefore takes an optional third cell.** `price` (null hides
+it, and the grid drops to `grid-cols-2`) plus `priceLabel` defaulting to prod's
+`reserve_price`. Its icon is **`ph-fill-coins`** — Phosphor FILL, like the other
+two, rather than the stroked `cash.svg`: `UiIcon` renders a plain filled path,
+so a stroke-only outline comes out as a solid blob. No prototype surface passes
+a price (there is no B2B seller here), so the cell is previewed in the gallery
+only — a third example beside the two-cell and both-null ones.
+
+**Two refinements went in with it, and they make the offers-page swap
+VISIBLE.** The icon moves to the LEFT of the value instead of being pushed to
+the right edge, and the value is `font-bold`. Both pages share the component, so
+the offers page changes too — it is no longer the invisible refactor change 1
+originally claimed, and the spec now says so rather than leaving a dev to
+discover it. Verified at a real 328px container: three cells at 103px each, no
+label clipped. (The gallery's own panel measures zero-width below `lg`, so
+measuring the preview there reports nonsense — measure against a page-width
+container instead.)
+
 **The chart's top rule goes with the new row.** prod's canvas is
 `my-3 py-3 border-y border-slate-200`, which is right while the row above has no
 frame — but `AuctionStats` brings its own, so the hairline lands 12px under it

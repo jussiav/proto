@@ -260,7 +260,7 @@
                 <div class="flex-1 min-w-0">
                   <span class="status-prototype text-xs font-medium px-2.5 py-0.5 rounded-full inline-block mb-2">Prototype</span>
                   <h2 class="font-dm font-bold text-slate-900 text-lg">AuctionStats</h2>
-                  <p class="font-dm text-slate-500 text-sm mt-1">The two figures an auction is described by — offers, and the dealerships behind them — in the bordered, divided pair of cells the offers page has always used. In production this markup lives inside <code class="bg-slate-100 px-1 rounded text-xs">Timer.vue</code> and is not a component; extracting it is what lets the decision page show the same numbers the same way. Used by <code class="bg-slate-100 px-1 rounded text-xs">AuctionInsights</code>.</p>
+                  <p class="font-dm text-slate-500 text-sm mt-1">The figures an auction is described by — offers, the dealerships behind them, and for a <b>B2B</b> seller the reserve price — in the bordered, divided row of cells the offers page has always used. In production the two-cell version lives inside <code class="bg-slate-100 px-1 rounded text-xs">Timer.vue</code> and is not a component; extracting it is what lets the decision page show the same figures the same way. Used by <code class="bg-slate-100 px-1 rounded text-xs">AuctionInsights</code>.</p>
                 </div>
                 <div class="flex flex-col gap-2 items-end flex-shrink-0">
                   <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Figma">
@@ -281,6 +281,10 @@
               <div class="bg-white rounded-xl border border-slate-200 p-4 max-w-md">
                 <div id="gallery-auction-stats-empty"></div>
               </div>
+              <span class="text-xs text-slate-400 font-dm block mt-5 mb-3">B2B seller — the reserve price as a third cell (<code class="bg-white px-1 rounded">price</code>)</span>
+              <div class="bg-white rounded-xl border border-slate-200 p-4 max-w-md">
+                <div id="gallery-auction-stats-b2b"></div>
+              </div>
             </div>
             <div class="px-6 py-4 border-t border-slate-100 bg-slate-50">
               <table class="w-full text-xs font-dm">
@@ -288,9 +292,11 @@
                 <tbody class="text-slate-700">
                   <tr class="prop-row"><td class="py-1 pr-4"><code>offers</code></td><td class="pr-4">Number</td><td>Offers on the request. <code>null</code> renders <code>_</code></td></tr>
                   <tr class="prop-row"><td class="py-1 pr-4"><code>bidders</code></td><td class="pr-4">Number</td><td>Dealerships behind them. <code>null</code> renders <code>_</code></td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>price</code></td><td class="pr-4">Number</td><td><b>B2B only.</b> Reserve price in €. <code>null</code> (default) hides the third cell and the row stays two columns</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>priceLabel</code></td><td class="pr-4">String</td><td>Overrides that cell's label; defaults to production's <code>reserve_price</code> — <b>Hintavaraus</b></td></tr>
                 </tbody>
               </table>
-              <p class="font-dm text-xs text-slate-500 mt-3">Mounts into any <code class="bg-slate-100 px-1 rounded">[data-auction-stats]</code> element and reads <code class="bg-slate-100 px-1 rounded">data-offers</code> / <code class="bg-slate-100 px-1 rounded">data-bidders</code>. Used on <code class="bg-slate-100 px-1 rounded">offers.html</code> and <code class="bg-slate-100 px-1 rounded">decision.html</code> (variant 1).</p>
+              <p class="font-dm text-xs text-slate-500 mt-3">Mounts into any <code class="bg-slate-100 px-1 rounded">[data-auction-stats]</code> element and reads <code class="bg-slate-100 px-1 rounded">data-offers</code> / <code class="bg-slate-100 px-1 rounded">data-bidders</code> / <code class="bg-slate-100 px-1 rounded">data-price</code>. Used on <code class="bg-slate-100 px-1 rounded">offers.html</code> and <code class="bg-slate-100 px-1 rounded">decision.html</code> (variant 1) — both consumer surfaces, so neither passes a price. The third cell is previewed above rather than in the prototype, since the prototype has no B2B seller.</p>
             </div>
           </div>
         </div>

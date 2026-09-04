@@ -24,18 +24,26 @@ function mountInto(el) {
 
   const state = reactive({
     offers: num(el.dataset.offers),
-    bidders: num(el.dataset.bidders)
+    bidders: num(el.dataset.bidders),
+    /* B2B only, and no prototype surface passes it — the mount reads it so a
+       host that does needs no change here. */
+    price: num(el.dataset.price)
   })
 
   createApp({
-    setup: () => () => h(AuctionStats, { offers: state.offers, bidders: state.bidders })
+    setup: () => () => h(AuctionStats, {
+      offers: state.offers,
+      bidders: state.bidders,
+      price: state.price
+    })
   }).mount(el)
 
   /* The host may rewrite the numbers without replacing the node. */
   new MutationObserver(() => {
     state.offers = num(el.dataset.offers)
     state.bidders = num(el.dataset.bidders)
-  }).observe(el, { attributes: true, attributeFilter: ['data-offers', 'data-bidders'] })
+    state.price = num(el.dataset.price)
+  }).observe(el, { attributes: true, attributeFilter: ['data-offers', 'data-bidders', 'data-price'] })
 }
 
 function scan(root) {

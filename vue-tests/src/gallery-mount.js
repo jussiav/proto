@@ -62,6 +62,8 @@ mountBtn('gallery-btn-loading',     { intent: 'neutral', size: 'lg', loading: tr
 // AuctionStats — on its own, and nested inside AuctionInsights below
 mount('gallery-auction-stats', AuctionStats, { offers: 12, bidders: 7 })
 mount('gallery-auction-stats-empty', AuctionStats, { offers: null, bidders: null })
+// The B2B seller's auction: the reserve price as a third cell
+mount('gallery-auction-stats-b2b', AuctionStats, { offers: 12, bidders: 7, price: 18500 })
 
 // AuctionInsights
 mount('gallery-auction-insights', AuctionInsights, {
