@@ -942,12 +942,21 @@ only — a third example beside the two-cell and both-null ones.
 cells below 320px, two below 220px, the dividing rule turning horizontal with
 them. A **container** query, not a media query: the same viewport gives this
 component wildly different widths depending on the host (a page card, a gallery
-panel), so the viewport cannot answer the question. Two gotchas, both cost a
-build: a container query **cannot match the element that declares the
-containment**, so the markup is a `.av-stats` wrapper around a `.av-stats-grid`;
-and the rule is **injected once from the component module** rather than written
-as an SFC `<style>`, because every Vite lib config here emits its own
-`dist/style.css` into one `dist/` and they overwrite each other.
+panel), so the viewport cannot answer the question. Four gotchas, one build each. A
+container query **cannot match the element that declares the containment**, so
+the markup is a `.av-stats` wrapper around a `.av-stats-grid`. The rule is
+**injected once from the component module** rather than written as an SFC
+`<style>`, because every Vite lib config here emits its own `dist/style.css`
+into one `dist/` and they overwrite each other. The injected CSS is a JS
+**template literal**, so a backtick in a code comment inside it terminates the
+string — quote CSS identifiers plainly there. And **Tailwind's `divide-x`
+out-specifies a naive override**: its selector is
+`.divide-x > :not([hidden]) ~ :not([hidden])`, worth three classes, so
+`.av-stats--3 > * + *` lost and the `border-left-width` calc survived — drawing
+a vertical rule AND a horizontal one, and shifting every cell after the first
+1px right. Matching its shape and adding the grid's own two classes wins without
+`!important`. `row-gap` also goes to 0: 8px is right between side-by-side cells,
+but stacked it detached each row from the frame and from its own divider.
 
 **What actually caused the clipping was the GALLERY SHELL, not the component.**
 `components.html` was a flex row of a fixed 224px sidebar plus `main`, which

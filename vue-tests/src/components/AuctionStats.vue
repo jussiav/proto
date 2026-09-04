@@ -106,13 +106,33 @@ if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
     style.id = STYLE_ID
     style.textContent = `
 .av-stats { container-type: inline-size; }
+
+/* Stacked: one column, cells flush, and the divider turns horizontal.
+   The selector has to out-specify Tailwind's own divide-x rule
+   (.divide-x > :not([hidden]) ~ :not([hidden]), three classes' worth) or its
+   border-left-width calc survives - which drew a vertical rule AND a
+   horizontal one, and shifted every cell after the first 1px to the right.
+   Matching its shape and adding the grid's two classes wins on specificity
+   without !important.
+
+   The row gap goes to 0 as well: 8px is right between side-by-side cells, but
+   stacked it detached each row from the frame and from its own divider. */
+.av-stats-grid.av-stats--3,
+.av-stats-grid.av-stats--2 { row-gap: 0; }
+
 @container (max-width: 320px) {
-  .av-stats--3 { grid-template-columns: minmax(0, 1fr); }
-  .av-stats--3 > * + * { border-left-width: 0; border-top-width: 1px; }
+  .av-stats-grid.av-stats--3 { grid-template-columns: minmax(0, 1fr); }
+  .av-stats-grid.av-stats--3 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: 0;
+    border-top-width: 1px;
+  }
 }
 @container (max-width: 220px) {
-  .av-stats--2 { grid-template-columns: minmax(0, 1fr); }
-  .av-stats--2 > * + * { border-left-width: 0; border-top-width: 1px; }
+  .av-stats-grid.av-stats--2 { grid-template-columns: minmax(0, 1fr); }
+  .av-stats-grid.av-stats--2 > :not([hidden]) ~ :not([hidden]) {
+    border-left-width: 0;
+    border-top-width: 1px;
+  }
 }`
     document.head.appendChild(style)
 }
