@@ -1,7 +1,11 @@
 <template>
+    <!-- The outer element is the query container; the grid inside is what the
+         query resizes. A container query cannot match the element that declares
+         the containment, so these have to be two elements. -->
+    <div class="av-stats">
     <div
-        class="grid gap-2 border border-slate-200 rounded-lg divide-x"
-        :class="hasPrice ? 'grid-cols-3' : 'grid-cols-2'"
+        class="av-stats-grid grid gap-2 border border-slate-200 rounded-lg divide-x"
+        :class="[hasPrice ? 'grid-cols-3' : 'grid-cols-2', hasPrice ? 'av-stats--3' : 'av-stats--2']"
     >
         <div class="flex flex-col p-2.5">
             <span class="text-slate-500 text-xs xs:text-sm text-wrap truncate">
@@ -53,6 +57,7 @@
             </div>
         </div>
     </div>
+    </div>
 </template>
 
 <script setup>
@@ -79,6 +84,38 @@
 import { computed } from 'vue'
 import { t, currency } from '../formatters.js'
 import UiIcon from './UiIcon.vue'
+
+/**
+ * Stacking rule, as a CONTAINER query rather than a media query: the same
+ * viewport gives this component very different widths depending on who hosts it
+ * — a page's white card, a gallery panel, a sidebar — so the viewport cannot
+ * answer "does the row still fit". A cell needs roughly 100px (10px padding
+ * either side, an 18px icon, a 6px gap, and the value), so three cells stack
+ * below 320px and two below 220px, and the dividing rule turns from vertical to
+ * horizontal with them.
+ *
+ * Injected once from here rather than written as an SFC <style> block: each of
+ * this project's Vite lib configs emits its own `dist/style.css` into one
+ * directory, so they overwrite each other. Owning the rule here keeps it with
+ * the component whichever path mounts it — the gallery imports the component
+ * directly, the pages go through the mount bundle.
+ */
+const STYLE_ID = 'auction-stats-css'
+if (typeof document !== 'undefined' && !document.getElementById(STYLE_ID)) {
+    const style = document.createElement('style')
+    style.id = STYLE_ID
+    style.textContent = `
+.av-stats { container-type: inline-size; }
+@container (max-width: 320px) {
+  .av-stats--3 { grid-template-columns: minmax(0, 1fr); }
+  .av-stats--3 > * + * { border-left-width: 0; border-top-width: 1px; }
+}
+@container (max-width: 220px) {
+  .av-stats--2 { grid-template-columns: minmax(0, 1fr); }
+  .av-stats--2 > * + * { border-left-width: 0; border-top-width: 1px; }
+}`
+    document.head.appendChild(style)
+}
 
 const props = defineProps({
     offers: {

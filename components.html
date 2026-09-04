@@ -83,10 +83,13 @@
   </header>
 
   <!-- Body -->
-  <div class="flex flex-1 overflow-hidden">
+  <!-- Below `lg` the shell stacks: a 224px sidebar beside a phone-width viewport
+       left the panel about 100px wide, so every preview inside it was squeezed
+       or clipped. The shell was the problem, not the components. -->
+  <div class="flex flex-1 overflow-hidden max-lg:flex-col max-lg:overflow-y-auto">
 
     <!-- Sidebar -->
-    <nav class="w-56 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col overflow-y-auto">
+    <nav class="w-56 flex-shrink-0 bg-white border-r border-slate-200 flex flex-col overflow-y-auto max-lg:w-full max-lg:border-r-0 max-lg:border-b max-lg:max-h-52">
 
       <!-- Section label -->
       <div class="px-4 pt-4 pb-2.5">
@@ -203,7 +206,7 @@
     </nav>
 
     <!-- Main content -->
-    <main id="gallery-main" class="flex-1 overflow-y-auto bg-slate-50 p-8">
+    <main id="gallery-main" class="flex-1 min-w-0 overflow-y-auto bg-slate-50 p-8 max-lg:p-5 max-lg:overflow-visible">
       <div class="max-w-[900px]">
 
         <!-- ── NavUserIcon ── -->

@@ -150,6 +150,16 @@ Production right-aligns the icon and leaves the value at normal weight; this is
 a deliberate change, so the offers page is no longer byte-identical to prod —
 see the initiative's change 1.
 
+**It stacks to rows when its container is too narrow for a row** — three cells
+below **320px**, two below **220px**, with the dividing rule turning horizontal.
+This is a **container** query, not a media query: the same viewport gives the
+component very different widths depending on who hosts it, so the viewport
+cannot answer "does the row still fit". The rule is injected once by the
+component itself; each Vite lib config here emits its own `dist/style.css` into
+one directory and they overwrite each other, so an SFC `<style>` block would be
+unreliable. Note the markup is two elements — a container query cannot match the
+element that declares the containment.
+
 Mounts itself into any `[data-auction-stats]` element and reads
 `data-offers` / `data-bidders` / `data-price`, re-rendering when those attributes
 change. Both host pages rebuild their markup after load, so the bundle watches

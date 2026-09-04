@@ -938,6 +938,27 @@ so a stroke-only outline comes out as a solid blob. No prototype surface passes
 a price (there is no B2B seller here), so the cell is previewed in the gallery
 only — a third example beside the two-cell and both-null ones.
 
+**AuctionStats stacks to rows when its container cannot hold a row** — three
+cells below 320px, two below 220px, the dividing rule turning horizontal with
+them. A **container** query, not a media query: the same viewport gives this
+component wildly different widths depending on the host (a page card, a gallery
+panel), so the viewport cannot answer the question. Two gotchas, both cost a
+build: a container query **cannot match the element that declares the
+containment**, so the markup is a `.av-stats` wrapper around a `.av-stats-grid`;
+and the rule is **injected once from the component module** rather than written
+as an SFC `<style>`, because every Vite lib config here emits its own
+`dist/style.css` into one `dist/` and they overwrite each other.
+
+**What actually caused the clipping was the GALLERY SHELL, not the component.**
+`components.html` was a flex row of a fixed 224px sidebar plus `main`, which
+never stacked — at 390px that left the preview panel **18px** wide, so every
+component card was squeezed, not just this one. Below `lg` the shell now stacks
+(sidebar full-width and capped at `max-h-52` above the panel, `main` gets
+`min-w-0` and lighter padding), which took the same container from 18px to
+266px. Worth remembering when a preview looks broken: **measure the container
+before blaming the component** — and an earlier reading of `containerW: 0` was
+dismissed as a hidden panel when it was this bug all along.
+
 **Two refinements went in with it, and they make the offers-page swap
 VISIBLE.** The icon moves to the LEFT of the value instead of being pushed to
 the right edge, and the value is `font-bold`. Both pages share the component, so
