@@ -171,27 +171,6 @@
       <!-- ── Right column (cream) ── -->
       <div id="success-sidebar" class="w-full lg:w-[calc(50%-3rem)] lg:m-6 bg-av-cream rounded-xl p-8 min-h-[480px] flex flex-col gap-6 md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
 
-        <!-- VehicleMetrics — prod's Sidebar.vue renders it on EVERY state where the
-             sidebar is visible: its only gate is that the draft has a brand, not the
-             draft's status. So it sits above the next-steps list here too, and on
-             plain `rejected` it is the only thing in the column. `hidden lg:flex` is
-             prod's own — the in-sidebar variant is desktop-only, and prod swaps to a
-             cream-backed version elsewhere on small screens rather than showing this
-             one. Copy is the total variant; prod picks the brand-specific heading
-             instead once we have sold 150+ of that make, which the proto has no
-             figure for. -->
-        <div id="success-vehicle-metrics" class="w-full hidden lg:flex items-center">
-          <div class="w-full bg-white rounded-lg p-4 flex gap-2 items-center shadow">
-            <figure class="flex-shrink-0">
-              <img src="assets/flame.png" width="36" alt="" />
-            </figure>
-            <div class="flex flex-col ml-4">
-              <p class="font-barlow font-bold text-slate-900 text-base mb-2" data-i18n="sidebar.title">Erinomainen aika myydä!</p>
-              <p class="font-dm text-base leading-5 text-black" data-i18n="sidebar.body">Autokauppa käy kuumana! Olemme myyneet jo yli 70 000 autoa!</p>
-            </div>
-          </div>
-        </div>
-
         <h2 id="success-next-steps-title" class="font-dm font-bold text-xl leading-[23px] text-black" data-i18n="success.nextStepsTitle">Mitä tapahtuu seuraavaksi?</h2>
 
         <div id="success-steps" class="flex flex-col gap-5">
@@ -649,8 +628,8 @@
              `canPreviewDraft` includes `publishingDraft`, so `shouldShowPreview`
              is true and the card renders. Only the next-steps list goes, because
              `shouldShowWhatHappensNext` excludes this state — nothing has been
-             published, so there is no "next" to describe yet. What is left in the
-             column is prod's VehicleMetrics block and the card.
+             published, so there is no "next" to describe yet. The column is the
+             card alone.
 
              `data-success-sidebar="empty"` then drops that card-only column on a
              narrow screen, which is prod's own `shouldShowSidebarOnMobile: false`
