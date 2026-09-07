@@ -511,10 +511,10 @@
         t(reviewable ? 'price.title' : 'price.askingTitle');
       document.getElementById('price-subtext').textContent =
         t(reviewable ? 'price.subtitle' : 'price.askingSubtitle');
-      /* The estimate variant has no label at all — prod's 92_combi block passes
-         NumberInput a placeholder only, so the whole label row is dropped and the
-         placeholder carries the question. The asking-price variant keeps prod's
-         label + required star. aria-label stands in as the accessible name in the
+      /* The estimate variant has no label at all — prod passes its number input
+         a placeholder only, so the whole label row is dropped and the placeholder
+         carries the question. The asking-price variant keeps prod's label +
+         required star. aria-label stands in as the accessible name in the
          label-less variant; prod leaves the field unnamed there. */
       var priceInput = document.getElementById('price-expectation');
       document.getElementById('price-label-row').style.display = reviewable ? 'none' : '';

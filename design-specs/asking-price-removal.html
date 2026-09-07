@@ -100,14 +100,14 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · decision page</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Asking price removal</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The asking price is on its way out of the seller journey. The decision page still shows it twice above the fold — as a column of its own, and as a dashed line across the chart — using a row that duplicates, in different words and a different design, what the offers page already shows the same seller.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The asking price is on its way out of the seller journey. It has now <b>left the decision page</b> — the column and the dashed chart line both shipped in September. What is left is the reason the initiative was wider than that removal: the row of figures still duplicates, in different words and a different design, what the offers page already shows the same seller.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Ready to build — 2 changes, no new copy
+          Status: 1 shipped &middot; 1 change left to build
         </span>
-        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026 &middot; updated 7 September</span>
       </div>
     </div>
     <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -115,25 +115,44 @@
     </svg>
   </header>
 
+  <main>
+
 
     <!-- How to read this -->
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Two changes, both on the <b>decision page&rsquo;s auction insights block</b> — the white card above the offers, holding a row of figures, a chart and the auction dates. Each section states <b>what changes</b>, links to that state in the prototype, and ends with a small-print <b>Why</b>.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>No new copy.</b> Change 1 adopts labels the offers page already ships; change 2 removes a line and a number. Nothing here needs a translation round.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">The changes are independent, but doing 1 first is cheaper: it replaces the row that holds the asking price, so change 2 is then the only place it still appears in this block.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Two changes, both on the <b>decision page&rsquo;s auction insights block</b> — the white card above the offers, holding a row of figures, a chart and the auction dates. <b>Change 2 has shipped</b> and is kept below as a record of what production now does. <b>Change 1 is the one still to build.</b></p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>No new copy.</b> Change 1 adopts labels the offers page already ships. Nothing here needs a translation round.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">One thing this initiative does <b>not</b> settle: the asking price still governs what a seller may counter-offer, while no longer appearing anywhere they can see it. That is <a class="text-av-blue underline font-medium" href="#scope">its own piece of work</a>, listed at the end.</p>
       </div>
     </section>
 
     <!-- Relationship to the running test -->
     <section class="av-band av-band-grey" id="ab-test">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Some of this already exists behind a flag</h2>
-      <div class="bg-info-50 border-l-4 border-info-200 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
-        <p class="mb-2"><b>Production already hides the expected-price column and the dashed line</b> for one arm of a live A/B test. The variant does exactly what change 2 asks for, and half of what change 1 asks for.</p>
-        <p class="mb-2">So the likely path is: <b>promote that variant</b> — delete the flag and the branch rather than write anything new — and then do change 1 on top.</p>
-        <p class="mb-0"><b>This initiative is wider than the test.</b> The test removes a column. This asks for the row to be <b>replaced</b> by the one the offers page already uses, so the two pages stop describing the same two numbers with different words, different icons and different framing. That part is new work whatever happens to the test.</p>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What already shipped</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-4">The A/B test that hid the asking price has <b>concluded</b>, and the result was split. Read this before starting change 1 — half of it is already done.</p>
+      <div class="bg-success-50 border-l-4 border-success-300 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-bold uppercase tracking-wide text-success-800 mb-2">Promoted &mdash; live on the consumer decision page</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+          <li>The <b>expected-price column</b> is gone. The row is now <b>two cells</b>, in the same old design.</li>
+          <li>The <b>dashed asking-price line</b> is gone, and <b>the price box at the left end of the chart</b> went with it — they were one chart dataset.</li>
+          <li>The flag and its branches are deleted. The hide is now a plain switch on the component, defaulting to hidden, and the consumer page simply does not turn it on.</li>
+        </ul>
+        <p class="mb-0"><b>So change 2 is finished, and the removal half of change 1 is finished.</b> What is left of change 1 is the part the test never touched: replacing the row itself.</p>
+      </div>
+      <div class="bg-warning-50 border-l-4 border-warning-300 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-bold uppercase tracking-wide text-warning-800 mb-2">Discarded &mdash; the negotiation modal kept everything</p>
+        <p class="mb-2">The same test had an arm that removed the asking price from the <b>counter-offer field</b> as well: the red warning naming it, and the rule that a counter offer may not exceed it. <b>That arm did not win.</b> Both are back in place for every seller.</p>
+        <p class="mb-0">This matters here because it leaves an inconsistency the removal created rather than solved: the asking price still <b>decides what a seller may offer</b>, while no longer appearing anywhere they can read it. Written up under <a class="text-av-blue underline font-medium" href="#scope">Not in this initiative yet</a>.</p>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Two smaller notes for whoever picks up change 1</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>B2B was never in the test</b> and still shows all three columns, with <b>Hintavaraus</b> as the third. See the notice in change 1 — it is the reason the shared component needs an optional third cell.</li>
+          <li>The chart&rsquo;s hidden vertical axis <b>still reads the asking price</b> when sizing its ticks. Harmless with the axis hidden, but it is a dead reference to clean up while you are in the file.</li>
+        </ul>
       </div>
       </div>
     </section>
@@ -156,15 +175,15 @@
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr>
               <td class="px-4 py-3 font-bold">1</td>
-              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">The figures row becomes the one the offers page already uses</a></td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">The figures row becomes the one the offers page already uses</a><br><span class="text-xs text-slate-500">The removal half already shipped &middot; what is left is the shared component</span></td>
               <td class="px-4 py-3">Decision page · insights block</td>
               <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">2</td>
-              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">The chart drops the dashed asking-price line</a></td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">The chart drops the dashed asking-price line</a><br><span class="text-xs text-slate-500">Kept as a record of what production now draws</span></td>
               <td class="px-4 py-3">Decision page · chart</td>
-              <td class="px-4 py-3"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
+              <td class="px-4 py-3"><span class="bg-slate-200 text-slate-700 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Shipped</span></td>
             </tr>
           </tbody>
         </table>
@@ -180,10 +199,10 @@
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
         <ul class="list-disc pl-5 space-y-1">
-          <li>The three-column row above the chart is <b>replaced by the two-column stats block the offers page shows during a live auction</b> — same markup, same labels, same icons, same frame.</li>
+          <li>The row above the chart &mdash; <b>two cells since the removal shipped</b> &mdash; is <b>replaced by the stats block the offers page shows during a live auction</b>: same markup, same labels, same icons, same frame.</li>
           <li>It stays <b>in the decision page&rsquo;s existing white card</b>, in the same place above the chart. The chart and the auction dates below it are untouched, with one exception below.</li>
           <li><b>The chart loses its top rule.</b> The new block carries its own frame, so the hairline above the chart lands a few pixels beneath it and reads as a second line. The rule below the chart stays.</li>
-          <li><b>The asking price leaves with the third column.</b> No replacement figure.</li>
+          <li><b>Nothing about the asking price is left to remove here</b> &mdash; the third column went with the promoted arm. This change is now purely the swap.</li>
           <li>The <b>B2B</b> decision page keeps a third column — see the notice below. The <b>B2B offers page shows neither block</b>, so nothing there is affected.</li>
           <li>The values are the same two numbers the row shows today — offers on this request, and how many dealerships they came from.</li>
           <li>Two refinements to the block itself, which therefore also change the offers page: the <b>icon moves to the left of the value</b> rather than being pushed to the right edge, and <b>the value is bold</b>. Reading a figure should not mean crossing the cell to find it.</li>
@@ -198,10 +217,9 @@
             <dl class="flex flex-row divide-x divide-slate-200 text-center">
               <div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 font-dm text-xs text-slate-500">Tarjousta</dt><dd class="font-dm font-bold text-slate-800">25</dd></div>
               <div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 font-dm text-xs text-slate-500">Autoliikettä</dt><dd class="font-dm font-bold text-slate-800">25</dd></div>
-              <div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 font-dm text-xs text-slate-500">Odotettu hinta</dt><dd class="font-dm font-bold text-slate-800">12 000 €</dd></div>
             </dl>
           </div>
-          <p class="font-dm text-xs text-slate-500 mt-3">Three columns, divided by hairlines, no frame, no icons. Labels are plural-aware — singular at exactly one.</p>
+          <p class="font-dm text-xs text-slate-500 mt-3">Two columns as of September, divided by a hairline, no frame, no icons, label <b>below</b> the value. Labels are plural-aware &mdash; singular at exactly one.</p>
         </div>
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">After — the offers page&rsquo;s block</p>
@@ -247,7 +265,7 @@
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr><td class="px-4 py-3">Tarjousta <span class="text-slate-500">/ Tarjous at one</span></td><td class="px-4 py-3 font-bold">Tarjouksia yhteensä</td><td class="px-4 py-3 text-slate-500">Offers in total</td></tr>
             <tr><td class="px-4 py-3">Autoliikettä <span class="text-slate-500">/ Autoliike at one</span></td><td class="px-4 py-3 font-bold">Tarjoajat</td><td class="px-4 py-3 text-slate-500">Bidders</td></tr>
-            <tr><td class="px-4 py-3">Odotettu hinta</td><td class="px-4 py-3 text-slate-500">— removed —</td><td class="px-4 py-3 text-slate-500">Expected price</td></tr>
+            <tr class="text-slate-500"><td class="px-4 py-3">Odotettu hinta</td><td class="px-4 py-3">— already removed, September —</td><td class="px-4 py-3">Expected price</td></tr>
           </tbody>
         </table>
       </div>
@@ -258,7 +276,7 @@
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>The decision page and the offers page render the <b>same component</b> for these two figures — not two copies of the same markup. See <a class="text-av-blue underline" href="../components.html#AuctionStats" target="_blank" rel="noopener">AuctionStats</a> for the props and states it has to cover.</li>
           <li>The values are unchanged: offers on the request, and the number of dealerships behind them.</li>
-          <li>No asking price, expected price or price estimate appears anywhere in the insights block.</li>
+          <li>No asking price, expected price or price estimate appears anywhere in the insights block &mdash; still true after the swap, as it is today.</li>
           <li>The chart, the auction dates and the surrounding white card are otherwise untouched — only its top rule goes.</li>
           <li>There is <b>one</b> hairline between the stats block and the chart, not two.</li>
           <li>It reads correctly at 360px — both labels fit their column without clipping.</li>
@@ -271,27 +289,30 @@
     <!-- Change 2 -->
     <section class="av-band av-band-grey" id="c2">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 — The chart drops the dashed asking-price line</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · chart</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Auction ended, offers seen</span></div>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 — The chart drops the dashed asking-price line <span class="text-slate-500">(shipped)</span></h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-200 text-slate-700 font-bold rounded-full px-3 py-1">Shipped &middot; September 2026</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · chart</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Auction ended, offers seen</span></div>
+      <div class="bg-slate-100 border-l-4 border-slate-400 rounded-lg p-4 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <b>Nothing to build.</b> This is what production draws today, kept so the change is on the record and so nobody reads the old chart in a screenshot as current. It arrived by promoting the A/B arm rather than as a ticket off this page.
+      </div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changed</p>
         <ul class="list-disc pl-5 space-y-1">
-          <li>The <b>dashed horizontal line</b> across the chart goes, along with <b>the price label</b> in the box at its left end.</li>
-          <li>Everything else stays: the rising bid line, the shaded fill beneath it, the highest-bid label at the right end, and the start and end dates below.</li>
-          <li>The chart&rsquo;s vertical scale no longer needs to reach the asking price — with the line gone, the bid progression is what sets the top of the range.</li>
+          <li>The <b>dashed horizontal line</b> across the chart is gone, and so is <b>the price label</b> in the box at its left end &mdash; they were one dataset, so removing it took both.</li>
+          <li>Everything else stayed: the rising bid line, the shaded fill beneath it, the highest-bid label at the right end, and the start and end dates below.</li>
+          <li>The chart now scales to <b>the bids alone</b>. One leftover: the hidden vertical axis still reads the asking price when sizing its ticks &mdash; a dead reference worth deleting.</li>
         </ul>
-        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&asking-price-removal=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— the chart with only the bid line</span></p>
-        <p class="mt-2 font-dm text-sm text-slate-600">The <a class="text-av-blue underline font-medium" href="../components.html#AuctionInsights" target="_blank" rel="noopener">AuctionInsights</a> component in the gallery is already in this state: one dataset, and no asking-price prop.</p>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">&mdash; both variants now draw one line, because this is production behaviour rather than a proposal</span></p>
       </div>
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li>The chart draws one line, not two, in every auction state that renders it.</li>
-          <li>No price box appears at the left edge; the highest-bid box at the right edge is unchanged.</li>
-          <li>The bid line still fills the chart vertically when the highest bid is well below what the asking price used to set.</li>
+          <li>The chart draws one line, not two, in every auction state that renders it. <span class="text-slate-500">&mdash; met</span></li>
+          <li>No price box appears at the left edge; the highest-bid box at the right edge is unchanged. <span class="text-slate-500">&mdash; met</span></li>
+          <li>The bid line fills the chart vertically off its own highest value. <span class="text-slate-500">&mdash; met; the dead axis reference above is the only tidy-up left</span></li>
+          <li><b>B2B still draws both lines</b>, and should. <span class="text-slate-500">&mdash; met; the switch is off for consumers only</span></li>
         </ul>
       </div>
-      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The line invites the seller to read the auction as a race against their own asking price — a number the product is removing, and one that was never a prediction of what dealerships would pay. With it gone the chart shows what actually happened.</p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The line invited the seller to read the auction as a race against their own asking price &mdash; a number the product is removing, and one that was never a prediction of what dealerships would pay. With it gone the chart shows what actually happened.</p>
       </div>
     </section>
 
@@ -299,12 +320,28 @@
     <section class="av-band av-band-grey" id="scope">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Not in this initiative yet</h2>
-      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-4">The asking price appears elsewhere in the seller journey. Those are separate pieces of work and are listed here only so nobody assumes they came with these two changes.</p>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-5">The asking price appears elsewhere in the seller journey. These are separate pieces of work, listed so nobody assumes they came with the two changes above &mdash; and so the first one is not quietly folded into a neighbouring initiative.</p>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3">
+          <span class="font-barlow font-bold text-black text-lg">The counter-offer ceiling</span>
+          <span class="font-dm text-xs bg-info-100 text-info-800 rounded-full px-2.5 py-1 md:ml-auto">Own work &middot; will be A/B tested</span>
+        </div>
+        <p class="mb-3"><b>A seller can be stopped by a number they were never shown.</b> The asking price left the decision page, but it still decides what they may counter-offer. Two places, both live for every seller:</p>
+        <ul class="list-disc pl-5 space-y-1 mb-3">
+          <li>A <b>red line under the counter-offer field</b> the moment the typed amount goes above it &mdash; <span class="font-medium">&ldquo;Pyyntihintasi oli [amount]&rdquo;</span>, which is the first and only time that figure appears.</li>
+          <li>A <b>server-side rule</b> that rejects the counter offer outright: <span class="font-medium">&ldquo;Vastatarjouksesi ei voi olla asettamaasi pyyntihintaa korkeampi.&rdquo;</span> It fires only while the highest offer is still below the asking price, and only for a reviewed listing.</li>
+        </ul>
+        <p class="mb-3">Both are <b>settled production behaviour, not an oversight</b>: the arm of the concluded test that removed them was the arm that lost.</p>
+        <p class="mb-3"><b>What the ceiling actually is, today.</b> It is the stored asking price &mdash; or the <b>GT-X estimate</b> where a listing was published without one, because the routing writes the estimate into that field when it auto-publishes. And the field itself can be set from several different sources. So &ldquo;the asking price&rdquo; is one name for more than one number, which is part of what makes it hard to explain to a seller.</p>
+        <p class="mb-0"><b>Do not build this off this page, and do not fold it into Enhanced negotiations.</b> That initiative deliberately leaves the ceiling alone. Resolving it &mdash; whether to show the figure, rename it, raise it or drop it &mdash; is its own decision and will be settled by an A/B test of its own.</p>
+      </div>
+
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl">
         <table class="w-full font-dm text-sm text-left">
           <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
-            <tr><td class="px-4 py-3 font-medium whitespace-nowrap">Negotiation modal</td><td class="px-4 py-3">The warning under the counter-offer field that names the seller&rsquo;s asking price. Deliberately left for later.</td></tr>
             <tr><td class="px-4 py-3 font-medium whitespace-nowrap">The funnel</td><td class="px-4 py-3">Where the asking price is asked for in the first place, and the screens that echo it back.</td></tr>
+            <tr><td class="px-4 py-3 font-medium whitespace-nowrap">B2B</td><td class="px-4 py-3">Out of scope by design. The B2B decision page keeps all three columns and both chart lines, and its third column is a live feature rather than a field being sunset.</td></tr>
           </tbody>
         </table>
       </div>

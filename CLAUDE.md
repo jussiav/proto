@@ -478,12 +478,31 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 
 **Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
-and Seller intent (VWO `104_combi`), both present in the 2026-08-31 dump —
-so their arms are being measured against real sellers and neither has a winner
-yet. Their `prodArm` stays `control` and their page default stays `control`: that
-is what the proto renders unasked, which is what a user-test participant must land
-in, and it is the arm the eventual result gets read against. Nothing gets deleted
-until one is promoted.
+and Seller intent (VWO `104_combi`), both still registered in the 2026-09-07 dump
+— so their arms are being measured against real sellers and neither has a winner
+yet. Seller intent is expected to keep running for at least another week from
+2026-09-07. Their `prodArm` stays `control` and their page default stays
+`control`: that is what the proto renders unasked, which is what a user-test
+participant must land in, and it is the arm the eventual result gets read
+against. Nothing gets deleted until one is promoted.
+
+**The rest of prod's experiment list, as of the 2026-09-07 dump.** Worth keeping
+straight, because two of them have decided initiative scope and a stale reference
+to a discarded one dates a comment badly:
+
+| Test | State | Bearing on the proto |
+|---|---|---|
+| `103_combi` hide expected price | **concluded, split** | Promoted for the insights block, discarded for the negotiation modal — see Asking price removal below |
+| `100_combi` verified service history | **discarded** | Constant and component both deleted. Was paused by a hotfix in the 08-31 dump; that is resolved, no owner needed |
+| `93_combi` remove service book upload | **not progressing** — team's call, 2026-09-07 | Still registered with no consumer, so it writes assignments for nobody. Would have collided with Seller file upload; it will not |
+| `92_combi` label-less estimate field | **discarded** | Gone from the enum. Its behaviour is plain prod now, so `translations.js` and `price.html` describe the label-less field without naming the test |
+| `89_combi` delayed negotiation CTA | live, **to be revisited later** | Sends a nudge email to a seller with offers and no negotiation. Overlaps Enhanced negotiations; deliberately not reconciled yet |
+| `73_combi`, `91_combi` | registered, no consumer | Cleanup only |
+
+**Never cite a VWO number in a proto comment to explain prod behaviour that is
+now unconditional.** A discarded test's number makes a true statement read as
+provisional, and the next person greps for a flag that no longer exists. Describe
+what prod does; mention the test only where an arm is still live.
 
 **Enhanced negotiations** makes the negotiation's own mechanics legible in the
 modal, where today none of them are. Almost half of all offers reach a
@@ -923,14 +942,38 @@ have no singular form. Change 2 drops the chart's dashed asking-price line and
 its left-hand price box; the bid line, its fill, the highest-bid label and the
 date row stay.
 
-**Prod already ships both removals behind `103_combi`.** `AuctionInsights.vue`
-takes a `hideExpectedPrice` prop (variation 2) that hides the third column AND
-the `Asking price` dataset — `borderDash: [5,5]`. So change 2 is close to
-promoting that arm, and half of change 1 with it. **The initiative is
-deliberately wider than the test:** the test removes a column, this replaces the
-row, so the two pages stop describing the same two numbers in different words
-and a different design. Recorded on the spec page as its own section rather than
-buried in a change.
+**`103_combi` CONCLUDED, and the result was SPLIT** (seen in the 2026-09-07
+dump). The flag is gone from the enum and from every consumer:
+
+| Arm | Outcome | What the code looks like now |
+|---|---|---|
+| insights block | **promoted** | `hideExpectedPrice` is replaced by a plain `showAskingPrice` prop, `default: false`. `C2BDecision.vue` passes nothing, so the consumer page shows **two cells and no dashed line**. `B2BDecision.vue` passes `:show-asking-price="true"` plus the `reserve_price` label |
+| negotiation modal | **discarded** | The hide-gate came OFF `Negotiate.vue`/`QuickNegotiate.vue`, keeping the red warning, and the ceiling-skip came OUT of `StoreNegotiationFormRequest`, restoring the block |
+
+So **change 2 is shipped and the removal half of change 1 is shipped.** What is
+left is the part the test never touched — replacing the row with the shared
+component. `Timer.vue` is unchanged, so nothing has been extracted yet.
+
+**The proto's `control` arm was moved onto prod's new baseline** rather than kept
+as a museum piece: two cells, no dashed line, no left-hand price box, and the
+chart's `yMax` off the bids alone (it used to be `max(asking, highest)`, which
+matched prod only while prod drew the line). `v1` is unchanged — AuctionStats
+plus `border-b`. So the switcher now compares the two things still in question:
+the old `dl` against the shared grid. One prod leftover NOT reproduced: the
+hidden y axis still reads `askingPrice` in its `stepSize`.
+
+**The removal created a problem it did not solve, and it is deliberately nobody's
+change yet.** The asking price still decides what a seller may counter-offer —
+the red `asking_price_error` line under the field, and the server-side ceiling —
+while no longer appearing anywhere the consumer can read it. For an
+auto-published listing the ceiling is the **GT-X estimate**, because the publish
+routing writes `price_estimation` into `asking_price` when there is none, and the
+field can be set from several sources besides. The team's call (2026-09-07):
+**resolve it later, with its own A/B test, and Enhanced negotiations explicitly
+takes no view on it.** Recorded on the asking-price spec under *Not in this
+initiative yet* and as an excluded row on the negotiations spec, so it cannot be
+folded into either. The proto already transcribes both the warning and all four
+of the ceiling's conditions, so it needs no change.
 
 **The block is not a component in prod.** It is markup inside `Timer.vue`, which
 also draws the progress bar, end date and reg badge — so the spec asks for the
@@ -955,11 +998,10 @@ clipPath covering the whole artwork, which clips nothing and is dropped.
 `:price-label="t('auction.auction_details.reserve_price')"` — **Hintavaraus** —
 with the same `auctionResults.asking_price` the consumer page passes. So prod
 already parameterises that column; only the word differs, and there is no
-`reserve_price` DB column. B2B does **NOT** pass `hideExpectedPrice`, so
-`103_combi`'s hide-gate is consumer-only: promoting variation 2 removes the
-consumer column and leaves B2B's alone, which is correct — a B2B reserve price
-binds the seller when a bid meets it, so it is a live feature, not a field being
-sunset. Flagged on the spec page in its own amber notice so nobody tidies it
+`reserve_price` DB column. That gate is now the plain
+`showAskingPrice` prop and **B2B is the only caller that turns it on**, which is
+what the promotion did and is correct — a B2B reserve price binds the seller when
+a bid meets it, so it is a live feature, not a field being sunset. Flagged on the spec page in its own amber notice so nobody tidies it
 away. **Surfaces, checked:** `AuctionInsights` has exactly two consumers, both
 decision pages; the two-figure block (`AuctionsProgress` → `Timer`) is imported
 by `C2B.vue` only, so the **B2B offers page shows neither block** and nothing
@@ -1028,12 +1070,13 @@ deliberate choice, and the reason the spec links both cards. Gallery, COMPONENTS
 and components.html were updated in the same change, as the component process
 requires.
 
-**Two things left out on purpose.** `103_combi`'s third arm hides the
-asking-price warning under the counter-offer field in `Negotiate.vue` and
-`QuickNegotiate.vue` — deferred, and listed on the spec's "Not in this
-initiative yet" section with the funnel. And a **second negotiation-modal A/B is
-coming in a future dump**, testing the ceiling on what a seller may counter-offer;
-worth knowing before anyone reads the modal's asking-price references as settled.
+**Two things left out on purpose.** The negotiation modal's asking-price
+warning and its counter-offer ceiling: `103_combi`'s arm for those was
+**discarded**, so both are settled prod behaviour rather than a pending arm, and
+the team has parked the wider question (a ceiling nothing tells the consumer
+about) for its own A/B test. And a **second negotiation-modal A/B** may still
+arrive testing that ceiling; worth knowing before anyone reads the modal's
+asking-price references as final.
 
 **Seller intent** asks one question per arm on the price step, below the
 estimate field, to learn how ready the seller actually is to sell — today the
@@ -1391,7 +1434,46 @@ min/max_mileage)  →  EvaluateDraftForReview  →  Resource: can_review
 ```
 
 The settings are a **whitelist** (`ReviewIfPreferredSegment` validates the car
-falls INSIDE the band), so a high-mileage or old car is NOT review-called.
+falls INSIDE the band), so a high-mileage or old car is NOT review-called. As of
+the 2026-09-07 dump that rule delegates to `TenderRequestReviewSettings::matches()`
+— same band, moved so the engine below can share the gate.
+
+**A review qualification ENGINE now exists, in ghost mode, and there is nothing
+to do about it in the proto** (team's call, 2026-09-07). Recorded because the
+machinery is easy to over-read:
+
+- New in the 09-07 dump: `app/Services/ReviewQualification/`, `ReviewEngineMode`
+  (`disabled` | `evaluate` | `enabled`), `ReviewEngineObservation` on the
+  **analytics** connection, `WhitelistSegment`, `RecordEngineObservation`, and
+  `config/review-qualification.php`. Decisions come from a **Lambda** and are
+  `review` or `auto_publish`.
+- **The pipeline SPLIT in two.** `EvaluateDraftForReview` — legacy rules only —
+  still produces `can_review` for the funnel. The new `RouteDraftOnPublish` runs
+  the same rules **plus the engine** and is what `PublishDraft` calls. So the
+  funnel's answer is computed from the filters and the real routing happens at
+  publish.
+- **Ghost mode means the filters still decide.** In `evaluate` the engine records
+  what it would have done and returns the legacy decision. The intended next step
+  keeps the filters in priority and lets the engine add fidelity *within* what
+  they already allow — it is not a replacement. **Note for whoever turns the dial:
+  the code does not yet express that.** In `enabled` mode `DecideViaQualificationEngine`
+  returns the engine's answer for the live slice without calling `$next`, so it
+  would OVERRIDE the segment rather than refine it, and `live_percentage` only
+  applies in that mode. Worth checking the env before reading "10% allocation" as
+  ghost mode.
+- **One side effect that reaches another initiative:** on `auto_publish` the
+  engine writes `price_estimation` into `asking_price` when the draft has none
+  (left dirty and unsaved so a failed publish rolls it back). That field is the
+  negotiation ceiling — see Asking price removal.
+- Observations now carry **offer acceptance, accepted price and a resolution
+  timestamp**, so the engine is measured on whether the car sold, not on whether
+  the ad published.
+
+**The proto models the OUTCOME, so none of this changes it** — same two paths,
+same two price questions. What it does change is the strength of Review/No
+review's Change 1: once the engine influences outcomes, the price step is
+promising something not yet decided. Recorded as background on that spec page,
+not as work.
 
 **Where it shows in the UI:** only `PriceInfo.vue`. `can_review: false` swaps the
 price step to an asking-price question (`tenderform.price_info.asking_price_*`,

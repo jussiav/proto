@@ -190,6 +190,11 @@ for new mount points rather than running once.
 | `startDate` | Dayjs | Yes | Auction start timestamp |
 | `endDate` | Dayjs | Yes | Auction end timestamp |
 
+No `askingPrice` prop: prod dropped the asking-price column and its dashed chart
+line for consumer sellers in September 2026. Prod's own component keeps the cell
+behind a `showAskingPrice` switch that only B2B turns on — mirrored here by
+[AuctionStats](#auctionstats)'s optional `price` cell rather than a prop of its own.
+
 **Used on:** `components.html`
 
 ---

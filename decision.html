@@ -1536,7 +1536,6 @@
     function buildInsights(req, offers) {
       var offerCount = req.offer_count || offers.length;
       var buyers     = req.buyers || 0;
-      var askingFmt  = fmtCurrency(req.asking_price);
       var startFmt   = new Date(req.published_at * 1000).toLocaleDateString('fi-FI', { day: 'numeric', month: 'long', year: 'numeric' });
       var endFmt     = new Date(req.auction_ends_at * 1000).toLocaleDateString('fi-FI', { day: 'numeric', month: 'long', year: 'numeric' });
 
@@ -1548,11 +1547,23 @@
       var bidsLabel   = offerCount === 1 ? 'Tarjous'   : 'Tarjousta';
       var buyersLabel = buyers === 1     ? 'Autoliike' : 'Autoliikettä';
 
-      /* Change 1. Control is prod's own three-column `dl`; v1 is the two-column
-         stats grid the offers page already shows a seller whose auction is
-         running — same markup, same labels, same icons, same frame. The two
-         pages stop carrying two designs and two vocabularies for the same two
-         numbers, and the asking price leaves with the third column.
+      /* Change 1, and it is all that is left of this initiative on this row.
+         The REMOVAL shipped: prod's VWO test concluded, its consumer arm was
+         promoted, and `AuctionInsights.vue` now hides the third column behind a
+         `showAskingPrice` prop that the consumer decision page does not pass.
+         So control below is prod as it stands today — the same `dl`, two cells,
+         no asking price.
+
+         v1 is the remaining ask: the two-column stats grid the offers page
+         already shows a seller whose auction is running — same markup, labels,
+         icons and frame — so the two pages stop carrying two designs and two
+         vocabularies for the same two numbers. Visible differences beyond the
+         frame: the grid puts the label ABOVE the value where the `dl` uses
+         `order-1` to put it below, and it carries an icon beside each figure.
+
+         B2B still passes the third column (`show-asking-price` plus the
+         `reserve_price` label, "Hintavaraus"), which is why AuctionStats takes
+         an optional third cell. No prototype surface passes one.
 
          Timer.vue's labels have no singular form, so the plural handling above
          is control's alone. The icons are the same inline paths offers.html
@@ -1567,7 +1578,6 @@
         html = '<dl class="flex flex-row divide-x divide-slate-200 text-center">';
         html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">' + bidsLabel + '</dt><dd class="font-bold text-slate-800">' + offerCount + '</dd></div>';
         html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">' + buyersLabel + '</dt><dd class="font-bold text-slate-800">' + buyers + '</dd></div>';
-        html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">Odotettu hinta</dt><dd class="font-bold text-slate-800">' + askingFmt + '</dd></div>';
         html += '</dl>';
       }
 
@@ -1575,38 +1585,40 @@
       // data = [0, ...insights_data], chart starts at 0 bottom-left and rises to highest bid
       var ascending = (req.insights_data && req.insights_data.length) ? req.insights_data : [];
       if (ascending.length) {
-        var asking = req.asking_price || 12000;
         var highestBidVal = ascending[ascending.length - 1] || 0;
         var chartData = [0].concat(ascending);  // leading 0, then bids
         var n = chartData.length;
         var W = 600, CHART_H = 200, TOP_PAD = 35, BOT_PAD = 10, SIDE_PAD = 12;
         var TOTAL_H = TOP_PAD + CHART_H + BOT_PAD; // 245
-        // Use max(asking, highest) + 5% headroom so the bid progression fills the chart vertically
-        var yMax = Math.max(asking, highestBidVal) * 1.05;
+        /* The bid progression fills the chart vertically off its own highest
+           value plus 5% headroom. It used to be max(asking, highest), matching
+           prod while prod drew the asking-price line; with that dataset gone the
+           consumer chart scales to the bids alone. prod's `y.ticks.stepSize`
+           still reads `askingPrice` — a leftover with the axis hidden. */
+        var yMax = highestBidVal * 1.05;
 
         function yC(v) { return TOP_PAD + CHART_H - (v / yMax) * CHART_H; }
         function xC(i) { return n > 1 ? SIDE_PAD + (i / (n - 1)) * (W - 2 * SIDE_PAD) : W / 2; }
 
-        var askY = Math.round(yC(asking));
         var pts = chartData.map(function(v, i) { return Math.round(xC(i)) + ',' + Math.round(yC(v)); });
 
         // Fill polygon: bid line + bottom baseline
         var botY = TOP_PAD + CHART_H;
         var fillPts = pts.join(' ') + ' ' + Math.round(xC(n-1)) + ',' + botY + ' ' + Math.round(xC(0)) + ',' + botY;
 
-        // Labels — asking price at left, highest bid at right — both in boxes above the line
-        var askLabelX = SIDE_PAD;
-        var askLabelY = Math.max(askY - 6, TOP_PAD - 2); // clamp within SVG
+        // Label — the highest bid, in a box above the line at the right edge
         var highestBid = highestBidVal;
         var highY = Math.round(yC(highestBid));
         var highLabelX = W - SIDE_PAD;
         var highLabelY = Math.max(highY - 6, TOP_PAD - 2);
         var LW = 74, LH = 18, LR = 3;
 
-        /* Change 2. prod draws the asking price as a second chart dataset —
-           a dashed line the width of the chart, with its value in a box at the
-           left edge. Both go in v1; the bids line, its fill, the end-value label
-           and the date row below are untouched. */
+        /* Change 2 is DONE in prod and is not an arm any more. prod used to
+           draw the asking price as a second chart dataset — a dashed line the
+           width of the chart with its value in a box at the left edge — and the
+           promoted arm dropped the whole dataset, which took the box with it.
+           Neither arm draws it here. The bids line, its fill, the end-value
+           label and the date row are untouched, as they were in prod. */
         /* The stats block above carries its own frame in v1, so the chart's top
            rule would sit a few pixels under it as a second line. Control keeps
            prod's `border-y`, where the row above has no frame of its own. */
@@ -1614,15 +1626,8 @@
           '<svg viewBox="0 0 ' + W + ' ' + TOTAL_H + '" class="w-full" style="height:auto;display:block">' +
             // Fill area under bid line
             '<polygon points="' + fillPts + '" fill="#EEF6FA" opacity="0.8"/>' +
-            // Asking price dashed line
-            (APR_V1 ? '' :
-            '<line x1="' + SIDE_PAD + '" y1="' + askY + '" x2="' + (W-SIDE_PAD) + '" y2="' + askY + '" stroke="#0B6DFF" stroke-dasharray="5,5" stroke-width="1.5"/>') +
             // Bid line — always render when we have at least one offer (n >= 2 means [0, bid])
             '<polyline points="' + pts.join(' ') + '" fill="none" stroke="#2890FF" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' +
-            // Asking price label box — left-anchored
-            (APR_V1 ? '' :
-            '<rect x="' + askLabelX + '" y="' + (askLabelY - LH + 4) + '" width="' + LW + '" height="' + LH + '" rx="' + LR + '" fill="white" stroke="black" stroke-width="0.8"/>' +
-            '<text x="' + (askLabelX + LW/2) + '" y="' + (askLabelY - 1) + '" text-anchor="middle" font-size="9" fill="black" font-family="system-ui,sans-serif">' + fmtCurrency(asking) + '</text>') +
             // Highest bid label box — right-anchored
             '<rect x="' + (highLabelX - LW) + '" y="' + (highLabelY - LH + 4) + '" width="' + LW + '" height="' + LH + '" rx="' + LR + '" fill="white" stroke="black" stroke-width="0.8"/>' +
             '<text x="' + (highLabelX - LW/2) + '" y="' + (highLabelY - 1) + '" text-anchor="middle" font-size="9" fill="black" font-family="system-ui,sans-serif">' + fmtCurrency(highestBid) + '</text>' +

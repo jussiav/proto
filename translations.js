@@ -555,10 +555,12 @@ window.TRANSLATIONS = {
     price: {
       title:           'Mitä odottaisit autoliikkeen tarjoavan autostasi?',
       subtitle:        'Oma arvio on vapaaehtoinen ja auttaa meitä ymmärtämään odotuksiasi.',
-      /* Prod's estimate field (PriceInfo.vue, the 92_combi block) has NO label —
-         the question is carried by the placeholder alone, and only the
-         asking-price field gets a real label. targetLabel therefore labels just
-         the ad-preview row in vehicle-card.js, not the input. */
+      /* Prod's estimate field has NO label — the question is carried by the
+         placeholder alone, and only the asking-price field gets a real label.
+         (It arrived as an A/B arm that has since been discarded from prod's
+         experiment list; the label-less field is plain prod now.) targetLabel
+         therefore labels just the ad-preview row in vehicle-card.js, not the
+         input. */
       targetLabel:     'Oma arvio (vapaaehtoinen)',
       targetPlaceholder: 'Oma arvio (vapaaehtoinen)',
       targetError:     'Anna hinta numeroina, esim. 12 500.',
