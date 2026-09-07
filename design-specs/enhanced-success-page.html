@@ -136,6 +136,19 @@
         <p class="mb-2">That is why the screen has <b>no illustration and no &ldquo;what happens next&rdquo; list</b>, where every other ending of the funnel has both: there is no next yet. Technically correct, and it is the whole problem.</p>
         <p class="mb-0"><b>The seller does not know any of that.</b> They answered every question, uploaded nothing, pressed the last button, and landed on a red frame. From where they sit this <i>is</i> the end of the funnel &mdash; so it is the end of the funnel that has to answer them.</p>
       </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Exactly what the cream column does here &mdash; three separate gates</p>
+        <p class="mb-3">Worth spelling out, because <b>the column is easy to get wrong in either direction</b>: it looks empty beside the other endings, but it is not empty &mdash; and the three things that could be in it are decided by three unrelated conditions. Two of them disagree on this state.</p>
+        <table class="w-full font-dm text-sm text-left mb-3">
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="py-2 pr-4 font-medium">In the column</th><th class="py-2 pr-4 font-medium">Here?</th><th class="py-2 font-medium">Because</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 align-top">
+            <tr><td class="py-2 pr-4 font-medium">Car card</td><td class="py-2 pr-4"><b>Yes</b></td><td class="py-2">The publish state <i>is</i> in the list that allows a draft preview</td></tr>
+            <tr><td class="py-2 pr-4 font-medium">&ldquo;What happens next&rdquo; list</td><td class="py-2 pr-4"><b>No</b></td><td class="py-2">The publish state is <i>not</i> in the list that shows it &mdash; a different condition from the one above</td></tr>
+            <tr><td class="py-2 pr-4 font-medium">&ldquo;Erinomainen aika myydä!&rdquo; banner</td><td class="py-2 pr-4"><b>No</b></td><td class="py-2">Its figures are only loaded on the equipment and service steps, so it is empty everywhere else &mdash; a third condition, one level further up</td></tr>
+          </tbody>
+        </table>
+        <p class="mb-0"><b>So the column holds the car card and nothing else</b>, and the card has to survive the change. Below <b>992px</b> the column is hidden altogether and production renders the same card inside the left-hand content instead, so the seller never loses sight of which car this is.</p>
+      </div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Do not confuse it with the other missing-photos screen</p>
         <p class="mb-2">There are <b>two</b> in production, with different triggers, different copy and different framing. This initiative is only about the first.</p>
@@ -146,7 +159,8 @@
             <tr><td class="py-2 pr-4">Listing was <b>reviewed and bounced back</b> for photos asked for on the call</td><td class="py-2 pr-4">&ldquo;Huomio! Tarvitsemme sinulta lisätietoja.&rdquo;</td><td class="py-2 text-slate-500">No &mdash; left exactly as it is</td></tr>
           </tbody>
         </table>
-        <p class="mt-4 mb-0">The second one already does what this proposal asks for: it acknowledges, states what is needed in its own card, and shows the remaining steps. It is a reasonable model for the first.</p>
+        <p class="mt-4 mb-2">The second one already does what this proposal asks for: it acknowledges, states what is needed in its own card, and shows the remaining steps. It is a reasonable model for the first &mdash; and it has been checked against production line by line, so it can be trusted as one.</p>
+        <p class="mb-0"><b>One thing on it is a production quirk, and it should be left alone:</b> its step list still tells the seller the listing is being reviewed, even though the review already happened and sent it back. That falls out of how the step list is computed, and it is faithful rather than a slip. If you end up on that screen for other reasons, do not quietly correct it &mdash; raise it.</p>
       </div>
       </div>
     </section>
@@ -280,7 +294,7 @@
           <li>The seller is told their details were saved <b>before</b> being told what is missing.</li>
           <li>Nothing on the screen reads as a failure: no red frame, no error styling.</li>
           <li>The five-photo minimum is still stated, and the button still goes to the photo step.</li>
-          <li>The car card still shows the draft as <b>unfinished</b>. The listing is not published and the screen must not imply it is.</li>
+          <li><b>The cream column and the car card in it survive</b>, and the card still shows the draft as <b>unfinished</b>. The listing is not published and the screen must not imply it is. This is the easiest thing to lose while removing the error framing.</li>
           <li>The Finnish has been through a copy round. Nothing on this page has.</li>
         </ul>
       </div>
