@@ -99,11 +99,6 @@
     {
       id: 'email-verification',
       tags: ['type:tender-request-draft-created', 'market:c2b', 'role:seller'],
-      initiative: {
-        slug: 'review-no-review',
-        spec: 'design-specs/review-no-review.html',
-        why: 'Step 1 of the new-seller list promises the review to every seller: "Kun olet vahvistanut sähköpostiosoitteesi ja tiimimme on tarkastanut ilmoituksesi, se julkaistaan". This is the first email a seller receives, and the same unconditional promise the funnel just removed.'
-      },
       rendered: true,
       group: 'Draft created',
       state: 'Draft created, email not yet verified',
@@ -138,34 +133,11 @@
             '</ol>' +
             '<p class="em-center">Auton myynti ei voisi olla tämän helpompaa!</p>' +
             '<div class="em-help"><p class="em-help-title"><b>Tarvitsetko neuvoja?</b></p><p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p></div>',
-          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1', '$verificationUrl'),
-          /* Review/No review, change 4.1 — approved copy. Only list item 1
-             changes: the review clause goes, and `ilmoituksesi` comes back with
-             it because the pronoun `se` referred to the noun inside the deleted
-             clause. Everything else is production copy. */
-          v1: {
-            body:
-              '<h1>Hei ja tervetuloa AutoVexille!</h1>' +
-              '<p>Kiva, että haluat myydä autosi kauttamme!</p>' +
-              '<p>Vahvistathan sähköpostiosoitteesi alla olevasta painikkeesta. Vahvistaminen on tärkeää, jotta pystymme pitämään sinut ajan tasalla auton myyntiprosessin kulusta.</p>' +
-              '{{BUTTON}}' +
-              '<p class="em-center em-lead"><b>Mitä seuraavaksi?</b></p>' +
-              '<ol>' +
-              '<li>Kun olet vahvistanut sähköpostiosoitteesi, ilmoituksesi julkaistaan ja autoliikkeet alkavat kilpailla autostasi.</li>' +
-              '<li>Autoliikkeet tekevät tarjouksia autostasi noin 36 tunnin ajan. Viikonloput ja arkipyhät pidentävät aikaa, jotta kaikki kiinnostuneet autoliikkeet ehtivät tekemään tarjouksen ja saat parhaan mahdollisen hinnan.</li>' +
-              '<li>Tarjouskilpailun päätyttyä näet parhaan tarjouksen. Saatat nähdä myös vaihtoehtoisen tarjouksen, mikäli toivot auton noutoa kotoasi.</li>' +
-              '<li>Hyväksyttyäsi tarjouksen yhdistämme sinut autoliikkeen kanssa. Voit turvallisin mielin tehdä kaupat luotettavan ostajan kanssa.</li>' +
-              '</ol>' +
-              '<p class="em-center">Auton myynti ei voisi olla tämän helpompaa!</p>' +
-              '<div class="em-help"><p class="em-help-title"><b>Tarvitsetko neuvoja?</b></p><p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p></div>'
-          }
+          cta: btn('Vahvista sähköposti tästä', 'success.html?emailVerified=1', '$verificationUrl')
         },
         {
           id: 'existing-seller',
           label: 'Returning seller',
-          /* Review/No review reaches the new-seller version only: this body
-             never mentions the review, so there is nothing to make conditional. */
-          unchanged: true,
           condition: '$draft->seller?->name is set',
           subject: 'Jatka autosi myyntiä',
           body:
@@ -205,11 +177,6 @@
     {
       id: 'draft-add-images',
       tags: ['type:draft-add-images', 'market:c2b', 'role:seller'],
-      initiative: {
-        slug: 'review-no-review',
-        spec: 'design-specs/review-no-review.html',
-        why: 'Assumes the review call already happened ("asiantuntijamme kanssa käymäsi puhelun mukaisesti"). True while only advisors send it; false the moment image chasing is automated for a non-reviewed car.'
-      },
       rendered: true,
       group: 'Review',
       state: 'Draft rejected for missing images (only reachable for a reviewed car)',
@@ -224,17 +191,7 @@
         '<p>Melkein valmista! Lataa puuttuvat kuvat asiantuntijamme kanssa käymäsi puhelun mukaisesti. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>' +
         '<p>Klikkaa alla olevaa painiketta lisätäksesi kuvat. Myydään autosi yhdessä!</p>' +
         '{{BUTTON}}',
-      cta: btn('Lisää kuvat', 'photos.html', '$draft->imageUploadLink()'),
-      /* Review/No review, change 4.2 — approved copy. The reference to the call
-         goes and nothing replaces it: the sentence is grammatical without it,
-         and the heading above already says why the email arrived. */
-      v1: {
-        body:
-          '<h1>Hei <var data-src="$draft-&gt;user?-&gt;firstName() ?? $draft-&gt;firstName()">[first name]</var>, tarjouspyyntösi kaipaa vielä lisäkuvia!</h1>' +
-          '<p>Melkein valmista! Lataa puuttuvat kuvat. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>' +
-          '<p>Klikkaa alla olevaa painiketta lisätäksesi kuvat. Myydään autosi yhdessä!</p>' +
-          '{{BUTTON}}'
-      }
+      cta: btn('Lisää kuvat', 'photos.html', '$draft->imageUploadLink()')
     },
 
     {
@@ -290,9 +247,9 @@
       id: 'auction-ended-low-offers',
       tags: ['type:auction-ended-low-offers', 'market:c2b', 'role:seller'],
       initiative: {
-        slug: null,
-        spec: null,
-        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. Belongs to the asking-price initiative, which has no spec page yet.'
+        slug: 'asking-price-removal',
+        spec: 'design-specs/asking-price-removal.html',
+        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. No copy change is proposed — the open question is which email gets sent once there is no asking price to compare against.'
       },
       rendered: true,
       group: 'Auction ended',
@@ -318,9 +275,9 @@
       id: 'auction-ended-good-offers',
       tags: ['type:auction-ended-good-offers', 'market:c2b', 'role:seller'],
       initiative: {
-        slug: null,
-        spec: null,
-        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. Belongs to the asking-price initiative, which has no spec page yet.'
+        slug: 'asking-price-removal',
+        spec: 'design-specs/asking-price-removal.html',
+        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. No copy change is proposed — the open question is which email gets sent once there is no asking price to compare against.'
       },
       rendered: true,
       group: 'Auction ended',
@@ -349,9 +306,9 @@
       id: 'auction-ended-great-offers',
       tags: ['type:auction-ended-great-offers', 'market:c2b', 'role:seller'],
       initiative: {
-        slug: null,
-        spec: null,
-        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. Belongs to the asking-price initiative, which has no spec page yet.'
+        slug: 'asking-price-removal',
+        spec: 'design-specs/asking-price-removal.html',
+        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. No copy change is proposed — the open question is which email gets sent once there is no asking price to compare against.'
       },
       rendered: true,
       group: 'Auction ended',

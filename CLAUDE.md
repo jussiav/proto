@@ -346,42 +346,56 @@ leads with subject + greeting + when it is sent + which block changes, and
 `[square brackets]` mark a send-time value. Prod file names, component names and
 translation keys still never appear.
 
-**Change 4 is marked "Ongoing work" — approved copy is not the same as cleared
-for development.** The status chip is `info`, not `success`, the section opens
-with a "do not pick this up yet" notice, and the first acceptance criterion is
-that the team has agreed it is going ahead and when. The emails are a shared
-surface, their timing is tied to when the funnel changes actually ship, and they
-overlap the Marketing-owned family in Change 5 — so a dev reading the page must
-not be able to mistake finished copy for a ready ticket. Changes 1–3 stay
-independently buildable, and the initiative reads
-`3 ready to build · 1 ongoing · 1 later, with Marketing`. **Use this status
-whenever a change is specified and agreed but not yet scheduled**; the previous
-`Ready to build` / `Awaiting copy` / `Later · with Marketing` chips do not cover
-it.
+**Change 4 is CLOSED with no change to any transactional email** (2026-09-07).
+It had been "Ongoing work" with two approved copy edits; reading all three
+candidates against the actual trigger closed it instead, and the initiative now
+reads `3 ready to build · 1 reviewed, no change · 1 later, with Marketing`. The
+three decisions, each turning on the trigger rather than the wording:
 
-**Change 4 is now TWO emails, and its copy is approved** (2026-09-02). 4.1
-restores `ilmoituksesi` along with the deletion — the pronoun `se` referred to
-the noun inside the clause being removed, so deleting alone leaves the sentence
-subjectless; 4.2 is the bare deletion. **4.3 was decided KEEP.** The
-`>200tkm / >10 vuotta` paragraph in the no-offers email stays: it is honest, it
-is usually the real reason, and it is the only part of that email that answers
-the seller's question — softening it would cost the seller the explanation to
-spare us the awkwardness, and nothing in the email promises a review or a call
-anyway. Its `v1` and its `initiative` link are both gone from
-`email-content.js`, so the tool shows it with no badge at all; the reasoning
-lives on the spec page as a recorded decision and in the entry's own `note`, so
-nobody re-opens it as an oversight.
+| # | Email | Why it stays |
+|---|---|---|
+| 4.1 | Email verification, new seller | **It promises no call.** "…ja tiimimme on tarkastanut ilmoituksesi" says the team CHECKS the listing, which is a different claim from phoning the seller — it commits us to nothing the seller then waits for, so a no-call publish does not contradict it |
+| 4.2 | Missing photos reminder | **Every recipient really has been called.** Only an advisor can trigger it, and they trigger it during or after the review call, so "asiantuntijamme kanssa käymäsi puhelun mukaisesti" is true by construction |
+| 4.3 | Auction ended · no offers | Honest, usually the real reason, and the only part of that email that answers the seller's question — softening it would cost the seller the explanation to spare us the awkwardness |
 
-**Two markers keep the tool honest about copy it is showing.** `draft: true` on
-a `v1` renders "placeholder copy, not approved" in the list badge, the bar's
-variant label and the meta panel — without it a green `v1 differs` asserts an
-approval nobody gave. Nothing carries it now that change 4 is approved; it stays
-for the next initiative that wants something to react to before sign-off. And
-`unchanged: true` on a STATE renders a slate `unchanged` badge instead of
-`candidate`: Review/No review reaches the verification email's new-seller
-version only, and `candidate` on the returning-seller version reported an open
-question that was in fact closed. The `initiative` field lives on the mail, so a
-per-state opt-out is the only way to say that.
+**The distinction that closed it: a promise of a CALL is the problem, a mention
+of a review is not.** The initiative exists because sellers wait for a call that
+never comes. Copy that says we look at the listing carries no such wait, and it
+stays broadly true while any share of listings is reviewed.
+
+Both `v1` overrides, both `initiative` links and the one `unchanged: true` are
+gone from `email-content.js`, so the tool shows every one of these emails with no
+badge and offers no arm — an arm that renders identically to control reads as
+"the change is in and it looks the same". `emails.html` keeps its generic
+per-email arm machinery; **Enhanced negotiations' change 7 is now its only
+consumer**, and that one swaps a link target rather than copy, so the
+`active.v1.body` branch of the variant label is currently unreached.
+
+The spec section survives as a **recorded decision**, following 4.3's own
+pattern: slate `Decided · no change` chips, "Nothing to build here", each email
+quoted with *why it was considered* and *why it stays*, and a **What would
+re-open this** card — because two of the three rest on how the email is
+triggered, not on the wording. If photo chasing is ever automated, 4.2 becomes
+untrue; if listings stop being checked before publishing at all, 4.1 does. The
+numbering is deliberately NOT shifted: the team has the page, Change 5 stays 5.
+`Ongoing work` as a status is still the right chip for something specified and
+agreed but not yet scheduled — it just no longer applies to anything here.
+
+**All the remaining email work is Change 5**, the Marketing-owned lifecycle
+family, which is where the actual call promises live (one in a subject line).
+The hero paragraph says "our marketing emails" rather than "the emails" for that
+reason.
+
+**Two markers keep the tool honest about copy it is showing, and NEITHER is in
+use.** `draft: true` on a `v1` renders "placeholder copy, not approved" in the
+list badge, the bar's variant label and the meta panel — without it a green
+`v1 differs` asserts an approval nobody gave. `unchanged: true` on a STATE
+renders a slate `unchanged` badge instead of `candidate`, for a mail whose
+initiative reaches only some of its states — Review/No review's verification
+email was the one user, marking the returning-seller version as deliberately
+untouched, and it went with change 4. Both renderers stay: the next initiative
+that wants something to react to before sign-off, or that touches one state of a
+conditional email, needs them and they are already wired.
 
 **The bar now shows arms in force on OTHER pages even when this page proposes
 nothing.** `elsewhere` in `proto-bar.js` used to be computed inside the branch
@@ -2072,6 +2086,11 @@ page gives when it takes no part in an initiative. Offering an arm that renders
 identically to control reads as "the change is in and it looks the same", which
 is worse than no arm at all. An `initiative` field links an email to the spec page that
 owns the change and carries the reason it is a candidate before any copy exists.
+The three `auction-ended-*` emails carry one with **no copy proposal**: which of
+the four a seller receives is computed from `asking_price`, so they are
+Asking-price removal's open question, not a wording change. They pointed at a
+`slug: null` placeholder saying that initiative had no spec page — it does now,
+so they link `design-specs/asking-price-removal.html`.
 
 The tool is dev-only: reachable from the bar's **Go to** row, absent from every
 seller-facing nav, and replaced by a short notice in `?mode=test`.
