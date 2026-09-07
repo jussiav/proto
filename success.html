@@ -286,6 +286,13 @@
       ],
       scenarioExtraParams: ['copy'],
       scenarios: [
+        /* Reachable organically by skipping the photo step, so it needs an option
+           of its own or it is only findable by emptying the store by hand. It is
+           not a draft-status branch like the rest: prod's publish step REFUSED to
+           publish, so the draft is still open and there is no listing yet. */
+        { group: 'Publish blocked', items: [
+          { id: 'photos-missing',          label: 'Photos missing — publish refused' }
+        ]},
         { group: 'Rejected', items: [
           { id: 'rejected',                label: 'Rejected' },
           { id: 'rejected-missing-images', label: 'Rejected — missing photos' }
@@ -500,6 +507,7 @@
     /* Only the states that actually draw a card need a status — see `card: false`
        below for the ones prod does not preview at all. */
     var SCENARIO_DRAFT_STATUS = {
+      'photos-missing':           'open',
       'in-review-unverified':     'in_review',
       'in-review-verified':       'in_review',
       'queued':                   'queued_for_publishing_after_verification'
@@ -585,7 +593,7 @@
     function updateContent() {
       if (FORCED_SCENARIO && renderForcedScenario(FORCED_SCENARIO, FORCED_COPY)) return;
       const s = getStore();
-      const photosOk = photosComplete(s);
+      const photosOk = FORCED_SCENARIO === 'photos-missing' ? false : photosComplete(s);
       const loggedIn = !!s.loggedIn;
       const existing = document.getElementById('success-photos-btn');
       const leftCol = document.getElementById('success-illustration-wrap').parentNode;

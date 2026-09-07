@@ -1319,6 +1319,19 @@ That screen also carries a genuine prod quirk, reproduced: `rejected` +
 `allNextSteps.slice(1)`, so it shows a 4-step list that still says the listing is
 under review.
 
+**It has its own Scenario option, `photos-missing`** ("Photos missing — publish
+refused", listed first as the earliest ending the funnel has). Without it the
+state was reachable only by walking the funnel and skipping photos, or by
+emptying `store.photos` by hand — so it would have been the one ending nobody
+demoed. It is NOT a draft-status branch like the rest of that menu, which is why
+it gets a group of its own rather than joining `Rejected`: prod refused to
+publish, so there is no listing yet. Mechanically it rides the existing
+fall-through — `renderForcedScenario` returns false for an id it does not know,
+so `updateContent` reaches the organic branch, and the only additions are
+`photosOk` being forced false for that id and `SCENARIO_DRAFT_STATUS` mapping it
+to `open`. One renderer, both routes, so they cannot drift. Scenario picks the
+state and the Variants row picks the arm, which is the documented split.
+
 **The initiative is named for the surface, not the fix**, so later work on the end
 of the funnel joins it rather than starting a page — Enhanced negotiations' batch
 pattern. Its arm is declared unconditionally on `success.html` even though it only
