@@ -603,14 +603,26 @@
         if (offersBtn) offersBtn.style.display = 'none';
 
         if (!ESP_V1) {
-          /* Control = prod. The shared headline, illustration, email card and the
-             whole next-steps sidebar go; prod shows none of them, because nothing
-             has been published and there is no "next" to describe yet. */
+          /* Control = prod. The shared headline, illustration and email card go —
+             prod's publish step draws none of them.
+
+             The CREAM COLUMN STAYS, and so does the car card in it: prod's
+             `canPreviewDraft` includes `publishingDraft`, so `shouldShowPreview`
+             is true and the card renders. Only the next-steps list goes, because
+             `shouldShowWhatHappensNext` excludes this state — nothing has been
+             published, so there is no "next" to describe yet. The column is the
+             card alone.
+
+             `data-success-sidebar="empty"` then drops that card-only column on a
+             narrow screen, which is prod's own `shouldShowSidebarOnMobile: false`
+             — and prod compensates by rendering the card inside the left column
+             instead (`<Preview class="mt-8 lg:hidden">`). The proto keeps the
+             single card in the sidebar rather than mounting a second one. */
           headlineSection.style.display = 'none';
           illustrationWrap.style.display = 'none';
           emailCard.style.display = 'none';
-          var sidebar = document.getElementById('success-sidebar');
-          if (sidebar) sidebar.style.display = 'none';
+          document.getElementById('success-next-steps-title').style.display = 'none';
+          document.getElementById('success-steps').style.display = 'none';
           document.documentElement.setAttribute('data-success-sidebar', 'empty');
           var pe = document.getElementById('success-photo-error');
           pe.classList.remove('hidden');
@@ -831,8 +843,15 @@
        phone the column would otherwise stack under the content as 480px of empty
        cream. Desktop keeps it, as prod does. Hand-written rather than
        `max-md:hidden` because the Tailwind Play CDN only generates utilities that
-       exist in the DOM at first paint. */
-    @media (max-width: 767px) {
+       exist in the DOM at first paint.
+
+       The breakpoint is prod's `lg` (992), not `md`. prod's sidebar root is
+       `lg:flex` with `:class="shouldShowSidebarOnMobile ? 'flex' : 'hidden'"`, so
+       a false flag leaves it `hidden lg:flex` — hidden right up to 992, not 768.
+       It was written as `max-width: 767px` here; corrected 2026-09-07 while the
+       photos-missing state started using the same rule. Applies to plain
+       `rejected` too, which has the same flag in prod. */
+    @media (max-width: 991px) {
       html[data-success-sidebar="empty"] #success-sidebar { display: none; }
     }
     @keyframes toastIn {

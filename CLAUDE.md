@@ -1276,13 +1276,24 @@ primary button ("Lisää kuvat"). Every string is prod's
 scenario is forced. **That fix is arm-independent** — the enhanced design changes
 what the page says, not what the draft is.
 
-**And prod draws no illustration and no next-steps list here**, which is not an
-oversight: `Sidebar.vue`'s `shouldShowWhatHappensNext` lists six states and
-`publishingDraft` is not one of them, while `canPreviewDraft` DOES include it —
-so the right column is the car card alone. `shouldShowSidebarOnMobile` is false
-too, which is why `Publish.vue` renders its own `<Preview class="mt-8 lg:hidden">`
-inside the left column. Control reuses the page's existing
-`html[data-success-sidebar="empty"]` rule rather than a new one.
+**And prod draws no illustration and no next-steps list here — but it DOES draw
+the cream column and the car card in it.** Getting that wrong was the first
+mistake in building this: the column was hidden outright, and the user caught it
+against a preview environment. `Sidebar.vue`'s `shouldShowWhatHappensNext` lists
+six states and `publishingDraft` is not one of them, so the STEPS go — while
+`canPreviewDraft` DOES include it, so `shouldShowPreview` is true and the CARD
+stays. **The right column is the card alone, not nothing.** Control hides
+`#success-next-steps-title` and `#success-steps` and leaves the column standing.
+`shouldShowSidebarOnMobile` is false too, so the column drops below 992px through
+the page's existing `html[data-success-sidebar="empty"]` rule — prod compensates
+there by rendering the card inside the left column
+(`<Preview class="mt-8 lg:hidden">`); the proto keeps its single card in the
+sidebar rather than mounting a second one.
+
+**The lesson, and it is the second time this month:** two sibling predicates on
+one component can disagree, and reading the one that answers "is there a list"
+does not answer "is there a card". Check every gate on the surface, not the one
+that explains the thing you noticed.
 
 **Control is its own block, not a restyle of the shared headline.** The success
 page's headline section is centred at `text-2xl`; prod's is left-aligned at
@@ -1681,9 +1692,13 @@ illustration byte-identical to prod's `published.png`, the peach notice block
 `rejected`, `rejected-missing-images` and `published`, and `SCENARIO_DRAFT_STATUS`
 only maps the states that actually draw a card. Plain `rejected` then has neither
 steps nor card, so the column is empty — prod fills it with `VehicleMetrics`,
-never ported here — and below 768px it is dropped entirely
+never ported here — and below **992px** it is dropped entirely
 (`html[data-success-sidebar="empty"]`), which is prod's own
 `shouldShowSidebarOnMobile = shouldShowWhatHappensNext || providingPersonalInfo`.
+**That was written as 768 and it was wrong** (corrected 2026-09-07): prod's
+sidebar root is `lg:flex` with `:class="shouldShowSidebarOnMobile ? 'flex' :
+'hidden'"`, so a false flag leaves it `hidden lg:flex` — hidden right up to
+prod's `lg`, 992. The photos-missing state below shares the rule.
 
 `DRAFT_BADGES` in
 `vehicle-card.js` spells out `UiBadge`'s variants including `iconColor`, since
