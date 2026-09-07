@@ -1184,8 +1184,30 @@ inside it once a seller-intent answer can downgrade someone. The `v1` arm render
 outcome branching**, because three outcome-specific copies would leak the decision
 a step before we state it. `contact.html` reads the arm in `<head>` and owns the
 label itself; the `data-i18n` attribute was removed so a language switch cannot
-overwrite the arm's string. The offers-return case keeps its plain "Valmis" in
-both arms.
+overwrite the arm's string.
+
+**The "Valmis" the proto used to show on the offers-return path was INVENTED
+copy, and it is gone** (2026-09-07, from a dev's question about when that label
+appears). It appears nowhere in prod: `PersonalInfo.vue` passes
+`:continue-label="t('tenderform.personal_info.submit')"` with no ternary,
+`personal_info` holds exactly one submit key, and that is the ONLY
+`continue-label` passed anywhere in the funnel — so no other step could swap it
+either. `StepNavigation`'s own fallback, unreachable here, is
+`tenderform.continue` = "Jatka". The only three `Valmis` strings in the dump are
+`pickup_readiness_title` ("Valmis noudettavaksi") and `ready_to_sell`
+("Valmis myytäväksi") ×2, all B2B status labels. The offers-return path is the
+proto's own convenience with no prod equivalent, so it now renders the same label
+as every other path and the arm applies to it.
+
+**The near-miss that probably prompted the question:** the step DOES branch on
+`hasUserCompleteProfile`, but only for its heading and intro —
+`title_for_login_user` ("Yhteystiedot") and `fill_your_info_for_login_user`
+("Tarkista yhteystietosi"). The button never branches, so a logged-in seller
+reads "check your details" over a "send for review" button. Change 2 fixes that
+by accident. And the DAC7 form on the offers side
+(`legalities/PersonalInfo.vue`) submits with
+`legalities.personal_info.form.buttons.confirm` = "Vahvista" — a different form,
+easy to mistake for this one when grepping for a second submit label.
 
 **Change 3 SHIPPED to the CMS on 2026-09-07, and the published copy differs from
 what the spec proposed in all five answers.** It reached the **support page's

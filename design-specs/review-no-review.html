@@ -302,8 +302,14 @@
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>Every seller sees the same label. The segment and the intent answer are not consulted on this step.</li>
-          <li>When this step is opened from the offers flow the button is a plain <b>"Valmis"</b> — that case is untouched.</li>
+          <li><b>There is no second label to leave alone.</b> This step passes one string, that string has one value, and it is the only submit label in the whole funnel — so the change is complete when that one string changes.</li>
         </ul>
+      </div>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Asked and answered &mdash; is there a case where the button says something else?</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-2"><b>No.</b> Checked against the 7 September production snapshot: the step passes its label unconditionally, the key it reads has a single value, and no other step in the funnel passes a label of its own. The shared navigation component does have a fallback for when no label is given &mdash; <b>&ldquo;Jatka&rdquo;</b> &mdash; but this step always gives one, so it is unreachable here.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-2"><b>The near-miss worth knowing, because it is probably what prompted the question.</b> This step <i>does</i> change for a seller who is already logged in with a complete profile &mdash; but only its <b>heading and intro line</b>, never the button. They read &ldquo;Yhteystiedot&rdquo; and &ldquo;Tarkista yhteystietosi&rdquo; (<i>Contact details</i> / <i>Check your contact details</i>) instead of the first-time pair. So that seller currently reads &ldquo;check your details&rdquo; above a button that says &ldquo;send for review&rdquo;. This change happens to fix that mismatch as well.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-0"><b>One other form could be mistaken for this one.</b> The personal-details form on the offers side &mdash; the one that collects identity data for the EU tax directive &mdash; submits with <b>&ldquo;Vahvista&rdquo;</b>. Different form, different purpose, <b>not part of this change</b>.</p>
       </div>
       </div>
     </section>

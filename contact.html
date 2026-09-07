@@ -331,11 +331,17 @@
     }
 
     /* Owned here rather than by data-i18n, so the arm survives a language switch.
-       Not applied when the page is opened from the offers flow, where the button
-       is a plain "Valmis". */
+       Applied on EVERY path, including the offers-return one. This used to hard-code
+       "Valmis" when the page was reached from an offers/decision scenario — invented
+       copy, and prod has no such label: its contact step passes
+       `personal_info.submit` unconditionally, that key has one value, and it is the
+       only continue-label in the whole funnel. (StepNavigation's own fallback, never
+       reached here, is "Jatka".) prod also has no offers-return state to imitate —
+       that path is this prototype's own convenience — so the faithful thing is the
+       same label the step always shows. */
     function applySubmitLabel() {
       var el = document.getElementById('contact-submit-label');
-      if (!el || _offersScenario) return;
+      if (!el) return;
       el.textContent = t(REVIEW_NO_REVIEW_ARM === 'v1' ? 'contact.submitBtnNeutral' : 'contact.submitBtn');
     }
     document.addEventListener('av:langchange', applySubmitLabel);
@@ -351,11 +357,7 @@
         document.getElementById(id)?.addEventListener('change', saveContact);
       });
 
-      if (_offersScenario) {
-        document.getElementById('contact-submit-label').textContent = 'Valmis';
-      } else {
-        applySubmitLabel();
-      }
+      applySubmitLabel();
     });
 
     /* The bar's Variants row — this step renders Change 2 of the initiative. */
