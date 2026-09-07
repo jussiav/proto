@@ -12,11 +12,21 @@
  * Two deliberate deviations from the CMS source:
  *   • Inline "Lue lisää täältä" links point at blog and info pages this
  *     prototype does not have, so the sentence is kept and the link is not.
- *     The one exception is the support address, which is a real mailto.
+ *     The one exception is the support address, which is a real mailto — and
+ *     the CMS currently authors those hrefs as "/mailto:tiimi@autovex.fi",
+ *     a leading slash that makes them relative paths rather than mail links.
+ *     The proto keeps a working mailto rather than reproducing that.
  *   • Structure is expressed as HTML (<p>, <ul>, <ol>) rather than the CMS's
- *     rich-text nodes.
+ *     rich-text nodes. Where the CMS types step numbers into the copy itself
+ *     ("1. Ilmoituksen luominen:") that is transcribed as written, numbers
+ *     included, rather than being turned back into a list.
  *
  * `a` is an HTML string; every consumer renders it with innerHTML.
+ *
+ * An item may carry a `v1` beside its `a` — the copy a live initiative
+ * proposes, rendered when that arm is on. Nothing carries one now:
+ * Review/No review's five support answers shipped to the CMS on 2026-09-07,
+ * so `a` IS the revised copy and there is no before/after left to switch.
  */
 (function () {
   var EMAIL = '<a href="mailto:tiimi@autovex.fi" class="text-av-blue underline hover:no-underline">tiimi@autovex.fi</a>';
@@ -127,27 +137,26 @@
         '<p><b>Luotettavuus:</b> Palvelussa ovat mukana sadat tunnetut ja turvalliset autoliikkeet. Kauttamme on myyty autoliikkeille jo yli 70 000 autoa. Autoliike hoitaa paperityöt ja siirtää rahat tilillesi. AutoVexin omat asiantuntijat auttavat sinua koko prosessin ajan.</p>' +
         '<p>Palvelu on sinulle täysin ilmainen! Jos et ole tyytyväinen tarjouksiin, et sitoudu myymään autoasi.</p>' },
 
+      /* The CMS rewrote this answer when Review/No review's change 3 shipped
+         (2026-09-07). Two things moved at once: step 2 became conditional in its
+         HEADING as well as its body ("mahdollinen" / "mahdollisesti", not the
+         "tarvittaessa" the spec had proposed), and the ordered list became
+         numbered heading/body paragraph PAIRS — the numbers are typed into the
+         copy, so there is no list element any more. Transcribed as the CMS has
+         it, numbers included. */
       { q: 'Miten myyntiprosessi etenee?',
         a:
         '<p>Myyntiprosessi AutoVexillä on tehty sinulle mahdollisimman helpoksi ja vaivattomaksi. Näin se etenee vaiheittain:</p>' +
-        '<ol class="list-decimal pl-5 space-y-2">' +
-        '<li><b>Ilmoituksen luominen:</b> Kerrot autostasi ilmoituksen luontivaiheessa. Autosi perustiedot täytetään automaattisesti rekisterinumeron perusteella. Lisäät vain kuvat ja tiedot varusteista sekä huolloista.</li>' +
-        '<li><b>Asiantuntijan yhteydenotto:</b> Asiantuntijamme ottaa sinuun yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia). Varmistamme yhdessä, että ilmoituksen tiedot ovat kunnossa, ja ohjeistamme prosessin jatkosta.</li>' +
-        '<li><b>Tarjouskilpailu:</b> Kun ilmoitus on tarkistettu, se julkaistaan autoliikkeiden tarjouskilpailuun, joka kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse kilpailutuksen ajan.</li>' +
-        '<li><b>Päätöksenteko:</b> Kilpailutuksen päätyttyä näet parhaan tarjouksen ja voit hyväksyä sen halutessasi. Palvelu ei velvoita myyntiin.</li>' +
-        '<li><b>Kaupat:</b> Jos hyväksyt tarjouksen, ostava autoliike ottaa sinuun yhteyttä sopiakseen auton luovutuksesta, paperitöistä ja maksusta.</li>' +
-        '</ol>',
-        /* Review/No review v1 (4.1): the call is conditional, and publication no
-           longer waits on a review. */
-        v1:
-        '<p>Myyntiprosessi AutoVexillä on tehty sinulle mahdollisimman helpoksi ja vaivattomaksi. Näin se etenee vaiheittain:</p>' +
-        '<ol class="list-decimal pl-5 space-y-2">' +
-        '<li><b>Ilmoituksen luominen:</b> Kerrot autostasi ilmoituksen luontivaiheessa. Autosi perustiedot täytetään automaattisesti rekisterinumeron perusteella. Lisäät vain kuvat ja tiedot varusteista sekä huolloista.</li>' +
-        '<li><b>Asiantuntijan yhteydenotto:</b> Asiantuntijamme ottaa sinuun tarvittaessa yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia). Varmistamme yhdessä, että ilmoituksen tiedot ovat kunnossa, ja ohjeistamme prosessin jatkosta.</li>' +
-        '<li><b>Tarjouskilpailu:</b> Kun ilmoitus on valmis, se julkaistaan autoliikkeiden tarjouskilpailuun, joka kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse kilpailutuksen ajan.</li>' +
-        '<li><b>Päätöksenteko:</b> Kilpailutuksen päätyttyä näet parhaan tarjouksen ja voit hyväksyä sen halutessasi. Palvelu ei velvoita myyntiin.</li>' +
-        '<li><b>Kaupat:</b> Jos hyväksyt tarjouksen, ostava autoliike ottaa sinuun yhteyttä sopiakseen auton luovutuksesta, paperitöistä ja maksusta.</li>' +
-        '</ol>' },
+        '<p><b>1. Ilmoituksen luominen:</b></p>' +
+        '<p>Kerrot autostasi ilmoituksen luontivaiheessa. Autosi perustiedot täytetään automaattisesti rekisterinumeron perusteella. Lisäät vain kuvat ja tiedot varusteista sekä huolloista.</p>' +
+        '<p><b>2. Asiantuntijan mahdollinen yhteydenotto:</b></p>' +
+        '<p>Asiantuntijamme ottaa sinuun mahdollisesti yhteyttä puhelimitse (puhelu kestää noin 5 minuuttia). Varmistamme yhdessä, että ilmoituksen tiedot ovat kunnossa, ja ohjeistamme prosessin jatkosta.</p>' +
+        '<p><b>3. Tarjouskilpailu:</b></p>' +
+        '<p>Kun ilmoitus on valmis, se julkaistaan autoliikkeiden tarjouskilpailuun, joka kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse kilpailutuksen ajan.</p>' +
+        '<p><b>4. Päätöksenteko:</b></p>' +
+        '<p>Kilpailutuksen päätyttyä näet parhaan tarjouksen ja voit hyväksyä sen halutessasi. Palvelu ei velvoita myyntiin.</p>' +
+        '<p><b>5. Kaupat:</b></p>' +
+        '<p>Jos hyväksyt tarjouksen, ostava autoliike ottaa sinuun yhteyttä sopiakseen auton luovutuksesta, paperitöistä ja maksusta.</p>' },
 
       { q: 'Onko AutoVex ilmainen palvelu?', a:
         '<p>Kyllä, palvelu on myyjälle täysin ilmainen eikä piilokuluja ole.</p>' +
@@ -166,22 +175,21 @@
       { q: 'Kuinka vanhoja autoja palvelussa voi myydä?', a:
         '<p>Palvelussamme voi myydä minkä tahansa alle 250 000 km ajetun auton. Tämän rajan yli ajetuille autoille ei lähtökohtaisesti ole palvelussamme kysyntää. Ikärajaa autoille ei ole, mutta tällä hetkellä autoliikkeiden suurin kiinnostus kohdistuu alle 10 vuotta vanhoihin ja alle 150tkm ajettuihin autoihin.</p>' },
 
+      /* Shipped 2026-09-07. `tarvittaessa` as proposed, but placed before
+         `lomakkeelle` rather than after `tiedot`. */
       { q: 'Miten AutoVexiin saa yhteyden?',
         a:
-        '<p>Asiakaspalvelumme auttaa sinua mielellään koko myyntiprosessin ajan! Haluamme varmistaa, että saat autostasi parhaan mahdollisen tarjouksen, joten käymme lomakkeelle täyttämäsi tiedot kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua. Lisäksi voit olla meihin yhteydessä sähköpostitse osoitteessa ' + EMAIL + '. Palvelemme arkisin klo 10-16.</p>',
-        /* v1 (4.2) */
-        v1:
-        '<p>Asiakaspalvelumme auttaa sinua mielellään koko myyntiprosessin ajan! Haluamme varmistaa, että saat autostasi parhaan mahdollisen tarjouksen, joten käymme lomakkeelle täyttämäsi tiedot tarvittaessa kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua. Lisäksi voit olla meihin yhteydessä sähköpostitse osoitteessa ' + EMAIL + '. Palvelemme arkisin klo 10-16.</p>' }
+        '<p>Asiakaspalvelumme auttaa sinua mielellään koko myyntiprosessin ajan! Haluamme varmistaa, että saat autostasi parhaan mahdollisen tarjouksen, joten käymme tarvittaessa lomakkeelle täyttämäsi tiedot kanssasi lyhyesti läpi puhelimitse jo ennen myynti-ilmoituksen julkaisua. Lisäksi voit olla meihin yhteydessä sähköpostitse osoitteessa ' + EMAIL + '. Palvelemme arkisin klo 10-16.</p>' }
     ]},
 
     { group: 'Ennen auton myyntiä', items: [
+      /* Shipped 2026-09-07, and further than proposed: `Saat tarvittaessa`
+         became `Saatat saada` — a possibility rather than a conditional
+         entitlement — and a sentence was ADDED saying we call as many as we
+         can, which the spec had not asked for. */
       { q: 'Miten tiedän autoni arvon?',
         a:
-        '<p>Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä. Tarjoamme realistisen arvion siitä, millä tasolla autosi arvo tällä hetkellä suunnilleen liikkuu.</p>' +
-        '<p>Haluatko ymmärtää tarkemmin, miten autoliikkeet hinnoittelevat autoja? Lue lisää täältä.</p>',
-        /* v1 (4.3) */
-        v1:
-        '<p>Saat tarvittaessa asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä. Tarjoamme realistisen arvion siitä, millä tasolla autosi arvo tällä hetkellä suunnilleen liikkuu.</p>' +
+        '<p>Saatat saada asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailutuksen käynnistymistä. Tarjoamme realistisen arvion siitä, millä tasolla autosi arvo tällä hetkellä suunnilleen liikkuu. Soitamme läpi ilmoituksia niin paljon kuin pystymme.</p>' +
         '<p>Haluatko ymmärtää tarkemmin, miten autoliikkeet hinnoittelevat autoja? Lue lisää täältä.</p>' },
 
       { q: 'Autossani on vikoja, voinko silti myydä sen?', a:
@@ -230,31 +238,28 @@
       { q: 'Kuvien tallentaminen tai lisääminen ei onnistu', a:
         '<p>Ilmoituksen julkaiseminen edellyttää vähintään viittä kuvaa, joten tarkistathan ensin, että olet yrittänyt lisätä tarvittavan määrän kuvia autostasi. Jos kuvien lataaminen ei onnistu tästä huolimatta, ota meihin yhteyttä osoitteessa ' + EMAIL + ', niin autamme sinut eteenpäin.</p>' },
 
+      /* Shipped 2026-09-07. The pyyntihinta sentence went as proposed; beyond
+         that, `Saatat saada` again, the consultation now also covers
+         `ilmoituksen laadusta`, a capacity sentence was added, and paragraph 2
+         gained `hyvä` before `tarjous`. */
       { q: 'Miten saan autoliikkeet kiinnostumaan autostani?', a:
         '<p>Tärkeintä on laatia mahdollisimman kattava ja selkeä ilmoitus. Lisää autostasi kuvat sisältä ja ulkoa, kuvaa mahdolliset vauriot avoimesti ja liitä mukaan huoltohistoria. Erityisesti huoltokirjan merkinnät ja dokumentoidut huollot lisäävät autoliikkeiden luottamusta ja kiinnostusta.</p>' +
-        '<p>Mitä tarkemmat tiedot annat auton kunnosta, varusteista ja historiasta, sitä helpompi autoliikkeiden on tehdä tarjous – ja sitä todennäköisemmin kilpailu nostaa hintaa.</p>' +
-        '<p>Myös realistisen pyyntihinnan asettaminen on tärkeää ja me tuemme sinua tässä. Saat asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</p>' +
-        '<p>Haluatko ymmärtää tarkemmin, miten autoliikkeet hinnoittelevat autoja? Lue aiheesta täältä.</p>',
-        /* v1 (4.4): the "me tuemme sinua tässä" sentence goes, and the
-           consultation becomes conditional — same substance as 4.3. */
-        v1:
-        '<p>Tärkeintä on laatia mahdollisimman kattava ja selkeä ilmoitus. Lisää autostasi kuvat sisältä ja ulkoa, kuvaa mahdolliset vauriot avoimesti ja liitä mukaan huoltohistoria. Erityisesti huoltokirjan merkinnät ja dokumentoidut huollot lisäävät autoliikkeiden luottamusta ja kiinnostusta.</p>' +
-        '<p>Mitä tarkemmat tiedot annat auton kunnosta, varusteista ja historiasta, sitä helpompi autoliikkeiden on tehdä tarjous – ja sitä todennäköisemmin kilpailu nostaa hintaa.</p>' +
-        '<p>Saat tarvittaessa asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ennen kilpailun käynnistymistä.</p>' +
+        '<p>Mitä tarkemmat tiedot annat auton kunnosta, varusteista ja historiasta, sitä helpompi autoliikkeiden on tehdä hyvä tarjous – ja sitä todennäköisemmin kilpailu nostaa hintaa.</p>' +
+        '<p>Saatat saada asiantuntijaltamme puhelimitse henkilökohtaisen konsultaation auton markkina-arvosta ja ilmoituksen laadusta ennen kilpailun käynnistymistä. Soitamme ilmoituksia mahdollisuuksien mukaan, kiireestä riippuen.</p>' +
         '<p>Haluatko ymmärtää tarkemmin, miten autoliikkeet hinnoittelevat autoja? Lue aiheesta täältä.</p>' },
 
+      /* Shipped 2026-09-07, and rewritten rather than qualified — the biggest
+         departure from the spec, which had proposed inserting one word. The
+         `Siksi käymme…` sentence is GONE (so nothing claims a review happens at
+         all), the price-estimate paragraph is GONE, the call is
+         `Mahdollisuuksien mukaan`, `otamme` softened to `pyrimme ottamaan`, and
+         a closing sentence states outright that some listings go to auction
+         with no contact. Four paragraphs down to three. */
       { q: 'Miksi ilmoitukseni on tarkistuksessa?',
         a:
-        '<p>Haluamme varmistaa, että saat autostasi parhaan mahdollisen hinnan. Siksi käymme ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</p>' +
-        '<p>Asiantuntijamme soittaa sinulle ja varmistaa esimerkiksi ajokilometrit, varusteet, huoltohistorian, renkaiden kunnon sekä mahdolliset viat. Kun autosi tiedot ovat kattavat ja oikein, autoliikkeet tekevät tarjouksia mielellään.</p>' +
-        '<p>Keskustelemme samalla myös hinta-arviosta ja realistisesta pyyntihinnasta autollesi. Lisäksi kerromme, miten prosessi etenee tästä eteenpäin.</p>' +
-        '<p>Tietojen läpikäynti kestää yleensä noin 5 minuuttia, ja otamme yhteyttä normaalisti seuraavaan arkipäivään mennessä. Sesonkiaikoina, viikonloppujen tai arkipyhien jälkeen yhteydenotto voi kestää hieman pidempään.</p>',
-        /* v1 (4.5): framing only — the rest of the answer stays accurate. */
-        v1:
-        '<p>Haluamme varmistaa, että saat autostasi parhaan mahdollisen hinnan. Siksi käymme tapauskohtaisesti ilmoituksen tiedot lyhyesti läpi ennen sen julkaisemista.</p>' +
-        '<p>Asiantuntijamme soittaa sinulle ja varmistaa esimerkiksi ajokilometrit, varusteet, huoltohistorian, renkaiden kunnon sekä mahdolliset viat. Kun autosi tiedot ovat kattavat ja oikein, autoliikkeet tekevät tarjouksia mielellään.</p>' +
-        '<p>Keskustelemme samalla myös hinta-arviosta ja realistisesta pyyntihinnasta autollesi. Lisäksi kerromme, miten prosessi etenee tästä eteenpäin.</p>' +
-        '<p>Tietojen läpikäynti kestää yleensä noin 5 minuuttia, ja otamme yhteyttä normaalisti seuraavaan arkipäivään mennessä. Sesonkiaikoina, viikonloppujen tai arkipyhien jälkeen yhteydenotto voi kestää hieman pidempään.</p>' }
+        '<p>Haluamme varmistaa, että saat autostasi parhaan mahdollisen hinnan!</p>' +
+        '<p>Mahdollisuuksien mukaan asiantuntijamme soittaa sinulle ja varmistaa esimerkiksi ajokilometrit, varusteet, huoltohistorian, renkaiden kunnon sekä mahdolliset viat. Kun autosi tiedot ovat kattavat ja oikein, autoliikkeet tekevät tarjouksia mielellään.</p>' +
+        '<p>Tietojen läpikäynti kestää yleensä noin 5 minuuttia, ja pyrimme ottamaan yhteyttä normaalisti seuraavaan arkipäivään mennessä. Sesonkiaikoina, viikonloppujen tai arkipyhien jälkeen yhteydenotto voi kestää hieman pidempään. Joissakin tapauksissa ilmoituksesi etenee tarjouskilpailuun ilman yhteydenottoa.</p>' }
     ]},
 
     { group: 'Kilpailutus ja tarjoukset', items: [
@@ -406,22 +411,16 @@
         '<p>The service is completely free for you! If you are not happy with the offers, you are not committed to selling.</p>' },
       { q: 'How does the selling process work?', a:
         '<p>The selling process at AutoVex is made as easy and effortless for you as possible. Step by step:</p>' +
-        '<ol class="list-decimal pl-5 space-y-2">' +
-        '<li><b>Creating the listing:</b> You tell us about your car while creating the listing. The basic details are filled in automatically from the registration number. You only add photos and details of equipment and services.</li>' +
-        '<li><b>The expert gets in touch:</b> Our expert calls you (the call takes about 5 minutes). Together we make sure the listing details are right, and we explain what happens next.</li>' +
-        '<li><b>Bidding:</b> Once the listing has been checked, it is published for dealerships to bid on, typically for 36 hours. We keep you up to date by email.</li>' +
-        '<li><b>Your decision:</b> When bidding ends you see the best offer and can accept it if you want. The service does not oblige you to sell.</li>' +
-        '<li><b>The sale:</b> If you accept, the buying dealership contacts you to agree on handover, paperwork and payment.</li>' +
-        '</ol>',
-        v1:
-        '<p>The selling process at AutoVex is made as easy and effortless for you as possible. Step by step:</p>' +
-        '<ol class="list-decimal pl-5 space-y-2">' +
-        '<li><b>Creating the listing:</b> You tell us about your car while creating the listing. The basic details are filled in automatically from the registration number. You only add photos and details of equipment and services.</li>' +
-        '<li><b>The expert gets in touch:</b> Our expert calls you if necessary (the call takes about 5 minutes). Together we make sure the listing details are right, and we explain what happens next.</li>' +
-        '<li><b>Bidding:</b> Once the listing is ready, it is published for dealerships to bid on, typically for 36 hours. We keep you up to date by email.</li>' +
-        '<li><b>Your decision:</b> When bidding ends you see the best offer and can accept it if you want. The service does not oblige you to sell.</li>' +
-        '<li><b>The sale:</b> If you accept, the buying dealership contacts you to agree on handover, paperwork and payment.</li>' +
-        '</ol>' },
+        '<p><b>1. Creating the listing:</b></p>' +
+        '<p>You tell us about your car while creating the listing. The basic details are filled in automatically from the registration number. You only add photos and details of equipment and services.</p>' +
+        '<p><b>2. A possible call from an expert:</b></p>' +
+        '<p>Our expert may call you (the call takes about 5 minutes). Together we make sure the listing details are right, and we explain what happens next.</p>' +
+        '<p><b>3. Bidding:</b></p>' +
+        '<p>Once the listing is ready, it is published for dealerships to bid on, typically for 36 hours. We keep you up to date by email.</p>' +
+        '<p><b>4. Your decision:</b></p>' +
+        '<p>When bidding ends you see the best offer and can accept it if you want. The service does not oblige you to sell.</p>' +
+        '<p><b>5. The sale:</b></p>' +
+        '<p>If you accept, the buying dealership contacts you to agree on handover, paperwork and payment.</p>' },
       { q: 'Is AutoVex a free service?', a:
         '<p>Yes, the service is completely free for the seller and there are no hidden costs.</p>' +
         '<p>Our business model is based on a commission dealerships pay on completed sales. We act as an efficient sourcing channel and partner for them, helping them find quality used cars – and you get your car put up for competition easily.</p>' },
@@ -436,16 +435,11 @@
       { q: 'How old a car can be sold in the service?', a:
         '<p>Any car driven under 250,000 km can be sold with us. For cars over that limit there is generally no demand in the service. There is no age limit, but at the moment dealership interest is greatest in cars under 10 years old and under 150,000 km.</p>' },
       { q: 'How can I get in touch with AutoVex?', a:
-        '<p>Our customer service is glad to help you throughout the selling process. We want to make sure you get the best possible offer for your car, so we go through the details you filled in briefly with you by phone before the listing is published. You can also reach us by email at ' + EMAIL + '. We are available on weekdays 10-16.</p>',
-        v1:
         '<p>Our customer service is glad to help you throughout the selling process. We want to make sure you get the best possible offer for your car, so if necessary we go through the details you filled in briefly with you by phone before the listing is published. You can also reach us by email at ' + EMAIL + '. We are available on weekdays 10-16.</p>' }
     ]},
     { group: 'Before selling', items: [
       { q: 'How do I know what my car is worth?', a:
-        '<p>You get a personal consultation from our expert by phone about the car\'s market value before bidding starts. We give a realistic estimate of roughly where your car\'s value sits at the moment.</p>' +
-        '<p>Want to understand how dealerships price cars? Read more.</p>',
-        v1:
-        '<p>If necessary you get a personal consultation from our expert by phone about the car\'s market value before bidding starts. We give a realistic estimate of roughly where your car\'s value sits at the moment.</p>' +
+        '<p>You may get a personal consultation from our expert by phone about the car\'s market value before bidding starts. We give a realistic estimate of roughly where your car\'s value sits at the moment. We call through as many listings as we can.</p>' +
         '<p>Want to understand how dealerships price cars? Read more.</p>' },
       { q: 'My car has faults — can I still sell it?', a:
         '<p>Yes. It is very important to report all faults, dents and other shortcomings, as well as repairs carried out, honestly while filling in the listing. Add clear photos of the damage and of the service book entries.</p>' +
@@ -484,24 +478,13 @@
         '<p>Publishing a listing requires at least five photos, so please check first that you have tried to add that many. If uploading still fails, contact us at ' + EMAIL + ' and we will help you onwards.</p>' },
       { q: 'How do I get dealerships interested in my car?', a:
         '<p>The most important thing is to write as complete and clear a listing as you can. Add photos of the inside and outside, photograph any damage openly, and include the service history. Service book entries and documented services in particular increase dealerships\' trust and interest.</p>' +
-        '<p>The more precise the details you give about condition, equipment and history, the easier it is for dealerships to make an offer – and the more likely competition pushes the price up.</p>' +
-        '<p>Setting a realistic asking price matters too, and we support you in that. You get a personal consultation from our expert by phone about the car\'s market value before the competition starts.</p>' +
-        '<p>Want to understand how dealerships price cars? Read more about it.</p>',
-        v1:
-        '<p>The most important thing is to write as complete and clear a listing as you can. Add photos of the inside and outside, photograph any damage openly, and include the service history. Service book entries and documented services in particular increase dealerships\' trust and interest.</p>' +
-        '<p>The more precise the details you give about condition, equipment and history, the easier it is for dealerships to make an offer – and the more likely competition pushes the price up.</p>' +
-        '<p>If necessary you get a personal consultation from our expert by phone about the car\'s market value before the competition starts.</p>' +
+        '<p>The more precise the details you give about condition, equipment and history, the easier it is for dealerships to make a good offer – and the more likely competition pushes the price up.</p>' +
+        '<p>You may get a personal consultation from our expert by phone about the car\'s market value and the quality of your listing before the competition starts. We call through listings as capacity allows.</p>' +
         '<p>Want to understand how dealerships price cars? Read more about it.</p>' },
       { q: 'Why is my listing under review?', a:
-        '<p>We want to make sure you get the best possible price for your car. That is why we go through the listing details briefly before publishing it.</p>' +
-        '<p>Our expert calls you and confirms things like the kilometres, equipment, service history, tyre condition and any faults. When your car\'s details are complete and correct, dealerships are glad to make offers.</p>' +
-        '<p>At the same time we discuss the price estimate and a realistic asking price for your car. We also explain how the process continues from there.</p>' +
-        '<p>Going through the details usually takes about 5 minutes, and we normally get in touch by the next working day. In peak season, or after weekends and public holidays, it can take a little longer.</p>',
-        v1:
-        '<p>We want to make sure you get the best possible price for your car. That is why we go through the listing details briefly, case by case, before publishing it.</p>' +
-        '<p>Our expert calls you and confirms things like the kilometres, equipment, service history, tyre condition and any faults. When your car\'s details are complete and correct, dealerships are glad to make offers.</p>' +
-        '<p>At the same time we discuss the price estimate and a realistic asking price for your car. We also explain how the process continues from there.</p>' +
-        '<p>Going through the details usually takes about 5 minutes, and we normally get in touch by the next working day. In peak season, or after weekends and public holidays, it can take a little longer.</p>' }
+        '<p>We want to make sure you get the best possible price for your car!</p>' +
+        '<p>Where capacity allows, our expert calls you and confirms things like the kilometres, equipment, service history, tyre condition and any faults. When your car\'s details are complete and correct, dealerships are glad to make offers.</p>' +
+        '<p>Going through the details usually takes about 5 minutes, and we aim to get in touch by the next working day. In peak season, or after weekends and public holidays, it can take a little longer. In some cases your listing goes to auction without any contact at all.</p>' }
     ]},
     { group: 'Bidding and offers', items: [
       { q: 'How does the bidding work?', a:

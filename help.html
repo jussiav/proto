@@ -227,29 +227,19 @@
        set of questions follows the CMS entry rather than the markup. Group cards
        keep the same classes the collapse and accordion handlers expect; both are
        (re)bound after every render. */
-    /* ── "Review/No review" initiative ────────────────────────────────────────
-       Change 4: five of these items present the review call as something every
-       seller gets. The v1 arm shows the revised copy; control keeps the current
-       CMS text, so the two read side by side. In production there is no arm — the
-       CMS entry is edited when the change ships. */
-    var REVIEW_NO_REVIEW_ARM = (function () {
-      var ARMS = ['control', 'v1'];
-      var arm = window.protoVariant ? window.protoVariant('review-no-review', 'control') : 'control';
-      if (ARMS.indexOf(arm) === -1) {
-        if (window.protoVariantSet) window.protoVariantSet('review-no-review', null);
-        return 'control';
-      }
-      return arm;
-    }());
+    /* Review/No review's change 3 SHIPPED to the CMS on 2026-09-07, so the five
+       revised answers are simply what this page renders — there is no arm here
+       any more, and `faq-content.js` carries no `v1` for them. The page also
+       stops declaring the initiative: offering a switcher whose two options
+       render identically reads as "the change is in and it looks the same",
+       which is worse than showing none. Changes 1 and 2 still have arms, on the
+       price and contact steps. */
 
     function renderHelpFaq() {
       var host = document.getElementById('faq-groups');
       if (!host) return;
       var set = (window.FAQ_CONTENT && window.FAQ_CONTENT.support) || { fi: [], en: [] };
       var groups = set[window.getLang ? getLang() : 'fi'] || set.fi;
-      var armAnswer = function (item) {
-        return (REVIEW_NO_REVIEW_ARM === 'v1' && item.v1) ? item.v1 : item.a;
-      };
       host.innerHTML = groups.map(function (group, gi) {
         var items = group.items.map(function () {
           return '<div class="faq-item">' +
@@ -277,7 +267,7 @@
         var rows = card.querySelectorAll('.faq-item');
         group.items.forEach(function (item, i) {
           rows[i].querySelector('.faq-trigger span').textContent = item.q;
-          rows[i].querySelector('.faq-body div div').innerHTML = armAnswer(item);
+          rows[i].querySelector('.faq-body div div').innerHTML = item.a;
         });
       });
       bindHelpFaq();
@@ -307,21 +297,6 @@
     window.setLang = function(lang) {
       _origSetLang(lang);
       renderHelpFaq();
-    };
-
-    /* The bar's Variants row: this page renders Change 4 of the initiative, so the
-       arm is switchable here as well as in the funnel. Set before the bar reads it. */
-    window.protoPage = {
-      initiatives: [
-        {
-          slug:    'review-no-review',
-          default: 'control',
-          variants: [
-            { id: 'control', label: 'Control — today\'s CMS copy' },
-            { id: 'v1',      label: 'Variant 1 — call is conditional' }
-          ]
-        }
-      ]
     };
 
     renderHelpFaq();

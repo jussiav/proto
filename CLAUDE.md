@@ -471,7 +471,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Initiative | Stage | Slug / param | Page default | Prod arm | Pages | Spec |
 |---|---|---|---|---|---|---|
 | Delivery distance A/B test | **In production A/B test** | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
-| Review/No review | Live | `review-no-review` | `control` | `control` | `price.html` | `design-specs/review-no-review.html` |
+| Review/No review | Live | `review-no-review` | `control` | `control` | `price.html`, `contact.html` | `design-specs/review-no-review.html` |
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
 | Enhanced negotiations | Live | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
@@ -1187,17 +1187,54 @@ label itself; the `data-i18n` attribute was removed so a language switch cannot
 overwrite the arm's string. The offers-return case keeps its plain "Valmis" in
 both arms.
 
-Change 3 of the same initiative reaches the **support page's FAQ**, not the app:
-five items presented the review call as something every seller gets. The revised
-copy makes it conditional with one word — `tarvittaessa`, or `tapauskohtaisesti`
-where the sentence is about our own process — so nothing is promised and nothing
-is denied. An item in `faq-content.js` may carry a `v1` field beside its CMS `a`
-text; `help.html` reads the arm through `protoVariant` and picks the override, so
-control still shows exactly what the CMS shows today. The page declares the
-initiative in its own `protoPage`, so the arm is switchable there too. In
-production there is no arm — the CMS entry is edited when the change ships. A
-sixth item ("why wasn't I called?") was considered and dropped: once nothing is
+**Change 3 SHIPPED to the CMS on 2026-09-07, and the published copy differs from
+what the spec proposed in all five answers.** It reached the **support page's
+FAQ**, not the app: five items presented the review call as something every
+seller gets. The proposal made each conditional with one word — `tarvittaessa`,
+or `tapauskohtaisesti` where the sentence was about our own process. What
+actually went live is weaker and better:
+
+| # | Answer | What shipped instead |
+|---|---|---|
+| 3.1 | Miten myyntiprosessi etenee? | `mahdollisesti`, not `tarvittaessa` — and the step's own HEADING went conditional too (`Asiantuntijan mahdollinen yhteydenotto`). The `<ol>` also became numbered heading/body paragraph PAIRS with the numbers typed into the copy |
+| 3.2 | Miten AutoVexiin saa yhteyden? | `tarvittaessa` as proposed, moved before `lomakkeelle`. The only one that shipped essentially as written |
+| 3.3 | Miten tiedän autoni arvon? | `Saatat saada` (a possibility) rather than `Saat tarvittaessa` (an entitlement with a condition), plus an added capacity sentence |
+| 3.4 | Miten saan autoliikkeet kiinnostumaan…? | asking-price sentence deleted as asked; consultation also gained `ja ilmoituksen laadusta`, plus a capacity sentence. One unrelated word rode along: `tehdä **hyvä** tarjous` |
+| 3.5 | Miksi ilmoitukseni on tarkistuksessa? | **Rewritten, not qualified.** The `Siksi käymme…` sentence and the whole price-estimate paragraph are GONE, the call is `Mahdollisuuksien mukaan`, `otamme` → `pyrimme ottamaan`, and a closing sentence says outright that some listings reach the auction with no contact. Four paragraphs to three |
+
+**The pattern in what the CMS chose: "this may happen", not "this happens when
+needed".** `mahdollisesti` / `Saatat saada` / `Mahdollisuuksien mukaan` all
+decline to promise; `tarvittaessa` still implies we judge and then act. And
+three answers now say out loud that we cannot call everyone, which the proposal
+had deliberately avoided saying. **The earlier decision that 3.5 keeps all four
+paragraphs did not survive the rewrite**, and the shorter answer is the strongest
+statement of this initiative anywhere in the copy.
+
+**So `faq-content.js`'s `a` IS the revised copy now, and every `v1` is gone** —
+FI and EN, ten overrides in total. `help.html` lost `REVIEW_NO_REVIEW_ARM`, its
+`armAnswer` helper and its whole `protoPage` declaration: a switcher whose two
+options render identically reads as "the change is in and it looks the same".
+The `v1` mechanism stays documented in the file header for the next initiative.
+Changes 1 and 2 keep their arms, on `price.html` and `contact.html`.
+
+A sixth item ("why wasn't I called?") was considered and dropped: once nothing is
 promised, there is no broken expectation to explain.
+
+**A live CMS defect found while transcribing, unrelated to this change.** Two
+support answers author their support-address links as `/mailto:tiimi@autovex.fi`
+— a leading slash, which makes them relative page links rather than mail links,
+so clicking the address goes nowhere. Flagged on the spec page as a one-character
+fix. The proto keeps a working `mailto:`, which was already a documented
+deviation.
+
+**How the transcription was verified, and it is the method to reuse:** all 36
+live answers were pulled from the rendered page, normalised to plain text and
+compared by LENGTH against the proto's own 36. Five differed by more than a
+whitespace character, which is exactly the five this change touched — proof that
+nothing else in the CMS entry moved. A sixth answer differed by 6 characters
+("Lomakkeen täyttäminen ei onnistu") and that is markup, not copy: the CMS types
+its step numbers where the proto uses an `<ol>`, so the rendered reading is the
+same.
 
 **Seller file upload** adds a documents section to the photos step — **PDF only**
 as of 2026-09-03, the team's decision; Word and images were accepted while the
@@ -2055,8 +2092,17 @@ renders it with `innerHTML`, so lists and bolded lead-ins survive.
 
 Two deliberate deviations: inline "Lue lisää täältä" links point at blog and info
 pages this proto does not have, so the sentence stays and the link goes (the
-support address is the exception and stays a real `mailto`); and structure is
-plain HTML rather than the CMS's rich-text nodes.
+support address is the exception and stays a real `mailto` — the CMS's own hrefs
+are currently broken, see Review/No review change 3); and structure is plain HTML
+rather than the CMS's rich-text nodes. Where the CMS types step numbers into the
+copy itself, that is transcribed as written rather than turned back into a list —
+`FAQ_CONTENT.support` has two answers like that.
+
+**Re-check the support set against the live page whenever the CMS is edited.**
+The method: pull all 36 rendered answers, normalise to plain text, compare by
+LENGTH against the proto's own. Anything off by more than a character or two of
+whitespace is a real edit; the rest is markup. That is how change 3's five
+revised answers were confirmed to be the only five that moved.
 
 **Pages render, they do not store.** `index.html` and `help.html` used to hold the
 questions as markup — ~400 lines on the support page alone — with a parallel JS
