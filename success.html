@@ -110,6 +110,26 @@
           </div>
         </div>
 
+        <!-- Prod's publish-step image-error block (control arm of Enhanced success
+             page). Transcribed from the publish step's own template: a left-aligned
+             heading-2, then a red-bordered notice whose first line is semibold and
+             second sits 12px under it, then a full-width primary button. Prod draws
+             no illustration, no badge and no next-steps list here, because the draft
+             was never published — so this block replaces the shared headline
+             section rather than restyling it. -->
+        <div id="success-photo-error" class="hidden w-full flex-col text-start">
+          <h1 id="success-photo-error-title" class="mb-8 font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]"></h1>
+          <div class="mb-6 p-6 border border-red-500 rounded-xl font-dm text-base leading-5 text-black">
+            <span id="success-photo-error-primary" class="block font-semibold"></span>
+            <span id="success-photo-error-secondary" class="block mt-3"></span>
+          </div>
+          <a id="success-photo-error-btn" href="photos.html?from=success"
+             class="flex items-center justify-center h-14 px-8 rounded-lg bg-av-blue no-underline"
+             style="box-shadow:inset 0px 1px 2px 1px rgba(255,255,255,0.2);">
+            <span class="font-dm font-medium text-base text-white"></span>
+          </a>
+        </div>
+
         <!-- Notice card — in_review(verified)/published states only. Visual style + copy
              confirmed verbatim against Review.vue's template (in_review+verified branch)
              and Success.vue (bg-[rgb(250,234,218)] border-orange-300, underlined text link). -->
@@ -216,6 +236,23 @@
       return ((s.contact || {}).sahkoposti || '').trim().toLowerCase().indexOf('dac') === 0;
     }
 
+    /* ── "Enhanced success page" initiative ───────────────────────────────────
+       Skipping photos and submitting does NOT reach a success page in prod: the
+       publish step refuses to publish and renders its own image-error branch, so
+       `control` is that screen and the draft stays `open`. `v1` is the enhanced
+       design this prototype had been showing unconditionally — it acknowledges
+       the submission, then states what is missing and what remains. */
+    var ESP_ARMS = ['control', 'v1'];
+    var ESP_ARM = (function () {
+      var arm = window.protoVariant ? window.protoVariant('enhanced-success-page', 'control') : 'control';
+      if (ESP_ARMS.indexOf(arm) === -1) {
+        if (window.protoVariantSet) window.protoVariantSet('enhanced-success-page', null);
+        return 'control';
+      }
+      return arm;
+    }());
+    var ESP_V1 = ESP_ARM === 'v1';
+
     function photosComplete(s) {
       const ph = s.photos || {};
       const total = Object.values(ph).reduce((n, a) => n + (a ? a.length : 0), 0);
@@ -233,6 +270,20 @@
        real prod copy chosen by when the seller submitted), not design variants,
        so they belong on the Scenario axis, carried by the extra `copy` param. */
     window.protoPage = {
+      /* The arm is only reachable on the photos-missing path, which is a store
+         state rather than a ?scenario= option — so it is declared unconditionally
+         and the switcher does nothing on the other states. That is honest: the
+         initiative proposes one screen, and the bar says which arm is pinned. */
+      initiatives: [
+        {
+          slug:    'enhanced-success-page',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — production behaviour' },
+            { id: 'v1',      label: 'Variant 1 — receipt, then what is missing (draft)' }
+          ]
+        }
+      ],
       scenarioExtraParams: ['copy'],
       scenarios: [
         { group: 'Rejected', items: [
@@ -456,7 +507,13 @@
     function currentDraftStatus() {
       /* Follows the organic path too, not just ?scenario=. Without that the card
          badge stayed on "Tarkastus käynnissä" while the page rendered the queued
-         state — the same review assumption this screen used to make everywhere. */
+         state — the same review assumption this screen used to make everywhere.
+
+         Photos missing is the same trap once more: prod's publish step REFUSES to
+         publish, so the draft is still `open` and its card reads "Keskeneräinen".
+         This holds in both arms — the enhanced design changes what the page says,
+         not what the draft is. */
+      if (!FORCED_SCENARIO && !photosComplete(getStore())) return 'open';
       return SCENARIO_DRAFT_STATUS[FORCED_SCENARIO || draftScenario(getStore())] || 'in_review';
     }
 
@@ -544,6 +601,27 @@
         setNotice(null); setActionCard(null);
         if (vehicleCard) vehicleCard.style.display = '';
         if (offersBtn) offersBtn.style.display = 'none';
+
+        if (!ESP_V1) {
+          /* Control = prod. The shared headline, illustration, email card and the
+             whole next-steps sidebar go; prod shows none of them, because nothing
+             has been published and there is no "next" to describe yet. */
+          headlineSection.style.display = 'none';
+          illustrationWrap.style.display = 'none';
+          emailCard.style.display = 'none';
+          var sidebar = document.getElementById('success-sidebar');
+          if (sidebar) sidebar.style.display = 'none';
+          document.documentElement.setAttribute('data-success-sidebar', 'empty');
+          var pe = document.getElementById('success-photo-error');
+          pe.classList.remove('hidden');
+          pe.classList.add('flex');
+          document.getElementById('success-photo-error-title').textContent     = t('success.photoErrTitle');
+          document.getElementById('success-photo-error-primary').textContent   = t('success.photoErrPrimary').replace('{min}', '5');
+          document.getElementById('success-photo-error-secondary').textContent = t('success.photoErrSecondary');
+          document.querySelector('#success-photo-error-btn span').textContent  = t('success.photoErrSubmit');
+          return;
+        }
+
         leftCol.insertBefore(illustrationWrap, headlineSection); // illustration above headline
         document.getElementById('success-illustration').src = 'assets/success-photos-missing.png';
         document.getElementById('success-headline').textContent = t('success.headlineMissingPhotos');

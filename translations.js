@@ -181,6 +181,17 @@ window.TRANSLATIONS = {
 
     /* ── Success page ── */
     success: {
+      /* PROD, verbatim — the screen a seller reaches by skipping photos and
+         submitting. It is not Success.vue at all: prod's publish step refuses to
+         publish and renders its own image-error branch, so the draft stays open.
+         `{min}` is prod's own `:min` interpolation. */
+      photoErrTitle:        'Lisää vielä kuvat autostasi',
+      photoErrPrimary:      'Autosi tiedot on tallennettu, mutta voimme aloittaa tarjouskilpailun vasta kun olet lisännyt vähintään {min} kuvaa. Selkeät, puhelimella otetut kuvat riittävät hyvin.',
+      photoErrSecondary:    'Kuvat auttavat autoliikkeitä arvioimaan auton paremmin, jotta ne voivat tehdä sinulle kilpailukykyisiä tarjouksia.',
+      photoErrSubmit:       'Lisää kuvat',
+      /* Enhanced success page, v1 — a DRAFT proposal, no prod equivalent. Kept as
+         the initiative's arm rather than deleted; see
+         design-specs/enhanced-success-page.html */
       headlineMissingPhotos:'Ilmoituksesi on vastaanotettu – kuvat vielä puuttuvat',
       subtextMissingPhotos: 'Lisää vielä kuvat autostasi – tarvitaan vähintään 5 kuvaa, erityisesti ulkopuolelta ja sisätiloista.',
       addPhotosBtn:         'Lisää puuttuvat kuvat',
@@ -803,6 +814,10 @@ window.TRANSLATIONS = {
     },
 
     success: {
+      photoErrTitle:        'Add photos of your car',
+      photoErrPrimary:      'Your car details are saved, but we can only start the bidding once you have added at least {min} photos. Clear photos taken with a phone are perfectly fine.',
+      photoErrSecondary:    'Photos help dealerships assess the car better, so they can make you competitive offers.',
+      photoErrSubmit:       'Add photos',
       headlineMissingPhotos:'Listing received – photos still missing',
       subtextMissingPhotos: 'Add photos of your car – at least 5 are needed, especially exterior and interior shots.',
       addPhotosBtn:         'Add missing photos',

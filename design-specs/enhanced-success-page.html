@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enhanced success page · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    /* Long unbroken identifiers have no break opportunity and pushed the page
+       20px wide at 375px. */
+    code { overflow-wrap: anywhere; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <!-- Hero -->
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; end of the ad creation funnel</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Enhanced success page</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller who skips the photo step still fills in everything else and presses submit. What they get is a red-framed error telling them the bidding cannot start &mdash; and nothing telling them the rest of their work was saved. This initiative proposes the opposite order: confirm what we received, then say what is missing, then show what is left to happen.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: proposal &middot; 1 change &middot; copy is a draft
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- How to read this -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Nothing here is agreed yet.</b> This is a proposal for the team, in the same shape as the other spec pages: one change, stated as what the seller sees before and after, with the prototype carrying both so you can flip between them.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>The Finnish copy is a draft.</b> Production has no wording for what is proposed, so every string in the After column is written for this page and needs a copy round before it could ship. The Before column is production, verbatim.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">It is <b>one change today</b>. The initiative is named for the surface rather than the fix so that further work on the end of the funnel can join it, the way Enhanced negotiations grew in batches.</p>
+      </div>
+    </section>
+
+    <!-- The thing to understand first -->
+    <section class="av-band av-band-grey" id="not-a-success-page">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">First: in production this is not a success page</h2>
+      <div class="bg-warning-50 border-l-4 border-warning-300 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="mb-2"><b>The screen is the publish step refusing to publish.</b> Submitting with fewer than five photos does not create a listing. The draft stays <b>open</b> &mdash; its card on the same screen reads <i>Keskeneräinen</i> (&ldquo;unfinished&rdquo;) &mdash; and the seller is shown an error and sent back.</p>
+        <p class="mb-2">That is why the screen has <b>no illustration and no &ldquo;what happens next&rdquo; list</b>, where every other ending of the funnel has both: there is no next yet. Technically correct, and it is the whole problem.</p>
+        <p class="mb-0"><b>The seller does not know any of that.</b> They answered every question, uploaded nothing, pressed the last button, and landed on a red frame. From where they sit this <i>is</i> the end of the funnel &mdash; so it is the end of the funnel that has to answer them.</p>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Do not confuse it with the other missing-photos screen</p>
+        <p class="mb-2">There are <b>two</b> in production, with different triggers, different copy and different framing. This initiative is only about the first.</p>
+        <table class="w-full font-dm text-sm text-left mt-3">
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="py-2 pr-4 font-medium">Trigger</th><th class="py-2 pr-4 font-medium">Headline today</th><th class="py-2 font-medium">In scope?</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 align-top">
+            <tr><td class="py-2 pr-4">Seller <b>skips photos</b> and submits</td><td class="py-2 pr-4">&ldquo;Lisää vielä kuvat autostasi&rdquo;</td><td class="py-2"><b>Yes</b> &mdash; this page</td></tr>
+            <tr><td class="py-2 pr-4">Listing was <b>reviewed and bounced back</b> for photos asked for on the call</td><td class="py-2 pr-4">&ldquo;Huomio! Tarvitsemme sinulta lisätietoja.&rdquo;</td><td class="py-2 text-slate-500">No &mdash; left exactly as it is</td></tr>
+          </tbody>
+        </table>
+        <p class="mt-4 mb-0">The second one already does what this proposal asks for: it acknowledges, states what is needed in its own card, and shows the remaining steps. It is a reasonable model for the first.</p>
+      </div>
+      </div>
+    </section>
+
+    <!-- Change log -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">One change so far. Each row links to its own section below.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">What would change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Scenario</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-bold">1</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">The skip-photos ending confirms the submission before naming what is missing</a></td>
+              <td class="px-4 py-3">End of funnel</td>
+              <td class="px-4 py-3 text-slate-600">Photos skipped, contact submitted</td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Proposal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <!-- Change 1 -->
+    <section class="av-band av-band-grey" id="c1">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; The skip-photos ending confirms the submission before naming what is missing</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Proposal &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">End of funnel</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Photos skipped, contact submitted</span></div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>The order of what the seller is told.</b> Receipt first, then the gap, then what remains. Today it is only the gap.</li>
+          <li><b>The red frame goes.</b> Nothing has failed &mdash; the seller has one task left. An error frame at the end of a completed funnel reads as work lost.</li>
+          <li><b>An illustration and the &ldquo;Mitä tapahtuu seuraavaksi?&rdquo; list arrive</b>, matching every other ending of the funnel. Three steps: add photos &rarr; verify email &rarr; listing is checked.</li>
+          <li><b>The button names the task, not the object</b> &mdash; &ldquo;Lisää puuttuvat kuvat&rdquo; rather than &ldquo;Lisää kuvat&rdquo;.</li>
+          <li><b>Unchanged:</b> the five-photo minimum, the destination of the button, the car card and its <i>Keskeneräinen</i> badge. The draft is still not published, and nothing here pretends otherwise.</li>
+        </ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../success.html?enhanced-success-page=v1" target="_blank" rel="noopener">See the proposal in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?enhanced-success-page=control" target="_blank" rel="noopener">see production</a> <span class="text-slate-500">&mdash; seed a car from the prototype bar, then clear its photos; or walk the funnel and skip the photo step.</span></p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-5 items-start mt-5">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Today &mdash; production</p>
+          <div class="border border-dashed border-slate-300 rounded-md p-4">
+            <p class="font-barlow font-bold text-slate-900 text-2xl leading-tight mb-4">Lisää vielä kuvat autostasi</p>
+            <div class="p-4 border border-red-500 rounded-xl font-dm text-sm leading-6 text-black">
+              <span class="block font-semibold">Autosi tiedot on tallennettu, mutta voimme aloittaa tarjouskilpailun vasta kun olet lisännyt vähintään 5 kuvaa. Selkeät, puhelimella otetut kuvat riittävät hyvin.</span>
+              <span class="block mt-3">Kuvat auttavat autoliikkeitä arvioimaan auton paremmin, jotta ne voivat tehdä sinulle kilpailukykyisiä tarjouksia.</span>
+            </div>
+            <div class="mt-4 flex items-center justify-center h-11 rounded-lg bg-av-blue"><span class="font-dm font-medium text-sm text-white">Lisää kuvat</span></div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Left-aligned. No illustration, no badge, no next-steps column &mdash; the right-hand column carries only the car card. The heading is the funnel's own step-title size.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Proposed &mdash; draft</p>
+          <div class="border border-dashed border-slate-300 rounded-md p-4 text-center">
+            <div class="h-16 mb-3 flex items-center justify-center text-slate-300 font-dm text-xs">[illustration]</div>
+            <p class="font-barlow font-bold text-slate-900 text-lg leading-tight mb-2">Ilmoituksesi on vastaanotettu &ndash; kuvat vielä puuttuvat</p>
+            <p class="font-dm text-sm leading-5 text-black mb-3">Lisää vielä kuvat autostasi &ndash; tarvitaan vähintään 5 kuvaa, erityisesti ulkopuolelta ja sisätiloista.</p>
+            <div class="flex items-center justify-center h-11 rounded-lg bg-av-blue"><span class="font-dm font-medium text-sm text-white">Lisää puuttuvat kuvat</span></div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Centred, matching the funnel's other endings. The right-hand column carries the car card <i>and</i> the three remaining steps.</p>
+        </div>
+      </div>
+
+      <div class="bg-info-50 border border-info-200 rounded-lg p-4 mt-5 mb-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <b>How to read the diffs.</b> <span class="av-del">Struck-through red</span> is production copy that would go, <span class="av-ins">green</span> is proposed copy. The Finnish is the copy; the grey line beneath is an <b>English gloss for reading only</b>. Every green string below is a <b>draft</b>.
+      </div>
+
+      <div class="av-copy-block">
+        <p class="av-copy-label">Today &mdash; the heading</p>
+        <p class="av-copy"><span class="av-del">Lisää vielä kuvat autostasi</span></p>
+        <p class="av-gloss"><span class="av-del">Add photos of your car</span></p>
+        <p class="av-copy-label mt-3">Proposed &mdash; draft</p>
+        <p class="av-copy"><span class="av-ins">Ilmoituksesi on vastaanotettu &ndash; kuvat vielä puuttuvat</span></p>
+        <p class="av-gloss"><span class="av-ins">Your listing has been received &ndash; photos are still missing</span></p>
+      </div>
+
+      <div class="av-copy-block">
+        <p class="av-copy-label">Today &mdash; the two lines inside the red frame</p>
+        <p class="av-copy"><span class="av-del">Autosi tiedot on tallennettu, mutta voimme aloittaa tarjouskilpailun vasta kun olet lisännyt vähintään 5 kuvaa. Selkeät, puhelimella otetut kuvat riittävät hyvin.</span></p>
+        <p class="av-gloss"><span class="av-del">Your car details are saved, but we can only start the bidding once you have added at least 5 photos. Clear photos taken with a phone are perfectly fine.</span></p>
+        <p class="av-copy"><span class="av-del">Kuvat auttavat autoliikkeitä arvioimaan auton paremmin, jotta ne voivat tehdä sinulle kilpailukykyisiä tarjouksia.</span></p>
+        <p class="av-gloss"><span class="av-del">Photos help dealerships assess the car better, so they can make you competitive offers.</span></p>
+        <p class="av-copy-label mt-3">Proposed &mdash; one line, no frame</p>
+        <p class="av-copy"><span class="av-ins">Lisää vielä kuvat autostasi &ndash; tarvitaan vähintään 5 kuvaa, erityisesti ulkopuolelta ja sisätiloista.</span></p>
+        <p class="av-gloss"><span class="av-ins">Add photos of your car &ndash; at least 5 are needed, especially of the outside and the interior.</span></p>
+        <p class="font-dm text-xs text-slate-500 mt-2"><b class="text-slate-600">Note the trade.</b> Two facts are dropped: that the details are saved (the new heading carries it) and why dealerships want photos. The second is a real loss and is an <a class="text-av-blue underline" href="#open">open question</a> &mdash; it may be worth keeping as a quieter line.</p>
+      </div>
+
+      <div class="av-copy-block">
+        <p class="av-copy-label">Today &mdash; the button</p>
+        <p class="av-copy"><span class="av-del">Lisää kuvat</span></p>
+        <p class="av-gloss"><span class="av-del">Add photos</span></p>
+        <p class="av-copy-label mt-3">Proposed &mdash; draft</p>
+        <p class="av-copy"><span class="av-ins">Lisää puuttuvat kuvat</span></p>
+        <p class="av-gloss"><span class="av-ins">Add the missing photos</span></p>
+      </div>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The three steps that arrive</p>
+        <p class="font-dm text-sm leading-6 text-slate-800 mb-3">Rendered in the same column and the same style as every other ending of the funnel. <b>Two of the three are existing production strings</b>, taken from the funnel's own next-steps component; only the first step's body is new.</p>
+        <table class="w-full font-dm text-sm text-left">
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="py-2 pr-4 font-medium">Step</th><th class="py-2 pr-4 font-medium">Body</th><th class="py-2 font-medium">Source</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
+            <tr><td class="py-2 pr-4 font-medium">Lisää kuvat</td><td class="py-2 pr-4"><span class="av-ins">Lisää vielä kuvat, jotta voimme käsitellä ilmoituksesi.</span></td><td class="py-2 text-slate-500">New &mdash; draft</td></tr>
+            <tr><td class="py-2 pr-4 font-medium">Vahvista sähköpostisi</td><td class="py-2 pr-4">Tarkista sähköpostisi ja vahvista osoitteesi jatkaaksesi tarjouskilpailuun.</td><td class="py-2 text-slate-500">Existing</td></tr>
+            <tr><td class="py-2 pr-4 font-medium">Ilmoituksesi tarkistetaan</td><td class="py-2 pr-4">Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.</td><td class="py-2 text-slate-500">Existing</td></tr>
+          </tbody>
+        </table>
+        <div class="bg-warning-50 border border-warning-200 rounded-md p-4 mt-4">
+          <p class="font-dm text-sm leading-6 text-slate-800 mb-0"><b>Step 3 collides with another initiative.</b> &ldquo;Soitamme sinulle&rdquo; promises the review call, which <a class="text-av-blue underline font-medium" href="review-no-review.html">Review / No review</a> exists to stop promising. If both go ahead, this step takes whatever wording that initiative settles on &mdash; or drops the promise and keeps the step.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria, if it goes ahead</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>The seller is told their details were saved <b>before</b> being told what is missing.</li>
+          <li>Nothing on the screen reads as a failure: no red frame, no error styling.</li>
+          <li>The five-photo minimum is still stated, and the button still goes to the photo step.</li>
+          <li>The car card still shows the draft as <b>unfinished</b>. The listing is not published and the screen must not imply it is.</li>
+          <li>The Finnish has been through a copy round. Nothing on this page has.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The seller has just answered every question in the funnel. Told only that the bidding cannot start, in a red frame, the reasonable reading is that the submission failed and the work is gone &mdash; so the ones who do come back come back anxious, and the ones who do not are lost at the last step of a funnel they had finished.</p>
+      </div>
+    </section>
+
+    <!-- Open questions -->
+    <section class="av-band av-band-grey" id="open">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Is dropping the &ldquo;why photos help&rdquo; sentence right?</b> It is the only line that explains the requirement rather than stating it. It could stay as a quieter line under the button.</li>
+        <li><b>Does the three-step list belong here at all?</b> It describes a path that only starts once photos are added. It may read as premature &mdash; or as exactly the reassurance the screen lacks.</li>
+        <li><b>Step 3's wording</b> depends on Review / No review, as above.</li>
+        <li><b>Is there a measurement?</b> Worth knowing how many sellers reach this screen and how many return to add photos, before and after. Nobody has looked.</li>
+        <li><b>Does anything else at the end of the funnel belong in this initiative?</b> The other endings were checked against production and match it; this is the only invented screen. Further work would join here rather than starting a new page.</li>
+      </ul>
+      </div>
+    </section>
+  </main>
+  <!-- Footer — same structure as the prototype's site footer (layout.js). -->
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Enhanced success page</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>

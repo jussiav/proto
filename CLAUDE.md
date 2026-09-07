@@ -476,6 +476,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced negotiations | Live | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
+| Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 
 **Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
 and Seller intent (VWO `104_combi`), both still registered in the 2026-09-07 dump
@@ -1257,6 +1258,66 @@ nothing else in the CMS entry moved. A sixth answer differed by 6 characters
 ("Lomakkeen täyttäminen ei onnistu") and that is markup, not copy: the CMS types
 its step numbers where the proto uses an `<ol>`, so the rendered reading is the
 same.
+
+**Enhanced success page** exists because the proto had been showing an invented
+screen unconditionally, found 2026-09-07 when the team compared the proto against
+a preview environment. **Skipping photos and submitting does NOT reach a success
+page in prod.** `Publish.vue`'s `hasImageErrors` branch refuses to publish and
+renders its own screen: a left-aligned `heading-2`
+("Lisää vielä kuvat autostasi"), a `p-6 border border-red-500 rounded-xl` notice
+whose first line is `font-semibold` and second `block mt-3`, and a full-width
+primary button ("Lisää kuvat"). Every string is prod's
+`images_step.missing_photos*`, with `:min` interpolated.
+
+**The draft stays `open`**, so its card reads `Keskeneräinen` (paperclip, slate)
+— `DRAFT_BADGES.open` already had it. The proto was showing
+`Tarkastus käynnissä`, because `currentDraftStatus()` fell through to its
+`in_review` default; it now returns `open` whenever photos are incomplete and no
+scenario is forced. **That fix is arm-independent** — the enhanced design changes
+what the page says, not what the draft is.
+
+**And prod draws no illustration and no next-steps list here**, which is not an
+oversight: `Sidebar.vue`'s `shouldShowWhatHappensNext` lists six states and
+`publishingDraft` is not one of them, while `canPreviewDraft` DOES include it —
+so the right column is the car card alone. `shouldShowSidebarOnMobile` is false
+too, which is why `Publish.vue` renders its own `<Preview class="mt-8 lg:hidden">`
+inside the left column. Control reuses the page's existing
+`html[data-success-sidebar="empty"]` rule rather than a new one.
+
+**Control is its own block, not a restyle of the shared headline.** The success
+page's headline section is centred at `text-2xl`; prod's is left-aligned at
+`heading-2`. `#success-photo-error` carries prod's markup and the shared
+headline/illustration/email card are hidden, which is cheaper than fighting the
+centred layout and keeps prod's structure legible.
+
+**`v1` is the screen the proto had**: illustration above a headline that
+acknowledges receipt, a subtext naming the five-photo minimum and which angles,
+"Lisää puuttuvat kuvat", and the three-step list. Four strings are invented and
+**stay marked as a draft** — `headlineMissingPhotos`, `subtextMissingPhotos`,
+`addPhotosBtn`, `missingStep1Body`. The other two step bodies are real prod
+strings from `WhatHappensNext`, just never shown on this screen in prod.
+
+**TWO missing-photos screens exist in prod, and only one is in scope.** The other
+— reviewed, then bounced back for photos asked for on the call — is
+`waitingForReview` + `rejected` + `missing_images`, and the proto **already
+transcribes it faithfully** as `?scenario=rejected-missing-images`:
+"Huomio! Tarvitsemme sinulta lisätietoja.", the red `Tietoja tarvitaan` pill, and
+a danger `Notification` reading "Lataa kuvat jatkaaksesi". Do not merge the two.
+That screen also carries a genuine prod quirk, reproduced: `rejected` +
+`missingImages` falls through every branch of `WhatHappensNext`'s computed to
+`allNextSteps.slice(1)`, so it shows a 4-step list that still says the listing is
+under review.
+
+**The initiative is named for the surface, not the fix**, so later work on the end
+of the funnel joins it rather than starting a page — Enhanced negotiations' batch
+pattern. Its arm is declared unconditionally on `success.html` even though it only
+bites on the photos-missing path, because that path is store state rather than a
+`?scenario=` option; the switcher simply does nothing on the other endings.
+
+**An audit of every `success.*` string went with it.** Invented, and NOT part of
+this initiative: `emailToastTitle` / `emailToastView` (a proto-only device that
+nudges a tester towards the email tool, like the bar) and `backToHome` (an
+`aria-label` on the logo). Everything else on the page is prod's.
 
 **Seller file upload** adds a documents section to the photos step — **PDF only**
 as of 2026-09-03, the team's decision; Word and images were accepted while the

@@ -138,6 +138,12 @@
       name: 'Asking price removal',
       spec: 'design-specs/asking-price-removal.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'enhanced-success-page',
+      name: 'Enhanced success page',
+      spec: 'design-specs/enhanced-success-page.html',
+      prodArm: 'control'
     }
   ];
 
