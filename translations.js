@@ -329,7 +329,7 @@ window.TRANSLATIONS = {
 
     /* ── Shared: right-column sidebar ── */
     sidebar: {
-      title: 'Erinomainen aika myydä',
+      title: 'Erinomainen aika myydä!',
       body:  'Autokauppa käy kuumana! Olemme myyneet jo yli 70 000 autoa!',
     },
 
@@ -952,7 +952,7 @@ window.TRANSLATIONS = {
     },
 
     sidebar: {
-      title: 'Great time to sell',
+      title: 'Great time to sell!',
       body:  'Car sales are booming! We\'ve already sold over 70,000 cars!',
     },
 

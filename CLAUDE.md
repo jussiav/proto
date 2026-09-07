@@ -1704,8 +1704,42 @@ illustration byte-identical to prod's `published.png`, the peach notice block
 `success.html` follows that table: a scenario carries `card: false` for
 `rejected`, `rejected-missing-images` and `published`, and `SCENARIO_DRAFT_STATUS`
 only maps the states that actually draw a card. Plain `rejected` then has neither
-steps nor card, so the column is empty — prod fills it with `VehicleMetrics`,
-never ported here — and below **992px** it is dropped entirely
+steps nor card — and **`VehicleMetrics` is what fills the column there**, now
+ported (2026-09-07). Its gate in prod is `vehicleMetrics?.brand` and NOTHING
+else: not the draft status, not the machine state. So it renders on EVERY state
+where the sidebar is visible — above the next-steps list on the in-review and
+missing-images screens, and as the only content on plain `rejected`, which is
+why that column used to look deliberately empty and was not. The block is prod's
+own shape (`bg-white rounded-lg p-4 flex gap-2 items-center shadow`, prod's
+`flame.png` at 36px, heading then `text-base` body) and `hidden lg:flex`, prod's
+own — the in-sidebar variant is desktop-only, and prod swaps to a cream-backed
+copy elsewhere below `lg` rather than showing this one.
+
+Copy comes from the existing `sidebar.title` / `sidebar.body`, already used by
+`details.html` and `services.html`, so it is a port rather than new copy — and
+transcribing it exposed a **dropped exclamation mark**: prod's `heading_total` is
+"Erinomainen aika myydä!" where the proto had "Erinomainen aika myydä". Fixed in
+both languages, which corrects those two funnel steps as well. Prod has a SECOND
+variant the proto cannot reach — `sold_by_brand >= 150` swaps in a brand-specific
+"Autosi on kuumaa kamaa!" / ":amount :brand-merkkistä autoa vuoden sisään" — and
+the proto has no such figure, so it always shows the total variant. Worth knowing
+before anyone reads the single heading as the only one.
+
+`details.html` and `services.html` render the same copy in a DIFFERENT layout (a
+67×100 flipped graphic, a 24px Barlow title, no white card and no flame), which
+is a pre-existing divergence from `VehicleMetrics` on those steps. Not touched.
+
+**The rejected screens' action card carries a reg plate**, ported at the same
+time. Prod's `Notification.vue` renders one opposite the icon whenever a
+`registrationNumber` is passed, and BOTH rejected notices pass
+`draft.registration_number` — so prod shows it on the plain-rejected card and the
+missing-photos card alike. The icon row became `justify-between` with the plate
+in the second slot, and the plate itself is `window.buildRegBadge`, the same
+function the car card uses, which already draws prod's shape (a `w-2` blue bar,
+then the plate half with `border-l-0`). Gated on the store actually having a
+plate, matching prod's `v-if`. No breakpoint: prod shows it at every width.
+
+Below **992px** the near-empty column is dropped entirely
 (`html[data-success-sidebar="empty"]`), which is prod's own
 `shouldShowSidebarOnMobile = shouldShowWhatHappensNext || providingPersonalInfo`.
 **That was written as 768 and it was wrong** (corrected 2026-09-07): prod's
