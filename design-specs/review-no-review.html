@@ -174,8 +174,8 @@
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">5</td>
-              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-5">Lifecycle emails contradict the change — one promises the call in its subject line</a><br><span class="text-xs text-slate-500">Not part of this build — a separate piece of work with Marketing</span></td>
-              <td class="px-4 py-3">SendGrid · outside the codebase</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#change-5">Marketing emails still promise the review call — one in its subject line</a><br><span class="text-xs text-slate-500">Written as a brief for Marketing · no dev task, blocks nothing</span></td>
+              <td class="px-4 py-3">SendGrid · outside the product</td>
               <td class="px-4 py-3 text-slate-600">Draft nurture · marketing</td>
               <td class="px-4 py-3"><span class="bg-slate-200 text-slate-700 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Later · with Marketing</span></td>
             </tr>
@@ -565,64 +565,101 @@
       </div>
     </section>
 
-    <!-- Change 5 -->
+    <!-- Change 5 — written for Marketing, not for a dev -->
     <section class="av-band av-band-grey" id="change-5">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">5 — Lifecycle emails contradict the change <span class="text-slate-500">(later, with Marketing)</span></h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-200 text-slate-700 font-bold rounded-full px-3 py-1">Later · with Marketing</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">SendGrid · outside the codebase</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Draft nurture · marketing</span></div>
-
-      <div class="bg-slate-100 border-l-4 border-slate-400 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
-        <p class="text-xs font-bold uppercase tracking-wide text-slate-600 mb-2">Not part of this build</p>
-        <p class="mb-2"><b>Nothing here is a dev task, and nothing here blocks Changes 1–3.</b> These emails are configured in <b>SendGrid</b> by the <b>Marketing team</b>; their copy exists nowhere in the repository and no one on this team can edit it.</p>
-        <p class="mb-2">The section stays on this page because the problem is real and the seller cannot tell the two senders apart: once Changes 1–4 ship, the product will have stopped promising the review call while at least one marketing email still promises it in a subject line. Fixing that needs <b>a joint session with Marketing</b>, not a ticket.</p>
-        <p class="mb-0"><b>What it needs, in order:</b> an owner on the Marketing side → a walkthrough of the emails below against the checklist at the end of this section → a decision per email → their own copy work. <b>Revisit once Changes 1–3 are live</b>, so the review is against what the product actually says by then.</p>
-      </div>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">5 — Marketing emails still promise the review call <span class="text-slate-500">(for Marketing)</span></h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-200 text-slate-700 font-bold rounded-full px-3 py-1">For Marketing &middot; not a dev task</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">SendGrid &middot; outside the product</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Do it after Changes 1&ndash;3</span></div>
 
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What this section is for</p>
-        <ul class="list-disc pl-5 space-y-1"><li>A record of <b>which</b> lifecycle emails conflict, captured from a real seller's inbox — the input for that session.</li><li>At least two contradict this initiative; one <b>promises the call in its subject line</b>.</li><li>No copy is proposed here: proposing wording for emails another team owns would be the wrong way round.</li></ul>
-        <p class="mt-4 text-slate-500">Not in the prototype — these emails are outside the codebase, so the email tool does not carry them.</p>
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">In short</p>
+        <p class="mb-3">We are moving to <b>selective review calling</b>. Until now our team looked at every listing and called the seller before it went live. From now on only some sellers get that call, and <b>most listings will publish without one</b>.</p>
+        <p class="mb-3">That means our communication has to be accurate for the seller who receives it, instead of promising everyone the same thing. Changes 1&ndash;3 do this inside the product: the funnel and the support pages stop saying that a review and a call are coming. <b>The marketing emails still say it</b> &mdash; one of them in a subject line.</p>
+        <p class="mb-0">A seller cannot tell our senders apart. One email promising a call is enough to set the expectation for a seller who will never get one &mdash; which is the exact expectation this initiative exists to stop setting. <b>What we need is one person on Marketing to own a pass over the lifecycle emails</b>, using the two lists below.</p>
       </div>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A seller's inbox contains more than the codebase sends. Captures from a real seller's mailbox show a second family of emails going out through SendGrid. Listed below with what each one conflicts with; the last two are included for completeness rather than because a problem was found.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+
+      <div class="bg-slate-100 border-l-4 border-slate-400 rounded-lg p-4 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-6">
+        <b>Who does what.</b> These emails are configured in <b>SendGrid</b> and only Marketing can edit them &mdash; they are not in the product's code, so no developer can change them and <b>nothing here blocks Changes 1&ndash;3</b>. Best done once those are live, so the emails are reviewed against what the product says by then. No wording is proposed on this page: that is Marketing's to write.
+      </div>
+
+      <h3 class="font-barlow font-bold text-black text-xl md:text-2xl leading-tight mb-2">The emails we know about</h3>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Captured from a real seller's inbox. Probably not the full list &mdash; establishing that is the first job of the pass.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mb-3">
         <table class="w-full font-dm text-sm text-left">
           <thead>
             <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">Subject seen in a seller's inbox</th>
-              <th class="px-4 py-3 font-medium">Why it matters</th>
+              <th class="px-4 py-3 font-medium">Subject line</th>
+              <th class="px-4 py-3 font-medium">What is wrong with it</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold align-top">"Ilmoituksesi on nyt valmis tarkastettavaksi – <span class="underline">soitamme sinulle pian</span>!"</td>
-              <td class="px-4 py-3"><b>Promises the review call outright, in the subject line</b>, to sellers who may never be called. The strongest instance of the problem this initiative exists to fix, and it sits outside every surface the initiative can otherwise reach.</td>
+              <td class="px-4 py-3 align-top w-2/5"><b>&ldquo;Ilmoituksesi on nyt valmis tarkastettavaksi &ndash; <span class="underline">soitamme sinulle pian</span>!&rdquo;</b><br><span class="text-slate-500 text-xs">Your listing is now ready for review &ndash; we will call you shortly!</span></td>
+              <td class="px-4 py-3"><b>Promises the call outright, in the subject line.</b> Most sellers who receive it will not be called. This is the clearest example of the problem, and the subject line means a seller sees it without even opening the email.</td>
             </tr>
             <tr class="bg-warning-50">
-              <td class="px-4 py-3 font-bold align-top">"Autamme sinua asettamaan autollesi pyyntihinnan"</td>
-              <td class="px-4 py-3">Promises help setting a price the team intends to remove from the product. Belongs to the <b>asking-price</b> initiative, but the same review applies.</td>
+              <td class="px-4 py-3 align-top"><b>&ldquo;Autamme sinua asettamaan autollesi pyyntihinnan&rdquo;</b><br><span class="text-slate-500 text-xs">We will help you set an asking price for your car</span></td>
+              <td class="px-4 py-3">Offers help with the <b>asking price</b>, a field the product is removing. The email would outlive the feature it is about.</td>
             </tr>
             <tr>
-              <td class="px-4 py-3 align-top">"Luonnoksesi on tallessa. Viimeistele auton tiedot!" · "Melkein valmista, laita autosi myyntiin jo tänään!" · "Viedään tarjouspyyntösi maaliin!"</td>
-              <td class="px-4 py-3">Draft-abandonment nurture. Check that none of them describes the process in a way the funnel no longer matches.</td>
-            </tr>
-            <tr>
-              <td class="px-4 py-3 align-top">"Näin otat laadukkaat kuvat autostasi"</td>
-              <td class="px-4 py-3">Photo guidance. No conflict found; listed for completeness.</td>
+              <td class="px-4 py-3 align-top">&ldquo;Luonnoksesi on tallessa. Viimeistele auton tiedot!&rdquo;<br>&ldquo;Melkein valmista, laita autosi myyntiin jo tänään!&rdquo;<br>&ldquo;Viedään tarjouspyyntösi maaliin!&rdquo;<br><span class="text-slate-500 text-xs">Three reminders to finish an unfinished listing</span></td>
+              <td class="px-4 py-3">Nothing obviously wrong, but they <b>describe what happens next</b>. Worth reading against the list below, since the funnel they describe is changing.</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What to look for when reviewing them</p>
-        <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2">
-          <li><b>Any promise of a phone call</b> — "Soitamme sinulle", "asiantuntijamme ottaa yhteyttä", "puhelu kestää noin 5 minuuttia". Each needs the same treatment as the support FAQ: conditional wording, or nothing.</li>
-          <li><b>Any claim that a listing is reviewed before publishing</b> — "valmis tarkastettavaksi", "kun ilmoitus on tarkistettu". Most ads will publish without it.</li>
-          <li><b>Any mention of an asking price or a price estimate.</b> The asking price is being removed; a nurture email offering help with it will outlive the feature.</li>
-          <li><b>Process descriptions with a fixed number of steps.</b> A five-step list that includes the call is wrong for a seller who is never called, exactly as the support page's was.</li>
-          <li><b>Timing claims</b> — "36 tuntia", "1,5 työpäivää", "24 tuntia" — which must agree with what the product screens and the transactional emails say.</li>
-          <li><b>Who owns the send.</b> Three senders reach the same seller: the codebase's own transactional emails, SendGrid for lifecycle and marketing, and Klaviyo for events the code triggers. A copy change agreed with one owner does not reach the other two.</li>
+      <p class="font-dm text-sm text-slate-600 mb-6 max-w-3xl">One more was checked and needs nothing: <i>&ldquo;Näin otat laadukkaat kuvat autostasi&rdquo;</i> (photo guidance) says nothing about a review or a call.</p>
+
+      <h3 class="font-barlow font-bold text-black text-xl md:text-2xl leading-tight mb-2">What to look for</h3>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Five things. Any email that does one of them needs changing.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mb-6">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Look for</th>
+              <th class="px-4 py-3 font-medium">For example</th>
+              <th class="px-4 py-3 font-medium">Why it is a problem</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
+            <tr>
+              <td class="px-4 py-3 font-bold">A promise that we will call</td>
+              <td class="px-4 py-3">&ldquo;Soitamme sinulle&rdquo;<br>&ldquo;asiantuntijamme ottaa yhteyttä&rdquo;</td>
+              <td class="px-4 py-3">Most sellers will not be called. They wait for a call that never comes, and then contact support about it.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">A claim that we check the listing first</td>
+              <td class="px-4 py-3">&ldquo;valmis tarkastettavaksi&rdquo;<br>&ldquo;kun ilmoitus on tarkistettu&rdquo;</td>
+              <td class="px-4 py-3">Most listings will publish straight away. Saying a check comes first makes publishing look delayed or conditional when it is not.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">A step-by-step process that includes the call</td>
+              <td class="px-4 py-3">A numbered list where step 2 is &ldquo;soitamme sinulle&rdquo;</td>
+              <td class="px-4 py-3">A five-step list is wrong for a seller who gets four steps. This is exactly what Change 3 fixed on the support pages.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">Help with an asking price or a price estimate</td>
+              <td class="px-4 py-3">&ldquo;Autamme sinua asettamaan pyyntihinnan&rdquo;</td>
+              <td class="px-4 py-3">The asking price is being removed from the product. Separate initiative, same review.</td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">Timing claims</td>
+              <td class="px-4 py-3">&ldquo;36 tuntia&rdquo;, &ldquo;1,5 työpäivää&rdquo;, &ldquo;24 tuntia&rdquo;</td>
+              <td class="px-4 py-3">These have to match what the product screens and our own transactional emails say. Easy to leave behind when the process changes.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="font-barlow font-bold text-black text-xl md:text-2xl leading-tight mb-2">How to fix a line</h3>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-4">
+        <ol class="list-decimal pl-5 space-y-3">
+          <li><b>First choice: take it out.</b> If a sentence exists only to describe the review or the call, deleting it is cleaner than qualifying it. Nothing else in the email usually depends on it.</li>
+          <li><b>Second choice: make it conditional.</b> One word is enough, and this is what we did on the support pages: <i>tarvittaessa</i> (&ldquo;if necessary&rdquo;) or <i>tapauskohtaisesti</i> (&ldquo;case by case&rdquo;). Nothing is promised and nothing is denied, so the same sentence is true for both kinds of seller.</li>
+          <li><b>Avoid a soft promise.</b> &ldquo;Saatamme soittaa&rdquo; or &ldquo;otamme mahdollisesti yhteyttä&rdquo; still creates a wait. If we do need to reach a seller, we reach them &mdash; the email does not have to announce it in advance.</li>
         </ol>
       </div>
+      <p class="font-dm text-sm leading-6 text-slate-700 max-w-3xl"><b>One thing to know before the pass.</b> Three separate systems email the same seller: the product's own transactional emails, SendGrid for lifecycle and marketing, and Klaviyo for event-triggered emails. Agreeing a change in one of them does not change the other two, so the pass should say which system each email comes from.</p>
       </div>
     </section>
 

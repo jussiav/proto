@@ -409,11 +409,33 @@ change-4 link carried `&review-no-review=v1` for an email that had no override:
 the link silently pinned the arm for `price`, `contact` and `help` while the
 email tool correctly showed production copy.
 
-**Change 5 is parked, not pending.** The SendGrid lifecycle emails are
-Marketing's, so the section opens with a slate "Not part of this build" callout
-(no dev task, blocks nothing, revisit after 1–4 ship) and its change-log status
-is `Later · with Marketing` rather than an amber `Needs an owner` — amber read as
-work waiting on us. No wording is proposed for emails another team owns.
+**Change 5 is parked, not pending, and it is the one section written for
+ANOTHER TEAM.** The SendGrid lifecycle emails are Marketing's, so its change-log
+status is `Later · with Marketing` rather than an amber `Needs an owner` — amber
+read as work waiting on us — and no wording is proposed for emails another team
+owns.
+
+Rewritten (2026-09-07) as **a brief Marketing can act on**, because the previous
+version was written for a dev reading a spec: it opened with meta-commentary
+about why the section was on the page at all, and a reader had to work out what
+they were being asked to do. The shape now is: an **In short** card explaining
+selective review calling in three short paragraphs (what is changing, why the
+communication has to change with it, what we need from them), a one-line
+**Who does what** strip, then three plainly-titled blocks — *The emails we know
+about* (subject lines with an English gloss, worst first, plus the one that was
+checked and needs nothing), *What to look for* (five patterns, each with an
+example Finnish phrase and the consequence), and *How to fix a line* (delete it,
+or make it conditional with the support pages' own `tarvittaessa` /
+`tapauskohtaisesti` — and avoid a soft "saatamme soittaa", which still creates a
+wait). It ends with the three-senders warning, which Marketing needs and a dev
+does not.
+
+**The rule this establishes: a spec section addressed to a non-dev team drops
+the spec conventions.** No Where/Scenario chip pair, no acceptance criteria, no
+prototype link, no reasoning about which branch fires — an overview of the
+change, examples, a checklist, and what to do about each hit. The audience is
+named in the heading (`(for Marketing)`) and in the first chip
+(`For Marketing · not a dev task`) so a dev skims past it.
 
 **Both spec pages now share that shape.** `review-no-review.html` was given the
 same treatment — a Where/Scenario chip pair under each heading, a short
