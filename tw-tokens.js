@@ -39,7 +39,35 @@
  * because the utility did not exist. `md` is 768 in both.
  *
  * **spacing — ported (additive).** Prod's half-step extras, so a transcribed
- * `mb-3.5`/`p-4.5` resolves instead of silently doing nothing.
+ * `mb-3.5`/`p-4.5` resolves instead of silently doing nothing. *
+ * **Element-level typography — ported, and it is the reason headings drifted.**
+ * Prod's `sass/base/_typography.scss` styles h1-h6 as ELEMENTS (`@apply text-3xl
+ * leading-6 lg:text-5xl lg:leading-8 font-bold` and so on), and `custom.scss`
+ * gives h1-h5 `font-display`. Both are loaded AFTER `@tailwind utilities`, so
+ * they beat Tailwind's preflight — which zeroes heading size and weight — while
+ * still losing to any utility class on the element itself. The proto had neither
+ * file, so a prod heading transcribed WITHOUT explicit size classes rendered at
+ * the inherited body size in regular weight. That is what made the decision
+ * page's support-banner title and the reject survey's thank-you title look
+ * nothing like production.
+ *
+ * The rules are injected here rather than written into each page's `<style>`,
+ * for the same reason the scales live here: one definition. Specificity is what
+ * makes this safe — a bare element selector loses to every `text-*` /
+ * `font-*` utility, so the ~140 proto headings that carry explicit classes are
+ * untouched and only genuinely bare ones change.
+ *
+ * `.heading-1`…`.heading-6`, which prod pairs with each element, are
+ * deliberately NOT added: no proto markup uses them, every consumer here is a
+ * real heading element that the element rule already covers, and as classes they
+ * would out-rank the utility strings rule 6 of CLAUDE.md tells us to write.
+ * `.hero h1` is skipped for the same reason — the proto has no `.hero`.
+ *
+ * **`p` is NOT ported.** Prod also styles the paragraph element
+ * (`mb-4.5 lg:mb-6 text-base leading-snug sm:text-lg last:mb-0 font-normal`),
+ * and 335 of the proto's 561 `<p>` elements carry no size class, so porting it
+ * would resize and re-space most body copy in the prototype. That is a separate
+ * decision, not a side effect of fixing the headings.
  */
 (function () {
   if (!window.tailwind) return;
@@ -101,4 +129,47 @@
   });
 
   window.tailwind.config = cfg;
+
+  /* ── Prod's element-level typography ──────────────────────────────────────
+     `sass/base/_typography.scss` (size, leading, weight) + `custom.scss`
+     (family, h1-h5 only — h6 stays on the body font). Values resolved through
+     prod's own scales: fontSize lg 18 / xl 20 / 2xl 24 / 3xl 28 / 4xl 32 /
+     5xl 40 / 6xl 48; lineHeight 2:21 3:24 4:28 5:30 6:36 8:46 9:52 — note 8 is
+     `2.875rem`, i.e. 46px, where prod's own inline comment beside it says 48;
+     screens sm 620 / lg 992. Appended after the CDN's own stylesheet so it
+     out-ranks preflight's heading reset at equal specificity, and left as bare
+     element selectors so any utility class on the element still wins. */
+  var DISPLAY = "Barlow, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'";
+  var css = [
+    'h1,h2,h3,h4,h5{font-family:' + DISPLAY + '}',
+    'h1{font-size:2rem;line-height:2.25rem;font-weight:700}',
+    'h2{font-size:1.75rem;line-height:2.25rem;font-weight:700}',
+    'h3{font-size:1.5rem;line-height:1.875rem;font-weight:700}',
+    'h4{font-size:1.125rem;line-height:1.5rem;font-weight:700}',
+    'h5{font-size:1.125rem;line-height:1.3125rem;font-weight:600}',
+    'h6{font-size:0.875rem;line-height:1.25;font-weight:600;letter-spacing:0.025em}',
+    /* prod's `sm`, 620px — h5 and h6 are the two that step up here */
+    '@media (min-width:620px){',
+    'h5{font-size:1.25rem;line-height:1.5rem}',
+    'h6{font-size:1rem;line-height:1.375}',
+    '}',
+    /* prod's `lg`, 992px */
+    '@media (min-width:992px){',
+    'h1{font-size:3rem;line-height:3.25rem}',
+    'h2{font-size:2.5rem;line-height:2.875rem}',
+    'h3{font-size:2rem;line-height:2.25rem}',
+    'h4{font-size:1.5rem;line-height:1.6875rem}',
+    '}'
+  ].join('');
+
+  /* The CDN rewrites its own <style> in place, so appending once is enough —
+     but it also injects late on some pages, so the tag is re-appended on
+     DOMContentLoaded to keep it last. Moving a <style> that is already last is
+     a no-op. */
+  var el = document.createElement('style');
+  el.setAttribute('data-proto-typography', '');
+  el.textContent = css;
+  function place() { document.head.appendChild(el); }
+  place();
+  document.addEventListener('DOMContentLoaded', place);
 }());

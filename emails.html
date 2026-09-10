@@ -81,9 +81,16 @@
       color: #74787E;
       line-height: 1.4;
     }
-    .em-body h1 { color: #2F3133; font-size: 19px; font-weight: bold; margin: 0 0 16px; text-align: left; }
-    .em-body h2 { color: #2F3133; font-size: 16px; font-weight: bold; margin: 24px 0 12px; text-align: left; }
-    .em-body h3 { color: #2F3133; font-size: 14px; font-weight: bold; margin: 18px 0 8px; text-align: left; }
+    /* `font-family` is repeated here on purpose. `tw-tokens.js` now carries
+       prod's element-level `h1,h2,h3,h4,h5 { font-family: Barlow }`, and an
+       element rule on the heading itself outranks the family inherited from
+       `.em-body` — so without this the rendered email's headings would come out
+       in the app's display font instead of the mail theme's Avenir. Size and
+       weight need no such guard: `.em-body h1` is a class-plus-element
+       selector, which already outranks a bare element rule. */
+    .em-body h1 { font-family: Avenir, Helvetica, Arial, sans-serif; color: #2F3133; font-size: 19px; font-weight: bold; margin: 0 0 16px; text-align: left; }
+    .em-body h2 { font-family: Avenir, Helvetica, Arial, sans-serif; color: #2F3133; font-size: 16px; font-weight: bold; margin: 24px 0 12px; text-align: left; }
+    .em-body h3 { font-family: Avenir, Helvetica, Arial, sans-serif; color: #2F3133; font-size: 14px; font-weight: bold; margin: 18px 0 8px; text-align: left; }
     .em-body p  { color: #74787E; font-size: 16px; line-height: 1.5em; margin: 0 0 16px; text-align: left; }
     .em-body ol, .em-body ul { color: #74787E; font-size: 16px; line-height: 1.5em; margin: 0 0 16px; padding-left: 22px; }
     .em-body li { margin-bottom: 8px; }
