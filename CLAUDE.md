@@ -2035,6 +2035,79 @@ stopped negotiation reads `expired`. The proto keeps the negotiation status
 ahead of its own expiry check. Unreachable today — every negotiation scenario
 uses an `ACTIVE()` window — but it is a real divergence if that changes.
 
+## Which offers get a card, and what a final offer implies
+
+**The selection rule, single-sourced in prod and mirrored exactly by the
+proto's `selectOffers`:** accepted offers if any; else the highest ALONE when it
+carries car pickup; else the **top two by amount**. Status is not part of it, so
+a rejected or expired offer can hold the second slot — only its rank is
+displaced by `getOfferStatus`.
+
+**A final offer is not a new offer, and it can only exist after a rejection.**
+Worth knowing before seeding any final-offer state:
+
+- The dealership holding the **highest** offer raises that same row in place —
+  `FinalOffer` writes `amount`, `car_pickup`, `status = FINAL` and a
+  `FINAL_OFFER` revision onto it. No new offer is created and no other offer is
+  touched.
+- Prod refuses it unless the highest offer is **already rejected**
+  (`only_rejected_requests_can_receive_final_offers`), the request has no final
+  offer yet, the raise clears `final_offer.minimum_raise_amount`, and the
+  dealership did not itself withdraw.
+- The seller's reject is always reject-**ALL**: `RejectAllOffers` sets every
+  offer on the request to rejected and every negotiation to stopped.
+
+**So the sequence is fixed — all offers rejected, then the top one comes back
+raised and flagged final — and the consequence is that every other offer on
+screen beside a final offer is REJECTED.** A live `Toiseksi korkein` card next
+to a final offer is a state production cannot produce. The proto's
+`final-offer` scenario carried `status: 0` on the five lower offers and rendered
+exactly that, complete with an accept button; corrected 2026-09-10 to `status: 2`.
+
+**Whether a second card appears at all is decided by `car_pickup`, not by
+finalness.** The final offer writes its own `car_pickup`, and the selection rule
+shows the highest alone when that flag is set — so a final offer WITH pickup is
+one card, without it is two (the second one rejected). The proto's scenario sets
+`car_pickup: false`, i.e. the two-card case; the one-card case has no scenario
+of its own and would only need the flag flipped.
+
+`FinalOffer` also resets the clock — `expires = now()` on the request and
+`now() + reaction time` on the offer — which is why the scenario uses `ACTIVE()`
+and why the final-offer card shows a running countdown rather than reading as
+expired.
+
+**A final offer cannot be countered, and prod's reject confirmation does not
+know that.** `useDecisionActions` routes reject-all to `Reject` rather than
+QuickNegotiate whenever the highest offer is final, `OfferActions.showNegotiate`
+ends in `&& !this.offer.isFinal`, and `C2BOfferCard`'s `finalOffer` override
+never sets `showNegotiate` — so there is no counter-offer affordance on the card
+or in the modal. But `Reject.vue` picks its copy from
+`!negotiation && negotiable`, and `negotiable` is
+`TenderRequest::offersAreNegotiable()`, which is only
+`marketplace_type !== B2B` — **always true for a consumer seller**. So a final
+offer with no negotiation gets `reject.confirm.no_negotiation`, the paragraph
+that says *"Suosittelemme tekemään vastatarjouksen autoliikkeelle…"*, with
+nothing anywhere to act on it. **A production defect, reproduced faithfully in
+control.** The honest fix there is one condition — `Reject.vue`'s `v-if` gaining
+`&& !offer.isFinal`, which falls back to prod's own bare-question string; the
+alternative, deciding a final offer IS counter-offerable, is a product decision
+about the mechanic and not a copy fix.
+
+**Enhanced negotiations must not carry that recommendation into `v1`.** The arm
+restructures this step (prod's question to the title row, the advice into the
+contained help block) and currently branches on `hasNeg` alone, so it repeats
+the dead advice. It should gate on the counter-offer button actually being
+present, which uses prod's second existing string and adds no copy — the same
+reasoning as change 9, which already took the customer-support dead end out of
+this modal.
+
+**One smaller sibling, not verified at runtime:** `showNegotiate` is not gated
+on expiry and that negotiate `Button` alone carries no `:disabled`, unlike its
+neighbours, so an expired highest offer still appears to offer
+`Tee vastatarjous`. The proto mirrors it. Check whether the send is refused
+server-side before calling it a bug.
+
+
 ## Customer support banner on the decision page — no photo, two configurations
 
 Prod's is `OBannerHelperCard.vue` over `OCard.vue`, with

@@ -773,15 +773,33 @@
           { id: 208, status: 0, amount: 8700,  car_pickup: true,  distance: 150, city: 'Lahti',    total_sales: 70,  office_id: 508, auto_rejected: false },
         ],
       }; },
+      /* EVERY OTHER OFFER IS REJECTED, and that is not a choice — it is the only
+         state a final offer can exist in. A final offer is not a new offer: the
+         dealership that held the HIGHEST one raises it in place, and prod will
+         only let them do that once the seller has already rejected
+         (`only_rejected_requests_can_receive_final_offers`). The seller's
+         reject is always reject-ALL, which sets every offer on the request to
+         rejected and stops every negotiation. So the sequence is fixed: all
+         offers rejected → the top one comes back raised and flagged final.
+
+         These carried `status: 0` and so rendered a live `Toiseksi korkein`
+         card, with an accept button, beside the final offer — a state
+         production cannot produce. At `status: 2` the second card is the
+         rejected one prod actually shows, because the selection rule takes the
+         top two by amount regardless of status and only the rank is displaced.
+
+         The reaction window is ACTIVE() because the final offer resets it: prod
+         writes `expires = now()` on the request and `now() + reaction time` on
+         the offer. */
       'final-offer': function() { return {
         request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11200, has_final_offer: true, insights_data: genInsights(25, 11200) }),
         offers: [
           { id: 201, status: 3, amount: 11200, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
-          { id: 202, status: 0, amount: 10800, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
-          { id: 203, status: 0, amount: 10300, car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
-          { id: 204, status: 0, amount: 9900,  car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
-          { id: 205, status: 0, amount: 9400,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
-          { id: 206, status: 0, amount: 8900,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
+          { id: 202, status: 2, amount: 10800, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
+          { id: 203, status: 2, amount: 10300, car_pickup: false, distance: 40,  city: 'Vantaa',   total_sales: 200, office_id: 503, auto_rejected: false },
+          { id: 204, status: 2, amount: 9900,  car_pickup: false, distance: 60,  city: 'Tampere',  total_sales: 55,  office_id: 504, auto_rejected: false },
+          { id: 205, status: 2, amount: 9400,  car_pickup: true,  distance: 80,  city: 'Turku',    total_sales: 30,  office_id: 505, auto_rejected: false },
+          { id: 206, status: 2, amount: 8900,  car_pickup: false, distance: 100, city: 'Oulu',     total_sales: 90,  office_id: 506, auto_rejected: false },
         ],
       }; },
       'accepted': function() {
