@@ -191,6 +191,18 @@
         <div id="banner-top-content"></div>
       </section>
 
+      <!-- Section 3a: Informed decision (ideation arm only) -->
+      <section id="section-decision-help" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <!-- prod's `checks-bold` sprite, verbatim -->
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M152.41 88.56l-89.6 88a12 12 0 0 1-16.82 0L7.59 138.85a12 12 0 0 1 16.82-17.13l30 29.46 81.19-79.74a12 12 0 0 1 16.82 17.12Zm96.15-17a12 12 0 0 0-17-.15L150.4 151.18l-7.88-7.74a12 12 0 0 0-16.82 17.12l16.29 16a12 12 0 0 0 16.82 0l89.6-88a12 12 0 0 0 .15-16.97Z"/></svg>
+          <span class="text-blue-900 leading-[24px]">Apua päätöksen tekoon</span>
+        </h2>
+        <div class="w-full p-5 bg-white rounded-xl">
+          <div id="decision-help-content"></div>
+        </div>
+      </section>
+
       <!-- Section 3: AuctionInsights -->
       <section id="section-insights" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
@@ -284,6 +296,24 @@
       return arm;
     }());
     var APR_V1 = APR_ARM === 'v1';
+
+    /* ── "Informed decision" arm — IDEATION ONLY ──────────────────────────────
+       A section above the auction-details block that gives a seller weighing
+       accept / negotiate / reject something to weigh it against. Deliberately
+       NOT a table of figures: it is a qualitative matrix plus three
+       "this does not block you" beliefs, because the goal is to educate rather
+       than to prove a number.
+
+       Nothing here is proposed for build. Every string is a first draft written
+       by me for the team to react to, and the spec page says so at the top.
+       Spec: design-specs/informed-decision.html */
+    var ID_ARMS = ['control', 'v1'];
+    var ID_ARM = (function () {
+      var arm = window.protoVariant('informed-decision', 'control');
+      if (ID_ARMS.indexOf(arm) === -1) { window.protoVariantSet('informed-decision', null); return 'control'; }
+      return arm;
+    }());
+    var ID_V1 = ID_ARM === 'v1';
 
     /* Change 17. The accept colour, in one place because it appears on the card,
        in the modal footer, inside the dealership's last bubble and on the accept
@@ -1627,6 +1657,102 @@
       '</div>';
     }
 
+    /* ── "Apua päätöksen tekoon" — Informed decision, IDEATION ONLY ──────────
+       Two blocks in one section, because the six ideas on the list are not one
+       shape. Four of them compare the seller's routes to a sale, which is a
+       matrix; the other two are beliefs a seller treats as disqualifying when
+       they are not, which is a list. Splitting them was the only structural
+       decision I made on my own.
+
+       NOT a table of figures, per the brief: no percentages, no euro gaps, no
+       "x % of sellers" — the marks carry the argument and each row's second
+       line explains it. That also keeps the section clear of any statistic we
+       cannot source.
+
+       Marks: check = yes, cross = no, dash = not always. Both negatives are
+       slate and differ only by glyph, deliberately — on this page red means a
+       notification and amber means a live negotiation, so a red cross in a
+       table would borrow a meaning that is already taken. Only the AutoVex
+       column fills with green, which is what makes it read as advocacy.
+
+       The pick-up row reads the REAL offer. `car_pickup` is on the highest
+       offer, so a seller who was not offered pick-up is not told they get it —
+       the row flips to "you deliver it" and a dash. Everything else is static.
+
+       All copy is a first draft written by me, unreviewed. */
+    function buildDecisionHelp(offers) {
+      var YES  = '<span class="inline-flex text-green-600" title="Kyllä">'
+        + '<svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm45.66 85.66-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32Z"/></svg></span>';
+      var NO   = '<span class="inline-flex text-slate-400" title="Ei">'
+        + '<svg width="17" height="17" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M13.845 12.7175a1.13 1.13 0 0 1 0 1.5289 1.13 1.13 0 0 1-1.5645 0L8.5 9.6289l-4.2175 4.2162a1.13 1.13 0 0 1-1.5645 0 1.13 1.13 0 0 1 0-1.5289L6.9711 8.5 3.1549 4.2826a1.13 1.13 0 0 1 0-1.5289 1.13 1.13 0 0 1 1.5289 0L8.5 7.3711l4.2174-4.2181a1.13 1.13 0 0 1 1.5289 1.5289L9.6289 8.5l4.2161 4.2175Z"/></svg></span>';
+      var PART = '<span class="inline-flex text-slate-400" title="Ei aina">'
+        + '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 11.75a.75.75 0 0 0-.75-.75H3.75a.75.75 0 0 0 0 1.5h16.5a.75.75 0 0 0 .75-.75Z"/></svg></span>';
+
+      var highest = offers && offers[0];
+      var pickup  = !!(highest && highest.car_pickup);
+
+      var rows = [
+        { t: 'Enemmän rahaa autostasi',
+          d: 'Suora myynti tuottaa tyypillisesti enemmän kuin vaihtohyvitys uuden auton kaupassa.',
+          m: [YES, NO, PART] },
+        { t: 'Summa on varma',
+          d: 'Tarjous on se summa, jonka saat. Pyyntihinta ei ole vielä kaupan hinta.',
+          m: [YES, YES, NO] },
+        { t: pickup ? 'Nouto ja paperityöt puolestasi' : 'Paperityöt puolestasi',
+          d: pickup
+            ? 'Autoliike noutaa auton, ja kauppakirjat hoidetaan liikkeen kanssa.'
+            : 'Toimitat auton liikkeeseen, mutta kauppakirjat hoidetaan liikkeen kanssa.',
+          m: [pickup ? YES : PART, PART, NO] },
+        { t: 'Ei tuntemattomia kotiovella',
+          d: 'Ei koeajoja vieraille, ei yhteydenottoja, ei maksuriskiä.',
+          m: [YES, YES, NO] }
+      ];
+
+      var beliefs = [
+        { q: 'Minulla on jo parempi tarjous',
+          a: 'Onko kyseessä tarjous vai pyyntihinta? Myynti-ilmoituksen pyyntihinta ei ole summa, joka sinulle maksetaan.' },
+        { q: 'Tarvitsen tilalle toisen auton',
+          a: 'Voit hyväksyä tarjouksen ja sopia autoliikkeen kanssa ajankohdasta, joka sopii korvaavan auton hankintaan.' },
+        { q: 'Autossa on rahoitusta jäljellä',
+          a: 'Voit hyväksyä tarjouksen ja sopia autoliikkeen kanssa jäljellä olevan rahoituksen hoitamisesta.' }
+      ];
+
+      var html = '<p class="font-dm text-sm text-slate-600 mb-4">Näin tarjous vertautuu muihin tapoihin myydä autosi.</p>';
+
+      html += '<div class="overflow-x-auto"><table class="w-full font-dm text-left border-collapse">';
+      html += '<thead><tr class="text-xs text-slate-500">'
+        + '<th class="font-medium pb-2 pr-3"></th>'
+        + '<th class="font-medium pb-2 w-14 text-center">AutoVex</th>'
+        + '<th class="font-medium pb-2 w-14 text-center">Vaihto&shy;hyvitys</th>'
+        + '<th class="font-medium pb-2 w-14 text-center">Itse myynti</th>'
+        + '</tr></thead><tbody class="divide-y divide-slate-100">';
+      rows.forEach(function (r) {
+        html += '<tr>'
+          + '<td class="py-3 pr-3 align-top">'
+            + '<div class="text-sm font-medium text-slate-900">' + r.t + '</div>'
+            + '<div class="text-xs text-slate-500 mt-0.5">' + r.d + '</div>'
+          + '</td>'
+          + '<td class="py-3 align-top text-center"><div class="flex justify-center pt-0.5">' + r.m[0] + '</div></td>'
+          + '<td class="py-3 align-top text-center"><div class="flex justify-center pt-0.5">' + r.m[1] + '</div></td>'
+          + '<td class="py-3 align-top text-center"><div class="flex justify-center pt-0.5">' + r.m[2] + '</div></td>'
+          + '</tr>';
+      });
+      html += '</tbody></table></div>';
+
+      html += '<div class="mt-6 pt-5 border-t border-slate-200">';
+      html += '<div class="font-dm text-sm font-bold text-slate-900 mb-3">Nämä eivät ole esteitä kaupalle</div>';
+      html += '<div class="flex flex-col gap-3">';
+      beliefs.forEach(function (b) {
+        html += '<div>'
+          + '<div class="font-dm text-sm font-medium text-slate-900">&rdquo;' + b.q + '&rdquo;</div>'
+          + '<div class="font-dm text-sm text-slate-600 mt-0.5">' + b.a + '</div>'
+          + '</div>';
+      });
+      html += '</div></div>';
+
+      return html;
+    }
+
     // AuctionInsights — mirrors AuctionInsights.vue structure (dl + chart area + dates)
     function buildInsights(req, offers) {
       var offerCount = req.offer_count || offers.length;
@@ -1992,6 +2118,22 @@
            identically in both. */
         bannerBotEl.innerHTML = buildBannerHelper(bannerCopy);
         bannerBotSec.classList.remove('hidden');
+      }
+
+      /* Informed decision — v1 only, and only where a decision is still open.
+         The four price tiers, a final offer and a closed negotiation all leave
+         the seller something to decide; no offers, expired offers, an accepted
+         offer and a rejected one do not, so arguing the case there would be
+         either useless or tactless. A live negotiation resolves to a price tier
+         in `pas`, so those states are covered by the same list. */
+      var DECISION_OPEN = ['excellent_auction', 'matches_expectations', 'good_auction',
+        'not_great_auction', 'final_offer', 'negotiation_stopped'];
+      var helpSec = document.getElementById('section-decision-help');
+      if (ID_V1 && DECISION_OPEN.indexOf(pas) !== -1 && offers.length) {
+        document.getElementById('decision-help-content').innerHTML = buildDecisionHelp(offers);
+        helpSec.classList.remove('hidden');
+      } else {
+        helpSec.classList.add('hidden');
       }
 
       // Insights
@@ -3147,6 +3289,14 @@
           variants: [
             { id: 'control', label: 'Control — current design' },
             { id: 'v1',      label: 'Variant 1 — shared stats row, no asking price' }
+          ]
+        },
+        {
+          slug:    'informed-decision',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — nothing above the auction details' },
+            { id: 'v1',      label: 'Variant 1 — comparison table + beliefs' }
           ]
         }
       ],

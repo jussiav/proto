@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Informed decision · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    /* Long unbroken identifiers have no break opportunity and pushed the page
+       20px wide at 375px. */
+    code { overflow-wrap: anywhere; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <!-- Hero -->
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Ideation &middot; decision page</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Informed decision</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller looking at an auction result has to choose between accepting, negotiating, rejecting and walking away &mdash; and the page gives them nothing to weigh that choice against. This is a first sketch of a section that does: not numbers, but the trade-offs between the routes a seller actually has.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Ideation only &middot; not a build proposal &middot; all copy AI-drafted
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <!-- Read this first -->
+    <section class="av-band av-band-grey">
+      <div class="av-container flex flex-col gap-6">
+
+        <div class="rounded-xl border-2 border-warning-300 bg-warning-50 p-6 max-w-3xl">
+          <h2 class="font-barlow font-bold text-2xl text-warning-900 mb-3">Read this before anything else</h2>
+          <ul class="font-dm text-base leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>Every Finnish string on this page was written by Claude</b>, not by AutoVex. None of it has been reviewed, approved or checked against the copy guidelines. It exists so the team has something concrete to react to instead of a description.</li>
+            <li><b>This is not a build proposal.</b> There is no acceptance criteria section, no data contract and no dev hand-off. It is a switchable sketch, deliberately thin.</li>
+            <li><b>It deliberately contains no figures.</b> No percentages, no euro gaps, no &ldquo;x&nbsp;% of sellers&rdquo;. The brief was to educate rather than to prove, and it also keeps the section clear of any statistic we cannot source.</li>
+            <li><b>Two of the six ideas make a promise about the dealership</b> &mdash; a conditional sale while the seller finds a replacement car, and help with remaining finance. AutoVex does not control either. Wording is hedged to &ldquo;agree with the dealership&rdquo;, but <b>OPS has to confirm both are realistic before this goes anywhere near a seller.</b></li>
+          </ul>
+        </div>
+
+        <div class="max-w-3xl">
+          <h2 class="font-barlow font-bold text-3xl mb-3">Try it</h2>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3">One new section, above the auction-details block. Switchable from the prototype bar under <b>Informed decision (ideation)</b>, or by URL:</p>
+          <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=seen-offers&amp;informed-decision=v1">../decision.html?scenario=seen-offers&amp;informed-decision=v1</a>
+          <p class="font-dm text-sm text-slate-500 mt-3">Shown only where a decision is still open: the four price tiers, a final offer, and a negotiation the dealership closed. Not on no offers, expired offers, an accepted offer or a rejected one &mdash; there the argument is either useless or tactless.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- What it is -->
+    <section class="av-band" style="background:#fff">
+      <div class="av-container flex flex-col gap-8">
+        <div class="max-w-3xl">
+          <h2 class="font-barlow font-bold text-3xl mb-3">Two blocks, because the ideas are two shapes</h2>
+          <p class="font-dm text-base leading-6 text-slate-700">Splitting them was the only structural decision taken without asking. Four of the six ideas compare the seller&rsquo;s routes to a sale, which wants a matrix. The other two are beliefs a seller treats as disqualifying when they are not, which wants a list. Forcing all six into one table made the last two read as claims about AutoVex rather than answers to the seller&rsquo;s own objection.</p>
+        </div>
+
+        <div class="max-w-3xl">
+          <h3 class="font-barlow font-bold text-xl mb-3">Block 1 &mdash; the comparison</h3>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-4">Rows are what a seller cares about; columns are the three things they can actually do with the car. A tick means yes, a cross means no, a dash means not always. Only the AutoVex column fills with green, which is what makes it read as advocacy rather than as a neutral table.</p>
+          <div class="overflow-x-auto rounded-xl border border-slate-200">
+            <table class="w-full font-dm text-sm text-left">
+              <thead><tr class="bg-slate-50 text-slate-500 text-xs">
+                <th class="px-4 py-3 font-medium">Row</th>
+                <th class="px-4 py-3 font-medium">AutoVex</th>
+                <th class="px-4 py-3 font-medium">Trade-in</th>
+                <th class="px-4 py-3 font-medium">Private sale</th>
+              </tr></thead>
+              <tbody class="divide-y divide-slate-100 text-slate-800">
+                <tr><td class="px-4 py-3"><b>Enemmän rahaa autostasi</b><br><span class="text-slate-500">A direct sale usually beats a trade-in allowance</span></td><td class="px-4 py-3">yes</td><td class="px-4 py-3">no</td><td class="px-4 py-3">not always</td></tr>
+                <tr><td class="px-4 py-3"><b>Summa on varma</b><br><span class="text-slate-500">An offer is what you get paid; an asking price is not</span></td><td class="px-4 py-3">yes</td><td class="px-4 py-3">yes</td><td class="px-4 py-3">no</td></tr>
+                <tr><td class="px-4 py-3"><b>Nouto ja paperityöt puolestasi</b><br><span class="text-slate-500">Reads the real offer &mdash; see below</span></td><td class="px-4 py-3">yes / not always</td><td class="px-4 py-3">not always</td><td class="px-4 py-3">no</td></tr>
+                <tr><td class="px-4 py-3"><b>Ei tuntemattomia kotiovella</b><br><span class="text-slate-500">No test drives for strangers, no payment risk</span></td><td class="px-4 py-3">yes</td><td class="px-4 py-3">yes</td><td class="px-4 py-3">no</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="font-dm text-sm text-slate-600 mt-4"><b>The pick-up row reads the seller&rsquo;s actual offer.</b> Pick-up is a property of the offer, so a seller who was not offered it is not told they get it: the row becomes &ldquo;Paperityöt puolestasi&rdquo; with a dash. Everything else is static. Two consequences worth a decision: without pick-up the row ties AutoVex with trade-in, so it may not be worth showing at all; and because an offer WITH pick-up is the only one shown on the page at all, the tick version of this row is currently unreachable in the prototype.</p>
+        </div>
+
+        <div class="max-w-3xl">
+          <h3 class="font-barlow font-bold text-xl mb-3">Block 2 &mdash; &ldquo;these are not obstacles&rdquo;</h3>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-4">Three objections, quoted in the seller&rsquo;s own voice and answered. All three are shown to everyone: framed as things sellers in this position weigh, a row that does not apply reads as information rather than as a wrong guess about them. Gating them on real data would mean asking questions we do not ask today.</p>
+          <div class="flex flex-col gap-4">
+            <div class="rounded-xl border border-slate-200 p-4">
+              <p class="font-dm text-base font-bold text-slate-900">&rdquo;Minulla on jo parempi tarjous&rdquo;</p>
+              <p class="font-dm text-sm text-slate-600 mt-1">Onko kyseessä tarjous vai pyyntihinta? Myynti-ilmoituksen pyyntihinta ei ole summa, joka sinulle maksetaan.</p>
+              <p class="font-dm text-xs text-slate-500 mt-2">EN: Is it an offer or an asking price? A listing&rsquo;s asking price is not the sum you get paid.</p>
+            </div>
+            <div class="rounded-xl border border-slate-200 p-4">
+              <p class="font-dm text-base font-bold text-slate-900">&rdquo;Tarvitsen tilalle toisen auton&rdquo;</p>
+              <p class="font-dm text-sm text-slate-600 mt-1">Voit hyväksyä tarjouksen ja sopia autoliikkeen kanssa ajankohdasta, joka sopii korvaavan auton hankintaan.</p>
+              <p class="font-dm text-xs text-slate-500 mt-2">EN: You can accept and agree a timing with the dealership that suits finding a replacement. <b class="text-warning-800">Needs OPS confirmation.</b></p>
+            </div>
+            <div class="rounded-xl border border-slate-200 p-4">
+              <p class="font-dm text-base font-bold text-slate-900">&rdquo;Autossa on rahoitusta jäljellä&rdquo;</p>
+              <p class="font-dm text-sm text-slate-600 mt-1">Voit hyväksyä tarjouksen ja sopia autoliikkeen kanssa jäljellä olevan rahoituksen hoitamisesta.</p>
+              <p class="font-dm text-xs text-slate-500 mt-2">EN: You can accept and agree with the dealership on handling the remaining finance. <b class="text-warning-800">Needs OPS confirmation.</b></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Decisions taken, and what is missing -->
+    <section class="av-band av-band-grey">
+      <div class="av-container flex flex-col gap-8">
+        <div class="max-w-3xl">
+          <h2 class="font-barlow font-bold text-3xl mb-4">Choices made, and why</h2>
+          <div class="flex flex-col gap-4 font-dm text-base leading-6 text-slate-700">
+            <p><b>&ldquo;Selling to a dealership is preferred by consumers&rdquo; was reframed, not dropped.</b> Stated as a research finding it needs a source, and citing research nobody has produced is fabricating evidence. The row now gives the <i>reason</i> consumers say that &mdash; no strangers, no test drives, no payment risk &mdash; which needs no citation. If real research exists, the original framing is stronger and should come back with the source attached.</p>
+            <p><b>Negatives are slate, not red.</b> On this page red already means &ldquo;something you have not seen&rdquo; and amber means &ldquo;your negotiation is live&rdquo;. A red cross in a table would borrow a meaning that is taken. The cross and the dash differ by glyph alone.</p>
+            <p><b>It sits above the auction details, not below.</b> The seller is being asked to decide; the evidence should arrive before the statistics about the auction, not after.</p>
+          </div>
+        </div>
+
+        <div class="max-w-3xl">
+          <h2 class="font-barlow font-bold text-3xl mb-4">Open questions</h2>
+          <ol class="font-dm text-base leading-6 text-slate-700 list-decimal pl-5 space-y-3">
+            <li><b>Does advocacy belong here at all?</b> The section argues for accepting and sits directly above a reject button. <code class="text-sm bg-slate-200 px-1 rounded">docs/anti_patterns.md</code> warns that pushy messaging costs trust, and <code class="text-sm bg-slate-200 px-1 rounded">docs/real_examples.md</code> holds up a comparative line (&ldquo;most sellers in your situation choose to&hellip;&rdquo;) as the good pattern. The advocacy framing was chosen deliberately &mdash; but a neutral version is the obvious A/B partner.</li>
+            <li><b>Is the fair-offer threshold the strongest row we are not using?</b> It is not on the original list, but AutoVex already defines a fair offer internally and the seller is never told whether theirs clears it. That is a stronger, more specific signal than any row here.</li>
+            <li><b>Second idea, not built yet: &ldquo;similar cars sold for&rdquo;.</b> Recent comparable sales with the differences to this seller&rsquo;s car spelled out. Deliberately parked until the comparison table is judged, and it needs real data rather than copy.</li>
+            <li><b>On a phone the section is about 1&nbsp;100&nbsp;px tall.</b> Nothing overflows, but it is a lot of reading above the auction details. Collapsing block&nbsp;2 behind a summary line is the obvious trim.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- Footer — same structure as the prototype's site footer (layout.js). -->
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Informed decision · ideation</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>

@@ -144,6 +144,16 @@
       name: 'Enhanced success page',
       spec: 'design-specs/enhanced-success-page.html',
       prodArm: 'control'
+    },
+    /* Ideation only, and TEMPORARY — registered so the arm is switchable and
+       traceable, not because anything here is proposed for build yet. Delete the
+       entry (and the page's own declaration) if the idea is dropped rather than
+       promoted. */
+    {
+      slug: 'informed-decision',
+      name: 'Informed decision (ideation)',
+      spec: 'design-specs/informed-decision.html',
+      prodArm: 'control'
     }
   ];
 

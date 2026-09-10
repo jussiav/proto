@@ -571,6 +571,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
+| Informed decision | **Ideation, temporary** | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 
 **Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
 and Seller intent (VWO `104_combi`), both still registered in the 2026-09-07 dump
@@ -2034,6 +2035,68 @@ branches (`dayjs().isAfter(expiry) && !hasPending`), so an expired offer with a
 stopped negotiation reads `expired`. The proto keeps the negotiation status
 ahead of its own expiry check. Unreachable today — every negotiation scenario
 uses an `ACTIVE()` window — but it is a real divergence if that changes.
+
+## Informed decision — ideation, and deliberately thin
+
+**Not a build proposal and not a normal initiative.** Created 2026-09-10 to put
+one idea in front of the team as something switchable rather than described. It
+adds ONE section to the decision page — `Apua päätöksen tekoon`, above the
+auction-details block — in `v1` only. `control` renders nothing.
+
+**All its Finnish copy was written by me and nothing is approved.** The spec
+page says so in its first card, in a warning-coloured status chip and in the
+hero. Same category as Seller file upload's draft copy, but weaker: that one is
+a proposal awaiting sign-off, this one is a conversation starter.
+
+**No figures anywhere, by instruction.** The brief was to educate, not to prove:
+no percentages, no euro gaps, no "x % of sellers". That also keeps the section
+clear of any statistic we cannot source — and it is why the original
+"consumers prefer selling to a dealership, according to market research" idea
+was **reframed into the reason** (no strangers, no test drives, no payment risk)
+rather than stated as a finding. Citing research nobody has produced would be
+fabricating evidence. If the research exists, the original framing is stronger
+and should return with its source.
+
+**Two blocks, because the six ideas are two shapes** — the one structural call
+made without asking. Four compare the seller's routes to a sale, which wants a
+matrix (rows × `AutoVex` / `Vaihtohyvitys` / `Itse myynti`, tick / cross /
+dash). Two are objections a seller treats as disqualifying when they are not,
+which wants a list in the seller's own voice. Forcing all six into one table
+made the last two read as claims about AutoVex rather than answers.
+
+**The pick-up row reads the real offer.** `car_pickup` lives on the offer, so a
+seller not offered pick-up is not told they get it — the row retitles to
+`Paperityöt puolestasi` and takes a dash. Two consequences: without pick-up the
+row ties AutoVex with trade-in and may not be worth showing, and since an offer
+WITH pick-up is the only card the selection rule shows, the tick version is
+**currently unreachable in the proto** — no scenario has a pick-up highest offer.
+
+**Negatives are slate, not red.** On this page red means "something you have not
+seen" and amber means "your negotiation is live"; a red cross in a table would
+borrow a taken meaning. Cross and dash differ by glyph alone, and only the
+AutoVex column fills green — which is what makes it read as advocacy.
+
+**Shown only where a decision is still open**: the four price tiers, `final_offer`
+and `negotiation_stopped` (a live negotiation resolves to a tier in `pas`, so
+those are covered). Not `no_offers`, `offers_expired`, `offer_accepted` or
+`offer_rejected` — there the argument is useless or tactless.
+
+**Two things flagged rather than solved.** The section argues for accepting and
+sits directly above a reject button, which `docs/anti_patterns.md` warns about
+and which makes a neutral-framing arm the obvious A/B partner — the advocacy
+framing was the team's explicit choice, not a default. And two rows promise
+something of the DEALERSHIP (a conditional sale while the seller finds a
+replacement, help with remaining finance) that AutoVex does not control; wording
+is hedged to "sopia autoliikkeen kanssa", but **OPS has to confirm both before
+this reaches a seller.**
+
+**Second idea, parked:** "similar cars sold for" — recent comparable sales with
+the differences to this seller's car spelled out. Not built; it needs real data
+rather than copy, and the comparison table should be judged first.
+
+**Delete, do not promote, if the idea is dropped** — the registry entry, the
+page's declaration, the arm reader, `buildDecisionHelp`, the section markup and
+the spec page. Nothing else depends on it.
 
 ## Which offers get a card, and what a final offer implies
 
