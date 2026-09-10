@@ -66,20 +66,62 @@ These rules apply to all new pages and components in this prototype, without exc
    body copy at once. Worth doing deliberately, with a sweep, not as a side
    effect.
 
-   **The audit that made the heading port safe, and the method to reuse:** find
-   every `h1`–`h6` whose class carries no `text-*` and no inline `font-size`,
-   then confirm in the browser per page. Result: **28 candidates, 2 real** — the
-   support banner's title and the reject survey's thank-you title, both in
-   `decision.html`, both wrong before. The other 26 are in `email-content.js` and
-   protected by `.em-body h1` (a class-plus-element selector out-ranks a bare
-   element rule); `accept-button-lab.html` and every `design-specs/` page do not
-   load `tw-tokens.js` at all; `mobile-upload-widget.js` styles its `h1` inline;
-   and the proto bar is immune through its own `#proto-bar *{font:inherit}`.
-   Every other page swept clean at zero. **One guard was needed:** `.em-body`
-   h1/h2/h3 in `emails.html` now repeat their `font-family`, because an element
-   rule on the heading itself out-ranks a family INHERITED from `.em-body` — the
-   rendered emails would otherwise have come out in Barlow instead of the mail
-   theme's Avenir.
+   **Which headings the element rule actually reaches — and it is NOT every
+   heading without a size class.** `fontSize` is ported only from `3xl` up (plus
+   `2xs`), and those keys are plain strings that pair NO line-height. `xs`
+   through `2xl` keep the CDN's own defaults, which DO pair one — `text-lg` and
+   `text-xl` both carry `1.75rem` — and a utility out-ranks an element rule. So:
+
+   | Heading carries | Size from | Leading from |
+   |---|---|---|
+   | `text-3xl`+ or `text-2xs` | the utility | **the element rule** |
+   | `text-xs`…`text-2xl` | the utility | **the utility's paired default** |
+   | no size class | the element rule | the element rule |
+   | any `leading-*` | as above | the utility |
+
+   That table is the whole safety story, and getting it wrong in either
+   direction costs a round trip.
+
+   **Audit BOTH size and leading — the first pass audited only size and
+   weight.** That miss shipped a regression: the decision page's warm-up
+   headline is `text-3xl` with no leading, so it took the element rule's
+   **46px at 992px** where prod pins it back to 36px, and Jussi caught it
+   against production. Prod's own markup says why —
+   `<h2 class="text-3xl font-bold mt-2 lg:leading-6">` — that `lg:leading-6`
+   exists precisely to undo the element rule's own `lg:leading-8`. The proto now
+   carries `lg:leading-[36px]` (pixels, since prod's `lineHeight` scale is not
+   ported) and reads 28/36 at every width, as prod does.
+
+   The same miss reached the email tool: `.em-body h1` sets no line-height, and
+   prod's mail theme does not either — it lets `body`'s `1.4` inherit. An
+   element rule on the heading beats an INHERITED value, so those headings took
+   36px on 19px text. Both guards there are now `font-family: inherit;
+   line-height: inherit`, which reproduces prod's cascade instead of restating
+   values that could drift from `.em-body`.
+
+   **The method, corrected:** sweep for headings that carry a ported size
+   (`3xl`+/`2xs`) **or no size at all**, AND no `leading-*`; those are the only
+   ones the element rule governs. Then confirm per page in the browser at three
+   widths. Current result: `email-content.js`'s 24 (guarded by `.em-body`), the
+   reject survey's thank-you `h2` (bare, and correct — prod styles it the same
+   way), and `mobile-upload-widget.js`'s `h1`, which now pins `line-height:1.2`
+   inline beside the size it already set there. `accept-button-lab.html` and
+   every `design-specs/` page do not load `tw-tokens.js` at all, and the proto
+   bar is immune through its own `#proto-bar *{font:inherit}`.
+
+   **A section title fixed in passing:** prod's `Section.vue` puts `leading-3`
+   (24px) on the title span, which `offers.html` transcribed and
+   `decision.html` never did — it was inheriting `text-xl`'s 28px. Now
+   `leading-[24px]` on both. Unrelated to the element rules; the `h2` above it
+   is a flex container, so its own leading draws no line box either way.
+
+   **Proto-only chrome is not a place to "fix" leading.** `offers.html`'s two
+   modal titles and the nine component-gallery headings are all `text-lg`, so
+   they were never touched by the element rules — they keep the CDN's paired
+   28px. I briefly added `leading-tight` to all eleven and reverted it: that
+   would have been a real visual change to eleven surfaces, made while fixing
+   something else, on the strength of an audit that had not yet distinguished
+   ported sizes from paired ones.
 
    Fonts: prod's `<body>` is `font-body`, i.e. **DM Sans is the base** and Barlow
    appears only where a component says `font-display`. Barlow is loaded at

@@ -417,7 +417,7 @@
       '<div style="width:76px;height:76px;background:#0B6DFF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;">' +
         '<svg width="34" height="34" viewBox="0 0 34 34" fill="none"><path d="M7 17l7 7 13-14" stroke="white" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
       '</div>' +
-      '<h1 style="font-family:\'Barlow\',sans-serif;font-weight:700;font-size:26px;color:#020617;margin:0 0 10px;">' + count + (muwIsFi() ? ' kuvaa lisätty!' : ' photos added!') + '</h1>' +
+      '<h1 style="font-family:\'Barlow\',sans-serif;font-weight:700;font-size:26px;line-height:1.2;color:#020617;margin:0 0 10px;">' + count + (muwIsFi() ? ' kuvaa lisätty!' : ' photos added!') + '</h1>' +
       '<p style="font-size:15px;line-height:1.6;color:#64748b;margin:0 0 12px;max-width:280px;">' +
         (muwIsFi() ? 'Oikeassa sovelluksessa jatkaisit nyt hinnoitteluvaiheeseen puhelimellasi.'
                    : 'In the real app you would now continue to the pricing step on your phone.') +
