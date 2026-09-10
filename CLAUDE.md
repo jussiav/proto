@@ -2088,18 +2088,29 @@ or in the modal. But `Reject.vue` picks its copy from
 offer with no negotiation gets `reject.confirm.no_negotiation`, the paragraph
 that says *"Suosittelemme tekemään vastatarjouksen autoliikkeelle…"*, with
 nothing anywhere to act on it. **A production defect, reproduced faithfully in
-control.** The honest fix there is one condition — `Reject.vue`'s `v-if` gaining
-`&& !offer.isFinal`, which falls back to prod's own bare-question string; the
-alternative, deciding a final offer IS counter-offerable, is a product decision
-about the mechanic and not a copy fix.
+control.**
 
-**Enhanced negotiations must not carry that recommendation into `v1`.** The arm
-restructures this step (prod's question to the title row, the advice into the
-contained help block) and currently branches on `hasNeg` alone, so it repeats
-the dead advice. It should gate on the counter-offer button actually being
-present, which uses prod's second existing string and adds no copy — the same
-reasoning as change 9, which already took the customer-support dead end out of
-this modal.
+**The team owns the fix, and the direction is decided (2026-09-10): the
+confirmation becomes a plain confirmation of rejection, with no negotiation
+recommendation.** It is ticketed with the team as production copy work. The
+alternative reading — deciding a final offer SHOULD be counter-offerable — was
+not taken; that would have been a product decision about the mechanic rather
+than a wording fix.
+
+**So the proto stays exactly as it is until that copy ships. Do not "correct"
+this in passing** — control is a faithful transcription and is meant to be. When
+the new string lands, transcribe it into `renderRejectModal` (the control
+paragraph and the `EN_V1` header/help block both) and re-check the `hasNeg`
+branch: a confirmation-only string may remove the need for two variants at all.
+
+**It also parks an Enhanced negotiations question rather than answering it.**
+`v1` restructures this step (prod's question to the title row, the advice into
+the contained help block) and branches on `hasNeg` alone, so today it repeats
+the dead advice. Gating it on the counter-offer button actually being present
+was proposed and is **deliberately not built**: if prod's copy becomes
+confirmation-only, there is no advice left to gate. Revisit only after the copy
+change, alongside change 9, which already took the customer-support dead end out
+of this modal.
 
 **One smaller sibling, not verified at runtime:** `showNegotiate` is not gated
 on expiry and that negotiate `Button` alone carries no `:disabled`, unlike its
