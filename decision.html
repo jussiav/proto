@@ -396,7 +396,15 @@
     var ICO_INFO_SM   = '<svg width="18" height="18" viewBox="0 0 100 100" fill="currentColor"><path fill-rule="evenodd" d="M50 100c27.614 0 50-22.386 50-50S77.614 0 50 0 0 22.386 0 50s22.386 50 50 50Zm-4.775-68.73c1.257 1.127 2.86 1.69 4.81 1.69 1.907 0 3.467-.563 4.68-1.69 1.257-1.17 1.885-2.6 1.885-4.29 0-1.733-.628-3.163-1.885-4.29-1.213-1.17-2.773-1.755-4.68-1.755-1.95 0-3.553.585-4.81 1.755-1.213 1.127-1.82 2.557-1.82 4.29 0 1.69.607 3.12 1.82 4.29ZM55.56 73V36.73H44.445V73H55.56Z" clip-rule="evenodd"/></svg>';
     var ICO_MDI_HOME  = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 8 6v12h-5v-7H9v7H4V9z"/></svg>';
     var ICO_CAR       = '<svg width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-8h96v8a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM80 152H56a8 8 0 0 1 0-16h24a8 8 0 0 1 0 16Zm120 0h-24a8 8 0 0 1 0-16h24a8 8 0 0 1 0 16ZM44.31 104 69.2 48h117.6l24.89 56Z"/></svg>';
-    var ICO_PHONE     = '<svg width="20" height="20" viewBox="0 -960 960 960" fill="currentColor"><path d="M798-120q-125 0-247-54.5T329-329Q229-429 174.5-551T120-798q0-18 12-30t30-12h162q14 0 25 9.5t13 22.5l26 140q2 16-1 27t-11 19l-97 98q20 37 47.5 71.5T387-386q31 31 65 57.5t72 48.5l94-94q9-9 23.5-13.5T670-390l138 28q14 4 23 14.5t9 23.5v162q0 18-12 30t-30 12Z"/></svg>';
+    /* prod's own `phone` sprite (Heroicons solid), at the size and with the
+       classes UiButton gives a leading icon at size `fw` — `1em` square plus
+       `pr-1 transform -translate-x-1`. Its one consumer is the support
+       banner's default-intent button; the proto used to draw a Material
+       Symbols phone here, which is a different glyph. */
+    var ICO_BTN_PHONE = '<svg class="fill-current inline-flex pr-1 transform -translate-x-1" width="1em" height="1em" viewBox="0 0 24 24" role="img" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 4.5a3 3 0 0 1 3-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 0 1-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 0 0 6.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 0 1 1.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 0 1-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5Z"/></svg>';
+    /* The same glyph as ICO_WARN_FILL above, at MSubTextWithIcon's own `1em`
+       and carrying `text-destructive` — hsl(0 84.2% 60.2%), i.e. red-500. */
+    var ICO_SUBTEXT_WARN = '<svg class="fill-current text-red-500" width="1em" height="1em" viewBox="0 0 16 16" role="img" aria-hidden="true"><path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/></svg>';
     var ICO_CAR_SIMPLE = '<svg width="160" height="160" viewBox="0 0 256 256" fill="currentColor"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/></svg>';
 
     // ── Formatters ──
@@ -1491,42 +1499,105 @@
       return html;
     }
 
-    // BannerHelperCard — mirrors OBannerHelperCard.vue
-    // variant: 'actionable' (default phone) or 'actionable_inline_destructive' (decline)
-    function buildBannerHelper(opts) {
-      // opts: { title, message, btnText, btnHref, destructive, subTextWarning }
-      var cardBg  = opts.destructive ? 'bg-orange-50 outline-orange-400' : 'bg-slate-50 outline-blue-400';
-      var actBg   = opts.destructive ? 'bg-orange-100' : 'bg-blue-100';
-      // ACTIONABLE_INLINE (destructive) → always visible, flex row on lg
-      // ACTIONABLE (non-destructive) → action section hidden on lg (lg:hidden)
-      var rowCls  = opts.destructive ? 'lg:flex lg:flex-row lg:justify-between' : '';
-      var actHide = opts.destructive ? '' : ' lg:hidden';
-      var btnCls  = opts.destructive
-        ? 'w-full inline-flex items-center justify-center px-5 h-10 rounded-lg bg-red-200 hover:bg-red-300 text-red-700 text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.25)]'
-        : 'w-full inline-flex items-center justify-center gap-2 px-5 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
-      var tag  = opts.btnHref ? 'a' : 'button';
-      var href = opts.btnHref ? ' href="' + opts.btnHref + '"' : '';
-      var phoneIcon = opts.btnHref && opts.btnHref.indexOf('tel:') === 0
-        ? '<span class="mr-1">' + ICO_PHONE + '</span>' : '';
+    /* BannerHelperCard — OBannerHelperCard.vue over OCard.vue, with
+       MThumbnailWithInlineText.vue for the text half and MButtonWithSubText.vue
+       + MSubTextWithIcon.vue for the action half.
 
-      return '<div class="w-full outline outline-offset-[-2px] rounded-xl overflow-hidden ' + cardBg + ' ' + rowCls + '">' +
-        // Thumbnail section — kasper.png avatar (AThumbnailImage pattern)
+       TWO configurations reach the consumer decision page and both are prod's,
+       picked by whether the status declares banner copy of its own:
+
+       - `actionable` + DEFAULT intent, a phone icon on the button. Used by the
+         four statuses that carry their own wording — no offers, expired,
+         accepted, rejected. Its action section is `lg:hidden`, so from 992px
+         the banner is TEXT ONLY and the number written into the sentence is
+         the seller's only way to call.
+       - `actionable-inline` + DESTRUCTIVE intent, a warning line under the
+         button. Declared by the four price tiers, final_offer,
+         negotiation_stopped and offers_pending_action — the statuses with no
+         wording of their own, all of which fall through to `decline`. Visible
+         at every width; a flex row from 992px.
+
+       NO ROUND PHOTO. `thumbnailImg` defaults to null and no consumer passes
+       one, so MThumbnailWithInlineText's `v-if="thumbnailSrc"` never fires and
+       the avatar wrapper is absent entirely — the text block then drops its
+       `ps-3` for `ps-0`. No dump back to 2026-08-14 has ever passed an image
+       here; the proto's `kasper.png` came from the retired Astro prototype's
+       own `expert` mock, a different component.
+
+       The title is a BARE `<h5>` and that is what makes it a heading: prod
+       styles the ELEMENT — `sass/base/_typography.scss` gives h5
+       `text-lg leading-2 sm:text-xl sm:leading-3 font-semibold` and
+       `custom.scss` gives it `font-display` — so it is Barlow 600 at 18px
+       below 620px and 20px above, with only `mb-2 leading-snug` of its own
+       (that `leading-snug` is a utility, so it wins over the element's own
+       leading). Those rules now live in `tw-tokens.js`; before they did, this
+       title rendered at the card's inherited 14px in regular weight, which is
+       how it was caught against production. Neither the title nor the message
+       carries a colour, so both inherit the near-black body colour rather than
+       the slate the proto used to paint them.
+
+       Two prod quirks reproduced. The variant class puts `block` on the action
+       section AFTER the base `flex` and tailwind-merge keeps the later one, so
+       that section is a block and its `justify-start items-center gap-1` do
+       nothing. And the sub-text wrapper is gated on the SLOT EXISTING, not on
+       its content: `sub_text` is an empty string for every wording but
+       `decline`, so those four banners carry an empty `mt-3` div — 12px of
+       dead space under the button. */
+    function buildBannerHelper(opts) {
+      // opts: { title, message, btnText, btnHref, btnSubText, destructive, dataAction }
+      var dest = !!opts.destructive;
+
+      // OCard's own cva, then the card cva, then the page's `text-sm`
+      var cardCls = 'font-body rounded-xl justify-center items-center overflow-hidden'
+        + ' w-full outline outline-offset-[-2px] '
+        + (dest ? 'lg:flex lg:flex-row lg:justify-between bg-orange-50 outline-orange-400'
+                : 'bg-slate-50 outline-blue-400')
+        + ' text-sm';
+
+      // `block` outranks the base `flex`; ACTIONABLE also drops the section from lg
+      var actCls = 'self-stretch justify-start items-center gap-1 p-4 w-full lg:w-4/6'
+        + ' content-center block '
+        + (dest ? 'bg-orange-100' : 'bg-blue-100 lg:hidden');
+
+      /* UiButton at size `fw` — `px-8 h-14 w-full`, label at `text-base`, not
+         the `text-sm` the md size would give — plus the page's own
+         `md:h-10 md:px-5`. Destructive takes the secondary red fill, default
+         the primary blue one. */
+      var btnCls = 'inline-flex justify-center items-center transition cursor-pointer'
+        + ' outline-offset-2 py-1.5 text-base leading-tight rounded-lg relative px-8 h-14 '
+        + (dest
+          ? 'shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.25)]'
+            + ' bg-red-200 hover:bg-red-300 active:bg-red-400 text-red-700 active:text-red-800'
+          : 'shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]'
+            + ' bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white active:text-blue-100')
+        + ' w-full md:h-10 md:px-5';
+
+      var tag  = opts.btnHref ? 'a' : 'button';
+      var attr = (opts.btnHref ? ' href="' + opts.btnHref + '"' : '')
+               + (opts.dataAction ? ' data-action="' + opts.dataAction + '"' : '');
+
+      return '<div class="' + cardCls + '">' +
+        // MThumbnailWithInlineText with no thumbnail — text only, `ps-0`
         '<div class="self-stretch inline-flex justify-start items-center p-4">' +
-          '<div class="flex items-center gap-3">' +
-            '<div class="w-[50px] h-[50px] md:w-[76px] md:h-[76px] rounded-full overflow-hidden border border-gray-200 flex items-center justify-center shrink-0 bg-white">' +
-              '<img src="assets/kasper.png" alt="Kasper" class="w-full h-full object-cover">' +
-            '</div>' +
-            '<div>' +
-              '<h5 class="font-semibold text-slate-800 text-sm leading-snug">' + opts.title + '</h5>' +
-              '<p class="text-slate-600 text-sm mt-0.5">' + opts.message + '</p>' +
+          '<div class="flex items-stretch overflow-hidden">' +
+            '<div class="flex-1 content-center ps-0">' +
+              '<h5 class="mb-2 leading-snug">' + opts.title + '</h5>' +
+              '<p class="text-sm leading-none">' + opts.message + '</p>' +
             '</div>' +
           '</div>' +
         '</div>' +
-        // Action section — hidden on lg for non-destructive (ACTIONABLE variant)
-        '<div class="self-stretch flex justify-start items-center gap-1 p-4 w-full lg:w-4/6' + actHide + ' ' + actBg + '">' +
-          '<div class="w-full">' +
-            '<' + tag + href + (opts.dataAction ? ' data-action="' + opts.dataAction + '"' : '') + ' class="' + btnCls + '">' + phoneIcon + opts.btnText + '</' + tag + '>' +
-            (opts.subTextWarning ? '<p class="flex items-start gap-1.5 text-xs text-slate-600 mt-3 font-normal">' + ICO_WARN_FILL + ' ' + opts.subTextWarning + '</p>' : '') +
+        '<div class="' + actCls + '">' +
+          '<' + tag + attr + ' class="' + btnCls + '">' +
+            '<span class="inline-flex items-center justify-center">' +
+              (dest ? '' : ICO_BTN_PHONE) + opts.btnText +
+            '</span>' +
+          '</' + tag + '>' +
+          // rendered whether or not there is sub text, exactly as prod does
+          '<div class="flex items-start gap-1.5 mt-3 text-slate-600 font-normal text-start">' +
+            '<div class="flex gap-2 self-stretch text-xs">' +
+              (dest ? '<div class="flex-shrink-0 pt-[0.125em]" style="font-size: 1.125em;">' + ICO_SUBTEXT_WARN + '</div>' : '') +
+              '<div class="flex-1">' + (opts.btnSubText || '') + '</div>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -1794,8 +1865,20 @@
         grid.appendChild(el.firstChild);
       });
 
-      // Banner logic
-      var allRejected = offers.length > 0 && offers.every(function(o) { return o.status === 2; });
+      /* Banner logic. prod picks the COPY from the post-auction status
+         (usePostAuctionMessaging) and the SECTION from the offers
+         (C2BDecision.vue), independently. The proto used to derive the top
+         banner's wording from the offer flags instead — which agrees with prod
+         in every reachable state, but would disagree the moment a status named
+         copy the flags did not. Both now come from the sources prod uses.
+
+         `allRejected` drops its own `offers.length > 0` guard for the same
+         reason: prod's `sortedOffers.every(o => o.isRejected)` is vacuously
+         TRUE with no offers, so a no-offer auction takes the top section. Both
+         sections sit between the offer grid and the FAQ and the insights block
+         is hidden without offers, so the banner lands in the same place either
+         way. */
+      var allRejected = offers.every(function(o) { return o.status === 2; });
       var hasAccepted = offers.some(function(o) { return o.status === 1; });
       /* prod hides the reject-all banner only while the seller is WAITING on the
          dealer (`highestOfferIsBeingNegotiated` = negotiation && waitingForDealer),
@@ -1812,25 +1895,64 @@
       var bannerTopEl  = document.getElementById('banner-top-content');
       var bannerBotEl  = document.getElementById('banner-bottom-content');
 
+      /* Five wordings, one per `banner_helper.card.*` + `.button.*` block,
+         verbatim. Note the TWO phone numbers: `helper`, `accepted` and
+         `decline` carry +358 40 040 7002 while `expired` and `rejected` carry
+         +358 44 901 5285.
+
+         `destructive` is not a separate choice. In prod exactly those statuses
+         that declare no wording of their own declare a `variant`, so the four
+         named wordings always arrive with the default configuration and the
+         `decline` fallback always arrives destructive. */
+      var BANNER_COPY = {
+        helper: {
+          title:   'Me voimme auttaa!',
+          message: 'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a class="text-blue" href="tel:+358 40 040 7002">+358 40 040 7002</a> (arkisin klo 10–16)',
+          btnText: 'Soita meille',
+          btnHref: 'tel:+358 40 040 7002',
+        },
+        expired: {
+          title:   'Me voimme auttaa!',
+          message: 'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a class="text-blue" href="tel:+358 44 901 5285">+358 44 901 5285</a> (arkisin klo 10–16)',
+          btnText: 'Soita meille',
+          btnHref: 'tel:+358 44 901 5285',
+        },
+        accepted: {
+          title:   'Tarvitsetko apua?',
+          message: 'Jos sinuun ei ole otettu yhteyttä yhden arkipäivän kuluessa, soita meille numeroon <a class="text-blue" href="tel:+358 40 040 7002">+358 40 040 7002</a> (arkisin klo 10–16)',
+          btnText: 'Soita meille',
+          btnHref: 'tel:+358 40 040 7002',
+        },
+        rejected: {
+          title:   'Muutitko mielesi?',
+          message: 'Asiantuntijamme ovat valmiina auttamaan. Soita numeroon <a class="text-blue" href="tel:+358 44 901 5285">+358 44 901 5285</a> (arkisin klo 10–16)',
+          btnText: 'Soita meille',
+          btnHref: 'tel:+358 44 901 5285',
+        },
+        decline: {
+          title:       'Tarvitsetko apua?',
+          message:     'Asiantuntijamme auttavat mielellään! Soita numeroon <a class="text-blue" href="tel:+358 40 040 7002">+358 40 040 7002</a> (arkisin klo 10–16)',
+          btnText:     'Hylkää tarjouskilpailu',
+          btnSubText:  'Hylättyäsi tuloksen et voi enää hyväksyä sitä myöhemmin.',
+          destructive: true,
+          dataAction:  'reject-all',
+        }
+      };
+      /* getMessageConfig's own mapping: only these four statuses carry banner
+         copy. Everything else — the four price tiers, final_offer,
+         negotiation_stopped — falls through to `decline`. */
+      var bannerCopy = pas === 'no_offers'      ? BANNER_COPY.helper
+                     : pas === 'offers_expired' ? BANNER_COPY.expired
+                     : pas === 'offer_accepted' ? BANNER_COPY.accepted
+                     : pas === 'offer_rejected' ? BANNER_COPY.rejected
+                     : BANNER_COPY.decline;
+
       if (allRejected || hasAccepted) {
-        // Top banner: phone CTA (ACTIONABLE/DEFAULT)
-        /* banner_helper.card.accepted / .rejected — note the DIFFERENT phone
-           numbers: prod's `accepted`, `helper` and `decline` variants carry
-           +358 40 040 7002, while `rejected` and `expired` carry
-           +358 44 901 5285. The proto used the first number everywhere. */
-        bannerTopEl.innerHTML = buildBannerHelper(hasAccepted ? {
-          title:    'Tarvitsetko apua?',
-          message:  'Jos sinuun ei ole otettu yhteyttä yhden arkipäivän kuluessa, soita meille numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
-          btnText:  'Soita meille',
-          btnHref:  'tel:+358400407002',
-          destructive: false,
-        } : {
-          title:    'Muutitko mielesi?',
-          message:  'Asiantuntijamme ovat valmiina auttamaan. Soita numeroon <a href="tel:+358449015285" class="text-blue-600">+358 44 901 5285</a> (arkisin klo 10–16)',
-          btnText:  'Soita meille',
-          btnHref:  'tel:+358449015285',
-          destructive: false,
-        });
+        /* prod dials the site's own seller phone number here (a Filament
+           setting), which is not necessarily the number written into the
+           sentence beside it. The proto has no such setting, so it dials the
+           number the copy shows. */
+        bannerTopEl.innerHTML = buildBannerHelper(bannerCopy);
         bannerTopSec.classList.remove('hidden');
         bannerBotSec.classList.add('hidden');
       } else if (highestIsNegotiating && !dealerRepliedOnHighest) {
@@ -1838,46 +1960,13 @@
         bannerBotSec.classList.add('hidden');
       } else {
         bannerTopSec.classList.add('hidden');
-        // Bottom banner
-        /* Three variants, not two. prod picks the banner from the status's own
-           config: no_offers → `helper`, offers_expired → `expired` (same words,
-           different phone number), and every status whose config declares only a
-           `variant` — the four price tiers, final_offer, negotiation_stopped —
-           falls through to usePostAuctionMessaging's default, `decline`.
-
-           The proto shared one "helper" block across no_offers AND
-           offers_expired, and titled the decline banner "Eikö hinta miellytä?",
-           which is not prod's copy — `decline.title` is "Tarvitsetko apua?",
-           the same title the accepted banner uses. */
-        var bannerVariant = pas === 'no_offers' ? 'helper'
-          : pas === 'offers_expired' ? 'expired'
-          : 'decline';
-        var BOTTOM_BANNERS = {
-          helper: {
-            title:    'Me voimme auttaa!',
-            message:  'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
-            btnText:  'Soita meille',
-            btnHref:  'tel:+358400407002',
-            destructive: false,
-          },
-          expired: {
-            title:    'Me voimme auttaa!',
-            message:  'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a href="tel:+358449015285" class="text-blue-600">+358 44 901 5285</a> (arkisin klo 10–16)',
-            btnText:  'Soita meille',
-            btnHref:  'tel:+358449015285',
-            destructive: false,
-          },
-          decline: {
-            title:       'Tarvitsetko apua?',
-            message:     'Asiantuntijamme auttavat mielellään! Soita numeroon <a href="tel:+358400407002" class="text-blue-600">+358 40 040 7002</a> (arkisin klo 10–16)',
-            btnText:     'Hylkää tarjouskilpailu',
-            btnHref:     null,
-            destructive: true,
-            dataAction:  'reject-all',
-            subTextWarning: 'Hylättyäsi tuloksen et voi enää hyväksyä sitä myöhemmin.',
-          }
-        };
-        bannerBotEl.innerHTML = buildBannerHelper(BOTTOM_BANNERS[bannerVariant]);
+        /* ONE deliberate divergence. prod wires this section's button to
+           `handleRejectAllOffers` whatever the wording, so on `offers_expired`
+           a button labelled "Soita meille" rejects the whole auction. That is
+           a prod defect, not a design; the proto keeps the tel: link its label
+           promises. `decline` is the wording prod means here and it behaves
+           identically in both. */
+        bannerBotEl.innerHTML = buildBannerHelper(bannerCopy);
         bannerBotSec.classList.remove('hidden');
       }
 
@@ -2760,10 +2849,12 @@
             '</div>' +
             '<div class="lg:basis-1/2 lg:pt-4 lg:pl-4">' +
               '<div class="m-5 lg:m-0 lg:flex-1 flex flex-col justify-center">' +
-                /* A bare <h2>: custom.scss gives it font-display and Tailwind's
-                   preflight strips the size and weight, so prod states this at
-                   body size in Barlow. */
-                '<h2 class="font-display">Kiitos kun käytit palveluamme!</h2>' +
+                /* A bare <h2>, exactly as prod writes it — so prod's own
+                   element typography applies: 28px/36px bold Barlow, 40px/48px
+                   from 992px (`_typography.scss` h2). The proto used to render
+                   this at body size, because it had no element rules; they are
+                   in `tw-tokens.js` now. */
+                '<h2>Kiitos kun käytit palveluamme!</h2>' +
                 '<div class="m-2 lg:ml-4 lg:mt-2">' +
                   '<div class="text-gray-700 mt-4 text-left">' +
                     '<div>Saat asiantuntijamme kiinni sähköpostitse</div>' +

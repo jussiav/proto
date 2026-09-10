@@ -35,6 +35,52 @@ These rules apply to all new pages and components in this prototype, without exc
    (`leading-[30px]`). Prod's numbers: 1:16 2:21 3:24 4:28 5:30 6:36 7:40 8:48
    9:52 10:56.
 
+   **It also injects prod's element-level heading typography** (added 2026-09-08,
+   after the support banner's title was caught looking nothing like production).
+   Prod styles headings as ELEMENTS in `sass/base/_typography.scss`, and
+   `custom.scss` adds the family for `h1`–`h5` only. Both load after
+   `@tailwind utilities`, so they beat preflight's heading reset while still
+   losing to any utility on the element — which is exactly how the injected
+   `<style data-proto-typography>` behaves here. Resolved values:
+
+   | Element | Base | From `sm` 620 | From `lg` 992 | Weight | Family |
+   |---|---|---|---|---|---|
+   | `h1` | 32 / 36 | — | 48 / 52 | 700 | Barlow |
+   | `h2` | 28 / 36 | — | 40 / 46 | 700 | Barlow |
+   | `h3` | 24 / 30 | — | 32 / 36 | 700 | Barlow |
+   | `h4` | 18 / 24 | — | 24 / 27 | 700 | Barlow |
+   | `h5` | 18 / 21 | 20 / 24 | — | 600 | Barlow |
+   | `h6` | 14 / 1.25 | 16 / 1.375 | — | 600 + `tracking-wide` | **DM Sans** |
+
+   `h6` is the odd one out in both places: `_typography` styles it, `custom.scss`
+   does not, so it keeps the body font. The `.heading-1`…`.heading-6` aliases prod
+   pairs with each element are **not** ported — nothing in the proto uses them,
+   every heading here is a real element the rule already covers, and as classes
+   they would out-rank the utility strings rule 6 asks for. `.hero h1` likewise.
+
+   **`p` is NOT ported, and that is an open decision.** Prod also styles the
+   paragraph element (`mb-4.5 lg:mb-6 text-base leading-snug sm:text-lg
+   last:mb-0 font-normal`), so bare body copy there is 16px→18px from 620px with
+   an 18px→24px bottom margin. **335 of the proto's 561 `<p>` elements carry no
+   size class**, so porting it would resize and re-space most of the prototype's
+   body copy at once. Worth doing deliberately, with a sweep, not as a side
+   effect.
+
+   **The audit that made the heading port safe, and the method to reuse:** find
+   every `h1`–`h6` whose class carries no `text-*` and no inline `font-size`,
+   then confirm in the browser per page. Result: **28 candidates, 2 real** — the
+   support banner's title and the reject survey's thank-you title, both in
+   `decision.html`, both wrong before. The other 26 are in `email-content.js` and
+   protected by `.em-body h1` (a class-plus-element selector out-ranks a bare
+   element rule); `accept-button-lab.html` and every `design-specs/` page do not
+   load `tw-tokens.js` at all; `mobile-upload-widget.js` styles its `h1` inline;
+   and the proto bar is immune through its own `#proto-bar *{font:inherit}`.
+   Every other page swept clean at zero. **One guard was needed:** `.em-body`
+   h1/h2/h3 in `emails.html` now repeat their `font-family`, because an element
+   rule on the heading itself out-ranks a family INHERITED from `.em-body` — the
+   rendered emails would otherwise have come out in Barlow instead of the mail
+   theme's Avenir.
+
    Fonts: prod's `<body>` is `font-body`, i.e. **DM Sans is the base** and Barlow
    appears only where a component says `font-display`. Barlow is loaded at
    400/600/700, matching prod's own faces — the proto used to load 700 alone, so
@@ -58,10 +104,16 @@ These rules apply to all new pages and components in this prototype, without exc
    | Textarea | `TextArea.vue` | `p-4 text-base leading-[21px] border border-gray-500` |
    | Info / hint line | `PriceInfo.vue` `<div class="text-sm">`, `ServiceInfo` tip `<div class="text-base">` | `font-dm text-sm` / `font-dm text-base` |
 
-   **Headings are Barlow because of the tag, not a class.** `custom.scss` applies
-   `font-display` to `h1`–`h5`, so every step title — an `<h2>` in prod — is
-   Barlow, while the price step's `<div role="heading">` is DM Sans. Reproduce the
-   family explicitly here; the proto has no such element rule.
+   **Headings are Barlow because of the tag, not a class** — and **so is their
+   size and weight.** `custom.scss` applies `font-display` to `h1`–`h5` and
+   `_typography.scss` applies size, leading and weight to `h1`–`h6`, which is why
+   the price step's `<div role="heading">` is DM Sans at a size of its own while
+   every step title, an `<h2>` in prod, is big bold Barlow without saying so.
+   **The proto now carries both rules** (see rule 5), so a heading transcribed
+   with no size or family class renders as prod's does rather than at body size.
+   The explicit strings in the table above are still the convention — they say
+   what the element is meant to be and they out-rank the element rule — but they
+   are no longer load-bearing for the family.
 
    **Two option-label weights, and the difference is the component.** `Chips`
    (Barlow **semibold**) is what the funnel uses — service book, service history,
@@ -1941,6 +1993,99 @@ stopped negotiation reads `expired`. The proto keeps the negotiation status
 ahead of its own expiry check. Unreachable today — every negotiation scenario
 uses an `ACTIVE()` window — but it is a real divergence if that changes.
 
+## Customer support banner on the decision page — no photo, two configurations
+
+Prod's is `OBannerHelperCard.vue` over `OCard.vue`, with
+`MThumbnailWithInlineText.vue` for the text half and `MButtonWithSubText.vue` +
+`MSubTextWithIcon.vue` for the action half. Transcribed (2026-09-08) after the
+team spotted the proto's version drifting.
+
+**There is no round agent photo, and there never was one here.** `thumbnailImg`
+defaults to `null`, neither consumer in `C2BDecision.vue` passes one, and
+`MThumbnailWithInlineText` gates the whole avatar wrapper on
+`v-if="thumbnailSrc"` — so the text block simply drops its `ps-3` for `ps-0`.
+Checked across all five dumps back to 2026-08-14: no version of that file has
+ever passed an image. The proto's `kasper.png` came from the retired Astro
+prototype's own `expert` mock, a different component; the asset is deleted.
+
+**Two configurations reach a consumer seller, and which one arrives is decided
+by whether the status declares banner copy of its own.** In
+`c2bPostAuctionMessages.js` exactly the statuses with no `card`/`button` block
+declare a `variant`, and the ones with copy declare none — so the flag is not a
+separate choice:
+
+| Configuration | Statuses | Frame | Action section | Button |
+|---|---|---|---|---|
+| `actionable` + `default` | no offers, expired, accepted, rejected — the four with their own wording | `bg-slate-50 outline-blue-400`, block | `bg-blue-100`, **`lg:hidden`** | primary blue, phone icon |
+| `actionable-inline` + `destructive` | the four price tiers, `final_offer`, `negotiation_stopped`, `offers_pending_action` — all falling through to `decline` | `bg-orange-50 outline-orange-400`, `lg:flex lg:flex-row lg:justify-between` | `bg-orange-100`, always visible | secondary red, warning line under it |
+
+**So from 992px the four default-intent banners are TEXT ONLY** — the action
+section is `lg:hidden` and the number written into the sentence is the seller's
+only way to call. Easy to miss when reviewing on a desktop.
+
+**Five wordings, two phone numbers.** `helper`, `accepted` and `decline` carry
++358 40 040 7002; `expired` and `rejected` carry +358 44 901 5285.
+
+Details that were wrong in the proto and are worth not re-inventing:
+
+- **The title is a bare `<h5>`, and that is what makes it a heading.** Prod
+  styles the element: `_typography.scss` gives `h5`
+  `text-lg leading-2 sm:text-xl sm:leading-3 font-semibold` and `custom.scss`
+  gives it `font-display`, so it is **Barlow 600 at 18px, 20px from 620px**,
+  with only `mb-2 leading-snug` of its own — that `leading-snug` is a utility,
+  so it wins over the element's own leading and the rendered line-height is
+  1.375. The proto had it `font-semibold text-slate-800` at the inherited 14px,
+  and **this is the heading that exposed the missing element rules** (see
+  rule 5); it is the reason they are now in `tw-tokens.js`.
+- **Neither the title nor the message carries a colour**, so both inherit the
+  body's near-black. The proto painted the message `text-slate-600`.
+- The message is `text-sm leading-none` — 14px on 14px, deliberately tight.
+- The button is size **`fw`** plus the page's own `md:h-10 md:px-5`: `px-8 h-14
+  w-full` with a `text-base` label on a phone, 40px tall and `px-5` from 768px.
+  The proto had it `h-10 text-sm` at every width.
+- The phone icon is prod's `phone` sprite (Heroicons solid) at `1em` with
+  `pr-1 transform -translate-x-1`; the proto had drawn a Material Symbols phone,
+  a different glyph.
+- The warning icon is `text-destructive`, i.e. `hsl(0 84.2% 60.2%)` = **#EF4444
+  = red-500**, at `1em` inside a `font-size: 1.125em` wrapper.
+
+**Two prod quirks reproduced rather than tidied.** The variant class puts
+`block` on the action section AFTER the base `flex` and `tailwind-merge` keeps
+the later one, so that section is a block and its `justify-start items-center
+gap-1` do nothing. And the sub-text wrapper is gated on **the slot existing**,
+not on its content — `sub_text` is an empty string for every wording but
+`decline`, so those four banners carry an empty `mt-3` div, 12px of dead space
+under the button.
+
+**Copy comes from the status, the section from the offers, and prod keeps those
+two independent.** `usePostAuctionMessaging` picks the wording; `C2BDecision.vue`
+picks which of its two `Section`s renders. The proto used to derive the top
+banner's wording from the offer flags, which agrees in every reachable state but
+would disagree the moment a status named copy the flags did not. `allRejected`
+also lost its `offers.length > 0` guard, because prod's
+`sortedOffers.every(o => o.isRejected)` is **vacuously true with no offers** — so
+a no-offer auction takes the top section. Both sections sit between the offer
+grid and the FAQ and the insights block is hidden without offers, so the banner
+lands in the same place either way.
+
+**One deliberate divergence, and it is a prod defect.** The bottom section wires
+its button to `handleRejectAllOffers` whatever the wording, so on
+`offers_expired` prod shows a button labelled **&ldquo;Soita meille&rdquo; that
+rejects the entire auction** (below 992px, where that section is visible at all).
+The proto keeps the `tel:` link the label promises. `decline` is the wording that
+section is meant for and behaves identically in both. Worth reporting rather than
+copying.
+
+**A second, smaller one:** prod's top-section button dials
+`window.Laravel.customer_success_phone`, a Filament site setting, which is not
+necessarily the number written into the sentence beside it. The proto has no such
+setting and dials the number the copy shows.
+
+**No spec page owns this** — it is prod transcription, not an initiative. The
+Enhanced negotiations spec references this banner only as the second entry point
+into the negotiation modal (its `Hylkää tarjouskilpailu` button), and neither
+that label nor its routing changed.
+
 ## Reject survey — prod's own, transcribed
 
 Rejecting is a survey, not a confirmation, and it is **not an initiative** — every
@@ -2023,9 +2168,13 @@ of prod's. The card sits inside the Reveal's own padding (the proto's earlier
 version bled it out with negative margins, which prod does not do) and carries
 its own close button, since `OfferActions` renders no footer for this action.
 
-**Three prod details transcribed knowingly.** Its title is a **bare `<h2>`** —
-`custom.scss` gives it `font-display` and Tailwind's preflight strips size and
-weight, so prod states "Kiitos kun käytit palveluamme!" at body size in Barlow.
+**Three prod details transcribed knowingly.** Its title is a **bare `<h2>`**, and
+that is not a small one: prod styles the element, so
+"Kiitos kun käytit palveluamme!" is **28px/36px bold Barlow, 40px/46px from
+992px**. The proto rendered it at body size until the element rules went into
+`tw-tokens.js` (2026-09-08) — an earlier note here claimed body size WAS prod,
+which was wrong, and it came from reading Tailwind's preflight without reading
+`sass/base/_typography.scss` after it.
 Its mailto is written `href="mailto:{{ customerSuccessEmail }}"` — a mustache in
 an unbound attribute, so prod shows the right address behind a link that does not
 resolve; **the proto links it**, since a tester clicking a dead link learns
