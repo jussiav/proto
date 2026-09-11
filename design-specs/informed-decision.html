@@ -100,7 +100,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Ideation &middot; decision page</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Informed decision</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller looking at an auction result has to choose between accepting, negotiating, rejecting and walking away &mdash; and the page gives them nothing to weigh that choice against. This is a first sketch of a section that does: not numbers, but the trade-offs between the routes a seller actually has.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller with a good offer in hand still hesitates, and the reason is almost always the same: they saw a similar car advertised for thousands more. Two blocks answer that, and nothing else. Accepting, negotiating, rejecting and walking away &mdash; and the page gives them nothing to weigh that choice against. This is a first sketch of a section that does: not numbers, but the trade-offs between the routes a seller actually has.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
@@ -124,214 +124,45 @@
         <div class="rounded-xl border-2 border-warning-300 bg-warning-50 p-6 max-w-3xl">
           <h2 class="font-barlow font-bold text-2xl text-warning-900 mb-3">Read this before anything else</h2>
           <ul class="font-dm text-base leading-6 text-slate-800 list-disc pl-5 space-y-2">
-            <li><b>None of the Finnish on this page is approved copy.</b> The advice section&rsquo;s wording is AutoVex&rsquo;s own, revised from an AI first draft; everything in the options section is still that first draft. Neither has been reviewed against the copy guidelines.</li>
-            <li><b>This is not a build proposal.</b> There is no acceptance criteria section, no data contract and no dev hand-off. It is a switchable sketch, deliberately thin.</li>
-            <li><b>It deliberately contains no figures.</b> No percentages, no euro gaps, no &ldquo;x&nbsp;% of sellers&rdquo;. The brief was to educate rather than to prove, and it also keeps the section clear of any statistic we cannot source.</li>
-            <li><b>Two of the six ideas make a promise about the dealership</b> &mdash; a conditional sale while the seller finds a replacement car, and help with remaining finance. AutoVex does not control either. Wording is hedged to &ldquo;agree with the dealership&rdquo;, but <b>OPS has to confirm both are realistic before this goes anywhere near a seller.</b></li>
+            <li><b>The Finnish is placeholder.</b> It is written to make the idea reviewable, not to be shipped, and the team owns the wording once the shape is agreed.</li>
+            <li><b>This page stays deliberately thin while the idea moves.</b> It describes where the initiative is now, not how it got here, and it gains acceptance criteria and a copy table once the shape is locked.</li>
+            <li><b>No figures anywhere, on the page or on screen.</b> The second block explains how a price is built, not what the parts cost &mdash; see its own section for why that is the design rather than a gap.</li>
           </ul>
         </div>
 
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-3">Try it</h2>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Three new sections above the auction-details block, the auction-details block itself rebuilt, <b>and every Enhanced negotiations change on top</b>. Switchable from the prototype bar under <b>Informed decision (ideation)</b>, or by URL:</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Two blocks on the decision page. Switchable from the prototype bar under <b>Informed decision</b>, or by URL:</p>
           <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=seen-offers&amp;informed-decision=v1">../decision.html?scenario=seen-offers&amp;informed-decision=v1</a>
-          <p class="font-dm text-sm text-slate-500 mt-3">All three appear only where a decision is still open: the four price tiers, a final offer, and a negotiation the dealership closed. Not on no offers, expired offers, an accepted offer or a rejected one &mdash; there the argument is either useless or tactless. Outside those states the auction-details block reverts to what production draws today.</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3">Add <code class="font-mono text-sm">&amp;fair=0</code> &mdash; or set <b>Fair offer</b> to <code class="font-mono text-sm">0</code> in the bar&rsquo;s Auction settings &mdash; to see what a seller outside the audience gets, which is production unchanged.</p>
         </div>
       </div>
     </section>
 
-    <!-- Muutama neuvo -->
+    <!-- Who sees it -->
     <section class="av-band" style="background:#fff">
       <div class="av-container flex flex-col gap-8">
+        <div class="max-w-3xl">
+          <h2 class="font-barlow font-bold text-3xl mb-3">Who sees it</h2>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Both blocks share one condition, so they can never appear apart. A seller sees them when the auction has ended and a decision is still open &mdash; not on an accepted, rejected or expired auction &mdash; <b>and the offer clears the team&rsquo;s fair-offer bar.</b></p>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>Everyone else gets production&rsquo;s block, untouched</b>, chart and dates included. Never a stripped-down version. A thin auction &mdash; fewer than four bidding dealerships &mdash; lands there too, because the first block argues from the number of dealerships that competed and that argument does not survive being true of three.</p>
+          <p class="font-dm text-base leading-6 text-slate-700"><b>Narrowing to fair offers is a focus decision for this tertial, not a design argument.</b> Both blocks make claims that are only honest for a seller whose offer is already good. Widening the audience later is a deliberate next step and the prototype is built for it: one predicate, read in one place.</p>
+        </div>
 
         <div class="rounded-xl border border-slate-200 bg-slate-50 p-6 max-w-3xl">
-          <h2 class="font-barlow font-bold text-2xl mb-3">This arm contains Enhanced negotiations too</h2>
-          <p class="font-dm text-base leading-6 text-slate-800 mb-3">Turning on <b>Informed decision</b> also turns on every change from the <a class="text-av-blue underline" href="enhanced-negotiations.html">Enhanced negotiations</a> initiative &mdash; the card colours and status lines, the rebuilt negotiation modal, the thread, the rounds on the send button, the hero copy, all of it. This is the arm where the whole decision page is being reconsidered, so demoing it against the OLD cards and the OLD modal would be reviewing a page that will never exist.</p>
-          <p class="font-dm text-base leading-6 text-slate-800 mb-3">It is also what makes the colour system legible. Enhanced negotiations establishes <b>green accepts, blue negotiates, red rejects</b> on the buttons; this initiative now carries the same three colours through the new sections. Neither half reads as a system on its own.</p>
-          <p class="font-dm text-base leading-6 text-slate-800"><b>The dependency is one-way and Enhanced negotiations is untouched.</b> It is real work in development and stays reviewable by itself: <code class="font-mono text-sm">enhanced-negotiations=v1</code> renders exactly what it always did, with none of the ideation sections. Nothing here changes that initiative, its spec or its scope.</p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h2 class="font-barlow font-bold text-3xl mb-3">Four blocks, three questions</h2>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">The arm changes four blocks that between them answer three questions, in this order down the page:</p>
-          <ol class="font-dm text-base leading-6 text-slate-700 list-decimal pl-5 space-y-2 mb-3">
-            <li><b>&ldquo;Tarjouskilpailun tiedot&rdquo;</b> &mdash; the block that already exists, rebuilt to say whether the offer is any good.</li>
-            <li><b>&ldquo;Mit&auml; voin tehd&auml;?&rdquo;</b> &mdash; the options, and what each one costs.</li>
-            <li><b>&ldquo;Muutama neuvo&rdquo;</b> &mdash; the objection that is stopping the seller.</li>
-            <li><b>&ldquo;Muistathan n&auml;m&auml;&rdquo;</b> &mdash; <i>the same objections</i>, unexpanded.</li>
-          </ol>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Then the reject banner below all four, where production already puts it.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>The run used to open with the objections and now closes with them.</b> The old reasoning was that an unanswered objection stops a seller reading anything else. The new one is better: a seller convinced by the auction result and shown three clear options may never need the objection handling at all, and leading with it raised doubts in the head of a seller who did not have them yet. State the outcome, offer the choices, then deal with whatever is still in the way.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>Blocks 3 and 4 say the same three things, and that is a decision to make, not an oversight.</b> They are built side by side so the team can see both together &mdash; see the section below.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>Three expandable items, styled as the page&rsquo;s own FAQ blocks.</b> Collapsed, the section is 194&nbsp;px and the leads alone are the glanceable version; the detail is a tap away, which is what makes it work on a phone. <b>The lead is never a restatement of the concern</b> &mdash; an earlier expandable version was rejected for reading as a second FAQ, and what was wrong was the content: four question-and-answer pairs of prose duplicating a component four sections below. Short leads that each answer something on their own are the opposite trade.</p><p class="font-dm text-base leading-6 text-slate-700"><b>The first lead is a question and the other two are statements, deliberately.</b> The asking-price item has to be recognised before it can be answered &mdash; a seller who has not seen a higher price elsewhere has no reason to open it. The other two name the conclusion straight out, so a seller who reads only the leads has still been told the useful thing.</p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">The three items</h3>
-          <div class="flex flex-col gap-4">
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-base font-bold text-slate-900">N&auml;itk&ouml; korkeamman hinnan muualla?</p>
-              <p class="font-dm text-sm text-slate-600 mt-1">Autoliikkeen pyyntihinta myyt&auml;ess&auml; sis&auml;lt&auml;&auml; liikkeen katteen, takuun, kunnostuksen ja riskipreemion. Se ei kerro, mit&auml; autosta lopulta maksetaan myyj&auml;lle.</p>
-              <p class="font-dm text-sm text-slate-600 mt-2">My&ouml;s vaihtokaupassa hyvitys voi n&auml;ytt&auml;&auml; korkeammalta kuin se on. Vertaa v&auml;lirahaa, &auml;l&auml; vaihtoautosi hyvityksen summaa.</p>
-              <p class="font-dm text-xs text-slate-500 mt-2">EN: A dealership&rsquo;s forecourt price carries their margin, warranty, reconditioning and a risk premium &mdash; it does not say what the seller is finally paid. And a trade-in allowance can look higher than it is, so compare the cash difference rather than the allowance.</p>
-              <p class="font-dm text-xs text-slate-500 mt-2"><b>One item, two paragraphs, and it used to be two items.</b> They are the same misunderstanding wearing two hats: a seller who has seen a bigger number elsewhere has either seen an asking price or been quoted an allowance, and both answers are &ldquo;that figure is not what anyone pays you&rdquo;. Split, the seller read two items to learn their number was the same kind of number. <b>The largest single cause of rejection</b>, and the one lead that is a question.</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-base font-bold text-slate-900">Rahoitusvaje ei ole este.</p>
-              <p class="font-dm text-sm text-slate-600 mt-1">Voit hyv&auml;ksy&auml; tarjouksen, vaikka autossa on rahoitusta j&auml;ljell&auml;. J&auml;ljell&auml; olevasta rahoituksesta sovitaan autoliikkeen kanssa.</p>
-              <p class="font-dm text-xs text-slate-500 mt-2">EN: You can accept with a loan outstanding. The remaining finance is agreed with the dealership.</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-base font-bold text-slate-900">Luovutat auton my&ouml;hemmin.</p>
-              <p class="font-dm text-sm text-slate-600 mt-1">Hyv&auml;ksymisen j&auml;lkeen autoliike ottaa sinuun yhteytt&auml;. Tarkastuksesta, papereista ja luovutuksen ajankohdasta sovitaan autoliikkeen kanssa.</p>
-              <p class="font-dm text-xs text-slate-500 mt-2">EN: After accepting, the dealership makes contact. Inspection, paperwork and the handover date are agreed with them.</p>
-            </div>
-          </div>
-          <p class="font-dm text-sm text-slate-600 mt-4"><b>Order is the concerns&rsquo; real frequency, with one change:</b> the trade-in item follows the asking-price item rather than sitting last, because both are the same misunderstanding about what a number means.</p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">A note for whoever builds this</h3>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">The items look like the page&rsquo;s FAQ blocks but they do not share its open/close. <b>The FAQ pattern does not expand anything</b> &mdash; measured on the prototype&rsquo;s own decision page, the first FAQ answer computes to 0&nbsp;px tall whether it is open or closed.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">The cause: the pattern puts the answer in a sibling of the <code class="text-sm bg-slate-200 px-1 rounded">&lt;details&gt;</code> and animates a grid row from <code class="text-sm bg-slate-200 px-1 rounded">0fr</code> to <code class="text-sm bg-slate-200 px-1 rounded">1fr</code>, where the row&rsquo;s only child has <code class="text-sm bg-slate-200 px-1 rounded">overflow:hidden</code>. An overflow-hidden box has an automatic minimum size of zero, so the track resolves as <code class="text-sm bg-slate-200 px-1 rounded">minmax(0, 1fr)</code> &mdash; and with no definite height on the container there is no free space to distribute, so it stays collapsed.</p>
-          <p class="font-dm text-base leading-6 text-slate-700">In this section the answer is simply a <b>child</b> of the <code class="text-sm bg-slate-200 px-1 rounded">&lt;details&gt;</code>, so the browser handles it: no CSS mechanism, no JavaScript, nothing to break. The trade-off is no open/close animation &mdash; which is what the FAQ delivers today in any case. <b>Production should fix the shared pattern rather than copy this workaround</b>, and the prototype&rsquo;s own FAQ blocks deserve the same fix.</p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">The trade-in point, in full</h3>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">This is the one that needed distilling, and the reasoning is deliberately <b>not</b> on the seller&rsquo;s screen &mdash; it is here so the team can check it.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">A trade-in figure and a direct-purchase offer are not comparable. A dealership can inflate the allowance on the car being traded in while holding firm on the price of the car the seller actually wants &mdash; discounting the new car would lower its perceived value, whereas paying &ldquo;over the odds&rdquo; for the old one feels to the seller like beating the system. The two adjustments cancel: <b>the only figure that moves is the cash difference.</b> Consumers largely do not know this, which is why a trade-in quote so often reads as the better deal when it is not.</p>
-          <p class="font-dm text-base leading-6 text-slate-700">On screen that is one claim and one line. Anything longer and the item stops being glanceable, which is the whole point of the section.</p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">Nothing is promised on the dealership&rsquo;s behalf</h3>
-          <p class="font-dm text-base leading-6 text-slate-700">Every item that touches the deal says the details are <b>agreed with</b> the dealership &mdash; which is what accepting actually starts &mdash; rather than saying the dealership will accommodate the seller. That distinction is why the loan and handover items need no OPS sign-off, where earlier phrasings did.</p>
+          <h3 class="font-barlow font-bold text-xl mb-3">A note on the fair-offer flag</h3>
+          <p class="font-dm text-base leading-6 text-slate-800">The definition of a fair offer is a separate discussion and is not repeated here. The front end already identifies one in production, so this asks for <b>a boolean on the request</b> rather than a threshold the page computes. The prototype does the same &mdash; its scenarios carry the flag and nothing in it calculates one.</p>
         </div>
       </div>
     </section>
 
-    <!-- What it is -->
-        <!-- Muistathan nämä -->
+    <!-- Block 1 -->
     <section class="av-band av-band-grey">
       <div class="av-container flex flex-col gap-8">
-
         <div class="max-w-3xl">
-          <h2 class="font-barlow font-bold text-3xl mb-3">The same three concerns, unexpanded</h2>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>&ldquo;Muistathan n&auml;m&auml;&rdquo;</b> is the last of the four, and it carries exactly the content of the one before it. Three numbered columns, each a heading a seller can agree with plus the single fact behind it. Structurally it is a copy of the options section further down &mdash; same white container, same three columns &mdash; with <b>one thing deliberately not copied: the &ldquo;tai&rdquo; rules.</b> These are a list, not a choice, and a divider saying <i>or</i> between them would tell the seller to pick one of three facts.</p>
-          <p class="font-dm text-base leading-6 text-slate-700">The numbered discs are production&rsquo;s own, the ones the funnel&rsquo;s next-steps list already uses. Reused rather than redrawn.</p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">The three columns</h3>
-          <div class="flex flex-col gap-4">
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-sm text-slate-500 mb-1">1</p>
-              <p class="font-dm text-base font-bold text-slate-900">Pyyntihinta ei ole myyntihinta</p>
-              <p class="font-dm text-sm text-slate-600 mt-1">Autoliikkeen pyyntihinta ja vaihtohyvitys sis&auml;lt&auml;v&auml;t liikkeen katteen. Kumpikaan ei kerro, mit&auml; sinulle autosta maksetaan.</p>
-              <p class="font-dm text-xs text-slate-500 mt-2">EN: A dealership&rsquo;s forecourt price and a trade-in allowance both carry the dealership&rsquo;s margin. Neither says what you are paid for your car.</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-sm text-slate-500 mb-1">2</p>
-              <p class="font-dm text-base font-bold text-slate-900">Rahoitus ei ole este</p>
-              <p class="font-dm text-sm text-slate-600 mt-1">Voit hyv&auml;ksy&auml; tarjouksen, vaikka autossa on rahoitusta j&auml;ljell&auml;. J&auml;ljell&auml; olevasta sovitaan autoliikkeen kanssa.</p>
-              <p class="font-dm text-xs text-slate-500 mt-2">EN: You can accept with finance still outstanding on the car. What is left is agreed with the dealership.</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-sm text-slate-500 mb-1">3</p>
-              <p class="font-dm text-base font-bold text-slate-900">Auto ei l&auml;hde heti</p>
-              <p class="font-dm text-sm text-slate-600 mt-1">Hyv&auml;ksyminen ei tarkoita, ett&auml; luovutat auton t&auml;n&auml;&auml;n. Tarkastuksesta ja aikataulusta sovitaan autoliikkeen kanssa.</p>
-              <p class="font-dm text-xs text-slate-500 mt-2">EN: Accepting does not mean handing the car over today. The inspection and the timing are agreed with the dealership.</p>
-            </div>
-          </div>
-          <p class="font-dm text-sm text-slate-500 mt-3">Nothing here promises anything on the dealership&rsquo;s behalf. Both items that touch the deal say it is <i>agreed with</i> them, which is what accepting actually starts &mdash; the same rule the section above follows, and the reason neither needs OPS sign-off.</p>
-        </div>
-
-        <div class="rounded-xl border-2 border-warning-300 bg-warning-50 p-6 max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl text-warning-900 mb-3">This block and &ldquo;Muutama neuvo&rdquo; above it are the same content. Pick one.</h3>
-          <p class="font-dm text-base leading-6 text-slate-800 mb-3">Not an oversight &mdash; they were built side by side so the difference is visible rather than argued about. The expandable version answers a seller who recognises their own objection and taps it. The concise version reaches the seller who taps nothing, which on a decision page is most of them.</p>
-          <p class="font-dm text-base leading-6 text-slate-800 mb-3">Three ways out: keep the concise one and drop the expandable; keep both, glanceable first and the detail below; or fold them into one. <b>Shipping both as they stand would say the same three things twice in a row.</b></p>
-          <p class="font-dm text-base leading-6 text-slate-800">It is partly a height question too. This block is the tallest in the arm on a phone, and the two together are most of what now sits between the options and the reject banner.</p>
-        </div>
-      </div>
-    </section>
-
-<section class="av-band" style="background:#fff">
-      <div class="av-container flex flex-col gap-8">
-
-        <div class="max-w-3xl">
-          <h2 class="font-barlow font-bold text-3xl mb-3">One option per button, and they are alternatives</h2>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">The section is titled <b>&ldquo;Mit&auml; voin tehd&auml;?&rdquo;</b>. It used to borrow production&rsquo;s own <i>&ldquo;Mit&auml; tapahtuu seuraavaksi?&rdquo;</i> from the funnel&rsquo;s next-steps block, so a seller met the same question in the same words at both ends of the journey &mdash; and it was the wrong question here. <b>&ldquo;What happens next&rdquo; reads as a sequence</b>, so three blocks under it read as three things to do in order, and a seller could reasonably conclude they were meant to accept, then counter-offer, then reject. &ldquo;What can I do&rdquo; names a menu, which is what the section is. The funnel&rsquo;s heading is untouched.</p><p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>A small &ldquo;tai&rdquo; sits between the cards</b>, set into a slate-200 hairline &mdash; vertical between columns on a desktop, horizontal between stacked cards on a phone. Three blocks in a row under a heading are a sequence by default; one word fixes what a paragraph of explanation would not.</p><p class="font-dm text-base leading-6 text-slate-700 mb-3">Three earlier versions all compared AutoVex against a trade-in and a private sale &mdash; routes the seller is not choosing between on this page. What is actually in front of them is three buttons: <b>accept</b>, <b>counter-offer</b>, <b>reject</b>. This version says what each one does and what it costs.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">A short title carrying the button&rsquo;s own imperative, then at most three lines. Nothing to expand, no prose, one line per point &mdash; and no lead sentence above the cards, because the section title carries the framing on its own.</p><p class="font-dm text-base leading-6 text-slate-700"><b>The lines are reasons to choose, not a description of the state.</b> That is the rule. An earlier pass had the accept card saying the sale closes at the offer price and the dealership will be in touch &mdash; both of which the page already says, in the hero and on the card itself, so they cost space and told the seller nothing. Every line now answers &ldquo;why would I pick this one&rdquo;.</p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">The three cards</h3>
-          <div class="flex flex-col gap-4">
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-xs font-medium inline-block rounded border border-green-500 bg-green-50 px-2 py-1 text-green-900 mb-2">Suosittelemme</p>
-              <p class="font-dm text-base font-bold text-green-900 mb-2">Hyv&auml;ksy tarjous</p>
-              <ul class="font-dm text-sm text-slate-800 space-y-1">
-                <li><b class="text-green-700">+</b> Varmistat tarjouksen ennen m&auml;&auml;r&auml;aikaa.</li>
-                <li><b class="text-green-700">+</b> Sovi kaupan yksityiskohdista liikkeen kanssa.</li>
-              </ul>
-              <p class="font-dm text-xs text-slate-500 mt-3">EN: You secure the offer before the deadline · Agree the details of the sale with the dealership. <b>A &ldquo;Suosittelemme&rdquo; tag above a bold green title.</b> The tag carries the same green as the auction-details verdict block, which already recommends accepting in a sentence &mdash; this is the same recommendation as a label, and with no column painted it is the only thing in the row that promotes anything. It sits above the title rather than beside it because a column is too narrow to hold both on one line; the cost is that this column&rsquo;s title sits a line lower than the other two. No column is painted on the page; the outlines in this mock are the spec page&rsquo;s own, to keep the three examples separable.</p>
-            </div>
-            <p class="font-dm text-xs text-slate-500 text-center">&mdash;&nbsp; tai &nbsp;&mdash;</p>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-base font-medium text-slate-600 mb-2">Tee vastatarjous</p>
-              <ul class="font-dm text-sm text-slate-800 space-y-1">
-                <li><b class="text-blue-600">+</b> Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi.</li>
-                <li><b class="text-red-700">&#10005;</b> Pident&auml;&auml; kaupank&auml;yntiaikaa.</li>
-              </ul>
-              <p class="font-dm text-xs text-slate-500 mt-3">EN: You can make the case to the dealership for why the price should be higher · It lengthens the time the sale takes. <b>The time cost is not optional</b> &mdash; waiting is the real price of countering, and the page says it nowhere else. It carries the same red cross as the reject card, so it reads as a cost rather than a comparison.</p>
-            </div>
-            <p class="font-dm text-xs text-slate-500 text-center">&mdash;&nbsp; tai &nbsp;&mdash;</p>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-base font-medium text-slate-600 mb-2">Hylk&auml;&auml; tarjouskilpailu</p>
-              <ul class="font-dm text-sm text-slate-800 space-y-1">
-                <li><b class="text-red-700">&#10005;</b> Menet&auml;t kaikki tarjoukset lopullisesti.</li>
-                <li><b class="text-red-700">&#10005;</b> Kilpailutus p&auml;&auml;ttyy t&auml;h&auml;n.</li>
-              </ul>
-              <p class="font-dm text-xs text-slate-500 mt-3">EN: You lose every offer for good · The auction ends here. Marked with an <b>X in a circle in the reject button&rsquo;s own label colour</b>, so the card and the button read as one action and this reads as the heaviest option. <b>No upside line, and that asymmetry is the message</b> &mdash; three crosses would read as preaching.</p>
-            </div>
-          </div>
-          <div class="rounded-xl border border-slate-200 bg-slate-50 p-4 mt-4">
-            <p class="font-dm text-sm text-slate-700"><b>There is no fourth line about letting the offers expire.</b> One used to sit under the cards &mdash; <i>&ldquo;Jos et tee mit&auml;&auml;n, tarjoukset umpeutuvat ja kilpailutus p&auml;&auml;ttyy&rdquo;</i> &mdash; on the reasoning that doing nothing is a real choice and the section should be complete. It is gone, for a better reason than the one it replaced: a section headed <i>what happens next</i> that lists four outcomes presents all four as options. Expiry is not an option we offer, it is what happens when the seller does not decide, and naming it beside three buttons quietly makes it a fourth button. The countdown on each offer card already says the deadline exists. <b>Do not restore it for completeness.</b></p>
-          </div>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">The cards are gated on what is actually on screen</h3>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-4">The section can never describe a button the seller does not have. The counter-offer card appears only when a counter offer is genuinely possible &mdash; the highest offer is not final, the negotiation has not been closed by the dealership, the seller has a round left, and it is not already their turn to wait. The reject card appears only when the reject-all banner is actually rendered.</p>
-          <div class="overflow-x-auto rounded-xl border border-slate-200">
-            <table class="w-full font-dm text-sm text-left">
-              <thead><tr class="bg-slate-50 text-slate-500 text-xs">
-                <th class="px-4 py-3 font-medium">State</th>
-                <th class="px-4 py-3 font-medium">Cards shown</th>
-              </tr></thead>
-              <tbody class="divide-y divide-slate-100 text-slate-800">
-                <tr><td class="px-4 py-3">Offers seen, no negotiation</td><td class="px-4 py-3">all three</td></tr>
-                <tr><td class="px-4 py-3">Final offer</td><td class="px-4 py-3">accept + reject &mdash; production removes every counter-offer affordance once an offer is final</td></tr>
-                <tr><td class="px-4 py-3">Counter offer sent, waiting</td><td class="px-4 py-3">accept only &mdash; it is the dealership&rsquo;s turn, and the reject banner is hidden while they owe a reply</td></tr>
-                <tr><td class="px-4 py-3">Dealership replied</td><td class="px-4 py-3">all three</td></tr>
-                <tr><td class="px-4 py-3">Negotiation closed by the dealership</td><td class="px-4 py-3">accept + reject</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Auction details, rebuilt -->
-    <section class="av-band" style="background:#fff">
-      <div class="av-container flex flex-col gap-8">
-
-        <div class="max-w-3xl">
-          <h2 class="font-barlow font-bold text-3xl mb-3">The auction details, turned into an answer</h2>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">The third block is not new &mdash; it is the existing <b>&ldquo;Tarjouskilpailun tiedot&rdquo;</b> section rebuilt. Today it reports two figures and draws a chart of the bidding, and it answers a question the seller is not asking. The question they <i>are</i> asking is <b>&ldquo;is this a good offer?&rdquo;</b>, and two bare numbers only answer that for a reader who already knows how a C2B auction works.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>The chart is the clearest case of the problem.</b> It shows the bids rising, which looks like evidence and is really just the shape every ascending auction makes. It is true, it is pretty, and it settles nothing.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>The verdict opens the block and the figures close it.</b> The stats row used to lead; read that way, the block opened on two numbers whose relevance the seller had to take on trust until they reached the sentence at the bottom. Evidence reads better after the claim.</p><p class="font-dm text-base leading-6 text-slate-700 mb-3">So the numbers stay and the chart and date row go. In their place, the block reads those same figures back as the argument they are: <b>professionals at the dealerships reviewed the listing and then bid against each other, so the top bid is an expert field&rsquo;s competitive result rather than one buyer&rsquo;s opinion.</b> Then AutoVex states a view in its own voice and recommends accepting &mdash; which is the sentence the seller is looking for, and the one nothing on this page says today.</p><p class="font-dm text-sm text-slate-500">An earlier draft argued from <i>blind independent valuation</i> instead &mdash; &ldquo;each dealership priced the car itself and did not see the other offers&rdquo;. Replaced deliberately: that is a mechanic a seller has to be taught before it means anything, where &ldquo;professionals looked at your ad and competed for it&rdquo; lands on first reading. The blindness is still true; it just does not carry the argument for a reader who has never run an auction.</p>
+          <h2 class="font-barlow font-bold text-3xl mb-3">1 &mdash; The auction result, as an answer</h2>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Today the block reports two figures and draws a chart of the bidding. The seller&rsquo;s question is <b>&ldquo;is this a good offer?&rdquo;</b>, and two bare numbers answer that only for a reader who already knows how the auction works. The chart is the clearest case: it draws the bids rising, which looks like evidence and is really just the shape every ascending auction makes.</p>
+          <p class="font-dm text-base leading-6 text-slate-700">So the chart and the date row go, the figures stay, and the block reads them back as the argument they are. <b>The verdict opens it and the figures close it</b> &mdash; evidence reads better after the claim.</p>
         </div>
 
         <div class="max-w-3xl">
@@ -349,78 +180,69 @@
               <div class="p-2.5"><p class="font-dm text-xs text-slate-500">Tarjouksia yhteens&auml;</p><p class="font-dm text-base font-bold text-slate-800 mt-1">138</p></div>
               <div class="p-2.5"><p class="font-dm text-xs text-slate-500">Tarjoajat</p><p class="font-dm text-base font-bold text-slate-800 mt-1">25</p></div>
             </div>
-            <p class="font-dm text-xs text-slate-500 mt-2">The shared stats row &mdash; the same bordered, divided, icon-led grid the offers page draws for a running auction. It is what the <a class="text-av-blue underline" href="asking-price-removal.html">Asking price removal</a> initiative proposes for this block, taken here because a row that looks like a spec sheet is the wrong frame for an argument. <b>Nothing about the two figures changes</b>, only how and where they are presented.</p>
-            <p class="font-dm text-xs text-slate-500 mt-2"><b>The two figures are different numbers, and that is the point of the row.</b> The prototype used to seed 25 bids from 25 dealerships, so the pair read as one number printed twice and neither label had to be understood. It is now <b>138 bids from 25 dealerships</b> &mdash; production&rsquo;s own meaning, where one bidder can bid many times &mdash; which is also what makes the headline&rsquo;s &ldquo;25 autoliikett&auml;&rdquo; unambiguous: it is the bidder count, not the bid count.</p>
-            <p class="font-dm text-xs text-slate-500 mt-4">EN &mdash; badge: <i>A good auction.</i> Headline: <i>25 dealerships competed for your car.</i> Body: <i>Professionals at the dealerships reviewed your listing and competed against each other for your car. So the highest offer is not one dealership&rsquo;s estimate, it is the result of 25 dealerships competing.</i> Closing line: <i>We consider the highest offer a competitive price for your car, and we recommend accepting it.</i></p>
+            <p class="font-dm text-xs text-slate-500 mt-3">EN &mdash; <i>A good auction. We consider the highest offer a competitive price for your car, and we recommend accepting it. / 25 dealerships competed for your car. Professionals at the dealerships reviewed your listing and competed against each other for it, so the highest offer is not one dealership&rsquo;s estimate &mdash; it is the result of 25 competing.</i></p>
           </div>
         </div>
 
         <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">Three parts, and each is doing one job</h3>
+          <h3 class="font-barlow font-bold text-xl mb-3">Three things, each doing one job</h3>
           <ul class="font-dm text-base leading-6 text-slate-700 list-disc pl-5 space-y-2">
-            <li><b>The closing block opens the section.</b> See below &mdash; it is listed first here because it is first on screen.</li>
-            <li><b>The headline is the fact, in the seller&rsquo;s own terms.</b> Not &ldquo;25 bidders&rdquo; as a count but 25 businesses competing for their specific car. It is the same figure the row above already shows, said as a sentence.</li>
-            <li><b>The body is the mechanic, and it is the only part that actually does the work.</b> Two claims in one sentence: the bidders are professionals who looked at the listing, and they bid against each other. Without them, 25 is just a big number and a seller who distrusts the offer has no reason to read it as anything else.</li>
-            <li><b>The closing block is a judgement, and it is deliberately AutoVex speaking.</b> The rest of the block lets the seller draw the conclusion; this says it out loud, and it is the only place on the decision page where the service states a view on the offer rather than reporting it &mdash; and the only place that <b>recommends an action outright</b>. It names no euro figure: <i>korkeinta tarjousta</i> points at the card above, so it cannot go stale against the number beside it and the sentence works unchanged on a final offer.</li>
+            <li><b>The verdict states a view and recommends an action.</b> The only place on the decision page that does either. It names no euro figure &mdash; it points at the offer card above &mdash; so it cannot go stale against the number beside it and it works unchanged on a final offer.</li>
+            <li><b>The body is the mechanic, and it is the part that does the work.</b> Two claims: the bidders are professionals who looked at the listing, and they bid against each other. Without them, a big number is just a big number to a seller who distrusts the offer.</li>
+            <li><b>The two figures are different numbers, and that is the point of the row.</b> Bids and bidders. When both read 25 the pair looked like one number printed twice and neither label had to be understood.</li>
           </ul>
-          <p class="font-dm text-base leading-6 text-slate-700 mt-3">Presentation borrows the <b>warm-up screen</b> &mdash; illustration, headline, one paragraph &mdash; at the scale of a block inside a card. The illustration takes a third of the container from 620&nbsp;px up &mdash; a fraction rather than a fixed width, so it holds that proportion whatever the container does; on a phone it keeps a fixed width and centres above the text. It is the warm-up&rsquo;s own illustration, so a seller who came through that screen meets it twice, two screens apart. Deliberate: this section is the explanation the warm-up&rsquo;s &ldquo;Hyv&auml; tarjouskilpailu takana!&rdquo; never gave.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mt-3"><b>&ldquo;Hyv&auml; tarjouskilpailu&rdquo; used to be a separate lime badge above the headline</b>, with the recommendation in a blue strip below. Two green-ish elements saying the same thing at two lengths, in two borrowed colours &mdash; lime from the warm-up badge, where it reports a status, and blue from the options section&rsquo;s promoted card. They are one green block now: the badge is its lead line, the sentence is the explanation. That also lets the column open on the headline, which gives the section a clean arc &mdash; the fact, then why it means anything, then the conclusion.</p>
-          <p class="font-dm text-base leading-6 text-slate-700 mt-3"><b>No rule between the stats row and the illustration.</b> The stats grid carries its own frame, so a hairline 20&nbsp;px under it read as a second line boxing the illustration in rather than as a separator. Spacing does the separating.</p>
-        </div>
-
-        <div class="rounded-xl border border-slate-200 bg-slate-50 p-6 max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">This block replaces the warm-up screen, so the arm removes it</h3>
-          <p class="font-dm text-base leading-6 text-slate-800 mb-3">Today a seller arriving at the decision page for the first time does not see it. A full screen stands in front: an illustration, <i>&ldquo;Hyv&auml; tarjouskilpailu takana!&rdquo;</i>, a line about the auction reaching hundreds of dealerships, and a button to see the results.</p>
-          <p class="font-dm text-base leading-6 text-slate-800 mb-3"><b>That is now what this block says on the decision page itself</b> &mdash; the same illustration, the same claim, and the figures behind it. Keeping both would make the seller read the same thing twice, once behind a click, and only the second one carries the evidence. So this arm skips the warm-up and opens straight on the results.</p>
-          <p class="font-dm text-base leading-6 text-slate-800">Production behaviour is unchanged in <code class="font-mono text-sm">control</code>, where the warm-up appears exactly as it does today. To compare the two, use a seller who has not yet seen their offers: <a class="text-av-blue underline break-all" href="../decision.html?scenario=new-offers&amp;informed-decision=v1">../decision.html?scenario=new-offers&amp;informed-decision=v1</a></p>
-        </div>
-
-        <div class="max-w-3xl">
-          <h3 class="font-barlow font-bold text-xl mb-3">Where it deliberately does not appear</h3>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-4">Two gates, and in both the block falls back to <b>today&rsquo;s design with nothing removed</b> &mdash; the chart and the date row exactly as they are now.</p>
-          <div class="overflow-x-auto rounded-xl border border-slate-200">
-            <table class="w-full font-dm text-sm text-left">
-              <thead><tr class="bg-slate-50 text-slate-500 text-xs">
-                <th class="px-4 py-3 font-medium">Gate</th>
-                <th class="px-4 py-3 font-medium">Why</th>
-              </tr></thead>
-              <tbody class="divide-y divide-slate-100 text-slate-800">
-                <tr><td class="px-4 py-3">Fewer than four bidding dealerships</td><td class="px-4 py-3">The argument is simply false. A thin auction is its own state and needs its own version of this block &mdash; one that does not yet exist &mdash; and showing this one there would be the worst available answer to &ldquo;is this a good offer?&rdquo;</td></tr>
-                <tr><td class="px-4 py-3">No decision left to make</td><td class="px-4 py-3">The same open-decision rule the other two sections use. After a rejection, &ldquo;we consider that a competitive price&rdquo; is the service telling a seller who has walked away that they were wrong; there is nothing left for it to help with, and it costs trust to make the point.</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="font-dm text-sm text-slate-500 mt-3"><b>Worth knowing before reading the first gate as theoretical.</b> A benchmarking study of comparable services put an uncompetitive auction &mdash; fewer than four bidding dealerships &mdash; behind roughly half of all rejected-offer cases. It is not an edge case; it is the second half of this design, and it is not designed.</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3">Presentation borrows the warm-up screen &mdash; illustration, headline, one paragraph. <b>Which is also why this arm removes that screen:</b> production stands a full page in front of a first-time visitor saying much the same thing with none of the evidence, and keeping both makes the seller read the claim twice, once behind a click.</p>
         </div>
       </div>
     </section>
 
-    <!-- Decisions, and what is missing -->
-    <section class="av-band av-band-grey">
+    <!-- Block 2 -->
+    <section class="av-band" style="background:#fff">
       <div class="av-container flex flex-col gap-8">
         <div class="max-w-3xl">
-          <h2 class="font-barlow font-bold text-3xl mb-4">Choices made, and why</h2>
-          <div class="flex flex-col gap-4 font-dm text-base leading-6 text-slate-700">
-            <p><b>Two marks, not three.</b> A green tick for an upside, a red X for a cost. A slate dash for &ldquo;a trade-off, not an alarm&rdquo; was the third and has been retired: the counter offer&rsquo;s time cost now carries the same cross the reject card does, so the only distinction left is <i>upside</i> or <i>cost</i>. The cross is an X in a circle in <b>the reject button&rsquo;s own label colour</b>, which is why the reject card and the button read as one action. Spent in two places rather than one it no longer marks the heaviest option on its own &mdash; the reject card earns that by having no upside line at all. It still does not collide with red-means-unread, because it sits inside a card whose title names an action rather than in a status line. <b>The tick carries the action&rsquo;s colour and the cross carries severity.</b> Green ticks the accept card, blue ticks the counter-offer card &mdash; the same blue as the counter-offer button &mdash; so an upside is written in the colour of the action it belongs to, while the cross stays red wherever it appears because it always means the same thing: this costs you something. With only one card painted, the marks are where the per-action colour system actually lives in this section. That is why the counter-offer card carries a blue tick and a red cross and is not inconsistent.</p><p><b>Two claims were removed on purpose, and both would have been wrong.</b> Nothing says the price is now fixed &mdash; a dealership can still adjust after inspecting the car, so that was a promise we cannot keep, and it is not replaced with a hedge either. And nothing calls a counter offer binding: it closes the sale mechanically when a dealership accepts, but it is not legally binding, and saying so would misstate what the seller is agreeing to.</p>
-            <p><b>No column is painted, and the hierarchy is in the titles.</b> Accept is bold in dark green; the two alternatives are medium weight in a lighter slate. Accept leads by being the darkest and heaviest thing in the row while the others recede &mdash; not by being boxed.</p><p><b>That took three passes, and the route is worth keeping.</b> Accept was originally blue-filled because it was the promoted one, which taught blue as &ldquo;the recommended action&rdquo; on a page where blue already means &ldquo;negotiate&rdquo;. Tinting all three in their own buttons&rsquo; colours fixed the meaning and cost the hierarchy &mdash; three painted cards is three promoted cards. Painting accept alone was right on both counts and still louder than a section of quiet advice wants to be: a filled, outlined box beside two bare columns reads as a card next to not-cards.</p><p>The colour system is carried by the marks and the real buttons instead, which is enough. <b>Do not re-introduce a fill or an outline on any of the three, and do not take accept back to blue.</b> Nothing in any column overstates: every line is a verified production consequence.</p>
-            <p><b>Nothing quantitative is shown.</b> The brief was to educate rather than prove.</p>
-            <p><b>Every white container is inset by 20&nbsp;px and nothing else.</b> The options and reminders columns had kept a padding of their own from when they were painted boxes, which put their text 36&nbsp;px from the container edge where the auction-details block and the offer cards start at 20. That padding is gone and the space between columns moved to the row gap, so the three blocks line up down the page. If a column ever needs its own inset again, it needs its own box too.</p>
-            <p><b>Height</b>, desktop / 375&nbsp;px: advice <b>194 / 194</b> (collapsed), reminders <b>264 / 524</b>, options <b>259 / 543</b>, auction details <b>457 / 535</b>. The three new sections together are <b>1&thinsp;261&nbsp;px on a phone</b> above the auction details &mdash; reminders is the tallest block in the arm, which is part of why the duplication has to be resolved. The auction-details block replaces a chart and a date row rather than adding to them, so it is close to a wash on its own.</p>
+          <h2 class="font-barlow font-bold text-3xl mb-3">2 &mdash; &ldquo;But I saw similar cars selling for thousands more&rdquo;</h2>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3">The single largest reason a seller rejects, and almost always the same mistake: the number they saw is a dealership&rsquo;s <b>advertised</b> price. Nobody was paid that for that car.</p>
+          <p class="font-dm text-base leading-6 text-slate-700"><b>The block shows what an advertised price is built from, and nothing else.</b> No euros, no percentages, no example car. What the seller has to take away is the construction &mdash; once that lands, the size of the gap explains itself and does not need to be quoted.</p>
+        </div>
+
+        <div class="max-w-3xl">
+          <h3 class="font-barlow font-bold text-xl mb-3">What the block shows</h3>
+          <div class="rounded-xl border border-slate-200 p-4">
+            <p class="font-dm text-sm text-slate-700 mb-4">Autoliikkeen ilmoituksessa n&auml;kyv&auml; hinta ei ole se hinta, jonka myyj&auml; on autostaan saanut. Siihen on lis&auml;tty kaikki se, mit&auml; liike auton myymiseen tarvitsee.</p>
+            <div class="rounded-lg border border-slate-200 overflow-hidden">
+              <div class="font-dm text-xs font-medium text-slate-500 px-4 py-2 bg-slate-50 border-b border-slate-200">Autoliikkeen pyyntihinta</div>
+              <div class="font-dm text-sm text-slate-700 px-4 py-2.5 border-b border-slate-200"><span class="text-slate-400">+</span>&nbsp; Liikkeen kate</div>
+              <div class="font-dm text-sm text-slate-700 px-4 py-2.5 border-b border-slate-200"><span class="text-slate-400">+</span>&nbsp; Takuu ja vastuu autosta</div>
+              <div class="font-dm text-sm text-slate-700 px-4 py-2.5 border-b border-slate-200"><span class="text-slate-400">+</span>&nbsp; Kunnostus, huolto ja katsastus</div>
+              <div class="font-dm text-sm text-slate-700 px-4 py-2.5 border-b border-slate-200"><span class="text-slate-400">+</span>&nbsp; Myynnin ja markkinoinnin kulut</div>
+              <div class="font-dm text-sm font-bold text-green-900 px-4 py-3 bg-green-50">Myyj&auml;lle maksettu hinta</div>
+            </div>
+            <p class="font-dm text-sm text-slate-700 mt-4">Sinulle tehty tarjous on t&auml;m&auml;n pinon alin rivi. Sit&auml; ei voi verrata ilmoituksen hintaan, koska ne eiv&auml;t mittaa samaa asiaa.</p>
+            <p class="font-dm text-xs text-slate-500 mt-4">EN &mdash; <i>The price in a dealership&rsquo;s listing is not the price the seller was paid for the car. Everything the dealership needs in order to sell it has been added on top. / The offer you have is the bottom row of this stack. It cannot be compared to a listing price, because the two do not measure the same thing.</i></p>
           </div>
         </div>
 
         <div class="max-w-3xl">
+          <h3 class="font-barlow font-bold text-xl mb-3">Three decisions worth keeping</h3>
+          <ul class="font-dm text-base leading-6 text-slate-700 list-disc pl-5 space-y-2">
+            <li><b>It is built upwards, and that is the whole design.</b> The seller&rsquo;s price is the base and everything else is stacked on top of it to reach the advertised figure. A breakdown that <i>subtracts</i> from the sticker price says &ldquo;they took this from you&rdquo;; one that <i>adds</i> to the seller&rsquo;s price says &ldquo;they added this to yours&rdquo;. Same facts, accurate direction, none of the resentment &mdash; and it is why the base is the only highlighted row.</li>
+            <li><b>The rows are equal height on purpose.</b> Proportional segments would assert amounts nobody has measured, and a seller who is told what a margin costs has been handed something to resent rather than something to understand. Every row is a thing, not a quantity.</li>
+            <li><b>No alternative route is named.</b> Not a private sale, not a trade-in, not another dealership. The block answers why that number was bigger and stops. Naming a route we would rather the seller did not take would undo the point of the whole arm.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Open questions -->
+    <section class="av-band av-band-grey">
+      <div class="av-container flex flex-col gap-8">
+        <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-4">Open questions</h2>
           <ol class="font-dm text-base leading-6 text-slate-700 list-decimal pl-5 space-y-3">
-            <li><b>The verdict is triggered by the bidder count, not by the offer &mdash; and it now recommends accepting.</b> &ldquo;We consider this a competitive price, and we recommend accepting it&rdquo; appears whenever four or more dealerships bid. But a well-attended auction can still land below what we would ourselves estimate the car is worth, and there that sentence is wrong in the one direction that costs the most trust: the seller takes our advice and later finds out. The recommendation raises the stakes on this &mdash; stating a view is one thing, telling someone what to do is another. The honest shape is probably the reverse of what is built: gate the claim on the offer measured against our own estimate, and let the bidder count be the <i>evidence</i> for it rather than the trigger. That needs the estimate on the page, which is a product decision this sketch does not make.</li>
-            <li><b>The thin-auction version does not exist.</b> Fewer than four bidders falls back to today&rsquo;s chart, which is the safe answer and not a good one: that seller has the same question and a worse offer, and is the likeliest of all to reject. What the block should say there is the harder half of this design and it is untouched.</li>
-            <li><b>The section keeps production&rsquo;s title.</b> &ldquo;Tarjouskilpailun tiedot&rdquo; &mdash; <i>auction details</i> &mdash; described a record of what happened. The block is now an argument about what it meant, so the title undersells it. Left alone rather than changed in passing, because renaming a production section is a decision of its own.</li>
-            <li><b>&ldquo;Muutama neuvo&rdquo; and &ldquo;Muistathan n&auml;m&auml;&rdquo; carry the same three concerns.</b> Deliberately built side by side so the choice is visible. Keep the concise one, keep both with the glanceable version first, or fold them into one &mdash; but not both as they stand, which says the same three things twice in a row. It is the first thing to settle in a review of this arm.</li>
-            <li><b>The price anchor is no longer addressed anywhere.</b> Earlier versions opened with a line separating a listing&rsquo;s asking price from an offer &mdash; the largest single cause of rejection. It does not belong in a section about what the buttons do. If it is worth saying, it needs its own place on the page rather than being folded back in here.</li>
-            <li><b>Net proceeds after loan payoff.</b> A benchmarking study of comparable services found no competitor that shows a live payoff figure at offer time &mdash; all of them make the seller fetch a payoff letter first. An estimate of <i>offer minus remaining loan</i>, before the seller spends time on a review call, would lead the category. Needs data and a product decision.</li>
-            <li><b>Conditional acceptance</b>, borrowed from property sale-contingency clauses: &ldquo;I accept, contingent on my replacement completing by date&nbsp;X&rdquo;. No car service found running it, and it is the honest answer for a seller who has not found a replacement &mdash; a concern this version has no room for at all.</li>
-            <li><b>Does a neutral version outperform this one?</b> Only the accept card is promoted, the auction-details block now tells the seller outright to accept, and all of it sits above a reject button. The prototype&rsquo;s own anti-pattern notes warn about exactly this shape. Explaining is a gentler mechanism than scoring, but a neutral-framing arm is the obvious A/B partner and it has got more necessary, not less.</li>
-            <li><b>Should the reject card carry an upside?</b> It has none today. If sellers can straightforwardly start a new auction later, saying so would be honest and would stop the card reading as a warning.</li>
+            <li><b>Does the seller believe the stack without numbers?</b> It is the central bet. The alternative is an illustrative example car, which buys credibility and costs the two reactions this design avoids: arguing with the arithmetic, and resenting a margin. Worth putting in front of the team before the copy is locked.</li>
+            <li><b>Does the verdict need the offer as well as the bidder count?</b> The claim fires on a fair offer and a competitive auction. Both are necessary; whether they are sufficient is a question for whoever owns the fair-offer definition.</li>
+            <li><b>Does a neutral version outperform this one?</b> Both blocks argue for accepting and sit directly above the reject control. A neutral-framing arm is the obvious partner.</li>
+            <li><b>What do the other sellers get?</b> Widening past fair offers is the deliberate next step, and the seller with a weaker offer is the one likeliest to reject. Nothing here is designed for them yet.</li>
           </ol>
         </div>
       </div>

@@ -151,7 +151,7 @@
        promoted. */
     {
       slug: 'informed-decision',
-      name: 'Informed decision (ideation)',
+      name: 'Informed decision (fair offer)',
       spec: 'design-specs/informed-decision.html',
       prodArm: 'control'
     }
