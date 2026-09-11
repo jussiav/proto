@@ -885,7 +885,7 @@
 
     var SCENARIOS = {
       'new-offers': function() { return {
-        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: null, highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 138, buyers: 25, offers_seen_at: null, highest_offer: 11500, has_final_offer: false, insights_data: genInsights(138, 11500) }),
         offers: [
           { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
           { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
@@ -898,7 +898,7 @@
         ],
       }; },
       'seen-offers': function() { return {
-        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-1800)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-1800)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(138, 11500) }),
         offers: [
           { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
           { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
@@ -929,7 +929,7 @@
          writes `expires = now()` on the request and `now() + reaction time` on
          the offer. */
       'final-offer': function() { return {
-        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11200, has_final_offer: true, insights_data: genInsights(25, 11200) }),
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11200, has_final_offer: true, insights_data: genInsights(138, 11200) }),
         offers: [
           { id: 201, status: 3, amount: 11200, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
           { id: 202, status: 2, amount: 10800, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
@@ -942,7 +942,7 @@
       'accepted': function() {
         var acceptedAmt = ACCEPTED_OFFER ? ACCEPTED_OFFER.amount : 11500;
         return {
-          request: Object.assign({}, BASE, { status: 2, expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-7200)*1000).toISOString(), highest_offer: acceptedAmt, has_final_offer: false, accepted_at: new Date((_now()-3600)*1000).toISOString(), has_an_accepted_offer: true, insights_data: genInsights(25, acceptedAmt) }),
+          request: Object.assign({}, BASE, { status: 2, expires_at: PAST(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-7200)*1000).toISOString(), highest_offer: acceptedAmt, has_final_offer: false, accepted_at: new Date((_now()-3600)*1000).toISOString(), has_an_accepted_offer: true, insights_data: genInsights(138, acceptedAmt) }),
           offers: ACCEPTED_OFFERS_SNAPSHOT || [
             { id: 201, status: 1, amount: 11500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
             { id: 202, status: 2, amount: 11100, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
@@ -966,7 +966,7 @@
         ],
       }; },
       'deal-failed': function() { return {
-        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3*86400)*1000).toISOString(), highest_offer: 9500, has_final_offer: false, insights_data: genInsights(25, 9500) }),
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-3*86400)*1000).toISOString(), highest_offer: 9500, has_final_offer: false, insights_data: genInsights(138, 9500) }),
         offers: [
           { id: 201, status: 2, amount: 9500,  car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
           { id: 202, status: 2, amount: 9100,  car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
@@ -977,7 +977,7 @@
         ],
       }; },
       'all-rejected': function() { return {
-        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3*86400)*1000).toISOString(), highest_offer: 9500, has_final_offer: false, insights_data: genInsights(25, 9500) }),
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-3*86400)*1000).toISOString(), highest_offer: 9500, has_final_offer: false, insights_data: genInsights(138, 9500) }),
         offers: [
           { id: 201, status: 2, amount: 9500,  car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false },
           { id: 202, status: 2, amount: 9100,  car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
@@ -1000,28 +1000,28 @@
         ],
       }; },
       'counter-offer-sent': function() { return {
-        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(138, 11500) }),
         offers: [
           { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true },
           { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
         ],
       }; },
       'dealer-replied': function() { return {
-        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(138, 11500) }),
         offers: [
           { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true, dealer_replied: true },
           { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
         ],
       }; },
       'negotiation-stopped': function() { return {
-        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 25, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(25, 11500) }),
+        request: Object.assign({}, BASE, { expires_at: ACTIVE(), offer_count: 138, buyers: 25, offers_seen_at: new Date((_now()-3600)*1000).toISOString(), highest_offer: 11500, has_final_offer: false, insights_data: genInsights(138, 11500) }),
         offers: [
           { id: 201, status: 0, amount: 11500, car_pickup: false, distance: 15, city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: false, negotiation_pending: true },
           { id: 202, status: 0, amount: 11000, car_pickup: true,  distance: 25, city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: false },
         ],
       }; },
       'offers-auto-rejected': function() { return {
-        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 25, buyers: 25, offers_seen_at: null, highest_offer: 9500, has_final_offer: false }),
+        request: Object.assign({}, BASE, { expires_at: PAST(), offer_count: 138, buyers: 25, offers_seen_at: null, highest_offer: 9500, has_final_offer: false }),
         offers: [
           { id: 201, status: 0, amount: 9500, car_pickup: false, distance: 15,  city: 'Helsinki', total_sales: 120, office_id: 501, auto_rejected: true },
           { id: 202, status: 0, amount: 9100, car_pickup: true,  distance: 25,  city: 'Espoo',    total_sales: 85,  office_id: 502, auto_rejected: true },
@@ -1177,18 +1177,37 @@
       var steps      = Math.max(3, count);
       var totalRange = highest - base;
 
-      // Fallback: range too small for varied steps — equal distribution
+      /* Variable weight pattern — repeats for large step counts. Declared up
+         here because BOTH branches read it; `var` would hoist it as undefined
+         into the dense branch below, which is the same trap `stackCls` and
+         `negBtnLabel` fell into. */
+      var PATTERN = [1, 1.5, 0.7, 2.0, 0.8, 1.3, 0.6, 1.8, 1.1, 0.9, 1.4, 0.75];
+
+      /* DENSE AUCTION: more bids than the euro range can carry in 50 € steps.
+         138 bids across ~4 000 € is ~29 € a bid, so the branch below — which
+         floors every increment at 50 € and forces the series strictly upward —
+         cannot draw it and used to fall back to an even ramp, a straight
+         diagonal line. A real busy auction is a STAIRCASE: many bids at or near
+         the same level, then a jump. So this keeps the same uneven weighting
+         and only drops the strictly-increasing rule, letting a value repeat.
+         Reachable since the mock scenarios started separating bids (138) from
+         bidders (25), which is how prod's two figures actually differ. */
       if (totalRange < steps * 50) {
-        var eq = [];
-        for (var i = 1; i <= steps; i++) {
-          eq.push(Math.round((base + totalRange * i / steps) / 50) * 50);
+        var eqW = [], eqSum = 0;
+        for (var i = 0; i < steps; i++) {
+          var ew = PATTERN[i % PATTERN.length];
+          eqW.push(ew);
+          eqSum += ew;
+        }
+        var eq = [], acc = 0;
+        for (var i = 0; i < steps; i++) {
+          acc += eqW[i];
+          eq.push(Math.round((base + totalRange * acc / eqSum) / 50) * 50);
         }
         eq[eq.length - 1] = highest;
         return eq;
       }
 
-      // Variable weight pattern — repeats for large step counts
-      var PATTERN = [1, 1.5, 0.7, 2.0, 0.8, 1.3, 0.6, 1.8, 1.1, 0.9, 1.4, 0.75];
       var weights = [], wSum = 0;
       for (var i = 0; i < steps; i++) {
         var w = PATTERN[i % PATTERN.length];
@@ -2484,7 +2503,17 @@
          `offers_seen_at: null` and prod would show it there.
 
          The outcome decides the CONTENT, not whether the card appears. */
-      var showWarmup = !req.offers_seen_at;
+      /* NO WARM-UP IN THE IDEATION ARM. Prod's warm-up is a full screen that
+         stands between the seller and their offers: an illustration, "Hyvä
+         tarjouskilpailu takana!", one line about the auction reaching hundreds
+         of dealerships, and a button to see the results. That is now what the
+         rebuilt auction-details block says ON the decision page — same
+         illustration, same claim, and the figures behind it — so keeping both
+         makes the seller read the same thing twice, once behind a click, and
+         the second time is the one with the evidence attached.
+
+         `control` keeps it, because it is prod. */
+      var showWarmup = !req.offers_seen_at && !ID_V1;
 
       var warmupEl = document.getElementById('state-warmup');
       var mainEl   = document.getElementById('state-main');

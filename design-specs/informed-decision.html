@@ -337,19 +337,20 @@
         <div class="max-w-3xl">
           <h3 class="font-barlow font-bold text-xl mb-3">What the block shows</h3>
           <div class="rounded-xl border border-slate-200 p-4">
-            <div class="grid grid-cols-2 divide-x divide-slate-200 border border-slate-200 rounded-lg mb-4">
-              <div class="p-2.5"><p class="font-dm text-xs text-slate-500">Tarjouksia yhteens&auml;</p><p class="font-dm text-base font-bold text-slate-800 mt-1">25</p></div>
-              <div class="p-2.5"><p class="font-dm text-xs text-slate-500">Tarjoajat</p><p class="font-dm text-base font-bold text-slate-800 mt-1">25</p></div>
+            <div class="rounded-lg border border-green-500 bg-green-50 p-3">
+              <p class="font-dm text-sm font-bold text-green-900">Hyv&auml; tarjouskilpailu</p>
+              <p class="font-dm text-sm text-green-900 mt-1">Pid&auml;mme korkeinta tarjousta kilpailukykyisen&auml; hintana autostasi ja suosittelemme hyv&auml;ksym&auml;&auml;n sen.</p>
             </div>
-            <p class="font-dm text-xs text-slate-500 mb-4">The shared stats row &mdash; the same bordered, divided, icon-led grid the offers page draws for a running auction. It is what the <a class="text-av-blue underline" href="asking-price-removal.html">Asking price removal</a> initiative proposes for this block, taken here because a row that looks like a spec sheet is the wrong frame for an argument. <b>Nothing about the two figures changes</b>, only how they are presented.</p>
-            <div class="pt-2">
+            <div class="mt-5">
               <p class="font-barlow text-lg font-bold text-slate-900">Autostasi kilpaili 25 autoliikett&auml;.</p>
               <p class="font-dm text-sm text-slate-700 mt-2">Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan 25 liikkeen kilpailun tulos.</p>
-              <div class="mt-3 rounded-lg border border-green-500 bg-green-50 p-3">
-                <p class="font-dm text-sm font-bold text-green-900">Hyv&auml; tarjouskilpailu</p>
-                <p class="font-dm text-sm text-green-900 mt-1">Pid&auml;mme korkeinta tarjousta kilpailukykyisen&auml; hintana autostasi ja suosittelemme hyv&auml;ksym&auml;&auml;n sen.</p>
-              </div>
             </div>
+            <div class="grid grid-cols-2 divide-x divide-slate-200 border border-slate-200 rounded-lg mt-5">
+              <div class="p-2.5"><p class="font-dm text-xs text-slate-500">Tarjouksia yhteens&auml;</p><p class="font-dm text-base font-bold text-slate-800 mt-1">138</p></div>
+              <div class="p-2.5"><p class="font-dm text-xs text-slate-500">Tarjoajat</p><p class="font-dm text-base font-bold text-slate-800 mt-1">25</p></div>
+            </div>
+            <p class="font-dm text-xs text-slate-500 mt-2">The shared stats row &mdash; the same bordered, divided, icon-led grid the offers page draws for a running auction. It is what the <a class="text-av-blue underline" href="asking-price-removal.html">Asking price removal</a> initiative proposes for this block, taken here because a row that looks like a spec sheet is the wrong frame for an argument. <b>Nothing about the two figures changes</b>, only how and where they are presented.</p>
+            <p class="font-dm text-xs text-slate-500 mt-2"><b>The two figures are different numbers, and that is the point of the row.</b> The prototype used to seed 25 bids from 25 dealerships, so the pair read as one number printed twice and neither label had to be understood. It is now <b>138 bids from 25 dealerships</b> &mdash; production&rsquo;s own meaning, where one bidder can bid many times &mdash; which is also what makes the headline&rsquo;s &ldquo;25 autoliikett&auml;&rdquo; unambiguous: it is the bidder count, not the bid count.</p>
             <p class="font-dm text-xs text-slate-500 mt-4">EN &mdash; badge: <i>A good auction.</i> Headline: <i>25 dealerships competed for your car.</i> Body: <i>Professionals at the dealerships reviewed your listing and competed against each other for your car. So the highest offer is not one dealership&rsquo;s estimate, it is the result of 25 dealerships competing.</i> Closing line: <i>We consider the highest offer a competitive price for your car, and we recommend accepting it.</i></p>
           </div>
         </div>
@@ -365,6 +366,13 @@
           <p class="font-dm text-base leading-6 text-slate-700 mt-3">Presentation borrows the <b>warm-up screen</b> &mdash; illustration, headline, one paragraph &mdash; at the scale of a block inside a card. The illustration takes a third of the container from 620&nbsp;px up &mdash; a fraction rather than a fixed width, so it holds that proportion whatever the container does; on a phone it keeps a fixed width and centres above the text. It is the warm-up&rsquo;s own illustration, so a seller who came through that screen meets it twice, two screens apart. Deliberate: this section is the explanation the warm-up&rsquo;s &ldquo;Hyv&auml; tarjouskilpailu takana!&rdquo; never gave.</p>
           <p class="font-dm text-base leading-6 text-slate-700 mt-3"><b>&ldquo;Hyv&auml; tarjouskilpailu&rdquo; used to be a separate lime badge above the headline</b>, with the recommendation in a blue strip below. Two green-ish elements saying the same thing at two lengths, in two borrowed colours &mdash; lime from the warm-up badge, where it reports a status, and blue from the options section&rsquo;s promoted card. They are one green block now: the badge is its lead line, the sentence is the explanation. That also lets the column open on the headline, which gives the section a clean arc &mdash; the fact, then why it means anything, then the conclusion.</p>
           <p class="font-dm text-base leading-6 text-slate-700 mt-3"><b>No rule between the stats row and the illustration.</b> The stats grid carries its own frame, so a hairline 20&nbsp;px under it read as a second line boxing the illustration in rather than as a separator. Spacing does the separating.</p>
+        </div>
+
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-6 max-w-3xl">
+          <h3 class="font-barlow font-bold text-xl mb-3">This block replaces the warm-up screen, so the arm removes it</h3>
+          <p class="font-dm text-base leading-6 text-slate-800 mb-3">Today a seller arriving at the decision page for the first time does not see it. A full screen stands in front: an illustration, <i>&ldquo;Hyv&auml; tarjouskilpailu takana!&rdquo;</i>, a line about the auction reaching hundreds of dealerships, and a button to see the results.</p>
+          <p class="font-dm text-base leading-6 text-slate-800 mb-3"><b>That is now what this block says on the decision page itself</b> &mdash; the same illustration, the same claim, and the figures behind it. Keeping both would make the seller read the same thing twice, once behind a click, and only the second one carries the evidence. So this arm skips the warm-up and opens straight on the results.</p>
+          <p class="font-dm text-base leading-6 text-slate-800">Production behaviour is unchanged in <code class="font-mono text-sm">control</code>, where the warm-up appears exactly as it does today. To compare the two, use a seller who has not yet seen their offers: <a class="text-av-blue underline break-all" href="../decision.html?scenario=new-offers&amp;informed-decision=v1">../decision.html?scenario=new-offers&amp;informed-decision=v1</a></p>
         </div>
 
         <div class="max-w-3xl">

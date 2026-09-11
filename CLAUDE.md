@@ -2100,6 +2100,21 @@ then deals with whatever is still in the way.
 for accepting now sits between the offer cards and the reject banner, in one
 uninterrupted run. That was already true and is now more so.
 
+### The arm also REMOVES the warm-up screen (2026-09-11)
+
+`showWarmup = !req.offers_seen_at && !ID_V1`. Prod's warm-up is a full screen
+standing between the seller and their offers: an illustration,
+"Hyvä tarjouskilpailu takana!", one line about the auction reaching hundreds of
+dealerships, and a button to see the results. **That is now what the rebuilt
+auction-details block says on the decision page itself** — same illustration,
+same claim, and the figures behind it — so keeping both makes the seller read
+the same thing twice, once behind a click, and only the second one carries the
+evidence.
+
+`control` keeps it, because it is prod. Nothing else changes: `revealOffers()`
+stays wired for control, `postAuctionStatus` is untouched, and the warm-up copy
+table below still describes what control renders.
+
 **Rows 3 and 4 overlap completely, and that is the open question rather than an
 oversight** — see the `Muistathan nämä` section below.
 
@@ -2474,6 +2489,29 @@ conclusion.
 illustration read as a second line boxing the illustration in rather than as a
 separator, since the grid already carries its own frame. Each part carries its
 own frame or none, and 20px of space does the separating.
+
+**THE TWO FIGURES ARE DIFFERENT NUMBERS NOW, and that is the point of the row.**
+Every open-decision scenario used to seed `offer_count: 25, buyers: 25`, so
+"Tarjouksia yhteensä 25 / Tarjoajat 25" read as one number printed twice and
+neither label had to be understood. They are **138 bids from 25 dealerships**
+(2026-09-11) — prod's own meaning, where a bidder can bid many times — which is
+also what makes the headline's "25 autoliikettä" unambiguous: it is the
+bidder count, not the bid count.
+
+It is changed in the SCENARIO data, not in the arm, and deliberately so. The
+number of bids is a state of the world a real seller could be in; an arm is a
+design candidate. Letting a variant rewrite world state would break the split
+the whole prototype bar is built on, so control shows 138/25 too — and it is
+more faithful to prod than 25/25 ever was.
+
+**It made the control chart honest and duller.** `genInsights` floors every
+increment at 50 €, so 138 bids across a ~4 000 € range could not be drawn and
+the generator fell back to an even ramp — a straight diagonal. The dense branch
+now keeps the same uneven weighting and only drops the strictly-increasing rule,
+giving a staircase (67 distinct levels across 139 points). At chart scale each
+50 € step is ~2.5px, so it still reads as close to a straight climb: that is
+what 138 bids over that range actually looks like, and the old varied line was
+an artefact of pretending there were 25.
 
 **The body is the whole argument, and it makes TWO claims:** the bidders are
 professionals who looked at the listing, and they bid against each other.
@@ -2935,6 +2973,10 @@ while `isLoading` and a literal `Something went wrong!!!` fallback; neither mean
 anything in a static prototype.
 
 ## Warm-up card and hero copy — the outcome tiers were unified
+
+**Informed decision's `v1` removes it**, and that is the only thing in the
+prototype that does — see that section. Everything below describes prod and
+therefore `control`.
 
 **The warm-up still exists in prod**, and its gate has nothing to do with the
 auction outcome. `C2BDecision.vue` renders it on
