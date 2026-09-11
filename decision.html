@@ -221,22 +221,17 @@
         <div id="banner-top-content"></div>
       </section>
 
-      <!-- Section 3a: "Muutama neuvo" — Informed decision (ideation arm only).
-           Deliberately ABOVE the "what each button does" block: the seller's
-           objection is what blocks the decision, so it is answered before the
-           options are laid out. Same arm, same open-decision gate.
-           The id and `buildAdvice` stay generic on purpose — the heading is
-           still being worked on, and renaming both every time it moves would
-           churn the call site for nothing. -->
-      <section id="section-advice" class="hidden">
+      <!-- Section 3a: AuctionInsights. FIRST of the four, and in the v1 arm
+           it is the block that answers "is this a good offer?" — so it opens
+           the run rather than closing it. See the ordering note below. -->
+      <section id="section-insights" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
-          <!-- prod's `ph-bold-seal-check` sprite family, at the section-icon size -->
-          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M225.86 102.82c-3.77-3.94-7.67-8-9.14-11.57-1.36-3.27-1.44-8.69-1.52-13.94-.15-9.76-.31-20.82-8-28.51s-18.75-7.85-28.51-8c-5.25-.08-10.67-.16-13.94-1.52-3.56-1.47-7.63-5.37-11.57-9.14C146.28 23.51 138.44 16 128 16s-18.27 7.51-25.18 14.14c-3.94 3.77-8 7.67-11.57 9.14-3.25 1.36-8.69 1.44-13.94 1.52-9.76.15-20.82.31-28.51 8s-7.8 18.75-8 28.51c-.08 5.25-.16 10.67-1.52 13.94-1.47 3.56-5.37 7.63-9.14 11.57C23.51 109.72 16 117.56 16 128s7.51 18.27 14.14 25.18c3.77 3.94 7.67 8 9.14 11.57 1.36 3.27 1.44 8.69 1.52 13.94.15 9.76.31 20.82 8 28.51s18.75 7.85 28.51 8c5.25.08 10.67.16 13.94 1.52 3.56 1.47 7.63 5.37 11.57 9.14C109.72 232.49 117.56 240 128 240s18.27-7.51 25.18-14.14c3.94-3.77 8-7.67 11.57-9.14 3.27-1.36 8.69-1.44 13.94-1.52 9.76-.15 20.82-.31 28.51-8s7.85-18.75 8-28.51c.08-5.25.16-10.67 1.52-13.94 1.47-3.56 5.37-7.63 9.14-11.57C232.49 146.28 240 138.44 240 128s-7.51-18.27-14.14-25.18Zm-52.2 6.84-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32Z"/></svg>
-          <span class="text-blue-900 leading-[24px]">Muutama neuvo</span>
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="m199 125.31-49.89-18.38L130.69 57a19.92 19.92 0 0 0-37.38 0l-18.38 49.93L25 125.31a19.92 19.92 0 0 0 0 37.38l49.89 18.38L93.31 231a19.92 19.92 0 0 0 37.38 0l18.38-49.89L199 162.69a19.92 19.92 0 0 0 0-37.38m-60 33.9a19.89 19.89 0 0 0-11.8 11.8L112 212.28 96.79 171A19.89 19.89 0 0 0 85 159.21L43.72 144 85 128.79A19.89 19.89 0 0 0 96.79 117L112 75.72 127.21 117a19.89 19.89 0 0 0 11.8 11.8l41.27 15.2ZM140 40a12 12 0 0 1 12-12h12V16a12 12 0 0 1 24 0v12h12a12 12 0 0 1 0 24h-12v12a12 12 0 0 1-24 0V52h-12a12 12 0 0 1-12-12m112 48a12 12 0 0 1-12 12h-4v4a12 12 0 0 1-24 0v-4h-4a12 12 0 0 1 0-24h4v-4a12 12 0 0 1 24 0v4h4a12 12 0 0 1 12 12"/></svg>
+          <span class="text-blue-900 leading-[24px]">Tarjouskilpailun tiedot</span>
         </h2>
-        <!-- No white card here, unlike the section below: the items ARE the
-             white blocks, exactly as the page's own FAQ list renders them. -->
-        <div id="advice-content" class="space-y-2.5"></div>
+        <div class="w-full p-5 bg-white rounded-xl">
+          <div id="insights-content"></div>
+        </div>
       </section>
 
       <!-- Section 3b: Informed decision (ideation arm only).
@@ -259,14 +254,45 @@
         </div>
       </section>
 
-      <!-- Section 3: AuctionInsights -->
-      <section id="section-insights" class="hidden">
+      <!-- Section 3c: "Muutama neuvo" — Informed decision (ideation arm only).
+           THE ORDER OF THESE FOUR IS: result, options, objections, reminders.
+           It used to open with the objections, on the reasoning that an
+           unanswered objection stops the seller reading anything else. It now
+           closes with them, and the reasoning is better: a seller convinced by
+           the auction result and shown three clear options may never need the
+           objection handling at all, and putting it first meant raising doubts
+           in the head of a seller who did not have them yet. So the run states
+           the outcome, offers the choices, and only then deals with whatever is
+           still in the way.
+           The id and `buildAdvice` stay generic on purpose — the heading is
+           still being worked on, and renaming both every time it moves would
+           churn the call site for nothing. -->
+      <section id="section-advice" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
-          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="m199 125.31-49.89-18.38L130.69 57a19.92 19.92 0 0 0-37.38 0l-18.38 49.93L25 125.31a19.92 19.92 0 0 0 0 37.38l49.89 18.38L93.31 231a19.92 19.92 0 0 0 37.38 0l18.38-49.89L199 162.69a19.92 19.92 0 0 0 0-37.38m-60 33.9a19.89 19.89 0 0 0-11.8 11.8L112 212.28 96.79 171A19.89 19.89 0 0 0 85 159.21L43.72 144 85 128.79A19.89 19.89 0 0 0 96.79 117L112 75.72 127.21 117a19.89 19.89 0 0 0 11.8 11.8l41.27 15.2ZM140 40a12 12 0 0 1 12-12h12V16a12 12 0 0 1 24 0v12h12a12 12 0 0 1 0 24h-12v12a12 12 0 0 1-24 0V52h-12a12 12 0 0 1-12-12m112 48a12 12 0 0 1-12 12h-4v4a12 12 0 0 1-24 0v-4h-4a12 12 0 0 1 0-24h4v-4a12 12 0 0 1 24 0v4h4a12 12 0 0 1 12 12"/></svg>
-          <span class="text-blue-900 leading-[24px]">Tarjouskilpailun tiedot</span>
+          <!-- prod's `ph-bold-seal-check` sprite family, at the section-icon size -->
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M225.86 102.82c-3.77-3.94-7.67-8-9.14-11.57-1.36-3.27-1.44-8.69-1.52-13.94-.15-9.76-.31-20.82-8-28.51s-18.75-7.85-28.51-8c-5.25-.08-10.67-.16-13.94-1.52-3.56-1.47-7.63-5.37-11.57-9.14C146.28 23.51 138.44 16 128 16s-18.27 7.51-25.18 14.14c-3.94 3.77-8 7.67-11.57 9.14-3.25 1.36-8.69 1.44-13.94 1.52-9.76.15-20.82.31-28.51 8s-7.8 18.75-8 28.51c-.08 5.25-.16 10.67-1.52 13.94-1.47 3.56-5.37 7.63-9.14 11.57C23.51 109.72 16 117.56 16 128s7.51 18.27 14.14 25.18c3.77 3.94 7.67 8 9.14 11.57 1.36 3.27 1.44 8.69 1.52 13.94.15 9.76.31 20.82 8 28.51s18.75 7.85 28.51 8c5.25.08 10.67.16 13.94 1.52 3.56 1.47 7.63 5.37 11.57 9.14C109.72 232.49 117.56 240 128 240s18.27-7.51 25.18-14.14c3.94-3.77 8-7.67 11.57-9.14 3.27-1.36 8.69-1.44 13.94-1.52 9.76-.15 20.82-.31 28.51-8s7.85-18.75 8-28.51c.08-5.25.16-10.67 1.52-13.94 1.47-3.56 5.37-7.63 9.14-11.57C232.49 146.28 240 138.44 240 128s-7.51-18.27-14.14-25.18Zm-52.2 6.84-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32Z"/></svg>
+          <span class="text-blue-900 leading-[24px]">Muutama neuvo</span>
+        </h2>
+        <!-- No white card here, unlike the section below: the items ARE the
+             white blocks, exactly as the page's own FAQ list renders them. -->
+        <div id="advice-content" class="space-y-2.5"></div>
+      </section>
+
+      <!-- Section 3d: "Muistathan nämä" — Informed decision (ideation arm only).
+           The same three concerns as "Muutama neuvo" directly above, said in one
+           breath each instead of behind a tap. Structurally a copy of the
+           options section: the same white container, the same three columns.
+           It carries NO "tai" rules, because these are a list and not a
+           choice — that divider is the one thing the two blocks must not share.
+           Prod's own numbered-step discs (`MNumberedSteps`, the same assets the
+           funnel's next-steps list uses) sit above each heading. -->
+      <section id="section-reminders" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
+          <span class="text-blue-900 leading-[24px]">Muistathan nämä</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
-          <div id="insights-content"></div>
+          <div id="reminders-content"></div>
         </div>
       </section>
 
@@ -356,11 +382,15 @@
     var APR_V1 = APR_ARM === 'v1';
 
     /* ── "Informed decision" arm — IDEATION ONLY ──────────────────────────────
-       A section above the auction-details block that gives a seller weighing
-       accept / negotiate / reject something to weigh it against. Deliberately
-       NOT a table of figures: it is a qualitative matrix plus three
-       "this does not block you" beliefs, because the goal is to educate rather
-       than to prove a number.
+       Everything a seller weighing accept / negotiate / reject might need,
+       between the offer cards and the reject banner. Four blocks in this order:
+       the rebuilt auction-details block (is this a good offer), the options
+       (what can I do), the objection handling, and the same objections again in
+       one breath each. Deliberately NOT a table of figures — the goal is to
+       educate rather than to prove a number.
+
+       It also turns on every Enhanced negotiations change; see the note under
+       `ID_V1` below.
 
        Nothing here is proposed for build. Every string is a first draft written
        by me for the team to react to, and the spec page says so at the top.
@@ -1735,10 +1765,13 @@
     }
 
     /* ── "Muutama neuvo" — Informed decision, IDEATION ONLY ───────────────
-       The other half of the initiative, and the half that answers WHY a seller
-       hesitates rather than WHAT the buttons do. It sits above that block on
-       purpose: the objection is the blocker, so it is cleared before the
-       options are laid out.
+       The half that answers WHY a seller hesitates rather than WHAT the
+       buttons do, and since 2026-09-11 it sits BELOW the options rather than
+       above them. The old order led with the objection, on the argument that an
+       unanswered one stops the seller reading anything else; leading with it
+       also raises doubts in the head of a seller who did not have them. The run
+       is now result, options, objections, reminders — a seller convinced by the
+       first two may never need this at all.
 
        EXPANDABLE, and built to LOOK exactly like this page's FAQ blocks —
        `buildFaqs` below is the model for the wrapper, the summary, the caret
@@ -1825,6 +1858,76 @@
         frag.appendChild(wrap);
       });
       return frag;
+    }
+
+    /* ── "Muistathan nämä" — Informed decision, IDEATION ONLY ─────────────
+       The SAME THREE CONCERNS as "Muutama neuvo" directly above, said in one
+       breath each instead of behind a tap. The expandable section answers a
+       seller who recognises their own objection and opens it; this one reaches
+       the seller who never opens anything, which on a decision page is most of
+       them.
+
+       **The two blocks overlap completely, and that is the open question, not
+       an oversight.** Built alongside on purpose so the team can see both and
+       decide: keep the concise one and drop the expandable, keep both (the
+       glanceable version first and the detail below), or fold them into one.
+       A page carrying both permanently would say the same three things twice
+       in a row.
+
+       Structurally it is a COPY of the options section — same white container,
+       same three flex columns, same `min-w-0`. One thing it must not copy: the
+       "tai" rules. These are a list, not a choice, and a
+       divider that says "or" between them would be wrong.
+
+       The discs are prod's own numbered-step assets, the ones the funnel's
+       next-steps list uses (`STEP_BADGES` in `price.html`, prod's
+       `MNumberedSteps`). Numbered rather than bulleted because the user asked
+       for it; the order is the order the concerns actually arrive in, price
+       first, which is also `Muutama neuvo`'s order and the order the
+       benchmarking study puts them in by share.
+
+       Copy is mine and unapproved, like the rest of this arm, and deliberately
+       shorter than the section above rather than a summary of it — each one is
+       a heading a seller can agree with plus the single fact behind it. Nothing
+       promises anything on the dealership's behalf: both items that touch the
+       deal say it is AGREED WITH them. */
+    var REMINDER_BADGES = [
+      'assets/cf9ed64c-e015-4129-a683-516894e443b4.svg',
+      'assets/7cb7ddce-86cc-457f-be2d-f44485a7e101.svg',
+      'assets/d7dbeec3-32bb-407c-a234-273ace9af998.svg'
+    ];
+
+    function buildReminders() {
+      var ITEMS = [
+        { t: 'Pyyntihinta ei ole myyntihinta',
+          b: 'Autoliikkeen pyyntihinta ja vaihtohyvitys sisältävät liikkeen katteen. Kumpikaan ei kerro, mitä sinulle autosta maksetaan.' },
+        { t: 'Rahoitus ei ole este',
+          b: 'Voit hyväksyä tarjouksen, vaikka autossa on rahoitusta jäljellä. Jäljellä olevasta sovitaan autoliikkeen kanssa.' },
+        { t: 'Auto ei lähde heti',
+          b: 'Hyväksyminen ei tarkoita, että luovutat auton tänään. Tarkastuksesta ja aikataulusta sovitaan autoliikkeen kanssa.' }
+      ];
+
+      /* NO PADDING ON THE COLUMNS. The white container's own `p-5` is the
+         inset, exactly as it is for the auction-details block and the offer
+         cards — a `p-4` here as well put this section's text 36px from the
+         container edge where every other card on the page starts at 20px. It
+         was left over from when these columns were painted boxes and needed
+         their own padding.
+
+         The space between columns moved to the row gap instead, tuned to keep
+         the distance the padding used to add: 16 + 12 + 16 = 44px then, 40px
+         now. One `gap` covers both axes, so the stacked phone layout keeps it
+         too. */
+      var html = '<div class="flex flex-col md:flex-row gap-10">';
+      ITEMS.forEach(function (it, i) {
+        html += '<div class="flex-1 min-w-0">'
+          + '<img src="' + REMINDER_BADGES[i] + '" class="w-6 h-6 block mb-3" alt="' + (i + 1) + '" />'
+          + '<div class="font-dm text-sm font-bold text-slate-900 mb-1">' + it.t + '</div>'
+          + '<p class="font-dm text-sm text-slate-700">' + it.b + '</p>'
+          + '</div>';
+      });
+      html += '</div>';
+      return html;
     }
 
     /* ── "Mitä voin tehdä?" — Informed decision, IDEATION ONLY ──────────
@@ -1939,6 +2042,18 @@
          a red cross, so the delay reads as a cost rather than a comparison. */
       cards.push({
         tone: 'accept',
+        /* The one card that says outright which way we lean. Same green pair as
+           the auction-details verdict block (`border-green-500 bg-green-50`),
+           because that block already recommends accepting in a sentence and
+           this is the same recommendation as a label. With no card painted any
+           more, it is the only thing in the row that promotes anything.
+
+           It sits ABOVE the title rather than beside it: at ~180px a column
+           cannot hold "Suosittelemme" and "Hyväksy tarjous" on one line, and a
+           wrapping tag under its own title reads backwards. The cost is that
+           this column's title sits a line lower than the other two — accepted,
+           because the tag is what the eye should land on first anyway. */
+        tag: 'Suosittelemme',
         t: 'Hyväksy tarjous',
         l: [
           [OK_ACCEPT, 'Varmistat tarjouksen ennen määräaikaa.'],
@@ -2019,14 +2134,19 @@
         +   '<div class="flex-1 h-px md:h-auto md:w-px bg-slate-200"></div>'
         + '</div>';
 
-      var html = '<div class="flex flex-col md:flex-row gap-3">';
+      /* `gap-7` rather than `gap-3`, and no padding on the columns — see the
+         note in `buildReminders`. Between two column texts that is 28 + 14 +
+         28 = 70px, exactly what 16 + 12 + 14 + 12 + 16 came to while the
+         columns still had their own padding, so only the outer inset changes. */
+      var html = '<div class="flex flex-col md:flex-row gap-7">';
       cards.forEach(function (c, i) {
         if (i) html += SEP;
-        /* `p-4` with nothing to pad: it is what keeps the columns off the
-           "tai" rules and their titles on one baseline. `min-w-0` because a
-           flex item defaults to its content's minimum width, which a long
-           Finnish compound would push past the column. */
-        html += '<div class="flex-1 min-w-0 p-4">'
+        /* `min-w-0` because a flex item defaults to its content's minimum
+           width, which a long Finnish compound would push past the column. */
+        html += '<div class="flex-1 min-w-0">'
+          + (c.tag
+              ? '<div class="inline-flex items-center px-2 py-1 mb-2 rounded border border-green-500 bg-green-50 font-dm text-xs font-medium text-green-900">' + c.tag + '</div>'
+              : '')
           + '<div class="font-dm text-sm mb-3 ' + TITLE[c.tone] + '">' + c.t + '</div>'
           + '<div class="flex flex-col gap-2">';
         c.l.forEach(function (row) {
@@ -2111,22 +2231,62 @@
 
     /* Takes `buyers` and nothing else off the request — the copy points at the
        offer card rather than quoting an amount, so no figure is read here. */
-    function buildAuctionVerdict(buyers) {
+    function buildAuctionVerdict(buyers, statsHtml) {
       /* prod's `ph-gavel-bold`, the same sprite the warm-up badge draws. It
          takes its colour from the block around it now, so no class here. */
       var ICO_GAVEL = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m246.14 113.86-16-16a20 20 0 0 0-23.06-3.75l-45.2-45.2a20 20 0 0 0-3.74-23.06l-16-16a20 20 0 0 0-28.28 0l-64 64a20 20 0 0 0 0 28.28l16 16a20 20 0 0 0 23 3.79l-59.5 59.46a32 32 0 0 0 45.26 45.26L134 167.21a20 20 0 0 0 3.81 22.94l16 16a20 20 0 0 0 28.29 0l64-64a20 20 0 0 0 0-28.29ZM80 98.34 69.64 88 128 29.65 138.34 40ZM57.64 209.67a8 8 0 0 1-11.31-11.32l59.52-59.52 11.31 11.32Zm92.7-60.29-43.72-43.72 39-39 43.72 43.72Zm17.65 37L157.65 176 216 117.66 226.34 128Z"/></svg>';
 
-      /* No rule above this: the stats grid already carries its own frame, so a
-         hairline 20px under it read as a second line boxing the illustration in
-         rather than as a separator. Spacing alone does the separating. */
-      var h = '<div class="mt-5">';
+      /* ORDER: verdict, then the explanation, then the figures — the figures
+         used to lead and now close. Reading it that way, the block answers
+         "is this a good offer?" in its first line and spends the rest earning
+         it, rather than opening on two numbers whose relevance the seller has
+         to take on trust until they reach the sentence at the bottom. The
+         figures are evidence, and evidence reads better after the claim.
+
+         No rules anywhere in here. Each block carries its own frame or none,
+         and 20px of space is what separates them. */
+      var h = '';
+
+      /* The payoff line, and the only place on this page where AutoVex states a
+         view on the offer rather than reporting it — and the only place that
+         RECOMMENDS an action outright. The options section's accept column
+         carries the same green as a "Suosittelemme" tag, so the two agree.
+
+         It names no euro figure: "korkeinta tarjousta" points at the card above
+         instead, so it cannot go stale against the number beside it and the
+         sentence works unchanged on a final offer. That is why this function
+         needs no amount at all.
+
+         GREEN, in the same green the options section gives its accept column's
+         title and tag, because green means one thing on this page: this is the
+         accepting direction. It used to be lime (borrowed from the warm-up
+         badge, where it reports a status) over blue (borrowed from the options
+         section's then-promoted card) — two colours for one claim, neither of
+         them the colour of the action being recommended.
+
+         It is the ONLY painted block left in this arm: the options columns
+         were unpainted after this was built. Deliberate — this is the one place
+         that states a recommendation in AutoVex's own voice, which is what
+         earns a box. */
+      h += '<div class="p-3 rounded-lg bg-green-50 border border-green-500">'
+        +    '<div class="flex items-center gap-2">'
+        +      '<span class="inline-flex flex-shrink-0 text-green-700">' + ICO_GAVEL + '</span>'
+        +      '<span class="font-dm text-sm font-bold text-green-900">Hyvä tarjouskilpailu</span>'
+        +    '</div>'
+        +    '<p class="font-dm text-sm text-green-900 mt-1">Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.</p>'
+        +  '</div>';
 
       /* The warm-up card's own arrangement — illustration beside headline and
          body — at the scale of a block inside a card rather than a screen of its
          own. It stacks below prod's `sm` (620px), where the illustration centres
          above the text. */
-      h += '<div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">'
-        +    '<div class="w-[132px] sm:w-[168px] flex-shrink-0 mx-auto sm:mx-0">'
+      h += '<div class="mt-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">'
+        /* A THIRD of the container from prod's `sm` up, as a fraction rather
+           than a fixed width: 168px read as about a quarter and stayed that
+           way whatever the container did. The phone layout keeps its fixed
+           132px — there the illustration is centred above the text rather than
+           beside it, so a fraction of the column would be the wrong measure. */
+        +    '<div class="w-[132px] sm:w-1/3 flex-shrink-0 mx-auto sm:mx-0">'
         +      '<img src="assets/excellent_auction.png" alt="" class="w-full object-contain" />'
         +    '</div>'
         +    '<div class="flex-1 text-center sm:text-left">'
@@ -2140,41 +2300,11 @@
         +    '</div>'
         +  '</div>';
 
-      /* ONE block, not a badge plus a strip. They were two green-ish elements
-         saying the same thing at two lengths — "Hyvä tarjouskilpailu" is the
-         verdict in two words and the sentence under it is the same verdict
-         explained — so the badge is now this block's own lead line. That also
-         lets the right-hand column open on the headline, which gives the
-         section a clean arc: the fact, then why it means anything, then the
-         conclusion.
+      /* The figures close the block. `statsHtml` is whatever the stats row
+         resolved to above — this function never builds it, so the two arms that
+         draw that row keep one definition of it. */
+      h += '<div class="mt-5">' + statsHtml + '</div>';
 
-         GREEN, in the same green the options section gives its accept column's
-         title, because green means one thing on this page: this is the
-         accepting direction. It used to be lime (borrowed from the warm-up
-         badge, where it reports a status) over blue (borrowed from the options
-         section's then-promoted card) — two colours for one claim, neither of
-         them the colour of the action being recommended.
-
-         It is the ONLY painted block left in this arm: the options columns
-         above were unpainted after this was built. Deliberate — this is the one
-         place that states a recommendation in AutoVex's own voice, which is
-         what earns a box.
-
-         It is the only place on the decision page where AutoVex states a view
-         on the offer rather than reporting it, and the only place that
-         RECOMMENDS an action outright. It names no euro figure: "korkeinta
-         tarjousta" points at the card above instead, so it cannot go stale
-         against the number beside it and the sentence works unchanged on a
-         final offer. That is why this function needs no amount at all. */
-      h += '<div class="mt-4 p-3 rounded-lg bg-green-50 border border-green-500">'
-        +    '<div class="flex items-center gap-2">'
-        +      '<span class="inline-flex flex-shrink-0 text-green-700">' + ICO_GAVEL + '</span>'
-        +      '<span class="font-dm text-sm font-bold text-green-900">Hyvä tarjouskilpailu</span>'
-        +    '</div>'
-        +    '<p class="font-dm text-sm text-green-900 mt-1">Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.</p>'
-        +  '</div>';
-
-      h += '</div>';
       return h;
     }
 
@@ -2235,7 +2365,7 @@
       /* Informed decision v1 stops here: the chart and the date row are what
          this arm replaces. Everything below is control's, untouched. */
       if (ID_V1 && decisionOpen && buyers >= VERDICT_MIN_BIDDERS) {
-        return html + buildAuctionVerdict(buyers);
+        return buildAuctionVerdict(buyers, html);
       }
 
       // Chart — uses req.insights_data (pre-generated bid progression, mirrors offers.astro formula)
@@ -2572,6 +2702,16 @@
         adviceSec.classList.remove('hidden');
       } else {
         adviceSec.classList.add('hidden');
+      }
+
+      /* Same gate as the other two blocks of this arm — one condition, three
+         sections, so they cannot appear apart. */
+      var remindSec = document.getElementById('section-reminders');
+      if (ID_V1 && DECISION_OPEN.indexOf(pas) !== -1 && offers.length) {
+        document.getElementById('reminders-content').innerHTML = buildReminders();
+        remindSec.classList.remove('hidden');
+      } else {
+        remindSec.classList.add('hidden');
       }
 
       var helpSec = document.getElementById('section-decision-help');

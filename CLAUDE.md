@@ -2040,7 +2040,7 @@ uses an `ACTIVE()` window — but it is a real divergence if that changes.
 
 **Not a build proposal and not a normal initiative.** Created 2026-09-10 to put
 one idea in front of the team as something switchable rather than described.
-`v1` adds two sections to the decision page above the auction-details block,
+`v1` adds three sections to the decision page above the auction-details block,
 rebuilds the auction-details block itself, and **renders every Enhanced
 negotiations change on top**; `control` is production, untouched.
 
@@ -2072,18 +2072,36 @@ page says so in its first card, in a warning-coloured status chip and in the
 hero. Same category as Seller file upload's draft copy, but weaker: that one is
 a proposal awaiting sign-off, this one is a conversation starter.
 
-### The initiative is THREE blocks, and they answer different questions
+### The initiative is FOUR blocks, and they answer different questions
 
-| Block | Question it answers | New? |
-|---|---|---|
-| `Muutama neuvo` | "but I saw a higher number / I have a loan / I can't hand the car over yet" | new section |
-| `Mitä voin tehdä?` | "what are my options, and what does each one cost" | new section |
-| `Tarjouskilpailun tiedot` | "is this a good offer" | prod's block, rebuilt |
+| # | Block | Question it answers | New? |
+|---|---|---|---|
+| 1 | `Tarjouskilpailun tiedot` | "is this a good offer" | prod's block, rebuilt |
+| 2 | `Mitä voin tehdä?` | "what are my options, and what does each one cost" | new section |
+| 3 | `Muutama neuvo` | "but I saw a higher number / I have a loan / I can't hand the car over yet" | new section |
+| 4 | `Muistathan nämä` | **the same three, in one breath each** | new section |
 
-All three live on the `v1` arm and **share the same open-decision gate**. They
-run in that order down the page, which is the order the questions block each
-other in: the objection stops the seller reading at all, the options say what
-they can do, the result says whether to.
+Then the reject banner (`Tarvitsetko apua?`) below all four, where prod already
+puts it.
+
+All four live on the `v1` arm and **share the same open-decision gate** — one
+condition, four sections, so they cannot appear apart.
+
+**The order was reversed on 2026-09-11 and the new reasoning is the better
+one.** It used to open with the objections, on the argument that an unanswered
+objection stops a seller reading anything else. It now closes with them:
+**result, options, objections, reminders.** A seller convinced by the auction
+result and shown three clear options may never need the objection handling at
+all — and leading with it meant raising doubts in the head of a seller who did
+not have them yet. So the run states the outcome, offers the choices, and only
+then deals with whatever is still in the way.
+
+**One consequence for the anti-patterns flag below:** every block that argues
+for accepting now sits between the offer cards and the reject banner, in one
+uninterrupted run. That was already true and is now more so.
+
+**Rows 3 and 4 overlap completely, and that is the open question rather than an
+oversight** — see the `Muistathan nämä` section below.
 
 The section id (`section-advice`) and the builder (`buildAdvice`) stay generic
 on purpose — the heading is still being worked on, and renaming both every time
@@ -2140,6 +2158,40 @@ break now.
 
 **Collapsed heights: 194px at both widths.** With the options block the pair is
 **820px at 375px**, down from ~1300 when the advice was flat.
+
+### `Muistathan nämä` — the same three concerns, unexpanded (2026-09-11)
+
+**Structurally a copy of `Mitä voin tehdä?`** — same white container, same three
+flex columns, same `p-4` and `min-w-0`. Each column is a numbered disc, a bold
+heading and one short paragraph.
+
+| # | Heading | Body |
+|---|---|---|
+| 1 | Pyyntihinta ei ole myyntihinta | Autoliikkeen pyyntihinta ja vaihtohyvitys sisältävät liikkeen katteen. Kumpikaan ei kerro, mitä sinulle autosta maksetaan. |
+| 2 | Rahoitus ei ole este | Voit hyväksyä tarjouksen, vaikka autossa on rahoitusta jäljellä. Jäljellä olevasta sovitaan autoliikkeen kanssa. |
+| 3 | Auto ei lähde heti | Hyväksyminen ei tarkoita, että luovutat auton tänään. Tarkastuksesta ja aikataulusta sovitaan autoliikkeen kanssa. |
+
+**The one thing it must NOT copy from the options section is the "tai" rules.**
+These are a list, not a choice, so the columns are separated by nothing but the
+gap. Getting that wrong would say the seller picks one of three facts.
+
+**The discs are prod's own numbered-step assets** — `STEP_BADGES` in
+`price.html`, which is prod's `MNumberedSteps` as pre-rendered SVGs. Reused
+rather than redrawn, and `REMINDER_BADGES` takes the first three.
+
+**It says exactly what `Muutama neuvo` says, and that is the whole open
+question.** The expandable section answers a seller who recognises their own
+objection and taps it; this one reaches the seller who taps nothing, which on a
+decision page is most of them. Both were built so the team can see them together
+and choose: keep the concise one and drop the expandable, keep both (glanceable
+first, detail below), or fold them into one. **A page shipping both permanently
+would say the same three things twice in a row** — worth stating plainly rather
+than leaving to be noticed in review.
+
+Copy is mine and unapproved. Each item is a heading a seller can agree with plus
+the single fact behind it, deliberately not a summary of the longer version.
+Nothing promises anything on the dealership's behalf: both items that touch the
+deal say it is AGREED WITH them, same rule as the section above.
 
 ### The FAQ accordion pattern does not work, and this section does not use it
 
@@ -2266,8 +2318,18 @@ there is no `box` key any more, and `rounded-lg` went with the fills.
 and that is enough. Do not re-introduce a fill or an outline on any of the
 three, and do not take accept back to blue.
 
-`p-4` stays on all three with nothing to pad — it is what keeps the columns off
-the "tai" rules and their titles on one baseline.
+**The accept column carries a `Suosittelemme` tag** (2026-09-11) — the same
+green pair as the auction-details verdict block, because that block already
+recommends accepting in a sentence and this is the same recommendation as a
+label. With no card painted, it is the only thing in the row that promotes
+anything.
+
+It sits **above** the title, not beside it: at ~180px a column cannot hold
+"Suosittelemme" and "Hyväksy tarjous" on one line, and a tag wrapping under its
+own title reads backwards. **The cost is that this column's title sits a line
+lower than the other two** — accepted, because the tag is what the eye should
+land on first. If that misalignment is ever judged worse than the gain, the fix
+is a reserved tag row in the other two columns, not moving the tag.
 
 **THE TICK CARRIES THE ACTION'S COLOUR, THE CROSS CARRIES SEVERITY**
 (2026-09-11). With only the accept card painted, **the marks are where the
@@ -2374,14 +2436,23 @@ every ascending auction makes. True, decorative, settles nothing. The date row
 goes with it. The two figures stay.
 
 In their place, `buildAuctionVerdict` reads those same figures back as the
-argument they are, in the **warm-up screen's own shape** — illustration, lime
-`UiBadge`, headline, one paragraph — at the scale of a block inside a card:
+argument they are, in the **warm-up screen's own shape** — illustration,
+headline, one paragraph — at the scale of a block inside a card.
+
+**ORDER: verdict, then the explanation, then the figures** (2026-09-11). The
+stats row used to lead and now closes. Read that way the block answers "is this
+a good offer?" in its first line and spends the rest earning it, instead of
+opening on two numbers whose relevance the seller has to take on trust until
+they reach the sentence at the bottom — **evidence reads better after the
+claim.** `buildAuctionVerdict` takes the stats markup as an argument rather than
+building it, so the two arms that draw that row keep one definition of it.
 
 | Part | Copy | Job |
 |---|---|---|
-| headline | `Autostasi kilpaili 25 autoliikettä.` | the fact, as a sentence rather than a count |
-| body | `Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan 25 liikkeen kilpailun tulos.` | **the mechanic — the only part that does the work** |
-| green block | lead `Hyvä tarjouskilpailu`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
+| **1 — green block** | lead `Hyvä tarjouskilpailu`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
+| **2 — headline** | `Autostasi kilpaili 25 autoliikettä.` | the fact, as a sentence rather than a count |
+| **2 — body** | `Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan 25 liikkeen kilpailun tulos.` | **the mechanic — the only part that does the work** |
+| **3 — stats row** | `Tarjouksia yhteensä` / `Tarjoajat` | the evidence, closing rather than opening |
 
 **The badge and the recommendation are ONE block** (2026-09-11). They were a
 lime `UiBadge` above the headline and a blue strip below the body — two green-ish
@@ -2399,9 +2470,10 @@ Folding it down also lets the right-hand column open on the headline, which give
 the section a clean arc — the fact, then why it means anything, then the
 conclusion.
 
-**No rule between the stats row and the illustration.** The stats grid carries
-its own frame, so a `border-t` 20px under it read as a second line boxing the
-illustration in rather than as a separator. Spacing alone separates them.
+**No rules anywhere in this block.** A `border-t` between the stats grid and the
+illustration read as a second line boxing the illustration in rather than as a
+separator, since the grid already carries its own frame. Each part carries its
+own frame or none, and 20px of space does the separating.
 
 **The body is the whole argument, and it makes TWO claims:** the bidders are
 professionals who looked at the listing, and they bid against each other.
@@ -2429,8 +2501,13 @@ sheet is the wrong frame for an argument. The chart's top rule follows the same
 condition: a framed stats row above it makes `border-y` read as a doubled line,
 which is the same fix Asking price removal already documents.
 
-**The illustration is the warm-up's own `excellent_auction.png`**, so a seller
-who came through that screen meets it twice, two screens apart. Deliberate —
+**The illustration is the warm-up's own `excellent_auction.png`**, at
+`sm:w-1/3` — a FRACTION of the container from prod's `sm` up, not a fixed width.
+It was `168px`, which read as about a quarter and would have stayed that way
+whatever the container did. The phone layout keeps its fixed `132px`, centred
+above the text rather than beside it, where a fraction of the column would be
+the wrong measure. A seller who came through the warm-up screen meets the
+illustration twice, two screens apart. Deliberate —
 this section is the explanation the warm-up's "Hyvä tarjouskilpailu takana!"
 never gave.
 
@@ -2468,25 +2545,40 @@ of what happened; the block is now an argument about what it meant, so the title
 undersells it. Renaming a production section is its own decision — left as an
 open question rather than changed in passing.
 
-**Heights, desktop / 375px:** advice **194 / 194** collapsed, options
-**256 / 580**, auction details **402 / 531**. The two new sections are 774px on a
-phone; the auction-details block replaces a chart and a date row rather than
-adding to them, so it is close to a wash on its own.
+**Heights, desktop / 375px:** advice **194 / 194** collapsed, reminders
+**264 / 524**, options **259 / 543**, auction details **457 / 535**. The three
+new sections are **1 261px on a phone** — reminders is still the biggest block in
+the arm, and the duplication question above is partly a height question. The
+auction-details block replaces a chart and a date row rather than adding to
+them, so it is close to a wash on its own.
+
+**All three white containers are inset by their own `p-5` and nothing else**
+(2026-09-11). The options and reminders columns kept a `p-4` from when they were
+painted boxes, which put their text **36px** from the container edge where the
+auction-details block and the offer cards start at **20px** — a misalignment
+across the page that nothing in the sections themselves made visible. Padding is
+off the columns and the space between them moved to the row gap: `gap-10` for
+reminders (40px between texts, against 44 before) and `gap-7` for the options
+row (28 + 14 + 28 = 70px, exactly what it was). One `gap` covers both axes, so
+the stacked phone layout keeps it. **Do not put padding back on a column** — if
+a column ever needs its own inset again, it needs its own box too.
 
 **Shown only where a decision is still open**: the four price tiers,
 `final_offer` and `negotiation_stopped` (a live negotiation resolves to a tier in
 `pas`, so those are covered). Not `no_offers`, `offers_expired`,
 `offer_accepted` or `offer_rejected` — there the argument is useless or tactless.
 
-**Still flagged rather than solved:** the section argues for accepting and sits
-directly above a reject button, which `docs/anti_patterns.md` warns about.
+**Still flagged rather than solved:** all four blocks argue for accepting and
+sit in one run directly above the reject banner, which `docs/anti_patterns.md`
+warns about — and the 2026-09-11 reordering tightened that rather than loosening
+it.
 Explaining is a gentler mechanism than scoring, but a neutral-framing arm is
 still the obvious A/B partner.
 
 **Delete, do not promote, if the idea is dropped** — the registry entry, the
 page's declaration, the arm reader, `buildAdvice`, `buildDecisionHelp`,
-`buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`, the two `section-*` blocks, and
-the spec page. In `buildInsights`, put the stats gate back to `APR_V1` alone
+`buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`, `buildReminders` +
+`REMINDER_BADGES`, the three `section-*` blocks, and the spec page. In `buildInsights`, put the stats gate back to `APR_V1` alone
 (both the grid and the chart's top rule) and drop the `decisionOpen` parameter
 with its call-site argument. **Delete `if (ID_V1) { EN_V1 = true; }` too** —
 that is the whole of the Enhanced negotiations coupling, and removing it leaves
