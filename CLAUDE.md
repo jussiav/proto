@@ -2084,54 +2084,67 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — the price belief
+### Block 2 — `Jälleenmyyntihinnan koostumus`
 
 `buildBelief`. ONE stacked bar, and the whole of it is the price the seller saw
 somewhere else:
 
 ```
-Autoliikkeen myyntihinta
-[▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒|▪|▪|▪|▪|▪]
- ▪ Myyjälle maksettu hinta                        ← green-200, 72%
- ▪▪▪▪▪ Takuu, kunnostus, kulut, kate, arvonalenema ← neutrals, ~5-6% each
+Jälleenmyyntihinnan koostumus          ← section heading, and the bar's only label
+[ Myyjälle maksettu hinta        |▪|▪|▪|▪|▪]
+                Takuu, kunnostus, kulut, kate, arvonalenema
+Muistathan, että ilmoituksen hinta ei ole sama kuin myyjälle maksettu hinta.
 ```
 
-**The seller's share comes first and anchors the left; everything that made the
-advertised price bigger follows it.** A diagram that TAKES the small parts out
-of the sticker price says "they took this from you"; one that starts from the
-seller's price says "they added this to yours" — same facts, accurate causal
-direction, none of the resentment.
+**The HEADING labels the bar, so the bar carries no caption.** An earlier
+version had `Autoliikkeen myyntihinta` written above it and was explaining the
+diagram twice. The seller's share names itself INSIDE its own segment — it is
+wide enough at every supported width — and the small parts are named in one
+right-aligned line directly under themselves, so neither needs a legend row.
+
+**The seller's share comes first and anchors the left.** A diagram that TAKES
+the small parts out of the sticker price says "they took this from you"; one
+that starts from the seller's price says "they added this to yours" — same
+facts, accurate causal direction, none of the resentment.
 
 **MUTED ON PURPOSE.** These segments are not a status, an action or a warning,
 and this page already spends saturated colour on all three — green accepts, blue
-negotiates, red and amber report. Green is the only hue here and sits at the
-palest step that still reads as green; the seller's share does not need colour
-to dominate, it is most of the bar. The rest are neutrals at 300/400, warm and
-cool alternating so they can be told apart without any going dark enough to pull
-the eye to the end of the bar.
+negotiates, red and amber report. Green is the only hue and sits at the palest
+step that still reads as green; the seller's share does not need colour to
+dominate, it is most of the bar. The rest are neutrals at 300/400, warm and cool
+alternating so they can be told apart without any going dark enough to pull the
+eye to the end of the bar.
 
-**Two legend rows, not six.** The small parts are named in ONE line and their
-swatch is the five colours together. They exist to be counted, not measured — a
-seller does not need to know which sliver is the warranty, only that there are
-several and that together they are the gap. Their widths are near-equal and
-claim nothing.
+**The small parts exist to be COUNTED, not measured.** Near-equal widths that
+claim nothing, named collectively, never individually — a seller does not need
+to know which sliver is the warranty, only that there are several and that
+together they are the gap.
 
-**NO SENTENCE EXPLAINS THE DIAGRAM AND NONE IS PRESENT.** Two earlier versions
-had prose: a bordered list of rows with a paragraph above and below (read as a
-FAQ), then a three-part equation with `+` and `=`. **If a revision needs a
-paragraph to make the picture land, the picture is wrong.**
+**ONE line of support copy, and only one.** The bar catches the eye before it is
+understood, so a sentence closes that gap; it states the fact and stops. The
+reject feedback says too many sellers never make this connection, while plenty
+of others make it instantly — **a second sentence would read as being talked
+down to by the ones who already knew.** `Muistathan` is the politeness the
+register wants; the rest is flat.
 
 **NO FIGURES — no euros, no percentages, no example car.** The widths are a
 schematic: no axis, nothing to read a number off. An illustrative example car
 was considered and dropped, because numbers invite the two reactions the block
-exists to avoid — arguing with our sums, and resenting a margin. `PARTS` is the
-one tunable.
+exists to avoid — arguing with our sums, and resenting a margin. `SELLER_W` and
+`SMALL` are the only tunables.
 
 **NO ALTERNATIVE ROUTE IS NAMED** — not a private sale, not a trade-in, not
 another dealership. Steering a seller toward a route we would rather they did
 not take would undo the point of the arm. The three-tier display the category
 uses (KBB's Trade-In / Private Party / Typical Listing) was considered and
 rejected on exactly this ground; watch for it coming back in a revision.
+
+**The design took four passes** — a bordered list of rows with explanatory
+paragraphs (read as a FAQ), a two-bar equation with `+` and `=`, one bar with a
+separate legend and caption, then this. The rule that survived all of them:
+**if a revision needs a paragraph to make the picture land, the picture is
+wrong.** The one sentence that remains is support for a bar that is already
+legible, not an explanation of it.
 
 **Delete, if the idea is dropped** — the registry entry, the page's declaration,
 the arm reader, `buildBelief`, `buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`,
