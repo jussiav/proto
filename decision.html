@@ -1968,30 +1968,32 @@
         });
       }
 
-      /* ONE CARD IS PAINTED, AND IT IS THE ACCEPT ONE. Green, the same
-         `border-green-500 bg-green-50` as the verdict block in the section
-         below, because green means one thing across this arm: the accepting
-         direction. The other two carry no box at all — the marks inside them
-         already say which way each line cuts, and their titles name the button.
+      /* NO CARD IS PAINTED. Three plain columns, and the hierarchy is carried
+         by the TITLES alone: accept is bold in `green-900`, the other two are
+         `font-medium` in `slate-600`. So accept leads by being the darkest and
+         heaviest thing in the row while the alternatives recede, rather than by
+         being boxed.
 
-         This is the second revision of the colour treatment and the right one.
-         The card had been BLUE-filled, which taught blue as "the recommended
-         action" on a page where blue already means "negotiate"; fixing that by
-         tinting all three in their own button's colours (green / blue / light
-         red) fixed the meaning but cost the hierarchy — three painted cards is
-         three promoted cards, and which action we are recommending stopped
-         being visible at a glance. Painting only accept keeps both: green is
-         the accept colour AND the only fill, so the card reads as the lead for
-         the same reason it always did.
+         That took three passes to arrive at, and the route is the useful part:
 
-         So the colour system is still one colour per action — it is just
-         carried by the marks and the buttons, not by tinting every card.
-         Do not re-tint the other two, and do not take the accept card back to
-         blue. */
-      var TONE = {
-        accept:    { box: 'border border-green-500 bg-green-50', title: 'text-green-900' },
-        negotiate: { box: '',                                    title: 'text-slate-900' },
-        reject:    { box: '',                                    title: 'text-slate-900' }
+         1. accept BLUE-FILLED, as the promoted card — which taught blue as
+            "the recommended action" on a page where blue already means
+            "negotiate";
+         2. all three tinted in their own buttons' colours (green / blue / light
+            red) — which fixed the meaning and cost the hierarchy, because three
+            painted cards is three promoted cards;
+         3. accept alone painted green — right on both counts, and still louder
+            than a section of quiet advice wants to be. A filled, outlined box
+            beside two bare columns reads as a card next to not-cards.
+
+         What carries the colour system now is the MARKS and the real buttons
+         below, which is enough: green ticks the accept column, blue ticks the
+         counter-offer one, red crosses the costs. Do not re-introduce a fill or
+         an outline on any of the three, and do not take accept back to blue. */
+      var TITLE = {
+        accept:    'font-bold text-green-900',
+        negotiate: 'font-medium text-slate-600',
+        reject:    'font-medium text-slate-600'
       };
 
       /* "TAI" BETWEEN THE CARDS, because without it they read as steps.
@@ -2020,13 +2022,12 @@
       var html = '<div class="flex flex-col md:flex-row gap-3">';
       cards.forEach(function (c, i) {
         if (i) html += SEP;
-        var tone = TONE[c.tone];
-        /* `p-4` on all three even where there is no box: it is what keeps the
-           three titles on one baseline and the three mark columns aligned.
-           `min-w-0` because a flex item defaults to its content's minimum
-           width, which a long Finnish compound would push past the column. */
-        html += '<div class="flex-1 min-w-0 rounded-lg p-4 ' + tone.box + '">'
-          + '<div class="font-dm text-sm font-bold mb-3 ' + tone.title + '">' + c.t + '</div>'
+        /* `p-4` with nothing to pad: it is what keeps the columns off the
+           "tai" rules and their titles on one baseline. `min-w-0` because a
+           flex item defaults to its content's minimum width, which a long
+           Finnish compound would push past the column. */
+        html += '<div class="flex-1 min-w-0 p-4">'
+          + '<div class="font-dm text-sm mb-3 ' + TITLE[c.tone] + '">' + c.t + '</div>'
           + '<div class="flex flex-col gap-2">';
         c.l.forEach(function (row) {
           html += '<div class="flex items-start gap-2">' + row[0]
@@ -2147,12 +2148,17 @@
          section a clean arc: the fact, then why it means anything, then the
          conclusion.
 
-         GREEN, and the same green the accept card carries, because green means
-         one thing on this page: this is the accepting direction. It used to be
-         lime (borrowed from the warm-up badge, where it reports a status) over
-         blue (borrowed from the options section's promoted card) — two colours
-         for one claim, neither of them the colour of the action being
-         recommended.
+         GREEN, in the same green the options section gives its accept column's
+         title, because green means one thing on this page: this is the
+         accepting direction. It used to be lime (borrowed from the warm-up
+         badge, where it reports a status) over blue (borrowed from the options
+         section's then-promoted card) — two colours for one claim, neither of
+         them the colour of the action being recommended.
+
+         It is the ONLY painted block left in this arm: the options columns
+         above were unpainted after this was built. Deliberate — this is the one
+         place that states a recommendation in AutoVex's own voice, which is
+         what earns a box.
 
          It is the only place on the decision page where AutoVex states a view
          on the offer rather than reporting it, and the only place that

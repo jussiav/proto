@@ -2219,7 +2219,7 @@ the control read as one thing: `Hyväksy tarjous`, `Tee vastatarjous`,
 
 | Card | Lines |
 |---|---|
-| **Hyväksy tarjous** (green, the only painted card) | ✓ Varmistat tarjouksen ennen määräaikaa · ✓ Sovi kaupan yksityiskohdista liikkeen kanssa |
+| **Hyväksy tarjous** (bold, green title) | ✓ Varmistat tarjouksen ennen määräaikaa · ✓ Sovi kaupan yksityiskohdista liikkeen kanssa |
 | **Tee vastatarjous** | ✓ Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi · ✗ Pidentää kaupankäyntiaikaa |
 | **Hylkää tarjouskilpailu** | ✗ Menetät kaikki tarjoukset lopullisesti · ✗ Kilpailutus päättyy tähän |
 
@@ -2239,34 +2239,35 @@ offer price and the dealership will be in touch — both of which the page alrea
 says, in the hero and on the card itself, so they cost space and told the seller
 nothing. Every line now answers "why would I pick this one".
 
-**ONE CARD IS PAINTED, AND IT IS THE ACCEPT ONE** (2026-09-11, Jussi's call
-after a first attempt went too far):
+**NO CARD IS PAINTED, AND THE HIERARCHY IS IN THE TITLES** (2026-09-11):
 
-| Card | Box | Title |
+| Column | Box | Title |
 |---|---|---|
-| Hyväksy tarjous | `border border-green-500 bg-green-50` | `text-green-900` |
-| Tee vastatarjous | *(none)* | `text-slate-900` |
-| Hylkää tarjouskilpailu | *(none)* | `text-slate-900` |
+| Hyväksy tarjous | *(none)* | `font-bold text-green-900` |
+| Tee vastatarjous | *(none)* | `font-medium text-slate-600` |
+| Hylkää tarjouskilpailu | *(none)* | `font-medium text-slate-600` |
 
-Green, and **the same `border-green-500 bg-green-50` as the verdict block** in
-the auction-details section, because green means one thing across this arm: the
-accepting direction. The other two carry no box at all — the marks inside them
-already say which way each line cuts, and their titles name the button.
+Accept leads by being **the darkest and heaviest thing in the row** while the
+alternatives recede — not by being boxed. `TITLE` is a plain slug→classes map;
+there is no `box` key any more, and `rounded-lg` went with the fills.
 
-**The route here is the part to keep.** The card was originally BLUE-filled
-because it was the promoted one, which taught blue as "the recommended action"
-on a page where blue already means "negotiate". Fixing that by tinting all three
-in their own buttons' colours (green / blue / light red) fixed the meaning and
-**cost the hierarchy** — three painted cards is three promoted cards, and which
-action we are recommending stopped being visible at a glance. Painting only
-accept keeps both: green is the accept colour AND the only fill.
+**The route took three passes and is the useful part of this note:**
 
-So the colour system is still one colour per action; it is carried by the marks
-and the real buttons rather than by tinting every card. **Do not re-tint the
-other two, and do not take the accept card back to blue.**
+1. accept **blue-filled** as the promoted card — which taught blue as "the
+   recommended action" on a page where blue already means "negotiate";
+2. **all three tinted** in their own buttons' colours (green / blue / light
+   red) — fixed the meaning, cost the hierarchy, because three painted cards is
+   three promoted cards;
+3. **accept alone painted green** — right on both counts, and still louder than
+   a section of quiet advice wants to be: a filled, outlined box beside two bare
+   columns reads as a card next to not-cards.
 
-`p-4` stays on all three even where there is no box — it is what keeps the three
-titles on one baseline and the three mark columns aligned.
+**What carries the colour system now is the marks and the real buttons below**,
+and that is enough. Do not re-introduce a fill or an outline on any of the
+three, and do not take accept back to blue.
+
+`p-4` stays on all three with nothing to pad — it is what keeps the columns off
+the "tai" rules and their titles on one baseline.
 
 **THE TICK CARRIES THE ACTION'S COLOUR, THE CROSS CARRIES SEVERITY**
 (2026-09-11). With only the accept card painted, **the marks are where the
@@ -2388,8 +2389,11 @@ elements saying the same thing at two lengths, in two borrowed colours: lime fro
 the warm-up badge, where it reports a status, and blue from the options section's
 promoted card. Neither was the colour of the action being recommended. Now one
 `border-green-500 bg-green-50` block with the badge text as its bold lead line,
-**the same green the accept card carries**, because green means one thing on this
-page: this is the accepting direction.
+in the same green the accept column's title carries, because green means one
+thing on this page: this is the accepting direction. **It is the only painted
+block in the whole arm** — the options columns above it were unpainted after it
+was built, and that is deliberate: this one states a recommendation in AutoVex's
+own voice, which is the one thing here that earns a box.
 
 Folding it down also lets the right-hand column open on the headline, which gives
 the section a clean arc — the fact, then why it means anything, then the
@@ -2465,7 +2469,7 @@ undersells it. Renaming a production section is its own decision — left as an
 open question rather than changed in passing.
 
 **Heights, desktop / 375px:** advice **194 / 194** collapsed, options
-**258 / 582**, auction details **402 / 531**. The two new sections are 776px on a
+**256 / 580**, auction details **402 / 531**. The two new sections are 774px on a
 phone; the auction-details block replaces a chart and a date row rather than
 adding to them, so it is close to a wash on its own.
 
