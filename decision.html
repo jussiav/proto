@@ -333,6 +333,8 @@
       if (EN_ARMS.indexOf(arm) === -1) { window.protoVariantSet('enhanced-negotiations', null); return 'control'; }
       return arm;
     }());
+    /* Not final: the Informed decision arm turns this on too — see the note
+       under `ID_V1` below. Read it before assuming this is the only writer. */
     var EN_V1 = EN_ARM === 'v1';
 
     /* ── "Asking price removal" arm ───────────────────────────────────────────
@@ -366,6 +368,25 @@
       return arm;
     }());
     var ID_V1 = ID_ARM === 'v1';
+
+    /* INFORMED DECISION SUBSUMES ENHANCED NEGOTIATIONS, and the direction is
+       one-way. The ideation arm is where the whole decision page is being
+       reconsidered, so it renders every Enhanced negotiations change as well —
+       otherwise a demo of it would show the new sections beside the OLD card
+       colours, the old status lines and the old modal, and the team would be
+       reviewing a page that will never exist. Combining them is also what makes
+       the colour system legible: green accepts, blue negotiates, red rejects,
+       across the cards, the buttons, the modal and the new sections at once.
+
+       `enhanced-negotiations=v1` on its own is UNTOUCHED — it is real work in
+       development and has to stay reviewable by itself. Nothing about this
+       reaches it. Reassigning `EN_V1` here rather than folding the test into
+       its own declaration keeps that one-way dependency in the one place it is
+       decided.
+
+       If Informed decision is dropped, delete these two lines and nothing else
+       about Enhanced negotiations changes. */
+    if (ID_V1) { EN_V1 = true; }
 
     /* Change 17. The accept colour, in one place because it appears on the card,
        in the modal footer, inside the dealership's last bubble and on the accept
@@ -1899,7 +1920,7 @@
          kuin tarjouksen hyväksyminen" became "pidentää kaupankäyntiaikaa" under
          a red cross, so the delay reads as a cost rather than a comparison. */
       cards.push({
-        lead: true,
+        tone: 'accept',
         t: 'Hyväksy tarjous',
         l: [
           [PLUS,  'Varmistat tarjouksen ennen määräaikaa.'],
@@ -1909,9 +1930,10 @@
 
       if (canCounter(highest)) {
         cards.push({
+          tone: 'negotiate',
           t: 'Tee vastatarjous',
           l: [
-            [PLUS,  'Voit perustella liikkeelle, miksi hinta tulisi olla korkeampi.'],
+            [PLUS,  'Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi.'],
             [CROSS, 'Pidentää kaupankäyntiaikaa.']
           ]
         });
@@ -1919,6 +1941,7 @@
 
       if (opts.canReject) {
         cards.push({
+          tone: 'reject',
           t: 'Hylkää tarjouskilpailu',
           l: [
             [CROSS, 'Menetät kaikki tarjoukset lopullisesti.'],
@@ -1929,10 +1952,36 @@
 
       var cols = cards.length === 3 ? 'md:grid-cols-3' : (cards.length === 2 ? 'md:grid-cols-2' : '');
 
+      /* ONE COLOUR PER ACTION, and the same one everywhere it appears: green
+         accepts, blue negotiates, red rejects. That is Enhanced negotiations'
+         own system (its accept button is green, its counter-offer button blue,
+         the reject button red), and this section had been ignoring it — the
+         accept card was blue-filled because it was the promoted one, which
+         taught blue as "the recommended action" on a page where blue already
+         means "negotiate". Now each card is tinted in its button's colour and
+         the seller can match card to control by colour alone.
+
+         What that costs: promotion is no longer carried by being the only
+         filled card. It moves to the accept card's heavier border, its position
+         first, and its being the only card with no cost line — plus the green
+         verdict block above, which is now the same green. Worth watching in
+         review; if accept stops reading as the lead, the fix is weight, not a
+         return to blue.
+
+         Tints are `-50` backgrounds so the cards stay quiet next to the real
+         buttons below them. None of them is a control and none should look like
+         one. */
+      var TONE = {
+        accept:    { box: 'border-2 border-green-500 bg-green-50', title: 'text-green-900' },
+        negotiate: { box: 'border border-blue-400 bg-blue-50',     title: 'text-blue-900'  },
+        reject:    { box: 'border border-red-300 bg-red-50',       title: 'text-red-900'   }
+      };
+
       var html = '<div class="grid gap-3 ' + cols + '">';
       cards.forEach(function (c) {
-        html += '<div class="rounded-lg border p-4 ' + (c.lead ? 'border-blue-600 bg-blue-50' : 'border-slate-200 bg-white') + '">'
-          + '<div class="font-dm text-sm font-bold mb-3 ' + (c.lead ? 'text-blue-900' : 'text-slate-900') + '">' + c.t + '</div>'
+        var tone = TONE[c.tone];
+        html += '<div class="rounded-lg p-4 ' + tone.box + '">'
+          + '<div class="font-dm text-sm font-bold mb-3 ' + tone.title + '">' + c.t + '</div>'
           + '<div class="flex flex-col gap-2">';
         c.l.forEach(function (row) {
           html += '<div class="flex items-start gap-2">' + row[0]
@@ -2012,54 +2061,61 @@
     /* Takes `buyers` and nothing else off the request — the copy points at the
        offer card rather than quoting an amount, so no figure is read here. */
     function buildAuctionVerdict(buyers) {
-      /* prod's `ph-gavel-bold`, the same sprite the warm-up badge draws, and
-         prod's `check-circle` from the options section above. */
-      var ICO_GAVEL = '<svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor" class="text-lime-700" aria-hidden="true"><path d="m246.14 113.86-16-16a20 20 0 0 0-23.06-3.75l-45.2-45.2a20 20 0 0 0-3.74-23.06l-16-16a20 20 0 0 0-28.28 0l-64 64a20 20 0 0 0 0 28.28l16 16a20 20 0 0 0 23 3.79l-59.5 59.46a32 32 0 0 0 45.26 45.26L134 167.21a20 20 0 0 0 3.81 22.94l16 16a20 20 0 0 0 28.29 0l64-64a20 20 0 0 0 0-28.29ZM80 98.34 69.64 88 128 29.65 138.34 40ZM57.64 209.67a8 8 0 0 1-11.31-11.32l59.52-59.52 11.31 11.32Zm92.7-60.29-43.72-43.72 39-39 43.72 43.72Zm17.65 37L157.65 176 216 117.66 226.34 128Z"/></svg>';
-      var ICO_CHECK = '<svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm45.66 85.66-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32Z"/></svg>';
+      /* prod's `ph-gavel-bold`, the same sprite the warm-up badge draws. It
+         takes its colour from the block around it now, so no class here. */
+      var ICO_GAVEL = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m246.14 113.86-16-16a20 20 0 0 0-23.06-3.75l-45.2-45.2a20 20 0 0 0-3.74-23.06l-16-16a20 20 0 0 0-28.28 0l-64 64a20 20 0 0 0 0 28.28l16 16a20 20 0 0 0 23 3.79l-59.5 59.46a32 32 0 0 0 45.26 45.26L134 167.21a20 20 0 0 0 3.81 22.94l16 16a20 20 0 0 0 28.29 0l64-64a20 20 0 0 0 0-28.29ZM80 98.34 69.64 88 128 29.65 138.34 40ZM57.64 209.67a8 8 0 0 1-11.31-11.32l59.52-59.52 11.31 11.32Zm92.7-60.29-43.72-43.72 39-39 43.72 43.72Zm17.65 37L157.65 176 216 117.66 226.34 128Z"/></svg>';
 
-      var h = '<div class="mt-5 pt-5 border-t border-slate-200">';
+      /* No rule above this: the stats grid already carries its own frame, so a
+         hairline 20px under it read as a second line boxing the illustration in
+         rather than as a separator. Spacing alone does the separating. */
+      var h = '<div class="mt-5">';
 
-      /* The warm-up card's own arrangement — illustration beside badge,
-         headline and body — at the scale of a block inside a card rather than a
-         screen of its own. It stacks below prod's `sm` (620px), where the
-         illustration centres above the text. */
+      /* The warm-up card's own arrangement — illustration beside headline and
+         body — at the scale of a block inside a card rather than a screen of its
+         own. It stacks below prod's `sm` (620px), where the illustration centres
+         above the text. */
       h += '<div class="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">'
         +    '<div class="w-[132px] sm:w-[168px] flex-shrink-0 mx-auto sm:mx-0">'
         +      '<img src="assets/excellent_auction.png" alt="" class="w-full object-contain" />'
         +    '</div>'
         +    '<div class="flex-1 text-center sm:text-left">'
-        /* UiBadge light_lime, exactly as the warm-up card draws it. There it
-           reports a status; here it carries the verdict, which is the one thing
-           a seller who reads nothing else should take away. */
-        +      '<div class="inline-flex items-center space-x-2 px-2 py-1 text-xs rounded border bg-lime-50 border-lime-400">'
-        +        ICO_GAVEL
-        +        '<span class="text-lime-700">Hyvä tarjouskilpailu</span>'
-        +      '</div>'
         /* `text-lg` is a CDN-default size, so it pairs its own 28px leading and
            the h3 element rule reaches neither the size nor the leading;
            `leading-snug` pulls it to 24.75px, matching prod's own bare-h5
            treatment on the support banner. One step below the section's `h2` so
            the two do not compete. */
-        +      '<h3 class="font-display text-lg font-bold leading-snug mt-2">Autostasi kilpaili ' + buyers + ' autoliikettä.</h3>'
+        +      '<h3 class="font-display text-lg font-bold leading-snug">Autostasi kilpaili ' + buyers + ' autoliikettä.</h3>'
         +      '<p class="font-dm text-sm text-slate-700 mt-2">Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan ' + buyers + ' liikkeen kilpailun tulos.</p>'
         +    '</div>'
         +  '</div>';
 
-      /* The payoff line, and the only place on this page where AutoVex states a
-         view on the offer rather than reporting it — and, since Jussi's pass,
-         the only place that RECOMMENDS an action outright. It names no euro
-         figure: "korkeinta tarjousta" points at the card above instead, so the
-         strip cannot go stale against the number beside it and the sentence
-         works unchanged on a final offer. That is why this function needs no
-         amount at all.
+      /* ONE block, not a badge plus a strip. They were two green-ish elements
+         saying the same thing at two lengths — "Hyvä tarjouskilpailu" is the
+         verdict in two words and the sentence under it is the same verdict
+         explained — so the badge is now this block's own lead line. That also
+         lets the right-hand column open on the headline, which gives the
+         section a clean arc: the fact, then why it means anything, then the
+         conclusion.
 
-         Blue rather than green: the page spends green on accepting and this is
-         not a button, and blue-50 is already what the options section gives its
-         accept card, so the two point the same way without the strip reading as
-         a control. */
-      h += '<div class="flex items-start gap-2 mt-4 p-3 rounded-lg bg-blue-50 border border-blue-100">'
-        +    '<span class="inline-flex flex-shrink-0 text-blue-600">' + ICO_CHECK + '</span>'
-        +    '<span class="font-dm text-sm font-medium text-blue-900">Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.</span>'
+         GREEN, and the same green the accept card carries, because green means
+         one thing on this page: this is the accepting direction. It used to be
+         lime (borrowed from the warm-up badge, where it reports a status) over
+         blue (borrowed from the options section's promoted card) — two colours
+         for one claim, neither of them the colour of the action being
+         recommended.
+
+         It is the only place on the decision page where AutoVex states a view
+         on the offer rather than reporting it, and the only place that
+         RECOMMENDS an action outright. It names no euro figure: "korkeinta
+         tarjousta" points at the card above instead, so it cannot go stale
+         against the number beside it and the sentence works unchanged on a
+         final offer. That is why this function needs no amount at all. */
+      h += '<div class="mt-4 p-3 rounded-lg bg-green-50 border border-green-500">'
+        +    '<div class="flex items-center gap-2">'
+        +      '<span class="inline-flex flex-shrink-0 text-green-700">' + ICO_GAVEL + '</span>'
+        +      '<span class="font-dm text-sm font-bold text-green-900">Hyvä tarjouskilpailu</span>'
+        +    '</div>'
+        +    '<p class="font-dm text-sm text-green-900 mt-1">Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.</p>'
         +  '</div>';
 
       h += '</div>';
@@ -3634,7 +3690,7 @@
           default: 'control',
           variants: [
             { id: 'control', label: 'Control — production decision page' },
-            { id: 'v1',      label: 'Variant 1 — advice, options, auction result explained' }
+            { id: 'v1',      label: 'Variant 1 — advice, options, auction result + enhanced negotiations' }
           ]
         }
       ],

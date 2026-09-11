@@ -571,7 +571,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
-| Informed decision | **Ideation, temporary** | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
+| Informed decision | **Ideation, temporary** — also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 
 **Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
 and Seller intent (VWO `104_combi`), both still registered in the 2026-09-07 dump
@@ -2040,8 +2040,32 @@ uses an `ACTIVE()` window — but it is a real divergence if that changes.
 
 **Not a build proposal and not a normal initiative.** Created 2026-09-10 to put
 one idea in front of the team as something switchable rather than described.
-`v1` adds two sections to the decision page above the auction-details block AND
-rebuilds the auction-details block itself; `control` is production, untouched.
+`v1` adds two sections to the decision page above the auction-details block,
+rebuilds the auction-details block itself, and **renders every Enhanced
+negotiations change on top**; `control` is production, untouched.
+
+### It SUBSUMES Enhanced negotiations, one-way
+
+`if (ID_V1) { EN_V1 = true; }` in `decision.html`, immediately under the
+`ID_V1` declaration, and that is the whole mechanism. Two reasons:
+
+- **A demo of this arm beside the OLD cards, status lines and modal would be a
+  review of a page that will never exist.** This is where the whole decision
+  page is being reconsidered, so it has to show the whole thing.
+- **The colour system is only legible when both halves are on.** Enhanced
+  negotiations establishes green accepts / blue negotiates / red rejects on the
+  buttons and in the modal; Informed decision now carries the same three through
+  the new sections. Neither reads as a system alone.
+
+**`enhanced-negotiations=v1` is UNTOUCHED and stays reviewable by itself** — it
+is real work in development. The dependency runs one way only; nothing about
+this reaches that initiative, its spec or its scope. Verified: the arm alone
+still renders the green accept button, the rebuilt modal and prod's own insights
+block, with none of the ideation sections.
+
+The reassignment deliberately sits at the `ID_V1` site rather than being folded
+into `EN_V1`'s own declaration, so the coupling lives in the one place it is
+decided. **Delete those two lines and Enhanced negotiations is unaffected.**
 
 **All its Finnish copy was written by me and nothing is approved.** The spec
 page says so in its first card, in a warning-coloured status chip and in the
@@ -2178,9 +2202,9 @@ the control read as one thing: `Hyväksy tarjous`, `Tee vastatarjous`,
 
 | Card | Lines |
 |---|---|
-| **Hyväksy tarjous** (blue, filled) | ✓ Varmistat tarjouksen ennen määräaikaa · ✓ Sovi kaupan yksityiskohdista liikkeen kanssa |
-| **Tee vastatarjous** | ✓ Voit perustella liikkeelle, miksi hinta tulisi olla korkeampi · ✗ Pidentää kaupankäyntiaikaa |
-| **Hylkää tarjouskilpailu** | ✗ Menetät kaikki tarjoukset lopullisesti · ✗ Kilpailutus päättyy tähän |
+| **Hyväksy tarjous** (green, heavier rule) | ✓ Varmistat tarjouksen ennen määräaikaa · ✓ Sovi kaupan yksityiskohdista liikkeen kanssa |
+| **Tee vastatarjous** (blue) | ✓ Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi · ✗ Pidentää kaupankäyntiaikaa |
+| **Hylkää tarjouskilpailu** (light red) | ✗ Menetät kaikki tarjoukset lopullisesti · ✗ Kilpailutus päättyy tähän |
 
 Plus one footnote for the fourth outcome, the only one with no button:
 *"Jos et tee mitään, tarjoukset umpeutuvat ja kilpailutus päättyy."*
@@ -2190,6 +2214,30 @@ rule to keep. An earlier pass had the accept card saying the sale closes at the
 offer price and the dealership will be in touch — both of which the page already
 says, in the hero and on the card itself, so they cost space and told the seller
 nothing. Every line now answers "why would I pick this one".
+
+**ONE COLOUR PER ACTION, on the cards as well as the buttons** (2026-09-11).
+Green accepts, blue negotiates, red rejects — Enhanced negotiations' own system,
+which this section had been ignoring. The accept card was blue-filled because it
+was the promoted one, which taught blue as "the recommended action" on a page
+where blue already means "negotiate". Each card is now tinted in its own
+button's colour, so card and control match by colour alone:
+
+| Card | Box | Title |
+|---|---|---|
+| Hyväksy tarjous | `border-2 border-green-500 bg-green-50` | `text-green-900` |
+| Tee vastatarjous | `border border-blue-400 bg-blue-50` | `text-blue-900` |
+| Hylkää tarjouskilpailu | `border border-red-300 bg-red-50` | `text-red-900` |
+
+**What it costs: being the only filled card no longer marks accept as the lead.**
+That moves to its heavier border, its position first, its being the only card
+with no cost line, and the green verdict block in the section below. If accept
+stops reading as the lead in review, **the fix is weight, not a return to blue.**
+All three are `-50` backgrounds so the cards stay quiet next to the real buttons;
+none of them is a control and none should look like one.
+
+**The marks stay independent of the tints.** The tint says which action the card
+IS, the mark says upside or cost — which is why a green tick appears inside the
+blue counter-offer card and is correct there.
 
 **TWO marks, not three — the slate dash is retired.** It meant "a trade-off, not
 an alarm" and carried the counter offer's time cost; Jussi's copy pass gave that
@@ -2291,10 +2339,26 @@ argument they are, in the **warm-up screen's own shape** — illustration, lime
 
 | Part | Copy | Job |
 |---|---|---|
-| badge | `Hyvä tarjouskilpailu` | the verdict, for whoever reads nothing else |
 | headline | `Autostasi kilpaili 25 autoliikettä.` | the fact, as a sentence rather than a count |
 | body | `Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan 25 liikkeen kilpailun tulos.` | **the mechanic — the only part that does the work** |
-| closing strip | `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
+| green block | lead `Hyvä tarjouskilpailu`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
+
+**The badge and the recommendation are ONE block** (2026-09-11). They were a
+lime `UiBadge` above the headline and a blue strip below the body — two green-ish
+elements saying the same thing at two lengths, in two borrowed colours: lime from
+the warm-up badge, where it reports a status, and blue from the options section's
+promoted card. Neither was the colour of the action being recommended. Now one
+`border-green-500 bg-green-50` block with the badge text as its bold lead line,
+**the same green the accept card carries**, because green means one thing on this
+page: this is the accepting direction.
+
+Folding it down also lets the right-hand column open on the headline, which gives
+the section a clean arc — the fact, then why it means anything, then the
+conclusion.
+
+**No rule between the stats row and the illustration.** The stats grid carries
+its own frame, so a `border-t` 20px under it read as a second line boxing the
+illustration in rather than as a separator. Spacing alone separates them.
 
 **The body is the whole argument, and it makes TWO claims:** the bidders are
 professionals who looked at the listing, and they bid against each other.
@@ -2362,7 +2426,7 @@ undersells it. Renaming a production section is its own decision — left as an
 open question rather than changed in passing.
 
 **Heights, desktop / 375px:** advice **194 / 194** collapsed, options
-**290 / 578**, auction details **419 / 583**. The two new sections are 772px on a
+**292 / 580**, auction details **402 / 531**. The two new sections are 774px on a
 phone; the auction-details block replaces a chart and a date row rather than
 adding to them, so it is close to a wash on its own.
 
@@ -2381,7 +2445,9 @@ page's declaration, the arm reader, `buildAdvice`, `buildDecisionHelp`,
 `buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`, the two `section-*` blocks, and
 the spec page. In `buildInsights`, put the stats gate back to `APR_V1` alone
 (both the grid and the chart's top rule) and drop the `decisionOpen` parameter
-with its call-site argument. Nothing else depends on it.
+with its call-site argument. **Delete `if (ID_V1) { EN_V1 = true; }` too** —
+that is the whole of the Enhanced negotiations coupling, and removing it leaves
+that initiative exactly as it was. Nothing else depends on any of it.
 
 ## Which offers get a card, and what a final offer implies
 

@@ -133,7 +133,7 @@
 
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-3">Try it</h2>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Two new sections above the auction-details block, and the auction-details block itself rebuilt. Switchable from the prototype bar under <b>Informed decision (ideation)</b>, or by URL:</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Two new sections above the auction-details block, the auction-details block itself rebuilt, <b>and every Enhanced negotiations change on top</b>. Switchable from the prototype bar under <b>Informed decision (ideation)</b>, or by URL:</p>
           <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=seen-offers&amp;informed-decision=v1">../decision.html?scenario=seen-offers&amp;informed-decision=v1</a>
           <p class="font-dm text-sm text-slate-500 mt-3">All three appear only where a decision is still open: the four price tiers, a final offer, and a negotiation the dealership closed. Not on no offers, expired offers, an accepted offer or a rejected one &mdash; there the argument is either useless or tactless. Outside those states the auction-details block reverts to what production draws today.</p>
         </div>
@@ -143,6 +143,13 @@
     <!-- Muutama neuvo -->
     <section class="av-band" style="background:#fff">
       <div class="av-container flex flex-col gap-8">
+
+        <div class="rounded-xl border border-slate-200 bg-slate-50 p-6 max-w-3xl">
+          <h2 class="font-barlow font-bold text-2xl mb-3">This arm contains Enhanced negotiations too</h2>
+          <p class="font-dm text-base leading-6 text-slate-800 mb-3">Turning on <b>Informed decision</b> also turns on every change from the <a class="text-av-blue underline" href="enhanced-negotiations.html">Enhanced negotiations</a> initiative &mdash; the card colours and status lines, the rebuilt negotiation modal, the thread, the rounds on the send button, the hero copy, all of it. This is the arm where the whole decision page is being reconsidered, so demoing it against the OLD cards and the OLD modal would be reviewing a page that will never exist.</p>
+          <p class="font-dm text-base leading-6 text-slate-800 mb-3">It is also what makes the colour system legible. Enhanced negotiations establishes <b>green accepts, blue negotiates, red rejects</b> on the buttons; this initiative now carries the same three colours through the new sections. Neither half reads as a system on its own.</p>
+          <p class="font-dm text-base leading-6 text-slate-800"><b>The dependency is one-way and Enhanced negotiations is untouched.</b> It is real work in development and stays reviewable by itself: <code class="font-mono text-sm">enhanced-negotiations=v1</code> renders exactly what it always did, with none of the ideation sections. Nothing here changes that initiative, its spec or its scope.</p>
+        </div>
 
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-3">Three blocks, three questions</h2>
@@ -208,24 +215,24 @@
         <div class="max-w-3xl">
           <h3 class="font-barlow font-bold text-xl mb-3">The three cards</h3>
           <div class="flex flex-col gap-4">
-            <div class="rounded-xl border-2 border-av-blue bg-blue-50 p-4">
-              <p class="font-dm text-base font-bold text-blue-900 mb-2">Hyv&auml;ksy tarjous</p>
+            <div class="rounded-xl border-2 border-green-500 bg-green-50 p-4">
+              <p class="font-dm text-base font-bold text-green-900 mb-2">Hyv&auml;ksy tarjous</p>
               <ul class="font-dm text-sm text-slate-800 space-y-1">
                 <li><b class="text-green-700">+</b> Varmistat tarjouksen ennen m&auml;&auml;r&auml;aikaa.</li>
                 <li><b class="text-green-700">+</b> Sovi kaupan yksityiskohdista liikkeen kanssa.</li>
               </ul>
-              <p class="font-dm text-xs text-slate-500 mt-3">EN: You secure the offer before the deadline · Agree the details of the sale with the dealership. <b>Filled and ruled in blue &mdash; the only promoted card.</b></p>
+              <p class="font-dm text-xs text-slate-500 mt-3">EN: You secure the offer before the deadline · Agree the details of the sale with the dealership. <b>Green, ruled heavier than the other two &mdash; the promoted card.</b></p>
             </div>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-base font-bold text-slate-900 mb-2">Tee vastatarjous</p>
+            <div class="rounded-xl border border-blue-400 bg-blue-50 p-4">
+              <p class="font-dm text-base font-bold text-blue-900 mb-2">Tee vastatarjous</p>
               <ul class="font-dm text-sm text-slate-800 space-y-1">
-                <li><b class="text-green-700">+</b> Voit perustella liikkeelle, miksi hinta tulisi olla korkeampi.</li>
+                <li><b class="text-green-700">+</b> Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi.</li>
                 <li><b class="text-red-700">&#10005;</b> Pident&auml;&auml; kaupank&auml;yntiaikaa.</li>
               </ul>
               <p class="font-dm text-xs text-slate-500 mt-3">EN: You can make the case to the dealership for why the price should be higher · It lengthens the time the sale takes. <b>The time cost is not optional</b> &mdash; waiting is the real price of countering, and the page says it nowhere else. It carries the same red cross as the reject card, so it reads as a cost rather than a comparison.</p>
             </div>
-            <div class="rounded-xl border border-slate-200 p-4">
-              <p class="font-dm text-base font-bold text-slate-900 mb-2">Hylk&auml;&auml; tarjouskilpailu</p>
+            <div class="rounded-xl border border-red-300 bg-red-50 p-4">
+              <p class="font-dm text-base font-bold text-red-900 mb-2">Hylk&auml;&auml; tarjouskilpailu</p>
               <ul class="font-dm text-sm text-slate-800 space-y-1">
                 <li><b class="text-red-700">&#10005;</b> Menet&auml;t kaikki tarjoukset lopullisesti.</li>
                 <li><b class="text-red-700">&#10005;</b> Kilpailutus p&auml;&auml;ttyy t&auml;h&auml;n.</li>
@@ -280,11 +287,13 @@
               <div class="p-2.5"><p class="font-dm text-xs text-slate-500">Tarjoajat</p><p class="font-dm text-base font-bold text-slate-800 mt-1">25</p></div>
             </div>
             <p class="font-dm text-xs text-slate-500 mb-4">The shared stats row &mdash; the same bordered, divided, icon-led grid the offers page draws for a running auction. It is what the <a class="text-av-blue underline" href="asking-price-removal.html">Asking price removal</a> initiative proposes for this block, taken here because a row that looks like a spec sheet is the wrong frame for an argument. <b>Nothing about the two figures changes</b>, only how they are presented.</p>
-            <div class="border-t border-slate-200 pt-4">
-              <p class="font-dm text-xs inline-block rounded border border-lime-400 bg-lime-50 px-2 py-1 text-lime-700 mb-2">Hyv&auml; tarjouskilpailu</p>
+            <div class="pt-2">
               <p class="font-barlow text-lg font-bold text-slate-900">Autostasi kilpaili 25 autoliikett&auml;.</p>
               <p class="font-dm text-sm text-slate-700 mt-2">Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan 25 liikkeen kilpailun tulos.</p>
-              <p class="font-dm text-sm font-medium text-blue-900 mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3">&#10003;&nbsp; Pid&auml;mme korkeinta tarjousta kilpailukykyisen&auml; hintana autostasi ja suosittelemme hyv&auml;ksym&auml;&auml;n sen.</p>
+              <div class="mt-3 rounded-lg border border-green-500 bg-green-50 p-3">
+                <p class="font-dm text-sm font-bold text-green-900">Hyv&auml; tarjouskilpailu</p>
+                <p class="font-dm text-sm text-green-900 mt-1">Pid&auml;mme korkeinta tarjousta kilpailukykyisen&auml; hintana autostasi ja suosittelemme hyv&auml;ksym&auml;&auml;n sen.</p>
+              </div>
             </div>
             <p class="font-dm text-xs text-slate-500 mt-4">EN &mdash; badge: <i>A good auction.</i> Headline: <i>25 dealerships competed for your car.</i> Body: <i>Professionals at the dealerships reviewed your listing and competed against each other for your car. So the highest offer is not one dealership&rsquo;s estimate, it is the result of 25 dealerships competing.</i> Closing line: <i>We consider the highest offer a competitive price for your car, and we recommend accepting it.</i></p>
           </div>
@@ -295,9 +304,11 @@
           <ul class="font-dm text-base leading-6 text-slate-700 list-disc pl-5 space-y-2">
             <li><b>The headline is the fact, in the seller&rsquo;s own terms.</b> Not &ldquo;25 bidders&rdquo; as a count but 25 businesses competing for their specific car. It is the same figure the row above already shows, said as a sentence.</li>
             <li><b>The body is the mechanic, and it is the only part that actually does the work.</b> Two claims in one sentence: the bidders are professionals who looked at the listing, and they bid against each other. Without them, 25 is just a big number and a seller who distrusts the offer has no reason to read it as anything else.</li>
-            <li><b>The closing line is a judgement, and it is deliberately AutoVex speaking.</b> The rest of the block lets the seller draw the conclusion; this says it out loud, and it is the only place on the decision page where the service states a view on the offer rather than reporting it &mdash; and, since the last copy pass, the only place that <b>recommends an action outright</b>. It names no euro figure: <i>korkeinta tarjousta</i> points at the card above, so the strip cannot go stale against the number beside it and the sentence works unchanged on a final offer.</li>
+            <li><b>The closing block is a judgement, and it is deliberately AutoVex speaking.</b> The rest of the block lets the seller draw the conclusion; this says it out loud, and it is the only place on the decision page where the service states a view on the offer rather than reporting it &mdash; and the only place that <b>recommends an action outright</b>. It names no euro figure: <i>korkeinta tarjousta</i> points at the card above, so it cannot go stale against the number beside it and the sentence works unchanged on a final offer.</li>
           </ul>
-          <p class="font-dm text-base leading-6 text-slate-700 mt-3">Presentation borrows the <b>warm-up screen</b> &mdash; illustration, badge, headline, one paragraph &mdash; at the scale of a block inside a card. It is the warm-up&rsquo;s own illustration, so a seller who came through that screen meets it twice, two screens apart. Deliberate: this section is the explanation the warm-up&rsquo;s &ldquo;Hyv&auml; tarjouskilpailu takana!&rdquo; never gave.</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3">Presentation borrows the <b>warm-up screen</b> &mdash; illustration, headline, one paragraph &mdash; at the scale of a block inside a card. It is the warm-up&rsquo;s own illustration, so a seller who came through that screen meets it twice, two screens apart. Deliberate: this section is the explanation the warm-up&rsquo;s &ldquo;Hyv&auml; tarjouskilpailu takana!&rdquo; never gave.</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3"><b>&ldquo;Hyv&auml; tarjouskilpailu&rdquo; used to be a separate lime badge above the headline</b>, with the recommendation in a blue strip below. Two green-ish elements saying the same thing at two lengths, in two borrowed colours &mdash; lime from the warm-up badge, where it reports a status, and blue from the options section&rsquo;s promoted card. They are one green block now: the badge is its lead line, the sentence is the explanation. That also lets the column open on the headline, which gives the section a clean arc &mdash; the fact, then why it means anything, then the conclusion.</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3"><b>No rule between the stats row and the illustration.</b> The stats grid carries its own frame, so a hairline 20&nbsp;px under it read as a second line boxing the illustration in rather than as a separator. Spacing does the separating.</p>
         </div>
 
         <div class="max-w-3xl">
@@ -326,10 +337,10 @@
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-4">Choices made, and why</h2>
           <div class="flex flex-col gap-4 font-dm text-base leading-6 text-slate-700">
-            <p><b>Two marks, not three.</b> A green tick for an upside, a red X for a cost. A slate dash for &ldquo;a trade-off, not an alarm&rdquo; was the third and has been retired: the counter offer&rsquo;s time cost now carries the same cross the reject card does, so the only distinction left is <i>upside</i> or <i>cost</i>. The cross is an X in a circle in <b>the reject button&rsquo;s own label colour</b>, which is why the reject card and the button read as one action. Spent in two places rather than one it no longer marks the heaviest option on its own &mdash; the reject card earns that by having no upside line at all. It still does not collide with red-means-unread, because it sits inside a card whose title names an action rather than in a status line.</p><p><b>Two claims were removed on purpose, and both would have been wrong.</b> Nothing says the price is now fixed &mdash; a dealership can still adjust after inspecting the car, so that was a promise we cannot keep, and it is not replaced with a hedge either. And nothing calls a counter offer binding: it closes the sale mechanically when a dealership accepts, but it is not legally binding, and saying so would misstate what the seller is agreeing to.</p>
-            <p><b>Only the accept card is filled.</b> That is the whole visual argument &mdash; the seller sees which card carries the ticks without reading a word. Nothing in any card overstates: every line is a verified production consequence.</p>
+            <p><b>Two marks, not three.</b> A green tick for an upside, a red X for a cost. A slate dash for &ldquo;a trade-off, not an alarm&rdquo; was the third and has been retired: the counter offer&rsquo;s time cost now carries the same cross the reject card does, so the only distinction left is <i>upside</i> or <i>cost</i>. The cross is an X in a circle in <b>the reject button&rsquo;s own label colour</b>, which is why the reject card and the button read as one action. Spent in two places rather than one it no longer marks the heaviest option on its own &mdash; the reject card earns that by having no upside line at all. It still does not collide with red-means-unread, because it sits inside a card whose title names an action rather than in a status line. The marks stay independent of the card tints around them: the tint says <i>which action this card is</i>, the mark says <i>upside or cost</i>, which is why a green tick appears inside the blue counter-offer card.</p><p><b>Two claims were removed on purpose, and both would have been wrong.</b> Nothing says the price is now fixed &mdash; a dealership can still adjust after inspecting the car, so that was a promise we cannot keep, and it is not replaced with a hedge either. And nothing calls a counter offer binding: it closes the sale mechanically when a dealership accepts, but it is not legally binding, and saying so would misstate what the seller is agreeing to.</p>
+            <p><b>One colour per action, the same one everywhere it appears.</b> Green accepts, blue negotiates, red rejects &mdash; on the buttons, in the modal, on these cards and in the auction-details verdict. The accept card had been blue because it was the promoted one, which taught blue as &ldquo;the recommended action&rdquo; on a page where blue already means &ldquo;negotiate&rdquo;. Each card is now tinted in its own button&rsquo;s colour, so card and control match by colour alone.</p><p><b>What that costs:</b> being the only filled card no longer marks accept as the lead. That moves to its heavier border, its position first, its being the only card with no cost line, and the green verdict block above it. Worth watching in review &mdash; if accept stops reading as the lead, the fix is weight, not a return to blue. All tints are the lightest step in each hue so the cards stay quiet next to the real buttons below; none of them is a control and none should look like one.</p><p>Nothing in any card overstates: every line is a verified production consequence.</p>
             <p><b>Nothing quantitative is shown.</b> The brief was to educate rather than prove.</p>
-            <p><b>Height</b>, desktop / 375&nbsp;px: advice <b>194 / 194</b> (collapsed), options <b>290 / 578</b>, auction details <b>419 / 583</b>. The two new sections together are <b>772&nbsp;px on a phone</b> above the auction details, down from ~1&nbsp;300 when the advice was flat. The auction-details block replaces a chart and a date row rather than adding to them, so it is close to a wash on its own.</p>
+            <p><b>Height</b>, desktop / 375&nbsp;px: advice <b>194 / 194</b> (collapsed), options <b>292 / 580</b>, auction details <b>402 / 531</b>. The two new sections together are <b>774&nbsp;px on a phone</b> above the auction details, down from ~1&nbsp;300 when the advice was flat. The auction-details block replaces a chart and a date row rather than adding to them, so it is close to a wash on its own.</p>
           </div>
         </div>
 
