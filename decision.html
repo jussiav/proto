@@ -1791,50 +1791,64 @@
 
        Copy is placeholder pending the team's own wording. */
     function buildBelief() {
-      /* Four SINGLE WORDS, not descriptions. These are the things a seller
-         forgot were in the number they saw — the point is that there are
-         several of them, not what each one covers. A phrase like "Kunnostus,
-         huolto ja katsastus" turns a chip into a sentence and the diagram back
-         into a list. */
-      var THINGS = ['Kate', 'Takuu', 'Kunnostus', 'Myyntikulut'];
+      /* ONE BAR, and the whole of it is the price the seller saw somewhere
+         else. The seller's own share is the first and by far the largest
+         segment; everything that made the advertised price bigger follows it,
+         small, in a stepped set of muted neutrals.
 
-      /* Schematic widths. They are a DIAGRAM, not a measurement — no axis, no
-         figures, nothing to read a number off — and the only claim they make is
-         the one that is safe: most of a dealership's asking price is what the
-         seller was paid, and the rest is the things above. Sized so the gap is
-         obvious at a glance without implying a dealership keeps a quarter. */
-      var SELLER_W = '72%';
+         MUTED ON PURPOSE. These segments are not a status, an action or a
+         warning, and this page already spends saturated colour on all three —
+         green accepts, blue negotiates, red and amber report. A bar in strong
+         colour here would read as another signal to act on. It is a diagram.
 
-      var html = '<div class="flex flex-col items-center">';
+         The small parts are near-equal and deliberately so: they exist to be
+         COUNTED, not measured. Their individual widths claim nothing, which is
+         also why the glossary names them in one line rather than labelling each
+         segment — a seller does not need to know which sliver is the warranty,
+         only that there are several and that together they are the gap. */
+      /* Green is the ONLY hue in here and it sits at the palest step that still
+         reads as green. The seller's share does not need colour to dominate —
+         it is 72% of the bar — so the green only has to say "this one is
+         yours". The rest are neutrals at 300/400, warm and cool alternating so
+         they can be told apart without any of them going dark enough to pull
+         the eye to the end of the bar. */
+      var PARTS = [
+        { w: 72,  c: 'bg-green-200' },   /* myyjälle maksettu hinta */
+        { w: 5.5, c: 'bg-slate-300' },
+        { w: 6.5, c: 'bg-stone-300' },
+        { w: 5,   c: 'bg-zinc-400' },
+        { w: 6,   c: 'bg-stone-400' },
+        { w: 5,   c: 'bg-slate-400' }
+      ];
 
-      /* 1 — the seller's price. First, because the whole point is that the
-         advertised price is built UP from it. */
-      html += '<div class="w-full">'
-        +      '<p class="font-dm text-sm font-bold text-green-900 mb-1.5">Myyjälle maksettu hinta</p>'
-        +      '<div class="h-9 rounded-md bg-green-500" style="width:' + SELLER_W + '"></div>'
-        +    '</div>';
+      /* The whole bar is labelled first: everything under it is a part of THIS
+         number, which is the number the seller came in comparing against. */
+      var html = '<p class="font-dm text-sm font-bold text-slate-900 mb-2">Autoliikkeen myyntihinta</p>';
 
-      /* The operators are structural, not decoration — they are what makes the
-         three parts read as one statement rather than three stacked things, so
-         they carry weight rather than being a faint grey glyph. */
-      html += '<div class="font-dm text-xl font-bold leading-none text-slate-300 my-1.5 self-start">+</div>';
-
-      /* 2 — the things, as chips. Wrapping is fine and expected on a phone. */
-      html += '<div class="w-full flex flex-wrap gap-2">';
-      THINGS.forEach(function (t) {
-        html += '<span class="font-dm text-sm text-slate-700 bg-slate-100 border border-slate-200 rounded-md px-3 py-1">' + t + '</span>';
+      html += '<div class="flex gap-px h-10 rounded-md overflow-hidden">';
+      PARTS.forEach(function (p) {
+        html += '<div class="' + p.c + '" style="width:' + p.w + '%"></div>';
       });
       html += '</div>';
 
-      html += '<div class="font-dm text-xl font-bold leading-none text-slate-300 my-1.5 self-start">=</div>';
+      /* Two legend rows, not six. The seller's share is named and weighted; the
+         rest is one line, and its swatch is the five small colours together so
+         the eye maps it back to the tail of the bar without numbering them. */
+      html += '<div class="mt-4 flex flex-col gap-2.5">';
 
-      /* 3 — the number the seller saw somewhere else, full width. The bar is
-         longer than the green one by exactly the room the chips took up, which
-         is the entire argument and the reason no sentence has to make it. */
-      html += '<div class="w-full">'
-        +      '<p class="font-dm text-sm font-bold text-slate-900 mb-1.5">Autoliikkeen pyyntihinta</p>'
-        +      '<div class="h-9 rounded-md bg-slate-700 w-full"></div>'
-        +    '</div>';
+      html +=   '<div class="flex items-center gap-2.5">'
+        +        '<span class="w-3.5 h-3.5 rounded-sm bg-green-200 flex-shrink-0"></span>'
+        +        '<span class="font-dm text-sm font-bold text-slate-900">Myyjälle maksettu hinta</span>'
+        +      '</div>';
+
+      var swatches = '';
+      PARTS.slice(1).forEach(function (p) {
+        swatches += '<span class="w-2 h-3.5 rounded-sm ' + p.c + '"></span>';
+      });
+      html +=   '<div class="flex items-center gap-2.5">'
+        +        '<span class="flex gap-px flex-shrink-0">' + swatches + '</span>'
+        +        '<span class="font-dm text-sm text-slate-600">Takuu, kunnostus, kulut, kate, arvonalenema</span>'
+        +      '</div>';
 
       html += '</div>';
       return html;

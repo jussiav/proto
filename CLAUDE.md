@@ -2086,38 +2086,46 @@ exclusions share one fallback.
 
 ### Block 2 — the price belief
 
-`buildBelief`. An EQUATION, and it has to read in one look:
+`buildBelief`. ONE stacked bar, and the whole of it is the price the seller saw
+somewhere else:
 
 ```
-Myyjälle maksettu hinta      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓          (green, 72%)
-  +   [Kate] [Takuu] [Kunnostus] [Myyntikulut]
-  =
-Autoliikkeen pyyntihinta     ████████████████████████    (slate, 100%)
+Autoliikkeen myyntihinta
+[▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒|▪|▪|▪|▪|▪]
+ ▪ Myyjälle maksettu hinta                        ← green-200, 72%
+ ▪▪▪▪▪ Takuu, kunnostus, kulut, kate, arvonalenema ← neutrals, ~5-6% each
 ```
 
-**Two named prices are the heroes and the four chips are just "things".** The
-bars do the arguing: the lower one is longer by exactly the room the chips take
-up. **No sentence explains it and none is present** — if a revision needs a
-paragraph to make the diagram land, the diagram is wrong.
+**The seller's share comes first and anchors the left; everything that made the
+advertised price bigger follows it.** A diagram that TAKES the small parts out
+of the sticker price says "they took this from you"; one that starts from the
+seller's price says "they added this to yours" — same facts, accurate causal
+direction, none of the resentment.
 
-**That is a correction, not a preference.** The first build was a bordered list
-of rows with an explanatory paragraph above and below. It read as a FAQ, and the
-prose was doing work the picture should do.
+**MUTED ON PURPOSE.** These segments are not a status, an action or a warning,
+and this page already spends saturated colour on all three — green accepts, blue
+negotiates, red and amber report. Green is the only hue here and sits at the
+palest step that still reads as green; the seller's share does not need colour
+to dominate, it is most of the bar. The rest are neutrals at 300/400, warm and
+cool alternating so they can be told apart without any going dark enough to pull
+the eye to the end of the bar.
 
-**Chips are SINGLE WORDS.** "Kunnostus, huolto ja katsastus" turns a chip into a
-sentence and the diagram back into a list.
+**Two legend rows, not six.** The small parts are named in ONE line and their
+swatch is the five colours together. They exist to be counted, not measured — a
+seller does not need to know which sliver is the warranty, only that there are
+several and that together they are the gap. Their widths are near-equal and
+claim nothing.
 
-**Built upwards, which is the whole design.** The seller's price comes FIRST and
-the rest is added to reach the advertised figure. A diagram that SUBTRACTS from
-the sticker price says "they took this from you"; one that ADDS to the seller's
-price says "they added this to yours" — same facts, accurate causal direction,
-none of the resentment.
+**NO SENTENCE EXPLAINS THE DIAGRAM AND NONE IS PRESENT.** Two earlier versions
+had prose: a bordered list of rows with a paragraph above and below (read as a
+FAQ), then a three-part equation with `+` and `=`. **If a revision needs a
+paragraph to make the picture land, the picture is wrong.**
 
-**NO FIGURES — no euros, no percentages, no example car.** The bar widths are a
-schematic: no axis, nothing to read a number off, and the only claim they make
-is the safe one. An illustrative example car was considered and dropped, because
-numbers invite the two reactions the block exists to avoid — arguing with our
-sums, and resenting a margin. `SELLER_W` is the one tunable.
+**NO FIGURES — no euros, no percentages, no example car.** The widths are a
+schematic: no axis, nothing to read a number off. An illustrative example car
+was considered and dropped, because numbers invite the two reactions the block
+exists to avoid — arguing with our sums, and resenting a margin. `PARTS` is the
+one tunable.
 
 **NO ALTERNATIVE ROUTE IS NAMED** — not a private sale, not a trade-in, not
 another dealership. Steering a seller toward a route we would rather they did
