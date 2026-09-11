@@ -2084,28 +2084,35 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — `Jälleenmyyntihinnan koostumus`
+### Block 2 — `Myyntihinta vai pyyntihinta?`
 
 `buildBelief`. ONE stacked bar, and the whole of it is the price the seller saw
 somewhere else:
 
 ```
-Jälleenmyyntihinnan koostumus          ← section heading, and the bar's only label
-[ Myyjälle maksettu hinta        |▪|▪|▪|▪|▪]
-                Takuu, kunnostus, kulut, kate, arvonalenema
-Muistathan, että ilmoituksen hinta ei ole sama kuin myyjälle maksettu hinta.
+Myyntihinta vai pyyntihinta?           ← section heading, poses the distinction
+Muistathan, että ilmoituksen pyyntihinta ei ole sama kuin myyjälle maksettu hinta.
+[ Myyjälle maksettu hinta            |▪|▪|▪|▪|▪]
+                    Takuu, kunnostus, kulut, kate, arvonalenema
 ```
 
-**The HEADING labels the bar, so the bar carries no caption.** An earlier
-version had `Autoliikkeen myyntihinta` written above it and was explaining the
-diagram twice. The seller's share names itself INSIDE its own segment — it is
-wide enough at every supported width — and the small parts are named in one
-right-aligned line directly under themselves, so neither needs a legend row.
+**The heading poses the distinction, one line answers it, and the bar carries no
+caption.** An earlier version titled the bar `Autoliikkeen myyntihinta` as well
+and was explaining the same thing three times. The seller's share names itself
+INSIDE its own segment — it is wide enough at every supported width — and the
+small parts are named in one right-aligned line directly under themselves, so
+neither needs a legend row.
 
-**The seller's share comes first and anchors the left.** A diagram that TAKES
-the small parts out of the sticker price says "they took this from you"; one
-that starts from the seller's price says "they added this to yours" — same
-facts, accurate causal direction, none of the resentment.
+**The seller's share comes first and is MOST of the bar — `SELLER_W` is 79%.**
+It anchors the left and everything else follows. The width is not arbitrary: at
+72% the green read as a grudging majority, closer to "they keep a quarter" than
+to "nearly all of this is yours", which is the opposite of what the block is
+for. The floor is countability — the small parts stop narrowing at ~12px each on
+a 375px screen.
+
+A diagram that TAKES the small parts out of the sticker price says "they took
+this from you"; one that starts from the seller's price says "they added this to
+yours" — same facts, accurate causal direction, none of the resentment.
 
 **MUTED ON PURPOSE.** These segments are not a status, an action or a warning,
 and this page already spends saturated colour on all three — green accepts, blue
@@ -2120,12 +2127,12 @@ claim nothing, named collectively, never individually — a seller does not need
 to know which sliver is the warranty, only that there are several and that
 together they are the gap.
 
-**ONE line of support copy, and only one.** The bar catches the eye before it is
-understood, so a sentence closes that gap; it states the fact and stops. The
-reject feedback says too many sellers never make this connection, while plenty
-of others make it instantly — **a second sentence would read as being talked
-down to by the ones who already knew.** `Muistathan` is the politeness the
-register wants; the rest is flat.
+**ONE line of copy, ABOVE the bar, and only one.** It answers the heading's
+question and frames the diagram before the seller has to parse it. It states the
+fact and stops. The reject feedback says too many sellers never make this
+connection, while plenty of others make it instantly — **a second sentence would
+read as being talked down to by the ones who already knew.** `Muistathan` is the
+politeness the register wants; the rest is flat.
 
 **NO FIGURES — no euros, no percentages, no example car.** The widths are a
 schematic: no axis, nothing to read a number off. An illustrative example car
@@ -2139,9 +2146,10 @@ not take would undo the point of the arm. The three-tier display the category
 uses (KBB's Trade-In / Private Party / Typical Listing) was considered and
 rejected on exactly this ground; watch for it coming back in a revision.
 
-**The design took four passes** — a bordered list of rows with explanatory
+**The design took five passes** — a bordered list of rows with explanatory
 paragraphs (read as a FAQ), a two-bar equation with `+` and `=`, one bar with a
-separate legend and caption, then this. The rule that survived all of them:
+separate legend and caption, the same bar self-labelling with the copy beneath,
+then this. The rule that survived all of them:
 **if a revision needs a paragraph to make the picture land, the picture is
 wrong.** The one sentence that remains is support for a bar that is already
 legible, not an explanation of it.

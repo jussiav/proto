@@ -244,7 +244,7 @@
       <section id="section-belief" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
-          <span class="text-blue-900 leading-[24px]">Jälleenmyyntihinnan koostumus</span>
+          <span class="text-blue-900 leading-[24px]">Myyntihinta vai pyyntihinta?</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="belief-content"></div>
@@ -1801,19 +1801,34 @@
          The small parts are near-equal and deliberately so: they exist to be
          COUNTED, not measured. Their individual widths claim nothing, which is
          why one line names them all rather than each segment carrying a label. */
-      var SELLER_W = 72;
+      /* The seller's share is MOST of the bar and should look it. At 72% the
+         green read as a grudging majority — closer to "they keep a quarter"
+         than to "nearly all of this is yours" — which is the opposite of what
+         the block is for. The small parts still have to be countable, so they
+         stop narrowing at ~12px each on a 375px screen. */
+      var SELLER_W = 79;
       var SMALL = [
-        { w: 5.5, c: 'bg-slate-300' },
-        { w: 6.5, c: 'bg-stone-300' },
-        { w: 5,   c: 'bg-zinc-400' },
-        { w: 6,   c: 'bg-stone-400' },
-        { w: 5,   c: 'bg-slate-400' }
+        { w: 4.5, c: 'bg-slate-300' },
+        { w: 4.5, c: 'bg-stone-300' },
+        { w: 4,   c: 'bg-zinc-400' },
+        { w: 4,   c: 'bg-stone-400' },
+        { w: 4,   c: 'bg-slate-400' }
       ];
 
-      /* NO LABEL ABOVE THE BAR. The section heading already says what the bar
-         is, so repeating "Autoliikkeen myyntihinta" over it was the diagram
-         being explained twice. */
-      var html = '<div class="flex gap-px h-10 rounded-md overflow-hidden">';
+      /* ONE LINE OF COPY, ABOVE THE BAR, and it earns its place: it answers
+         the heading's question and frames the bar before the seller has to
+         parse it. It states the fact and stops — no worked example, no second
+         sentence, nothing that would read as being talked down to by a seller
+         who already knew. The reject feedback says too many never make this
+         connection; plenty of others make it instantly. "Muistathan" is the
+         politeness the register wants; the rest is flat.
+
+         NO CAPTION ON THE BAR ITSELF. The heading and this line already say
+         what it is — an earlier version titled it as well and was explaining
+         the same diagram three times. */
+      var html = '<p class="font-dm text-sm text-slate-700 mb-4">Muistathan, että ilmoituksen pyyntihinta ei ole sama kuin myyjälle maksettu hinta.</p>';
+
+      html += '<div class="flex gap-px h-10 rounded-md overflow-hidden">';
       /* The seller's share carries its own name INSIDE it — it is wide enough
          to hold the words at every width the page supports, and a segment that
          labels itself needs no legend row to point at it. */
@@ -1830,14 +1845,6 @@
          the line sits below the segments it belongs to and the eye pairs them
          without a key. */
       html += '<p class="font-dm text-xs text-slate-500 text-right mt-1.5">Takuu, kunnostus, kulut, kate, arvonalenema</p>';
-
-      /* ONE LINE OF SUPPORT COPY, and it earns its place: the reject feedback
-         says too many sellers never make this connection, while plenty of
-         others make it instantly. So it states the fact and stops — no worked
-         example, no second sentence, nothing that would read as being talked
-         down to by a seller who already knew. "Muistathan" is the politeness
-         the register wants; the rest is flat. */
-      html += '<p class="font-dm text-sm text-slate-700 mt-4">Muistathan, että ilmoituksen hinta ei ole sama kuin myyjälle maksettu hinta.</p>';
 
       return html;
     }
