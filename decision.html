@@ -240,15 +240,19 @@
       </section>
 
       <!-- Section 3b: Informed decision (ideation arm only).
-           The title is prod's own `WhatHappensNext` heading, which the funnel
-           already uses on the price step — so a returning seller meets the same
-           question in the same words at both ends of the journey. Not a
-           coincidence to tidy away. -->
+           "Mitä voin tehdä?", not "Mitä tapahtuu seuraavaksi?". The old title
+           was prod's own `WhatHappensNext` heading, borrowed so a seller met
+           the same question in the same words at both ends of the funnel — and
+           it was the wrong question here. "What happens next" reads as a
+           SEQUENCE, so three blocks under it read as three steps to perform;
+           testers were expected to take all of them. "What can I do" names a
+           menu, which is what the section is. The funnel's own heading is
+           untouched. -->
       <section id="section-decision-help" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <!-- prod's `checks-bold` sprite, verbatim -->
           <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M152.41 88.56l-89.6 88a12 12 0 0 1-16.82 0L7.59 138.85a12 12 0 0 1 16.82-17.13l30 29.46 81.19-79.74a12 12 0 0 1 16.82 17.12Zm96.15-17a12 12 0 0 0-17-.15L150.4 151.18l-7.88-7.74a12 12 0 0 0-16.82 17.12l16.29 16a12 12 0 0 0 16.82 0l89.6-88a12 12 0 0 0 .15-16.97Z"/></svg>
-          <span class="text-blue-900 leading-[24px]">Mitä tapahtuu seuraavaksi?</span>
+          <span class="text-blue-900 leading-[24px]">Mitä voin tehdä?</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="decision-help-content"></div>
@@ -1823,7 +1827,7 @@
       return frag;
     }
 
-    /* ── "Mitä tapahtuu seuraavaksi?" — Informed decision, IDEATION ONLY ─
+    /* ── "Mitä voin tehdä?" — Informed decision, IDEATION ONLY ──────────
        REVISION 4. The first three revisions all answered the wrong question.
        They compared AutoVex against a trade-in and a private sale — routes the
        seller is not choosing between on this page. What is actually in front of
@@ -1880,8 +1884,22 @@
       opts = opts || {};
       var highest = offers && offers[0];
 
-      var PLUS = '<span class="inline-flex flex-shrink-0 text-green-600 mt-0.5">'
-        + '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm45.66 85.66-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32Z"/></svg></span>';
+      /* THE TICK CARRIES THE ACTION'S COLOUR, THE CROSS CARRIES SEVERITY.
+         Green ticks the accept card, blue ticks the counter-offer card — the
+         same blue as the counter-offer button below — so an upside is written
+         in the colour of the action it belongs to. The cross stays red
+         wherever it appears, because it always means the same thing: this
+         costs you something. That is why the counter-offer card carries a blue
+         tick and a red cross and is not inconsistent.
+
+         With only the accept card painted (see below), the marks are where the
+         per-action colour system actually lives in this section. */
+      function tick(cls) {
+        return '<span class="inline-flex flex-shrink-0 ' + cls + ' mt-0.5">'
+          + '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm45.66 85.66-56 56a8 8 0 0 1-11.32 0l-24-24a8 8 0 0 1 11.32-11.32L112 148.69l50.34-50.35a8 8 0 0 1 11.32 11.32Z"/></svg></span>';
+      }
+      var OK_ACCEPT = tick('text-green-600');
+      var OK_NEG    = tick('text-blue-600');
       /* TWO marks, not three. A slate dash for "a trade-off, not an alarm" was
          the third, and Jussi's copy pass retired it: the counter offer's time
          cost now carries the same red cross the reject card does, so the only
@@ -1923,8 +1941,8 @@
         tone: 'accept',
         t: 'Hyväksy tarjous',
         l: [
-          [PLUS,  'Varmistat tarjouksen ennen määräaikaa.'],
-          [PLUS,  'Sovi kaupan yksityiskohdista liikkeen kanssa.']
+          [OK_ACCEPT, 'Varmistat tarjouksen ennen määräaikaa.'],
+          [OK_ACCEPT, 'Sovi kaupan yksityiskohdista liikkeen kanssa.']
         ]
       });
 
@@ -1933,8 +1951,8 @@
           tone: 'negotiate',
           t: 'Tee vastatarjous',
           l: [
-            [PLUS,  'Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi.'],
-            [CROSS, 'Pidentää kaupankäyntiaikaa.']
+            [OK_NEG, 'Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi.'],
+            [CROSS,   'Pidentää kaupankäyntiaikaa.']
           ]
         });
       }
@@ -1950,37 +1968,64 @@
         });
       }
 
-      var cols = cards.length === 3 ? 'md:grid-cols-3' : (cards.length === 2 ? 'md:grid-cols-2' : '');
+      /* ONE CARD IS PAINTED, AND IT IS THE ACCEPT ONE. Green, the same
+         `border-green-500 bg-green-50` as the verdict block in the section
+         below, because green means one thing across this arm: the accepting
+         direction. The other two carry no box at all — the marks inside them
+         already say which way each line cuts, and their titles name the button.
 
-      /* ONE COLOUR PER ACTION, and the same one everywhere it appears: green
-         accepts, blue negotiates, red rejects. That is Enhanced negotiations'
-         own system (its accept button is green, its counter-offer button blue,
-         the reject button red), and this section had been ignoring it — the
-         accept card was blue-filled because it was the promoted one, which
-         taught blue as "the recommended action" on a page where blue already
-         means "negotiate". Now each card is tinted in its button's colour and
-         the seller can match card to control by colour alone.
+         This is the second revision of the colour treatment and the right one.
+         The card had been BLUE-filled, which taught blue as "the recommended
+         action" on a page where blue already means "negotiate"; fixing that by
+         tinting all three in their own button's colours (green / blue / light
+         red) fixed the meaning but cost the hierarchy — three painted cards is
+         three promoted cards, and which action we are recommending stopped
+         being visible at a glance. Painting only accept keeps both: green is
+         the accept colour AND the only fill, so the card reads as the lead for
+         the same reason it always did.
 
-         What that costs: promotion is no longer carried by being the only
-         filled card. It moves to the accept card's heavier border, its position
-         first, and its being the only card with no cost line — plus the green
-         verdict block above, which is now the same green. Worth watching in
-         review; if accept stops reading as the lead, the fix is weight, not a
-         return to blue.
-
-         Tints are `-50` backgrounds so the cards stay quiet next to the real
-         buttons below them. None of them is a control and none should look like
-         one. */
+         So the colour system is still one colour per action — it is just
+         carried by the marks and the buttons, not by tinting every card.
+         Do not re-tint the other two, and do not take the accept card back to
+         blue. */
       var TONE = {
-        accept:    { box: 'border-2 border-green-500 bg-green-50', title: 'text-green-900' },
-        negotiate: { box: 'border border-blue-400 bg-blue-50',     title: 'text-blue-900'  },
-        reject:    { box: 'border border-red-300 bg-red-50',       title: 'text-red-900'   }
+        accept:    { box: 'border border-green-500 bg-green-50', title: 'text-green-900' },
+        negotiate: { box: '',                                    title: 'text-slate-900' },
+        reject:    { box: '',                                    title: 'text-slate-900' }
       };
 
-      var html = '<div class="grid gap-3 ' + cols + '">';
-      cards.forEach(function (c) {
+      /* "TAI" BETWEEN THE CARDS, because without it they read as steps.
+         Three blocks in a row under a heading is a sequence by default — and
+         under the old heading, "Mitä tapahtuu seuraavaksi?", doubly so: a
+         seller could reasonably read it as accept, then counter-offer, then
+         reject. The heading now asks what they CAN do, and the dividers say
+         these are alternatives rather than a list. One word does what a
+         paragraph of explanation would not.
+
+         The separator turns with the layout: a slate-200 hairline with "tai"
+         set into it, horizontal between stacked cards on a phone and vertical
+         between columns from 768px. It is the same markup either way —
+         `flex` becomes `md:flex-col`, and the two line segments swap `h-px`
+         for `md:w-px` — so there is one thing to maintain, not two.
+
+         Grid became flex for this: N cards plus N-1 separators cannot share a
+         fixed column template, and `flex-1` (basis 0) gives the cards equal
+         widths anyway while the separators stay at their content width. */
+      var SEP = '<div class="flex md:flex-col items-center gap-2 flex-shrink-0" aria-hidden="true">'
+        +   '<div class="flex-1 h-px md:h-auto md:w-px bg-slate-200"></div>'
+        +   '<span class="font-dm text-xs text-slate-500">tai</span>'
+        +   '<div class="flex-1 h-px md:h-auto md:w-px bg-slate-200"></div>'
+        + '</div>';
+
+      var html = '<div class="flex flex-col md:flex-row gap-3">';
+      cards.forEach(function (c, i) {
+        if (i) html += SEP;
         var tone = TONE[c.tone];
-        html += '<div class="rounded-lg p-4 ' + tone.box + '">'
+        /* `p-4` on all three even where there is no box: it is what keeps the
+           three titles on one baseline and the three mark columns aligned.
+           `min-w-0` because a flex item defaults to its content's minimum
+           width, which a long Finnish compound would push past the column. */
+        html += '<div class="flex-1 min-w-0 rounded-lg p-4 ' + tone.box + '">'
           + '<div class="font-dm text-sm font-bold mb-3 ' + tone.title + '">' + c.t + '</div>'
           + '<div class="flex flex-col gap-2">';
         c.l.forEach(function (row) {
@@ -1991,12 +2036,17 @@
       });
       html += '</div>';
 
-      /* The fourth outcome, and the only one that needs no button: prod's
-         expiry sweep turns every pending offer on the request to rejected once
-         the reaction window closes. Worth one line, because doing nothing is a
-         real choice a seller makes here. */
-      html += '<p class="font-dm text-xs text-slate-500 mt-4">'
-        + 'Jos et tee mitään, tarjoukset umpeutuvat ja kilpailutus päättyy.</p>';
+      /* NO FOURTH LINE ABOUT LETTING THE OFFERS EXPIRE. There used to be one —
+         "Jos et tee mitään, tarjoukset umpeutuvat ja kilpailutus päättyy." —
+         on the reasoning that doing nothing is a real choice and the section
+         should be complete. It is gone on Jussi's call, and the reason is
+         better than the one it replaced: a section headed "what happens next"
+         that lists four outcomes presents all four as OPTIONS. Expiry is not an
+         option we offer, it is what happens when the seller does not decide,
+         and naming it beside three buttons quietly makes it a fourth button.
+         The countdown on each offer card already says the deadline exists.
+
+         Do not restore it for completeness. */
 
       return html;
     }

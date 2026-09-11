@@ -2077,7 +2077,7 @@ a proposal awaiting sign-off, this one is a conversation starter.
 | Block | Question it answers | New? |
 |---|---|---|
 | `Muutama neuvo` | "but I saw a higher number / I have a loan / I can't hand the car over yet" | new section |
-| `Mitä tapahtuu seuraavaksi?` | "what does each of these buttons actually do" | new section |
+| `Mitä voin tehdä?` | "what are my options, and what does each one cost" | new section |
 | `Tarjouskilpailun tiedot` | "is this a good offer" | prod's block, rebuilt |
 
 All three live on the `v1` arm and **share the same open-decision gate**. They
@@ -2191,10 +2191,27 @@ buttons: accept, counter-offer, reject. So the section says what each one is
 FOR. The comparison is gone, and so is the standalone lead line — the section
 title carries the framing on its own.
 
-**The title is prod's own.** `Mitä tapahtuu seuraavaksi?` is
-`WhatHappensNext`'s heading, which the funnel already uses on the price step —
-so a seller meets the same question in the same words at both ends of the
-journey. Deliberate, not a collision to tidy away.
+**The title is `Mitä voin tehdä?`, and the borrowed one was retired**
+(2026-09-11). It used to be prod's own `WhatHappensNext` heading — the one the
+funnel shows on the price step — taken so a seller met the same question in the
+same words at both ends of the journey. **It was the wrong question here.**
+"What happens next" reads as a SEQUENCE, so three blocks under it read as three
+things to do in order, and a seller could reasonably conclude they were meant to
+accept, then counter-offer, then reject. "What can I do" names a menu, which is
+what the section is. The funnel's own heading is untouched, and the collision
+that used to be deliberate simply no longer exists.
+
+**"tai" between the cards, for the same reason.** Three blocks in a row under a
+heading are a sequence by default, and one word fixes what a paragraph of
+explanation would not. A slate-200 hairline with `tai` set into it: horizontal
+between stacked cards on a phone, vertical between columns from 768px, **the
+same markup either way** — `flex` becomes `md:flex-col` and the two segments
+swap `h-px` for `md:w-px`, so there is one thing to maintain rather than two.
+
+The row is FLEX, not grid, for this: N cards plus N−1 separators cannot share a
+fixed column template, and `flex-1` (basis 0) gives equal card widths anyway
+while the separators stay at content width. Cards carry `min-w-0`, or a long
+Finnish compound pushes a column past its share.
 
 **One card per action, titled with the button's own imperative** so the card and
 the control read as one thing: `Hyväksy tarjous`, `Tee vastatarjous`,
@@ -2202,12 +2219,19 @@ the control read as one thing: `Hyväksy tarjous`, `Tee vastatarjous`,
 
 | Card | Lines |
 |---|---|
-| **Hyväksy tarjous** (green, heavier rule) | ✓ Varmistat tarjouksen ennen määräaikaa · ✓ Sovi kaupan yksityiskohdista liikkeen kanssa |
-| **Tee vastatarjous** (blue) | ✓ Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi · ✗ Pidentää kaupankäyntiaikaa |
-| **Hylkää tarjouskilpailu** (light red) | ✗ Menetät kaikki tarjoukset lopullisesti · ✗ Kilpailutus päättyy tähän |
+| **Hyväksy tarjous** (green, the only painted card) | ✓ Varmistat tarjouksen ennen määräaikaa · ✓ Sovi kaupan yksityiskohdista liikkeen kanssa |
+| **Tee vastatarjous** | ✓ Voit perustella liikkeelle, miksi hinnan tulisi olla korkeampi · ✗ Pidentää kaupankäyntiaikaa |
+| **Hylkää tarjouskilpailu** | ✗ Menetät kaikki tarjoukset lopullisesti · ✗ Kilpailutus päättyy tähän |
 
-Plus one footnote for the fourth outcome, the only one with no button:
-*"Jos et tee mitään, tarjoukset umpeutuvat ja kilpailutus päättyy."*
+**There is NO fourth line about letting the offers expire, and that is
+deliberate.** One used to sit under the cards — *"Jos et tee mitään, tarjoukset
+umpeutuvat ja kilpailutus päättyy."* — on the reasoning that doing nothing is a
+real choice and the section should be complete. Removed on Jussi's call, for a
+better reason than the one it replaced: **a section headed "what happens next"
+that lists four outcomes presents all four as OPTIONS.** Expiry is not an option
+we offer, it is what happens when the seller does not decide, and naming it
+beside three buttons quietly makes it a fourth button. The countdown on each
+offer card already says the deadline exists. Do not restore it for completeness.
 
 **The lines are REASONS TO CHOOSE, not a description of the state.** That is the
 rule to keep. An earlier pass had the accept card saying the sale closes at the
@@ -2215,29 +2239,44 @@ offer price and the dealership will be in touch — both of which the page alrea
 says, in the hero and on the card itself, so they cost space and told the seller
 nothing. Every line now answers "why would I pick this one".
 
-**ONE COLOUR PER ACTION, on the cards as well as the buttons** (2026-09-11).
-Green accepts, blue negotiates, red rejects — Enhanced negotiations' own system,
-which this section had been ignoring. The accept card was blue-filled because it
-was the promoted one, which taught blue as "the recommended action" on a page
-where blue already means "negotiate". Each card is now tinted in its own
-button's colour, so card and control match by colour alone:
+**ONE CARD IS PAINTED, AND IT IS THE ACCEPT ONE** (2026-09-11, Jussi's call
+after a first attempt went too far):
 
 | Card | Box | Title |
 |---|---|---|
-| Hyväksy tarjous | `border-2 border-green-500 bg-green-50` | `text-green-900` |
-| Tee vastatarjous | `border border-blue-400 bg-blue-50` | `text-blue-900` |
-| Hylkää tarjouskilpailu | `border border-red-300 bg-red-50` | `text-red-900` |
+| Hyväksy tarjous | `border border-green-500 bg-green-50` | `text-green-900` |
+| Tee vastatarjous | *(none)* | `text-slate-900` |
+| Hylkää tarjouskilpailu | *(none)* | `text-slate-900` |
 
-**What it costs: being the only filled card no longer marks accept as the lead.**
-That moves to its heavier border, its position first, its being the only card
-with no cost line, and the green verdict block in the section below. If accept
-stops reading as the lead in review, **the fix is weight, not a return to blue.**
-All three are `-50` backgrounds so the cards stay quiet next to the real buttons;
-none of them is a control and none should look like one.
+Green, and **the same `border-green-500 bg-green-50` as the verdict block** in
+the auction-details section, because green means one thing across this arm: the
+accepting direction. The other two carry no box at all — the marks inside them
+already say which way each line cuts, and their titles name the button.
 
-**The marks stay independent of the tints.** The tint says which action the card
-IS, the mark says upside or cost — which is why a green tick appears inside the
-blue counter-offer card and is correct there.
+**The route here is the part to keep.** The card was originally BLUE-filled
+because it was the promoted one, which taught blue as "the recommended action"
+on a page where blue already means "negotiate". Fixing that by tinting all three
+in their own buttons' colours (green / blue / light red) fixed the meaning and
+**cost the hierarchy** — three painted cards is three promoted cards, and which
+action we are recommending stopped being visible at a glance. Painting only
+accept keeps both: green is the accept colour AND the only fill.
+
+So the colour system is still one colour per action; it is carried by the marks
+and the real buttons rather than by tinting every card. **Do not re-tint the
+other two, and do not take the accept card back to blue.**
+
+`p-4` stays on all three even where there is no box — it is what keeps the three
+titles on one baseline and the three mark columns aligned.
+
+**THE TICK CARRIES THE ACTION'S COLOUR, THE CROSS CARRIES SEVERITY**
+(2026-09-11). With only the accept card painted, **the marks are where the
+per-action colour system actually lives in this section.** Green ticks the
+accept card, **blue ticks the counter-offer card** — the same blue as the
+counter-offer button below it — so an upside is written in the colour of the
+action it belongs to. The cross stays `red-700` everywhere, because it always
+means the same thing: this costs you something. That is why the counter-offer
+card carries a blue tick and a red cross and is not inconsistent. `tick(cls)`
+builds both, so they differ by colour class alone.
 
 **TWO marks, not three — the slate dash is retired.** It meant "a trade-off, not
 an alarm" and carried the counter offer's time cost; Jussi's copy pass gave that
@@ -2426,7 +2465,7 @@ undersells it. Renaming a production section is its own decision — left as an
 open question rather than changed in passing.
 
 **Heights, desktop / 375px:** advice **194 / 194** collapsed, options
-**292 / 580**, auction details **402 / 531**. The two new sections are 774px on a
+**258 / 582**, auction details **402 / 531**. The two new sections are 776px on a
 phone; the auction-details block replaces a chart and a date row rather than
 adding to them, so it is close to a wash on its own.
 
