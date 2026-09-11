@@ -1761,61 +1761,82 @@
        number they saw is a dealership's ADVERTISED price, which is not what any
        seller was paid for that car.
 
-       IT SHOWS THE CONSTRUCTION, NOT THE ARITHMETIC — no euro figures anywhere,
-       no example car, no percentages. What the seller has to take away is that
-       an advertised price is BUILT FROM a seller's price plus everything the
-       dealership adds to it. Once that lands, the size of the gap explains
-       itself and does not need to be quoted. Numbers would also invite the two
-       reactions we least want: arguing with our arithmetic, and resenting a
-       margin.
+       IT IS AN EQUATION, AND IT HAS TO READ IN ONE LOOK. Two named prices are
+       the heroes — what the seller was paid, and what the dealership asks — and
+       between them sit four chips for the things a seller forgot were in the
+       second number. The bars do the arguing: the lower one is shorter by
+       exactly the room the chips take up. **No sentence should be needed to
+       explain it, and none is present.** An earlier version stated the point in
+       two paragraphs above and below a list of rows; it read as a FAQ, and the
+       prose was doing work the picture should do.
 
-       BUILT UPWARDS, and that is the whole design. The seller's price is the
-       BASE and every other part is stacked ON TOP of it to reach the advertised
-       figure. A breakdown that subtracts from the sticker price says "they took
-       this from you"; one that adds to the seller's price says "they added this
-       to yours" — the same facts, the accurate causal direction, and none of
-       the resentment. It is also why the base is the only highlighted row.
+       IT IS BUILT UPWARDS, which is the whole design. The seller's price comes
+       FIRST and the rest is added to reach the advertised figure. A diagram
+       that subtracts from the sticker price says "they took this from you"; one
+       that adds to the seller's price says "they added this to yours" — same
+       facts, accurate causal direction, none of the resentment.
 
-       Rows are EQUAL HEIGHT on purpose. Proportional segments would assert
-       amounts we have not measured and cannot defend, which is the same line
-       held when an earlier revision wanted to cite research nobody had
-       produced. Every row is a thing, not a quantity.
+       NO FIGURES — no euros, no percentages, no example car. The bar widths are
+       a schematic with no axis and nothing to read a number off. The seller
+       needs the construction, not the arithmetic; numbers would invite the two
+       reactions the block exists to avoid, arguing with our sums and resenting
+       a margin.
 
-       NO ALTERNATIVE ROUTE IS NAMED. Not a private sale, not another
-       dealership, not a trade-in. The section answers why that number was
-       bigger and stops — naming a route we do not want the seller taking would
-       undo the point of the whole arm.
+       NO ALTERNATIVE ROUTE IS NAMED. Not a private sale, not a trade-in, not
+       another dealership. The block answers why that number was bigger and
+       stops — naming a route we would rather the seller did not take would undo
+       the point of the whole arm. The three-tier display the category uses
+       (KBB's Trade-In / Private Party / Typical Listing) was considered and
+       rejected on exactly this ground.
 
        Copy is placeholder pending the team's own wording. */
     function buildBelief() {
-      /* Bottom-up: the base is what a seller is actually paid, everything
-         above it is what the dealership adds to reach its shop window. */
-      var ADDED = [
-        'Liikkeen kate',
-        'Takuu ja vastuu autosta',
-        'Kunnostus, huolto ja katsastus',
-        'Myynnin ja markkinoinnin kulut'
-      ];
+      /* Four SINGLE WORDS, not descriptions. These are the things a seller
+         forgot were in the number they saw — the point is that there are
+         several of them, not what each one covers. A phrase like "Kunnostus,
+         huolto ja katsastus" turns a chip into a sentence and the diagram back
+         into a list. */
+      var THINGS = ['Kate', 'Takuu', 'Kunnostus', 'Myyntikulut'];
 
-      var html = '<p class="font-dm text-sm text-slate-700 mb-4">Autoliikkeen ilmoituksessa näkyvä hinta ei ole se hinta, jonka myyjä on autostaan saanut. Siihen on lisätty kaikki se, mitä liike auton myymiseen tarvitsee.</p>';
+      /* Schematic widths. They are a DIAGRAM, not a measurement — no axis, no
+         figures, nothing to read a number off — and the only claim they make is
+         the one that is safe: most of a dealership's asking price is what the
+         seller was paid, and the rest is the things above. Sized so the gap is
+         obvious at a glance without implying a dealership keeps a quarter. */
+      var SELLER_W = '72%';
 
-      html += '<div class="rounded-lg border border-slate-200 overflow-hidden">';
-      html +=   '<div class="font-dm text-xs font-medium text-slate-500 px-4 py-2 bg-slate-50 border-b border-slate-200">Autoliikkeen pyyntihinta</div>';
-      ADDED.forEach(function (row) {
-        html += '<div class="flex items-center gap-2 px-4 py-2.5 border-b border-slate-200">'
-          +      '<span class="font-dm text-sm text-slate-400 flex-shrink-0">+</span>'
-          +      '<span class="font-dm text-sm text-slate-700">' + row + '</span>'
-          +    '</div>';
+      var html = '<div class="flex flex-col items-center">';
+
+      /* 1 — the seller's price. First, because the whole point is that the
+         advertised price is built UP from it. */
+      html += '<div class="w-full">'
+        +      '<p class="font-dm text-sm font-bold text-green-900 mb-1.5">Myyjälle maksettu hinta</p>'
+        +      '<div class="h-9 rounded-md bg-green-500" style="width:' + SELLER_W + '"></div>'
+        +    '</div>';
+
+      /* The operators are structural, not decoration — they are what makes the
+         three parts read as one statement rather than three stacked things, so
+         they carry weight rather than being a faint grey glyph. */
+      html += '<div class="font-dm text-xl font-bold leading-none text-slate-300 my-1.5 self-start">+</div>';
+
+      /* 2 — the things, as chips. Wrapping is fine and expected on a phone. */
+      html += '<div class="w-full flex flex-wrap gap-2">';
+      THINGS.forEach(function (t) {
+        html += '<span class="font-dm text-sm text-slate-700 bg-slate-100 border border-slate-200 rounded-md px-3 py-1">' + t + '</span>';
       });
-      /* The base, and the only row that is painted: this is the number the
-         seller is comparing against, sitting under everything else. */
-      html +=   '<div class="flex items-center gap-2 px-4 py-3 bg-green-50">'
-        +        '<span class="font-dm text-sm font-bold text-green-900">Myyjälle maksettu hinta</span>'
-        +      '</div>';
       html += '</div>';
 
-      html += '<p class="font-dm text-sm text-slate-700 mt-4">Sinulle tehty tarjous on tämän pinon alin rivi. Sitä ei voi verrata ilmoituksen hintaan, koska ne eivät mittaa samaa asiaa.</p>';
+      html += '<div class="font-dm text-xl font-bold leading-none text-slate-300 my-1.5 self-start">=</div>';
 
+      /* 3 — the number the seller saw somewhere else, full width. The bar is
+         longer than the green one by exactly the room the chips took up, which
+         is the entire argument and the reason no sentence has to make it. */
+      html += '<div class="w-full">'
+        +      '<p class="font-dm text-sm font-bold text-slate-900 mb-1.5">Autoliikkeen pyyntihinta</p>'
+        +      '<div class="h-9 rounded-md bg-slate-700 w-full"></div>'
+        +    '</div>';
+
+      html += '</div>';
       return html;
     }
 

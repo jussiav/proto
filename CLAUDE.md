@@ -2086,31 +2086,44 @@ exclusions share one fallback.
 
 ### Block 2 — the price belief
 
-`buildBelief`. A stack showing what a dealership's advertised price is BUILT
-FROM: four `+` rows (margin, warranty, reconditioning, sales costs) over a
-highlighted base, `Myyjälle maksettu hinta`.
+`buildBelief`. An EQUATION, and it has to read in one look:
 
-**NO FIGURES ANYWHERE — no euros, no percentages, no example car.** The seller
-needs the construction, not the arithmetic; once that lands the size of the gap
-explains itself. Numbers would also invite the two reactions the block exists to
-avoid: arguing with our sums, and resenting a margin. An illustrative example
-car was considered and dropped for exactly that reason.
+```
+Myyjälle maksettu hinta      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓          (green, 72%)
+  +   [Kate] [Takuu] [Kunnostus] [Myyntikulut]
+  =
+Autoliikkeen pyyntihinta     ████████████████████████    (slate, 100%)
+```
 
-**It is built UPWARDS, and that is the whole design.** The seller's price is the
-base and everything else is stacked on top to reach the advertised figure. A
-breakdown that SUBTRACTS from the sticker price says "they took this from you";
-one that ADDS to the seller's price says "they added this to yours" — same
-facts, accurate causal direction, none of the resentment. It is why the base is
-the only painted row.
+**Two named prices are the heroes and the four chips are just "things".** The
+bars do the arguing: the lower one is longer by exactly the room the chips take
+up. **No sentence explains it and none is present** — if a revision needs a
+paragraph to make the diagram land, the diagram is wrong.
 
-**Rows are equal height on purpose.** Proportional segments would assert amounts
-nobody has measured. Every row is a thing, not a quantity.
+**That is a correction, not a preference.** The first build was a bordered list
+of rows with an explanatory paragraph above and below. It read as a FAQ, and the
+prose was doing work the picture should do.
+
+**Chips are SINGLE WORDS.** "Kunnostus, huolto ja katsastus" turns a chip into a
+sentence and the diagram back into a list.
+
+**Built upwards, which is the whole design.** The seller's price comes FIRST and
+the rest is added to reach the advertised figure. A diagram that SUBTRACTS from
+the sticker price says "they took this from you"; one that ADDS to the seller's
+price says "they added this to yours" — same facts, accurate causal direction,
+none of the resentment.
+
+**NO FIGURES — no euros, no percentages, no example car.** The bar widths are a
+schematic: no axis, nothing to read a number off, and the only claim they make
+is the safe one. An illustrative example car was considered and dropped, because
+numbers invite the two reactions the block exists to avoid — arguing with our
+sums, and resenting a margin. `SELLER_W` is the one tunable.
 
 **NO ALTERNATIVE ROUTE IS NAMED** — not a private sale, not a trade-in, not
 another dealership. Steering a seller toward a route we would rather they did
-not take would undo the point of the arm. Watch for this in any revision: the
-three-tier price display the category uses (KBB's Trade-In / Private Party /
-Typical Listing) was considered and rejected on exactly this ground.
+not take would undo the point of the arm. The three-tier display the category
+uses (KBB's Trade-In / Private Party / Typical Listing) was considered and
+rejected on exactly this ground; watch for it coming back in a revision.
 
 **Delete, if the idea is dropped** — the registry entry, the page's declaration,
 the arm reader, `buildBelief`, `buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`,
