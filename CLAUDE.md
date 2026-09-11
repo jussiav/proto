@@ -2039,64 +2039,349 @@ uses an `ACTIVE()` window — but it is a real divergence if that changes.
 ## Informed decision — ideation, and deliberately thin
 
 **Not a build proposal and not a normal initiative.** Created 2026-09-10 to put
-one idea in front of the team as something switchable rather than described. It
-adds ONE section to the decision page — `Apua päätöksen tekoon`, above the
-auction-details block — in `v1` only. `control` renders nothing.
+one idea in front of the team as something switchable rather than described.
+`v1` adds two sections to the decision page above the auction-details block AND
+rebuilds the auction-details block itself; `control` is production, untouched.
 
 **All its Finnish copy was written by me and nothing is approved.** The spec
 page says so in its first card, in a warning-coloured status chip and in the
 hero. Same category as Seller file upload's draft copy, but weaker: that one is
 a proposal awaiting sign-off, this one is a conversation starter.
 
-**No figures anywhere, by instruction.** The brief was to educate, not to prove:
-no percentages, no euro gaps, no "x % of sellers". That also keeps the section
-clear of any statistic we cannot source — and it is why the original
-"consumers prefer selling to a dealership, according to market research" idea
-was **reframed into the reason** (no strangers, no test drives, no payment risk)
-rather than stated as a finding. Citing research nobody has produced would be
-fabricating evidence. If the research exists, the original framing is stronger
-and should return with its source.
+### The initiative is THREE blocks, and they answer different questions
 
-**Two blocks, because the six ideas are two shapes** — the one structural call
-made without asking. Four compare the seller's routes to a sale, which wants a
-matrix (rows × `AutoVex` / `Vaihtohyvitys` / `Itse myynti`, tick / cross /
-dash). Two are objections a seller treats as disqualifying when they are not,
-which wants a list in the seller's own voice. Forcing all six into one table
-made the last two read as claims about AutoVex rather than answers.
+| Block | Question it answers | New? |
+|---|---|---|
+| `Muutama neuvo` | "but I saw a higher number / I have a loan / I can't hand the car over yet" | new section |
+| `Mitä tapahtuu seuraavaksi?` | "what does each of these buttons actually do" | new section |
+| `Tarjouskilpailun tiedot` | "is this a good offer" | prod's block, rebuilt |
 
-**The pick-up row reads the real offer.** `car_pickup` lives on the offer, so a
-seller not offered pick-up is not told they get it — the row retitles to
-`Paperityöt puolestasi` and takes a dash. Two consequences: without pick-up the
-row ties AutoVex with trade-in and may not be worth showing, and since an offer
-WITH pick-up is the only card the selection rule shows, the tick version is
-**currently unreachable in the proto** — no scenario has a pick-up highest offer.
+All three live on the `v1` arm and **share the same open-decision gate**. They
+run in that order down the page, which is the order the questions block each
+other in: the objection stops the seller reading at all, the options say what
+they can do, the result says whether to.
 
-**Negatives are slate, not red.** On this page red means "something you have not
-seen" and amber means "your negotiation is live"; a red cross in a table would
-borrow a taken meaning. Cross and dash differ by glyph alone, and only the
-AutoVex column fills green — which is what makes it read as advocacy.
+The section id (`section-advice`) and the builder (`buildAdvice`) stay generic
+on purpose — the heading is still being worked on, and renaming both every time
+it moves would churn the call site for nothing.
 
-**Shown only where a decision is still open**: the four price tiers, `final_offer`
-and `negotiation_stopped` (a live negotiation resolves to a tier in `pas`, so
-those are covered). Not `no_offers`, `offers_expired`, `offer_accepted` or
-`offer_rejected` — there the argument is useless or tactless.
+**THREE items, expandable, styled as this page's FAQ blocks.** Same wrapper
+(`bg-white p-3 rounded-md` in a `space-y-2.5` list, no outer card), same
+summary, same caret swap, same type. Collapsed the whole section is **194px**;
+the leads alone are the glanceable version and the detail is a tap away.
 
-**Two things flagged rather than solved.** The section argues for accepting and
-sits directly above a reject button, which `docs/anti_patterns.md` warns about
-and which makes a neutral-framing arm the obvious A/B partner — the advocacy
-framing was the team's explicit choice, not a default. And two rows promise
-something of the DEALERSHIP (a conditional sale while the seller finds a
-replacement, help with remaining finance) that AutoVex does not control; wording
-is hedged to "sopia autoliikkeen kanssa", but **OPS has to confirm both before
-this reaches a seller.**
+| Lead | What the answer covers |
+|---|---|
+| **Näitkö korkeamman hinnan muualla?** | Two paragraphs: a dealership's forecourt price carries margin, warranty, reconditioning and a risk premium, so it is not what the SELLER is paid; and a trade-in allowance can look higher than it is, so compare the cash difference |
+| **Rahoitusvaje ei ole este.** | You can accept with a loan outstanding; the remaining finance is agreed with the dealership |
+| **Luovutat auton myöhemmin.** | After accepting, the dealership makes contact; inspection, paperwork and the handover date are agreed with them |
 
-**Second idea, parked:** "similar cars sold for" — recent comparable sales with
-the differences to this seller's car spelled out. Not built; it needs real data
-rather than copy, and the comparison table should be judged first.
+**The asking-price and trade-in items are ONE item now.** They were separate and
+are the same misunderstanding wearing two hats: a seller who has seen a bigger
+number elsewhere has either seen a dealership's asking price or been quoted a
+trade-in allowance, and both answers are "that figure is not what anyone pays
+you". Splitting them made the seller read two items to learn their number was
+the same kind of number.
+
+**Expandable is a deliberate REVERSAL.** An earlier revision of this section was
+an accordion and was rejected for reading as a second FAQ. What was wrong then
+was the CONTENT — four question-and-answer pairs of prose duplicating a
+component four sections below. Three short leads that each answer something on
+their own, with the detail a tap away, is the opposite trade, and mobile is why
+it wins. **Do not flatten it back.**
+
+**The first lead is a QUESTION and the other two are STATEMENTS**, unlike a
+normal FAQ, and that is the point: collapsed, each statement already answers the
+worry, so a seller who reads only the leads has been told the useful thing. The
+asking-price one has to be recognised before it can be answered. Do not "fix"
+the inconsistency.
+
+**The trade-in reasoning stays OFF the seller's screen.** In full: a dealership
+can raise the allowance on the car being traded in while holding firm on the
+price of the car the seller actually wants — discounting the new car would lower
+its perceived value, whereas overpaying for the old one feels to the seller like
+beating the system. The two cancel, because the only figure that moves is the
+cash difference. Consumers largely do not know this. On screen it is one
+sentence; the argument lives on the spec page where the team can check it.
+
+**Nothing promises anything on the dealership's behalf.** Every item that
+touches the deal says the details are AGREED WITH the dealership — which is what
+accepting actually starts — rather than saying the dealership will accommodate
+the seller. That is why the loan and handover items need no OPS sign-off.
+
+**The copy is Jussi's**, revised from my first draft and still unapproved. One
+mechanical fix went in with a cleanup: deleting a mid-sentence clause from the
+loan item had left a dangling em dash before a capital, so that is a sentence
+break now.
+
+**Collapsed heights: 194px at both widths.** With the options block the pair is
+**820px at 375px**, down from ~1300 when the advice was flat.
+
+### The FAQ accordion pattern does not work, and this section does not use it
+
+**Verified on `decision.html`: its FAQ answers never expand.** The first answer's
+wrapper computes to **0px tall open and closed**. Worth knowing before anyone
+copies the pattern again, and worth its own fix — I have NOT checked whether the
+other pages that use it (`index.html`, `help.html`, `offers.html`) are affected;
+`help.html` builds its list differently enough that a quick probe found no
+`<details>` at all at load.
+
+**Why it cannot work as written.** `MAccordion` puts the answer in a SIBLING of
+the `<details>` and animates `grid-rows-[0fr]` → `peer-open:grid-rows-[1fr]` on
+a wrapper whose only child is `overflow-hidden`. **An `overflow:hidden` box has
+an automatic minimum size of 0**, so the track resolves as `minmax(0, 1fr)`;
+with no definite height on the container there is no free space to distribute
+and the row stays 0px. Measured: the row computes to 0px whether the open value
+is `1fr`, `auto` or `minmax(0,auto)`, and 240px the instant the wrapper becomes
+`display:block`.
+
+**Two hand-written replacements were tried and both failed in ways that should
+not be possible**, which is the part to remember:
+
+- `.adv-item[open] ~ .adv-body { max-height: 40rem }` — present in the page's
+  own `<style>`, later than the collapsed rule, higher specificity, and the
+  element matched it. Computed `0px`.
+- `style.maxHeight = '240px'` set from the `toggle` event — the inline value read
+  back correctly and was still overridden, with no `!important` rule anywhere
+  that matched the element.
+
+The same thing happened to a `[open] .dh-caret { transform: rotate(180deg) }`
+rule in an earlier revision of the options section. **Three hand-written rules
+keyed on `[open]` in this style block, all dead, while Tailwind's own
+`group-open:` variants keep working on the same elements.** Unexplained. Do not
+spend a fourth attempt on it.
+
+**What this section does instead: the answer is a CHILD of the `<details>`**, so
+the browser hides and shows it natively — no CSS mechanism, no JS, nothing to
+break. The `peer` class is dropped since there is no sibling to reach. The cost
+is no open/close animation, which is exactly what the FAQ delivers today anyway.
+
+### Revision 4 (2026-09-10) — what each button does
+
+
+
+**The first three revisions answered the wrong question.** All of them compared
+AutoVex against a trade-in and a private sale — routes the seller is not
+choosing between on this page. What is actually in front of them is three
+buttons: accept, counter-offer, reject. So the section says what each one is
+FOR. The comparison is gone, and so is the standalone lead line — the section
+title carries the framing on its own.
+
+**The title is prod's own.** `Mitä tapahtuu seuraavaksi?` is
+`WhatHappensNext`'s heading, which the funnel already uses on the price step —
+so a seller meets the same question in the same words at both ends of the
+journey. Deliberate, not a collision to tidy away.
+
+**One card per action, titled with the button's own imperative** so the card and
+the control read as one thing: `Hyväksy tarjous`, `Tee vastatarjous`,
+`Hylkää tarjouskilpailu`.
+
+| Card | Lines |
+|---|---|
+| **Hyväksy tarjous** (blue, filled) | ✓ Varmistat tarjouksen ennen määräaikaa · ✓ Sovi kaupan yksityiskohdista liikkeen kanssa |
+| **Tee vastatarjous** | ✓ Voit perustella liikkeelle, miksi hinta tulisi olla korkeampi · ✗ Pidentää kaupankäyntiaikaa |
+| **Hylkää tarjouskilpailu** | ✗ Menetät kaikki tarjoukset lopullisesti · ✗ Kilpailutus päättyy tähän |
+
+Plus one footnote for the fourth outcome, the only one with no button:
+*"Jos et tee mitään, tarjoukset umpeutuvat ja kilpailutus päättyy."*
+
+**The lines are REASONS TO CHOOSE, not a description of the state.** That is the
+rule to keep. An earlier pass had the accept card saying the sale closes at the
+offer price and the dealership will be in touch — both of which the page already
+says, in the hero and on the card itself, so they cost space and told the seller
+nothing. Every line now answers "why would I pick this one".
+
+**TWO marks, not three — the slate dash is retired.** It meant "a trade-off, not
+an alarm" and carried the counter offer's time cost; Jussi's copy pass gave that
+line the red cross instead, so the only distinction left is upside or cost, and
+`MINUS` is gone from `buildDecisionHelp`. The cross is an **X in a circle in
+`red-700`, the reject button's own label colour** on its `red-200` fill, which
+is why the reject card and the button read as one action. Spent in two cards
+rather than one it no longer marks the heaviest option by itself — **the reject
+card earns that by having no upside line at all.** It still does not collide
+with red-means-unread: it sits inside a card whose title names an action, never
+in a status line.
+
+**Two things are deliberately absent, and both would have been wrong:**
+
+- **Nothing claims the price is now fixed.** A dealership can still adjust after
+  inspecting the car, so an earlier "Hinta ei enää muutu" was a promise we
+  cannot keep. It is **not** replaced with a hedge either — a seller does not
+  need that caveat at the moment of deciding.
+- **Nothing calls a counter offer binding.** It closes the sale mechanically
+  when a dealership accepts it, but it is not legally binding, and saying so
+  would misstate what the seller is agreeing to. The mechanic still shows up as
+  a positive instead: the current offer stays theirs while they ask for more.
+
+**The negotiation card must always carry the time cost.** Waiting is the real
+price of countering, and it is the one thing the page does not say anywhere else.
+Jussi's pass sharpened it — "kestää kauemmin kuin tarjouksen hyväksyminen" became
+**"pidentää kaupankäyntiaikaa" under a red cross**, so the delay reads as a cost
+rather than a comparison, and the card dropped to one upside and one cost.
+
+**The reject card has no upside line and that asymmetry is the message.** Three
+crosses would read as preaching; two, against the accept card's two ticks, says
+it without editorialising.
+
+**CARDS ARE GATED ON THE PAGE'S OWN STATE**, so the section can never describe a
+button that is not on screen:
+
+- `canCounter(offer)` mirrors prod's `sellerCanSendMessage` — not final, the
+  negotiation not stopped, under `MAX_ROUNDS`, and not the seller's turn already
+  — **plus** the final-offer rule, since prod removes every counter-offer
+  affordance once the highest offer is final.
+- the reject card reads `!bannerBotSec.classList.contains('hidden')`, i.e.
+  whether the reject-all banner is actually rendered. The banner logic runs
+  above this in `renderMain` and owns that decision; asking the DOM means the
+  two cannot drift.
+
+Verified per scenario: `seen-offers` → three cards; `final-offer` → accept and
+reject only; `counter-offer-sent` → accept alone, because it is the dealership's
+turn and the banner is hidden while they owe a reply; `dealer-replied` → three;
+`negotiation-stopped` → accept and reject.
+
+**A stale seeded thread will make that look broken, and it is not.** A stored
+negotiation survives a scenario switch by design — reset is what clears it — so
+visiting `negotiation-stopped` and then `seen-offers` leaves the stopped thread
+on offer 201 and the counter-offer card correctly disappears. Clear
+`autovex_decision` (or use the bar's reset) before reading these states.
+
+**No hand-written CSS at all**, unlike revisions 1–3. Every class is a standard
+utility the Play CDN generates without arbitrary values, so no `.dh-*` rules
+remain. Revision 2's accordion CSS went with them, including a caret rule worth
+remembering: `.dh-item[open] .dh-caret { transform: rotate(180deg) }` **matched
+the element, was the only matching transform rule in any stylesheet, and still
+computed to identity.** Reach for the pattern already working on the page before
+debugging a rule that should work.
+
+**Height across the revisions at 375px: ~1100 → 790 → 513 → 626.** It rose from
+revision 3 because three stacked cards are taller than one chart; desktop went
+the other way, 385 → 358, since the cards sit in a row.
+
+**Three ideas from the benchmarking study are still unbuilt**, and this revision
+does not change their status: **net proceeds after loan payoff** (the study's
+clearest white space — no competitor shows a live payoff figure at offer time,
+and it needs data and a product decision), **conditional acceptance** ("I
+accept, contingent on my replacement completing by date X", from property
+sale-contingency clauses, which nobody in the category runs), and **"what
+similar cars actually sold for"** as a curve of completed prices.
+
+**What this revision dropped and has not replaced:** the
+asking-price-versus-offer line, which carried the largest single cause of
+rejection. It does not belong in a section about what the buttons do. If the
+price anchor is worth addressing, it needs its own place on the page rather than
+being folded back in here.
+
+### The auction-details block, rebuilt (2026-09-11)
+
+**The third block is prod's own `Tarjouskilpailun tiedot`, not a new section.**
+Today it reports two figures and draws the bid progression, and it answers a
+question the seller is not asking. The one they ARE asking is *is this a good
+offer?*, and two bare numbers only answer it for a reader who already knows how
+a C2B auction works.
+
+**The chart is the clearest case of the problem, which is why it is what goes.**
+It draws the bids RISING, which looks like evidence and is really just the shape
+every ascending auction makes. True, decorative, settles nothing. The date row
+goes with it. The two figures stay.
+
+In their place, `buildAuctionVerdict` reads those same figures back as the
+argument they are, in the **warm-up screen's own shape** — illustration, lime
+`UiBadge`, headline, one paragraph — at the scale of a block inside a card:
+
+| Part | Copy | Job |
+|---|---|---|
+| badge | `Hyvä tarjouskilpailu` | the verdict, for whoever reads nothing else |
+| headline | `Autostasi kilpaili 25 autoliikettä.` | the fact, as a sentence rather than a count |
+| body | `Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan 25 liikkeen kilpailun tulos.` | **the mechanic — the only part that does the work** |
+| closing strip | `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
+
+**The body is the whole argument, and it makes TWO claims:** the bidders are
+professionals who looked at the listing, and they bid against each other.
+Without them, 25 is just a big number and a seller who distrusts the offer has
+no reason to read it as anything else.
+
+**An earlier draft argued from blind independent valuation** — "each dealership
+priced the car itself and did not see the other offers" — and Jussi replaced it.
+Worth knowing before anyone reinstates it: blindness is true, but it is a
+mechanic a seller has to be TAUGHT before it means anything, where "professionals
+looked at your ad and competed for it" lands on first reading.
+
+**The closing strip names no euro figure** — `korkeinta tarjousta` points at the
+card above instead, so it cannot go stale against the number beside it and the
+sentence works unchanged on a final offer. That is why `buildAuctionVerdict`
+takes `buyers` and nothing else: no amount is read in it at all. It is the only
+place on the decision page where the service states a view on the offer rather
+than reporting it, and since Jussi's pass **the only place that recommends an
+action outright**.
+
+**The stats row takes Asking price removal's grid, in this arm too.** `APR_V1 ||
+ID_V1` — not a combination (the bar allows one arm at a time) but this arm
+asking for the row the other one proposes, because a row that looks like a spec
+sheet is the wrong frame for an argument. The chart's top rule follows the same
+condition: a framed stats row above it makes `border-y` read as a doubled line,
+which is the same fix Asking price removal already documents.
+
+**The illustration is the warm-up's own `excellent_auction.png`**, so a seller
+who came through that screen meets it twice, two screens apart. Deliberate —
+this section is the explanation the warm-up's "Hyvä tarjouskilpailu takana!"
+never gave.
+
+**TWO gates, and in both the fallback is control with nothing removed** — the
+chart and the date row exactly as prod draws them:
+
+- **`buyers >= 4`** (`VERDICT_MIN_BIDDERS`), because below that the argument is
+  false. Not reachable from any scenario today — every open-decision state seeds
+  25 bidders and the bar's price fields do not touch `buyers` — so it is a guard
+  rather than a second state to review. **It is not an edge case in production:**
+  a benchmarking study put an uncompetitive auction behind roughly half of all
+  rejected-offer cases. The thin-auction version of this block is the harder half
+  of the design and is **not designed**.
+- **The same open-decision list** the other two blocks use, passed in as
+  `decisionOpen` because `buildInsights` has no `pas` of its own. The insights
+  block is NOT gated on it in prod, so without this the verdict would appear on
+  an accepted and a rejected auction — and after a rejection, "we consider that a
+  competitive price" is the service telling a seller who has walked away that
+  they were wrong.
+
+**The biggest open question, and it is on the spec page: the verdict is
+triggered by the BIDDER COUNT, not by the offer — and it now tells the seller to
+accept.** A well-attended auction can still land below what we would estimate the
+car is worth, and there the sentence is wrong in the one direction that costs the
+most trust: the seller takes the advice and finds out later. The recommendation
+raises the stakes, since stating a view and telling someone what to do are not
+the same act. The honest shape is probably the reverse of what is built — gate
+the claim on the offer against our own estimate and let the bidder count be the
+evidence rather than the trigger — but that needs the estimate on the page, which
+is a product decision this sketch does not make. Built as briefed; flagged, not
+silently fixed.
+
+**The section keeps prod's title.** `Tarjouskilpailun tiedot` described a record
+of what happened; the block is now an argument about what it meant, so the title
+undersells it. Renaming a production section is its own decision — left as an
+open question rather than changed in passing.
+
+**Heights, desktop / 375px:** advice **194 / 194** collapsed, options
+**290 / 578**, auction details **419 / 583**. The two new sections are 772px on a
+phone; the auction-details block replaces a chart and a date row rather than
+adding to them, so it is close to a wash on its own.
+
+**Shown only where a decision is still open**: the four price tiers,
+`final_offer` and `negotiation_stopped` (a live negotiation resolves to a tier in
+`pas`, so those are covered). Not `no_offers`, `offers_expired`,
+`offer_accepted` or `offer_rejected` — there the argument is useless or tactless.
+
+**Still flagged rather than solved:** the section argues for accepting and sits
+directly above a reject button, which `docs/anti_patterns.md` warns about.
+Explaining is a gentler mechanism than scoring, but a neutral-framing arm is
+still the obvious A/B partner.
 
 **Delete, do not promote, if the idea is dropped** — the registry entry, the
-page's declaration, the arm reader, `buildDecisionHelp`, the section markup and
-the spec page. Nothing else depends on it.
+page's declaration, the arm reader, `buildAdvice`, `buildDecisionHelp`,
+`buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`, the two `section-*` blocks, and
+the spec page. In `buildInsights`, put the stats gate back to `APR_V1` alone
+(both the grid and the chart's top rule) and drop the `decisionOpen` parameter
+with its call-site argument. Nothing else depends on it.
 
 ## Which offers get a card, and what a final offer implies
 
