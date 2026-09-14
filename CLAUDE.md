@@ -2346,6 +2346,12 @@ finalised for the team). No iteration history, no rejected versions, no colour
 archaeology — that all lives here in CLAUDE.md instead. Section 2 is three
 paragraphs; the `Three things, each doing one job` list is gone.
 
+**It carries THREE changes, not two.** The warm-up removal had been built in the
+proto and described only here, so the spec page had nothing to review — a dev
+reading it would have shipped two blocks and left the screen standing. It is now
+`3 — The warm-up screen goes`, with a replica of the screen being removed and a
+`Try it` link on `?scenario=new-offers`, the only state that reaches it.
+
 **Its two `What the block shows` cards are the PROTOTYPE'S OWN MARKUP,
 transplanted** — section `<h2>`, its icon, the white card, everything — on a
 `#EEF6FA` stage (the decision page's own background) at `max-w-3xl` with `p-6`,

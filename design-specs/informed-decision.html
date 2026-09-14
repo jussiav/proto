@@ -137,6 +137,9 @@
           <h2 class="font-barlow font-bold text-3xl mb-3">Try it</h2>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3">Two blocks on the decision page. Switchable from the prototype bar under <b>Informed decision</b>, or by URL:</p>
           <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=seen-offers&amp;informed-decision=v1">../decision.html?scenario=seen-offers&amp;informed-decision=v1</a>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3">For change 3, open the page as a <b>first-time visitor</b> &mdash; the arm goes straight to the offers where production shows the warm-up screen first:</p>
+          <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=new-offers&amp;informed-decision=v1">../decision.html?scenario=new-offers&amp;informed-decision=v1</a>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3">Swap <code class="font-mono text-sm">v1</code> for <code class="font-mono text-sm">control</code> on that link to see the screen it replaces.</p>
           <p class="font-dm text-base leading-6 text-slate-700 mt-3">Add <code class="font-mono text-sm">&amp;fair=0</code> &mdash; or set <b>Fair offer</b> to <code class="font-mono text-sm">0</code> in the bar&rsquo;s Auction settings &mdash; to see what a seller outside the audience gets, which is production unchanged.</p>
         </div>
       </div>
@@ -259,8 +262,50 @@
       </div>
     </section>
 
-    <!-- Open questions -->
+    <!-- Block 3 -->
     <section class="av-band av-band-grey">
+      <div class="av-container flex flex-col gap-8">
+        <div class="max-w-3xl">
+          <h2 class="font-barlow font-bold text-3xl mb-3">3 &mdash; The warm-up screen goes</h2>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Production stands a full screen between the seller and their offers the first time they open the decision page. It says the auction went well, and it carries none of the evidence for that.</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>Block 1 now makes that claim on the page itself, with the figures behind it</b> &mdash; same illustration, same message. Keeping both would make the seller read the same sentence twice, once behind a click, and only the second one earns it. <b>So this arm skips the screen and takes the seller straight to the offers.</b></p>
+          <p class="font-dm text-base leading-6 text-slate-700"><b>It reaches first-time visitors only</b>, which is the one state production uses it for &mdash; a seller returning to the page has never seen it since. Nothing else changes: the screen is untouched for everyone outside the arm, and it still appears for the auction endings the two blocks do not cover.</p>
+        </div>
+
+        <div>
+          <h3 class="font-barlow font-bold text-xl mb-3">What is removed</h3>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-4 max-w-3xl">Production&rsquo;s own screen, at the width it renders on the decision page. In production it is centred on an otherwise empty page; only the card is shown here.</p>
+          <div class="rounded-xl p-6 max-w-3xl" style="background:#EEF6FA">
+            <div class="relative bg-white px-4 pt-4 pb-[20px] shadow-md rounded-xl">
+              <div class="w-full flex flex-col md:flex-row items-center md:items-stretch md:gap-4">
+                <div class="w-full md:w-1/2 h-[270px] md:h-full px-5 md:px-0 flex justify-center items-center mb-6 md:mb-0 py-4">
+                  <img src="../assets/excellent_auction.png" alt="" class="max-h-full object-contain" />
+                </div>
+                <div class="w-full md:w-1/2 flex flex-col items-center justify-center text-center px-2.5">
+                  <div class="inline-flex items-center space-x-2 px-2 py-1 text-xs rounded border bg-lime-50 border-lime-400">
+                    <svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor" class="text-lime-700" aria-hidden="true"><path d="m246.14 113.86-16-16a20 20 0 0 0-23.06-3.75l-45.2-45.2a20 20 0 0 0-3.74-23.06l-16-16a20 20 0 0 0-28.28 0l-64 64a20 20 0 0 0 0 28.28l16 16a20 20 0 0 0 23 3.79l-59.5 59.46a32 32 0 0 0 45.26 45.26L134 167.21a20 20 0 0 0 3.81 22.94l16 16a20 20 0 0 0 28.29 0l64-64a20 20 0 0 0 0-28.29ZM80 98.34 69.64 88 128 29.65 138.34 40ZM57.64 209.67a8 8 0 0 1-11.31-11.32l59.52-59.52 11.31 11.32Zm92.7-60.29-43.72-43.72 39-39 43.72 43.72Zm17.65 37L157.65 176 216 117.66 226.34 128Z"></path></svg>
+                    <span class="text-lime-700">Tarjouskilpailu on p&auml;&auml;ttynyt</span>
+                  </div>
+                  <!-- size pinned: prod's `3xl` is 28px where this page's Tailwind has the CDN's 30px, and prod's h2 element rule supplies the leading. -->
+                  <h2 class="font-display text-3xl font-bold mt-2" style="font-size:28px;line-height:36px;color:#000">Hyv&auml; tarjouskilpailu takana!</h2>
+                  <p class="text-black text-base px-2.5 mb-16 md:mb-6 mt-1">Autosi k&auml;vi l&auml;pi koko tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.</p>
+                  <span class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">Katso tulokset</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3 max-w-3xl">EN &mdash; badge: <i>The auction has ended.</i> Heading: <i>A good auction behind you!</i> Copy: <i>&ldquo;Your car went through the whole auction and reached a network of hundreds of dealerships.&rdquo;</i> Button: <i>See the results.</i></p>
+        </div>
+
+        <div class="max-w-3xl">
+          <h3 class="font-barlow font-bold text-xl mb-3">Worth deciding together</h3>
+          <p class="font-dm text-base leading-6 text-slate-700">The screen is the one moment the seller is given nothing to do but read. Removing it trades that for a page that says more and says it in context &mdash; but it also removes a deliberate pause before a decision, and an A/B will not separate the two blocks from the missing screen unless we want it to. <b>Worth agreeing whether the removal travels with this arm or gets tested on its own.</b></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Open questions -->
+    <section class="av-band" style="background:#fff">
       <div class="av-container flex flex-col gap-8">
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-4">Open questions</h2>
