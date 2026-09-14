@@ -1803,13 +1803,6 @@
          of what the block is for. The small parts still have to be countable,
          so they stop narrowing at ~12px each on a 375px screen. */
       var SELLER_W = 79;
-      var SMALL = [
-        { w: 4.5, c: 'bg-slate-300' },
-        { w: 4.5, c: 'bg-stone-300' },
-        { w: 4,   c: 'bg-zinc-400' },
-        { w: 4,   c: 'bg-stone-400' },
-        { w: 4,   c: 'bg-slate-400' }
-      ];
 
       /* ONE LINE ABOVE THE BAR. It answers the heading and frames the diagram
          before the seller has to parse it, then stops. */
@@ -1835,9 +1828,16 @@
       html +=   '<div class="bg-green-200 rounded-md flex items-center px-2 sm:px-3" style="width:' + SELLER_W + '%">'
         +        '<span class="font-dm text-xs sm:text-sm font-bold text-green-900 truncate">Edellisen omistajan osuus</span>'
         +      '</div>';
-      SMALL.forEach(function (p) {
-        html += '<div class="' + p.c + ' rounded-md" style="width:' + p.w + '%"></div>';
-      });
+      /* ONE neutral block, not five coloured ones. Five segments made the tail
+         the busiest thing in the bar — five shapes and five colours against one
+         flat green — so the eye went to the part that matters least. They were
+         separated to be COUNTABLE, and counting them turned out not to be worth
+         the attention it cost: the caption below already says there are several
+         things, and naming them in one line was always how they were read.
+
+         Light enough to recede, dark enough to still read as a part of the bar
+         rather than empty space. */
+      html += '<div class="bg-slate-200 rounded-md flex-1"></div>';
       html += '</div>';
 
       /* TWO CAPTIONS, one under each end of the bar, each labelling the part

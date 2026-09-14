@@ -2124,19 +2124,21 @@ A diagram that TAKES the small parts out of the sticker price says "they took
 this from you"; one that starts from the previous owner's share says "they added
 this to it" — same facts, accurate causal direction, none of the resentment.
 
-**Segments are individually rounded with a real gap**, not one clipped bar, so
-the parts read as parts and the tail is countable at a glance rather than
-resolving into a striped block.
+**TWO PARTS, NOT SIX** (2026-09-14). The remainder was five separate coloured
+segments, split so it could be COUNTED. Counting it was not worth the attention
+it cost: five shapes and five colours against one flat green made the least
+important part of the bar the busiest thing in it, and the eye went there. It is
+one `bg-slate-200` block now, light enough to recede and dark enough to still
+read as part of the bar rather than empty space. The caption below already said
+there were several things, which is how they were being read anyway.
 
-**MUTED ON PURPOSE.** These segments are not a status, an action or a warning,
-and this page already spends saturated colour on all three — green accepts, blue
+**MUTED ON PURPOSE.** These parts are not a status, an action or a warning, and
+this page already spends saturated colour on all three — green accepts, blue
 negotiates, red and amber report. Green is the only hue and sits at the palest
-step that still reads as green. The rest are neutrals at 300/400, warm and cool
-alternating so they can be told apart without any going dark enough to pull the
-eye to the end of the bar.
+step that still reads as green.
 
-**The small parts exist to be COUNTED, not measured.** Near-equal widths that
-claim nothing, named collectively, never individually.
+**Both parts are individually rounded with a real gap**, not one clipped bar, so
+they read as two things rather than one striped object.
 
 **The green label is `text-xs sm:text-sm`, and that is not taste.** At 375px the
 green is 211px; at 14px the label filled it with nothing to spare, i.e. one
