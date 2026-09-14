@@ -2084,204 +2084,76 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — `Mistä jälleenmyyntihinta koostuu?`
+### Block 2 — `Näin vertaat tarjoustasi`
 
-`buildBelief(amount)`. ONE framed row, and the seller's own offer leads it:
+`buildBelief(amount)`. THREE TERMS, read left to right as an addition the reader
+completes themselves:
 
 ```
-Mistä jälleenmyyntihinta koostuu?
-Näkemäsi vastaavien autojen pyyntihinnat sisältävät edelliselle omistajalle
-maksetun summan lisäksi muita kuluja. Huomioi tämä, kun arvioit saamaasi
-tarjousta.
-┌────────────────────────────────────────────────────────────┐
-│ 🪙 11 500 € sinulle    ·· white gathers to grey ··    + Kulut │
-│        (Esim. takuu, kunnostus, myyntikulut, kate, arvon…)     │
-└────────────────────────────────────────────────────────────┘
+Näin vertaat tarjoustasi
+Auto-ilmoituksien pyyntihinnat sisältävät edelliselle omistajalle maksetun
+summan lisäksi myös muita kuluja. Huomioi tämä, kun arvioit saamaasi tarjousta
+näkemiisi pyyntihintoihin.
+┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
+│ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Pyyntihinta      │
+│ Sinulle maksett… │   ╎ Vaihtelee autoit…╎   │ Ilmoituksessa n… │
+└──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
+*Kulujen osuus riippuu auton sisäänostokunnosta, odotetusta arvonalenemasta
+sekä rahoituksesta.
 ```
 
-**THE SELLER'S OWN OFFER IS A DELIBERATE REVERSAL** (2026-09-14). Earlier
-versions showed a generic resold car with the green labelled
-`Edellisen omistajan osuus` and a caption telling the seller to compare their
-offer to it. Safe — no figure anywhere — and one inference short: the seller had
-to place themselves in the diagram. Their own number removes that step, and the
-comparison caption went with it, because a bar reading `11 500 € sinulle` needs
-no instruction to compare.
+**It came from Jussi's own Figma draft** (2026-09-14). He built the equation —
+three terms, operators between, sub-label under each — directly in
+`C2B Seller – Ad creation`, and this is that shape with two changes made when it
+was turned into another version above his: the first term carries the seller's
+real figure, and the costs term is marked unknown.
 
-**THE GRADIENT IS WHAT MAKES THE FIGURE SAFE, and it is the whole point of the
-current shape** (2026-09-14). Two segments with a real gap put a real figure on
-a part of KNOWN WIDTH, and a known width states the total it came out of —
-11 500 € at 79 % is a 14 600 € car, whether or not that number is printed. We do
-not hold that number. One bar with the green FADING into the neutral removes the
-boundary: there is nothing to measure, so nothing to divide back out, and the
-bar still says *your share is most of this, the costs are the rest*. It infers an
-unknown estimate instead of asserting a calculable one.
+**ONLY THE FIRST TERM IS FILLED, BECAUSE IT IS THE ONLY ONE WE HOLD.** The offer
+is ours to state — blue-50 fill, blue-600 border, the coins icon, the real
+amount. The resale price and the costs are not ours, so they are outlines.
 
-**The stops are deliberately far apart** — flat to 52 %, arrived by 95 %, so
-the fade is wider than either flat end. A narrow fade reads as a soft line and
-puts the boundary straight back. `SELLER_W` is gone with the segments; the stops
-in `.belief-bar` are the only tunable, and **tightening them re-creates exactly
-the problem the fade was built to solve.**
+**THE COSTS TERM IS DASHED, AND THAT IS THE WHOLE SAFETY MECHANISM.** Every
+earlier version of this block had to stop the seller running the arithmetic
+backwards, and each did it by hiding a boundary — a gradient with no locatable
+edge, then no fill at all. An equation cannot hide its terms, so it says the
+quiet part instead: the box is dashed and its sub-label reads
+`Vaihtelee autoittain – emme tiedä tarkkaa summaa.` **A dashed box reads as a
+blank to be filled, not as a quantity**, so there is nothing to subtract from
+and no proportion is claimed. **Filling that chip, or giving it a figure, breaks
+the block.**
 
-**IT WEARS `AuctionStats`' FRAME, NOT THE VERDICT BLOCK'S** (2026-09-14, and it
-took a wrong turn to land on). **This bar is a "good to know", not a
-celebration.** It is the same register as the two-figure stats row above it: it
-reports how a resale price is built and says nothing about whether this auction
-went well. Dressing it in the recommendation's green said exactly that, and the
-greens then had to be reconciled — first green-200 against the tag's green-50,
-then a matched green-50 with a green-500 border, then a gradient border on top.
-Each step made the bar look more like the verdict and less like what it is.
+**The first term is the STANDING offer**, via `standingAmount(offer)` — the same
+single definition the offer card and the accept handler read, so a negotiation
+moves all three together. With no amount it falls back to the word
+`Tarjouksesi`.
 
-The frame is **`border-slate-200`, `rounded-lg`, 1px** — `AuctionStats`' own,
-verified by comparing computed styles against that component rather than by eye.
+**Contrast, measured against the rendered pixels:**
 
-**THERE IS NO GREEN IN THE BAR AT ALL** — not the fill, not the figure. It went
-in stages: green-200, a matched green-50 with a green-500 border, a gradient
-border, green demoted to a tint plus the figure's colour, then gone. **A green
-figure with no other green on the block reads as a leftover**, and the tint was
-the last thing still implying this bar is about a good outcome.
+| Label | On | Size | Ratio |
+|---|---|---|---|
+| `11 500 €` — slate-800 | blue-50 | 16px/700 | **13.37:1** |
+| `Sinulle maksettava summa.` — slate-600 | blue-50 | 12px/400 | **6.93:1** |
+| `Kulut` / `Pyyntihinta` — slate-800 | white | 16px/700 | **14.63:1** |
+| sub-labels + footnote — slate-600 | white | 12px/400 | **7.58:1** |
 
-**THE FILL HAS NO COLOUR IN IT, AND IT IS WHAT MAKES THIS A BREAKDOWN**
-(2026-09-14). The history is long and worth compressing: green-200 → a matched
-green-50 with a green-500 border → a gradient border → a green tint → a slate
-gradient → no fill at all → a blue-50 fade → **white to gray-100.**
+All against 4.5:1, all AA.
 
-Two dead ends, each teaching the same thing. Every GREEN version said *the
-auction went well*, which is the verdict block's job rather than this one's. The
-BLUE version said *this is an AutoVex fact* and competed with the section icon
-for that meaning. And the NO-FILL version was right about both and went too far:
-a bordered strip of text is true, quiet, and not visibly about the composition
-of a price.
-
-Plain white-to-grey says only *this is the price, and part of it is not yours*,
-which is the whole claim. The exact stops are Jussi's:
-`#fff 0%, #fff 62%, #F8FAFC 75%, #f3f4f6 100%`. The card's own white runs under
-the seller's figure and the grey gathers at the costs end, so the bar has one
-body with two ends and never a boundary between them.
-
-**IT STATES NO PROPORTION, and every version has had to satisfy that.** We know
-the offer; the resale price and the costs are both unknown. The fade has no
-locatable edge, so there is nothing to measure off the screen and nothing to
-divide back out. **Any revision that sharpens the transition puts that back** —
-which is why the stops stay far apart: flat to 52 %, arrived by 95 %.
-
-**It is otherwise AuctionStats' cell, not a bar** — same 1px slate-200 border, same
-`rounded-lg`, same `p-2.5`, same value/label typography, same icon treatment:
-
-| Side | Role | What |
-|---|---|---|
-| left | VALUE | `ph-fill-coins` at `fill-current text-blue-400` 18px + `gap-1.5`, then `text-slate-800 text-sm xs:text-base font-bold` |
-| right | LABEL | `+ Kulut` at `text-slate-500 text-xs xs:text-sm`, **with the examples under it**, right-aligned |
-
-**The examples moved INSIDE.** They were a footnote under the bar; now
-everything the costs are is in one place. That second line is also what gives
-the block AuctionStats' height — a one-line strip reads as a progress bar, two
-lines read as a cell.
-
-**THE MUTED LINES ARE slate-600, NOT AuctionStats' slate-500, and that comes
-back whenever the bar carries a fill.** Both muted lines are right-aligned, so
-they sit on the DARKEST part of the fill: slate-500 on gray-100 measures
-**4.32:1 and fails AA**, where it passes in AuctionStats only because that row
-is transparent over white. slate-600 there is 6.89:1. The deviation has now left
-and returned twice, tracking the fill each time — it is a measurement, never a
-preference.
-
-**Below prod's `sm` it stacks**, because in a ~120px column the examples line
-wrapped to FOUR lines and the block read as two unequal columns. Same move
-AuctionStats makes when its container cannot hold a row — a container query
-there, since that component is dropped into hosts of wildly different widths; a
-media query here, since this block only ever sits in the decision page's card.
-
-**THE STACKING SELECTOR IS DOUBLED, `.belief-bar.belief-bar`, and it is a trap
-worth knowing.** `.belief-bar` and Tailwind's `items-center` / `gap-3` are both
-one class, so specificity ties and SOURCE ORDER decides — and the Play CDN
-appends its generated utilities to the head at runtime, i.e. after the page's own
-`<style>`. The single-class rule lost: the row went to column and then centred
-itself, because `align-items: center` still won on the cross axis. Two classes
-win without `!important`.
-
-**THE FIGURE IS THE OFFER AS IT STANDS, NOT THE AUCTION RESULT** (2026-09-14).
-A negotiation raises the standing amount, and the card's big figure has always
-followed it — the bar has to say the same number or it silently quotes a stale
-price next to a live one. `standingAmount(offer)` is now the ONE definition:
-the auction result until a dealership replies, the latest dealer amount after
-that, clamped never to fall below the auction result (which mirrors prod, where
-`DealerNegotiationMessageAmount` refuses a lower reply and `CloseNegotiation`
-preserves the amount).
-
-**Three readers, one function.** The card's figure and the accept handler that
-commits the sale each had their own copy of this calculation; the bar would have
-been a third. `renderMain` re-runs after every counter-offer and every simulated
-dealer action, so the bar tracks without any wiring of its own. Verified by
-raising a dealer message and watching both move together.
-
-**What the colour removal costs, recorded rather than hidden:** the figure no
-longer ties to the page's green accepting direction, so nothing but the copy
-says `11 500 € sinulle` is the seller's money. That is the intended trade — this
-block is not the recommendation — but it is the thing to look at first if the
-bar ever stops landing.
-
-**The label is `[VALUE] sinulle`, not `Tarjouksesi [VALUE]`.** Same figure, and
-it reads as something the seller can have rather than a record of what was bid.
-
-**`+ Kulut`, not `Kulut`.** The `+` is an operator: it makes the bar an addition
-the reader completes themselves, so the costs end states a relationship rather
-than just naming a thing.
-
-**ONE figure only, and the costs end must never get one.** A euro amount on
-`Kulut` would turn "what a dealership adds" into "what they take off your
-price", which is the reaction the whole block exists to avoid — and it would
-restore the arithmetic the gradient just removed. The `Esim.` hedge matters for
-the same reason: examples of what a dealership adds, not an audited list.
-
-**Both labels sit inside the one bar**, the figure at the left edge and `Kulut`
-pushed right onto the flat neutral end, where it labels what the fade arrives
-at. Nothing under the bar points at anything.
-
-**TWO PARTS, NOT SIX — and now not even two.** The remainder was five separate
-coloured segments, split so it could be COUNTED. Counting it was not worth the
-attention it cost: five shapes and five colours against one flat green made the
-least important part of the bar the busiest thing in it. It became one flat
-neutral block, then the neutral end of a single bar.
-
-**MUTED ON PURPOSE.** These parts are not a status, an action or a warning, and
-this page already spends saturated colour on all three — green accepts, blue
-negotiates, red and amber report. Green is the only hue in the diagram.
-
-**`.belief-bar` is hand-written CSS**, not an arbitrary utility: the block is
-injected by JS and the Play CDN generates those a tick AFTER the render, which
-would paint the bar transparent on first paint. Same rule as `.modal-help` and
-`.neg-thread`.
-
-**Contrast, measured against the actual rendered pixels** — a canvas sample under
-each label rather than an eyeballed colour pair, which is the only honest method
-over a gradient (`accept-button-lab.html` uses the same one):
-
-| Label | On | Size | Ratio | WCAG 2.0 |
-|---|---|---|---|---|
-| `11 500 € sinulle` — slate-800 | white | 16px/700 | **14.63:1** | AA + AAA |
-| `+ Kulut` — slate-600 | gray-100 | 14px/500 | **6.89:1** | AA |
-| `(Esim. …)` — slate-600 | gray-100 | 12px/400 | **6.89:1** | AA |
-| *AuctionStats' own slate-500, rejected* | gray-100 | — | *4.32:1* | **fails** |
-
-Neither label is "large text" at these sizes, so both are against 4.5:1.
-
-Neither is "large text" — 14px bold is under the 18.66px bold threshold — so both
-are against 4.5:1. `slate-700` would buy AAA on the costs label; slate-600 is the
-muted token this block uses throughout, so it stays unless the team asks.
+**Below prod's `sm` it stacks** — three ~200px terms cannot sit in a 287px
+column — and the operators become row separators. `.belief-eq.belief-eq` is
+doubled for the same reason every other rule in this block is: `.belief-eq` and
+Tailwind's `items-stretch` / `gap-3` are one class each, so source order decides,
+and the Play CDN appends its utilities after the page's own `<style>`.
 
 **NO ALTERNATIVE ROUTE IS NAMED** — not a private sale, not a trade-in, not
-another dealership. Steering a seller toward a route we would rather they did
-not take would undo the point of the arm. The three-tier display the category
-uses (KBB's Trade-In / Private Party / Typical Listing) was considered and
-rejected on exactly this ground; watch for it coming back in a revision.
+another dealership. The block answers why the advertised number was bigger and
+stops.
 
-**The design took eight passes** — a bordered list of rows with explanatory
-paragraphs (read as a FAQ), a two-bar equation, one bar with a legend and
-caption, the bar self-labelling with copy beneath, copy above with a wider
-green, the previous-owner framing with a comparison caption, the seller's own
-offer in a sized segment, then the gradient. The rule that survived all of
-them: **if a revision needs a paragraph to make the picture land, the picture is
-wrong.**
+**What the earlier versions were, in one line**, since the reasoning still
+applies: a bordered list of rows (read as a FAQ), a two-bar equation, one
+stacked bar with a legend, the bar self-labelling, the previous-owner framing,
+the seller's own offer in a sized segment, a gradient with no locatable edge,
+and no fill at all. **The rule that survived all of them: if a revision needs a
+paragraph to make the picture land, the picture is wrong.**
 
 ### The value of the auction belongs in block 1, not block 2
 
