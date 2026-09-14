@@ -2098,8 +2098,9 @@ näkemiisi pyyntihintoihin.
 │ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Pyyntihinta      │
 │ Sinulle maksett… │   ╎ Vaihtelee autoit ╎   │ Ilmoituksessa n… │
 └──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
-*Kulujen osuus riippuu auton sisäänostokunnosta, odotetusta arvonalenemasta
-sekä rahoituksesta.
+*Kuluja ovat esim. kunnostus, katsastus, takuu, kuljetus, säilytys, rahoitus,
+markkinointi, arvonalenema ja kate. Niiden suuruus riippuu autosta ja
+markkinatilanteesta.
 ```
 
 **It came from Jussi's own Figma draft** (2026-09-14). He built the equation —
@@ -2124,6 +2125,22 @@ quantity**, so there is nothing to subtract from and no proportion is claimed.
 The sub-label was `Vaihtelee autoittain – emme tiedä tarkkaa summaa.` and was cut
 to two words. The dash clause was the picture apologising in prose — the dashed
 box already says it, and a term in an equation should read as a term.
+
+**THE FOOTNOTE IS A LIST BECAUSE LENGTH IS THE POINT** (2026-09-14). It named
+three FACTORS — purchase condition, expected depreciation, financing — which is
+accurate and tells a seller nothing they had not already guessed. It now names
+NINE ordinary costs, concrete first and abstract last: `kunnostus, katsastus,
+takuu, kuljetus, säilytys, rahoitus, markkinointi, arvonalenema ja kate`.
+
+The reaction to aim for is **"I had not thought of half of those"**, and that
+only lands if the list outruns what the reader could have listed themselves.
+**Shortening it defeats the purpose — the length IS the argument.** The closing
+clause names both variables, the car and the market.
+
+`esim.` still does the hedging: examples of what a dealership adds, not an
+exhaustive or audited list. **No figure against any of them, `kate` least of
+all** — a euro amount there hands the seller something to resent rather than
+something to understand.
 
 **The first term is the STANDING offer**, via `standingAmount(offer)` — the same
 single definition the offer card and the accept handler read, so a negotiation

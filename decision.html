@@ -1904,9 +1904,19 @@
          chip is dashed, and its sub-label says so. That is what stops the row
          being read as an arithmetic the seller can run backwards.
 
-         `Esim.` in the footnote is the hedge that matters: these are examples of
-         what a dealership adds, not an exhaustive or audited list, and the block
-         prints no figure for any of them. */
+         THE FOOTNOTE IS A LIST BECAUSE LENGTH IS THE POINT. It used to name
+         three FACTORS — purchase condition, expected depreciation, financing —
+         accurate, and telling a seller nothing they had not already guessed.
+         Naming nine ordinary costs does the work instead: the reaction to aim
+         for is "I had not thought of half of those", and that only lands if the
+         list outruns what the reader could have listed themselves. The order
+         runs concrete → unobvious → abstract for the same reason, and the
+         closing clause names BOTH variables, the car and the market.
+
+         `esim.` is the hedge that matters: these are examples of what a
+         dealership adds, not an exhaustive or audited list, and NO FIGURE is
+         printed for any of them — a euro amount against `kate` hands the seller
+         something to resent rather than something to understand. */
       function chip(cls, label, sub, coins) {
         return '<div class="belief-chip ' + cls + ' flex-1 min-w-0">'
           +      '<span class="flex items-center gap-1.5">'
@@ -1928,7 +1938,7 @@
         +      chip('', 'Pyyntihinta', 'Ilmoituksessa näkyvä hinta.', false)
         +    '</div>';
 
-      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Kulujen osuus riippuu auton sisäänostokunnosta, odotetusta arvonalenemasta sekä rahoituksesta.</p>';
+      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Kuluja ovat esim. kunnostus, katsastus, takuu, kuljetus, säilytys, rahoitus, markkinointi, arvonalenema ja kate. Niiden suuruus riippuu autosta ja markkinatilanteesta.</p>';
 
       return html;
     }
