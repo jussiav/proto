@@ -2096,7 +2096,7 @@ summan lisäksi myös muita kuluja. Huomioi tämä, kun arvioit saamaasi tarjous
 näkemiisi pyyntihintoihin.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
 │ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Pyyntihinta      │
-│ Sinulle maksett… │   ╎ Vaihtelee autoit ╎   │ Ilmoituksessa n… │
+│ Sinulle maksett… │   ╎ Vaihtelee autoit ╎   │ Ilmoituksessa n… │   (no full stops)
 └──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
 *Kuluja ovat esim. kunnostus, katsastus, takuu, kuljetus, säilytys, rahoitus,
 markkinointi, arvonalenema ja kate. Niiden suuruus riippuu autosta ja
@@ -2110,8 +2110,20 @@ was turned into another version above his: the first term carries the seller's
 real figure, and the costs term is marked unknown.
 
 **ONLY THE FIRST TERM IS FILLED, BECAUSE IT IS THE ONLY ONE WE HOLD.** The offer
-is ours to state — blue-50 fill, blue-600 border, the coins icon, the real
-amount. The resale price and the costs are not ours, so they are outlines.
+is ours to state — the real amount, the coins icon, and a filled chip. The
+resale price and the costs are not ours, so they are outlines.
+
+**THAT CHIP WEARS THE VERDICT TAG'S EXACT GREEN** (2026-09-14): `green-50` fill,
+`green-500` border, `green-700` icon — the same three values as
+`Loistava suoritus!`, verified against the tag's computed styles rather than by
+eye. It was blue-50/blue-600/blue-400, on the reasoning that green is the
+accepting direction and this block is not the recommendation. **Jussi's call
+reverses that, and it holds:** the green term IS the money the seller gets by
+accepting, so here green points at the same act the verdict recommends instead
+of competing with it.
+
+**The label text stays slate-800**, not the tag's green-900, so the three terms
+read as one set. Only the container matches the tag.
 
 **THE COSTS TERM IS DASHED, AND THAT IS THE WHOLE SAFETY MECHANISM.** Every
 earlier version of this block had to stop the seller running the arithmetic
@@ -2151,8 +2163,8 @@ moves all three together. With no amount it falls back to the word
 
 | Label | On | Size | Ratio |
 |---|---|---|---|
-| `11 500 €` — slate-800 | blue-50 | 16px/700 | **13.37:1** |
-| `Sinulle maksettava summa.` — slate-600 | blue-50 | 12px/400 | **6.93:1** |
+| `11 500 €` — slate-800 | green-50 | 16px/700 | **13.97:1** |
+| `Sinulle maksettava summa` — slate-600 | green-50 | 12px/400 | **7.24:1** |
 | `Kulut` / `Pyyntihinta` — slate-800 | white | 16px/700 | **14.63:1** |
 | sub-labels + footnote — slate-600 | white | 12px/400 | **7.58:1** |
 
@@ -2319,7 +2331,14 @@ building it, so the two arms that draw that row keep one definition of it.
 | Part | Copy | Job |
 |---|---|---|
 | **1 — green block** | lead `Loistava suoritus!`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
-| **2 — headline** | `Nyt tiedät, mitä juuri sinun autostasi maksetaan.` | the payoff, promoted — `juuri sinun` is the same anti-generic move the body makes |
+| **2 — headline** | `Nyt tiedät, mitä autostasi maksetaan juuri nyt.` | the payoff, promoted — and `juuri nyt` puts a clock on it |
+
+**The headline has carried three shapes.** `Autostasi kilpaili 25 autoliikettä.`
+(a count, duplicating the stats row) → `Nyt tiedät, mitä juuri sinun autostasi
+maksetaan.` (`juuri sinun` doing the anti-generic work) → the current one, where
+`juuri nyt` trades that for urgency: the offer expires, and nothing else in this
+block says so. **The anti-generic job now rests entirely on the body**, which
+still carries it twice (`perehtyi autoosi`, `Laskettuaan sille tarkan hinnan`).
 | **2 — body** | `25 autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun. Hyväksy tarjous, ja jatka myyntiä autoliikkeen kanssa.` | **who priced the car, how they competed, and who you deal with** |
 | **3 — stats row** | `Tarjouksia yhteensä` / `Tarjoajat` | the evidence, closing rather than opening |
 
