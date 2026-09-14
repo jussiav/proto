@@ -2086,56 +2086,72 @@ exclusions share one fallback.
 
 ### Block 2 — `Mistä jälleenmyyntihinta koostuu?`
 
-`buildBelief(amount)`. ONE bar in two parts, and the first part is the seller's
-own offer:
+`buildBelief(amount)`. ONE bar, no segments, and the seller's own offer leads it:
 
 ```
 Mistä jälleenmyyntihinta koostuu?
 Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain
 autosta maksettua hintaa.
-[ Tarjouksesi 11 500 €                          ][ Kulut ]
+[ 11 500 € sinulle          ·· fade ··          Kulut ]
                     (Esim. takuu, kunnostus, kulut, kate, arvonalenema)
 ```
 
-**THE SELLER'S OWN OFFER IN THE GREEN IS A DELIBERATE REVERSAL** (2026-09-14).
-Earlier versions showed a generic resold car with the green labelled
+**THE SELLER'S OWN OFFER IS A DELIBERATE REVERSAL** (2026-09-14). Earlier
+versions showed a generic resold car with the green labelled
 `Edellisen omistajan osuus` and a caption telling the seller to compare their
 offer to it. Safe — no figure anywhere — and one inference short: the seller had
-to place themselves in the diagram. Their own number removes that step entirely,
-and the comparison caption went with it, because a segment reading
-`Tarjouksesi 11 500 €` needs no instruction to compare.
+to place themselves in the diagram. Their own number removes that step, and the
+comparison caption went with it, because a bar reading `11 500 € sinulle` needs
+no instruction to compare.
 
-**THE TRADE, AND IT IS THE ONE CLAIM IN THIS BLOCK THAT IS NOT SCHEMATIC.** A
-real figure on a segment of known width implies the total: 11 500 € at 79%
-implies roughly 14 500 €. So the block now quietly says what the seller's car
-might be advertised for, even though no total is printed. Weighed and accepted
-for relatability. **`SELLER_W` is therefore load-bearing** — it used to be a
-schematic that claimed nothing, and it now sets that implied figure.
+**THE GRADIENT IS WHAT MAKES THE FIGURE SAFE, and it is the whole point of the
+current shape** (2026-09-14). Two segments with a real gap put a real figure on
+a part of KNOWN WIDTH, and a known width states the total it came out of —
+11 500 € at 79 % is a 14 600 € car, whether or not that number is printed. We do
+not hold that number. One bar with the green FADING into the neutral removes the
+boundary: there is nothing to measure, so nothing to divide back out, and the
+bar still says *your share is most of this, the costs are the rest*. It infers an
+unknown estimate instead of asserting a calculable one.
 
-If it ever has to go back, `Edellisen omistajan osuus` plus a
-`Vertaa tarjoustasi tähän.` caption is the shape to return to.
+**The stops are deliberately far apart** — `#BBF7D0 0% 52% → #CBD5E1 95% 100%`,
+so the fade is wider than either flat end. A narrow fade reads as a soft line
+and puts the boundary straight back. `SELLER_W` is gone with the segments; the
+stops in `.belief-bar` are the only tunable, and **tightening them re-creates
+exactly the problem the fade was built to solve.**
 
-**ONE figure only, and the remainder must never get one.** A euro amount on
+**The far end is slate-300, one step darker than the segment it replaces.** Two
+pale tints of near-equal lightness fading into each other came out as a wash —
+the costs end stopped reading as a different material at all, which costs the
+block its point. Still no hue, still muted; just dark enough to arrive
+somewhere.
+
+**The label is `[VALUE] sinulle`, not `Tarjouksesi [VALUE]`.** Same figure, and
+it reads as something the seller can have rather than a record of what was bid.
+
+**ONE figure only, and the costs end must never get one.** A euro amount on
 `Kulut` would turn "what a dealership adds" into "what they take off your
-price", which is the reaction the whole block exists to avoid. The `Esim.` hedge
-under it matters for the same reason: examples of what a dealership adds, not an
-audited list.
+price", which is the reaction the whole block exists to avoid — and it would
+restore the arithmetic the gradient just removed. The `Esim.` hedge matters for
+the same reason: examples of what a dealership adds, not an audited list.
 
-**Both parts name themselves inside their own segment**, so nothing under the
-bar points at anything any more.
+**Both labels sit inside the one bar**, the figure at the left edge and `Kulut`
+pushed right onto the flat neutral end, where it labels what the fade arrives
+at. Nothing under the bar points at anything.
 
-**TWO PARTS, NOT SIX.** The remainder was five separate coloured segments, split
-so it could be COUNTED. Counting it was not worth the attention it cost: five
-shapes and five colours against one flat green made the least important part of
-the bar the busiest thing in it, and the eye went there. One `bg-slate-200`
-block now — light enough to recede, dark enough to read as part of the bar
-rather than empty space.
+**TWO PARTS, NOT SIX — and now not even two.** The remainder was five separate
+coloured segments, split so it could be COUNTED. Counting it was not worth the
+attention it cost: five shapes and five colours against one flat green made the
+least important part of the bar the busiest thing in it. It became one flat
+neutral block, then the neutral end of a single bar.
 
 **MUTED ON PURPOSE.** These parts are not a status, an action or a warning, and
 this page already spends saturated colour on all three — green accepts, blue
 negotiates, red and amber report. Green is the only hue in the diagram.
 
-**Both parts are individually rounded with a real gap**, not one clipped bar.
+**`.belief-bar` is hand-written CSS**, not an arbitrary utility: the block is
+injected by JS and the Play CDN generates those a tick AFTER the render, which
+would paint the bar transparent on first paint. Same rule as `.modal-help` and
+`.neg-thread`.
 
 **NO ALTERNATIVE ROUTE IS NAMED** — not a private sale, not a trade-in, not
 another dealership. Steering a seller toward a route we would rather they did
@@ -2143,12 +2159,13 @@ not take would undo the point of the arm. The three-tier display the category
 uses (KBB's Trade-In / Private Party / Typical Listing) was considered and
 rejected on exactly this ground; watch for it coming back in a revision.
 
-**The design took seven passes** — a bordered list of rows with explanatory
+**The design took eight passes** — a bordered list of rows with explanatory
 paragraphs (read as a FAQ), a two-bar equation, one bar with a legend and
 caption, the bar self-labelling with copy beneath, copy above with a wider
-green, the previous-owner framing with a comparison caption, then the seller's
-own offer. The rule that survived all of them: **if a revision needs a paragraph
-to make the picture land, the picture is wrong.**
+green, the previous-owner framing with a comparison caption, the seller's own
+offer in a sized segment, then the gradient. The rule that survived all of
+them: **if a revision needs a paragraph to make the picture land, the picture is
+wrong.**
 
 ### The value of the auction belongs in block 1, not block 2
 

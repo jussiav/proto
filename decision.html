@@ -82,6 +82,28 @@
        briefly uncapped and the scroll-to-bottom had nothing to scroll. */
     .neg-thread { max-height: 325px; overflow-y: auto; }
 
+    /* Informed decision's price-belief bar. ONE bar, not two segments: the
+       seller's own figure FADES into the dealership's costs instead of meeting
+       them at an edge, so there is no boundary to measure off the screen and no
+       total to divide back out. The stops are deliberately far apart — the fade
+       is wider than either flat end — because a narrow one reads as a soft line
+       and puts the boundary back.
+
+       Hand-written rather than an arbitrary utility: the whole block is injected
+       by JS and the Play CDN generates those a tick AFTER the render, which
+       would paint the bar transparent on first paint. Same rule as `.modal-help`
+       and `.neg-thread` above.
+
+       The far end is slate-300, one step darker than the flat segment it
+       replaces. Two pale tints of near-equal lightness fading into each other
+       came out as a wash — the costs end stopped reading as a different
+       material at all, which costs the block its point. Still no hue, still
+       muted; just dark enough to arrive somewhere. */
+    .belief-bar {
+      background-image: linear-gradient(to right,
+        #BBF7D0 0%, #BBF7D0 52%, #CBD5E1 95%, #CBD5E1 100%);  /* green-200 → slate-300 */
+    }
+
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
        Play CDN generates no utilities for a ::before, and the SCSS is scoped in
        prod. Colours are prod's `bg-blue` (= blue-600, #0B6DFF) and the #E1E7F0
@@ -1811,33 +1833,23 @@
        take off your price", which is the reaction the whole block is built to
        avoid. */
     function buildBelief(amount) {
-      /* Green is the only hue in the diagram. The share does not need colour to
-         dominate — it is most of the bar — so the green only marks which part is
-         the seller's, and the remainder is one light neutral that recedes.
-
-         At 72% the green read as a grudging majority, closer to "they keep a
-         quarter" than to "nearly all of this is yours". 79% is also now a
-         load-bearing number rather than a schematic one: it is what sets the
-         implied total above. */
-      var SELLER_W = 79;
-
       var html = '<p class="font-dm text-sm text-slate-700 mb-4">Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain autosta maksettua hintaa.</p>';
 
-      html += '<div class="flex gap-1 h-10">';
-      /* Both parts name themselves inside their own segment. Nothing under the
-         bar points at anything any more, which is what let the comparison
-         caption go: a segment that says `Tarjouksesi 11 500 €` needs no
-         instruction to compare. */
-      html +=   '<div class="bg-green-200 rounded-md flex items-center px-3" style="width:' + SELLER_W + '%">'
-        +        '<span class="font-dm text-sm font-bold text-green-900 truncate">Tarjouksesi' + (amount ? ' ' + fmtCurrency(amount) : '') + '</span>'
-        +      '</div>';
-      html +=   '<div class="bg-slate-200 rounded-md flex-1 flex items-center px-2 min-w-0">'
-        +        '<span class="font-dm text-xs font-medium text-slate-600 truncate">Kulut</span>'
-        +      '</div>';
-      html += '</div>';
+      /* ONE bar. The two parts used to be two elements with a real gap, which
+         made the split measurable: a figure on a segment of known width states
+         the total it came out of. The gradient removes the edge, so the bar
+         still says "your share is most of this and the costs are the rest"
+         without saying how much the car retails for. See `.belief-bar`.
 
-      /* The remainder's contents, under the remainder. `Esim.` is the hedge
-         that matters: these are examples of what a dealership adds, not an
+         The seller's figure leads and the costs label sits at the far right, on
+         the flat neutral end, where it labels what the fade has arrived at. */
+      html += '<div class="belief-bar rounded-md h-10 flex items-center justify-between gap-3 px-3">'
+        +      '<span class="font-dm text-sm font-bold text-green-900 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
+        +      '<span class="font-dm text-xs font-medium text-slate-600 flex-shrink-0">Kulut</span>'
+        +    '</div>';
+
+      /* What the neutral end contains, under the neutral end. `Esim.` is the
+         hedge that matters: these are examples of what a dealership adds, not an
          exhaustive or audited list, and the block prints no figure for any of
          them. */
       html += '<p class="font-dm text-xs text-slate-500 text-right mt-1.5">(Esim. takuu, kunnostus, kulut, kate, arvonalenema)</p>';
