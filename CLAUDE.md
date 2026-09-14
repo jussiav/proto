@@ -2319,7 +2319,7 @@ building it, so the two arms that draw that row keep one definition of it.
 | Part | Copy | Job |
 |---|---|---|
 | **1 — green block** | lead `Loistava suoritus!`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
-| **2 — headline** | `Nyt tiedät, mitä autostasi maksetaan.` | the payoff, promoted |
+| **2 — headline** | `Nyt tiedät, mitä juuri sinun autostasi maksetaan.` | the payoff, promoted — `juuri sinun` is the same anti-generic move the body makes |
 | **2 — body** | `25 autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun. Hyväksy tarjous, ja jatka myyntiä autoliikkeen kanssa.` | **who priced the car, how they competed, and who you deal with** |
 | **3 — stats row** | `Tarjouksia yhteensä` / `Tarjoajat` | the evidence, closing rather than opening |
 
