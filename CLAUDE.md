@@ -2301,10 +2301,17 @@ building it, so the two arms that draw that row keep one definition of it.
 
 | Part | Copy | Job |
 |---|---|---|
-| **1 — green block** | lead `Hyvä tarjouskilpailu`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
+| **1 — green block** | lead `Loistava suoritus!`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
 | **2 — headline** | `Nyt tiedät, mitä autostasi maksetaan.` | the payoff, promoted |
-| **2 — body** | `25 autoliikkeen ammattilaista perehtyi ilmoitukseesi ja teki oman tarjouksensa. Kaupan teet suoraan autoliikkeen kanssa.` | **who made the offers, and who is buying** |
+| **2 — body** | `25 autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun. Hyväksy tarjous, ja jatka myyntiä autoliikkeen kanssa.` | **who priced the car, how they competed, and who you deal with** |
 | **3 — stats row** | `Tarjouksia yhteensä` / `Tarjoajat` | the evidence, closing rather than opening |
+
+**`Loistava suoritus!`, NOT `Hyvä tarjouskilpailu`** (2026-09-14). Jussi's call,
+and the reason is worth keeping: `hyvä` invites the question of what a BETTER
+auction would have looked like, which is exactly the doubt this block exists to
+close. A superlative leaves nothing above it. Do not confuse this string with
+the warm-up screen's `Hyvä tarjouskilpailu takana!`, which is prod's and
+unchanged — `control` still renders it.
 
 **The badge and the recommendation are ONE block** (2026-09-11). They were a
 lime `UiBadge` above the headline and a blue strip below the body — two green-ish
@@ -2367,10 +2374,16 @@ three words are decoration:
 
 | Phrase | The belief it answers |
 |---|---|
-| `ammattilaista` | sellers do not know a person looked at the car at all |
-| `perehtyi ilmoitukseesi` · `oman tarjouksensa` | they assume AutoVex fetches generic prices for similar cars, so the copy says each dealership studied THIS listing and priced it itself |
-| `näkivät toistensa tarjoukset ja korottivat omiaan määräaikaan asti` | the auction was a real contest, not 25 sealed envelopes — see the correction below |
-| `Kaupan teet suoraan autoliikkeen kanssa` | AutoVex is not the buyer — and market research says a named dealership is what consumers prefer over a website or a stranger at the door |
+| `ammattilaista perehtyi autoosi` | sellers do not know a person looked at all. `autoosi`, not `ilmoitukseesi` — it lands on the car rather than on a document |
+| `Laskettuaan sille tarkan hinnan` | the direct answer to "you just pull prices for similar cars": each dealership priced THIS car before bidding |
+| `korottivat vielä tarjouksiaan voittaakseen kilpailun` | the auction was a real contest, not 25 sealed envelopes — see the correction below |
+| `jatka myyntiä autoliikkeen kanssa` | the dealership is the counterparty, which research says consumers prefer to a website or a stranger at the door |
+
+**That last line now IMPLIES rather than states that AutoVex is not the buyer.**
+It was `Kaupan teet suoraan autoliikkeen kanssa` and became a call to action in
+Jussi's pass (2026-09-14). Worth watching in testing: the misconception it was
+written against is that AutoVex buys the car, and the sentence no longer says
+outright that it does not.
 
 **THE COMPETITION CLAUSE ALSO DECODES THE STATS ROW, which nothing else on the
 page does.** `138 tarjousta / 25 tarjoajaa` is a contradiction to a seller who

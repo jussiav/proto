@@ -2041,7 +2041,7 @@
       h += '<div class="p-3 rounded-lg bg-green-50 border border-green-500">'
         +    '<div class="flex items-center gap-2">'
         +      '<span class="inline-flex flex-shrink-0 text-green-700">' + ICO_GAVEL + '</span>'
-        +      '<span class="font-dm text-sm font-bold text-green-900">Hyvä tarjouskilpailu</span>'
+        +      '<span class="font-dm text-sm font-bold text-green-900">Loistava suoritus!</span>'
         +    '</div>'
         +    '<p class="font-dm text-sm text-green-900 mt-1">Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.</p>'
         +  '</div>';
@@ -2078,21 +2078,27 @@
            treatment on the support banner. One step below the section's `h2` so
            the two do not compete. */
         +      '<h3 class="font-display text-lg font-bold leading-snug">Nyt tiedät, mitä autostasi maksetaan.</h3>'
-        /* FOUR THINGS IN THREE SENTENCES, and each is a reject reason we hear.
-           `ammattilaista` — sellers do not know a person looked at all.
-           `perehtyi ilmoitukseesi` and `oman tarjouksensa` — they assume we
-           fetch generic prices for similar cars, so the copy says each
-           dealership studied THIS listing and priced it themselves.
-           `näkivät toistensa tarjoukset ja korottivat omiaan määräaikaan asti`
-           — THE AUCTION WAS A REAL CONTEST, NOT 25 SEALED ENVELOPES. It does
-           two jobs at once: a competitive result beats the best of 25 blind
-           guesses, and it is the only thing on the page that explains why the
-           row below reads 138 bids from 25 bidders. A seller who does not know
-           a dealership can bid more than once reads those two figures as a
-           contradiction.
-           `Kaupan teet suoraan autoliikkeen kanssa` — AutoVex is not the buyer,
-           and a named dealership is what research says sellers prefer. */
-        +      '<p class="font-dm text-sm text-slate-700 mt-2">' + buyers + ' autoliikkeen ammattilaista perehtyi ilmoitukseesi ja teki oman tarjouksensa. He näkivät toistensa tarjoukset ja korottivat omiaan määräaikaan asti. Kaupan teet suoraan autoliikkeen kanssa.</p>'
+        /* THREE SENTENCES, and each answers something sellers actually say.
+           `ammattilaista perehtyi autoosi` — sellers do not know a person
+           looked at all, and many assume we fetch generic prices for similar
+           cars. `autoosi` puts it on THIS car rather than the listing as a
+           document.
+           `Laskettuaan sille tarkan hinnan` — each dealership priced the car
+           itself before bidding, which is the direct answer to "you just pull
+           numbers for similar cars".
+           `korottivat vielä tarjouksiaan voittaakseen kilpailun` — THE AUCTION
+           WAS A REAL CONTEST, NOT 25 SEALED ENVELOPES. Two jobs at once: a
+           contested result beats the best of 25 independent guesses, and it is
+           the only sentence on the page that explains why the row below reads
+           138 bids from 25 bidders — a seller who does not know a dealership
+           may bid more than once reads those figures as a contradiction.
+           `jatka myyntiä autoliikkeen kanssa` — the dealership is the
+           counterparty, which research says consumers prefer to a website or a
+           stranger at the door. Note this now IMPLIES rather than states that
+           AutoVex is not the buyer; the sentence was
+           `Kaupan teet suoraan autoliikkeen kanssa` and became a call to
+           action in Jussi's pass. */
+        +      '<p class="font-dm text-sm text-slate-700 mt-2">' + buyers + ' autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun. Hyväksy tarjous, ja jatka myyntiä autoliikkeen kanssa.</p>'
         +    '</div>'
         +  '</div>';
 
