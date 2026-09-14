@@ -2171,6 +2171,7 @@ both are a deliberate override on the support banner, not a page convention.
 |---|---|---|
 | body copy — the verdict's lead line, the headline's paragraph, the lead line above the equation, chip labels, operators | `text-base` | 16 / 24 |
 | fine print — the verdict's recommendation sentence, chip sub-labels, the footnote | `text-xs` | 12 / 16 |
+| block 1's headline | `font-display text-xl font-bold leading-snug` | 20 / 27.5 Barlow |
 | **`AuctionStats`, untouched** | `text-xs xs:text-sm` | its own, transcribed from prod |
 
 Verified against `price.html`, where the funnel's own body copy measures 16px
@@ -2192,11 +2193,18 @@ seeing rather than tidying:** the green block is a 16px bold claim
 the weight and what it RECOMMENDS reads as the note beneath. The same shape
 repeats in every chip — a 16px term with a 12px gloss.
 
-**Heights, now that both moves have landed** (original → after the body-scale
-sweep → today): auction details 353 → 397 → **365** desktop and
-470 → 558 → **510** on a phone; price belief 252 → 272 → **260** and
-532 → 644 → **596**. So the 16px body copy costs ~12px desktop / ~40px phone
-against where these blocks started, rather than the 44/88 the sweep alone cost.
+**The headline went UP a notch at the same time** — `text-lg` → `text-xl`, so
+20px Barlow bold over the 12px recommendation sentence above it and the 16px
+paragraph below. It is the payoff line and now reads as the block's own title
+rather than as a bolder sentence. It wraps to **three lines at 375px**, which is
+the cost and was accepted.
+
+**Heights, now that all of it has landed** (original → after the body-scale
+sweep → today): auction details 353 → 397 → **368** desktop and
+470 → 558 → **543** on a phone; price belief 252 → 272 → **260** and
+532 → 644 → **596**. So against where these blocks started, the net is ~15px
+desktop / ~73px phone for auction details and ~8 / ~64 for the belief block —
+rather than the 44 / 88 and 20 / 112 the sweep alone cost.
 
 **Contrast, measured against the rendered pixels:**
 
