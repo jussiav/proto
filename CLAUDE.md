@@ -2304,6 +2304,57 @@ Two things that transplant needs, and they are the only divergences:
 kept in step. An EN gloss sits below each card, outside the stage, so the
 replica stays pixel-exact.
 
+### The Figma file — addresses, and how to verify work in it
+
+The decision page also exists as two live screens in Figma, built from the proto
+and kept in step with it by hand. **Everything below is an address; none of it
+is derivable from the repo, so it is written down here.**
+
+| What | Where |
+|---|---|
+| File | `C2B Seller – Ad creation`, fileKey `sHQk3FUhEZM7EFbYaAcjxX` |
+| Page | `Decision page (AI drafting)` — `7028:39536` |
+| Canvas | `Frame 1` — `7028:39537`; everything lives inside it |
+| Desktop screen (1440) | wrapper `7030:5` · nav `7030:6` · content column `7030:7` |
+| Mobile screen (375) | wrapper `7030:8` · nav `7030:9` · content column `7030:10` |
+
+Sections, desktop then mobile: Hero `7030:11` / `7030:17` · Offers `7030:12` /
+`7030:18` · Tarjouskilpailun tiedot `7030:13` / `7030:19` · price belief
+`7048:227` / `7030:20` · Tarvitsetko apua? `7030:15` / `7030:21` · FAQ
+`7030:16` / `7030:22`.
+
+**Local components** (build once, place instances — do not hand-build copies):
+`Offer card` `7038:5`, `FAQ row` `7041:71`. The lower offer card is an instance
+with the counter-offer action hidden.
+
+**The illustration's imageHash is `a0e1977c4c8cd9d7496af50e799134be8a09da66`.**
+The Plugin API cannot fetch a URL, so a raster image gets in via `upload_assets`
+and is then reused by setting that hash on another node's fills. It is no longer
+on either screen — the seal replaced it — but the hash is the only way back
+without re-uploading.
+
+**THE DESKTOP COLUMN HOLDS FIVE VERSIONS OF THE PRICE-BELIEF BLOCK**, because
+Jussi iterates by duplicating. `7048:227` is named
+`✅ Näin vertaat tarjoustasi — IN PROTO` and is the one the prototype renders;
+`7030:14` is `◻︎ Superseded — gradient bar (not in proto)`. The other three
+(`7046:39852`, `7046:39819`, `7046:39787`) are his drafts — **do not rename,
+reorder or delete them.**
+
+**VERIFY BY MEASUREMENT, NOT BY SCREENSHOT.** The in-app browser pane returns
+blank frames intermittently on this page — a scroll-then-capture race that no
+amount of waiting reliably fixes — and `node.screenshot()` in Figma is fine but
+only shows one node. Every claim about this work was checked by reading computed
+styles and rects and diffing them against the proto: font size, weight,
+line-height, colour, padding, radius, width, height. That is also how the
+replica fidelity was proved, and it is stronger evidence than an image. **A
+blank screenshot is a tooling artefact, not a broken page** — re-measure rather
+than re-building.
+
+Two divergences the Figma build needs, both deliberate: the spec page carries
+`screens: { xs: '460px' }` (only `xs`, so its own `sm`/`md`/`lg` do not move),
+and the block-1 headline pins `color:#000`, since that `h3` inherits and the
+spec page inherits slate-900 where the decision page inherits black.
+
 **All its Finnish copy was written by me and nothing is approved.** The spec
 page says so in its first card, in a warning-coloured status chip and in the
 hero. Same category as Seller file upload's draft copy, but weaker: that one is
