@@ -100,23 +100,22 @@
        material at all, which costs the block its point. Still no hue, still
        muted; just dark enough to arrive somewhere. */
     .belief-bar {
-      /* The `Hyvä tarjouskilpailu` verdict block's exact skin — `bg-green-50`,
-         a solid `border-green-500`, `rounded-lg` — so the two read as the same
-         family rather than two greens. The fill then fades green-50 → slate-200
-         across a deliberately wide span: flat to 52 %, arrived by 95 %. A narrow
-         fade reads as a soft line and puts back the measurable boundary the
-         gradient exists to remove.
+      /* AuctionStats' frame, not the verdict block's. This bar is a
+         "good to know", the same register as the two-figure stats row above it
+         — it is NOT saying the auction went well, and dressing it in the
+         recommendation's green said exactly that. So: `border-slate-200`,
+         `rounded-lg`, and the green demoted to a tint at the left plus the
+         figure's own colour.
 
-         THE BORDER IS SOLID, NOT A GRADIENT. A fading outline was tried and
-         dropped: it reads as encoding something, and it encodes nothing — the
-         only thing this bar has to say about its right-hand end is already said
-         by the fill.
+         The fill still fades green-50 → slate-200 across a deliberately wide
+         span: flat to 52 %, arrived by 95 %. A narrow fade reads as a soft line
+         and puts back the measurable boundary the gradient exists to remove.
 
          Hand-written rather than utilities: the block is injected by JS and the
          Play CDN generates those a tick AFTER the render, which would paint the
          bar transparent on first paint. Same rule as `.modal-help` and
          `.neg-thread` above. */
-      border: 1px solid #22C55E;                              /* green-500 */
+      border: 1px solid #E2E8F0;                              /* slate-200 */
       background-image: linear-gradient(to right,
         #F0FDF4 0%, #F0FDF4 52%, #E2E8F0 95%, #E2E8F0 100%);  /* green-50 → slate-200 */
     }
@@ -1859,10 +1858,17 @@
          without saying how much the car retails for. See `.belief-bar`.
 
          The seller's figure leads and the costs label sits at the far right, on
-         the flat neutral end, where it labels what the fade has arrived at. */
+         the flat neutral end, where it labels what the fade has arrived at.
+
+         The two take AuctionStats' value/label relationship — its
+         `text-sm xs:text-base font-bold` value and its `text-xs xs:text-sm`
+         label — but NOT its `text-slate-500` label colour: slate-500 measures
+         3.86:1 against this bar's slate-200 end and fails AA. It passes in
+         AuctionStats because that row is transparent over white. slate-600
+         here, which is the same token the block already used. */
       html += '<div class="belief-bar rounded-lg h-10 flex items-center justify-between gap-3 px-3">'
-        +      '<span class="font-dm text-sm font-bold text-green-900 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
-        +      '<span class="font-dm text-xs font-medium text-slate-600 flex-shrink-0">+ Kulut</span>'
+        +      '<span class="font-dm text-sm xs:text-base font-bold text-green-800 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
+        +      '<span class="font-dm text-xs xs:text-sm font-medium text-slate-600 flex-shrink-0">+ Kulut</span>'
         +    '</div>';
 
       /* What the neutral end contains, under the neutral end. `Esim.` is the
