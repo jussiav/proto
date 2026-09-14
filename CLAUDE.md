@@ -2092,8 +2092,8 @@ exclusions share one fallback.
 Mistä jälleenmyyntihinta koostuu?
 Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain
 autosta maksettua hintaa.
-[ 11 500 € sinulle          ·· fade ··          Kulut ]
-                    (Esim. takuu, kunnostus, kulut, kate, arvonalenema)
+[ 11 500 € sinulle          ·· fade ··        + Kulut ]
+                    (Esim. takuu, kunnostus, myyntikulut, kate, arvonalenema)
 ```
 
 **THE SELLER'S OWN OFFER IS A DELIBERATE REVERSAL** (2026-09-14). Earlier
@@ -2128,6 +2128,10 @@ somewhere.
 **The label is `[VALUE] sinulle`, not `Tarjouksesi [VALUE]`.** Same figure, and
 it reads as something the seller can have rather than a record of what was bid.
 
+**`+ Kulut`, not `Kulut`.** The `+` is an operator: it makes the bar an addition
+the reader completes themselves, so the costs end states a relationship rather
+than just naming a thing.
+
 **ONE figure only, and the costs end must never get one.** A euro amount on
 `Kulut` would turn "what a dealership adds" into "what they take off your
 price", which is the reaction the whole block exists to avoid — and it would
@@ -2152,6 +2156,19 @@ negotiates, red and amber report. Green is the only hue in the diagram.
 injected by JS and the Play CDN generates those a tick AFTER the render, which
 would paint the bar transparent on first paint. Same rule as `.modal-help` and
 `.neg-thread`.
+
+**Contrast, measured against the actual rendered pixels** — a canvas sample under
+each label rather than an eyeballed colour pair, which is the only honest method
+over a gradient (`accept-button-lab.html` uses the same one):
+
+| Label | On | Size | Ratio | WCAG 2.0 |
+|---|---|---|---|---|
+| `11 500 € sinulle` — green-900 | green-200 | 14px/700 | **7.52:1** | AA + AAA |
+| `+ Kulut` — slate-600 | slate-300 | 12px/500 | **5.09:1** | AA |
+
+Neither is "large text" — 14px bold is under the 18.66px bold threshold — so both
+are against 4.5:1. `slate-700` would buy AAA on the costs label; slate-600 is the
+muted token this block uses throughout, so it stays unless the team asks.
 
 **NO ALTERNATIVE ROUTE IS NAMED** — not a private sale, not a trade-in, not
 another dealership. Steering a seller toward a route we would rather they did

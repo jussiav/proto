@@ -1845,14 +1845,14 @@
          the flat neutral end, where it labels what the fade has arrived at. */
       html += '<div class="belief-bar rounded-md h-10 flex items-center justify-between gap-3 px-3">'
         +      '<span class="font-dm text-sm font-bold text-green-900 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
-        +      '<span class="font-dm text-xs font-medium text-slate-600 flex-shrink-0">Kulut</span>'
+        +      '<span class="font-dm text-xs font-medium text-slate-600 flex-shrink-0">+ Kulut</span>'
         +    '</div>';
 
       /* What the neutral end contains, under the neutral end. `Esim.` is the
          hedge that matters: these are examples of what a dealership adds, not an
          exhaustive or audited list, and the block prints no figure for any of
          them. */
-      html += '<p class="font-dm text-xs text-slate-500 text-right mt-1.5">(Esim. takuu, kunnostus, kulut, kate, arvonalenema)</p>';
+      html += '<p class="font-dm text-xs text-slate-500 text-right mt-1.5">(Esim. takuu, kunnostus, myyntikulut, kate, arvonalenema)</p>';
 
       return html;
     }
