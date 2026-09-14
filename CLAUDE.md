@@ -2090,8 +2090,8 @@ exclusions share one fallback.
 
 ```
 Mistä jälleenmyyntihinta koostuu?
-Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain
-autosta maksettua hintaa.
+Näkemäsi jälleenmyyntihinnat vastaavista autoista sisältävät kaikki liikkeen
+kulut, eivät vain autosta maksettua hintaa edelliselle omistajalle.
 ┌────────────────────────────────────────────────────────────┐
 │ 🪙 11 500 € sinulle                                + Kulut │
 │        (Esim. takuu, kunnostus, myyntikulut, kate, arvon…)  │
