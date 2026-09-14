@@ -104,12 +104,14 @@
          "good to know", the same register as the two-figure stats row above it
          — it is NOT saying the auction went well, and dressing it in the
          recommendation's green said exactly that. So: `border-slate-200`,
-         `rounded-lg`, and the green demoted to a tint at the left plus the
-         figure's own colour.
+         `rounded-lg`, and NO GREEN ANYWHERE IN IT, fill or label.
 
-         The fill still fades green-50 → slate-200 across a deliberately wide
-         span: flat to 52 %, arrived by 95 %. A narrow fade reads as a soft line
-         and puts back the measurable boundary the gradient exists to remove.
+         The fill fades slate-50 → slate-200 across a deliberately wide span:
+         flat to 52 %, arrived by 95 %. A narrow fade reads as a soft line and
+         puts back the measurable boundary the gradient exists to remove. The
+         left end is slate-50 rather than white so the bar reads as filled along
+         its whole length; at white the first half looks like empty track, which
+         says the seller's part is the missing one.
 
          Hand-written rather than utilities: the block is injected by JS and the
          Play CDN generates those a tick AFTER the render, which would paint the
@@ -117,7 +119,7 @@
          `.neg-thread` above. */
       border: 1px solid #E2E8F0;                              /* slate-200 */
       background-image: linear-gradient(to right,
-        #F0FDF4 0%, #F0FDF4 52%, #E2E8F0 95%, #E2E8F0 100%);  /* green-50 → slate-200 */
+        #F8FAFC 0%, #F8FAFC 52%, #E2E8F0 95%, #E2E8F0 100%);  /* slate-50 → slate-200 */
     }
 
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
@@ -1860,14 +1862,15 @@
          The seller's figure leads and the costs label sits at the far right, on
          the flat neutral end, where it labels what the fade has arrived at.
 
-         The two take AuctionStats' value/label relationship — its
-         `text-sm xs:text-base font-bold` value and its `text-xs xs:text-sm`
-         label — but NOT its `text-slate-500` label colour: slate-500 measures
-         3.86:1 against this bar's slate-200 end and fails AA. It passes in
-         AuctionStats because that row is transparent over white. slate-600
-         here, which is the same token the block already used. */
+         The two take AuctionStats' value/label relationship whole now, colours
+         included — `text-slate-800 text-sm xs:text-base font-bold` for the
+         value and `text-xs xs:text-sm` for the label — with ONE deviation, and
+         it is a measurement rather than a preference: AuctionStats' label is
+         `text-slate-500`, which measures 3.86:1 against this bar's slate-200
+         end and fails AA. It passes there because that row is transparent over
+         white. slate-600 here. */
       html += '<div class="belief-bar rounded-lg h-10 flex items-center justify-between gap-3 px-3">'
-        +      '<span class="font-dm text-sm xs:text-base font-bold text-green-800 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
+        +      '<span class="font-dm text-sm xs:text-base font-bold text-slate-800 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
         +      '<span class="font-dm text-xs xs:text-sm font-medium text-slate-600 flex-shrink-0">+ Kulut</span>'
         +    '</div>';
 

@@ -2128,24 +2128,35 @@ greens then had to be reconciled — first green-200 against the tag's green-50,
 then a matched green-50 with a green-500 border, then a gradient border on top.
 Each step made the bar look more like the verdict and less like what it is.
 
-The frame is now **`border-slate-200`, `rounded-lg`, 1px** — `AuctionStats`'
-own, verified by comparing computed styles against that component rather than by
-eye. Green is demoted to a **tint at the left plus the figure's own colour**, and
-nothing else on the block is green.
+The frame is **`border-slate-200`, `rounded-lg`, 1px** — `AuctionStats`' own,
+verified by comparing computed styles against that component rather than by eye.
 
-**It also borrows AuctionStats' value/label pair**, which is the right analogue:
-the seller's figure is the VALUE (`text-sm xs:text-base font-bold`, green-800
-where AuctionStats is slate-800) and `+ Kulut` is the LABEL
-(`text-xs xs:text-sm`).
+**THERE IS NO GREEN IN THE BAR AT ALL** — not the fill, not the figure. It went
+in stages, and the last one is the one that settled it: green-200, a matched
+green-50 with a green-500 border, a gradient border, then green demoted to a
+tint plus the figure's colour, then gone. **A green figure with no other green
+on the block reads as a leftover**, and the tint was the last thing still
+implying this bar is about a good outcome. The fill fades **slate-50 →
+slate-200**, same wide stops.
+
+**The left end is slate-50 rather than white.** At white the first half of the
+bar looks like empty track, which says the seller's part is the MISSING one.
+slate-50 keeps the bar reading as filled along its whole length.
+
+**It borrows AuctionStats' value/label pair whole, colours included:** the
+figure is the VALUE (`text-slate-800 text-sm xs:text-base font-bold`) and
+`+ Kulut` is the LABEL (`text-xs xs:text-sm`).
 
 **One deliberate deviation, and it is a measurement, not a preference:**
 AuctionStats' label colour is `text-slate-500`, which measures **3.86:1** against
 this bar's slate-200 end and **fails AA**. It passes in AuctionStats because that
 row is transparent over white. `+ Kulut` stays slate-600.
 
-**The fade target stays slate-200.** Dropping it to slate-100 alongside green-50
-would put both ends within a few percent of white and bring back the wash the
-slate step exists to avoid.
+**What the colour removal costs, recorded rather than hidden:** the figure no
+longer ties to the page's green accepting direction, so nothing but the copy
+says `11 500 € sinulle` is the seller's money. That is the intended trade — this
+block is not the recommendation — but it is the thing to look at first if the
+bar ever stops landing.
 
 **The label is `[VALUE] sinulle`, not `Tarjouksesi [VALUE]`.** Same figure, and
 it reads as something the seller can have rather than a record of what was bid.
@@ -2185,7 +2196,7 @@ over a gradient (`accept-button-lab.html` uses the same one):
 
 | Label | On | Size | Ratio | WCAG 2.0 |
 |---|---|---|---|---|
-| `11 500 € sinulle` — green-800 | green-50 | 16px/700 | **6.81:1** | AA |
+| `11 500 € sinulle` — slate-800 | slate-50 | 16px/700 | **13.98:1** | AA + AAA |
 | `+ Kulut` — slate-600 | slate-200 | 14px/500 | **6.15:1** | AA |
 | *AuctionStats' own slate-500, rejected* | slate-200 | — | *3.86:1* | **fails** |
 
