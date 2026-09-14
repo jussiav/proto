@@ -2159,6 +2159,27 @@ single definition the offer card and the accept handler read, so a negotiation
 moves all three together. With no amount it falls back to the word
 `Tarjouksesi`.
 
+**THESE TWO BLOCKS ARE ON THE SITE'S BODY SCALE, NOT THE DECISION PAGE'S OLD
+14px** (2026-09-14). Prod styles the `p` ELEMENT `text-base leading-snug
+sm:text-lg`, so bare body copy anywhere in the product is 16px, and the proto's
+funnel steps — whose paragraphs carry no size class — render at 16px too. The
+decision page only looked like an exception because these blocks set `text-sm`
+explicitly: prod's own `C2BDecision.vue` contains exactly TWO `text-sm` uses and
+both are a deliberate override on the support banner, not a page convention.
+
+| Role | Class | Size |
+|---|---|---|
+| body copy — verdict lead + body, the mechanic paragraph, the lead line, chip labels, operators | `text-base` | 16 / 24 |
+| small description — chip sub-labels, the footnote | `text-sm` | 14 / 20 |
+| **`AuctionStats`, untouched** | `text-xs xs:text-sm` | its own, transcribed from prod |
+
+Verified against `price.html`, where the funnel's own body copy measures 16px
+and its hint lines 14px — the same two tiers.
+
+**It costs height, and that was accepted:** auction details 353 → 397 desktop and
+470 → 558 on a phone; price belief 252 → 272 and 532 → 644. Legibility on the
+page's most argued-over copy was judged worth it.
+
 **Contrast, measured against the rendered pixels:**
 
 | Label | On | Size | Ratio |
