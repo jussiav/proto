@@ -2341,6 +2341,31 @@ The reassignment deliberately sits at the `ID_V1` site rather than being folded
 into `EN_V1`'s own declaration, so the coupling lives in the one place it is
 decided. **Delete those two lines and Enhanced negotiations is unaffected.**
 
+**THE SPEC PAGE DESCRIBES WHERE THE IDEA IS, NOT HOW IT GOT THERE** (2026-09-14,
+finalised for the team). No iteration history, no rejected versions, no colour
+archaeology — that all lives here in CLAUDE.md instead. Section 2 is three
+paragraphs; the `Three things, each doing one job` list is gone.
+
+**Its two `What the block shows` cards are the PROTOTYPE'S OWN MARKUP,
+transplanted** — section `<h2>`, its icon, the white card, everything — on a
+`#EEF6FA` stage (the decision page's own background) at `max-w-3xl` with `p-6`,
+which puts the card at **720px, the exact width it renders at on the decision
+page**. Verified by probing both pages and diffing computed styles rather than by
+eye: width, height, padding, radius, font size, weight, line-height and colour
+all match, at 375px too.
+
+Two things that transplant needs, and they are the only divergences:
+
+- **`screens: { xs: '460px' }` added to the spec page's Tailwind config.** The
+  replicas use `xs:` variants and this page has no prod screens. Only `xs` is
+  added — porting the whole scale would move the page's own `sm`/`md`/`lg`.
+- **The block-1 headline carries `style="color:#000"`.** Its `h3` has no colour
+  class and inherits, which is black on the decision page and slate-900 here.
+
+**Re-transplant after any change to either block**, the same way the copy is
+kept in step. An EN gloss sits below each card, outside the stage, so the
+replica stays pixel-exact.
+
 **All its Finnish copy was written by me and nothing is approved.** The spec
 page says so in its first card, in a warning-coloured status chip and in the
 hero. Same category as Seller file upload's draft copy, but weaker: that one is
