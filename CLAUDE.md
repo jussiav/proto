@@ -2369,16 +2369,29 @@ three words are decoration:
 |---|---|
 | `ammattilaista` | sellers do not know a person looked at the car at all |
 | `perehtyi ilmoitukseesi` · `oman tarjouksensa` | they assume AutoVex fetches generic prices for similar cars, so the copy says each dealership studied THIS listing and priced it itself |
+| `näkivät toistensa tarjoukset ja korottivat omiaan määräaikaan asti` | the auction was a real contest, not 25 sealed envelopes — see the correction below |
 | `Kaupan teet suoraan autoliikkeen kanssa` | AutoVex is not the buyer — and market research says a named dealership is what consumers prefer over a website or a stranger at the door |
 
-**Do not compress this to one sentence.** Each clause is load-bearing against a
-different objection; the length is already the floor.
+**THE COMPETITION CLAUSE ALSO DECODES THE STATS ROW, which nothing else on the
+page does.** `138 tarjousta / 25 tarjoajaa` is a contradiction to a seller who
+does not know a dealership may bid more than once. "They saw each other's offers
+and raised their own" is the only sentence that explains the gap — which is why
+it sits directly above the row rather than anywhere else.
 
-**An earlier draft argued from blind independent valuation** — "each dealership
-priced the car itself and did not see the other offers" — and Jussi replaced it.
-Worth knowing before anyone reinstates it: blindness is true, but it is a
-mechanic a seller has to be TAUGHT before it means anything, where "professionals
-looked at your ad and competed for it" lands on first reading.
+**Do not compress this to one sentence.** Each clause is load-bearing against a
+different objection; at 191 characters the length is already the floor.
+
+**THE AUCTION IS NOT BLIND, AND THIS NOTE USED TO SAY IT WAS** (corrected
+2026-09-14). An early draft of this block argued from blind independent
+valuation — "each dealership priced the car itself and did not see the other
+offers" — Jussi replaced the copy, and the note left behind here recorded
+"blindness is true". **It is not.** Dealerships see each other's bids, the
+auction runs to a deadline, and they raise their bids inside that window. That
+is what `Tarjouskilpailu` means, and it is why the copy now says so outright.
+
+Do not reinstate any framing built on sealed bids. The correct argument is the
+stronger one anyway: a contested auction beats the best of 25 independent
+guesses.
 
 **The closing strip names no euro figure** — `korkeinta tarjousta` points at the
 card above instead, so it cannot go stale against the number beside it and the
