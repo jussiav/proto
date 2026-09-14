@@ -100,22 +100,25 @@
        material at all, which costs the block its point. Still no hue, still
        muted; just dark enough to arrive somewhere. */
     .belief-bar {
-      /* TWO gradients, one clipped to the padding box and one to the border box:
-         the fill fades green-100 → slate-200 and the 1px outline fades
-         green-500 → slate-300 with it. A gradient border is the only way to give
-         this bar the tag's outline without ringing the costs end in green, which
-         reads as the costs being part of the recommendation.
+      /* The `Hyvä tarjouskilpailu` verdict block's exact skin — `bg-green-50`,
+         a solid `border-green-500`, `rounded-lg` — so the two read as the same
+         family rather than two greens. The fill then fades green-50 → slate-200
+         across a deliberately wide span: flat to 52 %, arrived by 95 %. A narrow
+         fade reads as a soft line and puts back the measurable boundary the
+         gradient exists to remove.
 
-         The palette is the `Hyvä tarjouskilpailu` verdict block's — `bg-green-50
-         border border-green-500`. The fill was green-200, two steps off it, and
-         beside the tag that read as a different green rather than a lighter one.
-         green-100 is one step, and keeps enough body that the fade still reads:
-         at green-50 the bar is so pale that the outline is doing all the work
-         and the diagram stops looking like a diagram. */
-      border: 1px solid transparent;
-      background:
-        linear-gradient(to right, #DCFCE7 0%, #DCFCE7 52%, #E2E8F0 95%, #E2E8F0 100%) padding-box,   /* green-100 → slate-200 */
-        linear-gradient(to right, #22C55E 0%, #22C55E 52%, #CBD5E1 95%, #CBD5E1 100%) border-box;    /* green-500 → slate-300 */
+         THE BORDER IS SOLID, NOT A GRADIENT. A fading outline was tried and
+         dropped: it reads as encoding something, and it encodes nothing — the
+         only thing this bar has to say about its right-hand end is already said
+         by the fill.
+
+         Hand-written rather than utilities: the block is injected by JS and the
+         Play CDN generates those a tick AFTER the render, which would paint the
+         bar transparent on first paint. Same rule as `.modal-help` and
+         `.neg-thread` above. */
+      border: 1px solid #22C55E;                              /* green-500 */
+      background-image: linear-gradient(to right,
+        #F0FDF4 0%, #F0FDF4 52%, #E2E8F0 95%, #E2E8F0 100%);  /* green-50 → slate-200 */
     }
 
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the

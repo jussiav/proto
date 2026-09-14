@@ -2119,30 +2119,25 @@ puts the boundary straight back. `SELLER_W` is gone with the segments; the stops
 in `.belief-bar` are the only tunable, and **tightening them re-creates exactly
 the problem the fade was built to solve.**
 
-**IT WEARS THE VERDICT BLOCK'S PALETTE, AND THAT IS WHY IT HAS AN OUTLINE**
-(2026-09-14). The bar was `green-200` with no border while the
-`Hyvä tarjouskilpailu` block beside it is `bg-green-50 border border-green-500`
-— two steps apart on the same scale, which beside each other read as a
-*different green* rather than a lighter one. The bar is now **green-100 fill
-with a 1px green-500 outline at `rounded-lg`**, the tag's own radius.
+**IT WEARS THE VERDICT BLOCK'S EXACT SKIN** (2026-09-14). The bar was
+`green-200` with no border while the `Hyvä tarjouskilpailu` block beside it is
+`bg-green-50 border border-green-500 rounded-lg` — two steps apart on the same
+scale, which side by side read as a *different green* rather than a lighter one.
+The bar now takes all three: **green-50 fill, solid 1px green-500 border,
+`rounded-lg`.** Verified by comparing computed styles against the tag's own, not
+by eye.
 
-**The outline is a GRADIENT, and it has to be.** A solid green-500 border rings
-the costs end in green, which says the costs are part of the recommendation.
-Both the fill and the border fade:
+**THE BORDER IS SOLID, NOT A GRADIENT.** A fading outline was built first, on the
+reasoning that a solid green border rings the costs end in green and so implies
+the costs are part of the recommendation. Jussi's call, and it is the right one:
+a fading border **reads as encoding something, and it encodes nothing.** The only
+claim this bar makes about its right-hand end is already made by the fill. The
+`border-box` / `padding-box` two-background trick went with it.
 
-| Layer | Clipped to | Gradient |
-|---|---|---|
-| fill | `padding-box` | green-100 → slate-200 |
-| outline | `border-box` | green-500 → slate-300 |
-
-with `border: 1px solid transparent` underneath, which is what makes the
-two-background trick work at all.
-
-**green-100 rather than green-50, which would match the tag exactly.** At
-green-50 the fill is so pale that the outline does all the work and the diagram
-stops looking like a diagram — and the fade to slate-100 becomes a wash, with
-the costs end no longer reading as a different material. One step off the tag
-keeps both.
+**The fade target stays slate-200.** Only the green was matched to the tag; the
+neutral end was left where it was, so the fill still travels a real distance in
+lightness. Dropping it to slate-100 alongside green-50 would put both ends within
+a few percent of white and bring back the wash the slate step exists to avoid.
 
 **The label is `[VALUE] sinulle`, not `Tarjouksesi [VALUE]`.** Same figure, and
 it reads as something the seller can have rather than a record of what was bid.
@@ -2182,10 +2177,10 @@ over a gradient (`accept-button-lab.html` uses the same one):
 
 | Label | On | Size | Ratio | WCAG 2.0 |
 |---|---|---|---|---|
-| `11 500 € sinulle` — green-900 | green-100 | 14px/700 | **8.30:1** | AA + AAA |
-| `+ Kulut` — slate-600 | slate-200 | 12px/500 | **6.13:1** | AA |
+| `11 500 € sinulle` — green-900 | green-50 | 14px/700 | **8.70:1** | AA + AAA |
+| `+ Kulut` — slate-600 | slate-200 | 12px/500 | **6.15:1** | AA |
 
-The lighter fill improved both — they were 7.52 and 5.09 on green-200 /
+Both improved as the fill lightened — they were 7.52 and 5.09 on green-200 /
 slate-300.
 
 Neither is "large text" — 14px bold is under the 18.66px bold threshold — so both
