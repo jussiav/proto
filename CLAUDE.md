@@ -2169,21 +2169,40 @@ both are a deliberate override on the support banner, not a page convention.
 
 | Role | Class | Size |
 |---|---|---|
-| body copy — verdict lead + body, the mechanic paragraph, the lead line, chip labels, operators | `text-base` | 16 / 24 |
-| small description — chip sub-labels, the footnote | `text-sm` | 14 / 20 |
+| body copy — the verdict's lead line, the headline's paragraph, the lead line above the equation, chip labels, operators | `text-base` | 16 / 24 |
+| fine print — the verdict's recommendation sentence, chip sub-labels, the footnote | `text-xs` | 12 / 16 |
 | **`AuctionStats`, untouched** | `text-xs xs:text-sm` | its own, transcribed from prod |
 
 Verified against `price.html`, where the funnel's own body copy measures 16px
-and its hint lines 14px — the same two tiers.
+and its hint lines 14px.
 
-**It costs height, and that was accepted:** auction details 353 → 397 desktop and
-470 → 558 on a phone; price belief 252 → 272 and 532 → 644. Legibility on the
-page's most argued-over copy was judged worth it.
+**THE MIDDLE TIER WENT AWAY, AND THAT IS JUSSI'S CALL** (2026-09-14). The sweep
+had put every small string on `text-sm`; he named five that belong at 12px
+instead, so the blocks now run 16 or 12 with nothing between them:
+
+- `Pidämme korkeinta tarjousta…` — the verdict's recommendation sentence
+- `Sinulle maksettava summa` · `Vaihtelee autoittain` ·
+  `Ilmoituksessa näkyvä hinta` — the three chip sub-labels
+- `*Kuluja ovat esim. …` — the footnote
+
+Four of those were already 12px before the sweep; the recommendation sentence
+was 14px and is now smaller than it has ever been. **The consequence is worth
+seeing rather than tidying:** the green block is a 16px bold claim
+(`Loistava suoritus!`) with fine print under it, so what AutoVex ASSERTS carries
+the weight and what it RECOMMENDS reads as the note beneath. The same shape
+repeats in every chip — a 16px term with a 12px gloss.
+
+**Heights, now that both moves have landed** (original → after the body-scale
+sweep → today): auction details 353 → 397 → **365** desktop and
+470 → 558 → **510** on a phone; price belief 252 → 272 → **260** and
+532 → 644 → **596**. So the 16px body copy costs ~12px desktop / ~40px phone
+against where these blocks started, rather than the 44/88 the sweep alone cost.
 
 **Contrast, measured against the rendered pixels:**
 
 | Label | On | Size | Ratio |
 |---|---|---|---|
+| `Pidämme korkeinta…` — green-900 | green-50 | 12px/400 | **8.70:1** |
 | `11 500 €` — slate-800 | green-50 | 16px/700 | **13.97:1** |
 | `Sinulle maksettava summa` — slate-600 | green-50 | 12px/400 | **7.24:1** |
 | `Kulut` / `Pyyntihinta` — slate-800 | white | 16px/700 | **14.63:1** |
