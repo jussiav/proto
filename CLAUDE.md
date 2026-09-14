@@ -2092,7 +2092,7 @@ exclusions share one fallback.
 Mistä jälleenmyyntihinta koostuu?
 Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain
 autosta maksettua hintaa.
-[ 11 500 € sinulle          ·· fade ··        + Kulut ]
+[ 🪙 11 500 € sinulle       ·· fade ··        + Kulut ]
                     (Esim. takuu, kunnostus, myyntikulut, kate, arvonalenema)
 ```
 
@@ -2132,25 +2132,48 @@ The frame is **`border-slate-200`, `rounded-lg`, 1px** — `AuctionStats`' own,
 verified by comparing computed styles against that component rather than by eye.
 
 **THERE IS NO GREEN IN THE BAR AT ALL** — not the fill, not the figure. It went
-in stages, and the last one is the one that settled it: green-200, a matched
-green-50 with a green-500 border, a gradient border, then green demoted to a
-tint plus the figure's colour, then gone. **A green figure with no other green
-on the block reads as a leftover**, and the tint was the last thing still
-implying this bar is about a good outcome. The fill fades **slate-50 →
-slate-200**, same wide stops.
+in stages: green-200, a matched green-50 with a green-500 border, a gradient
+border, green demoted to a tint plus the figure's colour, then gone. **A green
+figure with no other green on the block reads as a leftover**, and the tint was
+the last thing still implying this bar is about a good outcome.
 
-**The left end is slate-50 rather than white.** At white the first half of the
-bar looks like empty track, which says the seller's part is the MISSING one.
-slate-50 keeps the bar reading as filled along its whole length.
+**ONLY THE COSTS END IS PAINTED.** The fill starts fully transparent — the
+card's own white — and grey fades in from 52 %, arrived by 95 %. The frame is
+what makes it a bar; the grey is what makes the costs a THING. So the seller's
+figure is read against the page rather than against a tint, and the only painted
+area in the block is the part they did not know about. An earlier version tinted
+the left slate-50 to stop it reading as empty track; the icon and the bold figure
+do that job instead, and better.
 
-**It borrows AuctionStats' value/label pair whole, colours included:** the
-figure is the VALUE (`text-slate-800 text-sm xs:text-base font-bold`) and
-`+ Kulut` is the LABEL (`text-xs xs:text-sm`).
+**The transparent stop is written `rgba(226,232,240,0)`, not `transparent`.**
+That keyword is transparent BLACK, and some engines interpolate through grey
+toward it — a dirty smudge across the middle of the bar.
+
+**It borrows AuctionStats' value/label pair whole, colours included, and now its
+ICON too:** the figure is the VALUE (`text-slate-800 text-sm xs:text-base
+font-bold`) with `ph-fill-coins` at `fill-current text-blue-400`, 18px, `gap-1.5`
+— AuctionStats' exact icon treatment, and prod's own icon for its B2B
+reserve-price cell. `+ Kulut` is the LABEL (`text-xs xs:text-sm`).
 
 **One deliberate deviation, and it is a measurement, not a preference:**
 AuctionStats' label colour is `text-slate-500`, which measures **3.86:1** against
 this bar's slate-200 end and **fails AA**. It passes in AuctionStats because that
 row is transparent over white. `+ Kulut` stays slate-600.
+
+**THE FIGURE IS THE OFFER AS IT STANDS, NOT THE AUCTION RESULT** (2026-09-14).
+A negotiation raises the standing amount, and the card's big figure has always
+followed it — the bar has to say the same number or it silently quotes a stale
+price next to a live one. `standingAmount(offer)` is now the ONE definition:
+the auction result until a dealership replies, the latest dealer amount after
+that, clamped never to fall below the auction result (which mirrors prod, where
+`DealerNegotiationMessageAmount` refuses a lower reply and `CloseNegotiation`
+preserves the amount).
+
+**Three readers, one function.** The card's figure and the accept handler that
+commits the sale each had their own copy of this calculation; the bar would have
+been a third. `renderMain` re-runs after every counter-offer and every simulated
+dealer action, so the bar tracks without any wiring of its own. Verified by
+raising a dealer message and watching both move together.
 
 **What the colour removal costs, recorded rather than hidden:** the figure no
 longer ties to the page's green accepting direction, so nothing but the copy
@@ -2196,7 +2219,7 @@ over a gradient (`accept-button-lab.html` uses the same one):
 
 | Label | On | Size | Ratio | WCAG 2.0 |
 |---|---|---|---|---|
-| `11 500 € sinulle` — slate-800 | slate-50 | 16px/700 | **13.98:1** | AA + AAA |
+| `11 500 € sinulle` — slate-800 | white | 16px/700 | **14.63:1** | AA + AAA |
 | `+ Kulut` — slate-600 | slate-200 | 14px/500 | **6.15:1** | AA |
 | *AuctionStats' own slate-500, rejected* | slate-200 | — | *3.86:1* | **fails** |
 

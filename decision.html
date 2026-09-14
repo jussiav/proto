@@ -106,12 +106,18 @@
          recommendation's green said exactly that. So: `border-slate-200`,
          `rounded-lg`, and NO GREEN ANYWHERE IN IT, fill or label.
 
-         The fill fades slate-50 → slate-200 across a deliberately wide span:
-         flat to 52 %, arrived by 95 %. A narrow fade reads as a soft line and
-         puts back the measurable boundary the gradient exists to remove. The
-         left end is slate-50 rather than white so the bar reads as filled along
-         its whole length; at white the first half looks like empty track, which
-         says the seller's part is the missing one.
+         NOTHING SITS BEHIND THE FIGURE. The fill starts fully transparent —
+         the card's own white — and only the costs end carries grey, fading in
+         from 52 % and arrived by 95 %. The frame is what makes it a bar; the
+         grey is what makes the costs a THING. So the seller's own figure is
+         read against the page rather than against a tint, and the only painted
+         area in the block is the part they did not know about.
+
+         A narrow fade would read as a soft line and put back the measurable
+         boundary the gradient exists to remove, so the stops stay far apart.
+         The transparent stop is written as `rgba(226,232,240,0)`, not the
+         `transparent` keyword: that keyword is transparent BLACK, and some
+         engines interpolate through grey towards it.
 
          Hand-written rather than utilities: the block is injected by JS and the
          Play CDN generates those a tick AFTER the render, which would paint the
@@ -119,7 +125,8 @@
          `.neg-thread` above. */
       border: 1px solid #E2E8F0;                              /* slate-200 */
       background-image: linear-gradient(to right,
-        #F8FAFC 0%, #F8FAFC 52%, #E2E8F0 95%, #E2E8F0 100%);  /* slate-50 → slate-200 */
+        rgba(226, 232, 240, 0) 0%, rgba(226, 232, 240, 0) 52%,
+        #E2E8F0 95%, #E2E8F0 100%);                           /* nothing → slate-200 */
     }
 
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
@@ -644,6 +651,24 @@
        dealer answer moves it to STATUS_COUNTER_OFFER_SENT (7); STATUS_STOPPED
        is 8. OfferActions.vue gates the modal's accept button on this value,
        not on "a negotiation exists". */
+    /* The offer as it stands RIGHT NOW: the auction result until a dealership
+       replies in a negotiation, the latest dealer amount after that. Never
+       lower than the auction result, because `DealerNegotiationMessageAmount`
+       refuses a reply below the standing amount and `CloseNegotiation`
+       preserves it — the clamp mirrors that rather than trusting the seed.
+
+       ONE definition, because three places read it and they must agree: the
+       card's big figure, the accept handler that commits the sale, and the
+       price-belief bar. The card and the accept handler each had their own copy
+       of this calculation; the bar would have been the third. */
+    function standingAmount(offer) {
+      if (!offer) return 0;
+      var neg = NEGOTIATIONS[offer.id];
+      var msgs = (neg && neg.messages) || [];
+      var lastDealer = msgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0] || null;
+      return Math.max(lastDealer && lastDealer.amount ? lastDealer.amount : offer.amount, offer.amount);
+    }
+
     function negStatus(neg) {
       var msgs = (neg && neg.messages) || [];
       if (!msgs.length) return null;
@@ -1587,9 +1612,8 @@
         html += '</div>';
       }
 
-      // Amount — use latest dealer counter-offer amount regardless of subsequent seller messages
-      var _lastDealerMsg = _negMsgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0] || null;
-      var effectiveAmount = Math.max(_lastDealerMsg && _lastDealerMsg.amount ? _lastDealerMsg.amount : offer.amount, offer.amount);
+      // Amount — the offer as it stands, see `standingAmount`
+      var effectiveAmount = standingAmount(offer);
       html += '<div class="text-5xl font-bold font-display text-center ' + amtColor + '">' + fmtCurrency(effectiveAmount) + '</div>';
 
       // Status badge
@@ -1850,6 +1874,15 @@
        euro amount there would turn "what a dealership adds" into "what they
        take off your price", which is the reaction the whole block is built to
        avoid. */
+    /* AuctionStats gives every figure an icon, `fill-current text-blue-400` at
+       18px with a `gap-1.5`. This is the same kind of row, so the seller's
+       figure gets one too. `ph-fill-coins` is prod's own, the icon AuctionStats
+       uses for its B2B reserve-price cell — path data verbatim from
+       `iconRegistry.js`, which took it from prod's `resources/assets/icons/`.
+       Phosphor FILL, like the rest of that set: a stroke-only outline renders
+       as a solid blob against `fill="currentColor"`. */
+    var ICO_COINS = '<svg class="fill-current text-blue-400 flex-shrink-0" width="18" height="18" viewBox="0 0 256 256" role="img" aria-hidden="true" fill="currentColor"><path d="M184,89.57V84c0-25.08-37.83-44-88-44S8,58.92,8,84v40c0,20.89,26.25,37.49,64,42.46V172c0,25.08,37.83,44,88,44s88-18.92,88-44V132C248,111.3,222.58,94.68,184,89.57ZM56,146.87C36.41,141.4,24,132.39,24,124V109.93c8.16,5.78,19.09,10.44,32,13.57Zm80-23.37c12.91-3.13,23.84-7.79,32-13.57V124c0,8.39-12.41,17.4-32,22.87Zm-16,71.37C100.41,189.4,88,180.39,88,172v-4.17c2.63.1,5.29.17,8,.17,3.88,0,7.67-.13,11.39-.35A121.92,121.92,0,0,0,120,171.41Zm0-44.62A163,163,0,0,1,96,152a163,163,0,0,1-24-1.75V126.46A183.74,183.74,0,0,0,96,128a183.74,183.74,0,0,0,24-1.54Zm64,48a165.45,165.45,0,0,1-48,0V174.4a179.48,179.48,0,0,0,24,1.6,183.74,183.74,0,0,0,24-1.54ZM232,172c0,8.39-12.41,17.4-32,22.87V171.5c12.91-3.13,23.84-7.79,32-13.57Z"/></svg>';
+
     function buildBelief(amount) {
       var html = '<p class="font-dm text-sm text-slate-700 mb-4">Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain autosta maksettua hintaa.</p>';
 
@@ -1870,7 +1903,9 @@
          end and fails AA. It passes there because that row is transparent over
          white. slate-600 here. */
       html += '<div class="belief-bar rounded-lg h-10 flex items-center justify-between gap-3 px-3">'
-        +      '<span class="font-dm text-sm xs:text-base font-bold text-slate-800 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
+        +      '<span class="flex items-center gap-1.5 min-w-0">' + ICO_COINS
+        +        '<span class="font-dm text-sm xs:text-base font-bold text-slate-800 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
+        +      '</span>'
         +      '<span class="font-dm text-xs xs:text-sm font-medium text-slate-600 flex-shrink-0">+ Kulut</span>'
         +    '</div>';
 
@@ -2456,7 +2491,7 @@
       var beliefSec = document.getElementById('section-belief');
       if (idShow) {
         document.getElementById('belief-content').innerHTML =
-          buildBelief((offers[0] && offers[0].amount) || req.highest_offer || 0);
+          buildBelief(standingAmount(offers[0]) || req.highest_offer || 0);
         beliefSec.classList.remove('hidden');
       } else {
         beliefSec.classList.add('hidden');
@@ -2577,10 +2612,7 @@
           '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' + acceptCls() + '">Hyväksy tarjous</button>' +
         '</div>';
       document.getElementById('modal-btn-accept').addEventListener('click', function() {
-        var _acceptNeg = NEGOTIATIONS[offer.id];
-        var _acceptMsgs = (_acceptNeg && _acceptNeg.messages) || [];
-        var _acceptLastDealer = _acceptMsgs.filter(function(m) { return m.sender === 'dealer'; }).slice(-1)[0] || null;
-        var _acceptAmt = Math.max(_acceptLastDealer && _acceptLastDealer.amount ? _acceptLastDealer.amount : offer.amount, offer.amount);
+        var _acceptAmt = standingAmount(offer);
         ACCEPTED_OFFER = Object.assign({}, offer, { amount: _acceptAmt });
         var _snap = getData().offers || [];
         ACCEPTED_OFFERS_SNAPSHOT = _snap.map(function(o) {
