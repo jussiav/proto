@@ -244,7 +244,7 @@
       <section id="section-belief" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
-          <span class="text-blue-900 leading-[24px]">Näitkö netissä korkeampia hintoja?</span>
+          <span class="text-blue-900 leading-[24px]">Mistä jälleenmyyntihinta koostuu?</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="belief-content"></div>
@@ -1790,72 +1790,57 @@
        rejected on exactly this ground.
 
        Copy is placeholder pending the team's own wording. */
-    function buildBelief() {
-      /* Green is the ONLY hue in here and it sits at the palest step that still
-         reads as green. The share does not need colour to dominate — it is most
-         of the bar — so the green only has to mark which part is the seller's.
-         The rest are neutrals at 300/400, warm and cool alternating so they can
-         be told apart without any of them going dark enough to pull the eye to
-         the end of the bar.
+    /* THE BAR NOW CARRIES THE SELLER'S OWN OFFER, and that is a deliberate
+       reversal worth understanding before anyone edits it.
 
-         At 72% the green read as a grudging majority — closer to "they keep a
-         quarter" than to "nearly all of this is yours" — which is the opposite
-         of what the block is for. The small parts still have to be countable,
-         so they stop narrowing at ~12px each on a 375px screen. */
+       It used to show a generic resold car with the green labelled
+       `Edellisen omistajan osuus` — somebody else's car, no figure anywhere, and
+       a caption telling the seller to compare their offer to it. Safe, and one
+       inference short: the seller had to place themselves in the diagram.
+
+       Their own offer in the green removes that step entirely. THE COST is that
+       a real figure on a segment of known width implies the total — 11 500 € at
+       79% implies roughly 14 500 € — so the block now quietly says what the
+       seller's car might be advertised for, even though no total is printed.
+       Known and accepted for relatability; recorded so nobody meets it as a
+       surprise. If it ever has to go back, the previous-owner label and the
+       comparison caption are the shape to return to.
+
+       ONE figure only. The remainder is labelled `Kulut` and nothing else — a
+       euro amount there would turn "what a dealership adds" into "what they
+       take off your price", which is the reaction the whole block is built to
+       avoid. */
+    function buildBelief(amount) {
+      /* Green is the only hue in the diagram. The share does not need colour to
+         dominate — it is most of the bar — so the green only marks which part is
+         the seller's, and the remainder is one light neutral that recedes.
+
+         At 72% the green read as a grudging majority, closer to "they keep a
+         quarter" than to "nearly all of this is yours". 79% is also now a
+         load-bearing number rather than a schematic one: it is what sets the
+         implied total above. */
       var SELLER_W = 79;
 
-      /* ONE LINE ABOVE THE BAR. It answers the heading and frames the diagram
-         before the seller has to parse it, then stops. */
-      var html = '<p class="font-dm text-sm text-slate-700 mb-4">Jälleenmyytävän auton pyyntihinta sisältää kaikki kulut.</p>';
+      var html = '<p class="font-dm text-sm text-slate-700 mb-4">Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain autosta maksettua hintaa.</p>';
 
-      /* Segments are individually rounded with a real gap rather than one
-         clipped bar: the parts read as parts, and the tail is countable at a
-         glance instead of resolving into a striped block. */
       html += '<div class="flex gap-1 h-10">';
-      /* THE LABEL IS THE WHOLE BRIDGE. "Edellisen omistajan osuus" says the bar
-         belongs to SOMEBODY ELSE'S car — the one the seller saw advertised —
-         and that a person stood where they are standing now. Without it the bar
-         is unowned and a seller cannot tell whether it breaks down their car or
-         the listing they are comparing against, which are opposite readings.
-
-         It is also why nothing here claims anything about the seller's own car:
-         the diagram is about the advertised car, and their offer is only
-         *comparable* to the green part. */
-      /* `text-xs sm:text-sm` and the tighter padding are not taste: at 375px
-         the green is 211px and the label at 14px measured 177px into 177px of
-         room — fitting exactly, i.e. one font-rendering difference away from
-         truncating on a real phone. Dropping a step gives it ~35px of slack. */
-      html +=   '<div class="bg-green-200 rounded-md flex items-center px-2 sm:px-3" style="width:' + SELLER_W + '%">'
-        +        '<span class="font-dm text-xs sm:text-sm font-bold text-green-900 truncate">Edellisen omistajan osuus</span>'
+      /* Both parts name themselves inside their own segment. Nothing under the
+         bar points at anything any more, which is what let the comparison
+         caption go: a segment that says `Tarjouksesi 11 500 €` needs no
+         instruction to compare. */
+      html +=   '<div class="bg-green-200 rounded-md flex items-center px-3" style="width:' + SELLER_W + '%">'
+        +        '<span class="font-dm text-sm font-bold text-green-900 truncate">Tarjouksesi' + (amount ? ' ' + fmtCurrency(amount) : '') + '</span>'
         +      '</div>';
-      /* ONE neutral block, not five coloured ones. Five segments made the tail
-         the busiest thing in the bar — five shapes and five colours against one
-         flat green — so the eye went to the part that matters least. They were
-         separated to be COUNTABLE, and counting them turned out not to be worth
-         the attention it cost: the caption below already says there are several
-         things, and naming them in one line was always how they were read.
-
-         Light enough to recede, dark enough to still read as a part of the bar
-         rather than empty space. */
-      html += '<div class="bg-slate-200 rounded-md flex-1"></div>';
+      html +=   '<div class="bg-slate-200 rounded-md flex-1 flex items-center px-2 min-w-0">'
+        +        '<span class="font-dm text-xs font-medium text-slate-600 truncate">Kulut</span>'
+        +      '</div>';
       html += '</div>';
 
-      /* TWO CAPTIONS, one under each end of the bar, each labelling the part
-         above it.
-
-         The left one is the last step of the argument and the reason this block
-         exists: "edellisen omistajan osuus" gets the seller most of the way, but
-         nothing yet tells them their own offer belongs in that same place. It is
-         phrased as an INSTRUCTION rather than a claim — "compare yours to this"
-         asserts nothing about what their car would retail for, where "this is
-         your offer" would.
-
-         The right one hedges with "Esim.": these are examples of what a
-         dealership adds, not an exhaustive or audited list. */
-      html += '<div class="flex flex-wrap justify-between gap-x-4 gap-y-1 mt-1.5">'
-        +      '<p class="font-dm text-xs font-medium text-green-800">Vertaa tarjoustasi tähän.</p>'
-        +      '<p class="font-dm text-xs text-slate-500">(Esim. takuu, kunnostus, kulut, kate, arvonalenema)</p>'
-        +    '</div>';
+      /* The remainder's contents, under the remainder. `Esim.` is the hedge
+         that matters: these are examples of what a dealership adds, not an
+         exhaustive or audited list, and the block prints no figure for any of
+         them. */
+      html += '<p class="font-dm text-xs text-slate-500 text-right mt-1.5">(Esim. takuu, kunnostus, kulut, kate, arvonalenema)</p>';
 
       return html;
     }
@@ -1871,7 +1856,16 @@
        So in this arm the chart and the date row come out, and what replaces
        them is the warm-up screen's own shape — illustration, badge, headline,
        one short paragraph — reading those figures back as the argument they
-       are. The mechanic is the whole point, and Jussi's wording makes it TWO
+       are. It closes on what the seller GAINED rather than on another fact:
+       "Nyt tiedät, mitä autostasi ollaan valmiita maksamaan" is the auction's
+       value stated as knowledge, which is the thing sellers who carry the
+       result to a local dealership have already worked out for themselves.
+       Deliberately NOT a comparison against what one dealership would have
+       offered — we hold no such figure, and a seller told "we beat a single
+       dealer by X" is being invited to go and check, which costs the decision
+       time the arm exists to shorten.
+
+       The mechanic is the whole point, and Jussi's wording makes it TWO
        claims rather than one: the dealerships are professionals who looked at
        the listing, and they bid against each other. So the top bid is an expert
        field's competitive result rather than one buyer's opinion. Then AutoVex
@@ -1984,7 +1978,7 @@
            treatment on the support banner. One step below the section's `h2` so
            the two do not compete. */
         +      '<h3 class="font-display text-lg font-bold leading-snug">Autostasi kilpaili ' + buyers + ' autoliikettä.</h3>'
-        +      '<p class="font-dm text-sm text-slate-700 mt-2">Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan ' + buyers + ' liikkeen kilpailun tulos.</p>'
+        +      '<p class="font-dm text-sm text-slate-700 mt-2">Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan ' + buyers + ' liikkeen kilpailun tulos. Nyt tiedät, mitä autostasi ollaan valmiita maksamaan.</p>'
         +    '</div>'
         +  '</div>';
 
@@ -2423,7 +2417,8 @@
 
       var beliefSec = document.getElementById('section-belief');
       if (idShow) {
-        document.getElementById('belief-content').innerHTML = buildBelief();
+        document.getElementById('belief-content').innerHTML =
+          buildBelief((offers[0] && offers[0].amount) || req.highest_offer || 0);
         beliefSec.classList.remove('hidden');
       } else {
         beliefSec.classList.add('hidden');

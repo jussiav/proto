@@ -2084,74 +2084,58 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — `Näitkö netissä korkeampia hintoja?`
+### Block 2 — `Mistä jälleenmyyntihinta koostuu?`
 
-`buildBelief`. ONE stacked bar, and the whole of it is the price the seller saw
-somewhere else:
+`buildBelief(amount)`. ONE bar in two parts, and the first part is the seller's
+own offer:
 
 ```
-Näitkö netissä korkeampia hintoja?          ← heading, the seller's own observation
-Jälleenmyytävän auton pyyntihinta sisältää kaikki kulut.
-[ Edellisen omistajan osuus            |▪|▪|▪|▪|▪]
-  Vertaa tarjoustasi tähän.   (Esim. takuu, kunnostus, kulut, kate, arvonalenema)
+Mistä jälleenmyyntihinta koostuu?
+Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain
+autosta maksettua hintaa.
+[ Tarjouksesi 11 500 €                          ][ Kulut ]
+                    (Esim. takuu, kunnostus, kulut, kate, arvonalenema)
 ```
 
-**THE GREEN LABEL IS THE WHOLE BRIDGE, and it took a round to find.** Earlier
-versions labelled it `Myyjälle maksettu hinta` — true, and unowned. A seller
-could not tell whether the bar broke down THEIR car or the listing they were
-comparing against, which are opposite readings, and the wrong one makes the
-section meaningless. `Edellisen omistajan osuus` says the bar is somebody else's
-car and that a person stood exactly where this seller is standing now.
+**THE SELLER'S OWN OFFER IN THE GREEN IS A DELIBERATE REVERSAL** (2026-09-14).
+Earlier versions showed a generic resold car with the green labelled
+`Edellisen omistajan osuus` and a caption telling the seller to compare their
+offer to it. Safe — no figure anywhere — and one inference short: the seller had
+to place themselves in the diagram. Their own number removes that step entirely,
+and the comparison caption went with it, because a segment reading
+`Tarjouksesi 11 500 €` needs no instruction to compare.
 
-**One caption closes the last step.** `Vertaa tarjoustasi tähän.` under the
-green. Phrased as an INSTRUCTION, not a claim: "compare yours to this" asserts
-nothing about what the seller's own car would retail for, where "this is your
-offer" would — and we have no idea what any given car lists for. Without it the
-seller still has to make the final leap unaided, and that leap is the whole
-point of the block.
+**THE TRADE, AND IT IS THE ONE CLAIM IN THIS BLOCK THAT IS NOT SCHEMATIC.** A
+real figure on a segment of known width implies the total: 11 500 € at 79%
+implies roughly 14 500 €. So the block now quietly says what the seller's car
+might be advertised for, even though no total is printed. Weighed and accepted
+for relatability. **`SELLER_W` is therefore load-bearing** — it used to be a
+schematic that claimed nothing, and it now sets that implied figure.
 
-**Two captions, one under each end**, each labelling the part above it. The
-right one hedges with `Esim.`: these are examples of what a dealership adds, not
-an exhaustive or audited list.
+If it ever has to go back, `Edellisen omistajan osuus` plus a
+`Vertaa tarjoustasi tähän.` caption is the shape to return to.
 
-**The seller's share comes first and is MOST of the bar — `SELLER_W` is 79%.**
-At 72% the green read as a grudging majority, closer to "they keep a quarter"
-than to "nearly all of this is yours", which is the opposite of what the block is
-for. The floor is countability — the small parts stop narrowing at ~12px each on
-a 375px screen.
+**ONE figure only, and the remainder must never get one.** A euro amount on
+`Kulut` would turn "what a dealership adds" into "what they take off your
+price", which is the reaction the whole block exists to avoid. The `Esim.` hedge
+under it matters for the same reason: examples of what a dealership adds, not an
+audited list.
 
-A diagram that TAKES the small parts out of the sticker price says "they took
-this from you"; one that starts from the previous owner's share says "they added
-this to it" — same facts, accurate causal direction, none of the resentment.
+**Both parts name themselves inside their own segment**, so nothing under the
+bar points at anything any more.
 
-**TWO PARTS, NOT SIX** (2026-09-14). The remainder was five separate coloured
-segments, split so it could be COUNTED. Counting it was not worth the attention
-it cost: five shapes and five colours against one flat green made the least
-important part of the bar the busiest thing in it, and the eye went there. It is
-one `bg-slate-200` block now, light enough to recede and dark enough to still
-read as part of the bar rather than empty space. The caption below already said
-there were several things, which is how they were being read anyway.
+**TWO PARTS, NOT SIX.** The remainder was five separate coloured segments, split
+so it could be COUNTED. Counting it was not worth the attention it cost: five
+shapes and five colours against one flat green made the least important part of
+the bar the busiest thing in it, and the eye went there. One `bg-slate-200`
+block now — light enough to recede, dark enough to read as part of the bar
+rather than empty space.
 
 **MUTED ON PURPOSE.** These parts are not a status, an action or a warning, and
 this page already spends saturated colour on all three — green accepts, blue
-negotiates, red and amber report. Green is the only hue and sits at the palest
-step that still reads as green.
+negotiates, red and amber report. Green is the only hue in the diagram.
 
-**Both parts are individually rounded with a real gap**, not one clipped bar, so
-they read as two things rather than one striped object.
-
-**The green label is `text-xs sm:text-sm`, and that is not taste.** At 375px the
-green is 211px; at 14px the label filled it with nothing to spare, i.e. one
-font-rendering difference from truncating on a real phone. Dropping a step gives
-~35px of slack. (Note for the next person measuring this: `truncate` makes the
-span fill its box, so `scrollWidth === clientWidth` whether or not the text fits
-— it proves nothing. Measure a clone, or look at the screenshot.)
-
-**NO FIGURES — no euros, no percentages, no example car.** The widths are a
-schematic: no axis, nothing to read a number off. An illustrative example car
-was considered and dropped, because numbers invite the two reactions the block
-exists to avoid — arguing with our sums, and resenting a margin. `SELLER_W` and
-`SMALL` are the only tunables.
+**Both parts are individually rounded with a real gap**, not one clipped bar.
 
 **NO ALTERNATIVE ROUTE IS NAMED** — not a private sale, not a trade-in, not
 another dealership. Steering a seller toward a route we would rather they did
@@ -2159,13 +2143,41 @@ not take would undo the point of the arm. The three-tier display the category
 uses (KBB's Trade-In / Private Party / Typical Listing) was considered and
 rejected on exactly this ground; watch for it coming back in a revision.
 
-**The design took six passes** — a bordered list of rows with explanatory
-paragraphs (read as a FAQ), a two-bar equation with `+` and `=`, one bar with a
-separate legend and caption, the same bar self-labelling with the copy beneath,
-the copy moved above with a wider green, then the previous-owner framing and the
-comparison caption. The rule that survived all of them: **if a revision needs a
-paragraph to make the picture land, the picture is wrong.** The two captions are
-labels on parts of the diagram, not an explanation of it.
+**The design took seven passes** — a bordered list of rows with explanatory
+paragraphs (read as a FAQ), a two-bar equation, one bar with a legend and
+caption, the bar self-labelling with copy beneath, copy above with a wider
+green, the previous-owner framing with a comparison caption, then the seller's
+own offer. The rule that survived all of them: **if a revision needs a paragraph
+to make the picture land, the picture is wrong.**
+
+### The value of the auction belongs in block 1, not block 2
+
+Asked for on 2026-09-14 and placed deliberately. The seller's dilemma is real —
+a local dealership offers 10 000, the auction returns 11 500, they have seen
+listings at 13 500, and they cannot see what AutoVex was worth. But **block 1
+already makes the competition argument**, so the payoff is its missing last line
+rather than a new section. Putting it in block 2 would have been a third
+statement of the same argument on one page, which is what killed
+`Muistathan nämä`.
+
+The line is **`Nyt tiedät, mitä autostasi ollaan valmiita maksamaan.`** — the
+auction's value stated as KNOWLEDGE, which is what the sellers who carry the
+result to a local dealership have already worked out for themselves.
+
+**Deliberately NOT a comparison against what one dealership would have offered.**
+Two reasons, and the second is the stronger:
+
+- **We hold no such figure.** There is no counterfactual on the page. The
+  closest proxy is the spread between the lowest and highest bid, which both
+  reveals that somebody valued the car well below the top bid and overstates our
+  own value, since the lowest bidder is the least interested dealership rather
+  than a typical one.
+- **"We beat a single dealer by X" invites the seller to go and check.** That
+  costs decision time, which is one of the tertial's own key results — and the
+  paper-to-dealership behaviour proves sellers already have the instinct.
+
+**The paper-carrying behaviour stays off the page** for the same reason. It is
+good evidence the auction creates value and naming it tells sellers to do it.
 
 **Delete, if the idea is dropped** — the registry entry, the page's declaration,
 the arm reader, `buildBelief`, `buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`,
