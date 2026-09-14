@@ -2093,7 +2093,7 @@ Mistä jälleenmyyntihinta koostuu?
 Näkemäsi jälleenmyyntihinnat vastaavista autoista sisältävät kaikki liikkeen
 kulut, eivät vain autosta maksettua hintaa edelliselle omistajalle.
 ┌────────────────────────────────────────────────────────────┐
-│ 🪙 11 500 € sinulle   ·· blue-50 fades to slate-50 ·· + Kulut │
+│ 🪙 11 500 € sinulle    ·· white gathers to grey ··    + Kulut │
 │        (Esim. takuu, kunnostus, myyntikulut, kate, arvon…)     │
 └────────────────────────────────────────────────────────────┘
 ```
@@ -2139,20 +2139,23 @@ border, green demoted to a tint plus the figure's colour, then gone. **A green
 figure with no other green on the block reads as a leftover**, and the tint was
 the last thing still implying this bar is about a good outcome.
 
-**THE FILL IS BLUE, AND IT IS WHAT MAKES THIS A BREAKDOWN** (2026-09-14). The
-colour history is long and worth compressing: green-200 → a matched green-50
-with a green-500 border → a gradient border → a green tint → a slate gradient →
-no fill at all → **blue-50 fading to slate-50.** Every green version said *the
-auction went well*, which is the verdict block's job, not this one's. The
-no-fill version was correct about that and went too far the other way: a
-bordered strip of text is true, quiet, and not visibly about the composition of
-a price.
+**THE FILL HAS NO COLOUR IN IT, AND IT IS WHAT MAKES THIS A BREAKDOWN**
+(2026-09-14). The history is long and worth compressing: green-200 → a matched
+green-50 with a green-500 border → a gradient border → a green tint → a slate
+gradient → no fill at all → a blue-50 fade → **white to gray-100.**
 
-Light blue across the whole bar, fading to the palest slate at the costs end,
-gives it one body with two ends — the seller's part and everything else —
-without drawing a boundary between them. **Blue is the page's informational
-colour** (the section icon, AuctionStats' own figures); green is the accepting
-direction, and this block is not the recommendation.
+Two dead ends, each teaching the same thing. Every GREEN version said *the
+auction went well*, which is the verdict block's job rather than this one's. The
+BLUE version said *this is an AutoVex fact* and competed with the section icon
+for that meaning. And the NO-FILL version was right about both and went too far:
+a bordered strip of text is true, quiet, and not visibly about the composition
+of a price.
+
+Plain white-to-grey says only *this is the price, and part of it is not yours*,
+which is the whole claim. The exact stops are Jussi's:
+`#fff 0%, #fff 62%, #F8FAFC 75%, #f3f4f6 100%`. The card's own white runs under
+the seller's figure and the grey gathers at the costs end, so the bar has one
+body with two ends and never a boundary between them.
 
 **IT STATES NO PROPORTION, and every version has had to satisfy that.** We know
 the offer; the resale price and the costs are both unknown. The fade has no
@@ -2174,10 +2177,11 @@ the block AuctionStats' height — a one-line strip reads as a progress bar, two
 lines read as a cell.
 
 **THE MUTED LINES ARE slate-600, NOT AuctionStats' slate-500, and that comes
-back whenever the bar carries a fill.** slate-500 on blue-50 measures **4.35:1
-and fails AA**; it passes in AuctionStats only because that row is transparent
-over white. slate-600 on blue-50 is 6.93:1. The deviation has now left and
-returned twice, tracking the fill each time — it is a measurement, never a
+back whenever the bar carries a fill.** Both muted lines are right-aligned, so
+they sit on the DARKEST part of the fill: slate-500 on gray-100 measures
+**4.32:1 and fails AA**, where it passes in AuctionStats only because that row
+is transparent over white. slate-600 there is 6.89:1. The deviation has now left
+and returned twice, tracking the fill each time — it is a measurement, never a
 preference.
 
 **Below prod's `sm` it stacks**, because in a ~120px column the examples line
@@ -2253,10 +2257,10 @@ over a gradient (`accept-button-lab.html` uses the same one):
 
 | Label | On | Size | Ratio | WCAG 2.0 |
 |---|---|---|---|---|
-| `11 500 € sinulle` — slate-800 | blue-50 | 16px/700 | **13.37:1** | AA + AAA |
-| `+ Kulut` — slate-600 | the fade | 14px/500 | **7.18:1** | AA + AAA |
-| `(Esim. …)` — slate-600 | blue-50 | 12px/400 | **6.93:1** | AA |
-| *AuctionStats' own slate-500, rejected* | blue-50 | — | *4.35:1* | **fails** |
+| `11 500 € sinulle` — slate-800 | white | 16px/700 | **14.63:1** | AA + AAA |
+| `+ Kulut` — slate-600 | gray-100 | 14px/500 | **6.89:1** | AA |
+| `(Esim. …)` — slate-600 | gray-100 | 12px/400 | **6.89:1** | AA |
+| *AuctionStats' own slate-500, rejected* | gray-100 | — | *4.32:1* | **fails** |
 
 Neither label is "large text" at these sizes, so both are against 4.5:1.
 
