@@ -121,6 +121,13 @@
     .belief-chip--own     { background: #EEF6FA; border-color: #0B6DFF; }   /* blue-50 / blue-600 */
     .belief-chip--unknown { border-style: dashed; border-color: #CBD5E1; }  /* slate-300 */
 
+    /* The row is `items-stretch` so the three terms match the tallest; the
+       operators must not stretch with them or they sit at the top of a chip's
+       height. Hand-written rather than a `self-center` utility for the usual
+       reason — the block is injected by JS and the Play CDN generates utilities
+       a tick after the render, which would drop the operators on first paint. */
+    .belief-op { align-self: center; }
+
     /* Below prod's `sm` three 200px terms cannot sit in a 287px column, so the
        equation stacks and the operators become row separators.
 
@@ -130,7 +137,6 @@
        to the head at runtime, i.e. after this block. A single class loses. */
     @media (max-width: 619.98px) {
       .belief-eq.belief-eq { flex-direction: column; align-items: stretch; gap: .5rem; }
-      .belief-eq.belief-eq > .belief-op { align-self: center; }
     }
 
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
@@ -1917,7 +1923,7 @@
       html += '<div class="belief-eq flex items-stretch gap-3">'
         +      chip('belief-chip--own', (amount ? fmtCurrency(amount) : 'Tarjouksesi'), 'Sinulle maksettava summa.', true)
         +      op('+')
-        +      chip('belief-chip--unknown', 'Kulut', 'Vaihtelee autoittain \u2013 emme tiedä tarkkaa summaa.', false)
+        +      chip('belief-chip--unknown', 'Kulut', 'Vaihtelee autoittain', false)
         +      op('=')
         +      chip('', 'Pyyntihinta', 'Ilmoituksessa näkyvä hinta.', false)
         +    '</div>';

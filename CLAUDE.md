@@ -2096,7 +2096,7 @@ summan lisäksi myös muita kuluja. Huomioi tämä, kun arvioit saamaasi tarjous
 näkemiisi pyyntihintoihin.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
 │ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Pyyntihinta      │
-│ Sinulle maksett… │   ╎ Vaihtelee autoit…╎   │ Ilmoituksessa n… │
+│ Sinulle maksett… │   ╎ Vaihtelee autoit ╎   │ Ilmoituksessa n… │
 └──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
 *Kulujen osuus riippuu auton sisäänostokunnosta, odotetusta arvonalenemasta
 sekä rahoituksesta.
@@ -2117,10 +2117,13 @@ earlier version of this block had to stop the seller running the arithmetic
 backwards, and each did it by hiding a boundary — a gradient with no locatable
 edge, then no fill at all. An equation cannot hide its terms, so it says the
 quiet part instead: the box is dashed and its sub-label reads
-`Vaihtelee autoittain – emme tiedä tarkkaa summaa.` **A dashed box reads as a
-blank to be filled, not as a quantity**, so there is nothing to subtract from
-and no proportion is claimed. **Filling that chip, or giving it a figure, breaks
-the block.**
+`Vaihtelee autoittain`. **A dashed box reads as a blank to be filled, not as a
+quantity**, so there is nothing to subtract from and no proportion is claimed.
+**Filling that chip, or giving it a figure, breaks the block.**
+
+The sub-label was `Vaihtelee autoittain – emme tiedä tarkkaa summaa.` and was cut
+to two words. The dash clause was the picture apologising in prose — the dashed
+box already says it, and a term in an equation should read as a term.
 
 **The first term is the STANDING offer**, via `standingAmount(offer)` — the same
 single definition the offer card and the accept handler read, so a negotiation
@@ -2137,6 +2140,13 @@ moves all three together. With no amount it falls back to the word
 | sub-labels + footnote — slate-600 | white | 12px/400 | **7.58:1** |
 
 All against 4.5:1, all AA.
+
+**The operators sit on the row's centre line.** `.belief-op { align-self:
+center }` in hand-written CSS, not a `self-center` utility: the row is
+`items-stretch` so the three terms match the tallest, and without this the `+`
+and `=` stretch with them and settle at the top of a chip's height. Hand-written
+for the usual reason — the Play CDN generates utilities a tick after the render,
+which would drop the operators on first paint.
 
 **Below prod's `sm` it stacks** — three ~200px terms cannot sit in a 287px
 column — and the operators become row separators. `.belief-eq.belief-eq` is
