@@ -184,7 +184,7 @@
     // CTAs. prod's CarCard renders UiButton secondary (primary action) and ghost
     // (secondary action), or an #actions slot. Descriptors are
     // { text, href?, attrs? } — an href renders <a>, otherwise <button>.
-    var BTN_BASE = 'px-4 py-2 font-dm text-xs sm:text-sm font-medium rounded-lg text-center cursor-pointer transition-colors inline-flex items-center justify-center';
+    var BTN_BASE = 'px-4 py-2 font-dm text-sm font-medium rounded-lg text-center cursor-pointer transition-colors inline-flex items-center justify-center';
     // UiButton variants — see CLAUDE.md rule 8
     var BTN_SECONDARY = BTN_BASE + ' bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 sm:order-2';
     var BTN_GHOST     = BTN_BASE + ' bg-transparent hover:bg-blue-50 active:bg-blue-100 text-blue-600';

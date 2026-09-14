@@ -205,6 +205,54 @@ These rules apply to all new pages and components in this prototype, without exc
 
 10. **UiButton colors.** Default (no color prop) = blue variants: `secondary` → `bg-blue-100 hover:bg-blue-200 text-blue-800`, `ghost` → `bg-transparent hover:bg-blue-50 text-blue-600`. Slate variants only when `color="slate"` is explicit in the Vue component.
 
+    **Button LABEL SIZE comes from the `size` prop, and only two of the four
+    sizes set one** (audited 2026-09-14 against the 09-07 dump). `UiButton`'s
+    base cva is `text-base leading-tight`; `sm` and `md` override it with
+    `text-sm`, `lg` and `fw` do not — so **`lg` and `fw` labels are 16px** and
+    `sm`/`md` are 14px. `md` is the DEFAULT, so a `<UiButton>` with no `size` is
+    14px.
+
+    | Size | Classes | Label |
+    |---|---|---|
+    | `sm` | `text-sm px-3.5 h-8` | 14 |
+    | `md` *(default)* | `text-sm px-5 h-10` | 14 |
+    | `lg` | `px-8 h-14` | **16** |
+    | `fw` | `px-8 h-14 w-full` | **16** |
+
+    The legacy `elements/Button.vue` is a separate scale: `medium` (its default)
+    is `py-2 text-base`, plus a base `font-medium leading-none tracking-wider
+    px-5`. `large` is `text-lg`, `small` `text-sm`.
+
+    **Which consumer surface uses which, and what the proto had wrong:**
+
+    | Surface | Prod | Label | Proto before |
+    |---|---|---|---|
+    | Decision offer card — accept, counter offer | `UiButton` `lg` | 16 | **14** |
+    | Decision warm-up — `Katso tulokset` | `UiButton` `lg` | 16 | **14** |
+    | Decision support banner | `UiButton` `fw` | 16 | 16 ✓ |
+    | Negotiate / reject / thank-you modal footers | `Button.vue` medium | 16 | **14** |
+    | In-thread accept (`DealerAcceptCounterOfferAction`) | `UiButton` `md` | 14 | 14 ✓ |
+    | Offers page — car card CTAs, notification CTAs | `UiButton` `md` | 14 | `text-xs sm:text-sm` |
+
+    Twelve labels on `decision.html` went to `text-base` and `vehicle-card.js`'s
+    `BTN_BASE` lost its `text-xs sm:` step — **the card CTAs were 12px on a
+    phone where prod is 14px at every width.** The in-thread accept keeps
+    `text-sm` deliberately: it is prod's dealership component, which passes
+    `size="md"`, so it is the one button on the decision page that is smaller
+    than its neighbours in prod too.
+
+    **Two divergences found in the same audit and NOT changed**, because they
+    are geometry and weight rather than the label size that was asked about:
+
+    - **`UiButton` sets no `font-weight` at all**, so prod's card, warm-up and
+      offers-page labels inherit the body's 400. The proto writes `font-medium`
+      (500) on all of them. `Button.vue` DOES set `font-medium`, so the modal
+      footers are right and only the `UiButton` surfaces are heavy.
+    - **Heights and paddings.** The warm-up CTA is `px-6 h-12` against prod's
+      `px-8 h-14`, and the offers-page card CTAs are `px-4 py-2` (36px) against
+      prod's `px-5 h-10` (40px). Both change layout, so they are a decision
+      rather than a transcription fix.
+
 11. **Accordion/FAQ.** Use the MAccordion pattern: `<details class="group peer">` + sibling content div with `grid grid-rows-[0fr] opacity-0 peer-open:grid-rows-[1fr] peer-open:opacity-100 duration-150 transition-[grid-template-rows,opacity]`. Item wrapper: `bg-white p-3 rounded-md`. Title: `text-sm text-gray-700 group-open:font-bold`. Icons: `caret-down`/`caret-up` 16×16 `text-slate-500`. List gap: `space-y-2.5`. FAQ content comes from `faq.sellers_profile_faqs` in `vue-i18n-locales.generated.js` — all items, exact HTML.
 
 12. **Nav bar — one shared definition, `site-nav.js`.** Never inline nav markup in a page and never re-add nav HTML to `layout.js`. A page opts in with `<div id="site-nav"></div>` followed immediately by `<script src="site-nav.js"></script>` (the script must come right after the mount so the nav exists before any inline page script that reads `#nav-login-label`).

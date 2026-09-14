@@ -278,7 +278,7 @@
             <h2 id="warmup-heading" class="font-display text-3xl font-bold mt-2 lg:leading-[36px]"></h2>
             <p id="warmup-message" class="text-black text-base px-2.5 mb-16 md:mb-6 mt-1"></p>
 
-            <button onclick="revealOffers()" class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">
+            <button onclick="revealOffers()" class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">
               Katso tulokset
             </button>
           </div>
@@ -1662,7 +1662,7 @@
            everywhere. The green is `acceptCls()`, shared with the modal footer
            and the in-thread accept — see change 17 for which green. */
         html += '<div>' +
-          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-sm font-medium ' +
+          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base font-medium ' +
             (EN_V1 ? acceptCls() : 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
             '" data-action="accept-offer" data-offer-id="' + offer.id + '">' + acceptText + '</button>' +
           /* Change 16. The (i) is a blue-600 disc against a green button, on a
@@ -1685,7 +1685,7 @@
              white version was tried twice: the first time it read as disabled
              next to the green, the second time to give the count a white field.
              The count no longer needs one — red carries itself on pale blue. */
-          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-sm font-medium bg-blue-100 hover:bg-blue-200 text-blue-800' +
+          '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base font-medium bg-blue-100 hover:bg-blue-200 text-blue-800' +
             '" data-action="negotiate-offer" data-offer-id="' + offer.id + '">' + negBtnLabel + '</button>' +
           /* Change 12 (spec). The pulsing count stays — it is prod's, and it is
              the only thing on the card that moves. What changes is its colour and
@@ -2689,7 +2689,7 @@
       body.innerHTML = '<p class="text-base text-slate-700">Mahtavaa, olet nyt hyväksymässä autoliikkeen tarjouksen!</p>';
       footer.innerHTML =
         '<div class="flex justify-end">' +
-          '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' + acceptCls() + '">Hyväksy tarjous</button>' +
+          '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium ' + acceptCls() + '">Hyväksy tarjous</button>' +
         '</div>';
       document.getElementById('modal-btn-accept').addEventListener('click', function() {
         var _acceptAmt = standingAmount(offer);
@@ -2931,7 +2931,7 @@
         msgs[msgs.length - 1].sender === 'dealer';
       if (showAccept && !acceptIsInThread) {
         fRight += '<button id="modal-btn-accept-from-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
+          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium ' +
           (buttonDisabled ? disabledCls : acceptCls()) +
           '">Hyväksy tarjous</button>';
       }
@@ -2946,12 +2946,12 @@
           ? 'Lähetä vastatarjous (' + Math.max(0, 2 - sellerRounds) + ' jäljellä)'
           : 'Lähetä';
         fRight += '<button id="modal-btn-send-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium' + stackCls + ' ' +
+          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium' + stackCls + ' ' +
           (buttonDisabled ? disabledCls : 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
           '">' + sendLabel + '</button>';
       }
       if (showClose) {
-        fRight += '<button id="modal-btn-close" class="inline-flex items-center justify-center px-6 h-10 rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 text-sm font-medium">Sulje</button>';
+        fRight += '<button id="modal-btn-close" class="inline-flex items-center justify-center px-6 h-10 rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 text-base font-medium">Sulje</button>';
       }
 
       // QuickNegotiate (reached via "Hylkää tarjouskilpailu") always keeps the
@@ -2960,7 +2960,7 @@
       var fLeft = '';
       if (isQuick) {
         fLeft = '<button id="modal-btn-reject-from-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-sm font-medium' +
+          ' class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-base font-medium' +
           stackCls + ' ' +
           (buttonDisabled ? disabledCls : 'text-red-600 hover:bg-red-50') +
           '">Hylkää tarjous</button>';
@@ -3109,11 +3109,11 @@
         ? 'flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center sm:gap-0'
         : 'flex justify-between items-center') + '">';
       if (showNeg) {
-        fHtml += '<button id="modal-btn-to-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' + rejBtnCls + '">Tee vastatarjous</button>';
+        fHtml += '<button id="modal-btn-to-neg" class="inline-flex items-center justify-center px-8 h-10 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' + rejBtnCls + '">Tee vastatarjous</button>';
       } else {
         fHtml += '<span></span>';
       }
-      fHtml += '<button id="modal-btn-reject-confirm" class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-red-600 hover:bg-red-50 text-sm font-medium' + rejBtnCls + '">Hylkää tarjous</button>';
+      fHtml += '<button id="modal-btn-reject-confirm" class="inline-flex items-center justify-center px-6 h-10 rounded-lg text-red-600 hover:bg-red-50 text-base font-medium' + rejBtnCls + '">Hylkää tarjous</button>';
       fHtml += '</div>';
       footer.innerHTML = fHtml;
 
@@ -3418,7 +3418,7 @@
       var enabled = !!(f.reason && f.rejected_reason && f.StarRating);
       footer.innerHTML =
         '<div class="flex justify-center lg:justify-end"><button id="modal-btn-do-reject"' + (enabled ? '' : ' disabled') +
-        ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-sm font-medium ' +
+        ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium ' +
         (enabled
           ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]'
           : 'bg-gray-200 text-gray-500 border-2 border-gray-200 cursor-not-allowed') +
@@ -3471,7 +3471,7 @@
                   '<p class="text-gray-500 mt-2 text-left">Ark. klo 10–16</p>' +
                 '</div>' +
                 '<div class="mt-5 flex items-center justify-center">' +
-                  '<button id="modal-btn-thanks-close" class="w-full lg:w-auto lg:flex-1 inline-flex items-center justify-center px-5 h-10 rounded-lg bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-gray-300 hover:bg-opacity-50 text-sm font-medium tracking-wider">Sulje</button>' +
+                  '<button id="modal-btn-thanks-close" class="w-full lg:w-auto lg:flex-1 inline-flex items-center justify-center px-5 h-10 rounded-lg bg-transparent border-2 border-blue-600 text-blue-600 hover:bg-gray-300 hover:bg-opacity-50 text-base font-medium tracking-wider">Sulje</button>' +
                 '</div>' +
               '</div>' +
             '</div>' +
