@@ -2086,14 +2086,16 @@ exclusions share one fallback.
 
 ### Block 2 — `Mistä jälleenmyyntihinta koostuu?`
 
-`buildBelief(amount)`. ONE bar, no segments, and the seller's own offer leads it:
+`buildBelief(amount)`. ONE framed row, and the seller's own offer leads it:
 
 ```
 Mistä jälleenmyyntihinta koostuu?
 Näkemäsi jälleenmyyntihinnat sisältävät kaikki liikkeen kulut, eivät vain
 autosta maksettua hintaa.
-[ 🪙 11 500 € sinulle       ·· fade ··        + Kulut ]
-                    (Esim. takuu, kunnostus, myyntikulut, kate, arvonalenema)
+┌────────────────────────────────────────────────────────────┐
+│ 🪙 11 500 € sinulle                                + Kulut │
+│        (Esim. takuu, kunnostus, myyntikulut, kate, arvon…)  │
+└────────────────────────────────────────────────────────────┘
 ```
 
 **THE SELLER'S OWN OFFER IS A DELIBERATE REVERSAL** (2026-09-14). Earlier
@@ -2137,28 +2139,48 @@ border, green demoted to a tint plus the figure's colour, then gone. **A green
 figure with no other green on the block reads as a leftover**, and the tint was
 the last thing still implying this bar is about a good outcome.
 
-**ONLY THE COSTS END IS PAINTED.** The fill starts fully transparent — the
-card's own white — and grey fades in from 52 %, arrived by 95 %. The frame is
-what makes it a bar; the grey is what makes the costs a THING. So the seller's
-figure is read against the page rather than against a tint, and the only painted
-area in the block is the part they did not know about. An earlier version tinted
-the left slate-50 to stop it reading as empty track; the icon and the bold figure
-do that job instead, and better.
+**NO FILL AT ALL, AND THAT IS THE END OF THE BAR AS A DIAGRAM** (2026-09-14).
+green-200 → a matched green-50 with a green-500 border → a gradient border → a
+green tint → a slate gradient → nothing. Each step dropped something that
+claimed more than we can support, and the fill was the last: **it drew a
+PROPORTION, and we hold no proportion.** We know the offer; the resale price and
+the costs are both unknown. The block no longer depicts a split at all — it
+states one figure, names what else is in the price, and stops.
 
-**The transparent stop is written `rgba(226,232,240,0)`, not `transparent`.**
-That keyword is transparent BLACK, and some engines interpolate through grey
-toward it — a dirty smudge across the middle of the bar.
+**Before anyone "restores the bar": the gradient existed to make the split
+unmeasurable, and there is nothing left to measure.** Any fill that comes back
+has to answer what proportion it is claiming.
 
-**It borrows AuctionStats' value/label pair whole, colours included, and now its
-ICON too:** the figure is the VALUE (`text-slate-800 text-sm xs:text-base
-font-bold`) with `ph-fill-coins` at `fill-current text-blue-400`, 18px, `gap-1.5`
-— AuctionStats' exact icon treatment, and prod's own icon for its B2B
-reserve-price cell. `+ Kulut` is the LABEL (`text-xs xs:text-sm`).
+**It is AuctionStats' cell now, not a bar** — same 1px slate-200 border, same
+`rounded-lg`, same `p-2.5`, same value/label typography, same icon treatment:
 
-**One deliberate deviation, and it is a measurement, not a preference:**
-AuctionStats' label colour is `text-slate-500`, which measures **3.86:1** against
-this bar's slate-200 end and **fails AA**. It passes in AuctionStats because that
-row is transparent over white. `+ Kulut` stays slate-600.
+| Side | Role | What |
+|---|---|---|
+| left | VALUE | `ph-fill-coins` at `fill-current text-blue-400` 18px + `gap-1.5`, then `text-slate-800 text-sm xs:text-base font-bold` |
+| right | LABEL | `+ Kulut` at `text-slate-500 text-xs xs:text-sm`, **with the examples under it**, right-aligned |
+
+**The examples moved INSIDE.** They were a footnote under the bar; now
+everything the costs are is in one place. That second line is also what gives
+the block AuctionStats' height — a one-line strip reads as a progress bar, two
+lines read as a cell.
+
+**The slate-500 deviation went with the fill.** `+ Kulut` had to be slate-600
+while the bar had a grey end, where slate-500 measured 3.86:1 and failed AA. On
+white it is 4.76:1 and passes, so the label is AuctionStats' own colour again.
+
+**Below prod's `sm` it stacks**, because in a ~120px column the examples line
+wrapped to FOUR lines and the block read as two unequal columns. Same move
+AuctionStats makes when its container cannot hold a row — a container query
+there, since that component is dropped into hosts of wildly different widths; a
+media query here, since this block only ever sits in the decision page's card.
+
+**THE STACKING SELECTOR IS DOUBLED, `.belief-bar.belief-bar`, and it is a trap
+worth knowing.** `.belief-bar` and Tailwind's `items-center` / `gap-3` are both
+one class, so specificity ties and SOURCE ORDER decides — and the Play CDN
+appends its generated utilities to the head at runtime, i.e. after the page's own
+`<style>`. The single-class rule lost: the row went to column and then centred
+itself, because `align-items: center` still won on the cross axis. Two classes
+win without `!important`.
 
 **THE FIGURE IS THE OFFER AS IT STANDS, NOT THE AUCTION RESULT** (2026-09-14).
 A negotiation raises the standing amount, and the card's big figure has always
@@ -2220,8 +2242,8 @@ over a gradient (`accept-button-lab.html` uses the same one):
 | Label | On | Size | Ratio | WCAG 2.0 |
 |---|---|---|---|---|
 | `11 500 € sinulle` — slate-800 | white | 16px/700 | **14.63:1** | AA + AAA |
-| `+ Kulut` — slate-600 | slate-200 | 14px/500 | **6.15:1** | AA |
-| *AuctionStats' own slate-500, rejected* | slate-200 | — | *3.86:1* | **fails** |
+| `+ Kulut` — slate-500 | white | 14px/500 | **4.76:1** | AA |
+| `(Esim. …)` — slate-500 | white | 12px/400 | **4.76:1** | AA |
 
 Neither label is "large text" at these sizes, so both are against 4.5:1.
 
