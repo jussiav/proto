@@ -2302,8 +2302,8 @@ building it, so the two arms that draw that row keep one definition of it.
 | Part | Copy | Job |
 |---|---|---|
 | **1 — green block** | lead `Hyvä tarjouskilpailu`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
-| **2 — headline** | `Autostasi kilpaili 25 autoliikettä.` | the fact, as a sentence rather than a count |
-| **2 — body** | `Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan 25 liikkeen kilpailun tulos.` | **the mechanic — the only part that does the work** |
+| **2 — headline** | `Nyt tiedät, mitä autostasi maksetaan.` | the payoff, promoted |
+| **2 — body** | `25 autoliikkeen ammattilaista perehtyi ilmoitukseesi ja teki oman tarjouksensa. Kaupan teet suoraan autoliikkeen kanssa.` | **who made the offers, and who is buying** |
 | **3 — stats row** | `Tarjouksia yhteensä` / `Tarjoajat` | the evidence, closing rather than opening |
 
 **The badge and the recommendation are ONE block** (2026-09-11). They were a
@@ -2350,10 +2350,29 @@ giving a staircase (67 distinct levels across 139 points). At chart scale each
 what 138 bids over that range actually looks like, and the old varied line was
 an artefact of pretending there were 25.
 
-**The body is the whole argument, and it makes TWO claims:** the bidders are
-professionals who looked at the listing, and they bid against each other.
-Without them, 25 is just a big number and a seller who distrusts the offer has
-no reason to read it as anything else.
+**THE COPY WAS INVERTED AND CUT BY HALF** (2026-09-14). It ran 232 characters
+across three sentences and took six lines on a phone, sitting between a green
+block that states the conclusion and a stats row that shows the evidence —
+three layers all arguing the same thing, with `25` printed twice about 100px
+apart. The payoff line was promoted to the headline and the mechanic demoted to
+one short paragraph. **120 characters, two lines on desktop, and the section
+went 457 → 333 desktop / 576 → 430 on a phone.**
+
+One job per layer now: **the verdict recommends, the middle says what happened,
+the stats give the scale.**
+
+**THE BODY ANSWERS THREE THINGS SELLERS ACTUALLY SAY, and each is a reject
+reason from user testing** — this is why it reads as it does and why none of the
+three words are decoration:
+
+| Phrase | The belief it answers |
+|---|---|
+| `ammattilaista` | sellers do not know a person looked at the car at all |
+| `perehtyi ilmoitukseesi` · `oman tarjouksensa` | they assume AutoVex fetches generic prices for similar cars, so the copy says each dealership studied THIS listing and priced it itself |
+| `Kaupan teet suoraan autoliikkeen kanssa` | AutoVex is not the buyer — and market research says a named dealership is what consumers prefer over a website or a stranger at the door |
+
+**Do not compress this to one sentence.** Each clause is load-bearing against a
+different objection; the length is already the floor.
 
 **An earlier draft argued from blind independent valuation** — "each dealership
 priced the car itself and did not see the other offers" — and Jussi replaced it.
@@ -2376,15 +2395,30 @@ sheet is the wrong frame for an argument. The chart's top rule follows the same
 condition: a framed stats row above it makes `border-y` read as a doubled line,
 which is the same fix Asking price removal already documents.
 
-**The illustration is the warm-up's own `excellent_auction.png`**, at
-`sm:w-1/3` — a FRACTION of the container from prod's `sm` up, not a fixed width.
-It was `168px`, which read as about a quarter and would have stayed that way
-whatever the container did. The phone layout keeps its fixed `132px`, centred
-above the text rather than beside it, where a fraction of the column would be
-the wrong measure. A seller who came through the warm-up screen meets the
-illustration twice, two screens apart. Deliberate —
-this section is the explanation the warm-up's "Hyvä tarjouskilpailu takana!"
-never gave.
+**THE ILLUSTRATION IS GONE; A 48px SEAL-CHECK STAMPS THE BLOCK INSTEAD**
+(2026-09-14). Marketing is phasing the illustrations out product-wide, and at
+48px the block stops being a picture beside a paragraph and becomes one line
+with a stamp on it. `excellent_auction.png` STAYS IN THE REPO — `control`'s
+warm-up screen still draws it.
+
+**THE SEAL IS BLUE-600, AND THE COLOUR IS THE ARGUMENT.** This page assigns blue
+to what AutoVex does — the section icons, AuctionStats' figures — and green to
+the accepting direction. So blue also carries the sentence underneath it:
+**AutoVex ran the auction, the dealership made the offer, accepting it is the
+green act.**
+
+Green was the obvious choice and is wrong: a green seal 40px under the green
+verdict block is the recommendation stated twice in colour, which is the exact
+fault that merged the old lime badge and blue strip into that one block. Amber
+is unavailable — on this page it means "something new arrived".
+
+The glyph is prod's own seal-check, already used on the offer card's
+`100+ kauppaa AutoVexissä` row. Filled, its check knocks out of the rosette, so
+it reads as a stamp rather than an icon.
+
+**It is ONE ROW at every width now.** The illustration needed the phone layout to
+centre it above the text; a 48px stamp does not, so the stacked variant is gone
+and both breakpoints read the same way.
 
 **TWO gates, and in both the fallback is control with nothing removed** — the
 chart and the date row exactly as prod draws them:

@@ -2046,27 +2046,46 @@
         +    '<p class="font-dm text-sm text-green-900 mt-1">Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.</p>'
         +  '</div>';
 
-      /* The warm-up card's own arrangement — illustration beside headline and
-         body — at the scale of a block inside a card rather than a screen of its
-         own. It stacks below prod's `sm` (620px), where the illustration centres
-         above the text. */
-      h += '<div class="mt-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">'
-        /* A THIRD of the container from prod's `sm` up, as a fraction rather
-           than a fixed width: 168px read as about a quarter and stayed that
-           way whatever the container did. The phone layout keeps its fixed
-           132px — there the illustration is centred above the text rather than
-           beside it, so a fraction of the column would be the wrong measure. */
-        +    '<div class="w-[132px] sm:w-1/3 flex-shrink-0 mx-auto sm:mx-0">'
-        +      '<img src="assets/excellent_auction.png" alt="" class="w-full object-contain" />'
-        +    '</div>'
-        +    '<div class="flex-1 text-center sm:text-left">'
+      /* THE SEAL IS AutoVex'S MARK ON THE PROCESS, AND ITS COLOUR SAYS SO.
+         This page already assigns blue to what AutoVex does — the section
+         icons, AuctionStats' own figures — and GREEN to the accepting
+         direction. A green seal here would be the recommendation stated twice
+         in colour, forty pixels under the green verdict block, which is the
+         exact fault that merged the old lime badge and blue strip into that one
+         block in the first place. Blue also carries the point the copy makes:
+         AutoVex ran the auction, the dealership made the offer, and accepting
+         it is the green act.
+
+         It replaces `excellent_auction.png` at a fraction of the size — the
+         illustration is being phased out product-wide, and at 48px the block
+         stops being an illustration beside a paragraph and becomes one line
+         with a stamp on it. The asset stays in the repo: `control`'s warm-up
+         screen still draws it.
+
+         Amber was the other candidate and is unavailable: on this page amber
+         means "something new arrived" (the negotiation's reply state). */
+      var ICO_SEAL = '<svg width="48" height="48" viewBox="0 0 256 256" fill="currentColor" class="text-blue-600 flex-shrink-0" aria-hidden="true"><path d="M228.75 100.05c-3.52-3.67-7.15-7.46-8.34-10.33-1.06-2.56-1.14-7.83-1.21-12.47-.15-10-.34-22.44-9.18-31.27s-21.27-9-31.27-9.18c-4.64-.07-9.91-.15-12.47-1.21-2.87-1.19-6.66-4.82-10.33-8.34C148.87 20.46 140.05 12 128 12s-20.87 8.46-27.95 15.25c-3.67 3.52-7.46 7.15-10.33 8.34-2.56 1.06-7.83 1.14-12.47 1.21-10 .2-22.44.34-31.25 9.2s-9 21.25-9.2 31.25c-.07 4.64-.15 9.91-1.21 12.47-1.19 2.87-4.82 6.66-8.34 10.33C20.46 107.13 12 116 12 128s8.46 20.87 15.25 28c3.52 3.67 7.15 7.46 8.34 10.33 1.06 2.56 1.14 7.83 1.21 12.47.15 10 .34 22.44 9.18 31.27s21.27 9 31.27 9.18c4.64.07 9.91.15 12.47 1.21 2.87 1.19 6.66 4.82 10.33 8.34C107.13 235.54 116 244 128 244s20.87-8.46 27.95-15.25c3.67-3.52 7.46-7.15 10.33-8.34 2.56-1.06 7.83-1.14 12.47-1.21 10-.15 22.44-.34 31.27-9.18s9-21.27 9.18-31.27c.07-4.64.15-9.91 1.21-12.47 1.19-2.87 4.82-6.66 8.34-10.33 6.79-7.08 15.25-15.9 15.25-27.95s-8.46-20.87-15.25-27.95m-52.26-4.53a12 12 0 0 1 0 17l-56 56a12 12 0 0 1-17 0l-24-24a12 12 0 1 1 17-17L112 143l47.51-47.52a12 12 0 0 1 16.98.04Z"/></svg>';
+
+      /* One row at every width now. The illustration needed the phone layout to
+         centre it above the text; a 48px stamp does not, so the block reads the
+         same way on both and loses the stacked variant entirely. */
+      h += '<div class="mt-5 flex items-start gap-4">'
+        +    ICO_SEAL
+        +    '<div class="flex-1 min-w-0">'
         /* `text-lg` is a CDN-default size, so it pairs its own 28px leading and
            the h3 element rule reaches neither the size nor the leading;
            `leading-snug` pulls it to 24.75px, matching prod's own bare-h5
            treatment on the support banner. One step below the section's `h2` so
            the two do not compete. */
-        +      '<h3 class="font-display text-lg font-bold leading-snug">Autostasi kilpaili ' + buyers + ' autoliikettä.</h3>'
-        +      '<p class="font-dm text-sm text-slate-700 mt-2">Autoliikkeiden ammattilaiset tarkastivat ilmoituksesi ja kilpailivat autostasi toisiaan vastaan. Korkein tarjous ei siis ole yhden liikkeen arvio vaan ' + buyers + ' liikkeen kilpailun tulos. Nyt tiedät, mitä autostasi ollaan valmiita maksamaan.</p>'
+        +      '<h3 class="font-display text-lg font-bold leading-snug">Nyt tiedät, mitä autostasi maksetaan.</h3>'
+        /* THREE THINGS IN TWO SENTENCES, and each is a reject reason we hear.
+           `ammattilaista` — sellers do not know a person looked at all.
+           `perehtyi ilmoitukseesi` and `oman tarjouksensa` — they assume we
+           fetch generic prices for similar cars, so the copy says each
+           dealership studied THIS listing and priced it themselves.
+           `Kaupan teet suoraan autoliikkeen kanssa` — AutoVex is not the buyer,
+           and a named dealership is what research says sellers prefer. */
+        +      '<p class="font-dm text-sm text-slate-700 mt-2">' + buyers + ' autoliikkeen ammattilaista perehtyi ilmoitukseesi ja teki oman tarjouksensa. Kaupan teet suoraan autoliikkeen kanssa.</p>'
         +    '</div>'
         +  '</div>';
 
