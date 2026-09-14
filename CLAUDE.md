@@ -2084,55 +2084,66 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — `Myyntihinta vai pyyntihinta?`
+### Block 2 — `Näitkö netissä korkeampia hintoja?`
 
 `buildBelief`. ONE stacked bar, and the whole of it is the price the seller saw
 somewhere else:
 
 ```
-Myyntihinta vai pyyntihinta?           ← section heading, poses the distinction
-Muistathan, että ilmoituksen pyyntihinta ei ole sama kuin myyjälle maksettu hinta.
-[ Myyjälle maksettu hinta            |▪|▪|▪|▪|▪]
-                    Takuu, kunnostus, kulut, kate, arvonalenema
+Näitkö netissä korkeampia hintoja?          ← heading, the seller's own observation
+Jälleenmyytävän auton pyyntihinta sisältää kaikki kulut.
+[ Edellisen omistajan osuus            |▪|▪|▪|▪|▪]
+  Vertaa tarjoustasi tähän.   (Esim. takuu, kunnostus, kulut, kate, arvonalenema)
 ```
 
-**The heading poses the distinction, one line answers it, and the bar carries no
-caption.** An earlier version titled the bar `Autoliikkeen myyntihinta` as well
-and was explaining the same thing three times. The seller's share names itself
-INSIDE its own segment — it is wide enough at every supported width — and the
-small parts are named in one right-aligned line directly under themselves, so
-neither needs a legend row.
+**THE GREEN LABEL IS THE WHOLE BRIDGE, and it took a round to find.** Earlier
+versions labelled it `Myyjälle maksettu hinta` — true, and unowned. A seller
+could not tell whether the bar broke down THEIR car or the listing they were
+comparing against, which are opposite readings, and the wrong one makes the
+section meaningless. `Edellisen omistajan osuus` says the bar is somebody else's
+car and that a person stood exactly where this seller is standing now.
+
+**One caption closes the last step.** `Vertaa tarjoustasi tähän.` under the
+green. Phrased as an INSTRUCTION, not a claim: "compare yours to this" asserts
+nothing about what the seller's own car would retail for, where "this is your
+offer" would — and we have no idea what any given car lists for. Without it the
+seller still has to make the final leap unaided, and that leap is the whole
+point of the block.
+
+**Two captions, one under each end**, each labelling the part above it. The
+right one hedges with `Esim.`: these are examples of what a dealership adds, not
+an exhaustive or audited list.
 
 **The seller's share comes first and is MOST of the bar — `SELLER_W` is 79%.**
-It anchors the left and everything else follows. The width is not arbitrary: at
-72% the green read as a grudging majority, closer to "they keep a quarter" than
-to "nearly all of this is yours", which is the opposite of what the block is
+At 72% the green read as a grudging majority, closer to "they keep a quarter"
+than to "nearly all of this is yours", which is the opposite of what the block is
 for. The floor is countability — the small parts stop narrowing at ~12px each on
 a 375px screen.
 
 A diagram that TAKES the small parts out of the sticker price says "they took
-this from you"; one that starts from the seller's price says "they added this to
-yours" — same facts, accurate causal direction, none of the resentment.
+this from you"; one that starts from the previous owner's share says "they added
+this to it" — same facts, accurate causal direction, none of the resentment.
+
+**Segments are individually rounded with a real gap**, not one clipped bar, so
+the parts read as parts and the tail is countable at a glance rather than
+resolving into a striped block.
 
 **MUTED ON PURPOSE.** These segments are not a status, an action or a warning,
 and this page already spends saturated colour on all three — green accepts, blue
 negotiates, red and amber report. Green is the only hue and sits at the palest
-step that still reads as green; the seller's share does not need colour to
-dominate, it is most of the bar. The rest are neutrals at 300/400, warm and cool
+step that still reads as green. The rest are neutrals at 300/400, warm and cool
 alternating so they can be told apart without any going dark enough to pull the
 eye to the end of the bar.
 
 **The small parts exist to be COUNTED, not measured.** Near-equal widths that
-claim nothing, named collectively, never individually — a seller does not need
-to know which sliver is the warranty, only that there are several and that
-together they are the gap.
+claim nothing, named collectively, never individually.
 
-**ONE line of copy, ABOVE the bar, and only one.** It answers the heading's
-question and frames the diagram before the seller has to parse it. It states the
-fact and stops. The reject feedback says too many sellers never make this
-connection, while plenty of others make it instantly — **a second sentence would
-read as being talked down to by the ones who already knew.** `Muistathan` is the
-politeness the register wants; the rest is flat.
+**The green label is `text-xs sm:text-sm`, and that is not taste.** At 375px the
+green is 211px; at 14px the label filled it with nothing to spare, i.e. one
+font-rendering difference from truncating on a real phone. Dropping a step gives
+~35px of slack. (Note for the next person measuring this: `truncate` makes the
+span fill its box, so `scrollWidth === clientWidth` whether or not the text fits
+— it proves nothing. Measure a clone, or look at the screenshot.)
 
 **NO FIGURES — no euros, no percentages, no example car.** The widths are a
 schematic: no axis, nothing to read a number off. An illustrative example car
@@ -2146,13 +2157,13 @@ not take would undo the point of the arm. The three-tier display the category
 uses (KBB's Trade-In / Private Party / Typical Listing) was considered and
 rejected on exactly this ground; watch for it coming back in a revision.
 
-**The design took five passes** — a bordered list of rows with explanatory
+**The design took six passes** — a bordered list of rows with explanatory
 paragraphs (read as a FAQ), a two-bar equation with `+` and `=`, one bar with a
 separate legend and caption, the same bar self-labelling with the copy beneath,
-then this. The rule that survived all of them:
-**if a revision needs a paragraph to make the picture land, the picture is
-wrong.** The one sentence that remains is support for a bar that is already
-legible, not an explanation of it.
+the copy moved above with a wider green, then the previous-owner framing and the
+comparison caption. The rule that survived all of them: **if a revision needs a
+paragraph to make the picture land, the picture is wrong.** The two captions are
+labels on parts of the diagram, not an explanation of it.
 
 **Delete, if the idea is dropped** — the registry entry, the page's declaration,
 the arm reader, `buildBelief`, `buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`,
