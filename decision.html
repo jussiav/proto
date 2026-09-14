@@ -100,8 +100,22 @@
        material at all, which costs the block its point. Still no hue, still
        muted; just dark enough to arrive somewhere. */
     .belief-bar {
-      background-image: linear-gradient(to right,
-        #BBF7D0 0%, #BBF7D0 52%, #CBD5E1 95%, #CBD5E1 100%);  /* green-200 → slate-300 */
+      /* TWO gradients, one clipped to the padding box and one to the border box:
+         the fill fades green-100 → slate-200 and the 1px outline fades
+         green-500 → slate-300 with it. A gradient border is the only way to give
+         this bar the tag's outline without ringing the costs end in green, which
+         reads as the costs being part of the recommendation.
+
+         The palette is the `Hyvä tarjouskilpailu` verdict block's — `bg-green-50
+         border border-green-500`. The fill was green-200, two steps off it, and
+         beside the tag that read as a different green rather than a lighter one.
+         green-100 is one step, and keeps enough body that the fade still reads:
+         at green-50 the bar is so pale that the outline is doing all the work
+         and the diagram stops looking like a diagram. */
+      border: 1px solid transparent;
+      background:
+        linear-gradient(to right, #DCFCE7 0%, #DCFCE7 52%, #E2E8F0 95%, #E2E8F0 100%) padding-box,   /* green-100 → slate-200 */
+        linear-gradient(to right, #22C55E 0%, #22C55E 52%, #CBD5E1 95%, #CBD5E1 100%) border-box;    /* green-500 → slate-300 */
     }
 
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
@@ -1843,7 +1857,7 @@
 
          The seller's figure leads and the costs label sits at the far right, on
          the flat neutral end, where it labels what the fade has arrived at. */
-      html += '<div class="belief-bar rounded-md h-10 flex items-center justify-between gap-3 px-3">'
+      html += '<div class="belief-bar rounded-lg h-10 flex items-center justify-between gap-3 px-3">'
         +      '<span class="font-dm text-sm font-bold text-green-900 truncate">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
         +      '<span class="font-dm text-xs font-medium text-slate-600 flex-shrink-0">+ Kulut</span>'
         +    '</div>';
