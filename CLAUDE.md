@@ -2093,8 +2093,8 @@ Mistä jälleenmyyntihinta koostuu?
 Näkemäsi jälleenmyyntihinnat vastaavista autoista sisältävät kaikki liikkeen
 kulut, eivät vain autosta maksettua hintaa edelliselle omistajalle.
 ┌────────────────────────────────────────────────────────────┐
-│ 🪙 11 500 € sinulle                                + Kulut │
-│        (Esim. takuu, kunnostus, myyntikulut, kate, arvon…)  │
+│ 🪙 11 500 € sinulle   ·· blue-50 fades to slate-50 ·· + Kulut │
+│        (Esim. takuu, kunnostus, myyntikulut, kate, arvon…)     │
 └────────────────────────────────────────────────────────────┘
 ```
 
@@ -2139,19 +2139,28 @@ border, green demoted to a tint plus the figure's colour, then gone. **A green
 figure with no other green on the block reads as a leftover**, and the tint was
 the last thing still implying this bar is about a good outcome.
 
-**NO FILL AT ALL, AND THAT IS THE END OF THE BAR AS A DIAGRAM** (2026-09-14).
-green-200 → a matched green-50 with a green-500 border → a gradient border → a
-green tint → a slate gradient → nothing. Each step dropped something that
-claimed more than we can support, and the fill was the last: **it drew a
-PROPORTION, and we hold no proportion.** We know the offer; the resale price and
-the costs are both unknown. The block no longer depicts a split at all — it
-states one figure, names what else is in the price, and stops.
+**THE FILL IS BLUE, AND IT IS WHAT MAKES THIS A BREAKDOWN** (2026-09-14). The
+colour history is long and worth compressing: green-200 → a matched green-50
+with a green-500 border → a gradient border → a green tint → a slate gradient →
+no fill at all → **blue-50 fading to slate-50.** Every green version said *the
+auction went well*, which is the verdict block's job, not this one's. The
+no-fill version was correct about that and went too far the other way: a
+bordered strip of text is true, quiet, and not visibly about the composition of
+a price.
 
-**Before anyone "restores the bar": the gradient existed to make the split
-unmeasurable, and there is nothing left to measure.** Any fill that comes back
-has to answer what proportion it is claiming.
+Light blue across the whole bar, fading to the palest slate at the costs end,
+gives it one body with two ends — the seller's part and everything else —
+without drawing a boundary between them. **Blue is the page's informational
+colour** (the section icon, AuctionStats' own figures); green is the accepting
+direction, and this block is not the recommendation.
 
-**It is AuctionStats' cell now, not a bar** — same 1px slate-200 border, same
+**IT STATES NO PROPORTION, and every version has had to satisfy that.** We know
+the offer; the resale price and the costs are both unknown. The fade has no
+locatable edge, so there is nothing to measure off the screen and nothing to
+divide back out. **Any revision that sharpens the transition puts that back** —
+which is why the stops stay far apart: flat to 52 %, arrived by 95 %.
+
+**It is otherwise AuctionStats' cell, not a bar** — same 1px slate-200 border, same
 `rounded-lg`, same `p-2.5`, same value/label typography, same icon treatment:
 
 | Side | Role | What |
@@ -2164,9 +2173,12 @@ everything the costs are is in one place. That second line is also what gives
 the block AuctionStats' height — a one-line strip reads as a progress bar, two
 lines read as a cell.
 
-**The slate-500 deviation went with the fill.** `+ Kulut` had to be slate-600
-while the bar had a grey end, where slate-500 measured 3.86:1 and failed AA. On
-white it is 4.76:1 and passes, so the label is AuctionStats' own colour again.
+**THE MUTED LINES ARE slate-600, NOT AuctionStats' slate-500, and that comes
+back whenever the bar carries a fill.** slate-500 on blue-50 measures **4.35:1
+and fails AA**; it passes in AuctionStats only because that row is transparent
+over white. slate-600 on blue-50 is 6.93:1. The deviation has now left and
+returned twice, tracking the fill each time — it is a measurement, never a
+preference.
 
 **Below prod's `sm` it stacks**, because in a ~120px column the examples line
 wrapped to FOUR lines and the block read as two unequal columns. Same move
@@ -2241,9 +2253,10 @@ over a gradient (`accept-button-lab.html` uses the same one):
 
 | Label | On | Size | Ratio | WCAG 2.0 |
 |---|---|---|---|---|
-| `11 500 € sinulle` — slate-800 | white | 16px/700 | **14.63:1** | AA + AAA |
-| `+ Kulut` — slate-500 | white | 14px/500 | **4.76:1** | AA |
-| `(Esim. …)` — slate-500 | white | 12px/400 | **4.76:1** | AA |
+| `11 500 € sinulle` — slate-800 | blue-50 | 16px/700 | **13.37:1** | AA + AAA |
+| `+ Kulut` — slate-600 | the fade | 14px/500 | **7.18:1** | AA + AAA |
+| `(Esim. …)` — slate-600 | blue-50 | 12px/400 | **6.93:1** | AA |
+| *AuctionStats' own slate-500, rejected* | blue-50 | — | *4.35:1* | **fails** |
 
 Neither label is "large text" at these sizes, so both are against 4.5:1.
 

@@ -100,25 +100,30 @@
        material at all, which costs the block its point. Still no hue, still
        muted; just dark enough to arrive somewhere. */
     .belief-bar {
-      /* AuctionStats' frame, and by now that is the WHOLE of it: same 1px
-         slate-200 border, same `rounded-lg`, same `p-2.5` cell padding, same
-         value/label typography and icon treatment. This block is a
-         "good to know", the same register as the two-figure stats row above it
-         — it is NOT saying the auction went well, and every earlier version
-         that borrowed the verdict block's green said exactly that.
+      /* AuctionStats' frame — 1px slate-200, `rounded-lg`, `p-2.5`, its
+         value/label typography and its icon treatment — with ONE thing that
+         component does not have: a fill.
 
-         NO FILL AT ALL. It went green-200 → a matched green-50 with a green-500
-         border → a gradient border → a green tint → a slate gradient → nothing.
-         Each step dropped something that claimed more than we can support, and
-         the fill was the last of them: **it drew a PROPORTION, and we hold no
-         proportion.** We know the offer. The resale price and the costs are
-         both unknown. So the block no longer depicts a split at all — it states
-         one figure, names what else is in the price, and stops.
+         THE FILL IS WHAT MAKES IT A BREAKDOWN RATHER THAN A ROW. Without it the
+         block was a bordered strip of text: true, quiet, and not visibly about
+         the composition of a price. Light blue across the whole bar, fading to
+         the palest slate at the costs end, gives it one body with two ends —
+         the seller's part and everything else — without drawing a boundary
+         between them.
 
-         Worth knowing before anyone "restores the bar": the gradient existed to
-         make the split unmeasurable, and there is nothing left to measure. Any
-         fill that comes back has to answer what proportion it is claiming. */
+         IT STATES NO PROPORTION, and that is the constraint every version of
+         this block has had to satisfy. We know the offer; the resale price and
+         the costs are both unknown. The fade has no locatable edge, so there is
+         nothing to measure off the screen and nothing to divide back out.
+         **Any revision that sharpens the transition puts that back.** The stops
+         stay far apart for exactly that reason: flat to 52 %, arrived by 95 %.
+
+         Blue rather than green: green is the accepting direction on this page,
+         and this block is not the recommendation. Blue is the page's
+         informational colour — the section icon, AuctionStats' own figures. */
       border: 1px solid #E2E8F0;                              /* slate-200 */
+      background-image: linear-gradient(to right,
+        #EEF6FA 0%, #EEF6FA 52%, #F8FAFC 95%, #F8FAFC 100%);  /* blue-50 → slate-50 */
     }
 
     /* Below prod's `sm` the costs group has no room beside the figure: in a
@@ -1908,10 +1913,11 @@
          That second line is also what gives the block AuctionStats' height — a
          one-line strip reads as a progress bar, two lines read as a cell.
 
-         The label colour is AuctionStats' own `text-slate-500` again. It had
-         been slate-600 because slate-500 measured 3.86:1 against the bar's grey
-         end and failed AA; with the fill gone it sits on white at 4.76:1 and
-         passes, so the deviation leaves with the gradient.
+         The muted lines are slate-600, not AuctionStats' own slate-500. That
+         deviation comes back whenever the bar carries a fill, and it is a
+         measurement rather than a preference: slate-500 on blue-50 is 4.35:1
+         and FAILS AA. It passes in AuctionStats because that row is transparent
+         over white. slate-600 on blue-50 is 6.93:1.
 
          `Esim.` is the hedge that matters: these are examples of what a
          dealership adds, not an exhaustive or audited list, and the block
@@ -1921,8 +1927,8 @@
         +        '<span class="font-dm text-sm xs:text-base font-bold text-slate-800">' + (amount ? fmtCurrency(amount) + ' ' : '') + 'sinulle</span>'
         +      '</span>'
         +      '<span class="flex min-w-0 flex-col items-end text-right">'
-        +        '<span class="font-dm text-xs xs:text-sm font-medium text-slate-500">+ Kulut</span>'
-        +        '<span class="font-dm text-xs text-slate-500">(Esim. takuu, kunnostus, myyntikulut, kate, arvonalenema)</span>'
+        +        '<span class="font-dm text-xs xs:text-sm font-medium text-slate-600">+ Kulut</span>'
+        +        '<span class="font-dm text-xs text-slate-600">(Esim. takuu, kunnostus, myyntikulut, kate, arvonalenema)</span>'
         +      '</span>'
         +    '</div>';
 
