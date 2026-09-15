@@ -2170,8 +2170,30 @@ reverses that, and it holds:** the green term IS the money the seller gets by
 accepting, so here green points at the same act the verdict recommends instead
 of competing with it.
 
-**The label text stays slate-800**, not the tag's green-900, so the three terms
-read as one set. Only the container matches the tag.
+**EACH CHIP NOW BORROWS A WHOLE EXISTING COMPONENT'S PALETTE, TEXT INCLUDED**
+(2026-09-15, Jussi's call, and the reason given was that it simplifies the
+build):
+
+| Chip | Borrowed from | Label | Sub-label | Icon |
+|---|---|---|---|---|
+| the seller's offer | the `Loistava suoritus!` block | green-900 | green-900 | green-700 |
+| `Kulut` · `Pyyntihinta` | `AuctionStats` | slate-800 | **slate-500** | — |
+
+So the green chip is now **colour-identical to the verdict block** — green-50
+fill, green-500 border, green-700 icon, green-900 text at both sizes, exactly
+what that block already uses — and the two outline chips are AuctionStats' own
+value/label pair, whose figures were already slate-800 bold and whose labels are
+slate-500.
+
+**This replaces the earlier rule that the label text stays slate-800 so the
+three terms read as one set.** That kept the container and its contents on
+different systems, which is the thing a dev has to special-case: there are now
+two palettes on this page and each chip takes one whole. The set still reads
+together because the geometry is identical across the three.
+
+**The footnote stays slate-600**, not slate-500 — it is the block's own small
+print rather than a label inside a borrowed component, and slate-500 is close to
+its AA floor (see the table below).
 
 **THE COSTS TERM IS DASHED, AND THAT IS THE WHOLE SAFETY MECHANISM.** Every
 earlier version of this block had to stop the seller running the arithmetic
@@ -2258,13 +2280,19 @@ rather than the 44 / 88 and 20 / 112 the sweep alone cost.
 
 | Label | On | Size | Ratio |
 |---|---|---|---|
+| `Loistava suoritus!` — green-900 | green-50 | 16px/700 | **8.70:1** |
 | `Pidämme korkeinta…` — green-900 | green-50 | 12px/400 | **8.70:1** |
-| `11 500 €` — slate-800 | green-50 | 16px/700 | **13.97:1** |
-| `Sinulle maksettava summa` — slate-600 | green-50 | 12px/400 | **7.24:1** |
+| `11 500 €` — green-900 | green-50 | 16px/700 | **8.70:1** |
+| `Sinulle maksettava summa` — green-900 | green-50 | 12px/400 | **8.70:1** |
 | `Kulut` / `Pyyntihinta` — slate-800 | white | 16px/700 | **14.63:1** |
-| sub-labels + footnote — slate-600 | white | 12px/400 | **7.58:1** |
+| chip sub-labels — slate-500 | white | 12px/400 | **4.76:1** |
+| the footnote — slate-600 | white | 12px/400 | **7.58:1** |
 
-All against 4.5:1, all AA.
+All against 4.5:1, all AA. **The slate-500 sub-labels clear it by 0.26**, which
+is the whole margin — they pass because the chip behind them is WHITE. Every
+recorded slate-500 failure on this page was against a tint (3.86:1 on slate-200,
+4.35:1 on blue-50, 4.32:1 on gray-100), so **putting any fill behind those two
+chips breaks their contrast**, not just their meaning.
 
 **The operators sit on the row's centre line.** `.belief-op { align-self:
 center }` in hand-written CSS, not a `self-center` utility: the row is

@@ -1941,12 +1941,15 @@
          printed for any of them — a euro amount against `kate` hands the seller
          something to resent rather than something to understand. */
       function chip(cls, label, sub, coins) {
+        var own      = cls.indexOf('belief-chip--own') > -1;
+        var labelCls = own ? 'text-green-900' : 'text-slate-800';
+        var subCls   = own ? 'text-green-900' : 'text-slate-500';
         return '<div class="belief-chip ' + cls + ' flex-1 min-w-0">'
           +      '<span class="flex items-center gap-1.5">'
           +        (coins ? ICO_COINS : '')
-          +        '<span class="font-dm text-base font-bold text-slate-800">' + label + '</span>'
+          +        '<span class="font-dm text-base font-bold ' + labelCls + '">' + label + '</span>'
           +      '</span>'
-          +      '<p class="font-dm text-xs text-slate-600">' + sub + '</p>'
+          +      '<p class="font-dm text-xs ' + subCls + '">' + sub + '</p>'
           +    '</div>';
       }
       var op = function(sym) {
