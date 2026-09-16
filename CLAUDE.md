@@ -847,6 +847,45 @@ Change 10 is a real prod defect, not a preference: the message is Laravel's
 — on a field labelled **Vastatarjous**, so it names a field that is not on the
 screen. Spec'd as its own change so it is not read as styling.
 
+**THE MODAL SHELL ITSELF WAS NARROWER THAN PROD, AND A DEV SPOTTED IT**
+(2026-09-16). Prod's `Reveal.vue` sizes its container `max-w-4xl` — 56rem,
+**896px** — because `wideContainer` defaults false and `OfferActions` passes no
+`containerClass`. Prod's `maxWidth` override is under `extend`, so `4xl` keeps
+Tailwind's own value. The proto had `max-w-2xl`, **672px**: 224px narrow at
+every width above 704px.
+
+Three more shell divergences came out of the same comparison, all now matching
+prod's `Reveal`:
+
+| Part | Prod | Proto was |
+|---|---|---|
+| container | `max-w-4xl` (896) | `max-w-2xl` (672) |
+| body padding | `p-4 lg:p-6 lg:pt-12` | `p-4 lg:p-6 pt-12` |
+| close button | `-top-0.5 -right-0.5`, `h-12 w-12 sm:h-16 sm:w-16`, `text-2xl sm:text-4xl` | `top-0 right-0`, `h-12 w-12`, `text-2xl` |
+| overlay | `overflow-y-auto overflow-x-hidden` | `overflow-y-auto` |
+
+**The padding one was INVERTED, and it cost height on the surface change 18
+fought over.** Unprefixed `pt-12` beat `p-4`'s top below `lg` and then LOST to
+`lg:p-6` above it, so the proto rendered 48px of top padding on a phone and
+24px on a desktop — exactly the opposite of prod's 16 / 48. Measured after the
+fix: 16px top at 375px, 48px at 1024px, panel 896px at 1024 and 343px at 375,
+close button 48px/24px text on a phone and 64px/32px from `sm`. `text-4xl` is
+**32px** here, not the CDN's 36 — `tw-tokens.js` ports prod's `fontSize` from
+`3xl` up.
+
+**Change 8's measured figures on the spec page predate this** (`763px → 665px`
+for the modal body at 375px) and did not reproduce in a spot check of the
+before-sending state, which now reads 408 control / 410 v1. The shell fix takes
+a flat 32px off every state below `lg`, but the base pair is older than several
+copy passes. **Re-measure in a named state before quoting those numbers again**
+— they were left untouched rather than silently adjusted.
+
+**A measuring trap worth knowing: arms are sticky, and Informed decision forces
+`EN_V1` on.** Loading `?enhanced-negotiations=control` while `informed-decision=v1`
+is still remembered renders the v1 modal and reports the arm as `control`, so
+control and v1 measure identically. Clear it — `&informed-decision=control` —
+before measuring anything in this modal.
+
 **`DeliveryDateModal.vue` is the find worth remembering.** It is the only
 consumer modal that builds a real header inside the same `Reveal` shell the
 negotiate modal uses: a title row (`flex items-center gap-3`, title
