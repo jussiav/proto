@@ -2434,6 +2434,16 @@ Two things that transplant needs, and they are the only divergences:
 kept in step. An EN gloss sits below each card, outside the stage, so the
 replica stays pixel-exact.
 
+**Check the NESTING when you re-transplant, not just the classes.** Block 1
+carried a stray `</div>` that closed the white card early (fixed 2026-09-16),
+which threw the AuctionStats row out of the card and the EN gloss out of the
+stage. The browser recovers silently, so it looks like a styling problem and is
+not. The cheap check is structural rather than visual: on both pages the
+verdict block AND the stats row must be descendants of
+`.w-full.p-5.bg-white.rounded-xl`, and at 1024px that card measures 720 with
+the stats grid at 680 and its top 238px below the card's — identical numbers on
+the decision page and the replica.
+
 ### The Figma file — addresses, and how to verify work in it
 
 The decision page also exists as two live screens in Figma, built from the proto
