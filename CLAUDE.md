@@ -2236,7 +2236,7 @@ resale price and the costs are not ours, so they are outlines.
 
 **THAT CHIP WEARS THE VERDICT TAG'S EXACT GREEN** (2026-09-14): `green-50` fill,
 `green-500` border, `green-700` icon — the same three values as
-`Loistava suoritus!`, verified against the tag's computed styles rather than by
+the recommendation tag, verified against its computed styles rather than by
 eye. It was blue-50/blue-600/blue-400, on the reasoning that green is the
 accepting direction and this block is not the recommendation. **Jussi's call
 reverses that, and it holds:** the green term IS the money the seller gets by
@@ -2249,7 +2249,7 @@ build):
 
 | Chip | Borrowed from | Label | Sub-label | Icon |
 |---|---|---|---|---|
-| the seller's offer | the `Loistava suoritus!` block | green-900 | green-900 | green-700 |
+| the seller's offer | the `Suosittelemme hyväksymään` tag | green-900 | green-900 | green-700 |
 | `Kulut` · `Pyyntihinta` | `AuctionStats` | slate-800 | **slate-500** | — |
 
 So the green chip is now **colour-identical to the verdict block** — green-50
@@ -2340,38 +2340,35 @@ and its hint lines 14px.
 had put every small string on `text-sm`; he named five that belong at 12px
 instead, so the blocks now run 16 or 12 with nothing between them:
 
-- `Pidämme korkeinta tarjousta…` — the verdict's recommendation sentence
 - `Sinulle maksettava summa` · `Vaihtelee autoittain` ·
   `Ilmoituksessa näkyvä hinta` — the three chip sub-labels
 - `*Kuluja ovat autosta riippuen esim. …` — the footnote
+- `Pidämme korkeinta tarjousta…` — the verdict's recommendation sentence, **now
+  deleted with the block it sat in** (2026-09-16); the 12px tier is what the
+  replacement `Suosittelemme hyväksymään` tag inherited
 
-Four of those were already 12px before the sweep; the recommendation sentence
-was 14px and is now smaller than it has ever been. **The consequence is worth
-seeing rather than tidying:** the green block is a 16px bold claim
-(`Loistava suoritus!`) with fine print under it, so what AutoVex ASSERTS carries
-the weight and what it RECOMMENDS reads as the note beneath. The same shape
-repeats in every chip — a 16px term with a 12px gloss.
+**The shape this leaves:** a 16px term with a 12px gloss, repeated in every
+chip — and in block 1 a 12px tag over a 20px headline, so the label is the
+quietest thing in the row and the payoff is the loudest.
 
 **The headline went UP a notch at the same time** — `text-lg` → `text-xl`, so
-20px Barlow bold over the 12px recommendation sentence above it and the 16px
-paragraph below. It is the payoff line and now reads as the block's own title
-rather than as a bolder sentence. It wraps to **three lines at 375px**, which is
-the cost and was accepted.
+20px Barlow bold between the 12px tag above it and the 16px paragraph below. It
+is the payoff line and reads as the block's own title rather than as a bolder
+sentence. At 375px it wrapped to three lines while it was the long
+`Nyt tiedät…` string; the shorter `Autosi arvo on nyt tiedossa!` takes **two**.
 
-**Heights, now that all of it has landed** (original → after the body-scale
-sweep → after the type pass → after the 2026-09-16 copy cut): auction details
-353 → 397 → **368** desktop and 470 → 558 → **543** on a phone; price belief
-252 → 272 → 260 → **220** and 532 → 644 → 596 → **508**. So the belief block
-now sits **BELOW where it started** — 32px shorter on desktop and 24px shorter
-on a phone than before any of this — while carrying 16px body copy. The copy
-cut paid for the type scale and then some.
+**Heights, after every pass so far.** Auction details 353 → 397 → 368 →
+**288** desktop and 470 → 558 → 543 → **380** on a phone; price belief
+252 → 272 → 260 → **220** and 532 → 644 → 596 → **508**. **Both blocks now sit
+well below where they started** while carrying 16px body copy — auction details
+is 65px shorter on desktop and 90px shorter on a phone than the original, almost
+all of it from dropping the painted verdict block and the third sentence.
 
 **Contrast, measured against the rendered pixels:**
 
 | Label | On | Size | Ratio |
 |---|---|---|---|
-| `Loistava suoritus!` — green-900 | green-50 | 16px/700 | **8.70:1** |
-| `Pidämme korkeinta…` — green-900 | green-50 | 12px/400 | **8.70:1** |
+| `Suosittelemme hyväksymään` — green-900 | green-50 | 12px/700 | **8.70:1** |
 | `11 500 €` — green-900 | green-50 | 16px/700 | **8.70:1** |
 | `Sinulle maksettava summa` — green-900 | green-50 | 12px/400 | **8.70:1** |
 | `Kulut` / `Liikkeen pyyntihinta` — slate-800 | white | 16px/700 | **14.63:1** |
@@ -2616,21 +2613,43 @@ they reach the sentence at the bottom — **evidence reads better after the
 claim.** `buildAuctionVerdict` takes the stats markup as an argument rather than
 building it, so the two arms that draw that row keep one definition of it.
 
+**THE PAINTED VERDICT BLOCK IS GONE; THE RECOMMENDATION IS A TAG**
+(2026-09-16, Jussi's call). `Loistava suoritus!` and its sentence are replaced by
+one green tag, **`Suosittelemme hyväksymään`**, sitting immediately **above the
+headline and right of the 48px seal** — the first line of the copy column rather
+than a block of its own above the row.
+
+It keeps the verdict palette exactly (`green-50` fill, `green-500` border,
+`green-900` text) because the belief block's own first chip borrows that palette
+and needs a reference point on the page. The shape is the warm-up badge's
+(`px-2 py-1 text-xs rounded border`), so there is one tag idiom rather than two.
+`ICO_GAVEL` went with the block and is deleted.
+
+**What this trades.** The recommendation loses its sentence and keeps only its
+verb, so the block no longer argues for accepting — it labels. That also ends the
+"only painted block in the arm" reasoning: nothing in this section is painted now
+except the tag itself. Measured: green-900 on green-50 is **8.70:1**, and the tag
+is 191px natural against a 223px column at 375px, so it holds one line.
+
 | Part | Copy | Job |
 |---|---|---|
-| **1 — green block** | lead `Loistava suoritus!`, then `Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.` | AutoVex stating a view, and recommending |
-| **2 — headline** | `Nyt tiedät, mitä autostasi maksetaan juuri nyt.` | the payoff, promoted — and `juuri nyt` puts a clock on it |
+| **1 — tag** | `Suosittelemme hyväksymään` | AutoVex's view, stated in three words |
+| **2 — headline** | `Autosi arvo on nyt tiedossa!` | the payoff — knowledge, not a number |
 
-**The headline has carried three shapes.** `Autostasi kilpaili 25 autoliikettä.`
+**The headline has carried four shapes.** `Autostasi kilpaili 25 autoliikettä.`
 (a count, duplicating the stats row) → `Nyt tiedät, mitä juuri sinun autostasi
-maksetaan.` (`juuri sinun` doing the anti-generic work) → the current one, where
-`juuri nyt` trades that for urgency: the offer expires, and nothing else in this
-block says so. **The anti-generic job now rests entirely on the body**, which
-still carries it twice (`perehtyi autoosi`, `Laskettuaan sille tarkan hinnan`).
-| **2 — body** | `25 autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun. Hyväksy tarjous, ja jatka myyntiä autoliikkeen kanssa.` | **who priced the car, how they competed, and who you deal with** |
+maksetaan.` (`juuri sinun` doing the anti-generic work) → `Nyt tiedät, mitä
+autostasi maksetaan juuri nyt.` (`juuri nyt` trading that for urgency) → the
+current `Autosi arvo on nyt tiedossa!`, which drops both and states the payoff as
+a fact. **Nothing in the block now says the offer expires**, and **the
+anti-generic job rests entirely on the body**, which carries it twice
+(`perehtyi autoosi`, `Laskettuaan sille tarkan hinnan`).
+| **2 — body** | `25 autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun.` | **who priced the car and how they competed** |
 | **3 — stats row** | `Tarjouksia yhteensä` / `Tarjoajat` | the evidence, closing rather than opening |
 
-**`Loistava suoritus!`, NOT `Hyvä tarjouskilpailu`** (2026-09-14). Jussi's call,
+The row order is now **seal · (tag, headline, body) · stats** — one row, then the figures.
+
+**`Loistava suoritus!`, NOT `Hyvä tarjouskilpailu`** (2026-09-14; the string was RETIRED on 2026-09-16 with the block it led, but the reasoning still governs any future verdict wording). Jussi's call,
 and the reason is worth keeping: `hyvä` invites the question of what a BETTER
 auction would have looked like, which is exactly the doubt this block exists to
 close. A superlative leaves nothing above it. Do not confuse this string with
@@ -2701,13 +2720,13 @@ three words are decoration:
 | `ammattilaista perehtyi autoosi` | sellers do not know a person looked at all. `autoosi`, not `ilmoitukseesi` — it lands on the car rather than on a document |
 | `Laskettuaan sille tarkan hinnan` | the direct answer to "you just pull prices for similar cars": each dealership priced THIS car before bidding |
 | `korottivat vielä tarjouksiaan voittaakseen kilpailun` | the auction was a real contest, not 25 sealed envelopes — see the correction below |
-| `jatka myyntiä autoliikkeen kanssa` | the dealership is the counterparty, which research says consumers prefer to a website or a stranger at the door |
+| ~~`jatka myyntiä autoliikkeen kanssa`~~ | **CUT 2026-09-16.** It answered "the dealership is the counterparty, which research says consumers prefer to a website or a stranger at the door" — and it was the only line naming the dealership as the buyer. **Watch this in testing:** "does AutoVex buy the car?" is a live misconception and nothing in the block addresses it now |
 
-**That last line now IMPLIES rather than states that AutoVex is not the buyer.**
-It was `Kaupan teet suoraan autoliikkeen kanssa` and became a call to action in
-Jussi's pass (2026-09-14). Worth watching in testing: the misconception it was
-written against is that AutoVex buys the car, and the sentence no longer says
-outright that it does not.
+**That line is now gone entirely.** It was `Kaupan teet suoraan autoliikkeen
+kanssa`, became the call to action `Hyväksy tarjous, ja jatka myyntiä
+autoliikkeen kanssa` (2026-09-14), and was cut with the verdict block
+(2026-09-16). The recommendation it carried moved into the tag; the
+counterparty claim was not replaced.
 
 **THE COMPETITION CLAUSE ALSO DECODES THE STATS ROW, which nothing else on the
 page does.** `138 tarjousta / 25 tarjoajaa` is a contradiction to a seller who

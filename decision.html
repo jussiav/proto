@@ -109,16 +109,17 @@
        blank to be filled rather than a quantity, so the row cannot be read as a
        claim about proportions and there is nothing to subtract.
 
-       THE SELLER'S TERM WEARS THE VERDICT TAG'S GREEN (2026-09-14) — the same
-       `green-50` fill, `green-500` border and `green-700` icon as
-       `Loistava suoritus!` two blocks up. It was blue, on the reasoning that
-       green is the accepting direction and this block is not the
-       recommendation. Jussi's call reverses that, and it holds: the green term
-       IS the money the seller gets by accepting, so here green points at the
-       same act the verdict recommends rather than competing with it.
+       THE SELLER'S TERM WEARS THE RECOMMENDATION TAG'S GREEN (2026-09-14) —
+       the same `green-50` fill, `green-500` border and `green-700` icon the
+       `Suosittelemme hyväksymään` tag carries two blocks up. It was blue, on
+       the reasoning that green is the accepting direction and this block is not
+       the recommendation. Jussi's call reverses that, and it holds: the green
+       term IS the money the seller gets by accepting, so here green points at
+       the same act the tag recommends rather than competing with it.
 
-       The LABEL text stays slate-800 rather than the tag's green-900, so the
-       three terms read as one set — only the container matches the tag.
+       Both texts in this chip are green-900, matching that tag (2026-09-15) —
+       each chip borrows one whole existing palette rather than mixing a
+       container from one system with text from another.
 
        Hand-written rather than utilities: the block is injected by JS and the
        Play CDN generates those a tick AFTER the render, which would paint the
@@ -2038,10 +2039,6 @@
     /* Takes `buyers` and nothing else off the request — the copy points at the
        offer card rather than quoting an amount, so no figure is read here. */
     function buildAuctionVerdict(buyers, statsHtml) {
-      /* prod's `ph-gavel-bold`, the same sprite the warm-up badge draws. It
-         takes its colour from the block around it now, so no class here. */
-      var ICO_GAVEL = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m246.14 113.86-16-16a20 20 0 0 0-23.06-3.75l-45.2-45.2a20 20 0 0 0-3.74-23.06l-16-16a20 20 0 0 0-28.28 0l-64 64a20 20 0 0 0 0 28.28l16 16a20 20 0 0 0 23 3.79l-59.5 59.46a32 32 0 0 0 45.26 45.26L134 167.21a20 20 0 0 0 3.81 22.94l16 16a20 20 0 0 0 28.29 0l64-64a20 20 0 0 0 0-28.29ZM80 98.34 69.64 88 128 29.65 138.34 40ZM57.64 209.67a8 8 0 0 1-11.31-11.32l59.52-59.52 11.31 11.32Zm92.7-60.29-43.72-43.72 39-39 43.72 43.72Zm17.65 37L157.65 176 216 117.66 226.34 128Z"/></svg>';
-
       /* ORDER: verdict, then the explanation, then the figures — the figures
          used to lead and now close. Reading it that way, the block answers
          "is this a good offer?" in its first line and spends the rest earning
@@ -2053,34 +2050,19 @@
          and 20px of space is what separates them. */
       var h = '';
 
-      /* The payoff line, and the only place on this page where AutoVex states a
-         view on the offer rather than reporting it — and the only place that
-         RECOMMENDS an action outright. The options section's accept column
-         carries the same green as a "Suosittelemme" tag, so the two agree.
+      /* The recommendation, reduced from a painted block to a tag and moved to
+         sit directly above the headline. It keeps the verdict green — green
+         means one thing on this page, the accepting direction — and it is still
+         the only place where AutoVex states a view rather than reporting one.
+         It names no euro figure and reads no amount, so it cannot go stale
+         against the card above and works unchanged on a final offer.
 
-         It names no euro figure: "korkeinta tarjousta" points at the card above
-         instead, so it cannot go stale against the number beside it and the
-         sentence works unchanged on a final offer. That is why this function
-         needs no amount at all.
-
-         GREEN, in the same green the options section gives its accept column's
-         title and tag, because green means one thing on this page: this is the
-         accepting direction. It used to be lime (borrowed from the warm-up
-         badge, where it reports a status) over blue (borrowed from the options
-         section's then-promoted card) — two colours for one claim, neither of
-         them the colour of the action being recommended.
-
-         It is the ONLY painted block left in this arm: the options columns
-         were unpainted after this was built. Deliberate — this is the one place
-         that states a recommendation in AutoVex's own voice, which is what
-         earns a box. */
-      h += '<div class="p-3 rounded-lg bg-green-50 border border-green-500">'
-        +    '<div class="flex items-center gap-2">'
-        +      '<span class="inline-flex flex-shrink-0 text-green-700">' + ICO_GAVEL + '</span>'
-        +      '<span class="font-dm text-base font-bold text-green-900">Loistava suoritus!</span>'
-        +    '</div>'
-        +    '<p class="font-dm text-xs text-green-900 mt-1">Pidämme korkeinta tarjousta kilpailukykyisenä hintana autostasi ja suosittelemme hyväksymään sen.</p>'
-        +  '</div>';
+         The tag shape is the warm-up badge's own (`px-2 py-1 text-xs rounded
+         border`), so the page has one idiom for a tag rather than two. */
+      var TAG_RECOMMEND =
+        '<span class="inline-flex items-center px-2 py-1 text-xs rounded border '
+        + 'bg-green-50 border-green-500 font-dm font-bold text-green-900">'
+        + 'Suosittelemme hyväksymään</span>';
 
       /* THE SEAL IS AutoVex'S MARK ON THE PROCESS, AND ITS COLOUR SAYS SO.
          This page already assigns blue to what AutoVex does — the section
@@ -2105,15 +2087,16 @@
       /* One row at every width now. The illustration needed the phone layout to
          centre it above the text; a 48px stamp does not, so the block reads the
          same way on both and loses the stacked variant entirely. */
-      h += '<div class="mt-5 flex items-start gap-4">'
+      h += '<div class="flex items-start gap-4">'
         +    ICO_SEAL
         +    '<div class="flex-1 min-w-0">'
+        +      TAG_RECOMMEND
         /* `text-lg` is a CDN-default size, so it pairs its own 28px leading and
            the h3 element rule reaches neither the size nor the leading;
            `leading-snug` pulls it to 24.75px, matching prod's own bare-h5
            treatment on the support banner. One step below the section's `h2` so
            the two do not compete. */
-        +      '<h3 class="font-display text-xl font-bold leading-snug">Nyt tiedät, mitä autostasi maksetaan juuri nyt.</h3>'
+        +      '<h3 class="font-display text-xl font-bold leading-snug mt-2">Autosi arvo on nyt tiedossa!</h3>'
         /* THREE SENTENCES, and each answers something sellers actually say.
            `ammattilaista perehtyi autoosi` — sellers do not know a person
            looked at all, and many assume we fetch generic prices for similar
@@ -2128,13 +2111,14 @@
            the only sentence on the page that explains why the row below reads
            138 bids from 25 bidders — a seller who does not know a dealership
            may bid more than once reads those figures as a contradiction.
-           `jatka myyntiä autoliikkeen kanssa` — the dealership is the
-           counterparty, which research says consumers prefer to a website or a
-           stranger at the door. Note this now IMPLIES rather than states that
-           AutoVex is not the buyer; the sentence was
-           `Kaupan teet suoraan autoliikkeen kanssa` and became a call to
-           action in Jussi's pass. */
-        +      '<p class="font-dm text-base text-slate-700 mt-2">' + buyers + ' autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun. Hyväksy tarjous, ja jatka myyntiä autoliikkeen kanssa.</p>'
+           The third sentence — `Hyväksy tarjous, ja jatka myyntiä autoliikkeen
+           kanssa` — was dropped in Jussi's 2026-09-16 pass, along with the
+           painted verdict block. The recommendation it carried is now the tag
+           above the headline, so nothing here tells the seller what to do. What
+           went with it is the only line naming the DEALERSHIP as the
+           counterparty; watch for that in testing, since "does AutoVex buy the
+           car?" is a live misconception. */
+        +      '<p class="font-dm text-base text-slate-700 mt-2">' + buyers + ' autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun.</p>'
         +    '</div>'
         +  '</div>';
 
