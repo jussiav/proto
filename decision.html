@@ -163,6 +163,28 @@
       .belief-eq.belief-eq { flex-direction: column; align-items: stretch; gap: .5rem; }
     }
 
+    /* The recommendation tag has to read as something APPLIED to the block
+       rather than as its first line — it is shown only to a seller whose offer
+       clears the bar, so its placement should say "this one is yours" rather
+       than sit in the reading order everyone gets.
+
+       From prod's `sm` it is pulled to the far right of the headline's line:
+       DOM order is tag-then-headline, and `row-reverse` flips that visually, so
+       the headline reclaims the top-left and the tag hangs off the opposite
+       corner. Below `sm` the column is too narrow to hold both, so it stacks
+       with the tag on top.
+
+       Hand-written for the usual two reasons: the block is injected by JS, so
+       Play CDN utilities would land a tick late, and `.verdict-topline` would
+       otherwise tie with Tailwind's own one-class utilities and lose on source
+       order. */
+    .verdict-topline { display: flex; flex-direction: column; align-items: flex-start; gap: .5rem; }
+    .verdict-topline > .verdict-tag { flex: 0 0 auto; }
+    @media (min-width: 620px) {
+      .verdict-topline { flex-direction: row-reverse; align-items: flex-start; gap: .75rem; }
+      .verdict-topline > h3 { flex: 1 1 auto; min-width: 0; }
+    }
+
     /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
        Play CDN generates no utilities for a ::before, and the SCSS is scoped in
        prod. Colours are prod's `bg-blue` (= blue-600, #0B6DFF) and the #E1E7F0
@@ -2060,7 +2082,7 @@
          The tag shape is the warm-up badge's own (`px-2 py-1 text-xs rounded
          border`), so the page has one idiom for a tag rather than two. */
       var TAG_RECOMMEND =
-        '<span class="inline-flex items-center px-2 py-1 text-xs rounded border '
+        '<span class="verdict-tag inline-flex items-center px-2 py-1 text-xs rounded border '
         + 'bg-green-50 border-green-500 font-dm font-bold text-green-900">'
         + 'Suosittelemme hyväksymään</span>';
 
@@ -2090,13 +2112,15 @@
       h += '<div class="flex items-start gap-4">'
         +    ICO_SEAL
         +    '<div class="flex-1 min-w-0">'
-        +      TAG_RECOMMEND
+        +      '<div class="verdict-topline">'
+        +        TAG_RECOMMEND
         /* `text-lg` is a CDN-default size, so it pairs its own 28px leading and
            the h3 element rule reaches neither the size nor the leading;
            `leading-snug` pulls it to 24.75px, matching prod's own bare-h5
            treatment on the support banner. One step below the section's `h2` so
            the two do not compete. */
-        +      '<h3 class="font-display text-xl font-bold leading-snug mt-2">Autosi arvo on nyt tiedossa!</h3>'
+        +      '<h3 class="font-display text-xl font-bold leading-snug">Autosi arvo on nyt tiedossa!</h3>'
+        +      '</div>'
         /* THREE SENTENCES, and each answers something sellers actually say.
            `ammattilaista perehtyi autoosi` — sellers do not know a person
            looked at all, and many assume we fetch generic prices for similar

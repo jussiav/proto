@@ -2357,12 +2357,14 @@ is the payoff line and reads as the block's own title rather than as a bolder
 sentence. At 375px it wrapped to three lines while it was the long
 `Nyt tiedät…` string; the shorter `Autosi arvo on nyt tiedossa!` takes **two**.
 
-**Heights, after every pass so far.** Auction details 353 → 397 → 368 →
-**288** desktop and 470 → 558 → 543 → **380** on a phone; price belief
+**Heights, after every pass so far.** Auction details 353 → 397 → 368 → 288 →
+**254** desktop and 470 → 558 → 543 → 380 → **379** on a phone; price belief
 252 → 272 → 260 → **220** and 532 → 644 → 596 → **508**. **Both blocks now sit
 well below where they started** while carrying 16px body copy — auction details
-is 65px shorter on desktop and 90px shorter on a phone than the original, almost
-all of it from dropping the painted verdict block and the third sentence.
+is **99px shorter on desktop and 91px shorter on a phone** than the original —
+368 → 288 from dropping the painted block and the third sentence, then 288 →
+**254** when the tag moved onto the headline's line and stopped costing a row of
+its own. Phone: 543 → 380 → **379**, since stacked it still takes that row.
 
 **Contrast, measured against the rendered pixels:**
 
@@ -2625,6 +2627,26 @@ and needs a reference point on the page. The shape is the warm-up badge's
 (`px-2 py-1 text-xs rounded border`), so there is one tag idiom rather than two.
 `ICO_GAVEL` went with the block and is deleted.
 
+**PLACEMENT CARRIES THE EXCLUSIVITY, AND THAT IS THE POINT OF IT**
+(2026-09-16). This tag is shown ONLY to a seller whose offer clears the
+fair-offer bar, so it must not read as the block's first line — a line everybody
+gets. From prod's `sm` it is pulled to the **far right of the headline's own
+line**, hanging off the opposite corner with its right edge flush to the card's
+content box, and the headline reclaims the top-left beside the seal. Below `sm`
+the column cannot hold both, so it stacks with the tag on top.
+
+`.verdict-topline` is hand-written CSS: DOM order is **tag, then headline**, and
+`flex-direction: row-reverse` flips that visually so the markup keeps the tag
+first for a screen reader while the eye reads headline-then-tag. Hand-written
+for the two usual reasons — the block is injected by JS, so Play CDN utilities
+land a tick late, and a single-class rule would tie with Tailwind's own
+utilities and lose on source order.
+
+**Measured at the breakpoint**, which is the tight case: at exactly 620px the
+headline holds one line at 265px beside the 191px tag, with no overflow; at
+768px the headline has 398px. The tag is 191px natural against a 223px column at
+375px, so it holds one line stacked too.
+
 **What this trades.** The recommendation loses its sentence and keeps only its
 verb, so the block no longer argues for accepting — it labels. That also ends the
 "only painted block in the arm" reasoning: nothing in this section is painted now
@@ -2647,7 +2669,7 @@ anti-generic job rests entirely on the body**, which carries it twice
 | **2 — body** | `25 autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun.` | **who priced the car and how they competed** |
 | **3 — stats row** | `Tarjouksia yhteensä` / `Tarjoajat` | the evidence, closing rather than opening |
 
-The row order is now **seal · (tag, headline, body) · stats** — one row, then the figures.
+The row order is **seal · (headline + tag on one line, then body) · stats** from 620px, and **seal · (tag, headline, body) · stats** below it.
 
 **`Loistava suoritus!`, NOT `Hyvä tarjouskilpailu`** (2026-09-14; the string was RETIRED on 2026-09-16 with the block it led, but the reasoning still governs any future verdict wording). Jussi's call,
 and the reason is worth keeping: `hyvä` invites the question of what a BETTER
