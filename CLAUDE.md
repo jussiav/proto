@@ -2141,7 +2141,7 @@ completes themselves:
 Näin vertaat tarjoustasi
 Muualla näkemäsi pyyntihinnat sisältävät myös auton myyntiin liittyviä kuluja.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
-│ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Pyyntihinta      │
+│ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Liikkeen pyynti… │
 │ Sinulle maksett… │   ╎ Vaihtelee autoit ╎   │ Ilmoituksessa n… │   (no full stops)
 └──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
 *Kuluja ovat autosta riippuen esim. kunnostus, katsastus, säilytys,
@@ -2298,7 +2298,7 @@ cut paid for the type scale and then some.
 | `Pidämme korkeinta…` — green-900 | green-50 | 12px/400 | **8.70:1** |
 | `11 500 €` — green-900 | green-50 | 16px/700 | **8.70:1** |
 | `Sinulle maksettava summa` — green-900 | green-50 | 12px/400 | **8.70:1** |
-| `Kulut` / `Pyyntihinta` — slate-800 | white | 16px/700 | **14.63:1** |
+| `Kulut` / `Liikkeen pyyntihinta` — slate-800 | white | 16px/700 | **14.63:1** |
 | chip sub-labels — slate-500 | white | 12px/400 | **4.76:1** |
 | the footnote — slate-600 | white | 12px/400 | **7.58:1** |
 
@@ -2314,6 +2314,19 @@ center }` in hand-written CSS, not a `self-center` utility: the row is
 and `=` stretch with them and settle at the top of a chip's height. Hand-written
 for the usual reason — the Play CDN generates utilities a tick after the render,
 which would drop the operators on first paint.
+
+**THE THIRD TERM IS `Liikkeen pyyntihinta`, AND IT WRAPS IN ONE NARROW BAND**
+(2026-09-16). It was `Pyyntihinta`; naming the dealership says WHOSE asking
+price and reinforces the lead line's `Muualla`. Note this runs the opposite way
+to the lead line, which deliberately leaves the COSTS unattributed — naming the
+party is clarifying on the price and resentment-inviting on the costs.
+
+It is 160px at 16px/700, against ~182px of chip at full width, so measured:
+**one line at 730px and above, two lines between 620 and ~715px** (the section
+goes 220 → 244 → 300 as the column narrows), and one line again below 620 where
+the equation stacks to full-width rows. The wrap is not a break — `items-stretch`
+grows all three chips together and nothing overflows — but a longer label than
+this would wrap on a laptop, so **that is the length ceiling for a chip label.**
 
 **Below prod's `sm` it stacks** — three ~200px terms cannot sit in a 287px
 column — and the operators become row separators. `.belief-eq.belief-eq` is
