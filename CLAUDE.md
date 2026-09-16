@@ -2139,16 +2139,13 @@ completes themselves:
 
 ```
 Näin vertaat tarjoustasi
-Auto-ilmoituksien pyyntihinnat sisältävät edelliselle omistajalle maksetun
-summan lisäksi myös muita kuluja. Huomioi tämä, kun arvioit saamaasi tarjousta
-näkemiisi pyyntihintoihin.
+Muualla näkemäsi pyyntihinnat sisältävät myös auton myyntiin liittyviä kuluja.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
 │ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Pyyntihinta      │
 │ Sinulle maksett… │   ╎ Vaihtelee autoit ╎   │ Ilmoituksessa n… │   (no full stops)
 └──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
-*Kuluja ovat esim. kunnostus, katsastus, takuu, kuljetus, säilytys, rahoitus,
-markkinointi, arvonalenema ja kate. Niiden suuruus riippuu autosta ja
-markkinatilanteesta.
+*Kuluja ovat autosta riippuen esim. kunnostus, katsastus, säilytys,
+markkinointi, arvonalenema ja kate.
 ```
 
 **It came from Jussi's own Figma draft** (2026-09-14). He built the equation —
@@ -2208,16 +2205,32 @@ The sub-label was `Vaihtelee autoittain – emme tiedä tarkkaa summaa.` and was
 to two words. The dash clause was the picture apologising in prose — the dashed
 box already says it, and a term in an equation should read as a term.
 
-**THE FOOTNOTE IS A LIST BECAUSE LENGTH IS THE POINT** (2026-09-14). It named
-three FACTORS — purchase condition, expected depreciation, financing — which is
-accurate and tells a seller nothing they had not already guessed. It now names
-NINE ordinary costs, concrete first and abstract last: `kunnostus, katsastus,
-takuu, kuljetus, säilytys, rahoitus, markkinointi, arvonalenema ja kate`.
+**THE LEAD LINE NAMES WHERE THE SELLER SAW THOSE PRICES, AND THAT IS ITS WHOLE
+JOB** (2026-09-16). It used to open `Auto-ilmoituksien pyyntihinnat…`, which on
+this page is genuinely ambiguous — the seller has an `ilmoitus` of their own,
+made twenty minutes ago, and nothing in that phrase says otherwise. **`Muualla`
+is the fix, in one word.** It cannot be read as their own ad.
 
-The reaction to aim for is **"I had not thought of half of those"**, and that
-only lands if the list outruns what the reader could have listed themselves.
-**Shortening it defeats the purpose — the length IS the argument.** The closing
-clause names both variables, the car and the market.
+It also lost its second sentence (`Huomioi tämä, kun arvioit…`), which was the
+instruction — and the section header `Näin vertaat tarjoustasi` already gives
+that instruction, so the lead only has to point at the prices. **180 → 78
+characters**, four lines to one on desktop and five to three on a phone.
+
+The costs stay **unattributed** (`auton myyntiin liittyviä`, not
+`liikkeen kulut`). Naming the party would be clearer and the footnote already
+says `kate`, but it invites the resentment this block exists to avoid.
+
+**THE FOOTNOTE IS A LIST BECAUSE LENGTH IS THE POINT — and it was cut anyway**
+(2026-09-16, Jussi's call, on length). It named three FACTORS, then NINE costs,
+and now **six**: `kunnostus, katsastus, säilytys, markkinointi, arvonalenema ja
+kate`. Gone are `takuu`, `kuljetus` and `rahoitus`; the closing sentence about
+the car and the market folded into `autosta riippuen` at the front.
+
+The reaction to aim for is still **"I had not thought of half of those"**, and
+that only lands if the list outruns what the reader could have listed
+themselves — **so the floor is real, and six is close to it.** Do not cut
+further without replacing the mechanism. What was traded for is legibility: 168
+→ 103 characters, five lines to three at 12px on a phone.
 
 `esim.` still does the hedging: examples of what a dealership adds, not an
 exhaustive or audited list. **No figure against any of them, `kate` least of
@@ -2254,7 +2267,7 @@ instead, so the blocks now run 16 or 12 with nothing between them:
 - `Pidämme korkeinta tarjousta…` — the verdict's recommendation sentence
 - `Sinulle maksettava summa` · `Vaihtelee autoittain` ·
   `Ilmoituksessa näkyvä hinta` — the three chip sub-labels
-- `*Kuluja ovat esim. …` — the footnote
+- `*Kuluja ovat autosta riippuen esim. …` — the footnote
 
 Four of those were already 12px before the sweep; the recommendation sentence
 was 14px and is now smaller than it has ever been. **The consequence is worth
@@ -2270,11 +2283,12 @@ rather than as a bolder sentence. It wraps to **three lines at 375px**, which is
 the cost and was accepted.
 
 **Heights, now that all of it has landed** (original → after the body-scale
-sweep → today): auction details 353 → 397 → **368** desktop and
-470 → 558 → **543** on a phone; price belief 252 → 272 → **260** and
-532 → 644 → **596**. So against where these blocks started, the net is ~15px
-desktop / ~73px phone for auction details and ~8 / ~64 for the belief block —
-rather than the 44 / 88 and 20 / 112 the sweep alone cost.
+sweep → after the type pass → after the 2026-09-16 copy cut): auction details
+353 → 397 → **368** desktop and 470 → 558 → **543** on a phone; price belief
+252 → 272 → 260 → **220** and 532 → 644 → 596 → **508**. So the belief block
+now sits **BELOW where it started** — 32px shorter on desktop and 24px shorter
+on a phone than before any of this — while carrying 16px body copy. The copy
+cut paid for the type scale and then some.
 
 **Contrast, measured against the rendered pixels:**
 
