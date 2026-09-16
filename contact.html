@@ -101,22 +101,6 @@
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script>
-    /* ── "Review/No review" initiative, Change 2 ───────────────────────────
-       design-specs/review-no-review.html. Prod's submit copy is
-       "Lähetä tarkastukseen" — it names an outcome this step can no longer
-       predict, and after the seller-intent question it may be false. The v1 arm
-       renders one neutral copy for every seller; no branching on the outcome, so
-       nothing is promised and nothing is denied. control keeps prod's wording. */
-    var REVIEW_NO_REVIEW_ARM = (function () {
-      var ARMS = ['control', 'v1'];
-      var a = window.protoVariant ? window.protoVariant('review-no-review', 'control') : 'control';
-      if (ARMS.indexOf(a) === -1) {
-        if (window.protoVariantSet) window.protoVariantSet('review-no-review', null);
-        return 'control';
-      }
-      return a;
-    }());
-    document.documentElement.dataset.rnrArm = REVIEW_NO_REVIEW_ARM;
   </script>
   <script src="proto-mock.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
@@ -342,7 +326,7 @@
     function applySubmitLabel() {
       var el = document.getElementById('contact-submit-label');
       if (!el) return;
-      el.textContent = t(REVIEW_NO_REVIEW_ARM === 'v1' ? 'contact.submitBtnNeutral' : 'contact.submitBtn');
+      el.textContent = t('contact.submitBtn');
     }
     document.addEventListener('av:langchange', applySubmitLabel);
 
@@ -359,20 +343,6 @@
 
       applySubmitLabel();
     });
-
-    /* The bar's Variants row — this step renders Change 2 of the initiative. */
-    window.protoPage = {
-      initiatives: [
-        {
-          slug:    'review-no-review',
-          default: 'control',
-          variants: [
-            { id: 'control', label: 'Control — "Lähetä tarkastukseen"' },
-            { id: 'v1',      label: 'Variant 1 — neutral submit copy' }
-          ]
-        }
-      ]
-    };
 
     window.addEventListener('pageshow', function(e) {
       if (e.persisted) {
@@ -490,7 +460,7 @@
           <!-- CTA -->
           <button type="submit"
             class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors mt-1">
-            <span id="contact-submit-label">Lähetä tarkastukseen</span>
+            <span id="contact-submit-label">Lähetä ilmoitus</span>
             <img src="assets/2298f807-f79d-4913-a748-1d256742f181.svg" class="w-6 h-6" alt="" />
           </button>
 

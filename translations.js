@@ -335,20 +335,6 @@ window.TRANSLATIONS = {
 
     /* ── Shared: "what happens next" column (price step only — matches prod's
        WhatHappensNext.vue full 5-step list for draftStatus='open'/unverified) ── */
-    nextSteps: {
-      title:           'Mitä tapahtuu seuraavaksi?',
-      step1Title:      'Vahvista sähköpostisi',
-      step1Body:       'Tarkista sähköpostisi ja vahvista osoitteesi jatkaaksesi tarjouskilpailuun.',
-      step2Title:      'Ilmoituksesi tarkistetaan',
-      step2Body:       'Tiimimme käy läpi ilmoituksesi. Soitamme sinulle, jotta saadaan kaikki kuntoon.',
-      step3Title:      'Ilmoituksesi julkaistaan',
-      step3Body:       'Tarjouskilpailu käynnistyy, kun ensimmäinen tarjous on tehty.',
-      step4Title:      'Tarjouskilpailu käynnistyy',
-      step4Body:       'Tarjouskilpailu kestää tyypillisesti 36 tuntia. Pidämme sinut ajan tasalla sähköpostitse.',
-      step5Title:      'Tarjouskilpailu päättyy ja saat tulokset',
-      step5Body:       'Lähetämme sähköpostin kun tarjouskilpailu päättyy. Sinulla on 24 tuntia aikaa reagoida.',
-    },
-
     /* ── Shared: action buttons ── */
     btn: {
       continue: 'Jatka',
@@ -635,11 +621,7 @@ window.TRANSLATIONS = {
       emailPlaceholder:   'Sähköpostiosoitteesi',
       termsLabel:         'Hyväksyn AutoVexin <a href="#" class="text-av-blue underline hover:text-av-blue-dark">käyttöehdot</a> <span class="text-red-500">*</span>',
       marketingLabel:     'Haluan vastaanottaa mielenkiintoista sisältöä ja vinkkejä auton myyntiin sähköpostitse.',
-      submitBtn:          'Lähetä tarkastukseen',
-      /* "Review/No review" v1: one neutral copy for every seller. Prod's own
-         wording names an outcome the funnel can no longer predict — see
-         design-specs/review-no-review.html, Change 2. */
-      submitBtnNeutral:   'Lähetä ilmoitus',
+      submitBtn:          'Lähetä ilmoitus',
       nameError:          'Kirjoita koko nimesi.',
       phoneError:         'Kirjoita puhelinnumerosi.',
       emailEmptyError:    'Kirjoita sähköpostiosoitteesi.',
@@ -956,20 +938,6 @@ window.TRANSLATIONS = {
       body:  'Car sales are booming! We\'ve already sold over 70,000 cars!',
     },
 
-    nextSteps: {
-      title:               'What happens next?',
-      step1Title:          'Verify your email',
-      step1Body:           'Check your email and confirm your address to continue to the auction.',
-      step2Title:          'Your listing is reviewed',
-      step2Body:           'Our team reviews your listing. We\'ll call you to make sure everything is in order.',
-      step3Title:          'Your listing goes live',
-      step3Body:           'The auction starts once the first offer is made.',
-      step4Title:          'Auction in progress',
-      step4Body:           'The auction typically lasts 36 hours. We\'ll keep you posted by email.',
-      step5Title:          'Auction ends and you get results',
-      step5Body:           'We\'ll send an email when the auction ends. You have 24 hours to respond.',
-    },
-
     btn: {
       continue: 'Continue',
       back:     'Back',
@@ -1192,8 +1160,7 @@ window.TRANSLATIONS = {
       emailPlaceholder:  'Your email address',
       termsLabel:        'I accept AutoVex\'s <a href="#" class="text-av-blue underline hover:text-av-blue-dark">terms of service</a> <span class="text-red-500">*</span>',
       marketingLabel:    'I\'d like to receive interesting content and tips on selling my car by email.',
-      submitBtn:         'Submit for review',
-      submitBtnNeutral:  'Submit listing',
+      submitBtn:         'Submit listing',
       nameError:         'Enter your full name.',
       phoneError:        'Enter your phone number.',
       emailEmptyError:   'Enter your email address.',

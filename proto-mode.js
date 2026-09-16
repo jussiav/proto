@@ -72,7 +72,7 @@
   window.protoDev = mode === 'dev';
 
   /* ── Initiative arms ──────────────────────────────────────────────────────
-     protoVariant('review-no-review', 'control') → the arm this page should
+     protoVariant('enhanced-negotiations', 'control') → the arm this page should
      render. Same precedence as the mode above: an explicit param wins and is
      remembered, otherwise the remembered arm, otherwise the page's default.
 
@@ -107,12 +107,6 @@
       slug: 'delivery',
       name: 'Delivery distance A/B test',
       spec: 'design-specs/delivery-distance.html',
-      prodArm: 'control'
-    },
-    {
-      slug: 'review-no-review',
-      name: 'Review/No review',
-      spec: 'design-specs/review-no-review.html',
       prodArm: 'control'
     },
     {

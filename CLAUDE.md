@@ -451,7 +451,7 @@ participant to one arm. A remembered non-default arm is logged to the console on
 load, same escape hatch as test mode; picking `— none —` on the bar forgets it.
 
 **Pages normalise what gets remembered.** A legacy alias or a typo'd arm
-(`?delivery=stepper`, `?review-no-review=bogus`) would otherwise stick in
+(`?delivery=stepper`, `?enhanced-negotiations=bogus`) would otherwise stick in
 localStorage and leave the bar's row on `— none —` while the page rendered
 something else. A page maps or clears it with `window.protoVariantSet(name,
 value)` (`null` forgets), and the bar only ever selects a value the initiative
@@ -613,13 +613,18 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Initiative | Stage | Slug / param | Page default | Prod arm | Pages | Spec |
 |---|---|---|---|---|---|---|
 | Delivery distance A/B test | **In production A/B test** | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
-| Review/No review | Live | `review-no-review` | `control` | `control` | `price.html`, `contact.html` | `design-specs/review-no-review.html` |
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
 | Enhanced negotiations | Live | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
+
+**Completed initiatives:**
+
+| Initiative | Outcome | Spec |
+|---|---|---|
+| Review/No review | **Changes 1–3 shipped, September 2026**; change 4 closed as no change; change 5 still with the PM, Marketing-owned. No arms remain — `price.html` and `contact.html` render the shipped design unasked, and the registry entry is gone | `design-specs/review-no-review.html` |
 
 **Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
 and Seller intent (VWO `104_combi`), both still registered in the 2026-09-07 dump
@@ -1324,21 +1329,28 @@ picker buttons from the BROWSER's locale, not the page's `lang`, so
 while empty and a span shows `pp.kk.vvvv` over it. The picker popup itself stays
 browser-locale — nothing on the page can reach inside it.
 
-**Review/No review** makes funnel communication match whether the seller's car
-is in the review segment. Change 1 removes the "Mitä tapahtuu seuraavaksi?"
-component from the price step: prod's `WhatHappensNext` never sees `can_review`,
-so at that step it promises the review call to every seller, including the ones
-being asked for an asking price *because* they are outside the segment. The arm
-hides `#price-what-happens-next`; on desktop the cream column keeps its size and
-its save-draft mount and is otherwise empty — a deliberate divergence, since
-prod's `Sidebar.vue` keeps `VehicleMetrics` there. Below 768px the column
-(`#price-sidebar`) is hidden outright, matching prod's
-`shouldShowSidebarOnMobile`, which is driven by `WhatHappensNext`: stacked under
-the form an empty column is just a 64px strip of cream padding. The rule is
-hand-written CSS keyed to `body[data-rnr-arm]`, not `max-md:hidden` — the
-Tailwind Play CDN only generates utilities present at first paint. Default is `control`, so with no
-param the proto stays prod-faithful. See the Review Segment section above for
-the `can_review` chain this is about.
+**Review/No review** made funnel communication match whether the seller's car
+is in the review segment. **PROMOTED 2026-09-16: changes 1–3 have shipped and
+the proto now renders them unasked.** The arms, both page declarations and the
+registry entry are deleted, `nextSteps.*` is out of `translations.js`, and
+`contact.submitBtn` now holds the neutral copy with `submitBtnNeutral` gone.
+Change 4 was closed as a no-change and its spec section removed; change 5 stays
+open with the PM. Everything below is the record of what shipped and why.
+
+Change 1 removed the "Mitä tapahtuu seuraavaksi?" component from the price step:
+prod's `WhatHappensNext` never sees `can_review`, so at that step it promised the
+review call to every seller, including the ones being asked for an asking price
+*because* they are outside the segment. The component is **deleted**, not hidden.
+On desktop the cream column keeps its size and its save-draft mount and is
+otherwise empty — a deliberate divergence, since prod's `Sidebar.vue` keeps
+`VehicleMetrics` there. Below 768px the column (`#price-sidebar`) is hidden
+outright, matching prod's `shouldShowSidebarOnMobile`, which is driven by
+`WhatHappensNext`: stacked under the form an empty column is just a 64px strip of
+cream padding. That rule is hand-written CSS rather than `max-md:hidden` — the
+Tailwind Play CDN only generates utilities present at first paint. The numbered
+step badges went with the component: `STEP_BADGES` and `renumberSteps()` existed
+only to renumber a list that no longer renders. See the Review Segment section
+above for the `can_review` chain this is about.
 
 The four post-submit landings were walked
 organically (price → contact → submit → verification link) and match prod's own
@@ -1362,12 +1374,13 @@ page won: `pageTitle`, `intro2` and `submitBtn`.
 Change 2 takes the promise out of the **contact step's submit button**:
 prod's `personal_info.submit` reads "Lähetä tarkastukseen" with no `can_review`
 branch, which is already false outside the review segment and becomes false
-inside it once a seller-intent answer can downgrade someone. The `v1` arm renders
-`contact.submitBtnNeutral` ("Lähetä ilmoitus") for everyone — **one copy, no
-outcome branching**, because three outcome-specific copies would leak the decision
-a step before we state it. `contact.html` reads the arm in `<head>` and owns the
-label itself; the `data-i18n` attribute was removed so a language switch cannot
-overwrite the arm's string.
+inside it once a seller-intent answer can downgrade someone. The step now renders
+`contact.submitBtn` ("Lähetä ilmoitus") for everyone — **one copy, no outcome
+branching**, because three outcome-specific copies would leak the decision a step
+before we state it. On promotion the neutral string took over the `submitBtn` key
+and `submitBtnNeutral` was deleted. `contact.html` still sets the label from JS
+rather than `data-i18n`, which is what keeps a language switch from overwriting
+it.
 
 **The "Valmis" the proto used to show on the offers-return path was INVENTED
 copy, and it is gone** (2026-09-07, from a dev's question about when that label
@@ -1420,7 +1433,7 @@ FI and EN, ten overrides in total. `help.html` lost `REVIEW_NO_REVIEW_ARM`, its
 `armAnswer` helper and its whole `protoPage` declaration: a switcher whose two
 options render identically reads as "the change is in and it looks the same".
 The `v1` mechanism stays documented in the file header for the next initiative.
-Changes 1 and 2 keep their arms, on `price.html` and `contact.html`.
+Changes 1 and 2 kept their arms until they shipped too; all three are now promoted.
 
 A sixth item ("why wasn't I called?") was considered and dropped: once nothing is
 promised, there is no broken expectation to explain.
@@ -1689,9 +1702,15 @@ has none, since the feature does not exist there.
 3. **Promoted** — the winning arm becomes the only code. Delete the losing arms,
    the page's `initiatives` declaration AND the registry entry (the option group
    disappears, the param stops being read), plus any copy nothing renders any
-   more — if `v1` wins on
-   Review/No review, the whole `nextSteps` namespace leaves `translations.js`,
-   since `price.html` is its only consumer.
+   more. **Review/No review is the worked example** (2026-09-16): promoting it
+   took out two arm readers, two `initiatives` declarations, the registry entry,
+   the `data-rnr-arm` stamp and its CSS, the whole `nextSteps` namespace from
+   `translations.js` — `price.html` was its only consumer — and one copy key that
+   existed only to hold the arm's string. **One trap it exposed: the spec page's
+   "Today" mock was rendering the removed copy through `data-i18n`, so deleting
+   the namespace blanked it to em-dashes.** Copy a promotion deletes has to be
+   INLINED into any spec-page mock that still shows it — the record outlives the
+   product string.
 4. **Completed** — the spec page stays, its chip changed to *completed — `<arm>`
    promoted, `<month year>`* with a line naming what shipped, and the row above
    moves to a **Completed initiatives** list here. The record survives; the
