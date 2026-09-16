@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-09-07)
+## Reference Source Locations (updated 2026-09-16)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-09-07-fdd3a0224ef9/` (previous: `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-09-16-d1ea5398cdb4/` (previous: `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -1804,8 +1804,18 @@ machinery is easy to over-read:
   the code does not yet express that.** In `enabled` mode `DecideViaQualificationEngine`
   returns the engine's answer for the live slice without calling `$next`, so it
   would OVERRIDE the segment rather than refine it, and `live_percentage` only
-  applies in that mode. Worth checking the env before reading "10% allocation" as
-  ghost mode.
+  applies in that mode.
+- **THE DIAL IS IN THE BACK OFFICE NOW, NOT IN THE ENV** (2026-09-16 dump).
+  `engine_mode`, `live_percentage` and the four whitelist parameters moved out of
+  `config/review-qualification.php` into `App\Settings\ReviewAlgorithmSettings`,
+  and `DecideViaQualificationEngine` reads that object rather than `config()`.
+  They are edited in Filament on **Tender Review Settings → Review Algorithm**
+  (collapsed): a Mode select — *Disabled: legacy rules only* / *Evaluate: legacy
+  decides, engine observed* / *Enabled: engine decides for the live slice* — a
+  Live percentage 0–100 marked sticky per seller, and a Whitelist generation
+  fieldset. **So the current mode is READABLE in the UI, and anyone with access to
+  that page can move it.** `acceptance_resolved_at` was dropped from the
+  observations table in the same dump.
 - **One side effect that reaches another initiative:** on `auto_publish` the
   engine writes `price_estimation` into `asking_price` when the draft has none
   (left dirty and unsaved so a failed publish rolls it back). That field is the
@@ -2184,6 +2194,14 @@ here computes one: `BASE` carries `fair_offer: true`, `?fair=0` flips it, and
 the bar's **Auction settings** has a `Fair offer` field so the other case is one
 click away. Production already identifies a fair offer on the front end, so the
 real page reads a flag too — this is the data contract, not a proto shortcut.
+
+**Say REFERENCE PRICE, not "our estimate"** (2026-09-16, Jussi's term). A fair
+offer is defined as a share of the reference price, and the DB field behind it is
+named for an estimate — but the value it holds may be a **GT-X estimate, a sales
+advisor's estimate given during the review call, or any later corrected value**.
+Calling it "the estimate" implies one machine number and gets the denominator
+wrong; the seller's OWN estimate is a different field again. **The ratio itself
+lives outside this repo** — see the private notes, not this file.
 
 **Outside the gate the seller gets PRODUCTION'S BLOCK, untouched** — the
 three-column `dl`, the chart and the date row. Never a stripped-down version. A
@@ -2776,9 +2794,9 @@ car is worth, and there the sentence is wrong in the one direction that costs th
 most trust: the seller takes the advice and finds out later. The recommendation
 raises the stakes, since stating a view and telling someone what to do are not
 the same act. The honest shape is probably the reverse of what is built — gate
-the claim on the offer against our own estimate and let the bidder count be the
-evidence rather than the trigger — but that needs the estimate on the page, which
-is a product decision this sketch does not make. Built as briefed; flagged, not
+the claim on the offer against the reference price and let the bidder count be the
+evidence rather than the trigger — but that needs a reference price on the page,
+which is a product decision this sketch does not make. Built as briefed; flagged, not
 silently fixed.
 
 **The section keeps prod's title.** `Tarjouskilpailun tiedot` described a record
