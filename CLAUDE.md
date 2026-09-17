@@ -971,10 +971,66 @@ the fill keeps the button bright: green-400 on black is **12.05:1**, AAA. A text
 shadow, border or glow changes none of those numbers — the ratio is text against
 background, full stop.
 
-**`accept-button-lab.html` is where that was decided** and is worth keeping until
-the team settles it: a temporary page, linked from nowhere, with 22 candidates
-from the brand palette that each measure their own ratio from their rendered
-colours (and re-measure on hover), so the numbers cannot drift from what is drawn.
+**`accept-button-lab.html` is where that was decided**, and on 2026-09-17 it was
+**repurposed** — the 22-candidate palette sweep is gone (git history has it) and
+the page is now the brief for the `success`-intent change, written for devs and
+the dealership-side designer. It still measures every ratio from the rendered
+pixels, which is the part worth keeping: each state is rendered as its own static
+tile and the page reads its computed colour against its own computed background,
+walking up to the first opaque ancestor so ghost and link measure too. It is
+linked from nowhere and loads no `tw-tokens.js`.
+
+**What it now establishes, and the numbers are the deliverable:**
+
+- **There are THREE button components, two deprecated**, which is the thing that
+  gets described wrongly. `elements/Button.vue` (17 consumers, a `color` prop
+  taking `'blue' | 'red' | 'green-600' | 'transparent'`) AND `ui/UiButton.vue`
+  (78 consumers) both carry the same JSDoc pointing at `atoms/AButton.vue`
+  (7 consumers). So the lime `success` definition is **duplicated byte-for-byte
+  in UiButton and AButton**, and a colour change lands in both until one goes.
+- **The seller's two accepts are two different colours today.** The decision
+  page's card accept is `UiButton variant="primary" size="lg"` with **no intent
+  at all**, so it renders blue-600/white. The modal footer accept
+  (`OfferActions.vue`) is the legacy `Button color="green-600"`, the **only**
+  consumer of that colour anywhere. Neither is the shared `success` intent.
+- **The dealership's three accepts ARE the shared intent** — lime, via
+  `UiButton variant="primary" intent="success"`:
+  `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`,
+  `PastDeliveryDateConfirmModal`.
+- **`intent="success"` already means `text-green-600` in `UiIcon.vue` and
+  `ASpriteIcon.vue`.** Same intent name, two hues, one design system — so
+  greening the button makes it agree with the icon rather than introducing a
+  new meaning. This is the strongest single argument and it is not a taste one.
+- **Lime fails AA in 7 of its 14 states.** default active 2.98 · primary hover
+  4.42 · secondary rest 4.28 / hover 3.82 / active 3.31 · ghost active 2.98 ·
+  link active 3.09. The three that are **not transient** — primary hover and
+  secondary rest/hover — are the defensible ones; an `active` state is held only
+  while the pointer is down and how strictly WCAG applies there is arguable.
+  **Say that rather than counting all seven as equal.**
+- **A straight lime → green swap fixes primary and nothing else.** `green-700`
+  on green-200/300/400 fails exactly as `lime-700` does. The proposal therefore
+  deviates from the mirror in **three** places, each forced by a number:
+  primary label **black** not green-900; secondary label **green-900** not
+  green-700; default/ghost/link active **keep green-700** instead of lightening
+  to green-600. With those, all 14 states pass.
+- **green-950 is the tinted alternative to black** and survives the whole ladder
+  (8.55 / 6.54 / 4.52) where green-900 dies at hover (5.23 / **4.00** / **2.76**).
+  Worth offering if a fully neutral label reads as too hard.
+- **The default (blue) intent fails three of its own states too** — default
+  hover 4.13, default active 2.67, secondary active 3.41. So the honest ask is
+  *success is the worst of them and it is the one we are opening anyway*, not
+  *lime is uniquely broken*. A pass across every intent is separate work.
+- **Lime does not leave the product.** `UiBadge`'s `lime`/`light_lime`,
+  `UiTab`'s success, `OProductCard`, `OContainer`, `ReservePriceNotice` and
+  `B2BReserveStatusBadge` are untouched — none reads a button's `intent`.
+  Whether status lime should follow is flagged as a separate decision.
+
+**One build trap it cost a round trip:** the variant tiles were measured inside
+the loop that creates them, before the grid was appended — `getComputedStyle` on
+a **detached** element returns empty strings, `parse()` returned null and the
+whole IIFE died on `rgb[0]`. Measurement runs as a second pass over
+`.readout[data-measure]` once everything is in the document.
+
 Green-400 + black is the current pick pending the team's view.
 The in-message accept also carries the card's exact label,
 **"Hyväksy korkein tarjous"**: it needs no amount, since the figure is the bold

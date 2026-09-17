@@ -3,338 +3,793 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Accept button — contrast lab</title>
+  <title>Success button — where green and lime are today</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* TEMPORARY working page. Not linked from anywhere, not part of the proto.
-       Every colour below is a brand token: the AutoVex blue scale, the design
-       library's success scale (tokens.css --color-success-*, which is Tailwind's
-       lime ramp), Tailwind's green ramp as shipped in the product's config, and
-       av-turquoise. Nothing here is invented.
+    /* Working page for a conversation with devs and designers. Not linked from
+       the prototype, not part of it.
 
-       Contrast is measured by the page itself from each button's own computed
-       text colour and its declared background, so the numbers cannot drift from
-       what is rendered. Gradients declare their LIGHTEST stop — that is the
-       worst case, and the one that has to pass. */
+       Every colour below is a token the product already ships: the AutoVex blue
+       scale from tailwind.config.js, and Tailwind's own `lime` and `green`
+       ramps, which that config passes through untouched (`lime: colors.lime`,
+       `green: colors.green`). Nothing here is invented.
+
+       Every contrast number is measured by the page from the rendered pixels —
+       the element's own computed text colour against its own computed
+       background, walking up to the first opaque ancestor where the element is
+       transparent. Hover and active states are rendered statically as their own
+       tiles so they can be measured too; a state you have to find with the
+       pointer is a state nobody checks. */
     :root {
-      --white:#FFFFFF; --black:#000000; --slate-900:#0F172A;
-      --av-blue:#0B6DFF; --av-dark-blue:#08234D;
-      --green-200:#BBF7D0; --green-300:#86EFAC; --green-400:#4ADE80;
-      --green-500:#22C55E; --green-600:#16A34A; --green-700:#15803D;
+      --lime-50:#F7FEE7;  --lime-100:#ECFCCB; --lime-200:#D9F99D; --lime-300:#BEF264;
+      --lime-400:#A3E635; --lime-500:#84CC16; --lime-600:#65A30D; --lime-700:#4D7C0F;
+      --lime-800:#3F6212; --lime-900:#365314; --lime-950:#1A2E05;
+
+      --green-50:#F0FDF4;  --green-100:#DCFCE7; --green-200:#BBF7D0; --green-300:#86EFAC;
+      --green-400:#4ADE80; --green-500:#22C55E; --green-600:#16A34A; --green-700:#15803D;
       --green-800:#166534; --green-900:#14532D; --green-950:#052E16;
-      --success-200:#D9F99D; --success-300:#BEF264; --success-400:#A3E635;
-      --success-500:#84CC16; --success-600:#65A30D; --success-700:#4D7C0F;
-      --success-800:#3F6212;
-      --success-900:#365314;
+
+      --blue-50:#EEF6FA;  --blue-100:#D7EDFF; --blue-600:#0B6DFF; --blue-700:#0A59EB;
+      --blue-800:#0F47BE;
+
+      --slate-50:#F8FAFC;  --slate-100:#F1F5F9; --slate-200:#E2E8F0; --slate-400:#94A3B8;
+      --slate-500:#64748B; --slate-600:#475569; --slate-700:#334155; --slate-900:#0F172A;
+      --white:#FFFFFF; --black:#000000;
     }
+
     * { box-sizing: border-box; }
     body {
-      margin: 0; background: #FFFFFF; color: #0F172A;
+      margin: 0; background: var(--white); color: var(--slate-900);
       font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
-      padding: 48px 24px 96px;
+      font-size: 15px; line-height: 1.6;
+      padding: 40px 20px 120px;
     }
-    .wrap { max-width: 1180px; margin: 0 auto; }
-    h1 { font-family: Barlow, sans-serif; font-size: 32px; line-height: 1.15; margin: 0 0 8px; }
-    .lede { font-size: 15px; line-height: 1.6; color: #475569; max-width: 62ch; margin: 0 0 8px; }
-    h2 { font-family: Barlow, sans-serif; font-size: 20px; margin: 48px 0 4px; }
-    .sub { font-size: 13px; color: #64748B; margin: 0 0 20px; max-width: 62ch; line-height: 1.6; }
+    .wrap { max-width: 1120px; margin: 0 auto; }
 
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(268px, 1fr)); gap: 20px; }
-    .tile { border: 1px solid #E2E8F0; border-radius: 10px; padding: 18px; }
-    .tile .name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
-    .tile .tokens { font-size: 11px; color: #64748B; margin-bottom: 14px; font-variant-numeric: tabular-nums; }
-    .meta { display: flex; align-items: center; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
-    .hover-meta { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; color: #64748B; }
-    .hover-meta .verdict { font-size: 9px; padding: 2px 6px; }
+    h1 { font-family: Barlow, sans-serif; font-size: 32px; line-height: 1.15; margin: 0 0 10px; font-weight: 700; }
+    h2 { font-family: Barlow, sans-serif; font-size: 22px; line-height: 1.25; margin: 56px 0 6px; font-weight: 700; }
+    h3 { font-family: Barlow, sans-serif; font-size: 17px; line-height: 1.3; margin: 28px 0 4px; font-weight: 600; }
+    p  { margin: 0 0 12px; max-width: 74ch; }
+    .lede { font-size: 16px; color: var(--slate-600); max-width: 74ch; }
+    .sub  { font-size: 14px; color: var(--slate-500); max-width: 74ch; margin: 0 0 20px; }
+    code  { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
+            background: var(--slate-100); padding: 1px 5px; border-radius: 4px; }
+    strong { font-weight: 700; }
+
+    .rule { height: 1px; background: var(--slate-200); border: 0; margin: 40px 0 0; }
+
+    /* ── cards ──────────────────────────────────────────────────────────── */
+    .card { border: 1px solid var(--slate-200); border-radius: 12px; padding: 20px 22px; margin: 18px 0; }
+    .card.accent { border-color: var(--green-400); background: var(--green-50); }
+    .card.warn   { border-color: #FCD34D; background: #FFFBEB; }
+    .card h3:first-child, .card h2:first-child { margin-top: 0; }
+    .card p:last-child { margin-bottom: 0; }
+
+    .chip { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em;
+            text-transform: uppercase; border-radius: 999px; padding: 3px 9px; margin: 0 6px 8px 0; }
+    .chip.now     { background: var(--slate-200); color: var(--slate-700); }
+    .chip.option  { background: var(--blue-100); color: var(--blue-800); }
+    .chip.target  { background: var(--green-200); color: var(--green-900); }
+    .chip.dep     { background: #FEE2E2; color: #7F1D1D; }
+    .chip.keep    { background: #FEF3C7; color: #78350F; }
+
+    /* ── tables ─────────────────────────────────────────────────────────── */
+    .tablewrap { overflow-x: auto; margin: 16px 0 8px; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 620px; }
+    th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--slate-200); vertical-align: top; }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--slate-500); font-weight: 700;
+         border-bottom: 1px solid var(--slate-400); }
+    td.num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+    tr.fail td { background: #FEF2F2; }
+
+    /* ── buttons: the real class strings, resolved ──────────────────────── */
+    /* Geometry only. Colour is applied per tile so each state can be measured. */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: "DM Sans", sans-serif; font-weight: 400;
+      border-radius: 8px; border: 1px solid transparent; cursor: pointer;
+      transition: none; white-space: nowrap;
+    }
+    /* UiButton / AButton sizes, from the cva: base text-base leading-tight,
+       md and sm override the label size, lg and fw do not. */
+    .btn.sz-md { height: 40px; padding: 0 20px; font-size: 14px; line-height: 1.25; }
+    .btn.sz-lg { height: 56px; padding: 0 32px; font-size: 16px; line-height: 1.25; }
+    .btn.sz-fw { height: 56px; padding: 0 32px; font-size: 16px; line-height: 1.25; width: 100%; }
+    .btn.w-full { width: 100%; }
+    .btn.primary,
+    .btn.nav-cta  { box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.20); }
+    .btn.secondary{ box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.25); }
+    .btn.linkish  { padding: 0; height: auto; border: 0; background: transparent;
+                    border-radius: 0; box-shadow: none; text-decoration: none; }
+    .btn.linkish:hover { text-decoration: underline; }
+
+    /* The legacy elements/Button.vue, resolved from its own class string:
+       pt-13px px-5 pb-15px leading-none font-medium rounded-lg tracking-wider,
+       plus py-2 text-base from size="medium" and border-2 from the colour map. */
+    .btn.legacy {
+      height: auto; padding: 13px 20px 15px; font-size: 16px; line-height: 1;
+      font-weight: 500; letter-spacing: 0.05em; border-width: 2px; border-style: solid;
+      box-shadow: none;
+    }
+
+    /* ── colour sets ────────────────────────────────────────────────────── */
+    /* LIME — the `success` intent exactly as UiButton.vue and AButton.vue
+       define it today. Identical in both files. */
+    .L-default-rest   { background: var(--white);     color: var(--lime-700); border-color: var(--lime-400); }
+    .L-default-hover  { background: var(--lime-50);   color: var(--lime-700); border-color: var(--lime-400); }
+    .L-default-active { background: var(--lime-50);   color: var(--lime-600); border-color: var(--lime-400); }
+    .L-primary-rest   { background: var(--lime-400);  color: var(--lime-900); }
+    .L-primary-hover  { background: var(--lime-500);  color: var(--lime-900); }
+    .L-primary-active { background: var(--lime-600);  color: var(--lime-950); }
+    .L-secondary-rest   { background: var(--lime-200); color: var(--lime-700); }
+    .L-secondary-hover  { background: var(--lime-300); color: var(--lime-700); }
+    .L-secondary-active { background: var(--lime-400); color: var(--lime-700); }
+    .L-ghost-rest   { background: transparent;      color: var(--lime-700); }
+    .L-ghost-hover  { background: var(--lime-50);   color: var(--lime-700); }
+    .L-ghost-active { background: var(--lime-50);   color: var(--lime-600); }
+    .L-link-rest    { color: var(--lime-700); }
+    .L-link-active  { color: var(--lime-600); }
+
+    /* GREEN — the proposal. Same structure, one ramp over, with three
+       deliberate deviations the numbers force. Marked * in the table. */
+    .G-default-rest   { background: var(--white);     color: var(--green-700); border-color: var(--green-400); }
+    .G-default-hover  { background: var(--green-50);  color: var(--green-700); border-color: var(--green-400); }
+    .G-default-active { background: var(--green-50);  color: var(--green-700); border-color: var(--green-400); }
+    .G-primary-rest   { background: var(--green-400); color: var(--black); }
+    .G-primary-hover  { background: var(--green-500); color: var(--black); }
+    .G-primary-active { background: var(--green-600); color: var(--black); }
+    .G-secondary-rest   { background: var(--green-200); color: var(--green-900); }
+    .G-secondary-hover  { background: var(--green-300); color: var(--green-900); }
+    .G-secondary-active { background: var(--green-400); color: var(--green-900); }
+    .G-ghost-rest   { background: transparent;     color: var(--green-700); }
+    .G-ghost-hover  { background: var(--green-50); color: var(--green-700); }
+    .G-ghost-active { background: var(--green-50); color: var(--green-700); }
+    .G-link-rest    { color: var(--green-700); }
+    .G-link-active  { color: var(--green-700); }
+
+    /* The two non-success colours the seller's accept wears today. */
+    .B-primary-rest  { background: var(--blue-600); color: var(--white); }
+    .B-primary-hover { background: var(--blue-700); color: var(--white); }
+    .legacy-green-rest  { background: var(--green-600); color: var(--white); border-color: var(--green-600); }
+    .legacy-green-hover { background: var(--green-700); color: var(--white); border-color: var(--green-700); }
+
+    /* ── measurement furniture ──────────────────────────────────────────── */
+    .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 12px; }
+    .state  { min-width: 0; }
+    .state .lab { font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
+                  color: var(--slate-500); font-weight: 700; margin-bottom: 6px; }
+    .state .btnbox { display: flex; }
+    .state .btnbox .btn { width: 100%; }
+    .readout { display: flex; align-items: center; gap: 7px; margin-top: 8px; flex-wrap: wrap; }
     .ratio { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
     .verdict { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-               border-radius: 999px; padding: 3px 8px; }
-    .pass  { background: #DCFCE7; color: #14532D; }
-    .aaa   { background: #BBF7D0; color: #14532D; }
-    .fail  { background: #FEE2E2; color: #7F1D1D; }
-    .note  { font-size: 11px; line-height: 1.5; color: #64748B; margin-top: 10px; }
+               border-radius: 999px; padding: 3px 7px; }
+    .pass { background: var(--green-100); color: var(--green-900); }
+    .aaa  { background: var(--green-200); color: var(--green-900); }
+    .fail { background: #FEE2E2; color: #7F1D1D; }
+    .tokens { font-size: 11px; color: var(--slate-500); margin-top: 5px; font-variant-numeric: tabular-nums; }
 
-    /* The button, at the size the offer card uses: full width, 56px, 14px medium.
-       Everything except colour is the production button — same radius, same
-       inner highlight — so the comparison is only about colour. */
-    .btn {
-      width: 100%; height: 56px; border: 0; border-radius: 8px; cursor: pointer;
-      font-family: "DM Sans", sans-serif; font-size: 14px; font-weight: 500;
-      display: inline-flex; align-items: center; justify-content: center;
-      box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.20);
-      transition: background .15s, box-shadow .15s;
-    }
-    .btn.sm { height: 40px; }
-    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 8px; }
-    .row .btn { width: auto; padding: 0 32px; }
+    /* Surface comparison: three columns, one per option. */
+    .compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 14px; }
+    .col { border: 1px solid var(--slate-200); border-radius: 12px; padding: 18px; min-width: 0; }
+    .col.is-target { border-color: var(--green-400); background: var(--green-50); }
+    .col .colname { font-family: Barlow, sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+    .col .colnote { font-size: 12px; color: var(--slate-500); margin-bottom: 14px; line-height: 1.5; }
+    .col .comp { font-size: 11px; color: var(--slate-500); margin-top: 10px; font-family: ui-monospace, Menlo, monospace; line-height: 1.5; }
 
-    /* ── candidates ─────────────────────────────────────────────────────────
-       Every hover goes one step DARKER on its own ramp, which is what the rest
-       of the product's buttons do (blue-600 → blue-700, blue-100 → blue-200).
-       The hover ratio is measured too and shown next to the resting one: a
-       candidate whose hover drops below 4.5:1 is out, however good it looks at
-       rest. */
-    .b-now      { background: var(--green-500);   color: var(--white); }
-    .b-now:hover      { background: var(--green-600); }
-    .b-600w     { background: var(--green-600);   color: var(--white); }
-    .b-600w:hover     { background: var(--green-700); }
+    .stage { background: var(--white); border: 1px solid var(--slate-200); border-radius: 10px; padding: 14px; }
+    .col.is-target .stage { border-color: var(--green-200); }
 
-    /* Light fill, dark label */
-    .b-g500-950 { background: var(--green-500);   color: var(--green-950); }
-    .b-g500-950:hover { background: var(--green-600); }
-    .b-g500-blk { background: var(--green-500);   color: var(--black); }
-    .b-g500-blk:hover { background: var(--green-600); }
-    .b-g500-nav { background: var(--green-500);   color: var(--av-dark-blue); }
-    .b-g500-nav:hover { background: var(--green-600); }
-    .b-g500-sl  { background: var(--green-500);   color: var(--slate-900); }
-    .b-g500-sl:hover  { background: var(--green-600); }
-    .b-g400-950 { background: var(--green-400);   color: var(--green-950); }
-    .b-g400-950:hover { background: var(--green-500); }
-    .b-g400-blk { background: var(--green-400);   color: var(--black); }
-    .b-g400-blk:hover { background: var(--green-500); }
-    .b-g300-950 { background: var(--green-300);   color: var(--green-950); }
-    .b-g300-950:hover { background: var(--green-400); }
-    .b-g200-900 { background: var(--green-200);   color: var(--green-900); }
-    .b-g200-900:hover { background: var(--green-300); }
-    .b-g600-blk { background: var(--green-600);   color: var(--black); }
-    .b-g600-blk:hover { background: var(--green-700); }
-    .b-s400-900 { background: var(--success-400); color: var(--success-900); }
-    .b-s400-900:hover { background: var(--success-500); }
-    .b-s400-blk { background: var(--success-400); color: var(--black); }
-    .b-s400-blk:hover { background: var(--success-500); }
-    .b-s400-nav { background: var(--success-400); color: var(--av-dark-blue); }
-    .b-s400-nav:hover { background: var(--success-500); }
-    .b-s300-900 { background: var(--success-300); color: var(--success-900); }
-    .b-s300-900:hover { background: var(--success-400); }
-    .b-s300-blk { background: var(--success-300); color: var(--black); }
-    .b-s300-blk:hover { background: var(--success-400); }
-    .b-s200-900 { background: var(--success-200); color: var(--success-900); }
-    .b-s200-900:hover { background: var(--success-300); }
-    .b-s500-blk { background: var(--success-500); color: var(--black); }
-    .b-s500-blk:hover { background: var(--success-600); }
+    .varrow { margin-top: 26px; }
+    .varhead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .varhead .vname { font-family: Barlow, sans-serif; font-weight: 700; font-size: 16px; }
+    .varhead .vuse  { font-size: 12px; color: var(--slate-500); }
+    .side { margin-top: 12px; }
+    .side .sidelab { font-size: 12px; font-weight: 700; color: var(--slate-600); margin-bottom: 2px; }
 
-    /* Deeper fill, white label */
-    .b-g700-w   { background: var(--green-700);   color: var(--white); }
-    .b-g700-w:hover   { background: var(--green-800); }
-    .b-g800-w   { background: var(--green-800);   color: var(--white); }
-    .b-g800-w:hover   { background: var(--green-900); }
-    .b-s700-w   { background: var(--success-700); color: var(--white); }
-    .b-s700-w:hover   { background: var(--success-800); }
-    .b-s600-w   { background: var(--success-600); color: var(--white); }
-    .b-s600-w:hover   { background: var(--success-700); }
-
-    .callout { border: 1px solid #E2E8F0; border-left: 4px solid #0B6DFF; border-radius: 8px;
-               padding: 16px 18px; margin: 28px 0 0; max-width: 72ch; }
-    .callout p { margin: 0 0 8px; font-size: 13px; line-height: 1.65; color: #334155; }
-    .callout p:last-child { margin-bottom: 0; }
-    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
-           background: #F1F5F9; padding: 1px 5px; border-radius: 4px; }
+    ul { margin: 0 0 12px; padding-left: 20px; max-width: 74ch; }
+    li { margin-bottom: 6px; }
+    .footnote { font-size: 13px; color: var(--slate-500); max-width: 74ch; }
   </style>
 </head>
 <body>
 <div class="wrap">
 
-  <h1>Accept button — contrast lab</h1>
-  <p class="lede">Temporary page. Candidates for the offer card / negotiation modal accept button, all drawn from the brand palette, all measured against <b>WCAG 2.0 AA for normal text (4.5:1)</b> — the button's label is 14px medium, so the 3:1 large-text allowance does not apply.</p>
-  <p class="lede">Every ratio below is computed by this page from the button's own rendered text colour and its background, so the numbers cannot drift from what is drawn. Hover any button and its hover state is re-measured — every hover goes <b>darker</b>, matching the rest of the product's buttons.</p>
+  <h1>The success button: green and lime today, and the change we propose</h1>
+  <p class="lede">
+    AutoVex has three button components, two of them deprecated, and the act of
+    <em>accepting</em> is currently drawn in three different colours depending on
+    which side of the marketplace you are on and which component the surface
+    happens to use. This page shows exactly what is on screen today, then the
+    change we would like to make, with every state rendered and every contrast
+    ratio measured from the rendered pixels.
+  </p>
+  <p class="sub">
+    Audience: devs and designers, both sides of the product. Read against the
+    2026-09-16 production dump. Not part of the prototype.
+  </p>
 
-  <h2>Where we are</h2>
-  <p class="sub">The accept green in production today. It fails too, which is the thing to know before reading the rest: this is not a regression to undo, it is a problem to solve.</p>
-  <div class="grid" id="g-now"></div>
-
-  <h2>Light fill, dark label</h2>
-  <p class="sub">The main direction: keep a bright, cheerful green and let the label carry the contrast. Every one of these is a brand fill from either the green ramp or the design library's success ramp, with the label in a dark tone from the same family — or in black, navy or slate where that reads cleaner.</p>
-  <div class="grid" id="g-dark"></div>
-
-  <h2>Deeper fill, white label</h2>
-  <p class="sub">The other way round, for comparison. White text needs a considerably darker fill than anything above — the two at the end show where it stops working.</p>
-  <div class="grid" id="g-white"></div>
-
-  <div class="callout">
-    <p><b>Text shadows, borders, glows and outlines do not change a WCAG contrast ratio.</b> The ratio is computed from the text colour against the background directly behind it. A shadow can make text feel more legible on a photo; it does not make a failing button pass.</p>
-    <p><b>Nor does making the button bigger — at this size.</b> The 3:1 large-text allowance starts at 18.66px bold or 24px regular. The card's label is 14px medium, so it needs the full 4.5:1.</p>
-    <p><b>Hover states need to pass too, and two candidates do not.</b> Every hover here goes one step darker on its own ramp — the direction the rest of the product's buttons use — and a darker fill under a dark label means less contrast, not more. <code>green-600 + black</code> drops to 4.19:1 and <code>success-400 + success-900</code> to 4.42:1, so both are out however well they read at rest. Each tile shows its hover ratio without you having to find it with the pointer.</p>
+  <div class="card accent">
+    <h3>In short</h3>
+    <ul>
+      <li>The seller's two accept buttons are <strong>two different colours</strong> — blue on the offer card, green on the modal footer — because they are two different components.</li>
+      <li>The dealership's three accept buttons are one colour, <strong>lime</strong>, from the shared <code>intent="success"</code>.</li>
+      <li><code>intent="success"</code> already means <strong>green-600 in the icon components</strong>. The same intent name resolves to two hues in one design system.</li>
+      <li>Lime fails WCAG AA in <strong>7 of its 14 states</strong>, including three that are not transient.</li>
+      <li><strong>The proposal:</strong> retire the deprecated components on the seller side, put every accept on the shared <code>intent="success"</code>, and redefine that intent from lime to green. No new component, no new intent, one token for both sides.</li>
+    </ul>
   </div>
 
-  <h2>Side by side, at both sizes</h2>
-  <p class="sub">Only the candidates that pass at rest <b>and</b> on hover — card size (56px) above, modal footer size (40px) below.</p>
-  <div class="row" id="row-lg"></div>
-  <div class="row" id="row-sm"></div>
+  <hr class="rule" />
+
+  <h2>1 — Three button components, two of them deprecated</h2>
+  <p class="sub">
+    This is the part that is easy to get wrong: there is not one deprecated
+    button and one current one. There are two deprecated layers.
+  </p>
+
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Status</th><th>Consumers</th><th>Colour API</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>js/components/elements/Button.vue</code></td>
+          <td><span class="chip dep">deprecated</span></td>
+          <td class="num">17</td>
+          <td>a <code>color</code> prop taking <code>'blue' | 'red' | 'green-600' | 'transparent'</code> — a palette step baked into the API</td>
+        </tr>
+        <tr>
+          <td><code>js/components/ui/UiButton.vue</code></td>
+          <td><span class="chip dep">deprecated</span></td>
+          <td class="num">78</td>
+          <td><code>intent</code> + <code>variant</code>, semantic. <code>success</code> = lime</td>
+        </tr>
+        <tr>
+          <td><code>app/components/atoms/AButton/AButton.vue</code></td>
+          <td><span class="chip target">current</span></td>
+          <td class="num">7</td>
+          <td><code>intent</code> + <code>variant</code>, semantic. <code>success</code> = lime, byte-for-byte the same values as UiButton</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="footnote">
+    Both deprecated components carry the same JSDoc: <em>use the TypeScript atom
+    instead</em>. <code>UiButton</code> has 78 consumers against <code>AButton</code>'s 7, so the
+    migration it asks for has barely started — which matters below, because the
+    lime <code>success</code> definition is currently duplicated in both files and a
+    colour change has to land in both until one of them is gone.
+  </p>
+
+  <h2>2 — The seller side today</h2>
+  <p class="sub">
+    Two accepts, two components, two colours. Neither of them is the shared
+    <code>success</code> intent.
+  </p>
+
+  <div class="compare">
+    <div class="col">
+      <div class="colname">Decision page — offer card</div>
+      <div class="colnote">The primary accept. <code>UiButton variant="primary" size="lg"</code>, <strong>no intent at all</strong>, so it falls to the default intent and renders blue.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn sz-lg primary B-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn sz-lg primary B-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">C2BOfferCard.vue — blue-600 / blue-700, white label</div>
+    </div>
+
+    <div class="col">
+      <div class="colname">Offer modal — footer accept</div>
+      <div class="colnote">The same act, one click later. The deprecated <code>Button</code> with <code>color="green-600"</code> — the only consumer of that colour anywhere in the product.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn legacy legacy-green-rest w-full" type="button">Hyväksy tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn legacy legacy-green-hover w-full" type="button">Hyväksy tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">OfferActions.vue — green-600 / green-700, white label</div>
+    </div>
+  </div>
+
+  <div class="card warn">
+    <p style="margin:0">
+      <strong>Note the resting ratio on the green one.</strong> White on green-600
+      is the pairing that fails while the darker hover passes — the button is at
+      its least readable in the state it spends almost all of its life in.
+    </p>
+  </div>
+
+  <h2>3 — The dealership side today</h2>
+  <p class="sub">
+    Three surfaces, all on <code>UiButton variant="primary" intent="success"</code>. This
+    is the shared token, and it is lime.
+  </p>
+
+  <div class="compare">
+    <div class="col">
+      <div class="colname">Accept a counter offer</div>
+      <div class="colnote">The dealership's mirror of the seller's own accept — the same act, the same moment in the negotiation.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn sz-md primary L-primary-rest w-full" type="button">Hyväksy tämä tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn sz-md primary L-primary-hover w-full" type="button">Hyväksy tämä tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">DealerAcceptCounterOfferAction.vue</div>
+    </div>
+
+    <div class="col">
+      <div class="colname">Confirm the sale</div>
+      <div class="colnote">After the handover call.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn sz-md primary L-primary-rest w-full" type="button">Kauppa toteutunut</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn sz-md primary L-primary-hover w-full" type="button">Kauppa toteutunut</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">DeliveryAgreedActions.vue</div>
+    </div>
+
+    <div class="col">
+      <div class="colname">Mark handover completed</div>
+      <div class="colnote">The past-delivery-date modal.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn sz-md primary L-primary-rest w-full" type="button">Kyllä, merkitse toteutuneeksi</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn sz-md primary L-primary-hover w-full" type="button">Kyllä, merkitse toteutuneeksi</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">PastDeliveryDateConfirmModal.vue</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The inconsistency worth naming first</h3>
+    <p>
+      <code>intent="success"</code> is not only a button prop. <code>UiIcon.vue</code> and
+      <code>ASpriteIcon.vue</code> both map it to <code>text-green-600</code>.
+    </p>
+    <p style="margin-bottom:0">
+      So the design system already says success is green — in every component
+      except the one where it is most visible. A dealership accept today puts a
+      lime button next to green success icons. Changing the button is not
+      introducing a new meaning for green; it is making the button agree with the
+      icon.
+    </p>
+  </div>
+
+  <hr class="rule" />
+
+  <h2>4 — The change we propose</h2>
+  <p>
+    Three steps, and they are separable — step 1 can ship without step 2.
+  </p>
+  <ol style="max-width:74ch">
+    <li style="margin-bottom:8px"><strong>Take the seller side off the deprecated components.</strong> The modal accept moves from <code>Button color="green-600"</code> to <code>intent="success"</code>; the card accept moves from a bare <code>variant="primary"</code> to the same intent. Both seller accepts then match each other and match the dealership.</li>
+    <li style="margin-bottom:8px"><strong>Redefine <code>success</code> from lime to green</strong> in the cva. One edit per file, and every consumer moves together.</li>
+    <li><strong>Move all five variants, not only <code>primary</code>.</strong> <code>default</code>, <code>primary</code>, <code>secondary</code>, <code>ghost</code> and <code>link</code> each have their own compound row. Leaving any of them lime would put two greens in one intent.</li>
+  </ol>
+
+  <h3>What that looks like on the seller's accept</h3>
+  <p class="sub">The same button, three ways. Column 2 is step 1 alone; column 3 is steps 1 and 2 together.</p>
+
+  <div class="compare">
+    <div class="col">
+      <span class="chip now">today</span>
+      <div class="colname">Two components, two colours</div>
+      <div class="colnote">Card blue, modal green. Nothing shared with the dealership.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">card — rest</div>
+            <div class="btnbox"><button class="btn sz-lg primary B-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">modal — rest</div>
+            <div class="btnbox"><button class="btn legacy legacy-green-rest w-full" type="button">Hyväksy tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">UiButton (no intent) + elements/Button</div>
+    </div>
+
+    <div class="col">
+      <span class="chip option">option — migrate only</span>
+      <div class="colname">One component, lime</div>
+      <div class="colnote">Deprecated components gone, seller and dealership finally identical. Inherits lime's contrast problems unchanged.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn sz-lg primary L-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn sz-lg primary L-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">AButton intent="success" variant="primary"<br />— as the intent is defined today</div>
+    </div>
+
+    <div class="col is-target">
+      <span class="chip target">proposed</span>
+      <div class="colname">One component, green</div>
+      <div class="colnote">The same migration, with the intent redefined. This is where we would like to land.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn sz-lg primary G-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn sz-lg primary G-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">AButton intent="success" variant="primary"<br />— intent redefined to green-400 + black</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Why the label goes black rather than staying on the green ramp</h3>
+    <p>
+      Lime pairs its primary fill with <code>lime-900</code>. Mirroring that with
+      <code>green-900</code> works at rest and breaks on hover, which is the same
+      trap lime is already in. Black is what lets the fill stay bright enough to
+      read as the primary action while every state passes.
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Fill</th><th>black</th><th>green-900</th><th>green-950</th><th>white</th></tr></thead>
+        <tbody>
+          <tr data-ladder="green-400"><td><code>green-400</code> (rest)</td><td data-cell="black|green-400"></td><td data-cell="green-900|green-400"></td><td data-cell="green-950|green-400"></td><td data-cell="white|green-400"></td></tr>
+          <tr data-ladder="green-500"><td><code>green-500</code> (hover)</td><td data-cell="black|green-500"></td><td data-cell="green-900|green-500"></td><td data-cell="green-950|green-500"></td><td data-cell="white|green-500"></td></tr>
+          <tr data-ladder="green-600"><td><code>green-600</code> (active)</td><td data-cell="black|green-600"></td><td data-cell="green-900|green-600"></td><td data-cell="green-950|green-600"></td><td data-cell="white|green-600"></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="footnote" style="margin-bottom:0">
+      <code>green-950</code> is the one tinted label that survives the whole ladder, and it is
+      a legitimate alternative to black if a fully neutral label reads as too
+      hard. It is within a hair of black visually at that darkness.
+    </p>
+  </div>
+
+  <hr class="rule" />
+
+  <h2>5 — All five variants, lime against green</h2>
+  <p>
+    This is the part that has to be agreed rather than assumed. Changing
+    <code>success</code> touches five compound rows, and each one has three states.
+    Every tile below is the resolved class string rendered statically so it can
+    be measured; the label size is the <code>md</code> size, 14px, so the large-text
+    allowance does not apply and the bar is 4.5:1 throughout.
+  </p>
+
+  <div class="card warn">
+    <p style="margin-bottom:8px">
+      <strong>A straight lime → green swap does not fix this on its own.</strong>
+      <code>green-700</code> on the green-200/300/400 fills fails exactly as
+      <code>lime-700</code> does. The proposal therefore deviates from the mirror in
+      three places, each forced by a number rather than chosen:
+    </p>
+    <ul style="margin-bottom:0">
+      <li><code>primary</code> label: <strong>black</strong>, not <code>green-900</code></li>
+      <li><code>secondary</code> label: <strong><code>green-900</code></strong>, not <code>green-700</code></li>
+      <li><code>default</code> / <code>ghost</code> / <code>link</code> active: <strong>keep <code>green-700</code></strong> rather than lightening to <code>green-600</code></li>
+    </ul>
+  </div>
+
+  <div id="variants"></div>
+
+  <hr class="rule" />
+
+  <h2>6 — The full scorecard</h2>
+  <p class="sub">
+    Every state of both sets, measured. Failing rows are shaded.
+  </p>
+  <div class="tablewrap"><table id="scorecard">
+    <thead><tr><th>Variant</th><th>State</th><th>Lime today</th><th></th><th>Green proposed</th><th></th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+
+  <div class="card">
+    <h3>Honest framing for the conversation</h3>
+    <p>
+      Lime's <code>active</code> failures are the weakest part of the case — an active
+      state is held only while the pointer is down, and how strictly WCAG applies
+      to it is arguable. The three that are <strong>not</strong> arguable are
+      <code>primary</code> hover, and <code>secondary</code> at rest and on hover. Those are
+      steady states a user reads.
+    </p>
+    <p style="margin-bottom:0">
+      And this is not a lime-only problem: the <strong>default (blue) intent fails in
+      three of its own states</strong> too — <code>default</code> hover 4.13, <code>default</code>
+      active 2.67, <code>secondary</code> active 3.41. The honest version of this ask is
+      <em>success is the worst of them and it is the one we are opening anyway</em>,
+      not <em>lime is uniquely broken</em>. A pass across every intent is its own
+      piece of work.
+    </p>
+  </div>
+
+  <h2>7 — What this does not touch</h2>
+  <p class="sub">
+    Lime does not leave the product. It stays wherever it is a status colour
+    rather than an action colour, and none of these read <code>intent</code> from a
+    button.
+  </p>
+  <ul>
+    <li><code>UiBadge</code>'s <code>lime</code> and <code>light_lime</code> variants — including the seller's own auction-ended badge</li>
+    <li><code>UiTab</code>'s success tab</li>
+    <li><code>OProductCard</code> and <code>OContainer</code> success framing</li>
+    <li>the B2B reserve-price surfaces — <code>ReservePriceNotice</code>, <code>B2BReserveStatusBadge</code></li>
+  </ul>
+  <p class="footnote">
+    Worth deciding separately whether those should follow. The argument for
+    leaving them is that a lime <em>status</em> and a green <em>action</em> is a
+    usable distinction; the argument against is that we would then have two
+    success colours on purpose. Not part of this proposal either way.
+  </p>
+
+  <h2>8 — What we need from the dealership side</h2>
+  <ul>
+    <li>Agreement that <code>success</code> should be green rather than lime, given that the icon components already say so.</li>
+    <li>A view on <strong>black vs green-950</strong> for the primary label.</li>
+    <li>A check on the three surfaces this changes on that side — accept a counter offer, confirm the sale, mark the handover completed. All three are confirmations, so the meaning does not move; only the hue does.</li>
+    <li>Whether <code>green-400</code> is the right step. It won the seller-side comparison on contrast, but that comparison was scoped to the seller's accept. If the dealership side has a reason to prefer a different green, the case here is unaffected — it is about one token and about lime failing, not about this exact step.</li>
+  </ul>
 
 </div>
 
 <script>
 (function () {
-  var LABEL = 'Hyväksy korkein tarjous';
+  'use strict';
 
-  /* Candidates. `bg` is the value contrast is measured against: for a flat fill
-     it is the fill, for a gradient the lightest stop. */
-  var CANDIDATES = [
-    { g:'g-now', cls:'b-600w', name:'Current — green-600 + white',
-      tokens:'#16A34A + #FFFFFF', bg:'#16A34A', hoverBg:'#15803D',
-      note:'The accept green production uses in the negotiation modal today. Everything below is a candidate to replace it.' },
-    { g:'g-dark', cls:'b-g500-950', name:'green-500 + green-950',
-      tokens:'#22C55E + #052E16', bg:'#22C55E', hoverBg:'#16A34A',
-      note:'Today&rsquo;s exact fill, kept. Only the label changes.' },
-    { g:'g-dark', cls:'b-g500-blk', name:'green-500 + black',
-      tokens:'#22C55E + #000000', bg:'#22C55E', hoverBg:'#16A34A',
-      note:'Same fill, flat black label — a touch harder than the deep green.' },
-    { g:'g-dark', cls:'b-g500-nav', name:'green-500 + av-dark-blue',
-      tokens:'#22C55E + #08234D', bg:'#22C55E', hoverBg:'#16A34A',
-      note:'Same fill, the brand navy. Ties the button to the rest of the page.' },
-    { g:'g-dark', cls:'b-g500-sl', name:'green-500 + slate-900',
-      tokens:'#22C55E + #0F172A', bg:'#22C55E', hoverBg:'#16A34A',
-      note:'Same fill, the slate the product already writes body copy in.' },
-    { g:'g-dark', cls:'b-g400-950', name:'green-400 + green-950',
-      tokens:'#4ADE80 + #052E16', bg:'#4ADE80', hoverBg:'#22C55E',
-      note:'One step lighter and friendlier than today.' },
-    { g:'g-dark', cls:'b-g400-blk', name:'green-400 + black',
-      tokens:'#4ADE80 + #000000', bg:'#4ADE80', hoverBg:'#22C55E',
-      note:'Same lighter fill, black label.' },
-    { g:'g-dark', cls:'b-g300-950', name:'green-300 + green-950',
-      tokens:'#86EFAC + #052E16', bg:'#86EFAC', hoverBg:'#4ADE80',
-      note:'Mint. Very soft — check it still reads as the primary action next to the blue secondary.' },
-    { g:'g-dark', cls:'b-g200-900', name:'green-200 + green-900',
-      tokens:'#BBF7D0 + #14532D', bg:'#BBF7D0', hoverBg:'#86EFAC',
-      note:'Softest here. Almost certainly too quiet for the main action, included to mark the far end.' },
-    { g:'g-dark', cls:'b-g600-blk', name:'green-600 + black',
-      tokens:'#16A34A + #000000', bg:'#16A34A', hoverBg:'#15803D',
-      note:'The production green, rescued by a black label instead of a darker fill.' },
-    { g:'g-dark', cls:'b-s400-900', name:'success-400 + success-900',
-      tokens:'#A3E635 + #365314', bg:'#A3E635', hoverBg:'#84CC16',
-      note:'The design library&rsquo;s own success button — this pairing already exists as a component variant.' },
-    { g:'g-dark', cls:'b-s400-blk', name:'success-400 + black',
-      tokens:'#A3E635 + #000000', bg:'#A3E635', hoverBg:'#84CC16',
-      note:'Same lime, black label.' },
-    { g:'g-dark', cls:'b-s400-nav', name:'success-400 + av-dark-blue',
-      tokens:'#A3E635 + #08234D', bg:'#A3E635', hoverBg:'#84CC16',
-      note:'Lime with the brand navy.' },
-    { g:'g-dark', cls:'b-s300-900', name:'success-300 + success-900',
-      tokens:'#BEF264 + #365314', bg:'#BEF264', hoverBg:'#A3E635',
-      note:'Lighter lime. Reads as fresh rather than loud.' },
-    { g:'g-dark', cls:'b-s300-blk', name:'success-300 + black',
-      tokens:'#BEF264 + #000000', bg:'#BEF264', hoverBg:'#A3E635',
-      note:'Same, black label.' },
-    { g:'g-dark', cls:'b-s200-900', name:'success-200 + success-900',
-      tokens:'#D9F99D + #365314', bg:'#D9F99D', hoverBg:'#BEF264',
-      note:'The lime equivalent of green-200 — the quiet end of the ramp.' },
-    { g:'g-dark', cls:'b-s500-blk', name:'success-500 + black',
-      tokens:'#84CC16 + #000000', bg:'#84CC16', hoverBg:'#65A30D',
-      note:'Deeper lime. Black label rescues the pairing that failed with success-900.' },
-    { g:'g-white', cls:'b-g700-w', name:'green-700 + white',
-      tokens:'#15803D + #FFFFFF', bg:'#15803D', hoverBg:'#166534',
-      note:'The lightest green that carries white text at this size.' },
-    { g:'g-white', cls:'b-g800-w', name:'green-800 + white',
-      tokens:'#166534 + #FFFFFF', bg:'#166534', hoverBg:'#14532D',
-      note:'Sober. Reads more like a bank than a marketplace.' },
-    { g:'g-white', cls:'b-s700-w', name:'success-700 + white',
-      tokens:'#4D7C0F + #FFFFFF', bg:'#4D7C0F', hoverBg:'#3F6212',
-      note:'The olive end of the success ramp.' },
-    { g:'g-white', cls:'b-s600-w', name:'success-600 + white',
-      tokens:'#65A30D + #FFFFFF', bg:'#65A30D', hoverBg:'#4D7C0F',
-      note:'One step lighter — and it drops below the line. The boundary in the lime ramp.' },
-    { g:'g-white', cls:'b-now', name:'green-500 + white',
-      tokens:'#22C55E + #FFFFFF', bg:'#22C55E', hoverBg:'#16A34A',
-      note:'The brighter green with a white label. What the prototype happens to render right now, and the reason this page exists — it is the worst score here.' }
-  ];
+  var HEX = {
+    'lime-50':'#F7FEE7','lime-100':'#ECFCCB','lime-200':'#D9F99D','lime-300':'#BEF264',
+    'lime-400':'#A3E635','lime-500':'#84CC16','lime-600':'#65A30D','lime-700':'#4D7C0F',
+    'lime-800':'#3F6212','lime-900':'#365314','lime-950':'#1A2E05',
+    'green-50':'#F0FDF4','green-100':'#DCFCE7','green-200':'#BBF7D0','green-300':'#86EFAC',
+    'green-400':'#4ADE80','green-500':'#22C55E','green-600':'#16A34A','green-700':'#15803D',
+    'green-800':'#166534','green-900':'#14532D','green-950':'#052E16',
+    'white':'#FFFFFF','black':'#000000'
+  };
 
   function srgb(c) { c = c / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
   function lum(rgb) { return 0.2126 * srgb(rgb[0]) + 0.7152 * srgb(rgb[1]) + 0.0722 * srgb(rgb[2]); }
   function parse(v) {
+    if (!v) return null;
     if (v.charAt(0) === '#') {
       var h = v.slice(1);
       return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
     }
-    var m = v.match(/\d+/g);
+    var m = v.match(/[\d.]+/g);
+    if (!m) return null;
+    if (m.length > 3 && parseFloat(m[3]) === 0) return null;   // fully transparent
     return [ +m[0], +m[1], +m[2] ];
   }
   function ratio(fg, bg) {
-    var a = lum(parse(fg)), b = lum(parse(bg));
+    var a = lum(fg), b = lum(bg);
     var hi = Math.max(a, b), lo = Math.min(a, b);
     return (hi + 0.05) / (lo + 0.05);
   }
-
   function verdictFor(r) {
     if (r >= 7)   return { cls:'aaa',  text:'AAA' };
     if (r >= 4.5) return { cls:'pass', text:'AA' };
     return { cls:'fail', text:'fails AA' };
   }
 
-  CANDIDATES.forEach(function (c) {
-    var host = document.getElementById(c.g);
-    var tile = document.createElement('div');
-    tile.className = 'tile';
-
-    var name = document.createElement('p');
-    name.className = 'name'; name.textContent = c.name;
-    var tok = document.createElement('p');
-    tok.className = 'tokens'; tok.textContent = c.tokens;
-
-    var btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'btn ' + c.cls;
-    btn.textContent = LABEL;
-
-    var meta = document.createElement('div');
-    meta.className = 'meta';
-    var num = document.createElement('span'); num.className = 'ratio';
-    var vd  = document.createElement('span'); vd.className = 'verdict';
-    meta.appendChild(num); meta.appendChild(vd);
-
-    /* The hover ratio is shown at rest, not only while hovering — a failing
-       hover is easy to miss if you have to find it with the pointer. */
-    var hmeta = document.createElement('div');
-    hmeta.className = 'hover-meta';
-    var hnum = document.createElement('span');
-    var hvd  = document.createElement('span'); hvd.className = 'verdict';
-    hmeta.appendChild(hnum); hmeta.appendChild(hvd);
-
-    var note = document.createElement('p');
-    note.className = 'note'; note.textContent = c.note;
-
-    tile.appendChild(name); tile.appendChild(tok); tile.appendChild(btn);
-    tile.appendChild(meta);
-    if (c.hoverBg) tile.appendChild(hmeta);
-    tile.appendChild(note);
-    host.appendChild(tile);
-
-    /* Measured from what is actually rendered: the button's own computed text
-       colour against the declared background. Re-measured on hover, because a
-       hover state that fails is still a failure. */
-    function measure(bg) {
-      var fg = getComputedStyle(btn).color;
-      var r  = ratio(fg, bg);
-      var v  = verdictFor(r);
-      num.textContent = r.toFixed(2) + ':1';
-      vd.className = 'verdict ' + v.cls;
-      vd.textContent = v.text;
-      c.measured = r;
+  /* The effective background of an element: its own if opaque, otherwise the
+     first ancestor that paints one. This is what makes ghost and link tiles
+     measurable without declaring anything by hand. */
+  function effectiveBg(el) {
+    var node = el;
+    while (node && node !== document.documentElement) {
+      var c = parse(getComputedStyle(node).backgroundColor);
+      if (c) return c;
+      node = node.parentElement;
     }
-    measure(c.bg);
-    if (c.hoverBg) {
-      var hr = ratio(getComputedStyle(btn).color, c.hoverBg);
-      var hv = verdictFor(hr);
-      hnum.textContent = 'hover ' + hr.toFixed(2) + ':1';
-      hvd.className = 'verdict ' + hv.cls;
-      hvd.textContent = hv.text;
-      c.hoverMeasured = hr;
-    }
-    btn.addEventListener('mouseenter', function () { measure(c.hoverBg || c.bg); });
-    btn.addEventListener('mouseleave', function () { measure(c.bg); });
+    return [255,255,255];
+  }
+
+  function readoutInto(box, btn) {
+    var fg = parse(getComputedStyle(btn).color);
+    var bg = effectiveBg(btn);
+    var r  = ratio(fg, bg);
+    var v  = verdictFor(r);
+    box.innerHTML = '';
+    var num = document.createElement('span');
+    num.className = 'ratio'; num.textContent = r.toFixed(2) + ':1';
+    var vd = document.createElement('span');
+    vd.className = 'verdict ' + v.cls; vd.textContent = v.text;
+    box.appendChild(num); box.appendChild(vd);
+    return r;
+  }
+
+  /* ── the variant matrix ────────────────────────────────────────────────── */
+  var VARIANTS = [
+    { key:'default', name:'default', use:'the outlined button — a secondary confirm',
+      lime:  [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
+      green: [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
+    { key:'primary', name:'primary', use:'every accept button in the product',
+      lime:  [['rest','lime-900 on lime-400'],['hover','lime-900 on lime-500'],['active','lime-950 on lime-600']],
+      green: [['rest','black on green-400 *'],['hover','black on green-500 *'],['active','black on green-600 *']] },
+    { key:'secondary', name:'secondary', use:'a quieter confirm beside a primary one',
+      lime:  [['rest','lime-700 on lime-200'],['hover','lime-700 on lime-300'],['active','lime-700 on lime-400']],
+      green: [['rest','green-900 on green-200 *'],['hover','green-900 on green-300 *'],['active','green-900 on green-400 *']] },
+    { key:'ghost', name:'ghost', use:'a borderless action inside a dense row',
+      lime:  [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
+      green: [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
+    { key:'link', name:'link', use:'inline text action',
+      lime:  [['rest','lime-700'],['active','lime-600']],
+      green: [['rest','green-700'],['active','green-700 *']] }
+  ];
+
+  var LABELS = { 'default':'Hyväksy', 'primary':'Hyväksy tarjous', 'secondary':'Hyväksy', 'ghost':'Hyväksy', 'link':'Hyväksy tarjous' };
+  var host = document.getElementById('variants');
+  var SCORES = [];
+
+  VARIANTS.forEach(function (v) {
+    var row = document.createElement('div');
+    row.className = 'varrow';
+
+    var head = document.createElement('div');
+    head.className = 'varhead';
+    head.innerHTML = '<span class="vname">' + v.name + '</span><span class="vuse">' + v.use + '</span>';
+    row.appendChild(head);
+
+    [['lime','Today — lime','L'],['green','Proposed — green','G']].forEach(function (pair) {
+      var setKey = pair[0], setName = pair[1], prefix = pair[2];
+
+      var side = document.createElement('div');
+      side.className = 'side';
+      var lab = document.createElement('div');
+      lab.className = 'sidelab'; lab.textContent = setName;
+      side.appendChild(lab);
+
+      var grid = document.createElement('div');
+      grid.className = 'states';
+
+      v[setKey].forEach(function (st) {
+        var stateName = st[0], tokens = st[1];
+
+        var cell = document.createElement('div');
+        cell.className = 'state';
+
+        var sl = document.createElement('div');
+        sl.className = 'lab'; sl.textContent = stateName;
+
+        var box = document.createElement('div');
+        box.className = 'btnbox';
+
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'btn sz-md ' + v.key + ' ' + prefix + '-' + v.key + '-' + stateName;
+        if (v.key === 'link') btn.className += ' linkish';
+        btn.textContent = LABELS[v.key];
+        box.appendChild(btn);
+
+        var ro = document.createElement('div');
+        ro.className = 'readout';
+
+        var tk = document.createElement('div');
+        tk.className = 'tokens'; tk.textContent = tokens;
+
+        /* Measured in a second pass, after everything is in the document —
+           getComputedStyle on a detached element returns nothing. */
+        ro.setAttribute('data-measure', '');
+        ro.setAttribute('data-variant', v.name);
+        ro.setAttribute('data-state', stateName);
+        ro.setAttribute('data-set', setKey);
+
+        cell.appendChild(sl); cell.appendChild(box); cell.appendChild(ro); cell.appendChild(tk);
+        grid.appendChild(cell);
+      });
+
+      side.appendChild(grid);
+      row.appendChild(side);
+    });
+
+    host.appendChild(row);
   });
 
-  /* The passing set, side by side, at both real sizes. */
-  var lg = document.getElementById('row-lg'), sm = document.getElementById('row-sm');
-  CANDIDATES.filter(function (c) { return c.measured >= 4.5 && (c.hoverMeasured === undefined || c.hoverMeasured >= 4.5); }).forEach(function (c) {
-    ['', 'sm'].forEach(function (size) {
-      var b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'btn ' + size + ' ' + c.cls;
-      b.textContent = LABEL;
-      (size ? sm : lg).appendChild(b);
-    });
+  /* ── measure everything, now that it is all in the document ────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll('.readout[data-measure]'), function (box) {
+    var btn = box.parentElement.querySelector('.btn');
+    if (!btn) return;
+    var r = readoutInto(box, btn);
+    if (box.hasAttribute('data-variant')) {
+      SCORES.push({
+        variant: box.getAttribute('data-variant'),
+        state:   box.getAttribute('data-state'),
+        set:     box.getAttribute('data-set'),
+        ratio:   r
+      });
+    }
+  });
+
+  /* ── the black / green-900 / green-950 / white ladder ──────────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-cell]'), function (td) {
+    var parts = td.getAttribute('data-cell').split('|');
+    var r = ratio(parse(HEX[parts[0]]), parse(HEX[parts[1]]));
+    var v = verdictFor(r);
+    td.className = 'num';
+    td.innerHTML = r.toFixed(2) + ' <span class="verdict ' + v.cls + '">' + v.text + '</span>';
+  });
+
+  /* ── scorecard ─────────────────────────────────────────────────────────── */
+  var tbody = document.querySelector('#scorecard tbody');
+  var seen = {};
+  SCORES.forEach(function (s) {
+    var id = s.variant + '|' + s.state;
+    if (!seen[id]) seen[id] = { variant: s.variant, state: s.state };
+    seen[id][s.set] = s.ratio;
+  });
+  Object.keys(seen).forEach(function (id) {
+    var e = seen[id];
+    var tr = document.createElement('tr');
+    if (e.lime < 4.5 || e.green < 4.5) tr.className = 'fail';
+    function cell(r) {
+      if (r === undefined) return '<td></td><td></td>';
+      var v = verdictFor(r);
+      return '<td class="num">' + r.toFixed(2) + '</td><td><span class="verdict ' + v.cls + '">' + v.text + '</span></td>';
+    }
+    tr.innerHTML = '<td>' + e.variant + '</td><td>' + e.state + '</td>' + cell(e.lime) + cell(e.green);
+    tbody.appendChild(tr);
   });
 }());
 </script>
