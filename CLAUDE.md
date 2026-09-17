@@ -2542,6 +2542,26 @@ Sections, desktop then mobile: Hero `7030:11` / `7030:17` · Offers `7030:12` /
 `Offer card` `7038:5`, `FAQ row` `7041:71`. The lower offer card is an instance
 with the counter-offer action hidden.
 
+**Synced to the proto on 2026-09-17.** What that pass changed, so the next one
+knows what is already there: the `Verdict` frames (`7033:10` desktop, `7035:10`
+mobile) were **deleted** with the painted green block, and a
+`Tag / Suosittelemme` frame added in their place — desktop `7134:227` inside a
+new `Topline` row `7134:229`, mobile `7134:230` as the first child of the copy
+column. Desktop puts headline-then-tag in one HORIZONTAL row (headline FILL, tag
+HUG, so the tag lands right); mobile stacks tag-then-headline. The belief block
+took the new lead line, the six-item footnote, `Liikkeen pyyntihinta`, 12px
+sub-labels, and the green-900 / slate-500 chip palettes.
+
+**Heights do not match the browser exactly, and should not be chased.** Figma
+lays text out itself, so the same copy breaks differently: auction details
+**252 / 384** against the proto's 254 / 379, belief **226 / 526** against
+220 / 508. Verify the SEMANTICS — copy, size, weight, colour, child order —
+which do match exactly.
+
+**One stale string is left deliberately.** `7046:39858` still carries the old
+`Auto-ilmoituksien pyyntihinnat…` lead, because it lives in one of Jussi's own
+three draft versions, which are not to be renamed, reordered or edited.
+
 **The illustration's imageHash is `a0e1977c4c8cd9d7496af50e799134be8a09da66`.**
 The Plugin API cannot fetch a URL, so a raster image gets in via `upload_assets`
 and is then reused by setting that hash on another node's fills. It is no longer
