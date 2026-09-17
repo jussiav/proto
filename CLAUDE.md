@@ -275,43 +275,34 @@ These rules apply to all new pages and components in this prototype, without exc
     we create new ones, and like aligning button styles across the app
     (seller + buyer side)."*
 
-    **Before proposing any change to something more than one surface uses, do
-    these six. Each of them changed the outcome of the `intent="success"` work
-    (2026-09-17), which is the worked example — see `accept-button-lab.html`:**
+    **The procedure is the `shared-component-change` skill, not this file** —
+    six checks to run before proposing, and the shape of the artefact that
+    carries it. It is a portable procedure, so it lives in the skills layer
+    where devs on other repos can use it too; this file holds only what is true
+    of THIS repo. Read the skill before proposing; read the worked example
+    below for what it looks like against prod.
 
-    - **Inventory the components first, and do not trust "the old one and the
-      new one."** There were THREE buttons and TWO were deprecated —
-      `elements/Button.vue` **and** `ui/UiButton.vue` both point at
-      `atoms/AButton.vue`. Proposing a migration without checking would have
-      landed on a deprecated component. **Count the consumers of each**; the
-      ratio says how far the previous migration actually got (78 vs 7 = barely
-      started, so a token change has to land in both files).
-    - **State the blast radius on BOTH sides before the detail, not after.** The
-      change read as a seller-side tidy-up and was half a visual change on the
-      dealership side. A spec that does not open with *this side gets X, that
-      side gets Y* loses the reader who has to approve it.
-    - **Isolate one variable per option.** If a proposal changes two things at
-      once — hue AND label, layout AND copy — **render the option that changes
-      only one.** The dealership designer asked which one was doing the work and
-      was right to: it was the label, not the hue. Neither the reviewer nor you
-      can tell otherwise.
-    - **Check every variant and state the change touches**, not the one in front
-      of you. Half the failures found were in variants with **zero consumers
-      today** — worth knowing rather than hiding, because they go live the moment
-      someone uses them.
-    - **Say what the change does NOT touch.** Naming the exclusions is what stops
-      a reviewer imagining a bigger change than the one proposed.
-    - **Do not let a measured argument carry more weight than it bears.** I led
-      with "lime fails AA in 7 of 14 states" and it did not survive contact: with
-      the label fixed, lime passes too, and scores **higher** than green.
-      Contrast settled the LABEL, never the hue. **Before calling something an
-      accessibility fix, check whether the alternative also passes.** What
-      survived was structural — `intent="success"` already resolves to
-      `green-600` in the icon atoms, so the button was the outlier.
+    **The worked example is `accept-button-lab.html`** (2026-09-17, the
+    `intent="success"` change). Everything the inventory turned up, which is
+    repo knowledge and belongs here rather than in the skill:
 
-    **When creating something new is genuinely right, write down what was
-    inventoried and why nothing fitted.** An undocumented new component reads as
-    one nobody looked for.
+    | | |
+    |---|---|
+    | Components serving this role | **three**, and **two are deprecated** — `elements/Button.vue` (17 consumers) and `ui/UiButton.vue` (78) both point at `atoms/AButton.vue` (7) |
+    | Consequence of the ratio | the migration has barely started, so a token change has to land in **both** `UiButton` and `AButton` until one is gone |
+    | Same name, two hues | `intent="success"` is lime on the button and **`text-green-600`** in `UiIcon.vue` / `ASpriteIcon.vue`. The button is the outlier — this turned out to be the strongest argument in the whole proposal |
+    | Seller side | two accepts, **two colours**: the card is `UiButton variant="primary"` with **no intent** (blue), the modal footer is the legacy `Button color="green-600"` — the only consumer of that colour anywhere |
+    | Dealership side | three accepts, all `UiButton variant="primary" intent="success"` — `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`, `PastDeliveryDateConfirmModal` |
+    | All of them sit on **white** | Reveal's panel, the CallSeller card, and — for the dealer accept — the seller's own `bg-white` speech bubble |
+    | Variants with **zero** consumers | `default`, `secondary`, `ghost`, `link` of `success`. Every consumer is `primary`, so today the fill is always opaque and the page background cannot affect a label |
+    | Untouched by the change | `UiBadge` `lime`/`light_lime`, `UiTab` success, `OProductCard`, `OContainer`, `ReservePriceNotice`, `B2BReserveStatusBadge` — none reads a button's `intent` |
+
+    **And the check that cost me the argument, kept here because it is the one
+    most likely to repeat:** I led with "lime fails AA in 7 of 14 states". With
+    the label fixed to black, **lime passes too, and scores higher than green**
+    (13.93 / 10.63 against 12.05 / 9.22 — `lime-400` is the lighter fill).
+    Contrast settled the LABEL, never the hue. The skill's check 6 is this
+    lesson generalised.
 
 ## Proto Modes — dev vs test
 
@@ -3655,14 +3646,16 @@ seller-facing nav, and replaced by a short notice in `?mode=test`.
 
 Public dev-facing spec pages on GH Pages (e.g. `design-specs/delivery-distance.html`) document design changes: previous issues, live demo, states, behavior rules, data contract, copy. They are delivered to devs and discussed with the team.
 
-**Rule 13 applies before a spec page proposes anything shared.** If a change
-touches a component, token or pattern more than one surface uses, the spec must
-carry the inventory (which components exist, which are deprecated, how many
-consumers each has), the impact on **both** sides of the product stated up front,
-the option that changes only one variable alongside the preferred one, and what
-the change does **not** touch. `accept-button-lab.html` is the worked example of
-that shape — a standalone page that measures its own numbers from the rendered
-pixels so they cannot drift from what is drawn.
+**Rule 13 and the `shared-component-change` skill apply before a spec page
+proposes anything shared.** If a change touches a component, token or pattern
+more than one surface uses, run the skill's six checks first, and the spec must
+carry what they produce: the inventory (which components exist, which are
+deprecated, how many consumers each has), the impact on **both** sides of the
+product stated up front, the option that changes only one variable alongside the
+preferred one, and what the change does **not** touch.
+`accept-button-lab.html` is the worked example of that shape — a standalone page
+that measures its own numbers from the rendered pixels so they cannot drift from
+what is drawn.
 
 **Sync rule — MANDATORY:** whenever the proto app (`details.html` etc.) or a `design-specs/` page is edited, the counterpart must be updated in the same change: behavior, states, data contract, and all FI + EN copy in `translations.js`. Spec-page live demos load `../translations.js` + `../i18n.js` directly (same `details.*` keys via `data-i18n`), so copy stays in sync automatically — but structural/behavioral changes must be mirrored by hand in both directions. Doc prose stays English; production copy shown verbatim; copy tables show both languages statically (no toggle needed there).
 
