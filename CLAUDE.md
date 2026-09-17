@@ -267,6 +267,52 @@ These rules apply to all new pages and components in this prototype, without exc
 
     Prod source: `ONavigationBar.vue`, `Header.astro`, `useHeadRoom.js`. As of the 2026-08-20 dump the **white variant is gone** — the `color` prop was removed from `NavigationBarProps` entirely, `navigationVariants` is a fixed `bg-blue` object, and the spacer is unconditionally `h-20 bg-blue`. Blue everywhere is now prod, not a divergence.
 
+13. **Never invent a component, and never change a shared one without the
+    inventory.** Rules 1–3 forbid inventing style, copy and structure; this is
+    the same rule for components. **Preference order, and it is Jussi's:
+    reuse what exists → redefine an existing token → create something new,
+    last.** *"I like when we stop using deprecated components, don't like when
+    we create new ones, and like aligning button styles across the app
+    (seller + buyer side)."*
+
+    **Before proposing any change to something more than one surface uses, do
+    these six. Each of them changed the outcome of the `intent="success"` work
+    (2026-09-17), which is the worked example — see `accept-button-lab.html`:**
+
+    - **Inventory the components first, and do not trust "the old one and the
+      new one."** There were THREE buttons and TWO were deprecated —
+      `elements/Button.vue` **and** `ui/UiButton.vue` both point at
+      `atoms/AButton.vue`. Proposing a migration without checking would have
+      landed on a deprecated component. **Count the consumers of each**; the
+      ratio says how far the previous migration actually got (78 vs 7 = barely
+      started, so a token change has to land in both files).
+    - **State the blast radius on BOTH sides before the detail, not after.** The
+      change read as a seller-side tidy-up and was half a visual change on the
+      dealership side. A spec that does not open with *this side gets X, that
+      side gets Y* loses the reader who has to approve it.
+    - **Isolate one variable per option.** If a proposal changes two things at
+      once — hue AND label, layout AND copy — **render the option that changes
+      only one.** The dealership designer asked which one was doing the work and
+      was right to: it was the label, not the hue. Neither the reviewer nor you
+      can tell otherwise.
+    - **Check every variant and state the change touches**, not the one in front
+      of you. Half the failures found were in variants with **zero consumers
+      today** — worth knowing rather than hiding, because they go live the moment
+      someone uses them.
+    - **Say what the change does NOT touch.** Naming the exclusions is what stops
+      a reviewer imagining a bigger change than the one proposed.
+    - **Do not let a measured argument carry more weight than it bears.** I led
+      with "lime fails AA in 7 of 14 states" and it did not survive contact: with
+      the label fixed, lime passes too, and scores **higher** than green.
+      Contrast settled the LABEL, never the hue. **Before calling something an
+      accessibility fix, check whether the alternative also passes.** What
+      survived was structural — `intent="success"` already resolves to
+      `green-600` in the icon atoms, so the button was the outlier.
+
+    **When creating something new is genuinely right, write down what was
+    inventoried and why nothing fitted.** An undocumented new component reads as
+    one nobody looked for.
+
 ## Proto Modes — dev vs test
 
 `proto-mode.js` (loaded in `<head>` on every page) decides whether the
@@ -3608,6 +3654,15 @@ seller-facing nav, and replaced by a short notice in `?mode=test`.
 ## Design Spec Pages (`design-specs/`)
 
 Public dev-facing spec pages on GH Pages (e.g. `design-specs/delivery-distance.html`) document design changes: previous issues, live demo, states, behavior rules, data contract, copy. They are delivered to devs and discussed with the team.
+
+**Rule 13 applies before a spec page proposes anything shared.** If a change
+touches a component, token or pattern more than one surface uses, the spec must
+carry the inventory (which components exist, which are deprecated, how many
+consumers each has), the impact on **both** sides of the product stated up front,
+the option that changes only one variable alongside the preferred one, and what
+the change does **not** touch. `accept-button-lab.html` is the worked example of
+that shape — a standalone page that measures its own numbers from the rendered
+pixels so they cannot drift from what is drawn.
 
 **Sync rule — MANDATORY:** whenever the proto app (`details.html` etc.) or a `design-specs/` page is edited, the counterpart must be updated in the same change: behavior, states, data contract, and all FI + EN copy in `translations.js`. Spec-page live demos load `../translations.js` + `../i18n.js` directly (same `details.*` keys via `data-i18n`), so copy stays in sync automatically — but structural/behavioral changes must be mirrored by hand in both directions. Doc prose stays English; production copy shown verbatim; copy tables show both languages statically (no toggle needed there).
 
