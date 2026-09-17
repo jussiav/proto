@@ -487,33 +487,41 @@
        in the modal footer, inside the dealership's last bubble and on the accept
        confirmation step — and the four have to agree.
 
-       IT IS NOW PROD'S OWN `intent="success" variant="primary"`, VERBATIM
-       (2026-09-17, to see the design-system answer rendered). Every class below
-       is copied out of `AButton`/`UiButton`'s cva: the lime pair from the
-       success intent, the inset shadow from the primary variant. Nothing here
-       is a proto choice any more — that is the point of the experiment.
+       THIS IS `intent="success" variant="primary"` WITH THE INTENT REDEFINED
+       (2026-09-17). Same component, same prop, same shape — prod's `primary`
+       inset shadow and its full rest/hover/active ladder — but the success
+       intent resolves to GREEN rather than lime. Nothing here is a per-button
+       choice: the proposal is to change the token, so every consumer of
+       `success` moves together and the seller's accept matches the
+       dealership's.
 
-       WHY: `success` is already the accepting intent in prod and already carries
-       this act on the other side of the same negotiation —
-       `DealerAcceptCounterOfferAction` uses it for the dealership accepting a
-       counter offer. Using it here makes both sides one token instead of two
-       greens, and takes the seller's accept off the deprecated
-       `elements/Button.vue`, whose `color: 'blue' | 'red' | 'green-600'` prop
-       bakes a palette step into an API.
+       WHY THE INTENT AND NOT A NEW COLOUR: `success` is already the accepting
+       intent in prod and already carries this act on the other side of the same
+       negotiation — `DealerAcceptCounterOfferAction` uses it for the dealership
+       accepting a counter offer. This also takes the seller's accept off the
+       deprecated `elements/Button.vue`, whose
+       `color: 'blue' | 'red' | 'green-600'` prop bakes a palette step into an
+       API and is the naming mistake to avoid.
 
-       WHAT IT COSTS, measured: resting lime-400 on lime-900 is 5.79:1, AA — but
-       HOVER lime-500 on lime-900 is 4.42:1, which FAILS AA at this size. That
-       is prod's own component and affects all three of its existing consumers
-       today, not something this swap introduced.
+       WHY GREEN AND NOT LIME, measured across the whole intent rather than this
+       one button — LIME FAILS AA IN THREE OF ITS SEVEN STATES:
 
-       WHAT IT REPLACED: `green-400` with a black label, hover `green-500`,
-       12.05:1 resting and 9.22:1 hovered, chosen on `accept-button-lab.html`
-       because white on a green bright enough to read as primary cannot reach AA
-       — prod's `green-600` is 3.30:1 and `green-500` 2.28:1. If the team keeps
-       the greener hue, the fix is to change what `success` RESOLVES to rather
-       than to reintroduce a second green here. */
+         primary hover     lime-500/lime-900   4.42  FAIL  →  green-500/black   9.22
+         secondary rest    lime-200/lime-700   4.28  FAIL  →  green-200/g-800   5.88
+         secondary hover   lime-300/lime-700   3.82  FAIL  →  green-300/g-800   5.08
+         primary rest      lime-400/lime-900   5.79        →  green-400/black  12.05
+         primary active    lime-600/lime-950   4.73        →  green-600/black   6.37
+         default + ghost   white/lime-700      4.99        →  white/green-700   5.02
+         ghost hover       lime-50/lime-700    4.82        →  green-50/g-700    4.79
+
+       The label is BLACK, not green-900, and that is what buys the headroom:
+       white cannot reach AA on a green bright enough to read as the primary
+       action — prod's own `green-600` is 3.30:1 against white and `green-500`
+       is 2.28:1 — so the contrast moves into the label and the fill stays
+       bright. Candidates were compared on `accept-button-lab.html`, which
+       measures each from its own rendered colours. */
     function acceptCls() {
-      return 'bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-lime-900 active:text-lime-950 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
+      return 'bg-green-400 hover:bg-green-500 active:bg-green-600 text-black shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
     }
 
     /* All FI copy below is a DRAFT PENDING APPROVAL — prod has none of it, since
