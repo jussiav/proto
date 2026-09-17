@@ -132,6 +132,24 @@
     .L-link-rest    { color: var(--lime-700); }
     .L-link-active  { color: var(--lime-600); }
 
+    /* LIME + BLACK — the dealership designer's counter-proposal: keep the hue,
+       move the contrast into the label. Same three corrections as the green set,
+       applied to lime instead. */
+    .LB-default-rest   { background: var(--white);    color: var(--lime-700); border-color: var(--lime-400); }
+    .LB-default-hover  { background: var(--lime-50);  color: var(--lime-700); border-color: var(--lime-400); }
+    .LB-default-active { background: var(--lime-50);  color: var(--lime-700); border-color: var(--lime-400); }
+    .LB-primary-rest   { background: var(--lime-400); color: var(--black); }
+    .LB-primary-hover  { background: var(--lime-500); color: var(--black); }
+    .LB-primary-active { background: var(--lime-600); color: var(--black); }
+    .LB-secondary-rest   { background: var(--lime-200); color: var(--lime-900); }
+    .LB-secondary-hover  { background: var(--lime-300); color: var(--lime-900); }
+    .LB-secondary-active { background: var(--lime-400); color: var(--lime-900); }
+    .LB-ghost-rest   { background: transparent;    color: var(--lime-700); }
+    .LB-ghost-hover  { background: var(--lime-50); color: var(--lime-700); }
+    .LB-ghost-active { background: var(--lime-50); color: var(--lime-700); }
+    .LB-link-rest    { color: var(--lime-700); }
+    .LB-link-active  { color: var(--lime-700); }
+
     /* GREEN — the proposal. Same structure, one ramp over, with three
        deliberate deviations the numbers force. Marked * in the table. */
     .G-default-rest   { background: var(--white);     color: var(--green-700); border-color: var(--green-400); }
@@ -225,8 +243,9 @@
       <li>The seller's two accept buttons are <strong>two different colours</strong> — blue on the offer card, green on the modal footer — because they are two different components.</li>
       <li>The dealership's three accept buttons are one colour, <strong>lime</strong>, from the shared <code>intent="success"</code>.</li>
       <li><code>intent="success"</code> already means <strong>green-600 in the icon components</strong>. The same intent name resolves to two hues in one design system.</li>
-      <li>Lime fails WCAG AA in <strong>7 of its 14 states</strong>, including three that are not transient.</li>
-      <li><strong>The proposal:</strong> retire the deprecated components on the seller side, put every accept on the shared <code>intent="success"</code>, and redefine that intent from lime to green. No new component, no new intent, one token for both sides.</li>
+      <li>Lime fails WCAG AA in <strong>7 of its 14 states</strong>, including three that are not transient. The cause is the <em>label</em>, not the hue — see the next point.</li>
+      <li><strong>Contrast decides the label, not the colour.</strong> Once the primary label is black, <em>both</em> hues pass, and lime actually scores higher than green. So the accessibility case settles <code>lime-900</code> and white out of the running; it does not, on its own, choose between lime and green.</li>
+      <li><strong>The proposal:</strong> retire the deprecated components on the seller side, put every accept on the shared <code>intent="success"</code>, and redefine that intent from lime to green. No new component, no new intent, one token for both sides. The argument for green over corrected lime is the icon inconsistency above, plus the seller-side view that lime does not read as an accept.</li>
     </ul>
   </div>
 
@@ -508,6 +527,27 @@
       <div class="comp">AButton intent="success" variant="primary"<br />— as the intent is defined today</div>
     </div>
 
+    <div class="col">
+      <span class="chip option">option — keep lime, fix the label</span>
+      <div class="colname">One component, lime + black</div>
+      <div class="colnote">The dealership designer's counter. Same migration, hue untouched, contrast moved into the label. Passes AAA at rest and hover.</div>
+      <div class="stage">
+        <div class="states" style="grid-template-columns:1fr">
+          <div class="state">
+            <div class="lab">rest</div>
+            <div class="btnbox"><button class="btn sz-lg primary LB-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+          <div class="state">
+            <div class="lab">hover</div>
+            <div class="btnbox"><button class="btn sz-lg primary LB-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
+            <div class="readout" data-measure></div>
+          </div>
+        </div>
+      </div>
+      <div class="comp">AButton intent="success" variant="primary"<br />— lime kept, label to black</div>
+    </div>
+
     <div class="col is-target">
       <span class="chip target">proposed</span>
       <div class="colname">One component, green</div>
@@ -557,7 +597,7 @@
 
   <hr class="rule" />
 
-  <h2>5 — All five variants, lime against green</h2>
+  <h2>5 — All five variants, three ways</h2>
   <p>
     This is the part that has to be agreed rather than assumed. Changing
     <code>success</code> touches five compound rows, and each one has three states.
@@ -568,16 +608,29 @@
 
   <div class="card warn">
     <p style="margin-bottom:8px">
-      <strong>A straight lime → green swap does not fix this on its own.</strong>
-      <code>green-700</code> on the green-200/300/400 fills fails exactly as
-      <code>lime-700</code> does. The proposal therefore deviates from the mirror in
-      three places, each forced by a number rather than chosen:
+      <strong>Neither hue fixes itself by changing hue.</strong> <code>green-700</code>
+      on the green-200/300/400 fills fails exactly as <code>lime-700</code> does on
+      its own ramp. Both sets therefore need the <strong>same three corrections</strong>,
+      each forced by a number rather than chosen:
     </p>
     <ul style="margin-bottom:0">
-      <li><code>primary</code> label: <strong>black</strong>, not <code>green-900</code></li>
-      <li><code>secondary</code> label: <strong><code>green-900</code></strong>, not <code>green-700</code></li>
-      <li><code>default</code> / <code>ghost</code> / <code>link</code> active: <strong>keep <code>green-700</code></strong> rather than lightening to <code>green-600</code></li>
+      <li><code>primary</code> label: <strong>black</strong>, not the ramp's own <code>-900</code></li>
+      <li><code>secondary</code> label: the <strong><code>-900</code></strong> step, not <code>-700</code></li>
+      <li><code>default</code> / <code>ghost</code> / <code>link</code> active: <strong>keep the <code>-700</code></strong> rather than lightening to <code>-600</code></li>
     </ul>
+  </div>
+
+  <div class="card accent">
+    <h3>Why the middle set is here</h3>
+    <p style="margin-bottom:0">
+      Asked by the dealership-side designer, and it is the right question: the
+      proposal changes two things at once — the hue and the label — so which one
+      is doing the work? The middle set answers it. Apply the same three
+      corrections to lime and <strong>it passes everywhere too</strong>, scoring
+      <em>higher</em> than green at rest and hover, because <code>lime-400</code> is a
+      lighter fill than <code>green-400</code> and black has more room on it.
+      Contrast chooses the label. It does not choose the hue.
+    </p>
   </div>
 
   <div id="variants"></div>
@@ -586,10 +639,10 @@
 
   <h2>6 — The full scorecard</h2>
   <p class="sub">
-    Every state of both sets, measured. Failing rows are shaded.
+    Every state of all three sets, measured. Rows where any set fails are shaded.
   </p>
   <div class="tablewrap"><table id="scorecard">
-    <thead><tr><th>Variant</th><th>State</th><th>Lime today</th><th></th><th>Green proposed</th><th></th></tr></thead>
+    <thead><tr><th>Variant</th><th>State</th><th>Lime today</th><th></th><th>Lime + black</th><th></th><th>Green proposed</th><th></th></tr></thead>
     <tbody></tbody>
   </table></div>
 
@@ -609,6 +662,15 @@
       <em>success is the worst of them and it is the one we are opening anyway</em>,
       not <em>lime is uniquely broken</em>. A pass across every intent is its own
       piece of work.
+    </p>
+    <p style="margin-bottom:0">
+      <strong>And the strongest correction of all:</strong> with the label fixed,
+      lime passes too. Do not take an accessibility argument into this
+      conversation as though it settles the hue — it settles
+      <code>lime-900</code> and white, both of which lose on either ramp. What
+      remains for green is that the icon components already call success green,
+      and a seller-side view that lime does not read as an accept. Those are the
+      arguments worth making.
     </p>
   </div>
 
@@ -633,8 +695,9 @@
 
   <h2>8 — What we need from the dealership side</h2>
   <ul>
-    <li>Agreement that <code>success</code> should be green rather than lime, given that the icon components already say so.</li>
-    <li>A view on <strong>black vs green-950</strong> for the primary label.</li>
+    <li><strong>The label goes black either way</strong> — that part is settled by the numbers and needs no debate. The question is only the hue.</li>
+    <li>A view on green rather than lime, knowing that <strong>corrected lime also passes</strong>. The case for green is the icon components already resolving <code>success</code> to <code>green-600</code>, not contrast.</li>
+    <li>A view on <strong>black vs green-950</strong> (or <code>lime-950</code>, if lime is kept) for the primary label.</li>
     <li>A check on the three surfaces this changes on that side — accept a counter offer, confirm the sale, mark the handover completed. All three are confirmations, so the meaning does not move; only the hue does.</li>
     <li>Whether <code>green-400</code> is the right step. It won the seller-side comparison on contrast, but that comparison was scoped to the seller's accept. If the dealership side has a reason to prefer a different green, the case here is unaffected — it is about one token and about lime failing, not about this exact step.</li>
   </ul>
@@ -709,20 +772,25 @@
   /* ── the variant matrix ────────────────────────────────────────────────── */
   var VARIANTS = [
     { key:'default', name:'default', use:'the outlined button — a secondary confirm',
-      lime:  [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
-      green: [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
+      lime:      [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
+      limeblack: [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-700 on lime-50 *']],
+      green:     [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
     { key:'primary', name:'primary', use:'every accept button in the product',
-      lime:  [['rest','lime-900 on lime-400'],['hover','lime-900 on lime-500'],['active','lime-950 on lime-600']],
-      green: [['rest','black on green-400 *'],['hover','black on green-500 *'],['active','black on green-600 *']] },
+      lime:      [['rest','lime-900 on lime-400'],['hover','lime-900 on lime-500'],['active','lime-950 on lime-600']],
+      limeblack: [['rest','black on lime-400 *'],['hover','black on lime-500 *'],['active','black on lime-600 *']],
+      green:     [['rest','black on green-400 *'],['hover','black on green-500 *'],['active','black on green-600 *']] },
     { key:'secondary', name:'secondary', use:'a quieter confirm beside a primary one',
-      lime:  [['rest','lime-700 on lime-200'],['hover','lime-700 on lime-300'],['active','lime-700 on lime-400']],
-      green: [['rest','green-900 on green-200 *'],['hover','green-900 on green-300 *'],['active','green-900 on green-400 *']] },
+      lime:      [['rest','lime-700 on lime-200'],['hover','lime-700 on lime-300'],['active','lime-700 on lime-400']],
+      limeblack: [['rest','lime-900 on lime-200 *'],['hover','lime-900 on lime-300 *'],['active','lime-900 on lime-400 *']],
+      green:     [['rest','green-900 on green-200 *'],['hover','green-900 on green-300 *'],['active','green-900 on green-400 *']] },
     { key:'ghost', name:'ghost', use:'a borderless action inside a dense row',
-      lime:  [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
-      green: [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
+      lime:      [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
+      limeblack: [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-700 on lime-50 *']],
+      green:     [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
     { key:'link', name:'link', use:'inline text action',
-      lime:  [['rest','lime-700'],['active','lime-600']],
-      green: [['rest','green-700'],['active','green-700 *']] }
+      lime:      [['rest','lime-700'],['active','lime-600']],
+      limeblack: [['rest','lime-700'],['active','lime-700 *']],
+      green:     [['rest','green-700'],['active','green-700 *']] }
   ];
 
   var LABELS = { 'default':'Hyväksy', 'primary':'Hyväksy tarjous', 'secondary':'Hyväksy', 'ghost':'Hyväksy', 'link':'Hyväksy tarjous' };
@@ -738,7 +806,9 @@
     head.innerHTML = '<span class="vname">' + v.name + '</span><span class="vuse">' + v.use + '</span>';
     row.appendChild(head);
 
-    [['lime','Today — lime','L'],['green','Proposed — green','G']].forEach(function (pair) {
+    [['lime','Today — lime, as shipped','L'],
+     ['limeblack','Option — lime, corrected labels','LB'],
+     ['green','Proposed — green, corrected labels','G']].forEach(function (pair) {
       var setKey = pair[0], setName = pair[1], prefix = pair[2];
 
       var side = document.createElement('div');
@@ -828,13 +898,13 @@
   Object.keys(seen).forEach(function (id) {
     var e = seen[id];
     var tr = document.createElement('tr');
-    if (e.lime < 4.5 || e.green < 4.5) tr.className = 'fail';
+    if (e.lime < 4.5 || e.limeblack < 4.5 || e.green < 4.5) tr.className = 'fail';
     function cell(r) {
       if (r === undefined) return '<td></td><td></td>';
       var v = verdictFor(r);
       return '<td class="num">' + r.toFixed(2) + '</td><td><span class="verdict ' + v.cls + '">' + v.text + '</span></td>';
     }
-    tr.innerHTML = '<td>' + e.variant + '</td><td>' + e.state + '</td>' + cell(e.lime) + cell(e.green);
+    tr.innerHTML = '<td>' + e.variant + '</td><td>' + e.state + '</td>' + cell(e.lime) + cell(e.limeblack) + cell(e.green);
     tbody.appendChild(tr);
   });
 }());

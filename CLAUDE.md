@@ -1013,6 +1013,17 @@ linked from nowhere and loads no `tw-tokens.js`.
   primary label **black** not green-900; secondary label **green-900** not
   green-700; default/ghost/link active **keep green-700** instead of lightening
   to green-600. With those, all 14 states pass.
+- **THE PAGE CARRIES THREE SETS, NOT TWO, AND THE MIDDLE ONE UNDOES HALF THE
+  ARGUMENT** (2026-09-17, asked for by the dealership-side designer). His
+  question was the right one: the proposal changes the hue AND the label at
+  once, so which is doing the work? Answer — **the label**. Apply the same three
+  corrections to lime and it passes everywhere too, and **scores higher than
+  green** at rest and hover (13.93 / 10.63 against 12.05 / 9.22), because
+  `lime-400` is a lighter fill than `green-400`. **Contrast settles `lime-900`
+  and white out of the running; it does not choose between lime and green.**
+  Do not carry an accessibility argument into that conversation as though it
+  does. What survives for green: the icon components already resolve `success`
+  to `green-600`, and Jussi's own view that lime does not read as an accept.
 - **green-950 is the tinted alternative to black** and survives the whole ladder
   (8.55 / 6.54 / 4.52) where green-900 dies at hover (5.23 / **4.00** / **2.76**).
   Worth offering if a fully neutral label reads as too hard.
