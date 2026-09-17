@@ -1089,7 +1089,58 @@ a **detached** element returns empty strings, `parse()` returned null and the
 whole IIFE died on `rgb[0]`. Measurement runs as a second pass over
 `.readout[data-measure]` once everything is in the document.
 
-Green-400 + black is the current pick pending the team's view.
+**DECIDED AND ANNOUNCED, 2026-09-17.** Green-400 + black, and the rollout shape
+is the substance of the decision — it was posted to the dealership product team
+(Business Squad) in Slack, so treat it as committed rather than proposed.
+
+**The plan: change `AButton` ONLY, and let each side arrive on its own ticket.**
+
+| | |
+|---|---|
+| Consumer side | migrates its accept buttons onto **`AButton`**, off `elements/Button.vue` and `ui/UiButton.vue` |
+| `AButton`'s `success` | lime → **green-400, label black**, all five variants |
+| `ui/UiButton.vue` | **NOT touched** |
+| Dealership side | unchanged today. Their three accepts stay lime until they migrate to `AButton` on a ticket of their own, at which point they turn green |
+
+**Why this shape rather than editing both files.** Three reasons, and the second
+is the one that makes it safe:
+
+- **`AButton` has ZERO `success` consumers today**, so the colour edit ships
+  with no visual change anywhere. The change arrives with each migration, one
+  at a time, reviewable on its own.
+- **No user sees both sides.** A seller never opens the dealership UI, so the
+  interim lime/green split is a design-system inconsistency, not a user-facing
+  one. That is what makes waiting cost nothing — do not restate it as a UX
+  problem.
+- It gives Business an **easy path** rather than an obligation: nothing to do
+  now, and the colour comes free with a migration they want anyway.
+
+**The trap to put in the dealership's ticket when it comes.** Migrating those
+three components is **NOT a no-op refactor** — the buttons change colour. Scoped
+as "swap the component, should look identical", the change reads as a regression
+and gets reverted. It is small otherwise: 3 files, ~6 button instances
+(`DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`,
+`PastDeliveryDateConfirmModal`), and the icon props carry over unchanged —
+`check-bold` and `flag-checkered-fill` are both in `resources/assets/icons/`,
+which feeds the sprite both components read.
+
+**What they also gain, and it is the argument for the migration itself:**
+`UiButton` is missing three things `AButton` has — the `accent` (turquoise)
+intent, the `nav-cta` variant, and `px-0` on `iconOnly`. `AButton`'s own source
+names the last as a defect in `UiButton` ("leaving px-8 fighting w-14 at lg").
+The deprecated file has already drifted, which is what a duplicated cva does.
+
+**AN ERROR OF MINE REACHED A DRAFTED SLACK POST, AND IT IS THE REASON RULE 13's
+FIRST CHECK EXISTS.** I reported that the dealership "already uses the shared
+`intent="success"`" without saying in the same breath that `UiButton` is
+deprecated too. Jussi reasonably read that as *they are already on the component
+we want* and drafted an announcement on it — which would have told another team
+their UI was changing when it was not. He caught it himself, asked the right
+question ("if they are not using AButton, nothing changes for them, right?"),
+and appended a correction note to the post. **When reporting where a component
+sits, state its deprecation status in the same sentence.** A component's
+location is not a fact on its own.
+
 The in-message accept also carries the card's exact label,
 **"Hyväksy korkein tarjous"**: it needs no amount, since the figure is the bold
 number at the top of the same bubble and the button's placement is what says
