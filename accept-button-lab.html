@@ -179,6 +179,14 @@
     .col .colnote { font-size: 12px; color: var(--slate-500); margin-bottom: 14px; line-height: 1.5; }
     .col .comp { font-size: 11px; color: var(--slate-500); margin-top: 10px; font-family: ui-monospace, Menlo, monospace; line-height: 1.5; }
 
+    /* Section 4's impact strip: who this lands on, one box each. */
+    .impact { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0 4px; }
+    .impact .box { border: 1px solid var(--slate-200); border-radius: 10px; padding: 16px 18px; background: var(--white); min-width: 0; }
+    .impact .box .who { font-family: Barlow, sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 2px; }
+    .impact .box .what { font-size: 13px; font-weight: 700; color: var(--green-800); margin-bottom: 8px; }
+    .impact .box p { font-size: 14px; margin: 0; color: var(--slate-600); }
+    .outcome { font-size: 15px; font-weight: 700; margin: 0; }
+
     .stage { background: var(--white); border: 1px solid var(--slate-200); border-radius: 10px; padding: 14px; }
     .col.is-target .stage { border-color: var(--green-200); }
 
@@ -407,6 +415,44 @@
   <hr class="rule" />
 
   <h2>4 — The change we propose</h2>
+
+  <div class="card accent">
+    <h3>One change, landing on both sides of the product</h3>
+    <p>
+      It is easy to read this as a seller-side tidy-up. It is not — half of it is
+      a visual change on the dealership side, and that half is the one that needs
+      a designer's sign-off.
+    </p>
+
+    <div class="impact">
+      <div class="box">
+        <div class="who">Seller side</div>
+        <div class="what">Component alignment. No visual change to the intent.</div>
+        <p>
+          Both accepts come off the two deprecated components and onto
+          <code>AButton intent="success"</code> — the same component and the same
+          token the dealership already uses. The card stops being blue and the
+          modal stops carrying a hardcoded <code>color="green-600"</code>.
+        </p>
+      </div>
+      <div class="box">
+        <div class="who">Dealership side</div>
+        <div class="what">Colour change. No component change.</div>
+        <p>
+          Nothing moves in the markup — the three accept buttons already use the
+          shared intent. What changes is what that intent renders:
+          <strong>lime becomes green</strong>, across all five variants, so the
+          button finally agrees with the green success icons beside it.
+        </p>
+      </div>
+    </div>
+
+    <p class="outcome" style="margin-top:14px">
+      What we get: one button component and one success colour across seller and
+      dealership, instead of three components and three colours for the same act.
+    </p>
+  </div>
+
   <p>
     Three steps, and they are separable — step 1 can ship without step 2.
   </p>

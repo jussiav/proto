@@ -1025,6 +1025,16 @@ linked from nowhere and loads no `tw-tokens.js`.
   `B2BReserveStatusBadge` are untouched — none reads a button's `intent`.
   Whether status lime should follow is flagged as a separate decision.
 
+**Section 4 opens with a two-box impact strip, and that is the point of the
+page for a reader in a hurry.** The change reads as a seller-side tidy-up and is
+not: **seller side = component alignment, no visual change to the intent;
+dealership side = colour change, no component change** (their three buttons
+already use the shared intent, so only what it renders moves). Closing line:
+*one button component and one success colour across seller and dealership,
+instead of three components and three colours for the same act.* Jussi asked for
+this explicitly — without it a dealership-side designer skims past a page that
+looks like it is about the seller's funnel.
+
 **One build trap it cost a round trip:** the variant tiles were measured inside
 the loop that creates them, before the grid was appended — `getComputedStyle` on
 a **detached** element returns empty strings, `parse()` returned null and the
