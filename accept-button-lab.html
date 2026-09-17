@@ -223,7 +223,7 @@
 <body>
 <div class="wrap">
 
-  <h1>The success button: green and lime today, and the change we propose</h1>
+  <h1>The success button: green and lime today, and the change we are making</h1>
   <p class="lede">
     AutoVex has three button components, two of them deprecated, and the act of
     <em>accepting</em> is currently drawn in three different colours depending on
@@ -235,6 +235,9 @@
   <p class="sub">
     Audience: devs and designers, both sides of the product. Read against the
     2026-09-16 production dump. Not part of the prototype.
+    <br /><strong>Status: decided and announced to the dealership product team,
+    2026-09-17.</strong> Sections 1–3 describe production as it stands today;
+    section 4 onwards is what was agreed.
   </p>
 
   <div class="card accent">
@@ -245,7 +248,8 @@
       <li><code>intent="success"</code> already means <strong>green-600 in the icon components</strong>. The same intent name resolves to two hues in one design system.</li>
       <li>Lime fails WCAG AA in <strong>7 of its 14 states</strong>, including three that are not transient. The cause is the <em>label</em>, not the hue — see the next point.</li>
       <li><strong>Contrast decides the label, not the colour.</strong> Once the primary label is black, <em>both</em> hues pass, and lime actually scores higher than green. So the accessibility case settles <code>lime-900</code> and white out of the running; it does not, on its own, choose between lime and green.</li>
-      <li><strong>The proposal:</strong> retire the deprecated components on the seller side, put every accept on the shared <code>intent="success"</code>, and redefine that intent from lime to green. No new component, no new intent, one token for both sides. The argument for green over corrected lime is the icon inconsistency above, plus the seller-side view that lime does not read as an accept.</li>
+      <li><strong>What was decided:</strong> the seller side migrates its accepts onto <code>AButton</code>, the current component, and <code>AButton</code>'s <code>success</code> intent goes from lime to <strong>green-400 with a black label</strong>, all five variants. No new component, no new intent. The argument for green over corrected lime is the icon inconsistency above, plus the seller-side view that lime does not read as an accept.</li>
+      <li><strong>The dealership side is not touched, and that is deliberate.</strong> Their accepts run on <code>UiButton</code>, which is <em>also</em> deprecated and which this change leaves alone. Their buttons turn green when they migrate to <code>AButton</code> on a ticket of their own — see section 4.</li>
     </ul>
   </div>
 
@@ -433,53 +437,93 @@
 
   <hr class="rule" />
 
-  <h2>4 — The change we propose</h2>
+  <h2>4 — The change, as agreed</h2>
 
   <div class="card accent">
-    <h3>One change, landing on both sides of the product</h3>
+    <h3>One change, arriving on each side separately</h3>
     <p>
-      It is easy to read this as a seller-side tidy-up. It is not — half of it is
-      a visual change on the dealership side, and that half is the one that needs
-      a designer's sign-off.
+      <strong>Read this part carefully — it is the thing most easily got wrong.</strong>
+      <code>AButton</code> is the current button component. <strong>Neither side
+      uses it for accepts today.</strong> The seller side is on
+      <code>elements/Button.vue</code> and <code>ui/UiButton.vue</code>; the
+      dealership is on <code>ui/UiButton.vue</code>. Both of those are deprecated.
+      So the two sides are one generation apart, not one of them already on target.
     </p>
 
     <div class="impact">
       <div class="box">
-        <div class="who">Seller side</div>
-        <div class="what">Component alignment. No visual change to the intent.</div>
+        <div class="who">Seller side — now</div>
+        <div class="what">Component change and colour change.</div>
         <p>
           Both accepts come off the two deprecated components and onto
-          <code>AButton intent="success"</code> — the same component and the same
-          token the dealership already uses. The card stops being blue and the
-          modal stops carrying a hardcoded <code>color="green-600"</code>.
+          <code>AButton intent="success"</code>. The card stops being blue, the
+          modal loses its hardcoded <code>color="green-600"</code>, and both
+          render the new green.
         </p>
       </div>
       <div class="box">
-        <div class="who">Dealership side</div>
-        <div class="what">Colour change. No component change.</div>
+        <div class="who">Dealership side — nothing now</div>
+        <div class="what">Unchanged until they migrate. Then both at once.</div>
         <p>
-          Nothing moves in the markup — the three accept buttons already use the
-          shared intent. What changes is what that intent renders:
-          <strong>lime becomes green</strong>, across all five variants, so the
-          button finally agrees with the green success icons beside it.
+          Their three accepts stay <strong>lime</strong>. They run on
+          <code>UiButton</code>, which this change does not touch. When they
+          migrate to <code>AButton</code> on a ticket of their own, the buttons
+          turn green as part of that move — so it is
+          <strong>not a no-op refactor</strong> and should not be scoped as one.
         </p>
       </div>
     </div>
 
     <p class="outcome" style="margin-top:14px">
-      What we get: one button component and one success colour across seller and
-      dealership, instead of three components and three colours for the same act.
+      Where this lands: one button component and one success colour across both
+      sides — reached in two steps, one per team, instead of one deploy that
+      changes another team's UI for them.
     </p>
   </div>
 
-  <p>
-    Three steps, and they are separable — step 1 can ship without step 2.
-  </p>
   <ol style="max-width:74ch">
-    <li style="margin-bottom:8px"><strong>Take the seller side off the deprecated components.</strong> The modal accept moves from <code>Button color="green-600"</code> to <code>intent="success"</code>; the card accept moves from a bare <code>variant="primary"</code> to the same intent. Both seller accepts then match each other and match the dealership.</li>
-    <li style="margin-bottom:8px"><strong>Redefine <code>success</code> from lime to green</strong> in the cva. One edit per file, and every consumer moves together.</li>
+    <li style="margin-bottom:8px"><strong>Take the seller side off the deprecated components.</strong> The modal accept moves from <code>Button color="green-600"</code> to <code>AButton intent="success"</code>; the card accept moves from a bare <code>variant="primary"</code> to the same. Both seller accepts then match each other.</li>
+    <li style="margin-bottom:8px"><strong>Redefine <code>success</code> from lime to green in <code>AButton</code>, and only there.</strong> <code>UiButton</code> carries its own copy of the same values and is deliberately left alone.</li>
     <li><strong>Move all five variants, not only <code>primary</code>.</strong> <code>default</code>, <code>primary</code>, <code>secondary</code>, <code>ghost</code> and <code>link</code> each have their own compound row. Leaving any of them lime would put two greens in one intent.</li>
   </ol>
+
+  <div class="card accent">
+    <h3>Why <code>AButton</code> only, rather than editing both files</h3>
+    <p>
+      The <code>success</code> values are duplicated byte-for-byte in
+      <code>UiButton</code> and <code>AButton</code>. Editing both would turn the
+      dealership's buttons green on our deploy, without their team doing anything
+      or choosing when. Editing only <code>AButton</code> was the call, for three
+      reasons:
+    </p>
+    <ul style="margin-bottom:0">
+      <li><strong><code>AButton</code> has zero <code>success</code> consumers today</strong>, so the colour edit ships with <em>no visual change anywhere</em>. The change arrives with each migration, one at a time, reviewable on its own.</li>
+      <li><strong>No user sees both sides.</strong> A seller never opens the dealership UI, so the interim lime-here-green-there split is a design-system inconsistency, not a user-facing one. That is what makes waiting cost nothing.</li>
+      <li>It gives the dealership team an <strong>easy path rather than an obligation</strong>: nothing to do now, and the colour comes free with a migration they want anyway.</li>
+    </ul>
+  </div>
+
+  <div class="card warn">
+    <h3>For whoever writes the dealership's migration ticket</h3>
+    <p style="margin-bottom:8px">
+      <strong>It is not a no-op refactor.</strong> Scoped as "swap the component,
+      should look identical", the colour change reads as a regression and gets
+      reverted. Scope it as a visual change. It is small otherwise:
+    </p>
+    <ul style="margin-bottom:8px">
+      <li><strong>3 files, ~6 button instances</strong> — <code>DealerAcceptCounterOfferAction</code>, <code>DeliveryAgreedActions</code>, <code>PastDeliveryDateConfirmModal</code></li>
+      <li>the icon props carry over unchanged — <code>check-bold</code> and <code>flag-checkered-fill</code> are both in the shared sprite directory that feeds either component</li>
+    </ul>
+    <p style="margin-bottom:0">
+      <strong>And the migration is worth doing on its own merits.</strong>
+      <code>UiButton</code> is missing three things <code>AButton</code> has: the
+      <code>accent</code> (turquoise) intent, the <code>nav-cta</code> variant, and
+      <code>px-0</code> on <code>iconOnly</code> — which <code>AButton</code>'s own
+      source names as a defect in <code>UiButton</code>, "leaving px-8 fighting
+      w-14 at lg". The deprecated file has already drifted, which is what a
+      duplicated cva does.
+    </p>
+  </div>
 
   <h3>What that looks like on the seller's accept</h3>
   <p class="sub">The same button, three ways. Column 2 is step 1 alone; column 3 is steps 1 and 2 together.</p>
@@ -693,13 +737,15 @@
     success colours on purpose. Not part of this proposal either way.
   </p>
 
-  <h2>8 — What we need from the dealership side</h2>
+  <h2>8 — What the dealership side needs to do</h2>
+  <p class="sub">
+    Announced 2026-09-17. Short answer: nothing now.
+  </p>
   <ul>
-    <li><strong>The label goes black either way</strong> — that part is settled by the numbers and needs no debate. The question is only the hue.</li>
-    <li>A view on green rather than lime, knowing that <strong>corrected lime also passes</strong>. The case for green is the icon components already resolving <code>success</code> to <code>green-600</code>, not contrast.</li>
-    <li>A view on <strong>black vs green-950</strong> (or <code>lime-950</code>, if lime is kept) for the primary label.</li>
-    <li>A check on the three surfaces this changes on that side — accept a counter offer, confirm the sale, mark the handover completed. All three are confirmations, so the meaning does not move; only the hue does.</li>
-    <li>Whether <code>green-400</code> is the right step. It won the seller-side comparison on contrast, but that comparison was scoped to the seller's accept. If the dealership side has a reason to prefer a different green, the case here is unaffected — it is about one token and about lime failing, not about this exact step.</li>
+    <li><strong>Nothing changes for you on this deploy.</strong> Your accepts stay lime; <code>UiButton</code> is untouched.</li>
+    <li><strong>Acknowledgement</strong>, and a heads-up when a related ticket comes up so the timing can be lined up.</li>
+    <li><strong>When you do migrate</strong>, use the ticket card above — three files, and it carries a visual change rather than being a pure refactor.</li>
+    <li>Still open, and yours to answer whenever you get there: <strong>black vs <code>green-950</code></strong> for the primary label, and whether <code>green-400</code> is the right step. The comparison that picked it was scoped to the seller's accept. If there is a reason to prefer a different green, the rest of the case is unaffected — it is about one token and one component, not this exact step.</li>
   </ul>
 
 </div>
