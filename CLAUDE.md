@@ -2664,6 +2664,82 @@ sub-label** — the lowest, passing only because the card behind it is white, so
 **Delete, if it loses:** `buildListingPrice`, `#section-listing-price` and its
 render branch, the three `.lp-*` rules, and block 2b on the spec page.
 
+### Block 2c — `Nettiauto-hinta on tämän ketjun päässä` (2026-09-18)
+
+**THE THIRD TREATMENT OF ONE OBJECTION, AND THE ONE THAT ARGUES LEAST.** Jussi's
+ask after reading 2b: bridge the story from `Tarjouskilpailun tiedot` toward the
+price comparison, building on the fact that the seller's amount is **only the
+first part** of a story that ends at a Nettiauto price.
+
+`buildPriceJourney(amount)`, section `#section-journey`. **It renders FIRST of
+the three**, directly under block 1 — that block closes on
+`Autosi arvo on nyt tiedossa!` and this picks the figure up and walks it
+forward. Same `idShow` gate and same `standingAmount` as the other two.
+
+```
+11 500 €  →  Liike ostaa auton  →  Kunnostaa ja katsastaa  →  Laittaa myyntiin  →  Nettiauto-hinta
+Sinulle nyt
+```
+
+**A SEQUENCE, NOT AN EXPLANATION, AND THAT IS THE WHOLE IDEA.** Blocks 2 and 2b
+both explain — an equation and a pair of categories. **Sellers tell us in
+testing that they already know how this works** ("of course I know how they
+trick us"), and a reader who believes that dismisses an explanation. A sequence
+is harder to argue with: the gap is not asserted to be fair, it is shown to be a
+series of events that has not happened yet, at the far end of which somebody
+else's price appears.
+
+**IT CARRIES NO BODY COPY AT ALL.** No lead line, no footnote — the heading
+states the correction once and the chain is the evidence. **Every extra sentence
+is another thing to disagree with**, and anything more would be teaching the
+economics of a dealership, which is not what the misunderstanding requires.
+
+**It is also a direct fix to a defect in 2b, which Jussi named:** that block
+opens by asserting what a Nettiauto price IS
+(`…hinta, jolla liike myy auton eteenpäin`) and then qualifies itself two lines
+later in the footnote (`*Pyyntihinta ei ole sama kuin summa, jolla auto lopulta
+myydään`). **Do not state a claim in a block and negate it in that block's own
+small print.**
+
+**THE MIDDLE STEPS NAME ACTIONS, NEVER COSTS.** `Kunnostaa ja katsastaa` is
+something a dealership DOES; `kunnostuskulut` is something it CHARGES. The first
+is observable and neutral, the second is an argument — and to a seller who
+already suspects a trick, an argument reads as us defending the buyer.
+
+**ONLY THE TWO ENDS CARRY A BOX**, and that is this block's version of the one
+rule the arm cannot break. The ends are prices; the middle three are events, and
+an event in a box starts to look like an amount. Boxless middles also mean there
+is no extent anywhere to read a proportion off — the same protection block 2
+buys with a dashed chip and 2b buys by refusing a shared axis, reached a third
+way. **Boxing the middle steps breaks the block.** One figure only, at the near
+end; nothing is printed at the far end, so no gap is quantified.
+
+**Widths, and they took three passes.** Nine items (five plus four arrows) leave
+little room. At an even split the terminal node lands on **exactly** its label's
+125px with nothing to spare, which one font fallback turns into a wrap. Shipped:
+`gap-2` on the row and `flex: 2.2` on the ends against a step's `1` — 27px of
+margin at the far end, 69px per step, all three wrapping to two 12px lines
+**uniformly**. `2.6` was tried and takes the steps to 62px, where
+`Kunnostaa ja katsastaa` goes to three lines while its neighbours stay at two.
+Flex lives in the hand-written CSS, not as `flex-1` in the markup: Tailwind's
+`.flex-1` and `.pj-node` are one class each, so the CDN's later-appended rule
+wins the tie.
+
+**Below prod's `sm` the chain turns vertical and the arrows rotate 90°** rather
+than a second glyph entering the DOM, so there is one arrow to keep in step.
+
+**Measured:** **148px desktop / 428px at 375px**, against block 2's 254 / 508 and
+2b's 276 / 420 — comfortably the tightest of the three on desktop. Contrast:
+8.70 for the amount and its sub, 14.63 for the far end, 7.58 for the steps,
+4.76 for the arrows (which are `aria-hidden` decoration besides).
+
+**Three shapes, three arguments, all on `v1` at once** — a horizontal equation,
+two side-by-side categories, and a chain. Deliberate: the team compares
+treatments rather than reading one. Whichever survives takes the others' place.
+
+**Delete, if it loses:** `buildPriceJourney`, `#section-journey` and its render
+branch, the four `.pj-*` rules, and block 2c on the spec page.
+
 ### The value of the auction belongs in block 1, not block 2
 
 Asked for on 2026-09-14 and placed deliberately. The seller's dilemma is real —
