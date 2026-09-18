@@ -5,55 +5,24 @@
     <div class="av-stats">
     <div
         class="av-stats-grid grid gap-2 border border-slate-200 rounded-lg divide-x"
-        :class="[hasPrice ? 'grid-cols-3' : 'grid-cols-2', hasPrice ? 'av-stats--3' : 'av-stats--2']"
+        :class="[gridCols, stackClass]"
     >
-        <div class="flex flex-col p-2.5">
-            <span class="text-slate-500 text-xs xs:text-sm text-wrap truncate">
-                {{ t('auction.landing.auctions_in_progress.total_bids') }}
-            </span>
-            <div class="mt-auto w-full flex items-center gap-1.5">
-                <UiIcon
-                    icon="ph-bold-chart-bar"
-                    width="18"
-                    height="18"
-                    class="text-blue-400 flex-shrink-0"
-                />
-                <span class="text-slate-800 text-sm xs:text-base font-bold">{{ offers ?? '_' }}</span>
-            </div>
-        </div>
-
-        <div class="flex flex-col p-2.5">
-            <span class="text-slate-500 text-xs xs:text-sm text-wrap truncate">
-                {{ t('auction.landing.auctions_in_progress.bidders') }}
-            </span>
-            <div class="mt-auto w-full flex items-center gap-1.5">
-                <UiIcon
-                    icon="ph-bold-users-three"
-                    width="18"
-                    height="18"
-                    class="text-blue-400 flex-shrink-0"
-                />
-                <span class="text-slate-800 text-sm xs:text-base font-bold">{{ bidders ?? '_' }}</span>
-            </div>
-        </div>
-
-        <!-- B2B only: the price the seller is committed to selling at. Absent
-             unless a price is passed, so the consumer auction stays two cells. -->
         <div
-            v-if="hasPrice"
+            v-for="(cell, i) in resolvedCells"
+            :key="i"
             class="flex flex-col p-2.5"
         >
             <span class="text-slate-500 text-xs xs:text-sm text-wrap truncate">
-                {{ priceLabel || t('auction.auction_details.reserve_price') }}
+                {{ cell.label }}
             </span>
             <div class="mt-auto w-full flex items-center gap-1.5">
                 <UiIcon
-                    icon="ph-fill-coins"
+                    :icon="cell.icon"
                     width="18"
                     height="18"
                     class="text-blue-400 flex-shrink-0"
                 />
-                <span class="text-slate-800 text-sm xs:text-base font-bold">{{ currency(price) }}</span>
+                <span class="text-slate-800 text-sm xs:text-base font-bold">{{ cell.value }}</span>
             </div>
         </div>
     </div>
@@ -158,8 +127,59 @@ const props = defineProps({
     priceLabel: {
         type: String,
         default: ''
+    },
+
+    /**
+     * Replaces the default cells entirely: `[{ label, value, icon }]`, rendered
+     * in the order given. Omit it and the component is exactly what it was —
+     * prod's bids/bidders row plus the optional B2B price — so the offers page
+     * and Asking price removal are untouched by this existing.
+     *
+     * It exists because Informed decision's block reports an auction's RESULT
+     * rather than an auction in progress: dealerships, then bids, then the
+     * winning price, with its own labels. That is the same frame with different
+     * content, not a second component — and passing content beats bolting on a
+     * label override per cell plus a flag to reverse the order.
+     *
+     * Values are pre-formatted by the caller; the component does not know what
+     * a cell means, only how to draw one.
+     */
+    cells: {
+        type: Array,
+        default: null
     }
 })
 
 const hasPrice = computed(() => props.price !== null && props.price !== undefined)
+
+const resolvedCells = computed(() => {
+    if (props.cells && props.cells.length) return props.cells
+
+    const out = [
+        {
+            label: t('auction.landing.auctions_in_progress.total_bids'),
+            value: props.offers ?? '_',
+            icon: 'ph-bold-chart-bar'
+        },
+        {
+            label: t('auction.landing.auctions_in_progress.bidders'),
+            value: props.bidders ?? '_',
+            icon: 'ph-bold-users-three'
+        }
+    ]
+    if (hasPrice.value) {
+        out.push({
+            label: props.priceLabel || t('auction.auction_details.reserve_price'),
+            value: currency(props.price),
+            icon: 'ph-fill-coins'
+        })
+    }
+    return out
+})
+
+/* The container query keys off these, so they follow the rendered count rather
+   than `hasPrice` — a three-cell row stacks below 320px whichever way it was
+   populated. */
+const gridCols = computed(() => (resolvedCells.value.length === 3 ? 'grid-cols-3' : 'grid-cols-2'))
+const stackClass = computed(() => (resolvedCells.value.length === 3 ? 'av-stats--3' : 'av-stats--2'))
 </script>

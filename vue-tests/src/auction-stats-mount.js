@@ -18,6 +18,22 @@ function num(value) {
   return Number.isFinite(n) ? n : null
 }
 
+/**
+ * `data-cells` carries a JSON array of `{ label, value, icon }` for a host that
+ * needs its own cells — Informed decision's result row. Malformed JSON falls
+ * back to null, i.e. the component's default cells, so a typo degrades to the
+ * ordinary row rather than to an empty frame.
+ */
+function cells(value) {
+  if (!value) return null
+  try {
+    const parsed = JSON.parse(value)
+    return Array.isArray(parsed) && parsed.length ? parsed : null
+  } catch (e) {
+    return null
+  }
+}
+
 function mountInto(el) {
   if (el.dataset.vueMounted) return
   el.dataset.vueMounted = 'true'
@@ -27,14 +43,16 @@ function mountInto(el) {
     bidders: num(el.dataset.bidders),
     /* B2B only, and no prototype surface passes it — the mount reads it so a
        host that does needs no change here. */
-    price: num(el.dataset.price)
+    price: num(el.dataset.price),
+    cells: cells(el.dataset.cells)
   })
 
   createApp({
     setup: () => () => h(AuctionStats, {
       offers: state.offers,
       bidders: state.bidders,
-      price: state.price
+      price: state.price,
+      cells: state.cells
     })
   }).mount(el)
 
@@ -43,7 +61,8 @@ function mountInto(el) {
     state.offers = num(el.dataset.offers)
     state.bidders = num(el.dataset.bidders)
     state.price = num(el.dataset.price)
-  }).observe(el, { attributes: true, attributeFilter: ['data-offers', 'data-bidders', 'data-price'] })
+    state.cells = cells(el.dataset.cells)
+  }).observe(el, { attributes: true, attributeFilter: ['data-offers', 'data-bidders', 'data-price', 'data-cells'] })
 }
 
 function scan(root) {

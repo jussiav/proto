@@ -331,7 +331,7 @@
       <section id="section-insights" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="m199 125.31-49.89-18.38L130.69 57a19.92 19.92 0 0 0-37.38 0l-18.38 49.93L25 125.31a19.92 19.92 0 0 0 0 37.38l49.89 18.38L93.31 231a19.92 19.92 0 0 0 37.38 0l18.38-49.89L199 162.69a19.92 19.92 0 0 0 0-37.38m-60 33.9a19.89 19.89 0 0 0-11.8 11.8L112 212.28 96.79 171A19.89 19.89 0 0 0 85 159.21L43.72 144 85 128.79A19.89 19.89 0 0 0 96.79 117L112 75.72 127.21 117a19.89 19.89 0 0 0 11.8 11.8l41.27 15.2ZM140 40a12 12 0 0 1 12-12h12V16a12 12 0 0 1 24 0v12h12a12 12 0 0 1 0 24h-12v12a12 12 0 0 1-24 0V52h-12a12 12 0 0 1-12-12m112 48a12 12 0 0 1-12 12h-4v4a12 12 0 0 1-24 0v-4h-4a12 12 0 0 1 0-24h4v-4a12 12 0 0 1 24 0v4h4a12 12 0 0 1 12 12"/></svg>
-          <span class="text-blue-900 leading-[24px]">Tarjouskilpailun tiedot</span>
+          <span class="text-blue-900 leading-[24px]">Tarjouskilpailun tulos</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="insights-content"></div>
@@ -2161,30 +2161,35 @@
            `leading-snug` pulls it to 24.75px, matching prod's own bare-h5
            treatment on the support banner. One step below the section's `h2` so
            the two do not compete. */
-        +      '<h3 class="font-display text-xl font-bold leading-snug">Autosi arvo on nyt tiedossa!</h3>'
+        +      '<h3 class="font-display text-xl font-bold leading-snug">Paras hinta autostasi on nyt selvillä!</h3>'
         +      '</div>'
-        /* THREE SENTENCES, and each answers something sellers actually say.
-           `ammattilaista perehtyi autoosi` — sellers do not know a person
-           looked at all, and many assume we fetch generic prices for similar
-           cars. `autoosi` puts it on THIS car rather than the listing as a
-           document.
-           `Laskettuaan sille tarkan hinnan` — each dealership priced the car
-           itself before bidding, which is the direct answer to "you just pull
-           numbers for similar cars".
-           `korottivat vielä tarjouksiaan voittaakseen kilpailun` — THE AUCTION
-           WAS A REAL CONTEST, NOT 25 SEALED ENVELOPES. Two jobs at once: a
-           contested result beats the best of 25 independent guesses, and it is
-           the only sentence on the page that explains why the row below reads
-           138 bids from 25 bidders — a seller who does not know a dealership
-           may bid more than once reads those figures as a contradiction.
-           The third sentence — `Hyväksy tarjous, ja jatka myyntiä autoliikkeen
-           kanssa` — was dropped in Jussi's 2026-09-16 pass, along with the
-           painted verdict block. The recommendation it carried is now the tag
-           above the headline, so nothing here tells the seller what to do. What
-           went with it is the only line naming the DEALERSHIP as the
-           counterparty; watch for that in testing, since "does AutoVex buy the
-           car?" is a live misconception. */
-        +      '<p class="font-dm text-base text-slate-700 mt-2">' + buyers + ' autoliikkeen ammattilaista perehtyi autoosi. Laskettuaan sille tarkan hinnan, ostajat korottivat vielä tarjouksiaan voittaakseen kilpailun.</p>'
+        /* TWO SENTENCES, and between them they answer the three things sellers
+           actually say about this screen.
+
+           `perehtyivät autoosi` — sellers do not know a person looked at all,
+           and many assume we fetch generic prices for similar cars. `autoosi`
+           puts it on THIS car rather than on the listing as a document. The
+           word matters: an earlier pass used `arvioivat`, and `arvio` is
+           exactly what a sceptical seller dismisses ("se on vaan arvio") as
+           well as the product's own word for the machine estimate.
+
+           `laskivat sille tarjouksensa` — each dealership priced the car itself
+           before bidding, the direct answer to "you just pull numbers for
+           similar cars".
+
+           `kunnes korkein tarjous jäi voimaan` — THIS IS THE SENTENCE THAT
+           EXPLAINS THE ROW BELOW, and it is why the second sentence changed.
+           A seller reading `137 tarjousta / 25 autoliikettä` sees a
+           contradiction unless they know a dealership may bid more than once,
+           and the older wording (`korottivat vielä tarjouksiaan voittaakseen
+           kilpailun`) said why they bid but never what became of the other 136.
+           "The highest one REMAINED IN FORCE" says they were superseded, not
+           withheld — which is the suspicion the block exists to close.
+
+           No figure is printed here any more. The old opening read `25
+           autoliikkeen ammattilaista` about a hundred pixels above a cell that
+           printed 25; the count now appears once, in the row. */
+        +      '<p class="font-dm text-base text-slate-700 mt-2">Autoliikkeiden ammattilaiset perehtyivät autoosi ja laskivat sille tarjouksensa. Kilpailussa he korottivat tarjouksiaan, kunnes korkein tarjous jäi voimaan.</p>'
         +    '</div>'
         +  '</div>';
 
@@ -2242,7 +2247,43 @@
         /* The AuctionStats Vue component — the same one the offers page mounts,
            so the two pages cannot drift. It reads its figures from the data
            attributes and mounts itself when this markup lands in the DOM. */
-        html = '<div data-auction-stats data-offers="' + offerCount + '" data-bidders="' + buyers + '"></div>';
+        var verdictRow = idShow && buyers >= VERDICT_MIN_BIDDERS;
+
+        if (verdictRow) {
+          /* THE RESULT ROW, and it is a different row from the one above it in
+             the file even though it is the same component. Asking price removal
+             shows an auction IN PROGRESS — prod's own bids and bidders. This
+             one reports an auction's RESULT, so it runs dealerships → bids →
+             the winning price and MIRRORS THE SENTENCE ABOVE IT: professionals
+             assessed, they raised, the highest remained. Row and copy teach one
+             shape rather than two.
+
+             THE THIRD CELL IS WHAT ANSWERS "where are the other 136 offers?".
+             Two bare counts state a contradiction and leave it there; a row
+             that narrows to the number on the offer card resolves it.
+
+             The amount is `standingAmount`, the same single definition the
+             offer card, the accept handler and the belief block read — so a
+             negotiation moves all of them together and this cell cannot quote
+             a stale price beside a live one. It was deliberately absent before:
+             `buildAuctionVerdict` took `buyers` and nothing else precisely so
+             no figure here could go stale. Carrying one is a real obligation,
+             not a free addition.
+
+             `data-cells` rather than three new props on a shared component —
+             see the prop's own note in AuctionStats.vue. */
+          var resultCells = [
+            { label: 'Autoliikkeitä',         value: buyers,      icon: 'ph-bold-users-three' },
+            { label: 'Tarjousta kilpailussa', value: offerCount,  icon: 'ph-bold-chart-bar' },
+            { label: 'Korkein tarjous',
+              value: fmtCurrency(standingAmount(offers[0]) || req.highest_offer || 0),
+              icon: 'ph-fill-coins' }
+          ];
+          html = '<div data-auction-stats data-cells="'
+            + JSON.stringify(resultCells).replace(/"/g, '&quot;') + '"></div>';
+        } else {
+          html = '<div data-auction-stats data-offers="' + offerCount + '" data-bidders="' + buyers + '"></div>';
+        }
       } else {
         html = '<dl class="flex flex-row divide-x divide-slate-200 text-center">';
         html += '<div class="flex-auto flex flex-col px-2 py-1"><dt class="order-1 text-xs text-slate-500">' + bidsLabel + '</dt><dd class="font-bold text-slate-800">' + offerCount + '</dd></div>';

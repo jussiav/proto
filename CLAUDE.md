@@ -3008,6 +3008,67 @@ they reach the sentence at the bottom — **evidence reads better after the
 claim.** `buildAuctionVerdict` takes the stats markup as an argument rather than
 building it, so the two arms that draw that row keep one definition of it.
 
+**REWRITTEN 2026-09-18, FROM JUSSI'S FIGMA VERSION.** The section is now
+`Tarjouskilpailun tulos` — which **resolves the open question below** about
+prod's `tiedot` underselling a block that had stopped being a record. What it
+says now:
+
+| Part | Copy |
+|---|---|
+| tag | `Suosittelemme hyväksymään` *(unchanged)* |
+| headline | `Paras hinta autostasi on nyt selvillä!` |
+| body | `Autoliikkeiden ammattilaiset perehtyivät autoosi ja laskivat sille tarjouksensa. Kilpailussa he korottivat tarjouksiaan, kunnes korkein tarjous jäi voimaan.` |
+| row | `Autoliikkeitä 25` · `Tarjousta kilpailussa 138` · `Korkein tarjous 11 500 €` |
+
+**THE HEADLINE CLAIMS THE BRAND'S OWN PROMISE**, closing the front page's
+`Paras hinta autostasi` at the moment the seller can act on it. It is only
+defensible because the gate is the offer amount — see the corrected note below.
+
+**THE THIRD CELL IS WHAT ANSWERS "where are the other 136 offers?"** Two bare
+counts state a contradiction and leave it; a row that narrows —
+dealerships → bids → the winning price — resolves it by ending on the number on
+the offer card. **The row now mirrors the sentence above it**, which is the
+structural point: copy and figures teach one shape instead of two.
+
+**`kunnes korkein tarjous jäi voimaan` is the sentence doing that work.** The
+old wording (`korottivat vielä tarjouksiaan voittaakseen kilpailun`) said why
+they bid and never what became of the rest. "The highest one REMAINED IN FORCE"
+says they were superseded, not withheld.
+
+**`perehtyivät`, NEVER `arvioivat`.** An intermediate Figma version used
+`arvioivat autosi`; `arvio` is exactly what a sceptical seller dismisses
+("se on vaan arvio") and it is the product's own word for the machine estimate.
+It was also ungrammatical in that draft (`perehtyä` takes the illative —
+`autoosi`, not `autosi`), which is what the proto ships.
+
+**THE BLOCK NOW CARRIES A EURO FIGURE, AND THAT IS A REAL OBLIGATION.** It used
+to take `buyers` and nothing else, deliberately, so nothing here could go stale.
+The cell reads `standingAmount(offers[0])` — the same single definition the
+offer card, the accept handler and the belief block use — so a negotiation moves
+all of them together. **A figure added here must always read that.** Consequence
+to watch in testing: the amount now appears three times on one screen (card,
+this row, the belief chip), each with a different job.
+
+**`AuctionStats` GAINED ONE PROP, `cells`, AND NOTHING ELSE CHANGED.** The
+component's own row is prod's bids/bidders plus the optional B2B price; this row
+is a different content set in a different order with its own labels, which is
+the same frame rather than a second component. `cells` (`[{label, value, icon}]`,
+pre-formatted by the caller) replaces the defaults when passed and is absent
+everywhere else, so **the offers page and Asking price removal are untouched**.
+Passed as JSON in `data-cells`; malformed JSON falls back to the default cells
+rather than to an empty frame. Chosen over three ad-hoc props (two label
+overrides plus an order flag) because it states the generalisation honestly.
+**The bundle must be rebuilt** — `npx vite build --config vite.auction-stats.config.js`.
+
+**Measured, three cells:** 254px desktop / **517px at 375px**. The container
+query stacks them below a 320px container, which a phone always is (287px), so
+the row becomes three full-width rows with horizontal dividers — +138px against
+the two-cell version, and the cost of the third figure. Nothing truncates at any
+width. One band worth knowing: between roughly 410px and 500px viewport the
+container sits just above the stacking threshold and
+`Tarjousta kilpailussa` takes two 12px lines while its neighbours take one;
+`mt-auto` keeps every value on the same baseline, so the row stays level.
+
 **THE PAINTED VERDICT BLOCK IS GONE; THE RECOMMENDATION IS A TAG**
 (2026-09-16, Jussi's call). `Loistava suoritus!` and its sentence are replaced by
 one green tag, **`Suosittelemme hyväksymään`**, sitting immediately **above the
@@ -3221,17 +3282,33 @@ chart and the date row exactly as prod draws them:
   competitive price" is the service telling a seller who has walked away that
   they were wrong.
 
-**The biggest open question, and it is on the spec page: the verdict is
-triggered by the BIDDER COUNT, not by the offer — and it now tells the seller to
-accept.** A well-attended auction can still land below what we would estimate the
-car is worth, and there the sentence is wrong in the one direction that costs the
-most trust: the seller takes the advice and finds out later. The recommendation
-raises the stakes, since stating a view and telling someone what to do are not
-the same act. The honest shape is probably the reverse of what is built — gate
-the claim on the offer against the reference price and let the bidder count be the
-evidence rather than the trigger — but that needs a reference price on the page,
-which is a product decision this sketch does not make. Built as briefed; flagged, not
-silently fixed.
+**THIS NOTE USED TO SAY THE VERDICT WAS TRIGGERED BY THE BIDDER COUNT. THAT WAS
+WRONG, AND JUSSI CORRECTED IT ON 2026-09-18.** The record now reads:
+
+**THE TRIGGER IS THE OFFER AMOUNT.** `req.fair_offer` is true when the offer
+clears a set share of the reference price — **the ratio is in the private notes,
+never here** — and `idShow` requires it, so the block only ever appears to a
+seller whose offer already passes that bar. The honest
+shape I described as "probably the reverse of what is built" is what was built
+all along; I had read `VERDICT_MIN_BIDDERS` as the condition and the flag as a
+detail, when it is the other way round.
+
+**`buyers >= 4` is a SECOND guard, not the trigger.** It exists because a
+competition argument is false in a thin auction whatever the offer is, so both
+must hold. Reading a compound gate and reporting the loudest half is the mistake
+to avoid repeating — **name the condition that decides, not the one that reads
+as a rule.**
+
+What this changes in practice: the headline may make a claim about the PRICE,
+because the price is what qualified the seller to see it. `Paras hinta autostasi
+on nyt selvillä!` (2026-09-18) would have been indefensible on a bidder-count
+trigger and is defensible on this one. **That makes the gate load-bearing in a
+new way** — widening the audience later is no longer a one-line change to a
+predicate, it is a decision about a claim.
+
+**The ratio itself stays out of this repository** — see the private notes. The
+denominator is the reference price, not "our estimate": a GT-X estimate, a sales
+advisor's estimate from the review call, or any later corrected value.
 
 **The section keeps prod's title.** `Tarjouskilpailun tiedot` described a record
 of what happened; the block is now an argument about what it meant, so the title
