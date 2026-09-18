@@ -2373,7 +2373,85 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — `Näin vertaat tarjoustasi`
+### Block 2 — `Nettiauton hinta ja saamasi tarjous`
+
+**REPLACED 2026-09-18, AND THE REPLACEMENT CAME OUT OF THE IDEATION SET RATHER
+THAN FROM ANOTHER PASS AT THE ORIGINAL.** Jussi iterated in Figma across three
+versions; this merges the old equation's three-term geometry with 2c's
+sequencing. Everything below the next few paragraphs is the history of
+`Näin vertaat tarjoustasi` — the safety mechanism, the palettes and the type
+scale all still govern, the strings do not.
+
+**What it is now:**
+
+```
+Nettiauton hinta ja saamasi tarjous
+Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.
+┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
+│ 🪙 11 500 €      │ → ╎ Jälleenmyynti    ╎ → │ Liikkeen         │
+│ Sinulle maksett… │   ╎ Kulut, riski ja  ╎   │ pyyntihinta      │   (no sub-label)
+└──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
+*Autosta riippuen kuluja syntyy esim. kunnostuksesta, katsastuksesta,
+säilytyksestä ja markkinoinnista.
+```
+
+**THE LEAD LINE IS THE WHOLE CORRECTION, and it is the strongest sentence this
+initiative has produced.** It stops arguing about the SIZE of the gap and says
+the advertised number is **silent about the seller's side**. The reader
+completes the parallel themselves: that car had a previous owner who was paid
+something invisible, and they are that person now. Nothing in it defends
+anyone, which is what makes it survive the reader who already "knows how they
+trick us" — there is no claim about fairness to bounce off, only a statement
+about what a number omits.
+
+**IT SAYS `Autoliikkeen`, NOT `Myynti-ilmoituksen`, AND THIS IS A GENERAL RULE
+FOR THIS PRODUCT.** `ilmoitus` is the **seller's own word** everywhere else —
+the funnel submits with `Lähetä ilmoitus`, the success screen says
+`Ilmoituksesi tarkistetaan`, the preview sheet labels their figure
+`Pyyntihintasi`. A seller who published an ad twenty minutes ago reads
+"myynti-ilmoituksen pyyntihinta" as **theirs**. It is the same collision that
+killed `Auto-ilmoituksien pyyntihinnat…` an iteration earlier, where the fix
+was `Muualla`; `Myynti-` does not close it, because their listing is a sales
+listing too. **Never use `ilmoitus` for the dealership's listing.** The third
+term moved to `Liikkeen pyyntihinta` for the same reason, so the collision is
+gone from both places.
+
+**ARROWS, NOT `+` AND `=`, AND THE MIDDLE TERM NAMES A PHASE.** An equation asks
+to be solved; a sequence does not. `Jälleenmyynti` is a phase word where `Kulut`
+was a quantity word — **you cannot subtract a phase**, which makes it a second
+line of defence behind the dashed box rather than a rename.
+
+**The third term lost its sub-label** (`Ilmoituksessa näkyvä hinta`). With
+`Liikkeen pyyntihinta` naming the party, the gloss restated it.
+
+**`riski` is the word doing the most work, and it is new.** Refurbishment a
+sceptical seller calls markup; the risk that the car does not sell, or sells for
+less, is a real asymmetry they are being relieved of. It is the one item on the
+block that cannot be dismissed as padding — worth protecting if the sub-label is
+ever shortened.
+
+**The footnote dropped to four items, and that trades away a mechanism.** The
+old six-item list existed to outrun what a reader could have listed themselves
+("I had not thought of half of those"). Four ordinary costs do not. The surprise
+job has moved to `riski` in the middle term instead — deliberate, but if that
+word ever goes, the footnote has to grow back.
+
+**Measured after the replacement:** 220px desktop / 516px at 375px. All three
+labels hold one line at 720px — `Liikkeen pyyntihinta` is 159px in a 177px chip.
+Below 620px the row stacks and `.belief-op` rotates 90°, same as 2c's arrows.
+Contrast unchanged: 8.70 for the figure and its sub, 14.63 for the two dark
+terms and the arrows, 7.58 for the footnote, **4.76 for the slate-500 sub** —
+the floor, passing only because the chip behind it is white.
+
+**2b and 2c ARE STILL ON THE PAGE.** Jussi's instruction was to replace block 2,
+not to remove the other two, so all three render. 2b is the weakest of the set
+and its self-contradiction is the defect this replacement fixes, so it is the
+obvious next deletion — but that is his call, not a tidy-up to make in passing.
+
+---
+
+**History below: `Näin vertaat tarjoustasi`, the block this replaced.**
+
 
 `buildBelief(amount)`. THREE TERMS, read left to right as an addition the reader
 completes themselves:

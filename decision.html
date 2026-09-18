@@ -161,6 +161,7 @@
        to the head at runtime, i.e. after this block. A single class loses. */
     @media (max-width: 619.98px) {
       .belief-eq.belief-eq { flex-direction: column; align-items: stretch; gap: .5rem; }
+      .belief-op { transform: rotate(90deg); }
     }
 
     /* ── Informed decision, v1: the Nettiauto section ─────────────────────
@@ -456,7 +457,7 @@
       <section id="section-belief" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
-          <span class="text-blue-900 leading-[24px]">Näin vertaat tarjoustasi</span>
+          <span class="text-blue-900 leading-[24px]">Nettiauton hinta ja saamasi tarjous</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="belief-content"></div>
@@ -2151,29 +2152,37 @@
     }
 
     function buildBelief(amount) {
-      var html = '<p class="font-dm text-base text-slate-700 mb-4">Muualla näkemäsi pyyntihinnat sisältävät myös auton myyntiin liittyviä kuluja.</p>';
+      /* THIS REPLACED THE `Näin vertaat tarjoustasi` EQUATION (2026-09-18), and
+         it came out of the ideation set rather than from another pass at the
+         original. Same three terms and the same palette, but the operators are
+         ARROWS and the middle term names a PHASE rather than a quantity — an
+         equation asks to be solved, a sequence does not, and you cannot
+         subtract `Jälleenmyynti` the way you can subtract `Kulut`.
 
-      /* THREE TERMS, and only the first one is ours to state. The seller's own
-         figure leads — the same standing amount the offer card shows, so a
-         negotiation moves both — then the costs, then the advertised price.
+         THE LEAD LINE IS THE WHOLE CORRECTION and it is the strongest sentence
+         this initiative has produced. It stops arguing about the size of the
+         gap and says the advertised number is SILENT about the seller's side:
+         the reader completes the parallel themselves — that car had a previous
+         owner who was paid something invisible, and they are that person now.
+         Nothing in it defends anyone, so there is nothing for a seller who
+         already "knows how they trick us" to bounce off.
 
-         The costs term is the honest half of the block: we do not know it, the
-         chip is dashed, and its sub-label says so. That is what stops the row
-         being read as an arithmetic the seller can run backwards.
+         IT SAYS `Autoliikkeen`, NOT `Myynti-ilmoituksen`, AND THAT IS NOT A
+         PREFERENCE. `ilmoitus` is the SELLER's word everywhere else in this
+         product — `Lähetä ilmoitus` on the funnel's submit, `Ilmoituksesi
+         tarkistetaan` on the success screen, `Pyyntihintasi` on the preview
+         sheet. A seller who published an ad twenty minutes ago reads
+         "myynti-ilmoituksen pyyntihinta" as THEIRS. It is the same trap that
+         killed `Auto-ilmoituksien pyyntihinnat…` an iteration earlier; naming
+         the dealership is what closes it, and the third term follows the lead
+         to `Liikkeen pyyntihinta` so the collision is gone from both places.
 
-         THE FOOTNOTE IS A LIST BECAUSE LENGTH IS THE POINT. It used to name
-         three FACTORS — purchase condition, expected depreciation, financing —
-         accurate, and telling a seller nothing they had not already guessed.
-         Naming nine ordinary costs does the work instead: the reaction to aim
-         for is "I had not thought of half of those", and that only lands if the
-         list outruns what the reader could have listed themselves. The order
-         runs concrete → unobvious → abstract for the same reason, and the
-         closing clause names BOTH variables, the car and the market.
+         The middle term stays DASHED for the reason it always was: a dashed box
+         reads as a blank to be filled rather than as a quantity, so no
+         proportion is claimed and there is nothing to run backwards. Giving it
+         a figure breaks the block. */
+      var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.</p>';
 
-         `esim.` is the hedge that matters: these are examples of what a
-         dealership adds, not an exhaustive or audited list, and NO FIGURE is
-         printed for any of them — a euro amount against `kate` hands the seller
-         something to resent rather than something to understand. */
       function chip(cls, label, sub, coins) {
         var own      = cls.indexOf('belief-chip--own') > -1;
         var labelCls = own ? 'text-green-900' : 'text-slate-800';
@@ -2183,91 +2192,20 @@
           +        (coins ? ICO_COINS : '')
           +        '<span class="font-dm text-base font-bold ' + labelCls + '">' + label + '</span>'
           +      '</span>'
-          +      '<p class="font-dm text-xs ' + subCls + '">' + sub + '</p>'
+          +      (sub ? '<p class="font-dm text-xs ' + subCls + '">' + sub + '</p>' : '')
           +    '</div>';
       }
-      var op = function(sym) {
-        return '<span class="belief-op font-dm text-base font-bold text-slate-800 flex-shrink-0">' + sym + '</span>';
-      };
+      var arrow = '<span class="belief-op font-dm text-base font-bold text-slate-800 flex-shrink-0" aria-hidden="true">&rarr;</span>';
 
       html += '<div class="belief-eq flex items-stretch gap-3">'
         +      chip('belief-chip--own', (amount ? fmtCurrency(amount) : 'Tarjouksesi'), 'Sinulle maksettava summa', true)
-        +      op('+')
-        +      chip('belief-chip--unknown', 'Kulut', 'Vaihtelee autoittain', false)
-        +      op('=')
-        +      chip('', 'Liikkeen pyyntihinta', 'Ilmoituksessa näkyvä hinta', false)
+        +      arrow
+        +      chip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, riski ja kate', false)
+        +      arrow
+        +      chip('', 'Liikkeen pyyntihinta', '', false)
         +    '</div>';
 
-      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Kuluja ovat autosta riippuen esim. kunnostus, katsastus, säilytys, markkinointi, arvonalenema ja kate.</p>';
-
-      return html;
-    }
-
-    /* ── Informed decision, v1: the Nettiauto section ─────────────────────────
-       The same objection as `buildBelief`, answered directly. Built as an
-       ideation piece to run BESIDE that block, not to replace it — the team
-       compares two treatments of one problem, so both render.
-
-       THE ARGUMENT IS CATEGORY, NOT ARITHMETIC. Block 2 says an advertised
-       price is the seller's money PLUS costs; this one says an advertised price
-       is a different kind of number entirely — what a dealership asks the NEXT
-       buyer, after it has already bought the car. That is one sentence rather
-       than an equation, which is what makes it the more direct of the two.
-
-       WHAT IS DELIBERATELY ABSENT, and each was a decision:
-
-       - NO FIGURE ON THE COSTS, not even an illustrative one. A team draft
-         carried `~9 200 €` beside a "just an example" disclaimer; at a glance
-         the disclaimer does not survive and the number reads as this car's.
-       - NO SHARED AXIS. The two cards are separate objects, never segments of
-         one bar. The seller's real amount is printed here — it is the one
-         figure we hold, and repeating it is a reminder of what accepting is
-         actually worth — so the moment the listing price is given a drawn
-         extent beside it, the costs become inferable by difference. That is
-         the exact reading block 2's dashed chip exists to prevent.
-       - NO MARGIN. The named inclusions are `kunnostus`, `katsastus`, `takuu`
-         and `myyntityö` — real, checkable costs. `kate` is in block 2's
-         footnote and stays out of here: this section attributes its costs to
-         the dealership by name, and attribution plus margin together is what
-         turns an explanation into a grievance.
-       - NO SECOND OPINION SOUGHT. An earlier footnote read "compare an offer to
-         another offer, not to an asking price" — true, and an instruction to go
-         and get one, which costs the decision time this arm exists to shorten.
-         It states the category difference instead.
-
-       `Sisältää mm.` is the hedge `esim.` does in block 2: examples of what a
-       dealership adds, not an audited list.
-
-       All Finnish here is mine and unapproved. NAMING NETTIAUTO NEEDS LEGAL AND
-       BRAND SIGN-OFF before this reaches production — it is a third party, and
-       no design review can settle that. */
-    function buildListingPrice(amount) {
-      var html = '<p class="font-dm text-base text-slate-700 mb-4">Nettiautossa näkyvä hinta on hinta, jolla liike myy auton eteenpäin.</p>';
-
-      function tag(label) {
-        return '<span class="lp-tag font-dm text-xs text-slate-700">' + label + '</span>';
-      }
-
-      html += '<div class="lp-pair flex items-stretch gap-3">'
-        +      '<div class="lp-card flex-1 min-w-0">'
-        +        '<p class="font-dm text-base font-bold text-slate-800">Nettiauto-hinta</p>'
-        +        '<p class="font-dm text-xs text-slate-500">Liikkeen pyyntihinta seuraavalle ostajalle</p>'
-        +        '<p class="font-dm text-xs text-slate-600 mt-3 mb-1.5">Sisältää mm.</p>'
-        +        '<div class="flex flex-wrap gap-1.5">'
-        +          tag('Kunnostus') + tag('Katsastus') + tag('Takuu') + tag('Myyntityö')
-        +        '</div>'
-        +      '</div>'
-        +      '<div class="lp-card lp-card--offer flex-1 min-w-0">'
-        +        '<span class="flex items-center gap-1.5">'
-        +          ICO_COINS
-        +          '<span class="font-dm text-base font-bold text-green-900">'
-        +            (amount ? fmtCurrency(amount) : 'Tarjouksesi') + '</span>'
-        +        '</span>'
-        +        '<p class="font-dm text-xs text-green-900">Sinulle maksettava summa nyt</p>'
-        +      '</div>'
-        +    '</div>';
-
-      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Pyyntihinta ei ole sama kuin summa, jolla auto lopulta myydään.</p>';
+      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Autosta riippuen kuluja syntyy esim. kunnostuksesta, katsastuksesta, säilytyksestä ja markkinoinnista.</p>';
 
       return html;
     }
