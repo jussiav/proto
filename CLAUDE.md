@@ -2686,160 +2686,47 @@ the seller's own offer in a sized segment, a gradient with no locatable edge,
 and no fill at all. **The rule that survived all of them: if a revision needs a
 paragraph to make the picture land, the picture is wrong.**
 
-### Block 2b — `Nettiauto-hinta on eri asia` (2026-09-18)
+### The ideation set that produced block 2 — both arms removed (2026-09-18)
 
-**A SECOND, MORE DIRECT ANSWER TO THE SAME OBJECTION, RUNNING BESIDE BLOCK 2 —
-NOT REPLACING IT.** Jussi's ask after the team read the arm: they like the
-blocks, and want to try a blunter treatment of the price belief. Both render on
-`v1`, sharing `idShow` and the same `standingAmount`, so they appear and vanish
-together. It is an ideation pair; whichever survives the team's read takes the
-other's place later.
+Two extra treatments ran beside the original block for one day so the team could
+compare approaches rather than read one. **Both are gone from the proto**; the
+block above absorbed what worked. Kept here because the reasoning outlived them.
 
-`buildListingPrice(amount)`, section `#section-listing-price`, directly below
-block 2.
+| Arm | What it tried | Outcome |
+|---|---|---|
+| **2b** `Nettiauto-hinta on eri asia` | two side-by-side cards, a listing price with its inclusions tagged against the seller's figure | **Removed.** It asserted what a Nettiauto price IS and then qualified itself in its own footnote two lines later |
+| **2c** `Nettiauto-hinta on tämän ketjun päässä` | a five-stage chain, no body copy at all | **Removed.** Its sequencing survived as the arrows in block 2 |
 
-**The difference is CATEGORY vs ARITHMETIC, and that is the whole variable.**
-Block 2 says an advertised price is *built* — offer + costs = asking price.
-2b says what that price *is*: **a dealership's asking price to the NEXT buyer**,
-a different transaction with a different party. One sentence instead of an
-equation.
+**What the set proved, and it is the part worth keeping:**
 
-**It NAMES NETTIAUTO, and that is deliberate.** Sellers cite it by name in user
-tests, interviews and advisor calls. A generic phrase is what block 2 already
-says (`Muualla näkemäsi pyyntihinnat`), so the two would then differ only in
-layout. **LEGAL AND BRAND HAVE TO SEE THIS BEFORE IT GOES NEAR PRODUCTION** —
-naming a third party in seller-facing copy is not a design decision. Flagged in
-its own amber card on the spec page, not just here.
+- **A sequence beats an explanation for this reader.** Sellers tell us in testing
+  they already know how this works — "of course I know how they trick us" — and
+  that reader dismisses an explanation. Arrows made it into block 2 for this
+  reason; `+` and `=` did not survive.
+- **Never state a claim in a block and negate it in that block's own small
+  print.** 2b's defect, and the reason block 2's lead says what a price does NOT
+  tell you rather than what it IS.
+- **Name actions, not costs, when the reader is suspicious.** 2c's middle steps
+  said `Kunnostaa ja katsastaa` (what a dealership DOES) rather than
+  `kunnostuskulut` (what it CHARGES). An argument reads as us defending the
+  buyer. Block 2's `Jälleenmyynti` is the same instinct in one word.
+- **Attribution plus margin together reads as a grievance.** 2b attributed the
+  costs to the dealership and kept `kate` out for that reason. Block 2 does the
+  reverse — it carries `kate` in the sub-label but attributes the phase, not the
+  party — and that trade is live, not settled.
+- **Five stages was too many for one row.** Nine items including arrows left the
+  terminal node on exactly its label's width; three terms breathe.
 
-**It grew from a team member's draft, and what was taken and left is the record
-worth keeping:**
-
-| From the draft | Verdict |
-|---|---|
-| naming Nettiauto, and `jälleenmyyntihinta` as the idea | **taken** — it is the sharpest framing of the whole objection |
-| attributing the costs to the dealership | **taken**, minus the margin — see below |
-| a stacked bar with `13 800 €` / `~9 200 €` / `~23 000 €` | **dropped**. Jussi's call: no price comparison, and **no example figure for the costs even with a disclaimer beside it** — at a glance the disclaimer does not survive and the number reads as this car's |
-| three checkmark lines | one of them survives as the footnote; the rest was the copy weight Jussi objected to |
-
-**Four absences, each a decision:**
-
-- **NO FIGURE ON THE COSTS**, not even illustrative. See the table above.
-- **NO SHARED AXIS.** Two separate cards, never segments of one bar. The
-  seller's real amount **is** printed — Jussi's call, and the reasoning is that
-  it reminds them what accepting is actually worth, where an unquantified
-  version reads generic — so the moment the listing price is given a drawn
-  extent beside it the costs are inferable by difference. **That is the exact
-  reading block 2's dashed chip exists to prevent**, which is why the two cards
-  cannot become a bar later without also dropping the amount.
-- **NO MARGIN.** Inclusions are `Kunnostus`, `Katsastus`, `Takuu`,
-  `Myyntityö` — real, checkable costs. `kate` stays in block 2's footnote.
-  **Attribution plus margin together is what turns an explanation into a
-  grievance**, and this section attributes.
-- **NO SECOND OPINION INVITED.** An earlier footnote read "compare an offer to
-  another offer, not to an asking price" — true, and an instruction to go and
-  get one, which costs the decision time the arm exists to shorten.
-
-**It borrows block 2's colour vocabulary exactly**, because both are on one
-screen: solid slate-200 = a real thing we are deliberately not sizing (block 2's
-third chip); green-50 on green-500 = the money the seller gets (block 2's first
-chip and the verdict tag). **DASHED IS NOT USED HERE** — in block 2 it means *we
-do not know this amount*, and a listing price is not unknown, it is simply not
-ours to size.
-
-**The section icon is block 2's own info circle, on purpose.** The two answer
-one objection and are meant to read as a pair; a glyph of its own would present
-this as a third subject.
-
-`Sisältää mm.` is the hedge `esim.` does in block 2. `.lp-card`, `.lp-tag` and
-`.lp-pair` are hand-written CSS for the usual reason (JS-injected markup, Play
-CDN utilities land a tick late); `.lp-pair` needs no doubled selector, unlike
-`.belief-eq`, because nothing on that row is a Tailwind flex-direction utility.
-
-**Measured:** 276px desktop / 420px at 375px, against block 2's 254 / 508 — so
-it is the shorter of the two on a phone. Cards 334px each at 720px width,
-stacking below prod's `sm`. Contrast, every string: 14.63 and 8.70 for the card
-headings, 9.90 for the tags, 7.58 for the footnote, **4.76 for the slate-500
-sub-label** — the lowest, passing only because the card behind it is white, so
-**putting any fill behind that card breaks it**, exactly as in block 2.
-
-**Delete, if it loses:** `buildListingPrice`, `#section-listing-price` and its
-render branch, the three `.lp-*` rules, and block 2b on the spec page.
-
-### Block 2c — `Nettiauto-hinta on tämän ketjun päässä` (2026-09-18)
-
-**THE THIRD TREATMENT OF ONE OBJECTION, AND THE ONE THAT ARGUES LEAST.** Jussi's
-ask after reading 2b: bridge the story from `Tarjouskilpailun tiedot` toward the
-price comparison, building on the fact that the seller's amount is **only the
-first part** of a story that ends at a Nettiauto price.
-
-`buildPriceJourney(amount)`, section `#section-journey`. **It renders FIRST of
-the three**, directly under block 1 — that block closes on
-`Autosi arvo on nyt tiedossa!` and this picks the figure up and walks it
-forward. Same `idShow` gate and same `standingAmount` as the other two.
-
-```
-11 500 €  →  Liike ostaa auton  →  Kunnostaa ja katsastaa  →  Laittaa myyntiin  →  Nettiauto-hinta
-Sinulle nyt
-```
-
-**A SEQUENCE, NOT AN EXPLANATION, AND THAT IS THE WHOLE IDEA.** Blocks 2 and 2b
-both explain — an equation and a pair of categories. **Sellers tell us in
-testing that they already know how this works** ("of course I know how they
-trick us"), and a reader who believes that dismisses an explanation. A sequence
-is harder to argue with: the gap is not asserted to be fair, it is shown to be a
-series of events that has not happened yet, at the far end of which somebody
-else's price appears.
-
-**IT CARRIES NO BODY COPY AT ALL.** No lead line, no footnote — the heading
-states the correction once and the chain is the evidence. **Every extra sentence
-is another thing to disagree with**, and anything more would be teaching the
-economics of a dealership, which is not what the misunderstanding requires.
-
-**It is also a direct fix to a defect in 2b, which Jussi named:** that block
-opens by asserting what a Nettiauto price IS
-(`…hinta, jolla liike myy auton eteenpäin`) and then qualifies itself two lines
-later in the footnote (`*Pyyntihinta ei ole sama kuin summa, jolla auto lopulta
-myydään`). **Do not state a claim in a block and negate it in that block's own
-small print.**
-
-**THE MIDDLE STEPS NAME ACTIONS, NEVER COSTS.** `Kunnostaa ja katsastaa` is
-something a dealership DOES; `kunnostuskulut` is something it CHARGES. The first
-is observable and neutral, the second is an argument — and to a seller who
-already suspects a trick, an argument reads as us defending the buyer.
-
-**ONLY THE TWO ENDS CARRY A BOX**, and that is this block's version of the one
-rule the arm cannot break. The ends are prices; the middle three are events, and
-an event in a box starts to look like an amount. Boxless middles also mean there
-is no extent anywhere to read a proportion off — the same protection block 2
-buys with a dashed chip and 2b buys by refusing a shared axis, reached a third
-way. **Boxing the middle steps breaks the block.** One figure only, at the near
-end; nothing is printed at the far end, so no gap is quantified.
-
-**Widths, and they took three passes.** Nine items (five plus four arrows) leave
-little room. At an even split the terminal node lands on **exactly** its label's
-125px with nothing to spare, which one font fallback turns into a wrap. Shipped:
-`gap-2` on the row and `flex: 2.2` on the ends against a step's `1` — 27px of
-margin at the far end, 69px per step, all three wrapping to two 12px lines
-**uniformly**. `2.6` was tried and takes the steps to 62px, where
-`Kunnostaa ja katsastaa` goes to three lines while its neighbours stay at two.
-Flex lives in the hand-written CSS, not as `flex-1` in the markup: Tailwind's
-`.flex-1` and `.pj-node` are one class each, so the CDN's later-appended rule
-wins the tie.
-
-**Below prod's `sm` the chain turns vertical and the arrows rotate 90°** rather
-than a second glyph entering the DOM, so there is one arrow to keep in step.
-
-**Measured:** **148px desktop / 428px at 375px**, against block 2's 254 / 508 and
-2b's 276 / 420 — comfortably the tightest of the three on desktop. Contrast:
-8.70 for the amount and its sub, 14.63 for the far end, 7.58 for the steps,
-4.76 for the arrows (which are `aria-hidden` decoration besides).
-
-**Three shapes, three arguments, all on `v1` at once** — a horizontal equation,
-two side-by-side categories, and a chain. Deliberate: the team compares
-treatments rather than reading one. Whichever survives takes the others' place.
-
-**Delete, if it loses:** `buildPriceJourney`, `#section-journey` and its render
-branch, the four `.pj-*` rules, and block 2c on the spec page.
+**One bug, and the lesson is about verification.** Replacing `buildBelief` was
+done as an index-based cut whose range also contained `buildListingPrice`, so
+that function went with it. `renderMain` threw at 2b's gate, and **a throw
+aborts the rest of the function**, so every section below it stopped rendering —
+including `Tarjouskilpailun tiedot`. The verification pass had measured the
+block that changed, found it correct, and reported it. **Measuring what you
+changed does not tell you what you broke:** after any edit to `renderMain` or
+what it calls, list EVERY section with its hidden state and read the console in
+a FRESH tab — this pane retains console messages across reloads, which nearly
+produced a second false report.
 
 ### The value of the auction belongs in block 1, not block 2
 
@@ -2954,12 +2841,24 @@ is derivable from the repo, so it is written down here.**
 | Desktop screen (1440) | wrapper `7030:5` · nav `7030:6` · content column `7030:7` |
 | Mobile screen (375) | wrapper `7030:8` · nav `7030:9` · content column `7030:10` |
 
-Sections, desktop then mobile, **in render order after the 2026-09-18 sync**:
-Hero `7030:11` / `7030:17` · Offers `7030:12` / `7030:18` ·
-Tarjouskilpailun tiedot `7030:13` / `7030:19` · **the chain (2c)
-`7231:227` / `7234:227`** · price belief `7048:227` / `7030:20` ·
-**the Nettiauto cards (2b) `7232:227` / `7234:261`** ·
-Tarvitsetko apua? `7030:15` / `7030:21` · FAQ `7030:16` / `7030:22`.
+Sections, desktop then mobile: Hero `7030:11` / `7030:17` · Offers `7030:12` /
+`7030:18` · Tarjouskilpailun tiedot `7030:13` / `7030:19` · **price belief —
+LIVE: `7236:227` / `7236:252`** · Tarvitsetko apua? `7030:15` / `7030:21` ·
+FAQ `7030:16` / `7030:22`.
+
+**FIGMA KEEPS EVERY ITERATION; THE PROTO KEEPS ONLY THE CURRENT ONE.** Jussi's
+instruction (2026-09-18): *always just add the latest, never remove any of the
+iterations there.* So a block removed from the proto STAYS on the canvas, and
+the superseded price-belief versions now sit under the live one on both screens:
+`7231:227` / `7234:227` (the 5-stage chain, with Jussi's own rewrite on the
+desktop copy), `7048:227` / `7030:20` (the original equation) and
+`7232:227` / `7234:261` (the two-card version).
+
+**The `✅ … — IN PROTO` / `◻︎ Superseded — … (not in proto)` markers are how you
+tell which is which, and they are the ONLY thing to update when a version is
+retired.** Renaming is not removing; four frames all claiming IN PROTO would
+make the marker worthless. The mobile column now carries the markers too — it
+never needed them until it held iterations.
 
 **Local components** (build once, place instances — do not hand-build copies):
 `Offer card` `7038:5`, `FAQ row` `7041:71`. The lower offer card is an instance
