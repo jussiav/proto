@@ -2853,14 +2853,43 @@ is derivable from the repo, so it is written down here.**
 | Desktop screen (1440) | wrapper `7030:5` · nav `7030:6` · content column `7030:7` |
 | Mobile screen (375) | wrapper `7030:8` · nav `7030:9` · content column `7030:10` |
 
-Sections, desktop then mobile: Hero `7030:11` / `7030:17` · Offers `7030:12` /
-`7030:18` · Tarjouskilpailun tiedot `7030:13` / `7030:19` · price belief
-`7048:227` / `7030:20` · Tarvitsetko apua? `7030:15` / `7030:21` · FAQ
-`7030:16` / `7030:22`.
+Sections, desktop then mobile, **in render order after the 2026-09-18 sync**:
+Hero `7030:11` / `7030:17` · Offers `7030:12` / `7030:18` ·
+Tarjouskilpailun tiedot `7030:13` / `7030:19` · **the chain (2c)
+`7231:227` / `7234:227`** · price belief `7048:227` / `7030:20` ·
+**the Nettiauto cards (2b) `7232:227` / `7234:261`** ·
+Tarvitsetko apua? `7030:15` / `7030:21` · FAQ `7030:16` / `7030:22`.
 
 **Local components** (build once, place instances — do not hand-build copies):
 `Offer card` `7038:5`, `FAQ row` `7041:71`. The lower offer card is an instance
 with the counter-offer action hidden.
+
+**Synced again 2026-09-18 — the two new price-belief treatments.** Both were
+built by CLONING `7048:227` (desktop) and `7030:20` (mobile) rather than from
+scratch, which is the method to reuse: the clone inherits every convention in
+one step — section frame VERTICAL gap 20, heading HORIZONTAL gap 10 with a 20×20
+`icon/info` holding a `#2890FF` vector, Title Barlow Bold 20/24 `#134195`, Card
+VERTICAL pad 20 gap 16 radius 12 white, Lead DM Sans 16/24 `#334155`, chips
+pad 11 radius 8 (`#F0FDF4`/`#22C55E` own, `#E2E8F0` solid, `#CBD5E1` dashed),
+Sub and Footnote DM Sans 12/20. Building fresh would have meant re-deriving all
+of it and getting some of it wrong.
+
+**Two Figma-specific translations the browser does not need.** Flex ratios have
+no Figma equivalent, so the chain's ends are FIXED 174px and its steps FILL,
+which self-balances to 72px against the browser's 69. And the mobile chain uses
+a literal `↓` where the proto rotates its `→` 90° in CSS — the rendered result
+is what the file should show, not the mechanism.
+
+**THE DESKTOP CHAIN WAS REWRITTEN IN FIGMA WHILE THIS SYNC WAS RUNNING**, by
+Jussi, and it was left exactly as he made it. It now reads
+`Näin Nettiauton hinta muodostuu` over
+`Maksettu myyjälle → Kunnostus ja valmistelu → Myyntikulut ja kate →
+Ilmoituksen pyyntihinta`, with a closing line
+`Pyyntihinta ei siis kerro sitä mitä edelliselle omistajalle on maksettu.`
+**Figma is ahead of the proto on that block** — note that his stages name COSTS
+(`Myyntikulut ja kate`) where the proto's name ACTIONS, which is the deliberate
+distinction recorded in the 2c section above. Resolve which way it goes before
+syncing that block in either direction.
 
 **Synced to the proto on 2026-09-17.** What that pass changed, so the next one
 knows what is already there: the `Verdict` frames (`7033:10` desktop, `7035:10`
@@ -2878,22 +2907,30 @@ lays text out itself, so the same copy breaks differently: auction details
 220 / 508. Verify the SEMANTICS — copy, size, weight, colour, child order —
 which do match exactly.
 
-**One stale string is left deliberately.** `7046:39858` still carries the old
-`Auto-ilmoituksien pyyntihinnat…` lead, because it lives in one of Jussi's own
-three draft versions, which are not to be renamed, reordered or edited.
-
 **The illustration's imageHash is `a0e1977c4c8cd9d7496af50e799134be8a09da66`.**
 The Plugin API cannot fetch a URL, so a raster image gets in via `upload_assets`
 and is then reused by setting that hash on another node's fills. It is no longer
 on either screen — the seal replaced it — but the hash is the only way back
 without re-uploading.
 
-**THE DESKTOP COLUMN HOLDS FIVE VERSIONS OF THE PRICE-BELIEF BLOCK**, because
-Jussi iterates by duplicating. `7048:227` is named
-`✅ Näin vertaat tarjoustasi — IN PROTO` and is the one the prototype renders;
-`7030:14` is `◻︎ Superseded — gradient bar (not in proto)`. The other three
-(`7046:39852`, `7046:39819`, `7046:39787`) are his drafts — **do not rename,
-reorder or delete them.**
+**THE DRAFT VARIANTS ARE GONE, AND NOT BY ME** (checked 2026-09-18). The desktop
+column used to hold five versions of the price-belief block —
+`7030:14` (`◻︎ Superseded — gradient bar`) and Jussi's three drafts
+`7046:39852`, `7046:39819`, `7046:39787`, plus the stale lead string
+`7046:39858`. **All five return MISSING and the column's first read that day
+already listed only six children with no drafts among them**, so they were
+removed in Figma before this session touched the file. The standing instruction
+not to rename, reorder or delete Jussi's drafts still holds for any he makes
+next; there is simply nothing left to protect from the old set.
+
+**`figma.getNodeById` LIES ABOUT THIS — use `getNodeByIdAsync`.** The sync getter
+returns null for any node outside the currently loaded subtree, so it reports a
+live node as missing. Both were run here before concluding anything; only the
+async answer is evidence.
+
+**THE DESKTOP COLUMN STILL USES THE `✅ … — IN PROTO` MARKER** and the two new
+sections carry it. Mobile holds no variants, so its sections stay unmarked —
+that is the file's own convention, not an oversight.
 
 **VERIFY BY MEASUREMENT, NOT BY SCREENSHOT.** The in-app browser pane returns
 blank frames intermittently on this page — a scroll-then-capture race that no
