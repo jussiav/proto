@@ -164,36 +164,6 @@
       .belief-op { transform: rotate(90deg); }
     }
 
-    /* ── Informed decision, v1: the Nettiauto section ─────────────────────
-       A second, more direct answer to the same objection block 2 answers, run
-       beside it so the team can compare two approaches rather than read one.
-
-       IT BORROWS BLOCK 2's COLOUR VOCABULARY EXACTLY, because both are on the
-       same screen and a second meaning for the same treatment would be worse
-       than either. Solid slate-200 = a real thing we are deliberately not
-       quantifying (block 2's third chip, `Liikkeen pyyntihinta`). Green-50 on
-       green-500 = the money the seller actually gets (block 2's first chip and
-       the recommendation tag). DASHED is NOT used here: in block 2 it means
-       "we do not know this amount", and the listing price is not unknown — it
-       is simply not ours to size. */
-    .lp-card { border: 1px solid #E2E8F0; border-radius: .5rem; padding: 11px; }
-    .lp-card--offer {
-      background: #F0FDF4; border-color: #22C55E;
-      display: flex; flex-direction: column; justify-content: center;
-    }
-    .lp-tag {
-      display: inline-block; background: #F8FAFC;                /* slate-50 */
-      border: 1px solid #E2E8F0; border-radius: .375rem; padding: 2px 8px;
-    }
-    /* Single class is enough here, unlike `.belief-eq`: nothing on this row is
-       a Tailwind flex-direction utility, so there is no specificity tie to win.
-       Still hand-written rather than `max-sm:flex-col`, for the other half of
-       that rule — the block is injected by JS and the Play CDN generates its
-       utilities a tick after the render. */
-    @media (max-width: 619.98px) {
-      .lp-pair { flex-direction: column; }
-    }
-
     /* ── Informed decision, v1: the price chain ───────────────────────────
        ONLY THE TWO ENDS CARRY A BOX, and that is the whole safety mechanism
        here. The ends are prices; the middle three are things that HAPPEN, and
@@ -461,37 +431,6 @@
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="belief-content"></div>
-        </div>
-      </section>
-
-      <!-- Section 3c: the Nettiauto comparison — Informed decision, v1 only,
-           and an IDEATION PIECE that runs BESIDE 3b rather than replacing it.
-
-           Same objection, answered directly instead of structurally. Block 3b
-           explains how an advertised price is BUILT (offer + costs = asking
-           price); this one says what that price IS — a dealership's asking
-           price to the NEXT buyer, which is a different transaction from the
-           one the seller is being offered. Sellers name Nettiauto by name in
-           user tests, interviews and advisor calls, so this version names it
-           too: that directness is the whole variable being tested, and a
-           generic phrase would leave the two sections differing only in
-           layout.
-
-           NAMING A THIRD PARTY IN SHIPPED COPY IS NOT A DESIGN DECISION —
-           legal and brand have to see this before it goes anywhere near
-           production. Recorded on the spec page, not just here.
-
-           The section icon is deliberately the SAME info circle 3b carries.
-           The two sections answer one objection and are meant to be read as a
-           pair; giving this one a glyph of its own would present it as a third
-           subject. -->
-      <section id="section-listing-price" class="hidden">
-        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
-          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
-          <span class="text-blue-900 leading-[24px]">Nettiauto-hinta on eri asia</span>
-        </h2>
-        <div class="w-full p-5 bg-white rounded-xl">
-          <div id="listing-price-content"></div>
         </div>
       </section>
 
@@ -2815,20 +2754,6 @@
         beliefSec.classList.remove('hidden');
       } else {
         beliefSec.classList.add('hidden');
-      }
-
-      /* Same gate, same amount, same standing-offer definition — the two
-         sections answer one objection for one audience and must appear and
-         disappear together. Both render: this is an ideation pair, not an
-         either/or, and whichever survives the team's read takes the other's
-         place later. */
-      var listingSec = document.getElementById('section-listing-price');
-      if (idShow) {
-        document.getElementById('listing-price-content').innerHTML =
-          buildListingPrice(standingAmount(offers[0]) || req.highest_offer || 0);
-        listingSec.classList.remove('hidden');
-      } else {
-        listingSec.classList.add('hidden');
       }
 
       // Insights

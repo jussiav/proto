@@ -2443,10 +2443,33 @@ Contrast unchanged: 8.70 for the figure and its sub, 14.63 for the two dark
 terms and the arrows, 7.58 for the footnote, **4.76 for the slate-500 sub** —
 the floor, passing only because the chip behind it is white.
 
-**2b and 2c ARE STILL ON THE PAGE.** Jussi's instruction was to replace block 2,
-not to remove the other two, so all three render. 2b is the weakest of the set
-and its self-contradiction is the defect this replacement fixes, so it is the
-obvious next deletion — but that is his call, not a tidy-up to make in passing.
+**2b IS GONE (2026-09-18), 2c REMAINS.** Its self-contradiction was the defect
+this replacement fixed, so it had nothing left to offer. Removed: the section
+shell, the render gate, `buildListingPrice`, the three `.lp-*` rules and its
+spec-page block. **The spec page still numbers the survivor `2c`** — the
+numbering is not shifted, for the same reason change 4's was not: the team has
+the page and a reference has to keep resolving.
+
+**A REAL BUG CAME OUT OF THIS, AND THE LESSON IS ABOUT VERIFICATION, NOT THE
+CODE.** Replacing `buildBelief` was done as index-based surgery — cut from
+`function buildBelief` to the next comment banner — and `buildListingPrice` sat
+*inside* that range. It went with it. `renderMain` then threw
+`buildListingPrice is not defined` at 2b's gate, and **because the throw aborted
+the rest of the function, every section after it stopped rendering — including
+`Tarjouskilpailun tiedot`.** Jussi saw a section disappear that nobody had asked
+to remove.
+
+The verification pass after the replacement measured `#section-belief` and
+declared it good. It was good. **Measuring the thing you changed does not tell
+you what you broke** — after any edit to `renderMain` or the functions it calls,
+list EVERY section with its hidden state and read the console, because one throw
+silently truncates the page from that point down. Two cheap habits that would
+have caught it: `document.querySelectorAll('section[id^="section-"]')` with
+`.classList.contains('hidden')`, and an errors-only console read.
+
+**Index-based cuts over a range you have not just listed are the hazard.** Prefer
+an explicit start-and-end string pair whose contents you have read, and grep for
+the removed symbol afterwards.
 
 ---
 
