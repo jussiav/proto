@@ -1984,7 +1984,27 @@
          The middle term stays DASHED for the reason it always was: a dashed box
          reads as a blank to be filled rather than as a quantity, so no
          proportion is claimed and there is nothing to run backwards. Giving it
-         a figure breaks the block. */
+         a figure breaks the block.
+
+         `vastuu` IS THE LOAD-BEARING WORD NOW (2026-09-18, Jussi's addition).
+         It means the dealership's responsibility for the car AFTER it sells it
+         on. The block does not assert this as fact and must not start to: the
+         reasoning it invites is that a dealership which carries that liability
+         has reason to put the car right first, so whatever a repair or a set of
+         tyres cost is already inside the advertised price. **That is why the
+         footnote no longer lists costs.** A list states as fact what is really
+         an assumption about one car; `vastuu` carries the same idea as an
+         assumption, which is the honest form of it.
+
+         So the footnote describes what reselling INVOLVES rather than what it
+         COSTS, hedged with `autosta riippuen`. Do not turn it back into a list
+         — the old six-item version existed to outrun what a reader could list
+         themselves, and that mechanism is deliberately retired here.
+
+         THE THIRD TERM SAYS `Ilmoituksen pyyntihinta` AGAIN, which is Jussi's
+         call. The `ilmoitus` collision documented below therefore survives in
+         that one label; the lead line, where the correction actually lands,
+         keeps `Autoliikkeen`. */
       var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.</p>';
 
       function chip(cls, label, sub, coins) {
@@ -2004,12 +2024,12 @@
       html += '<div class="belief-eq flex items-stretch gap-3">'
         +      chip('belief-chip--own', (amount ? fmtCurrency(amount) : 'Tarjouksesi'), 'Sinulle maksettava summa', true)
         +      arrow
-        +      chip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, riski ja kate', false)
+        +      chip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
         +      arrow
-        +      chip('', 'Liikkeen pyyntihinta', '', false)
+        +      chip('', 'Ilmoituksen pyyntihinta', '', false)
         +    '</div>';
 
-      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Autosta riippuen kuluja syntyy esim. kunnostuksesta, katsastuksesta, säilytyksestä ja markkinoinnista.</p>';
+      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
 
       return html;
     }

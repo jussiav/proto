@@ -2388,12 +2388,34 @@ scale all still govern, the strings do not.
 Nettiauton hinta ja saamasi tarjous
 Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
-│ 🪙 11 500 €      │ → ╎ Jälleenmyynti    ╎ → │ Liikkeen         │
-│ Sinulle maksett… │   ╎ Kulut, riski ja  ╎   │ pyyntihinta      │   (no sub-label)
-└──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
-*Autosta riippuen kuluja syntyy esim. kunnostuksesta, katsastuksesta,
-säilytyksestä ja markkinoinnista.
+│ 🪙 11 500 €      │ → ╎ Jälleenmyynti    ╎ → │ Ilmoituksen      │
+│ Sinulle maksett… │   ╎ Kulut, vastuu,   ╎   │ pyyntihinta      │   (no sub-label)
+└──────────────────┘   └╌ riski ja kate ╌╌┘   └──────────────────┘
+*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.
 ```
+
+**`vastuu` IS THE LOAD-BEARING WORD, AND IT IS AN ASSUMPTION THE BLOCK INVITES
+RATHER THAN A CLAIM IT MAKES** (2026-09-18, Jussi's addition). It means the
+dealership's responsibility for the car **after** it sells it on. The reasoning
+the reader is left to complete: a dealership carrying that liability has reason
+to put the car right first, so whatever a repair or a set of tyres cost is
+already inside the advertised price. **The block never states this as fact and
+must not start to** — "the dealership must repair it" is a claim about law and
+practice we are not making.
+
+**THAT IS WHY THE FOOTNOTE NO LONGER LISTS COSTS.** A list states as fact what
+is really an assumption about one particular car, and it was always the weakest
+half of the block: the old six-item version existed to outrun what a reader
+could name themselves, and the four-item version had already lost that. The
+footnote now says what reselling **involves** rather than what it **costs**,
+hedged with `autosta riippuen`. **Do not turn it back into a list** — the
+assumption is now carried honestly by `vastuu`, where a list carried it as fact.
+
+**THE THIRD TERM SAYS `Ilmoituksen pyyntihinta` AGAIN**, which is Jussi's call.
+So the `ilmoitus` collision below survives in that one label; the lead line,
+where the correction actually lands, keeps `Autoliikkeen`. At 186px it wraps to
+two lines in a 177px chip — which is what the Figma version does too, so it is
+faithful rather than a defect.
 
 **THE LEAD LINE IS THE WHOLE CORRECTION, and it is the strongest sentence this
 initiative has produced.** It stops arguing about the SIZE of the gap and says
@@ -2424,21 +2446,15 @@ line of defence behind the dashed box rather than a rename.
 **The third term lost its sub-label** (`Ilmoituksessa näkyvä hinta`). With
 `Liikkeen pyyntihinta` naming the party, the gloss restated it.
 
-**`riski` is the word doing the most work, and it is new.** Refurbishment a
-sceptical seller calls markup; the risk that the car does not sell, or sells for
-less, is a real asymmetry they are being relieved of. It is the one item on the
-block that cannot be dismissed as padding — worth protecting if the sub-label is
-ever shortened.
+**`vastuu` and `riski` are the two words doing the work.** Refurbishment a
+sceptical seller calls markup; the risk that the car does not sell, and the
+liability the dealership carries for it afterwards, are real asymmetries they
+are being relieved of. They cannot be dismissed as padding, and — unlike a list
+of costs — they are assumptions carried as assumptions. **Protect both if the
+sub-label is ever shortened.**
 
-**The footnote dropped to four items, and that trades away a mechanism.** The
-old six-item list existed to outrun what a reader could have listed themselves
-("I had not thought of half of those"). Four ordinary costs do not. The surprise
-job has moved to `riski` in the middle term instead — deliberate, but if that
-word ever goes, the footnote has to grow back.
-
-**Measured after the replacement:** 220px desktop / 516px at 375px. All three
-labels hold one line at 720px — `Liikkeen pyyntihinta` is 159px in a 177px chip.
-Below 620px the row stacks and `.belief-op` rotates 90°, same as 2c's arrows.
+**Measured:** 228px desktop / 500px at 375px. Below 620px the row stacks and
+`.belief-op` rotates 90°.
 Contrast unchanged: 8.70 for the figure and its sub, 14.63 for the two dark
 terms and the arrows, 7.58 for the footnote, **4.76 for the slate-500 sub** —
 the floor, passing only because the chip behind it is white.
