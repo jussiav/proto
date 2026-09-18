@@ -163,6 +163,36 @@
       .belief-eq.belief-eq { flex-direction: column; align-items: stretch; gap: .5rem; }
     }
 
+    /* ── Informed decision, v1: the Nettiauto section ─────────────────────
+       A second, more direct answer to the same objection block 2 answers, run
+       beside it so the team can compare two approaches rather than read one.
+
+       IT BORROWS BLOCK 2's COLOUR VOCABULARY EXACTLY, because both are on the
+       same screen and a second meaning for the same treatment would be worse
+       than either. Solid slate-200 = a real thing we are deliberately not
+       quantifying (block 2's third chip, `Liikkeen pyyntihinta`). Green-50 on
+       green-500 = the money the seller actually gets (block 2's first chip and
+       the recommendation tag). DASHED is NOT used here: in block 2 it means
+       "we do not know this amount", and the listing price is not unknown — it
+       is simply not ours to size. */
+    .lp-card { border: 1px solid #E2E8F0; border-radius: .5rem; padding: 11px; }
+    .lp-card--offer {
+      background: #F0FDF4; border-color: #22C55E;
+      display: flex; flex-direction: column; justify-content: center;
+    }
+    .lp-tag {
+      display: inline-block; background: #F8FAFC;                /* slate-50 */
+      border: 1px solid #E2E8F0; border-radius: .375rem; padding: 2px 8px;
+    }
+    /* Single class is enough here, unlike `.belief-eq`: nothing on this row is
+       a Tailwind flex-direction utility, so there is no specificity tie to win.
+       Still hand-written rather than `max-sm:flex-col`, for the other half of
+       that rule — the block is injected by JS and the Play CDN generates its
+       utilities a tick after the render. */
+    @media (max-width: 619.98px) {
+      .lp-pair { flex-direction: column; }
+    }
+
     /* The recommendation tag has to read as something APPLIED to the block
        rather than as its first line — it is shown only to a seller whose offer
        clears the bar, so its placement should say "this one is yours" rather
@@ -351,6 +381,37 @@
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="belief-content"></div>
+        </div>
+      </section>
+
+      <!-- Section 3c: the Nettiauto comparison — Informed decision, v1 only,
+           and an IDEATION PIECE that runs BESIDE 3b rather than replacing it.
+
+           Same objection, answered directly instead of structurally. Block 3b
+           explains how an advertised price is BUILT (offer + costs = asking
+           price); this one says what that price IS — a dealership's asking
+           price to the NEXT buyer, which is a different transaction from the
+           one the seller is being offered. Sellers name Nettiauto by name in
+           user tests, interviews and advisor calls, so this version names it
+           too: that directness is the whole variable being tested, and a
+           generic phrase would leave the two sections differing only in
+           layout.
+
+           NAMING A THIRD PARTY IN SHIPPED COPY IS NOT A DESIGN DECISION —
+           legal and brand have to see this before it goes anywhere near
+           production. Recorded on the spec page, not just here.
+
+           The section icon is deliberately the SAME info circle 3b carries.
+           The two sections answer one objection and are meant to be read as a
+           pair; giving this one a glyph of its own would present it as a third
+           subject. -->
+      <section id="section-listing-price" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
+          <span class="text-blue-900 leading-[24px]">Nettiauto-hinta on eri asia</span>
+        </h2>
+        <div class="w-full p-5 bg-white rounded-xl">
+          <div id="listing-price-content"></div>
         </div>
       </section>
 
@@ -2007,6 +2068,75 @@
       return html;
     }
 
+    /* ── Informed decision, v1: the Nettiauto section ─────────────────────────
+       The same objection as `buildBelief`, answered directly. Built as an
+       ideation piece to run BESIDE that block, not to replace it — the team
+       compares two treatments of one problem, so both render.
+
+       THE ARGUMENT IS CATEGORY, NOT ARITHMETIC. Block 2 says an advertised
+       price is the seller's money PLUS costs; this one says an advertised price
+       is a different kind of number entirely — what a dealership asks the NEXT
+       buyer, after it has already bought the car. That is one sentence rather
+       than an equation, which is what makes it the more direct of the two.
+
+       WHAT IS DELIBERATELY ABSENT, and each was a decision:
+
+       - NO FIGURE ON THE COSTS, not even an illustrative one. A team draft
+         carried `~9 200 €` beside a "just an example" disclaimer; at a glance
+         the disclaimer does not survive and the number reads as this car's.
+       - NO SHARED AXIS. The two cards are separate objects, never segments of
+         one bar. The seller's real amount is printed here — it is the one
+         figure we hold, and repeating it is a reminder of what accepting is
+         actually worth — so the moment the listing price is given a drawn
+         extent beside it, the costs become inferable by difference. That is
+         the exact reading block 2's dashed chip exists to prevent.
+       - NO MARGIN. The named inclusions are `kunnostus`, `katsastus`, `takuu`
+         and `myyntityö` — real, checkable costs. `kate` is in block 2's
+         footnote and stays out of here: this section attributes its costs to
+         the dealership by name, and attribution plus margin together is what
+         turns an explanation into a grievance.
+       - NO SECOND OPINION SOUGHT. An earlier footnote read "compare an offer to
+         another offer, not to an asking price" — true, and an instruction to go
+         and get one, which costs the decision time this arm exists to shorten.
+         It states the category difference instead.
+
+       `Sisältää mm.` is the hedge `esim.` does in block 2: examples of what a
+       dealership adds, not an audited list.
+
+       All Finnish here is mine and unapproved. NAMING NETTIAUTO NEEDS LEGAL AND
+       BRAND SIGN-OFF before this reaches production — it is a third party, and
+       no design review can settle that. */
+    function buildListingPrice(amount) {
+      var html = '<p class="font-dm text-base text-slate-700 mb-4">Nettiautossa näkyvä hinta on hinta, jolla liike myy auton eteenpäin.</p>';
+
+      function tag(label) {
+        return '<span class="lp-tag font-dm text-xs text-slate-700">' + label + '</span>';
+      }
+
+      html += '<div class="lp-pair flex items-stretch gap-3">'
+        +      '<div class="lp-card flex-1 min-w-0">'
+        +        '<p class="font-dm text-base font-bold text-slate-800">Nettiauto-hinta</p>'
+        +        '<p class="font-dm text-xs text-slate-500">Liikkeen pyyntihinta seuraavalle ostajalle</p>'
+        +        '<p class="font-dm text-xs text-slate-600 mt-3 mb-1.5">Sisältää mm.</p>'
+        +        '<div class="flex flex-wrap gap-1.5">'
+        +          tag('Kunnostus') + tag('Katsastus') + tag('Takuu') + tag('Myyntityö')
+        +        '</div>'
+        +      '</div>'
+        +      '<div class="lp-card lp-card--offer flex-1 min-w-0">'
+        +        '<span class="flex items-center gap-1.5">'
+        +          ICO_COINS
+        +          '<span class="font-dm text-base font-bold text-green-900">'
+        +            (amount ? fmtCurrency(amount) : 'Tarjouksesi') + '</span>'
+        +        '</span>'
+        +        '<p class="font-dm text-xs text-green-900">Sinulle maksettava summa nyt</p>'
+        +      '</div>'
+        +    '</div>';
+
+      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Pyyntihinta ei ole sama kuin summa, jolla auto lopulta myydään.</p>';
+
+      return html;
+    }
+
     /* ── Informed decision, v1: the auction result, read back as an argument ──
        The stats row says 25 and 25. It never says what those two numbers are
        FOR, and the seller's real question at this point is "is this a good
@@ -2601,6 +2731,20 @@
         beliefSec.classList.remove('hidden');
       } else {
         beliefSec.classList.add('hidden');
+      }
+
+      /* Same gate, same amount, same standing-offer definition — the two
+         sections answer one objection for one audience and must appear and
+         disappear together. Both render: this is an ideation pair, not an
+         either/or, and whichever survives the team's read takes the other's
+         place later. */
+      var listingSec = document.getElementById('section-listing-price');
+      if (idShow) {
+        document.getElementById('listing-price-content').innerHTML =
+          buildListingPrice(standingAmount(offers[0]) || req.highest_offer || 0);
+        listingSec.classList.remove('hidden');
+      } else {
+        listingSec.classList.add('hidden');
       }
 
       // Insights

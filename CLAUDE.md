@@ -2585,6 +2585,85 @@ the seller's own offer in a sized segment, a gradient with no locatable edge,
 and no fill at all. **The rule that survived all of them: if a revision needs a
 paragraph to make the picture land, the picture is wrong.**
 
+### Block 2b — `Nettiauto-hinta on eri asia` (2026-09-18)
+
+**A SECOND, MORE DIRECT ANSWER TO THE SAME OBJECTION, RUNNING BESIDE BLOCK 2 —
+NOT REPLACING IT.** Jussi's ask after the team read the arm: they like the
+blocks, and want to try a blunter treatment of the price belief. Both render on
+`v1`, sharing `idShow` and the same `standingAmount`, so they appear and vanish
+together. It is an ideation pair; whichever survives the team's read takes the
+other's place later.
+
+`buildListingPrice(amount)`, section `#section-listing-price`, directly below
+block 2.
+
+**The difference is CATEGORY vs ARITHMETIC, and that is the whole variable.**
+Block 2 says an advertised price is *built* — offer + costs = asking price.
+2b says what that price *is*: **a dealership's asking price to the NEXT buyer**,
+a different transaction with a different party. One sentence instead of an
+equation.
+
+**It NAMES NETTIAUTO, and that is deliberate.** Sellers cite it by name in user
+tests, interviews and advisor calls. A generic phrase is what block 2 already
+says (`Muualla näkemäsi pyyntihinnat`), so the two would then differ only in
+layout. **LEGAL AND BRAND HAVE TO SEE THIS BEFORE IT GOES NEAR PRODUCTION** —
+naming a third party in seller-facing copy is not a design decision. Flagged in
+its own amber card on the spec page, not just here.
+
+**It grew from a team member's draft, and what was taken and left is the record
+worth keeping:**
+
+| From the draft | Verdict |
+|---|---|
+| naming Nettiauto, and `jälleenmyyntihinta` as the idea | **taken** — it is the sharpest framing of the whole objection |
+| attributing the costs to the dealership | **taken**, minus the margin — see below |
+| a stacked bar with `13 800 €` / `~9 200 €` / `~23 000 €` | **dropped**. Jussi's call: no price comparison, and **no example figure for the costs even with a disclaimer beside it** — at a glance the disclaimer does not survive and the number reads as this car's |
+| three checkmark lines | one of them survives as the footnote; the rest was the copy weight Jussi objected to |
+
+**Four absences, each a decision:**
+
+- **NO FIGURE ON THE COSTS**, not even illustrative. See the table above.
+- **NO SHARED AXIS.** Two separate cards, never segments of one bar. The
+  seller's real amount **is** printed — Jussi's call, and the reasoning is that
+  it reminds them what accepting is actually worth, where an unquantified
+  version reads generic — so the moment the listing price is given a drawn
+  extent beside it the costs are inferable by difference. **That is the exact
+  reading block 2's dashed chip exists to prevent**, which is why the two cards
+  cannot become a bar later without also dropping the amount.
+- **NO MARGIN.** Inclusions are `Kunnostus`, `Katsastus`, `Takuu`,
+  `Myyntityö` — real, checkable costs. `kate` stays in block 2's footnote.
+  **Attribution plus margin together is what turns an explanation into a
+  grievance**, and this section attributes.
+- **NO SECOND OPINION INVITED.** An earlier footnote read "compare an offer to
+  another offer, not to an asking price" — true, and an instruction to go and
+  get one, which costs the decision time the arm exists to shorten.
+
+**It borrows block 2's colour vocabulary exactly**, because both are on one
+screen: solid slate-200 = a real thing we are deliberately not sizing (block 2's
+third chip); green-50 on green-500 = the money the seller gets (block 2's first
+chip and the verdict tag). **DASHED IS NOT USED HERE** — in block 2 it means *we
+do not know this amount*, and a listing price is not unknown, it is simply not
+ours to size.
+
+**The section icon is block 2's own info circle, on purpose.** The two answer
+one objection and are meant to read as a pair; a glyph of its own would present
+this as a third subject.
+
+`Sisältää mm.` is the hedge `esim.` does in block 2. `.lp-card`, `.lp-tag` and
+`.lp-pair` are hand-written CSS for the usual reason (JS-injected markup, Play
+CDN utilities land a tick late); `.lp-pair` needs no doubled selector, unlike
+`.belief-eq`, because nothing on that row is a Tailwind flex-direction utility.
+
+**Measured:** 276px desktop / 420px at 375px, against block 2's 254 / 508 — so
+it is the shorter of the two on a phone. Cards 334px each at 720px width,
+stacking below prod's `sm`. Contrast, every string: 14.63 and 8.70 for the card
+headings, 9.90 for the tags, 7.58 for the footnote, **4.76 for the slate-500
+sub-label** — the lowest, passing only because the card behind it is white, so
+**putting any fill behind that card breaks it**, exactly as in block 2.
+
+**Delete, if it loses:** `buildListingPrice`, `#section-listing-price` and its
+render branch, the three `.lp-*` rules, and block 2b on the spec page.
+
 ### The value of the auction belongs in block 1, not block 2
 
 Asked for on 2026-09-14 and placed deliberately. The seller's dilemma is real —
