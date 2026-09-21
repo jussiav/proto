@@ -2360,6 +2360,18 @@ the bar's **Auction settings** has a `Fair offer` field so the other case is one
 click away. Production already identifies a fair offer on the front end, so the
 real page reads a flag too — this is the data contract, not a proto shortcut.
 
+**AND THE RULE COVERS PROSE, NOT ONLY CODE — IT NEARLY SHIPPED ONCE.** On
+2026-09-18 the corrected fair-offer definition was recorded in THIS FILE with
+the ratio spelled out, two screens above the paragraph that says the ratio
+stays out. `CLAUDE.md` is tracked, so that would have published it. Caught on
+2026-09-21 in a pre-push check, while the commit carrying it was still
+unpushed; it was rewritten out of the commit rather than fixed in a later one,
+because history is public too.
+
+**So: before any push, grep the staged tree for the ratio, not just the diff.**
+The leak arrived as an explanatory sentence in a note ABOUT the rule, which is
+exactly where it is least likely to be looked for.
+
 **Say REFERENCE PRICE, not "our estimate"** (2026-09-16, Jussi's term). A fair
 offer is defined as a share of the reference price, and the DB field behind it is
 named for an estimate — but the value it holds may be a **GT-X estimate, a sales
