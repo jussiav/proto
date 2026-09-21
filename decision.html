@@ -2100,9 +2100,10 @@
        initiative. */
     var VERDICT_MIN_BIDDERS = 4;
 
-    /* Takes `buyers` and nothing else off the request — the copy points at the
-       offer card rather than quoting an amount, so no figure is read here. */
-    function buildAuctionVerdict(buyers, statsHtml) {
+    /* Reads the two COUNTS and no euro amount — the copy points at the offer
+       card rather than quoting a price, so nothing here can go stale against
+       the number beside it, and it works unchanged on a final offer. */
+    function buildAuctionVerdict(buyers, offerCount, statsHtml) {
       /* ORDER: verdict, then the explanation, then the figures — the figures
          used to lead and now close. Reading it that way, the block answers
          "is this a good offer?" in its first line and spends the rest earning
@@ -2163,33 +2164,28 @@
            the two do not compete. */
         +      '<h3 class="font-display text-xl font-bold leading-snug">Paras hinta autostasi on nyt selvillä!</h3>'
         +      '</div>'
-        /* TWO SENTENCES, and between them they answer the three things sellers
-           actually say about this screen.
+        /* TWO SENTENCES, AND THE FIRST ONE IS WHAT ANSWERS "where are the
+           other 136 offers?".
 
-           `perehtyivät autoosi` — sellers do not know a person looked at all,
-           and many assume we fetch generic prices for similar cars. `autoosi`
-           puts it on THIS car rather than on the listing as a document. The
-           word matters: an earlier pass used `arvioivat`, and `arvio` is
-           exactly what a sceptical seller dismisses ("se on vaan arvio") as
-           well as the product's own word for the machine estimate.
+           `25 autoliikettä … tekemällä yhteensä 138 tarjousta` states the two
+           figures IN ONE CLAUSE, so the gap between them is a fact about how
+           the auction ran rather than a contradiction the seller has to
+           resolve. A row of two bare counts cannot do that: it prints 25 and
+           138 side by side and leaves the reader to guess whether 136 offers
+           are being withheld. This is why the counts are back in the copy
+           after a pass that took them out — the duplication with the row is
+           the price of the sentence working.
 
-           `laskivat sille tarjouksensa` — each dealership priced the car itself
-           before bidding, the direct answer to "you just pull numbers for
-           similar cars".
+           `perehtyi autoosi`, never `arvioi`. Sellers do not know a person
+           looked at all, and many assume we pull generic prices for similar
+           cars. `arvio` is both what a sceptical seller dismisses ("se on vaan
+           arvio") and the product's own word for the machine estimate.
 
-           `kunnes korkein tarjous jäi voimaan` — THIS IS THE SENTENCE THAT
-           EXPLAINS THE ROW BELOW, and it is why the second sentence changed.
-           A seller reading `137 tarjousta / 25 autoliikettä` sees a
-           contradiction unless they know a dealership may bid more than once,
-           and the older wording (`korottivat vielä tarjouksiaan voittaakseen
-           kilpailun`) said why they bid but never what became of the other 136.
-           "The highest one REMAINED IN FORCE" says they were superseded, not
-           withheld — which is the suspicion the block exists to close.
-
-           No figure is printed here any more. The old opening read `25
-           autoliikkeen ammattilaista` about a hundred pixels above a cell that
-           printed 25; the count now appears once, in the row. */
-        +      '<p class="font-dm text-base text-slate-700 mt-2">Autoliikkeiden ammattilaiset perehtyivät autoosi ja laskivat sille tarjouksensa. Kilpailussa he korottivat tarjouksiaan, kunnes korkein tarjous jäi voimaan.</p>'
+           `Korkein tarjous on kilpailun tulos` is the second half of the same
+           answer: the other offers were SUPERSEDED, not hidden. It replaces
+           `kunnes korkein tarjous jäi voimaan`, which said the same thing in
+           the passive and buried it at the end of a subordinate clause. */
+        +      '<p class="font-dm text-base text-slate-700 mt-2">' + buyers + ' autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä ' + offerCount + ' tarjousta. Korkein tarjous on kilpailun tulos, jonka suosittelemme hyväksymään.</p>'
         +    '</div>'
         +  '</div>';
 
@@ -2252,32 +2248,27 @@
         if (verdictRow) {
           /* THE RESULT ROW, and it is a different row from the one above it in
              the file even though it is the same component. Asking price removal
-             shows an auction IN PROGRESS — prod's own bids and bidders. This
-             one reports an auction's RESULT, so it runs dealerships → bids →
-             the winning price and MIRRORS THE SENTENCE ABOVE IT: professionals
-             assessed, they raised, the highest remained. Row and copy teach one
-             shape rather than two.
+             shows an auction IN PROGRESS — prod's own bids and bidders, in that
+             order. This one reports an auction's RESULT, so it leads with the
+             DEALERSHIPS and follows with the offers they made, mirroring the
+             sentence above it clause for clause. Row and copy teach one shape
+             rather than two.
 
-             THE THIRD CELL IS WHAT ANSWERS "where are the other 136 offers?".
-             Two bare counts state a contradiction and leave it there; a row
-             that narrows to the number on the offer card resolves it.
+             `Tehtyjä tarjouksia`, not prod's `Tarjouksia yhteensä`: past tense,
+             because the auction is over and the block is a result.
 
-             The amount is `standingAmount`, the same single definition the
-             offer card, the accept handler and the belief block read — so a
-             negotiation moves all of them together and this cell cannot quote
-             a stale price beside a live one. It was deliberately absent before:
-             `buildAuctionVerdict` took `buyers` and nothing else precisely so
-             no figure here could go stale. Carrying one is a real obligation,
-             not a free addition.
+             It carries NO euro figure. A third `Korkein tarjous` cell was built
+             and dropped — the amount is already the largest thing on the offer
+             card directly above, so the cell restated it in a smaller font, and
+             it duplicated the belief block's own chip further down the page.
+             The copy answers the "where are the rest" question instead, which
+             is what that cell was really for.
 
-             `data-cells` rather than three new props on a shared component —
-             see the prop's own note in AuctionStats.vue. */
+             `data-cells` rather than label-override props on a shared
+             component — see the prop's own note in AuctionStats.vue. */
           var resultCells = [
-            { label: 'Autoliikkeitä',         value: buyers,      icon: 'ph-bold-users-three' },
-            { label: 'Tarjousta kilpailussa', value: offerCount,  icon: 'ph-bold-chart-bar' },
-            { label: 'Korkein tarjous',
-              value: fmtCurrency(standingAmount(offers[0]) || req.highest_offer || 0),
-              icon: 'ph-fill-coins' }
+            { label: 'Autoliikkeitä',     value: buyers,     icon: 'ph-bold-users-three' },
+            { label: 'Tehtyjä tarjouksia', value: offerCount, icon: 'ph-bold-chart-bar' }
           ];
           html = '<div data-auction-stats data-cells="'
             + JSON.stringify(resultCells).replace(/"/g, '&quot;') + '"></div>';
@@ -2294,7 +2285,7 @@
       /* Informed decision v1 stops here: the chart and the date row are what
          this arm replaces. Everything below is control's, untouched. */
       if (idShow && buyers >= VERDICT_MIN_BIDDERS) {
-        return buildAuctionVerdict(buyers, html);
+        return buildAuctionVerdict(buyers, offerCount, html);
       }
 
       // Chart — uses req.insights_data (pre-generated bid progression, mirrors offers.astro formula)

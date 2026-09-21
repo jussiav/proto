@@ -3008,7 +3008,8 @@ they reach the sentence at the bottom — **evidence reads better after the
 claim.** `buildAuctionVerdict` takes the stats markup as an argument rather than
 building it, so the two arms that draw that row keep one definition of it.
 
-**REWRITTEN 2026-09-18, FROM JUSSI'S FIGMA VERSION.** The section is now
+**REWRITTEN 2026-09-21, FROM JUSSI'S FIGMA VERSION — THE SECOND REWRITE IN
+FOUR DAYS, AND IT REVERSES PART OF THE FIRST.** The section is
 `Tarjouskilpailun tulos` — which **resolves the open question below** about
 prod's `tiedot` underselling a block that had stopped being a record. What it
 says now:
@@ -3016,58 +3017,83 @@ says now:
 | Part | Copy |
 |---|---|
 | tag | `Suosittelemme hyväksymään` *(unchanged)* |
-| headline | `Paras hinta autostasi on nyt selvillä!` |
-| body | `Autoliikkeiden ammattilaiset perehtyivät autoosi ja laskivat sille tarjouksensa. Kilpailussa he korottivat tarjouksiaan, kunnes korkein tarjous jäi voimaan.` |
-| row | `Autoliikkeitä 25` · `Tarjousta kilpailussa 138` · `Korkein tarjous 11 500 €` |
+| headline | `Paras hinta autostasi on nyt selvillä!` *(unchanged)* |
+| body | `25 autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä 138 tarjousta. Korkein tarjous on kilpailun tulos, jonka suosittelemme hyväksymään.` |
+| row | `Autoliikkeitä 25` · `Tehtyjä tarjouksia 138` |
 
 **THE HEADLINE CLAIMS THE BRAND'S OWN PROMISE**, closing the front page's
 `Paras hinta autostasi` at the moment the seller can act on it. It is only
 defensible because the gate is the offer amount — see the corrected note below.
 
-**THE THIRD CELL IS WHAT ANSWERS "where are the other 136 offers?"** Two bare
-counts state a contradiction and leave it; a row that narrows —
-dealerships → bids → the winning price — resolves it by ending on the number on
-the offer card. **The row now mirrors the sentence above it**, which is the
-structural point: copy and figures teach one shape instead of two.
+**THE COPY ANSWERS "where are the other 136 offers?", AND THE THIRD CELL THAT
+USED TO ANSWER IT IS GONE.** This is the reversal: on 2026-09-18 a
+`Korkein tarjous 11 500 €` cell was added on the reasoning that a row which
+NARROWS — dealerships → bids → the winning price — resolves the contradiction
+by ending on the number on the offer card. It does, and it cost too much: the
+amount is already the largest thing on the offer card directly above, so the
+cell restated it in a smaller font, and it duplicated the belief block's own
+chip further down the same screen. **Jussi named that duplication himself** —
+same number, two terms, two visual styles.
 
-**`kunnes korkein tarjous jäi voimaan` is the sentence doing that work.** The
-old wording (`korottivat vielä tarjouksiaan voittaakseen kilpailun`) said why
-they bid and never what became of the rest. "The highest one REMAINED IN FORCE"
-says they were superseded, not withheld.
+**THE SENTENCE DOES THE SAME WORK FOR NOTHING.** `25 autoliikettä … tekemällä
+yhteensä 138 tarjousta` states both figures IN ONE CLAUSE, so the gap between
+them is a fact about how the auction ran rather than a contradiction the reader
+has to resolve. Two bare counts in a row cannot do that — they print 25 and 138
+side by side and leave the seller to decide whether 136 offers are being
+withheld. `Korkein tarjous on kilpailun tulos` closes it: the rest were
+**superseded, not hidden**.
 
-**`perehtyivät`, NEVER `arvioivat`.** An intermediate Figma version used
-`arvioivat autosi`; `arvio` is exactly what a sceptical seller dismisses
-("se on vaan arvio") and it is the product's own word for the machine estimate.
-It was also ungrammatical in that draft (`perehtyä` takes the illative —
-`autoosi`, not `autosi`), which is what the proto ships.
+**SO THE COUNTS ARE BACK IN THE COPY, AND THE DUPLICATION WITH THE ROW IS
+DELIBERATE.** A pass on 2026-09-14 took `25 autoliikkeen ammattilaista` OUT of
+the body precisely because a cell 100px below printed 25 — the rule then was
+"the count appears once". That rule is now overruled: a figure repeated in a
+sentence that EXPLAINS it is not the same as a figure printed twice. **Do not
+"fix" this by removing the numbers from the copy again** — the sentence stops
+working without them.
 
-**THE BLOCK NOW CARRIES A EURO FIGURE, AND THAT IS A REAL OBLIGATION.** It used
-to take `buyers` and nothing else, deliberately, so nothing here could go stale.
-The cell reads `standingAmount(offers[0])` — the same single definition the
-offer card, the accept handler and the belief block use — so a negotiation moves
-all of them together. **A figure added here must always read that.** Consequence
-to watch in testing: the amount now appears three times on one screen (card,
-this row, the belief chip), each with a different job.
+**`perehtyi`, NEVER `arvioi`** — and note the singular. The subject is
+`25 autoliikettä`, which takes a singular verb in Finnish; the previous version
+had a plural subject (`ammattilaiset perehtyivät`). `arvio` is exactly what a
+sceptical seller dismisses ("se on vaan arvio") and it is the product's own word
+for the machine estimate. An intermediate Figma version also had it in the wrong
+case — `perehtyä` takes the illative, `autoosi` not `autosi`.
 
-**`AuctionStats` GAINED ONE PROP, `cells`, AND NOTHING ELSE CHANGED.** The
-component's own row is prod's bids/bidders plus the optional B2B price; this row
-is a different content set in a different order with its own labels, which is
-the same frame rather than a second component. `cells` (`[{label, value, icon}]`,
-pre-formatted by the caller) replaces the defaults when passed and is absent
-everywhere else, so **the offers page and Asking price removal are untouched**.
-Passed as JSON in `data-cells`; malformed JSON falls back to the default cells
-rather than to an empty frame. Chosen over three ad-hoc props (two label
-overrides plus an order flag) because it states the generalisation honestly.
-**The bundle must be rebuilt** — `npx vite build --config vite.auction-stats.config.js`.
+**THE BLOCK READS NO EURO FIGURE AGAIN, which is what it was designed for.**
+`buildAuctionVerdict(buyers, offerCount, statsHtml)` takes the two counts and
+nothing else, so nothing here can go stale against the number beside it and it
+works unchanged on a final offer. The three-cell version's obligation —
+"a figure here must always read `standingAmount`" — no longer applies, and
+reinstating any amount in this block brings it back.
 
-**Measured, three cells:** 254px desktop / **517px at 375px**. The container
-query stacks them below a 320px container, which a phone always is (287px), so
-the row becomes three full-width rows with horizontal dividers — +138px against
-the two-cell version, and the cost of the third figure. Nothing truncates at any
-width. One band worth knowing: between roughly 410px and 500px viewport the
-container sits just above the stacking threshold and
-`Tarjousta kilpailussa` takes two 12px lines while its neighbours take one;
-`mt-auto` keeps every value on the same baseline, so the row stays level.
+**`Tehtyjä tarjouksia`, not prod's `Tarjouksia yhteensä`.** Past tense, because
+the auction is over and the block reports a result rather than a total in
+progress.
+
+**`AuctionStats`' `cells` PROP IS STILL LOAD-BEARING even at two cells**, and
+that is not obvious: the default row is the same COUNT but prod's own labels in
+prod's own order (bids first). This row leads with the dealerships and renames
+both cells, so it is still a content override rather than the default. `cells`
+(`[{label, value, icon}]`, pre-formatted by the caller) replaces the defaults
+when passed and is absent everywhere else, so **the offers page and Asking price
+removal are untouched** — verified after this change: the offers page still
+renders `Tarjouksia yhteensä / Tarjoajat`. Passed as JSON in `data-cells`;
+malformed JSON falls back to the default cells rather than to an empty frame.
+**The component did not change here, so the bundle needs NO rebuild** — this
+edit is `decision.html` only.
+
+**Measured, two cells:** 254px desktop / **403px at 375px**, against the
+three-cell version's 254 / 517 — **114px back on a phone**, because two cells
+clear the container query's 220px threshold where three did not clear its 320px
+one, so the row stays side by side instead of stacking. Both labels hold one
+line down to **360px viewport** (272px container); at 320px `Tehtyjä tarjouksia`
+takes two 12px lines, unclipped, and `mt-auto` keeps both values on the same
+baseline so the row stays level. The body is 6 lines at 375px — the longest it
+has been, and the price of carrying both figures in prose.
+
+**One repetition shipped knowingly:** the body ends `jonka suosittelemme
+hyväksymään` and the tag says `Suosittelemme hyväksymään`, ~60px apart. It is
+Jussi's own Figma copy and was built as drawn; flagged for the copy lock rather
+than edited in passing.
 
 **THE PAINTED VERDICT BLOCK IS GONE; THE RECOMMENDATION IS A TAG**
 (2026-09-16, Jussi's call). `Loistava suoritus!` and its sentence are replaced by
@@ -3310,10 +3336,12 @@ predicate, it is a decision about a claim.
 denominator is the reference price, not "our estimate": a GT-X estimate, a sales
 advisor's estimate from the review call, or any later corrected value.
 
-**The section keeps prod's title.** `Tarjouskilpailun tiedot` described a record
-of what happened; the block is now an argument about what it meant, so the title
-undersells it. Renaming a production section is its own decision — left as an
-open question rather than changed in passing.
+**THE SECTION TITLE WAS CHANGED, AND THIS OPEN QUESTION IS CLOSED**
+(2026-09-18). Prod's `Tarjouskilpailun tiedot` described a record of what
+happened; the block is an argument about what it meant, so the title undersold
+it. It is `Tarjouskilpailun tulos` now. The rename is NOT arm-gated — `control`
+shows it too — so it is a production copy change to carry into the ticket rather
+than part of the arm.
 
 **Heights, desktop / 375px:** advice **194 / 194** collapsed, reminders
 **264 / 524**, options **259 / 543**, auction details **457 / 535**. The three
