@@ -138,6 +138,21 @@
   // mirror its props too — see CARD-COMPONENT-PLAN.md for the contract.
   //
   //   registrationNumber, make, model, modelSpecification,
+  /* Prod stores these as enum keys and prints them through
+     tender.fuel_types / .drive_types / .transmission_types, so a raw "fwd" or
+     "gasoline" never reaches a Finnish card. Values the map does not know pass
+     through unchanged - the funnel already writes some of them in Finnish. */
+  var ENUM_LABELS_FI = {
+    gasoline: 'Bensiini', diesel: 'Diesel', hybrid: 'Hybridi', electric: 'Sähkö',
+    gas: 'Kaasu', e85: 'E85/bensiini',
+    petrol_electric: 'Bensiini-sähkö', diesel_electric: 'Diesel-sähkö',
+    manual: 'Manuaali', automatic: 'Automaatti', stepless: 'Portaaton',
+    fwd: 'Etuveto', rwd: 'Takaveto', awd: 'Neliveto'
+  };
+  function ENUM_FI(v) {
+    return (typeof v === 'string' && ENUM_LABELS_FI[v.toLowerCase()]) || v;
+  }
+
   //   year, mileage, fuelType, driveType, image,
   //   status, statusColor, statusIcon, statusIconColor, supportingText,
   //   primaryCta / secondaryCta  { text, href?, attrs? }
@@ -175,7 +190,7 @@
 
     var name = [props.make, props.model].filter(Boolean).map(esc).join(' ');
 
-    var pills = [props.year, props.mileage, props.driveType, props.fuelType]
+    var pills = [props.year, props.mileage, ENUM_FI(props.driveType), ENUM_FI(props.fuelType)]
       .filter(Boolean)
       .map(function (v) {
         return '<span class="px-1.5 py-0.5 font-dm text-xs text-slate-500 rounded border border-slate-200">' + esc(v) + '</span>';

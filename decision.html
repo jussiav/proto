@@ -398,7 +398,10 @@
   <script>
   (function() {
     var _now = function() { return Math.floor(Date.now() / 1000); };
-    var REACTION = 7200;
+    /* prod's `app.reaction_time_for_offers`, config default 86400. Shared with
+       offers.html through PROTO_AUCTION so one offer has one deadline across
+       the two pages; prod derives both from the same request. */
+    var REACTION = (window.PROTO_AUCTION && window.PROTO_AUCTION.reactionSeconds) || 86400;
     var _params  = new URLSearchParams(window.location.search);
 
     /* ── "Enhanced negotiations" arm ──────────────────────────────────────────
@@ -711,11 +714,27 @@
        for this scenario, so both pages agree — one definition, used by the
        cards and by the modal footer's timer. */
     function offerExpiryTs(req) {
-      var store = {};
-      try { store = JSON.parse(localStorage.getItem('autovex_offers') || '{}'); } catch (e) { store = {}; }
+      var store = _sharedAuction();
       return (store.sharedExpiryScenario === SCENARIO && store.sharedExpiry)
         ? store.sharedExpiry
         : (req.expires_at || 0) + REACTION;
+    }
+
+    function _sharedAuction() {
+      try { return JSON.parse(localStorage.getItem('autovex_offers') || '{}'); } catch (e) { return {}; }
+    }
+
+    /* The offers page and this one show the same auction, and in prod both read
+       one tender request - so the tally the seller saw while it was running has
+       to be the tally the result block explains. Whatever offers.html pinned for
+       this scenario wins; the fixture is the fallback for a direct load. */
+    function auctionCounts(req) {
+      var store = _sharedAuction();
+      var same  = store.sharedExpiryScenario === SCENARIO;
+      return {
+        offers:  same && store.sharedOffers  != null ? store.sharedOffers  : req.offer_count,
+        bidders: same && store.sharedBidders != null ? store.sharedBidders : req.buyers
+      };
     }
 
     /* prod's negotiation.status, derived from the thread the proto stores.
@@ -965,6 +984,21 @@
     var PAST   = function() { return _now() - REACTION - 3600; };
     var ACTIVE = function() { return _now() - 3600; };
 
+    /* The car the seller entered, not a fixture: prod's decision page renders
+       the seller's own tender request. Same store keys offers.html reads, so
+       the two pages cannot show different cars for one listing. */
+    var _funnelCar = (function() {
+      var f = {};
+      try { f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) { f = {}; }
+      var d = f.details || {}, h = f.hero || {};
+      return {
+        make:  d.merkki     || 'Toyota',
+        model: d.malli      || 'Corolla',
+        year:  parseInt(d.vuosimalli, 10) || 2019,
+        plate: h.plate      || 'ABC-123'
+      };
+    })();
+
     var _funnelAskingPrice = (function() {
       try { var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); return parseInt(String(f.priceExpectation || '').replace(/\D/g, '')) || 12000; } catch(e) { return 12000; }
     })();
@@ -974,8 +1008,8 @@
     })();
 
     var BASE = {
-      id: 1001, make: 'Toyota', model: 'Corolla', year: 2019,
-      registration_number: 'ABC-123', asking_price: _funnelAskingPrice, price_estimation: _funnelAskingPrice,
+      id: 1001, make: _funnelCar.make, model: _funnelCar.model, year: _funnelCar.year,
+      registration_number: _funnelCar.plate, asking_price: _funnelAskingPrice, price_estimation: _funnelAskingPrice,
       published_at: _now() - 8 * 86400,
       auction_ends_at: _now() - REACTION - 7200,
       /* Every seeded auction is a fair offer unless `?fair=0` says otherwise —
@@ -2199,8 +2233,9 @@
 
     // AuctionInsights — mirrors AuctionInsights.vue structure (dl + chart area + dates)
     function buildInsights(req, offers, idShow) {
-      var offerCount = req.offer_count || offers.length;
-      var buyers     = req.buyers || 0;
+      var _counts    = auctionCounts(req);
+      var offerCount = _counts.offers || offers.length;
+      var buyers     = _counts.bidders || 0;
       var startFmt   = new Date(req.published_at * 1000).toLocaleDateString('fi-FI', { day: 'numeric', month: 'long', year: 'numeric' });
       var endFmt     = new Date(req.auction_ends_at * 1000).toLocaleDateString('fi-FI', { day: 'numeric', month: 'long', year: 'numeric' });
 

@@ -220,6 +220,24 @@
     return 'draft-incomplete';
   }
 
+  /* One definition of the auction's own numbers, because two pages render them
+     and prod reads both from the same tender request.
+
+     `reactionSeconds` is prod's `app.reaction_time_for_offers` (config default
+     86400). Prod derives every seller-facing deadline from it - the card timer,
+     the modal footer and the final offer, which resets the window rather than
+     shortening it (FinalOffer.php). The proto used to run the decision page on
+     a 2 h window while the offers page seeded 24 h ones, so the same seller saw
+     two different clocks for one offer.
+
+     The ended-auction counts are shared for the same reason: the offers page's
+     live tally and the decision page's result block are one request in prod. */
+  window.PROTO_AUCTION = {
+    reactionSeconds: 86400,
+    endedBids:       138,
+    endedBidders:    25
+  };
+
   window.PROTO_MOCK = {
     states: LABELS,
     detect: detect,

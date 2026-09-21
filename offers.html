@@ -321,6 +321,29 @@
       } catch(e) {}
     })();
 
+    /* The auction's own numbers come from PROTO_AUCTION so this page and
+       decision.html cannot disagree about one request - prod reads both from
+       the same tender request, where `offer_count` is every bid and `buyers`
+       the distinct dealerships behind them. */
+    var RX          = (window.PROTO_AUCTION && window.PROTO_AUCTION.reactionSeconds) || 86400;
+    var ENDED_BIDS  = (window.PROTO_AUCTION && window.PROTO_AUCTION.endedBids)    || 138;
+    var ENDED_BUYERS= (window.PROTO_AUCTION && window.PROTO_AUCTION.endedBidders) || 25;
+    var LIVE_BIDS   = 84;   // mid-auction, on the way to ENDED_BIDS
+    var LIVE_BUYERS = 19;
+
+    /* The drafts list shows the seller's own car, as prod does - the same
+       funnel values BASE reads, so a draft and a published listing cannot show
+       two different cars in one account. */
+    var DRAFT_CAR = {
+      registration_number: plate,
+      make_name: merkki, model_name: malli,
+      model_specification: (s.details || {}).mallitarkennus || '',
+      year: parseInt(vuosi, 10) || 2020,
+      fuel_type: fuel || 'gasoline',
+      drive_type: (s.details || {}).vetotapa || 'fwd',
+      driven: km
+    };
+
     var BASE = {
       id: 1001, make: merkki, model: malli, year: parseInt(vuosi) || 2020,
       fuel_type: fuel, driven: km, registration_number: plate,
@@ -335,24 +358,24 @@
       })], negotiations: [] }; },
       'auction-live':   function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() + 20*3600, published_at: _now() - 16*3600,
-        offer_count: 2, buyers: 2, offers: [{id:201,status:0},{id:202,status:0}], offers_seen_at: null, has_final_offer: false,
+        offer_count: LIVE_BIDS, buyers: LIVE_BUYERS, offers: [{id:201,status:0},{id:202,status:0}], offers_seen_at: null, has_final_offer: false,
       })], negotiations: [] }; },
       'new-offers':     function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 4*3600,  published_at: _now() - 40*3600,
-        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
         offers_seen_at: null, has_final_offer: false,
         expires_at: _now() - 4*3600 + 24*3600,
       })], negotiations: [] }; },
       'seen-offers':    function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 5*3600,  published_at: _now() - 41*3600,
-        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
         offers_seen_at: new Date((_now() - 3600) * 1000).toISOString(), has_final_offer: false,
         expires_at: _now() - 5*3600 + 24*3600,
       })], negotiations: [] }; },
       'final-offer':    function() { return { requests: [Object.assign({}, BASE, {
         status: 1,
         auction_ends_at: _now() - 5*3600, published_at: _now() - 7*86400,
-        offer_count: 2, buyers: 2,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
         offers: [{id:201,status:3},{id:202,status:0}],
         offers_seen_at: new Date((_now() - 3600) * 1000).toISOString(), has_final_offer: true,
         highest_offer: 11200, second_highest_offer: 10800,
@@ -371,20 +394,20 @@
         status: 1,
         auction_ends_at: _now() - 4*86400, published_at: _now() - 7*86400,
         expires_at: _now() - 3*86400,
-        offer_count: 3, buyers: 3,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
         offers: [{id:201,status:2},{id:202,status:2},{id:203,status:2}],
         offers_seen_at: new Date((_now() - 3*86400) * 1000).toISOString(), has_final_offer: false,
         highest_offer: 9500, second_highest_offer: 9000,
       })], negotiations: [] }; },
       'accepted':       function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 2*86400, published_at: _now() - 2*86400 - 36*3600,
-        offer_count: 3, buyers: 3,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
         offers: [{id:201,status:1},{id:202,status:2},{id:203,status:2}],
         offers_seen_at: new Date((_now() - 2*86400) * 1000).toISOString(), has_final_offer: false,
       })], negotiations: [] }; },
       'deal-completed': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
-        offer_count: 3, buyers: 3,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
         /* REQUEST_COMPLETED — the only thing separating this from `accepted`,
            and what turns the badge into "Kauppa vahvistettu". */
         status: 4,
@@ -393,23 +416,23 @@
       })], negotiations: [] }; },
       'deal-failed':    function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
-        offer_count: 3, buyers: 3,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
         offers: [{id:201,status:2},{id:202,status:2},{id:203,status:2}],
         offers_seen_at: new Date((_now() - 2*86400) * 1000).toISOString(), has_final_offer: false,
       })], negotiations: [] }; },
       'counter-offer-sent': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 5*3600, published_at: _now() - 41*3600,
-        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
         offers_seen_at: new Date((_now() - 2*3600) * 1000).toISOString(), has_final_offer: false,
       })], negotiations: [{id:301,tender_id:1001,offer_id:201,status:0,seller_counter_amount:11200,dealer_original_amount:10500,updated_at:_now()-3600}] }; },
       'dealer-replied': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 5*3600, published_at: _now() - 41*3600,
-        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
         offers_seen_at: new Date((_now() - 2*3600) * 1000).toISOString(), has_final_offer: false,
       })], negotiations: [{id:301,tender_id:1001,offer_id:201,status:7,seller_counter_amount:11200,dealer_original_amount:10500,dealer_counter_amount:10800,updated_at:_now()-3600}] }; },
       'negotiation-stopped': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 5*3600, published_at: _now() - 41*3600,
-        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
         offers_seen_at: new Date((_now() - 2*3600) * 1000).toISOString(), has_final_offer: false,
         expires_at: _now() + 18*3600,
       })], negotiations: [{id:301,tender_id:1001,offer_id:201,status:8,updated_at:_now()-2*3600}] }; },
@@ -417,64 +440,64 @@
         status: 1,
         auction_ends_at: _now() - 4*86400, published_at: _now() - 10*86400,
         expires_at: _now() - 3*86400,
-        offer_count: 3, buyers: 3, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS, offers: [{id:201,status:0},{id:202,status:0},{id:203,status:0}],
         offers_seen_at: null, has_final_offer: false,
         highest_offer: 11500, second_highest_offer: 11000,
         is_expired: true,
       })], negotiations: [] }; },
       'offers-auto-rejected': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 4*86400, published_at: _now() - 4*86400 - 36*3600,
-        offer_count: 3, buyers: 3,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
         offers: [{id:201,status:0,auto_rejected:true},{id:202,status:0,auto_rejected:true},{id:203,status:0,auto_rejected:true}],
         offers_seen_at: null, has_final_offer: false,
       })], negotiations: [] }; },
       'dac7': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 3*86400, published_at: _now() - 3*86400 - 36*3600,
-        offer_count: 3, buyers: 3,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
         offers: [{id:201,status:1},{id:202,status:2},{id:203,status:2}],
         offers_seen_at: new Date((_now() - 3*86400) * 1000).toISOString(), has_final_offer: false,
         needs_dac7: true,
       })], negotiations: [] }; },
       'blank': function() { return { requests: [], negotiations: [], drafts: [] }; },
       'draft-open': function() { return { requests: [], negotiations: [], drafts: [{
-        id: 501, status: 'open', registration_number: 'XYZ-789',
+        id: 501, status: 'open', registration_number: DRAFT_CAR.registration_number,
         missing_images: false, created_at: _now() - 3600,
-        make_name: 'Toyota', model_name: 'Corolla',
-        model_specification: 'Trendline 1,0 kk kW (75 hv)',
-        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
-        driven: 82000, asking_price: 12000,
+        make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
+        model_specification: DRAFT_CAR.model_specification,
+        year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
+        driven: DRAFT_CAR.driven, asking_price: 12000,
       }] }; },
       'draft-in-review': function() { return { requests: [], negotiations: [], drafts: [{
-        id: 501, status: 'in_review', registration_number: 'XYZ-789',
+        id: 501, status: 'in_review', registration_number: DRAFT_CAR.registration_number,
         review_comms_content: REVIEW_COMMS_CONTENT[REVIEW_COPY_VARIANT] || null, created_at: _now() - 86400,
-        make_name: 'Toyota', model_name: 'Corolla',
-        model_specification: 'Trendline 1,0 kk kW (75 hv)',
-        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
-        driven: 82000, asking_price: 12000,
+        make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
+        model_specification: DRAFT_CAR.model_specification,
+        year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
+        driven: DRAFT_CAR.driven, asking_price: 12000,
       }] }; },
       'draft-rejected': function() { return { requests: [], negotiations: [], drafts: [{
-        id: 501, status: 'rejected', registration_number: 'XYZ-789',
+        id: 501, status: 'rejected', registration_number: DRAFT_CAR.registration_number,
         missing_images: false, created_at: _now() - 2 * 86400,
-        make_name: 'Toyota', model_name: 'Corolla',
-        model_specification: 'Trendline 1,0 kk kW (75 hv)',
-        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
-        driven: 82000, asking_price: 12000,
+        make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
+        model_specification: DRAFT_CAR.model_specification,
+        year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
+        driven: DRAFT_CAR.driven, asking_price: 12000,
       }] }; },
       'draft-rejected-images': function() { return { requests: [], negotiations: [], drafts: [{
-        id: 501, status: 'rejected', registration_number: 'XYZ-789',
+        id: 501, status: 'rejected', registration_number: DRAFT_CAR.registration_number,
         missing_images: true, created_at: _now() - 2 * 86400,
-        make_name: 'Toyota', model_name: 'Corolla',
-        model_specification: 'Trendline 1,0 kk kW (75 hv)',
-        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
-        driven: 82000, asking_price: 12000,
+        make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
+        model_specification: DRAFT_CAR.model_specification,
+        year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
+        driven: DRAFT_CAR.driven, asking_price: 12000,
       }] }; },
       'draft-queued': function() { return { requests: [], negotiations: [], drafts: [{
-        id: 501, status: 'queued_for_publishing_after_verification', registration_number: 'XYZ-789',
+        id: 501, status: 'queued_for_publishing_after_verification', registration_number: DRAFT_CAR.registration_number,
         missing_images: false, created_at: _now() - 86400,
-        make_name: 'Toyota', model_name: 'Corolla',
-        model_specification: 'Trendline 1,0 kk kW (75 hv)',
-        year: 2019, fuel_type: 'gasoline', drive_type: 'fwd',
-        driven: 82000, asking_price: 12000,
+        make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
+        model_specification: DRAFT_CAR.model_specification,
+        year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
+        driven: DRAFT_CAR.driven, asking_price: 12000,
       }] }; },
     };
 
@@ -815,13 +838,15 @@
       var cfg = NOTIF_CFG[notifType];
       sectionUpdates.classList.remove('hidden');
 
-      // All notifications use request.expires_at + reactionTimeForOffers (24h in mock)
-      var expiresAt = req.expires_at || (req.auction_ends_at + 24*3600);
+      // All notifications use request.expires_at + reactionTimeForOffers
+      var expiresAt = req.expires_at || (req.auction_ends_at + RX);
       // Persist effective expiry so decision.html can sync its countdown
       try {
         var _offs = JSON.parse(localStorage.getItem('autovex_offers') || '{}');
         _offs.sharedExpiry = expiresAt;
         _offs.sharedExpiryScenario = SCENARIO;
+        _offs.sharedOffers = req.offer_count;
+        _offs.sharedBidders = req.buyers;
         localStorage.setItem('autovex_offers', JSON.stringify(_offs));
       } catch(e) {}
       if (notifType === 'postRejection') { expiresAt = expiresAt + 86400 + 7*86400; }

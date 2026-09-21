@@ -2135,6 +2135,21 @@ font-size step is prod's `text-xs xs:text-sm` with prod's custom `xs` = 460px,
 hand-written in the card's shell CSS because the proto does not override
 Tailwind's default screens.
 
+**The card's attribute pills are translated, because prod stores enum keys**
+(2026-09-21). `fuel_type`, `drive_type` and `transmission` are keys in prod and
+print through `tender.fuel_types` / `.drive_types` / `.transmission_types`, so a
+raw `fwd` or `gasoline` never reaches a Finnish card — the proto was rendering
+the key. `ENUM_LABELS_FI` in `vehicle-card.js` transcribes those three maps and
+passes anything it does not know through unchanged, since the funnel already
+writes some of these values in Finnish.
+
+**Cars sold: 80 000, everywhere** (2026-09-21). The front page said `50 000+`
+and the funnel sidebar `70 000`; prod's own static string is
+`Yli 80 000 myytyä autoa` and the live front page says 80 000+. Note prod's
+sidebar copy interpolates the figure (`description_total` takes `:amount`), so
+the proto's number is a stand-in and will drift again — check it against prod
+when the front page is next reviewed.
+
 **The seller's own price is never shown back to them.** Prod passes
 `asking_price` into `CarCard` (`Preview.vue`) and `CarCard` never renders it —
 the prop is declared and unused — and `CarDetailsCard`, the modal behind the
@@ -3204,6 +3219,39 @@ number of bids is a state of the world a real seller could be in; an arm is a
 design candidate. Letting a variant rewrite world state would break the split
 the whole prototype bar is built on, so control shows 138/25 too — and it is
 more faithful to prod than 25/25 ever was.
+
+**AND BOTH PAGES NOW READ ONE DEFINITION OF THEM** (2026-09-21). The counts and
+the reaction window live in `proto-mock.js` as `window.PROTO_AUCTION`
+(`reactionSeconds` 86400, `endedBids` 138, `endedBidders` 25), because prod
+reads both pages off the same tender request and the proto was contradicting
+itself across the navigation:
+
+| | was | now |
+|---|---|---|
+| reaction window, decision page | `REACTION = 7200` (2 h) | prod's `app.reaction_time_for_offers`, config default **86400** |
+| reaction window, offers page | a literal `24*3600` | the same constant |
+| live auction counts | `offer_count: 2, buyers: 2` | `LIVE_BIDS` 84 / `LIVE_BUYERS` 19, mid-flight towards the ended pair |
+| ended auction counts | `offer_count: 3, buyers: 3` on twelve fixtures | `ENDED_BIDS` / `ENDED_BUYERS` |
+
+`offers.html` pins `sharedOffers` / `sharedBidders` next to the `sharedExpiry`
+it already pinned, and `decision.html`'s `auctionCounts(req)` prefers that pair
+when the scenario matches, falling back to its own fixture on a direct load.
+**The clock was the louder half**: a final offer rendered a 1 h countdown where
+prod's `FinalOffer` RESETS the window to a full 24 h (`expires = now()` on the
+request, `now() + reaction time` on the offer), and the seller's own clock is
+computed request-side anyway — `SellerTenderOfferResource` returns
+`expires->addSeconds(reaction_time_for_offers)` and does not read
+`tender_offers.expires_at` at all, with a comment saying it should. Measured
+after the change: 23 h on a direct load, 19 h 59 m arriving from the offers
+page, which is that page's own pinned expiry.
+
+**One car across every surface, too.** The five draft fixtures on `offers.html`
+carried a hardcoded `XYZ-789 / Toyota Corolla 2019` while `BASE` on the same
+page already read the funnel store, so one account could list two cars;
+`decision.html`'s `BASE` hardcoded a third. Both now read the funnel car
+(`DRAFT_CAR` and `_funnelCar`). The plate lookup still returns one fixed car
+whatever plate is typed — accepted, deliberately, rather than shipping a
+catalogue of placeholder makes into the proto.
 
 **It made the control chart honest and duller.** `genInsights` floors every
 increment at 50 €, so 138 bids across a ~4 000 € range could not be drawn and
