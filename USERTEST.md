@@ -21,6 +21,54 @@ Default single-run persona if nothing specified:
 
 > Private person selling their current car. Not in a hurry, but motivated. **Goal: "I want to sell my car and get as high a price for it as possible."** Somewhat wary of car dealers; wants to feel in control; won't hand over personal data without seeing why it's needed. Reads Finnish. Average tech skills — no dev tools, no URL editing.
 
+## Preflight — do this before every run, and check it per participant
+
+A run that starts against a broken environment fails page by page in ways that
+read as product bugs. These are preconditions, not steps to remember:
+
+1. **The prototype must be served over HTTP.** `file://` breaks Google Fonts and
+   the scenario params. Check the server, and start one if it is down:
+
+   ```bash
+   curl -sf -o /dev/null http://localhost:8080/index.html \
+     || (cd <path-to>/Claude-Figma && python3 -m http.server 8080 &)
+   ```
+
+   Do not assume a server someone else started will outlive the batch - check it
+   again for each participant, not once for the run.
+
+2. **Kill any browser still holding this participant's debugging port.** A
+   crashed run leaves Chrome alive; the next start then attaches to the dead
+   run's profile and inherits its localStorage, so the "first-time visitor"
+   arrives mid-funnel.
+
+3. **Fresh profile per participant**, so each one has its own localStorage. Two
+   participants sharing an origin and a profile will overwrite each other's
+   funnel data.
+
+4. **A screens folder per participant, and write only into your own.** Runs have
+   written into another participant's folder before, which then has to be traced
+   file by file. Before writing the report, list the folder and cite only what is
+   actually in it.
+
+5. **First URL carries the mode and the arm**, e.g.
+   `index.html?mode=test&informed-decision=v1`. Both stick in localStorage, so
+   later URLs need only the scenario params. `?mode=test` hides the prototype's
+   own dev bar - a participant must never see proto tooling.
+
+6. **Dealer responses run through `window.protoPage.actions[N].run()`**, not
+   through the page's internal functions, which sit inside its IIFE and are
+   unreachable from outside. Index 0 replies and leaves the negotiation open,
+   1 closes with the pre-filled message, 2 closes silently, 3 auto-closes on the
+   deadline, 4 resets. They preserve the participant's own thread, where
+   switching scenario would reseed it. A seller counter-offer must exist first.
+
+7. **Know the prototype's own artifacts so they do not get reported as product
+   defects:** the plate lookup always returns the same fixed mock car whatever
+   plate is typed, and the offers page's live bid counts are its own mock and do
+   not match the decision page's result counts. Note either in one line, tagged
+   `[proto artifact]`, and move on.
+
 ## How Claude runs it
 
 1. Launch headed browser (`channel: 'chrome'`, `headless: false`), fresh localStorage, front page.
