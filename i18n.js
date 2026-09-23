@@ -50,30 +50,38 @@
     return val;
   }
 
+  /* resolve() hands back the key itself when nothing matches, so a node whose
+     key is missing — a stale cached translations.js beside fresh markup is the
+     usual cause — keeps the copy written in its HTML instead of printing its
+     own key. */
   function applyTranslations() {
     // Text content
     var nodes = document.querySelectorAll('[data-i18n]');
     for (var i = 0; i < nodes.length; i++) {
-      var v = resolve(nodes[i].getAttribute('data-i18n'));
-      if (v) nodes[i].textContent = v;
+      var k = nodes[i].getAttribute('data-i18n');
+      var v = resolve(k);
+      if (v && v !== k) nodes[i].textContent = v;
     }
     // innerHTML (for nodes containing links)
     var htmlNodes = document.querySelectorAll('[data-i18n-html]');
     for (var i = 0; i < htmlNodes.length; i++) {
-      var v = resolve(htmlNodes[i].getAttribute('data-i18n-html'));
-      if (v) htmlNodes[i].innerHTML = v;
+      var k = htmlNodes[i].getAttribute('data-i18n-html');
+      var v = resolve(k);
+      if (v && v !== k) htmlNodes[i].innerHTML = v;
     }
     // placeholder attributes
     var phNodes = document.querySelectorAll('[data-i18n-placeholder]');
     for (var i = 0; i < phNodes.length; i++) {
-      var v = resolve(phNodes[i].getAttribute('data-i18n-placeholder'));
-      if (v) phNodes[i].placeholder = v;
+      var k = phNodes[i].getAttribute('data-i18n-placeholder');
+      var v = resolve(k);
+      if (v && v !== k) phNodes[i].placeholder = v;
     }
     // aria-label attributes
     var ariaNodes = document.querySelectorAll('[data-i18n-aria]');
     for (var i = 0; i < ariaNodes.length; i++) {
-      var v = resolve(ariaNodes[i].getAttribute('data-i18n-aria'));
-      if (v) ariaNodes[i].setAttribute('aria-label', v);
+      var k = ariaNodes[i].getAttribute('data-i18n-aria');
+      var v = resolve(k);
+      if (v && v !== k) ariaNodes[i].setAttribute('aria-label', v);
     }
     // html lang attribute
     document.documentElement.lang = getLang();
