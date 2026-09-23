@@ -95,7 +95,8 @@ window.TRANSLATIONS = {
     faq: {
       title:      'Usein kysyttyä',
       subtitle:   'Vastaukset yleisimpiin kysymyksiin auton myynnistä.',
-      moreLink:   'Lisää kysymyksiä?',
+      moreQuestion: 'Muuta kysyttävää?',
+      moreLink:   'Vieraile tukisivulla',
     },
 
     /* ── Review card texts ── */
@@ -714,7 +715,8 @@ window.TRANSLATIONS = {
     faq: {
       title:      'Frequently asked questions',
       subtitle:   'Answers to the most common questions about selling your car.',
-      moreLink:   'More questions?',
+      moreQuestion: 'Anything else?',
+      moreLink:   'Visit the support page',
     },
 
     reviews: {
