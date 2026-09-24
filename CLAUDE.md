@@ -2399,8 +2399,48 @@ accept is the card's only action and negotiating becomes a considered choice.
 
 **Nothing is expanded on load** — the labels are the whole exposure, which is the
 answer to the priming worry that kept euro figures out of the block in the first
-place. The branch answers must stay honest in both directions: "minulla on toinen
-tarjous" tells the seller to take the better offer if it really is better.
+place.
+
+**COPY PASS 2026-09-24, JUSSI'S OWN WORDING, AND TWO THINGS MOVED WITH IT.**
+
+**`Minulla on toinen tarjous` now ends in a counter-offer, not in "take the
+other one".** It used to close with `Jos toinen tarjous on näillä ehdoilla
+parempi, kannattaa ottaa se.` — honest, and it left the seller nothing to do
+here. It now reads `…suosittelemme neuvottelemaan korkeimman AutoVex-tarjouksen
+tehneen liikkeen kanssa samoista ehdoista`, followed by the same
+**Tee vastatarjous** button the `low` branch carries. **The honesty is not
+traded away** — the comparison sentence above it still names the terms that can
+make a rival offer genuinely better (tied to buying another car, who handles the
+paperwork and the liability, when the money lands), and the branch now points at
+the thing the seller can actually change rather than at the door. Keep both
+halves: the branch stops being honest the moment the comparison goes.
+
+**So TWO branches offer the counter-offer, and they share one definition.**
+`NEG_BTN` and `NEG_RUNNING` are declared once in `buildTriage`; each branch picks
+by `hasNeg`. Adding a third entry point means reusing those, never a second
+button string.
+
+**`Hinta tuntuu matalalta` now prints BOTH counts**, through `auctionCounts(req)`
+— the same helper the result block reads, because the two sections state the
+same figures about 400px apart and a seller reads them in one scroll. It was
+reading `req.buyers` directly, which would have diverged the moment a scenario
+pinned counts on the offers page.
+
+**THE `low` BRANCH AND BLOCK 1 NOW SAY ALMOST THE SAME SENTENCE, AND THAT IS
+ACCEPTED FOR NOW — NOT AN OVERSIGHT.** Both open with
+`25 autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä 138
+tarjousta`; the triage adds `onnistuneen` and drops nothing. **Jussi's call
+(2026-09-24): the duplication stands only while both sections are being
+ideated.** The open question is whether `Tarjouskilpailun tulos` should say
+something DIFFERENT once the triage answers the same doubt below it — they must
+not ship as duplicates. Resolve that before either goes to the team; do not
+quietly de-duplicate in passing, because which of the two keeps the sentence is
+the actual decision.
+
+**The branch answers must stay honest in both directions.** That was the reason
+`other-offer` used to end in "take it", and the replacement above is the first
+time this rule has been traded against giving the seller an action. It held
+because the comparison stayed; watch it in testing.
 
 `hasNeg` tests `negStatus(...) !== null`, not truthiness — `negStatus` returns
 **0** for a counter-offer awaiting a reply, so `!!` would re-invite a negotiation
@@ -2470,7 +2510,8 @@ scale all still govern, the strings do not.
 
 ```
 Nettiauton hinta ja saamasi tarjous
-Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.
+Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu
+tai välttämättä mihin hintaan auto myydään.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
 │ 🪙 11 500 €      │ → ╎ Jälleenmyynti    ╎ → │ Ilmoituksen      │
 │ Sinulle maksett… │   ╎ Kulut, vastuu,   ╎   │ pyyntihinta      │   (no sub-label)
@@ -2530,6 +2571,24 @@ line of defence behind the dashed box rather than a rename.
 **The third term lost its sub-label** (`Ilmoituksessa näkyvä hinta`). With
 `Liikkeen pyyntihinta` naming the party, the gloss restated it.
 
+**THE LEAD GAINED A SECOND CLAUSE ON 2026-09-24** — `…tai välttämättä mihin
+hintaan auto myydään.` Jussi's wording, and it closes the one hole the sentence
+had: a seller could accept that the previous owner's figure is invisible and
+still read the advertised price as what the car IS worth. It now says the
+advertised number is not a sale price either. **It does this without naming a
+discount or a rate**, which is what keeps the block out of the arithmetic it has
+always refused to invite.
+
+**THE FOOTNOTE SITS 28px BELOW THE ROW, AND THE RULE IS DOUBLED FOR A REASON
+WORTH KNOWING.** It read as the row's next line at 16px. `.belief-note` is
+hand-written (`mt-7` appears nowhere else on the page, so the Play CDN would
+generate it a tick after this JS-built block renders) — and it is **doubled**,
+`.belief-note.belief-note`, because in `v2` this block renders inside a triage
+panel where `.triage-panel p` is a class PLUS an element and out-specifies a
+single class, zeroing the margin. Measured 28px in both arms after the fix; it
+was 0 in `v2` and 16 in `v1` before it. **A single class silently works in one
+arm and not the other** — that is the trap, not the specificity itself.
+
 **`vastuu` and `riski` are the two words doing the work.** Refurbishment a
 sceptical seller calls markup; the risk that the car does not sell, and the
 liability the dealership carries for it afterwards, are real asymmetries they
@@ -2537,7 +2596,10 @@ are being relieved of. They cannot be dismissed as padding, and — unlike a lis
 of costs — they are assumptions carried as assumptions. **Protect both if the
 sub-label is ever shortened.**
 
-**Measured:** 228px desktop / 500px at 375px. Below 620px the row stacks and
+**Measured (2026-09-24, after the lead's second clause and the 28px footnote
+gap):** `v1`'s `section-belief` **264px desktop / 536px at 375px**, against
+228 / 500 before — the lead takes a second line on desktop and a fourth on a
+phone, and the footnote gap adds 12px. Below 620px the row stacks and
 `.belief-op` rotates 90°.
 Contrast unchanged: 8.70 for the figure and its sub, 14.63 for the two dark
 terms and the arrows, 7.58 for the footnote, **4.76 for the slate-500 sub** —

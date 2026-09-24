@@ -176,6 +176,18 @@
        a tick after the render, which would drop the operators on first paint. */
     .belief-op { align-self: center; }
 
+    /* The footnote is small print ABOUT the row above it, so it needs to read
+       as detached from the row rather than as its next line. Hand-written for
+       the reason above: `mt-7` appears nowhere else on the page, so the Play
+       CDN would generate it a tick after this JS-built block renders. The
+       utility stays on the element as the record of the intended value. */
+    /* DOUBLED, like `.belief-eq` below and for a sharper reason: in v2 this
+       block renders inside a triage panel, and `.triage-panel p` (one class
+       plus an element) out-specifies a single class and zeroes the top margin.
+       Doubling wins without `!important` and without reaching into the panel's
+       own paragraph rhythm. */
+    .belief-note.belief-note { margin-top: 1.75rem; }
+
     /* Below prod's `sm` three 200px terms cannot sit in a 287px column, so the
        equation stacks and the operators become row separators.
 
@@ -1980,34 +1992,47 @@
 
        ALL COPY IS PLACEHOLDER, like the rest of this initiative. */
     function buildTriage(offer, req) {
-      var buyers = req.buyers || 0;
+      /* Same counts the result block prints, through the same helper, because
+         both sections now state them in prose and a seller reads them ~400px
+         apart. */
+      var counts     = auctionCounts(req);
+      var buyers     = counts.bidders || 0;
+      var offerCount = counts.offers  || 0;
       var amount = standingAmount(offer) || req.highest_offer || 0;
       /* negStatus returns 0 for a counter-offer still awaiting a reply, so this
          tests against null rather than truthiness - `!!0` would re-invite a
          negotiation that is already running. */
       var hasNeg = negStatus(NEGOTIATIONS[offer.id]) !== null;
+
+      /* The invitation is only honest while there is no negotiation running.
+         Once one exists the card already carries `Näytä vastaus`, so both
+         branches that would offer a counter-offer point at it instead of
+         opening a second entry to the same modal. */
+      var NEG_RUNNING = '<p>Olet jo tehnyt vastatarjouksen. Näet neuvottelun tilanteen tarjouksen kohdalta.</p>';
+      var NEG_BTN = '<p><button class="triage-cta" data-action="negotiate-offer" data-offer-id="' + offer.id + '">Tee vastatarjous</button></p>';
+
       var items = [
-        /* The invitation is only honest while there is no negotiation running.
-           Once one exists the card already carries `Näytä vastaus`, so this
-           branch points at it instead of offering a second entry to the same
-           modal. */
         { id: 'low',
           q: 'Hinta tuntuu matalalta',
-          a: '<p>Tarjous on tarjouskilpailun tulos: ' + buyers + ' autoliikettä kilpaili autostasi ja korkein tarjous jäi voimaan.</p>' +
+          a: '<p>' + buyers + ' autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä ' + offerCount + ' tarjousta. Korkein tarjous on onnistuneen tarjouskilpailun tulos, jonka suosittelemme hyväksymään.</p>' +
              (hasNeg
-               ? '<p>Olet jo tehnyt vastatarjouksen. Näet neuvottelun tilanteen tarjouksen kohdalta.</p>'
-               : '<p>Jos haluat kokeilla korkeampaa hintaa, voit tehdä vastatarjouksen. Nykyinen tarjous on voimassa sen ajan.</p>' +
-                 '<p><button class="triage-cta" data-action="negotiate-offer" data-offer-id="' + offer.id + '">Tee vastatarjous</button></p>') },
+               ? NEG_RUNNING
+               : '<p>Jos et ole täysin tyytyväinen saamaasi tarjoukseen, voit tehdä vastatarjouksen korkeimmalle tarjoajalle. Nykyinen tarjous pysyy voimassa neuvottelun ajan.</p>' + NEG_BTN) },
         { id: 'elsewhere',
           q: 'Näin muualla korkeampia hintoja',
           a: buildBelief(amount) },
+        /* This branch ends in a counter-offer rather than in "take the other
+           one". The earlier version told the seller to leave, which is honest
+           and gives them nothing to do here; naming the SAME TERMS as the thing
+           to negotiate over keeps the comparison fair and leaves an action. */
         { id: 'other-offer',
           q: 'Minulla on toinen tarjous',
-          a: '<p>Vertaa tarjouksia samoilla ehdoilla: onko toinen tarjous sidottu toisen auton ostoon, kuka hoitaa paperit ja vastuun, ja milloin rahat ovat tilillä.</p>' +
-             '<p>Jos toinen tarjous on näillä ehdoilla parempi, kannattaa ottaa se.</p>' },
+          a: '<p>Vertaa tarjouksia samoilla ehdoilla. Onko toinen tarjous sidottu uuden auton ostoon, kuka hoitaa paperityöt ja vastuun, ja milloin rahat ovat tilillä.</p>' +
+             '<p>Jos toinen tarjous on näillä ehdoilla parempi, suosittelemme neuvottelemaan korkeimman AutoVex-tarjouksen tehneen liikkeen kanssa samoista ehdoista.</p>' +
+             (hasNeg ? NEG_RUNNING : NEG_BTN) },
         { id: 'timing',
           q: 'En tiedä kannattaako myydä nyt',
-          a: '<p>Tarjous on voimassa vain rajoitetun ajan. Sen jälkeen voit julkaista ilmoituksen uudelleen, mutta tarjoukset muodostuvat silloisen markkinatilanteen mukaan.</p>' }
+          a: '<p>Tarjous on voimassa vain rajoitetun ajan. Voit myös kokeilla julkaista ilmoituksen uudelleen, mutta tarjoukset muodostuvat silloisen markkinatilanteen mukaan ja ostajat usein välttävät tarjoavansa autoista jotka ovat jo nähneet tarjouskilpailussa aiemmin.</p>' }
       ];
       var html = '<p class="text-base text-slate-700 mb-4">Kerro mikä mietityttää, niin vastaamme siihen.</p>';
       items.forEach(function (it) {
@@ -2072,7 +2097,7 @@
          call. The `ilmoitus` collision documented below therefore survives in
          that one label; the lead line, where the correction actually lands,
          keeps `Autoliikkeen`. */
-      var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.</p>';
+      var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.</p>';
 
       function chip(cls, label, sub, coins) {
         var own      = cls.indexOf('belief-chip--own') > -1;
@@ -2096,7 +2121,7 @@
         +      chip('', 'Ilmoituksen pyyntihinta', '', false)
         +    '</div>';
 
-      html += '<p class="font-dm text-xs text-slate-600 mt-4">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
+      html += '<p class="belief-note font-dm text-xs text-slate-600 mt-7">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
 
       return html;
     }
