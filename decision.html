@@ -1973,6 +1973,29 @@
        as a solid blob against `fill="currentColor"`. */
     var ICO_COINS = '<svg class="fill-current text-green-700 flex-shrink-0" width="18" height="18" viewBox="0 0 256 256" role="img" aria-hidden="true" fill="currentColor"><path d="M184,89.57V84c0-25.08-37.83-44-88-44S8,58.92,8,84v40c0,20.89,26.25,37.49,64,42.46V172c0,25.08,37.83,44,88,44s88-18.92,88-44V132C248,111.3,222.58,94.68,184,89.57ZM56,146.87C36.41,141.4,24,132.39,24,124V109.93c8.16,5.78,19.09,10.44,32,13.57Zm80-23.37c12.91-3.13,23.84-7.79,32-13.57V124c0,8.39-12.41,17.4-32,22.87Zm-16,71.37C100.41,189.4,88,180.39,88,172v-4.17c2.63.1,5.29.17,8,.17,3.88,0,7.67-.13,11.39-.35A121.92,121.92,0,0,0,120,171.41Zm0-44.62A163,163,0,0,1,96,152a163,163,0,0,1-24-1.75V126.46A183.74,183.74,0,0,0,96,128a183.74,183.74,0,0,0,24-1.54Zm64,48a165.45,165.45,0,0,1-48,0V174.4a179.48,179.48,0,0,0,24,1.6,183.74,183.74,0,0,0,24-1.54ZM232,172c0,8.39-12.41,17.4-32,22.87V171.5c12.91-3.13,23.84-7.79,32-13.57Z"/></svg>';
 
+    /* The chip and the arrow are MARKUP PRIMITIVES, shared by the two chains
+       below on purpose: they carry the geometry (`.belief-chip`, `.belief-op`)
+       and nothing about what a term means. v1's chain and v2's chain own their
+       own CONTENT and are free to diverge — which is the point of keeping the
+       arms separate — while still reading as one visual grammar. If v2 ever
+       needs a different chip SHAPE it gets its own primitive rather than a
+       flag on this one. */
+    function beliefChip(cls, label, sub, coins) {
+      var own      = cls.indexOf('belief-chip--own') > -1;
+      var labelCls = own ? 'text-green-900' : 'text-slate-800';
+      var subCls   = own ? 'text-green-900' : 'text-slate-500';
+      return '<div class="belief-chip ' + cls + ' flex-1 min-w-0">'
+        +      '<span class="flex items-center gap-1.5">'
+        +        (coins ? ICO_COINS : '')
+        +        '<span class="font-dm text-base font-bold ' + labelCls + '">' + label + '</span>'
+        +      '</span>'
+        +      (sub ? '<p class="font-dm text-xs ' + subCls + '">' + sub + '</p>' : '')
+        +    '</div>';
+    }
+    var BELIEF_ARROW = '<span class="belief-op font-dm text-base font-bold text-slate-800 flex-shrink-0" aria-hidden="true">&rarr;</span>';
+
+    var BELIEF_FOOTNOTE = '<p class="belief-note font-dm text-xs text-slate-600 mt-7">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
+
     /* ── Triage — Informed decision v2 ────────────────────────────────────
        The seller names what they are weighing up, and only that branch answers.
        It is the reject survey's own taxonomy, asked BEFORE the decision instead
@@ -1991,14 +2014,17 @@
          the second button on the page.
 
        ALL COPY IS PLACEHOLDER, like the rest of this initiative. */
-    function buildTriage(offer, req) {
-      /* Same counts the result block prints, through the same helper, because
-         both sections now state them in prose and a seller reads them ~400px
-         apart. */
-      var counts     = auctionCounts(req);
-      var buyers     = counts.bidders || 0;
-      var offerCount = counts.offers  || 0;
-      var amount = standingAmount(offer) || req.highest_offer || 0;
+    /* NOTHING IN HERE READS SELLER DATA except the offer's id, which only
+       routes the counter-offer button. No amount, no counts, no dates — every
+       branch says the same thing to every seller.
+
+       That is a design decision, not an omission. The result block above
+       already prints this auction's figures, so repeating them here taught
+       nothing and cost a second place they could go stale. It also means the
+       block does not depend on the fair-offer gate to stay true: it is kept
+       behind that gate today, but only two phrases would have to change if it
+       were widened — see the `low` branch. */
+    function buildTriage(offer) {
       /* negStatus returns 0 for a counter-offer still awaiting a reply, so this
          tests against null rather than truthiness - `!!0` would re-invite a
          negotiation that is already running. */
@@ -2012,15 +2038,26 @@
       var NEG_BTN = '<p><button class="triage-cta" data-action="negotiate-offer" data-offer-id="' + offer.id + '">Tee vastatarjous</button></p>';
 
       var items = [
+        /* THE TWO PHRASES THAT TIE THIS BLOCK TO THE FAIR-OFFER GATE are
+           `onnistuneen` and `suosittelemme hyväksymään`. Everything else in
+           the triage is true of any auction; these two are a claim about THIS
+           result, so widening the audience means rewording this sentence and
+           nothing else. Recorded here rather than in the gate, because that is
+           where someone widening it will be reading.
+
+           The counts are deliberately absent: the result block prints them
+           directly above, and a seller who opened this branch has scrolled
+           past that row. What they are missing is not the figures but what
+           the figures MEAN. */
         { id: 'low',
           q: 'Hinta tuntuu matalalta',
-          a: '<p>' + buyers + ' autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä ' + offerCount + ' tarjousta. Korkein tarjous on onnistuneen tarjouskilpailun tulos, jonka suosittelemme hyväksymään.</p>' +
+          a: '<p>Korkein tarjous on onnistuneen tarjouskilpailun tulos. Autoliikkeet perehtyivät autoosi ja korottivat tarjouksiaan, joten hinta on se, mitä autostasi ollaan nyt valmiita maksamaan.</p>' +
              (hasNeg
                ? NEG_RUNNING
                : '<p>Jos et ole täysin tyytyväinen saamaasi tarjoukseen, voit tehdä vastatarjouksen korkeimmalle tarjoajalle. Nykyinen tarjous pysyy voimassa neuvottelun ajan.</p>' + NEG_BTN) },
         { id: 'elsewhere',
           q: 'Näin muualla korkeampia hintoja',
-          a: buildBelief(amount) },
+          a: buildResaleChain() },
         /* This branch ends in a counter-offer rather than in "take the other
            one". The earlier version told the seller to leave, which is honest
            and gives them nothing to do here; naming the SAME TERMS as the thing
@@ -2099,30 +2136,60 @@
          keeps `Autoliikkeen`. */
       var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.</p>';
 
-      function chip(cls, label, sub, coins) {
-        var own      = cls.indexOf('belief-chip--own') > -1;
-        var labelCls = own ? 'text-green-900' : 'text-slate-800';
-        var subCls   = own ? 'text-green-900' : 'text-slate-500';
-        return '<div class="belief-chip ' + cls + ' flex-1 min-w-0">'
-          +      '<span class="flex items-center gap-1.5">'
-          +        (coins ? ICO_COINS : '')
-          +        '<span class="font-dm text-base font-bold ' + labelCls + '">' + label + '</span>'
-          +      '</span>'
-          +      (sub ? '<p class="font-dm text-xs ' + subCls + '">' + sub + '</p>' : '')
-          +    '</div>';
-      }
-      var arrow = '<span class="belief-op font-dm text-base font-bold text-slate-800 flex-shrink-0" aria-hidden="true">&rarr;</span>';
-
       html += '<div class="belief-eq flex items-stretch gap-3">'
-        +      chip('belief-chip--own', (amount ? fmtCurrency(amount) : 'Tarjouksesi'), 'Sinulle maksettava summa', true)
-        +      arrow
-        +      chip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
-        +      arrow
-        +      chip('', 'Ilmoituksen pyyntihinta', '', false)
+        +      beliefChip('belief-chip--own', (amount ? fmtCurrency(amount) : 'Tarjouksesi'), 'Sinulle maksettava summa', true)
+        +      BELIEF_ARROW
+        +      beliefChip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
+        +      BELIEF_ARROW
+        +      beliefChip('', 'Ilmoituksen pyyntihinta', '', false)
         +    '</div>';
 
-      html += '<p class="belief-note font-dm text-xs text-slate-600 mt-7">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
+      html += BELIEF_FOOTNOTE;
 
+      return html;
+    }
+
+    /* ── The resale chain — Informed decision v2 only ─────────────────────
+       v1's `buildBelief` and this are DELIBERATELY SEPARATE FUNCTIONS, not one
+       with a flag. The two arms are alternatives the team will choose between,
+       so their content has to be free to move independently; a shared body
+       with a `static` switch is how they quietly converge again.
+
+       WHAT MAKES THIS ONE DIFFERENT: it carries NO SELLER DATA. v1 opens the
+       chain on the seller's own figure, which is relatable and ties the block
+       to one auction. This one opens on `Sisäänosto` — what a dealership pays
+       the previous owner, in the general case — so the whole block is a
+       statement about how resale works rather than about this car.
+
+       Three consequences, all of them the point:
+       - it says the same thing to every seller, so it survives being shown
+         outside the fair-offer audience if that is ever widened;
+       - nothing in it can go stale against the offer card or a negotiation;
+       - the seller has to place themselves in the chain, which is the one
+         inference v1 removed on purpose. That is the trade, and it is the
+         reason both arms exist.
+
+       `Autoliikkeen pyyntihinta` closes the chain here where v1 says
+       `Ilmoituksen pyyntihinta`, so the term the lead line argues about and the
+       term the chain arrives at are the same words. It also keeps the
+       `ilmoitus` collision out of this arm entirely — that word is the
+       SELLER's everywhere else in the product. */
+    function buildResaleChain() {
+      var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.</p>';
+
+      /* The first chip keeps the green and the coins even without a figure:
+         it is still the money step and still the term the seller identifies
+         with, and three identical grey boxes would leave the sequence with no
+         start. */
+      html += '<div class="belief-eq flex items-stretch gap-3">'
+        +      beliefChip('belief-chip--own', 'Sisäänosto', 'Edelliselle omistajalle', true)
+        +      BELIEF_ARROW
+        +      beliefChip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
+        +      BELIEF_ARROW
+        +      beliefChip('', 'Autoliikkeen pyyntihinta', '', false)
+        +    '</div>';
+
+      html += BELIEF_FOOTNOTE;
       return html;
     }
 
@@ -2758,7 +2825,7 @@
       /* v2: the same argument, demoted to one branch of the triage. */
       var triageSec = document.getElementById('section-triage');
       if (idShow && ID_V2) {
-        document.getElementById('triage-content').innerHTML = buildTriage(offers[0], req);
+        document.getElementById('triage-content').innerHTML = buildTriage(offers[0]);
         triageSec.classList.remove('hidden');
       } else {
         triageSec.classList.add('hidden');

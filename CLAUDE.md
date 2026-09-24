@@ -2379,6 +2379,21 @@ will be replaced.
 
 ### `v2` — the triage element (2026-09-23, first draft)
 
+**THE THREE THINGS ON THE TABLE, AND THEY ARE TWO SEPARATE TESTS** (Jussi,
+2026-09-24). Worth having straight before reading either arm, because it is
+what makes keeping them apart matter:
+
+| Test | Compares | Audience |
+|---|---|---|
+| 1 | the new **`Tarjouskilpailun tulos`** block against prod's chart | fair-offer sellers |
+| 2 | that block **plus `v1`** against that block **plus `v2`** | undecided |
+
+So `v1` and `v2` are not iterations of each other — they are the two arms of
+test 2, and the result block is common to both. **Keep their design and their
+content separate while ideating.** A shared sentence or a shared renderer that
+"happens to fit both" is how a comparison stops measuring anything.
+
+
 **`informed-decision=v2` keeps the auction-result block and replaces the
 price-belief section with a triage:** the seller says what they are weighing up,
 and only that branch answers. Same fair-offer gate as `v1`, same `EN_V1` forcing,
@@ -2420,27 +2435,96 @@ halves: the branch stops being honest the moment the comparison goes.
 by `hasNeg`. Adding a third entry point means reusing those, never a second
 button string.
 
-**`Hinta tuntuu matalalta` now prints BOTH counts**, through `auctionCounts(req)`
-— the same helper the result block reads, because the two sections state the
-same figures about 400px apart and a seller reads them in one scroll. It was
-reading `req.buyers` directly, which would have diverged the moment a scenario
-pinned counts on the offers page.
+**`v2` CARRIES NO SELLER DATA AT ALL** (2026-09-24, Jussi's call, and it is the
+rule for the whole block rather than a tidy-up). `buildTriage(offer)` reads the
+offer's **id** and nothing else — no amount, no counts, no dates. Verified by
+measurement: zero digits anywhere in `#section-triage`.
 
-**THE `low` BRANCH AND BLOCK 1 NOW SAY ALMOST THE SAME SENTENCE, AND THAT IS
-ACCEPTED FOR NOW — NOT AN OVERSIGHT.** Both open with
-`25 autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä 138
-tarjousta`; the triage adds `onnistuneen` and drops nothing. **Jussi's call
-(2026-09-24): the duplication stands only while both sections are being
-ideated.** The open question is whether `Tarjouskilpailun tulos` should say
-something DIFFERENT once the triage answers the same doubt below it — they must
-not ship as duplicates. Resolve that before either goes to the team; do not
-quietly de-duplicate in passing, because which of the two keeps the sentence is
-the actual decision.
+Three things follow, and the third is the reason:
+
+- the result block directly above already prints this auction's figures, so
+  repeating them taught nothing and created a second place they could go stale;
+- nothing here can contradict the offer card or a live negotiation;
+- **the block stops depending on the fair-offer gate to be true.** It is kept
+  behind that gate today, but Jussi's note is that it should not have to be —
+  and being static is what makes widening it a copy decision rather than a
+  correctness one.
+
+**EXACTLY TWO PHRASES STILL TIE `v2` TO THE FAIR-OFFER GATE**, both in the
+`low` branch: `onnistuneen` and `suosittelemme hyväksymään`. Everything else in
+the four branches is true of any auction at any price. Whoever widens the
+audience rewords that one sentence and nothing else — which is why the
+constraint is written at the branch, where they will be reading, and not at the
+gate.
+
+**The `low` branch lost its figures and gained the meaning.** It read
+`25 autoliikettä perehtyi autoosi … yhteensä 138 tarjousta`, which restated the
+row ~400px above it. It now reads `Korkein tarjous on onnistuneen
+tarjouskilpailun tulos. Autoliikkeet perehtyivät autoosi ja korottivat
+tarjouksiaan, joten hinta on se, mitä autostasi ollaan nyt valmiita maksamaan.`
+A seller who opened this branch has already scrolled past the counts; what they
+are missing is not the figures but what the figures MEAN. The closing clause is
+the recorded `Nyt tiedät, mitä autostasi ollaan valmiita maksamaan.` reused, so
+the two sections share vocabulary without sharing a sentence.
+
+**THE DUPLICATION BETWEEN THE `low` BRANCH AND BLOCK 1 IS THEREFORE CLOSED**,
+and it closed in the right direction: the result block keeps the figures and
+the triage keeps the interpretation. It had been recorded a day earlier as an
+accepted temporary overlap; it is not one any more, and it should not come
+back — a branch that reprints the row above it is the shape to reject.
 
 **The branch answers must stay honest in both directions.** That was the reason
 `other-offer` used to end in "take it", and the replacement above is the first
 time this rule has been traded against giving the seller an action. It held
 because the comparison stayed; watch it in testing.
+
+#### `v2`'s resale chain is its OWN function, not `buildBelief` with a flag
+
+**`buildResaleChain()` (v2) and `buildBelief(amount)` (v1) are separate**, and
+that is the fork the A/B above requires. A shared body with a `static` switch is
+how two arms quietly converge, and converged arms measure nothing.
+
+What IS shared is markup primitives only — `beliefChip()`, `BELIEF_ARROW`,
+`BELIEF_FOOTNOTE`, hoisted to module scope. They carry geometry and no meaning,
+so the two chains read as one visual grammar while owning their content
+outright. **If `v2` ever needs a different chip SHAPE it gets its own
+primitive** rather than a flag on that one.
+
+| | `v1` — `buildBelief` | `v2` — `buildResaleChain` |
+|---|---|---|
+| first term | the seller's real figure · `Sinulle maksettava summa` | **`Sisäänosto`** · `Edelliselle omistajalle` |
+| third term | `Ilmoituksen pyyntihinta` | **`Autoliikkeen pyyntihinta`** |
+| middle term, lead, footnote | identical today | identical today |
+| reads seller data | yes | **no** |
+
+**The first term is the whole difference, and the trade is explicit.** `v1`
+opens on the seller's own money, which is relatable and ties the block to one
+auction — the inference "you are the previous owner" is made FOR them. `v2`
+opens on `Sisäänosto` in the general case, so the block is a statement about how
+resale works and the seller has to place themselves in the chain. That is the
+one step `v1` deliberately removed, and it is now the thing the test compares.
+
+**The green and the coins stay on `Sisäänosto` even without a figure.** It is
+still the money step and still the term the seller has to identify with; three
+identical grey boxes would leave the sequence with no start. My call, not
+Jussi's — flag it if the green now over-claims for a chip that names nobody's
+actual euros.
+
+**`Autoliikkeen pyyntihinta` closes `v2`'s chain** so the term the lead argues
+about and the term the chain arrives at are the same words — and it keeps the
+`ilmoitus` collision out of this arm entirely, which `v1` still carries in that
+one label by Jussi's earlier call. **Measured:** it wraps to two lines inside
+the triage panel from about 730px down (the panel's own 16px padding and border
+make it narrower than `v1`'s card at the same viewport); `items-stretch` grows
+all three chips together, so nothing overflows at any width down to 375px.
+
+**`v1` was verified UNCHANGED after the fork** — 264px at 1024, `11 500 € /
+Sinulle maksettava summa`, `Ilmoituksen pyyntihinta`, 28px footnote gap. One
+thing did cross over the day before the fork and has NOT been reverted: the
+lead's second clause and the 28px footnote gap landed in both arms on
+2026-09-24. Both are improvements to the same argument rather than v2-specific
+ideas, so they were left in place; **open, if `v1` is meant to be frozen at its
+pre-2026-09-24 wording, say so and it is a two-line revert.**
 
 `hasNeg` tests `negStatus(...) !== null`, not truthiness — `negStatus` returns
 **0** for a counter-offer awaiting a reply, so `!!` would re-invite a negotiation
