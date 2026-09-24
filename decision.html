@@ -210,31 +210,6 @@
       .verdict-topline > h3 { flex: 1 1 auto; min-width: 0; }
     }
 
-    /* partials/Negotiation.vue's .speech-bubble tail. Hand-written because the
-       Play CDN generates no utilities for a ::before, and the SCSS is scoped in
-       prod. Colours are prod's `bg-blue` (= blue-600, #0B6DFF) and the #E1E7F0
-       border literal the component itself uses. */
-    .speech-bubble { position: relative; }
-    .speech-bubble::before {
-      content: "";
-      height: .5rem;
-      width: .5rem;
-      display: block;
-      position: absolute;
-      bottom: .5rem;
-      transform: rotate(45deg);
-    }
-    .speech-bubble--left::before {
-      background: #fff;
-      left: -.25rem;
-      border-left: 1px solid #E1E7F0;
-      border-bottom: 1px solid #E1E7F0;
-    }
-    .speech-bubble--right::before {
-      background: #0B6DFF;
-      right: -.25rem;
-    }
-
     /* Reject survey. TextArea.vue's `leading-2` is 21px on prod's own scale
        (the proto deliberately does not port that scale, so it is transcribed as
        a pixel value), and the thank-you card's peach is prod's own
@@ -540,8 +515,8 @@
     if (ID_ANY) { EN_V1 = true; }
 
     /* Change 17. The accept colour, in one place because it appears on the card,
-       in the modal footer, inside the dealership's last bubble and on the accept
-       confirmation step — and the four have to agree.
+       inside the dealership's last bubble and on the accept confirmation step —
+       and the three have to agree.
 
        THIS IS `intent="success" variant="primary"` WITH THE INTENT REDEFINED
        (2026-09-17). Same component, same prop, same shape — prod's `primary`
@@ -586,10 +561,6 @@
        its Finnish; adding one arm's strings to the corpus would make this the
        only translated copy on the page. */
     var EN_COPY = {
-      /* Change 1 — the field's reference figure. Label is prod's own
-         offer_card.first_place, so only the layout is new here. */
-      standingOfferLabel: 'Korkein tarjous',
-
       /* Changes 2 and 3, now ONE sentence pair. It states all three outcomes of a
          counter offer in the order they matter: accepted and the sale closes
          (change 3 — an accepted counter offer runs the same accept action the
@@ -1602,39 +1573,18 @@
         '<span class="mt-0.5">' + ICO_HG_HIGH + '</span><span>Umpeutuu:</span><span class="font-mono">' + fmtTime(timeToReact) + '</span></div>';
     }
 
-    /* ── Batch 2 — the thread, as the newer component renders it ──────────────
-       `negotiations/NegotiationMessage.vue` already declares a `pointOfView`
-       prop that accepts 'seller'. It was built for both sides; the seller was
-       simply never switched over and still renders the legacy
-       `partials/Negotiation.vue`. So this is a prop flip in prod, not a redesign,
-       and here it is a transcription of a component that already exists.
-
-       Differences from the legacy thread, all prod's:
-         · bubbles are bordered and soft — own `border-blue-300 bg-blue-50`,
-           other `border-gray-200 bg-white` — not a solid blue-600 fill
-         · one corner is squared toward the sender (rounded-tr-none / -tl-none)
-           instead of a rotated tail pseudo-element
-         · p-4 and rounded-xl, min-w-[14rem], max-w-[75%]
-         · the list is height-capped and scrolls, so a long thread stops pushing
-           the form off screen
-         · a stopped negotiation collapses behind "Avaa neuvotteluhistoria" —
-           which is also the seller's route back in after it ends
-         · the last message from the other side carries the accept action */
-    function buildChatThreadV1(msgs, opts) {
+    /* The seller's thread: `negotiations/NegotiationMessage.vue` with
+       `point-of-view="seller"`, each message an `MNegotiationBubble`. Both arms
+       render it; the arms differ only in the in-bubble accept's colour
+       (`opts.acceptClass`). */
+    function buildChatThread(msgs, opts) {
       opts = opts || {};
       msgs = msgs || [];
 
-      /* Change 13, second attempt. A grey badge above the field stated the
-         standing offer as a hint; it still read as a separate widget bolted to
-         the form. The auction result IS the first thing the dealership said, so
-         it becomes the first bubble and the negotiation continues from it — one
-         thread, in order, instead of a figure quoted next to it. It stays as the
-         thread grows: it is what the seller is countering FROM, and their own
-         later replies never overwrite it.
-
-         `offer.amount` is the auction result and stays put — a dealer reply
-         updates `tenderOffer.amount` in prod, but the proto keeps replies in the
-         thread and reads the latest from there (`effectiveAmount`). */
+      /* prod's `auctionResult` bubble reads `offer.auction_amount` (the offer's
+         last bid revision) because a dealer reply overwrites `tenderOffer.amount`.
+         The proto keeps replies in the thread and never overwrites
+         `offer.amount`, so that field already is the auction result. */
       if (opts.auctionOffer) {
         msgs = [{
           sender: 'dealer',
@@ -1646,12 +1596,8 @@
       }
       if (msgs.length === 0) return '';
 
-      /* NegotiationMessage collapses a stopped thread behind
-         `negotiation.open_message_history`, and this deliberately does NOT.
-         That component lives on the dealership's screen, where the negotiation is
-         one panel among many and collapsing it buys back room. Here the modal
-         exists for nothing else — the seller opened it to read the thread, so
-         hiding it behind a second click is a step for no gain. */
+      /* No `open_message_history` collapse: the seller's modals pass
+         `collapse-when-stopped="false"`. */
       var html = '<div class="relative bg-gray-100/60">';
       html += '<div id="neg-thread-list" class="neg-thread max-h-[325px] overflow-y-auto p-2 space-y-2 border-y border-slate-200">';
       var lastMsg = msgs[msgs.length - 1];
@@ -1678,50 +1624,17 @@
         if (msg.message) {
           html += '<div class="break-words">' + escHtml(maskContactInfo(msg.message)) + '</div>';
         }
-        /* Change 4 — accept inside the message, on the LAST one from the
-           dealership only, exactly where DealerAcceptCounterOfferAction sits on
-           their side. Full-width success button; the confirmation step the modal
-           already has names the amount. */
+        /* `AButton variant="primary" intent="success" size="md"` on the LAST
+           message only, when it is the dealership's. It goes to the Accept
+           confirmation step, as the card's accept does. */
         if (!isSeller && msg === lastMsg && opts.canAccept && !msg.isAuctionResult) {
-          /* Same label and same colour as the card's accept. The amount is not
-             repeated: it is the bold figure at the top of this very bubble, and
-             the button's placement inside it is what says which price it takes.
-             Naming it again made the two accepts read as different actions. */
-          html += '<button type="button" data-action="neg-accept-inline" class="w-full inline-flex items-center justify-center px-5 h-10 rounded-lg text-sm font-medium ' + acceptCls() + '">Hyväksy korkein tarjous</button>';
+          html += '<button type="button" data-action="neg-accept-inline"' + (opts.acceptDisabled ? ' disabled' : '') +
+            ' class="w-full inline-flex items-center justify-center px-5 h-10 rounded-lg text-sm leading-tight ' +
+            (opts.acceptDisabled ? 'cursor-not-allowed !text-slate-300 bg-slate-200' : opts.acceptClass) + '">Hyväksy korkein tarjous</button>';
         }
         html += '</div></div></div>';
       });
       html += '<div class="h-1"></div></div></div>';
-      return html;
-    }
-
-    /* partials/Negotiation.vue with point-of-view="seller" — the LEGACY component
-       the seller's negotiate modal renders in control. Container, bubble classes,
-       the rotated tail and the amount/message/timestamp order are all prod's; the
-       tail itself is in the page's <style> block. */
-    function buildChatThread(msgs) {
-      if (!msgs || msgs.length === 0) return '';
-      var html = '<div class="negotiation-container bg-gray-100 bg-opacity-60 relative"><div class="pt-2 pb-2">';
-      msgs.forEach(function(msg) {
-        var isSeller = msg.sender === 'seller';
-        var side = isSeller
-          ? 'speech-bubble--right bg-blue-600 text-white ml-auto'
-          : 'speech-bubble--left bg-white mr-auto';
-        html += '<div class="p-2 flex">';
-        html += '<div class="speech-bubble text-sm text-left p-2 rounded shadow-sm border border-gray-200 ' + side + '" style="max-width:75%">';
-        html += '<div class="m-0 text-sm leading-tight">';
-        html += '<div class="flex items-center"><div class="font-bold">' + fmtCurrency(msg.amount) + '</div>';
-        if (!isSeller && msg.pickup) {
-          html += '<div class="font-bold ml-1">+ nouto pihasta</div>';
-        }
-        html += '</div>';
-        if (msg.message) {
-          html += '<div class="mt-2 break-words">' + escHtml(maskContactInfo(msg.message)) + '</div>';
-        }
-        html += '<div class="mt-4 float-right text-xs">' + fmtRelativeTime(msg.created_at) + '</div>';
-        html += '</div></div></div>';
-      });
-      html += '</div></div>';
       return html;
     }
 
@@ -1779,13 +1692,13 @@
 
       // Accept button
       if (showAccept) {
-        /* Change 15. Control paints accept primary blue on the card and
-           green in the modal, for the same act — and the modal's two buttons
-           are green accept + blue send, so the card teaches the seller one
-           meaning for blue and the modal immediately teaches another. v1 fixes
-           the meaning instead of the shade: GREEN accepts, BLUE negotiates,
-           everywhere. The green is `acceptCls()`, shared with the modal footer
-           and the in-thread accept — see change 17 for which green. */
+        /* Change 15. Control paints the same act three colours: primary blue
+           on the card, lime in the thread's bubble (`AButton` success) and
+           green-600 on the accept confirmation step (`Button color="green-600"`).
+           v1 fixes the meaning instead of the shade: GREEN accepts, BLUE
+           negotiates, everywhere. The green is `acceptCls()`, shared with the
+           in-thread accept and the confirmation step — see change 17 for which
+           green. */
         html += '<div>' +
           '<button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base font-medium ' +
             (EN_V1 ? acceptCls() : 'bg-blue-600 hover:bg-blue-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]') +
@@ -2938,7 +2851,9 @@
       body.innerHTML = '<p class="text-base text-slate-700">Mahtavaa, olet nyt hyväksymässä autoliikkeen tarjouksen!</p>';
       footer.innerHTML =
         '<div class="flex justify-end">' +
-          '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium ' + acceptCls() + '">Hyväksy tarjous</button>' +
+          '<button id="modal-btn-accept" class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium ' +
+            (EN_V1 ? acceptCls() : 'bg-green-600 hover:bg-green-700 text-white border-2 border-green-600 hover:border-green-700') +
+            '">Hyväksy tarjous</button>' +
         '</div>';
       document.getElementById('modal-btn-accept').addEventListener('click', function() {
         var _acceptAmt = standingAmount(offer);
@@ -2971,17 +2886,26 @@
 
       var html = '';
 
-      /* Batch 2 routes the thread through the newer component in v1. canAccept
-         mirrors prod's own gate for the in-bubble action: a negotiation exists
-         and it is not the seller's turn to be waited on — i.e. exactly when the
-         footer's accept button would have shown. */
+      /* Reaction window. Static, like every other timer on this page — prod's
+         useServertimeDifference ticks, the proto renders once. Read here because
+         the in-bubble accept takes prod's `acceptDisabled` from it. */
+      var reactionSecs = offerExpiryTs(req) - _now();
+      var hasPendingNegotiation = hasNegotiation && status === 0;
+      var buttonDisabled = reactionSecs <= 0 && !hasPendingNegotiation;
+
+      /* canAccept is prod's `showSellerAccept`: the last message is the
+         dealership's, which is every status but PENDING. Control's accept is
+         prod's `AButton` success intent, still lime; v1 is the decided
+         green-400 + black (`acceptCls`). */
       function thread() {
-        if (!EN_V1) return buildChatThread(msgs);
-        return buildChatThreadV1(msgs, {
+        return buildChatThread(msgs, {
           canAccept: hasNegotiation && status !== 0,
+          acceptDisabled: buttonDisabled,
+          acceptClass: EN_V1 ? acceptCls()
+            : 'bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-lime-900 active:text-lime-950 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]',
           auctionOffer: {
             amount: offer.amount,
-            label: EN_COPY.standingOfferLabel,
+            label: 'Korkein tarjous',
             created_at: req.auction_ends_at ? new Date(req.auction_ends_at * 1000).toISOString() : null
           }
         });
@@ -3051,10 +2975,10 @@
             html += '</ul>';
           }
         }
-        /* v1 renders the thread even with no negotiation yet — it opens with the
-           auction result, which is the message the seller is answering. */
-        if (hasNegotiation || EN_V1) {
-          html += thread();
+        /* The thread renders even with no negotiation yet — prod's Negotiate.vue
+           dropped its `v-if="negotiation"`, so it opens on the auction result. */
+        html += thread();
+        if (hasNegotiation) {
           /* Change 6. Control's filled blue block sits directly above the form
              and reads as forbidding it. v1 drops it entirely — the rounds left
              ride on the send button instead, which is what the dealership's own
@@ -3144,18 +3068,10 @@
       scrollThreadToEnd();
 
       /* ── Footer, from OfferActions.vue ──
-         Accept is gated on the negotiation's STATUS, not on its existence: right
-         after the seller sends, status is PENDING and prod hides the button
-         until the dealer answers. QuickNegotiate never shows Accept at all. */
-      var showAccept = !isQuick && hasNegotiation && status !== 0;
+         No accept here: `showAccept` is `action === 'Accept'` alone, so in a
+         negotiation the only accept is the one in the dealership's bubble. */
       var showSend   = sellerCanSend;
       var showClose  = !sellerCanSend;
-
-      /* Reaction window. Static, like every other timer on this page — prod's
-         useServertimeDifference ticks, the proto renders once. */
-      var reactionSecs = offerExpiryTs(req) - _now();
-      var hasPendingNegotiation = hasNegotiation && status === 0;
-      var buttonDisabled = reactionSecs <= 0 && !hasPendingNegotiation;
       var showTimer  = reactionSecs < 181 && sellerCanSend;
 
       var disabledCls = ' bg-gray-200 text-gray-500 border-2 border-gray-200 cursor-not-allowed';
@@ -3171,18 +3087,6 @@
           ? '<span class="mt-0.5">' + ICO_HG_HIGH + '</span><span>Umpeutuu:</span><span class="font-mono">' + fmtTime(reactionSecs) + '</span>'
           : '<span class="mt-0.5">' + ICO_HG_LOW + '</span><span>Umpeutunut</span>';
         fRight += '</div>';
-      }
-      /* v1 moves accept into the dealership's last message — but only when that
-         message IS the last one. prod's stopped and replied threads both end on
-         the dealership, so this holds; the footer keeps the button otherwise
-         rather than leaving the seller no way to accept. */
-      var acceptIsInThread = EN_V1 && hasNegotiation && msgs.length > 0 &&
-        msgs[msgs.length - 1].sender === 'dealer';
-      if (showAccept && !acceptIsInThread) {
-        fRight += '<button id="modal-btn-accept-from-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium ' +
-          (buttonDisabled ? disabledCls : acceptCls()) +
-          '">Hyväksy tarjous</button>';
       }
       if (showSend) {
         /* Change 6, solved the way the dealership's side already solves it:
@@ -3231,7 +3135,6 @@
         : '<div class="flex justify-center lg:justify-end">' + fRightWrap + '</div>';
 
       var closeBtn       = document.getElementById('modal-btn-close');
-      var acceptFromNeg  = document.getElementById('modal-btn-accept-from-neg');
       var sendBtn        = document.getElementById('modal-btn-send-neg');
       var rejectFromNeg  = document.getElementById('modal-btn-reject-from-neg');
       var amountEl       = document.getElementById('modal-neg-amount');
@@ -3276,15 +3179,11 @@
         syncCount();
       }
 
-      /* Accept from inside the bubble reaches the SAME confirmation step the
-         footer button used, which is the step that names the amount — prod's own
-         seller-side accept already confirms, and change 4 does not touch it. */
       var acceptInline = body.querySelector('[data-action="neg-accept-inline"]');
       if (acceptInline && !buttonDisabled) acceptInline.addEventListener('click', function() { openModal('Accept', MODAL.offerId); });
 
       if (rejectFromNeg && !buttonDisabled) rejectFromNeg.addEventListener('click', function() { MODAL.action = 'RejectConfirm'; renderModal(); });
       if (closeBtn)      closeBtn.addEventListener('click', closeModal);
-      if (acceptFromNeg && !buttonDisabled) acceptFromNeg.addEventListener('click', function() { openModal('Accept', MODAL.offerId); });
       if (sendBtn && !buttonDisabled) sendBtn.addEventListener('click', function() {
         var amount = MODAL.amount;
         var amountErrors = validateCounterOffer(amount, req, offers, neg);

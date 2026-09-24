@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-09-16)
+## Reference Source Locations (updated 2026-09-24)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-09-16-d1ea5398cdb4/` (previous: `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-09-24-760241d9dd71/` (previous: `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -288,10 +288,10 @@ These rules apply to all new pages and components in this prototype, without exc
 
     | | |
     |---|---|
-    | Components serving this role | **three**, and **two are deprecated** — `elements/Button.vue` (17 consumers) and `ui/UiButton.vue` (78) both point at `atoms/AButton.vue` (7) |
+    | Components serving this role | **three**, and **two are deprecated** — `elements/Button.vue` (16 consumers) and `ui/UiButton.vue` (77) both point at `atoms/AButton.vue` (8) — counts from the 2026-09-24 dump |
     | Consequence of the ratio | the migration has barely started, so a token change has to land in **both** `UiButton` and `AButton` until one is gone |
     | Same name, two hues | `intent="success"` is lime on the button and **`text-green-600`** in `UiIcon.vue` / `ASpriteIcon.vue`. The button is the outlier — this turned out to be the strongest argument in the whole proposal |
-    | Seller side | two accepts, **two colours**: the card is `UiButton variant="primary"` with **no intent** (blue), the modal footer is the legacy `Button color="green-600"` — the only consumer of that colour anywhere |
+    | Seller side | three accepts, **three colours**: the card is `UiButton variant="primary"` with **no intent** (blue); the accept confirmation step is the legacy `Button color="green-600"` — the only consumer of that colour anywhere; and since the 2026-09-24 dump the in-thread accept is `AButton variant="primary" intent="success"` (lime), the only seller-side `success` consumer |
     | Dealership side | three accepts, all `UiButton variant="primary" intent="success"` — `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`, `PastDeliveryDateConfirmModal` |
     | All of them sit on **white** | Reveal's panel, the CallSeller card, and — for the dealer accept — the seller's own `bg-white` speech bubble |
     | Variants with **zero** consumers | `default`, `secondary`, `ghost`, `link` of `success`. Every consumer is `primary`, so today the fill is always opaque and the page background cannot affect a label |
@@ -651,7 +651,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 |---|---|---|---|---|---|---|
 | Delivery distance A/B test | **In production A/B test** | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
-| Enhanced negotiations | Live | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
+| Enhanced negotiations | Live — **changes 4 + 5 shipped** (2026-09-24 dump), rest `v1` only | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
@@ -699,9 +699,9 @@ they type. **Built in batches**, one arm (`v1`) carrying all of them:
 | Batch | Changes | State |
 |---|---|---|
 | 1 | standing offer by the field · offer can only rise · counter offer is binding · 24 business hours + auto-close | in the proto |
-| 2 | the dealership's thread component · in-bubble accept · rounds on the send button | in the proto |
+| 2 | the dealership's thread component · in-bubble accept · rounds on the send button | **thread + in-bubble accept shipped** (2026-09-24 dump); rounds on the send button still `v1` only |
 | 3 | findability — email link target and the open-thread affordance · the auto-close's own voice | in the proto |
-| 4 | the modal's own presentation — header, contained guidance, hint badge, card affordance, required-error copy | in the proto |
+| 4 | the modal's own presentation — header, contained guidance, hint badge, card affordance, required-error copy | auction-result bubble **shipped** (2026-09-24 dump); the rest `v1` only |
 
 Three findings from prod hold the design up, all verified against the 2026-08-31
 dump. **A counter offer is binding**: `DealerAcceptCounterOfferApiController`
@@ -710,12 +710,31 @@ the counter price with no further step — the hesitancy sellers report is corre
 and the copy says so rather than soothing it. **A dealer's offer can only rise**:
 `DealerNegotiationMessageAmount` rejects any reply below the standing amount and
 `CloseNegotiation` preserves it, so "up or unchanged" is a mechanic, not
-reassurance. And **the two sides run different thread components** — the seller
-is on the legacy `partials/Negotiation.vue` while the dealership has
-`partials/negotiations/NegotiationMessage.vue`, which already ships in-bubble
-accept naming the amount, `Avaa neuvotteluhistoria` on a closed negotiation, and
-a height-capped thread. Batch 2 is that swap, which is why it is reuse rather
-than design.
+reassurance. And **the two sides ran different thread components** — the seller
+was on the legacy `partials/Negotiation.vue` while the dealership had
+`partials/negotiations/NegotiationMessage.vue`, with in-bubble accept,
+`Avaa neuvotteluhistoria` on a closed negotiation, and a height-capped thread.
+Batch 2 was that swap, which is why it was reuse rather than design — and it is
+the part that shipped first (below).
+
+**SHIPPED IN THE 2026-09-24 DUMP: changes 4 and 5 of the spec** (batch 2's
+thread swap and in-bubble accept, batch 4's auction-result bubble). What prod
+now does, and therefore what `control` renders:
+
+| Part | Prod, 2026-09-24 |
+|---|---|
+| component | `partials/Negotiation.vue` is **deleted**. `Negotiate.vue` and `QuickNegotiate.vue` render `NegotiationMessage` with `point-of-view="seller"` and `:collapse-when-stopped="false"` |
+| bubbles | a new molecule, **`MNegotiationBubble`** (`app/components/molecules`), carrying the classes that used to be inline in `NegotiationMessage` — own `border-blue-300 bg-blue-50`, other `border-gray-200 bg-white` |
+| first bubble | `auctionResult`: `offer.auction_amount ?? offer.amount`, labelled `offer_card.first_place` ("Korkein tarjous"), timestamped `auction_ends_at`. **It renders with no negotiation too** — `Negotiate.vue` dropped its `v-if="negotiation"`. `auction_amount` is the offer's last `bid`/`auto_bid` revision, a subquery in `TenderOfferApiController`, not a column |
+| accept | inside the **last** message when it is the dealership's, `AButton variant="primary" intent="success" size="md"`, label `accept_highest` ("Hyväksy korkein tarjous"), `:disabled` = `loading \|\| buttonDisabled`. Shown on a stopped negotiation too |
+| footer | `OfferActions.showAccept` is now `action === 'Accept'` alone, so **the negotiation modal has no footer accept at all** |
+| unchanged | header, tips, the blue last-round block, `Lähetä`, the contact-info paragraph, the support lines, error copy — everything else on the spec |
+
+**So the in-thread accept is LIME in prod today** — it is the first seller-side
+consumer of `AButton`'s `success`, which has not had its green change yet.
+Control reproduces that; `v1` keeps `acceptCls()`, which is what that button
+becomes once the token change lands. The spec marks 4 and 5 **Shipped** and
+leaves change 15 (the green) open.
 
 **Change 17 is the reject entry reading as a choice** (2026-09-02, from the
 team walkthrough). Two halves of one problem. The title gains a **question
@@ -734,10 +753,9 @@ pair: the reject confirmation's `Tee vastatarjous` + `Hylkää tarjous`, measure
 at 360px as 163 + 133 = **296px in a 296px row** — no overflow, no slack either,
 so it stacks the same way. There the DOM already leads with the primary button,
 so plain `flex-col` is enough, and it applies only when both buttons are present
-(`showNeg`). Every other v1 state ends with a single button: `acceptIsInThread`
-moves accept out of the footer whenever the last message is the dealership's,
-which is exactly when the footer would have shown it, so accept + send never
-share a row in v1.
+(`showNeg`). Every other state ends with a single button: prod's negotiation
+modal has no footer accept at all since the 2026-09-24 dump, so accept + send
+never share a row.
 
 **`stackCls` has to be declared before the buttons are assembled.** It was
 written next to the footer markup at first, which is BELOW the button strings —
@@ -811,8 +829,8 @@ other state agrees, because the proto's `!hasNeg` gate and prod's
 unreachable.
 
 **Batch 2 is four prod patterns, no new component.** `NegotiationMessage.vue`
-declares `pointOfView` with `'seller'` already an accepted value, so the swap is a
-prop flip prod never made: bubbles go from the legacy solid-blue fill plus a
+declared `pointOfView` with `'seller'` already an accepted value, so the swap was
+a prop flip — **now made in prod, see SHIPPED above**: bubbles go from the legacy solid-blue fill plus a
 rotated CSS tail to bordered cards — own `border-blue-300 bg-blue-50
 rounded-tr-none ml-auto`, other `border-gray-200 bg-white rounded-tl-none
 mr-auto` — in a `max-h-[325px] overflow-y-auto` list. From the same stack:
@@ -823,16 +841,15 @@ action and **replaces change 6's own string entirely** — the blue
 "Vastatarjouksia ei tämän jälkeen tehdä enempää" block goes with it — and
 `app.negotiations.counter_offer_message` as the textarea placeholder.
 
-**The accept button moves into the dealership's last message** (`v1` only), per
-the same component, so it names the amount in the place that amount was offered
-instead of restating it in the footer. `acceptIsInThread` gates the footer copy
-off, and it is keyed on the thread's last message being a **dealer** one — not on
-the negotiation's status. That distinction is what caught a seeding bug: the
-proto's `negotiation-stopped` thread ended with a seller message, which prod
-cannot produce, because `CloseNegotiation` always appends a dealer message
+**The accept button moved into the dealership's last message**, per the same
+component, so it sits where that amount was offered instead of restating it in
+the footer. Both arms now, since prod shipped it; the footer accept and its
+`acceptIsInThread` fallback are gone. It is keyed on the thread's last message
+being a **dealer** one, which is what caught a seeding bug: the proto's
+`negotiation-stopped` thread ended with a seller message, which prod cannot
+produce, because `CloseNegotiation` always appends a dealer message
 (`close_negotiation.message_pre_filled` when the dealer sends none). Fixed in the
-seed; the fallback stays, so a thread ending seller-side still shows a footer
-accept rather than none.
+seed.
 
 **Batch 3 is a link target.** Every FI seller email in the dump points at
 `route('user.offers')` — the LIST — including both dealer-replied emails and the
@@ -948,14 +965,16 @@ tarjouksen tai jatkaa myyntiä kanssamme.") as the help text. Both strings exist
 only the placement is new, and the seller now reads the same sentence on the page
 and in the modal.
 
-**The dealership's collapse is deliberately NOT taken.** `NegotiationMessage`
+**The dealership's collapse is deliberately NOT taken — and prod agreed**: the
+seller's modals pass `:collapse-when-stopped="false"`. `NegotiationMessage`
 hides a stopped thread behind `negotiation.open_message_history`, which buys back
 room on a screen where the negotiation is one panel among many. The seller's modal
 is only the negotiation, so a closed thread stays open — they opened it to read
 the messages. The dealership's other close signal, removing the reply button,
 happens here anyway.
 
-**Change 13 landed on its third shape.** A `text-base` line above the field (the
+**Change 13 landed on its third shape, and that shape shipped** (2026-09-24
+dump, prod's `auctionResult` bubble). A `text-base` line above the field (the
 dealership's own form) read as a second heading; a grey `UiBadge` hint fixed the
 weight but still sat beside the form as a separate widget quoting a number the
 thread was about to quote again. It is now the thread's **first bubble** — the
@@ -1020,16 +1039,18 @@ linked from nowhere and loads no `tw-tokens.js`.
 **What it now establishes, and the numbers are the deliverable:**
 
 - **There are THREE button components, two deprecated**, which is the thing that
-  gets described wrongly. `elements/Button.vue` (17 consumers, a `color` prop
+  gets described wrongly. `elements/Button.vue` (16 consumers, a `color` prop
   taking `'blue' | 'red' | 'green-600' | 'transparent'`) AND `ui/UiButton.vue`
-  (78 consumers) both carry the same JSDoc pointing at `atoms/AButton.vue`
-  (7 consumers). So the lime `success` definition is **duplicated byte-for-byte
+  (77 consumers) both carry the same JSDoc pointing at `atoms/AButton.vue`
+  (8 consumers, 2026-09-24 dump). So the lime `success` definition is **duplicated byte-for-byte
   in UiButton and AButton**, and a colour change lands in both until one goes.
-- **The seller's two accepts are two different colours today.** The decision
-  page's card accept is `UiButton variant="primary" size="lg"` with **no intent
-  at all**, so it renders blue-600/white. The modal footer accept
-  (`OfferActions.vue`) is the legacy `Button color="green-600"`, the **only**
-  consumer of that colour anywhere. Neither is the shared `success` intent.
+- **The seller's three accepts are three different colours today.** The
+  decision page's card accept is `UiButton variant="primary" size="lg"` with
+  **no intent at all**, so it renders blue-600/white. The accept confirmation
+  step (`OfferActions.vue`) is the legacy `Button color="green-600"`, the
+  **only** consumer of that colour anywhere. And since the 2026-09-24 dump the
+  in-thread accept is `AButton intent="success"` — lime, and the one seller
+  accept already on the shared intent.
 - **The dealership's three accepts ARE the shared intent** — lime, via
   `UiButton variant="primary" intent="success"`:
   `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`,
@@ -1105,9 +1126,11 @@ is the substance of the decision — it was posted to the dealership product tea
 **Why this shape rather than editing both files.** Three reasons, and the second
 is the one that makes it safe:
 
-- **`AButton` has ZERO `success` consumers today**, so the colour edit ships
-  with no visual change anywhere. The change arrives with each migration, one
-  at a time, reviewable on its own.
+- **`AButton` has ONE `success` consumer** (the seller's in-thread accept,
+  shipped in the 2026-09-24 dump), so the colour edit changes exactly that
+  button, in the intended direction, and nothing on the dealership side. When
+  this was decided it had zero; `accept-button-lab.html` now says one. Every
+  other change arrives with its own migration, one at a time.
 - **No user sees both sides.** A seller never opens the dealership UI, so the
   interim lime/green split is a design-system inconsistency, not a user-facing
   one. That is what makes waiting cost nothing — do not restate it as a UX
