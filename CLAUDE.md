@@ -2354,6 +2354,40 @@ of `Muutama neuvo` is block 2.
 Finnish once the shape is agreed, so there is no point spending on wording that
 will be replaced.
 
+### `v2` — the triage element (2026-09-23, first draft)
+
+**`informed-decision=v2` keeps the auction-result block and replaces the
+price-belief section with a triage:** the seller says what they are weighing up,
+and only that branch answers. Same fair-offer gate as `v1`, same `EN_V1` forcing,
+`section-triage` between the offers and the reject banner.
+
+Four branches, and they are **the reject survey's own reason taxonomy asked
+BEFORE the decision instead of after it** — hinta tuntuu matalalta · näin muualla
+korkeampia hintoja · minulla on toinen tarjous · en tiedä kannattaako myydä nyt.
+The Nettiauto argument is branch 2's answer rather than a section every seller
+reads, so the doubt is named only by the seller who has it.
+
+**The counter-offer moves in with it.** In `v2` the card's negotiate button is
+suppressed unless a negotiation already exists — `Näytä vastaus` survives, because
+opening a reply is not an invitation to negotiate. The reasoning is the team's:
+almost half of auctions reach a negotiation, many out of opportunity rather than
+need, and each one adds days in which the seller can change their mind. So
+accept is the card's only action and negotiating becomes a considered choice.
+
+**Nothing is expanded on load** — the labels are the whole exposure, which is the
+answer to the priming worry that kept euro figures out of the block in the first
+place. The branch answers must stay honest in both directions: "minulla on toinen
+tarjous" tells the seller to take the better offer if it really is better.
+
+`hasNeg` tests `negStatus(...) !== null`, not truthiness — `negStatus` returns
+**0** for a counter-offer awaiting a reply, so `!!` would re-invite a negotiation
+that is already running.
+
+**No spec page yet, deliberately** (the team's call while the shape is settling),
+and all copy is placeholder like the rest of this initiative. The reject survey is
+untouched and must stay that way: its reason mix is how we read whether asking
+earlier changed anything.
+
 ### ONE gate, read once, and both blocks share it
 
 `idShow` in `renderMain`:
