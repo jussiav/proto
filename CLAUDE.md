@@ -1992,6 +1992,72 @@ right edge of a phone. It sets `bottom` from the button too, not from the bar:
 once the bar opens into a column its rows sit at different heights, and a panel
 pinned to the bar's top edge would cover the control that opened it.
 
+## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
+
+**The decision page can be read in English, and the mechanism is opt-in per
+page** (2026-09-24, for team ideation). `i18n.js` only reaches nodes carrying a
+`data-i18n` key, and `decision.html` has **four** — it builds nearly all its
+markup in JS with the Finnish inline, deliberately, because the page is a
+transcription of prod and the Finnish has to stay diffable against a dump.
+
+So `proto-i18n.js` translates the RENDERED TEXT instead. A page registers a flat
+`{ finnish: english }` dictionary plus a few regex `patterns` for strings that
+carry a figure, and a DOM pass swaps text nodes and the `title` / `aria-label` /
+`placeholder` attributes. **`decision-i18n.js` is the only dictionary today**
+(~90 entries).
+
+**It is a reading aid, not an i18n layer.** Same category as the spec pages'
+English glosses: none of the English is approved copy, and prod has no English
+at all for some of it (`tender.rejection_reason_for_seller.*` has no `en` entry
+in any dump). Do not grow this into the funnel's translation path.
+
+**Migrating another page is one file and one script tag** — write its dictionary,
+call `register`, and the bar's **Language** row appears there on its own. A page
+that registers nothing renders no control and pays nothing; verified on
+`offers.html`, which has neither.
+
+**Three things make it work, and each is load-bearing:**
+
+- **A WeakMap of the original Finnish, keyed by text node.** Translation is
+  destructive, so switching back needs the source — and every later pass reads
+  the stash rather than the screen, which is what makes the pass idempotent in
+  both directions. Entries die with the nodes, which a re-render replaces
+  anyway.
+- **A MutationObserver on `body`.** This page rebuilds whole sections on almost
+  every interaction, so a one-shot pass would translate once and lose it.
+  Observing is safe precisely because the pass is idempotent: our own mutations
+  produce text no key matches.
+- **`protoI18n.set()` DROPS `?lang=` from the URL.** `getLang()` ranks the URL
+  param above the stored value, which is right for a pinned link and fatal for a
+  control on the page: loaded with `?lang=en`, every `setLang` was overruled on
+  the next read and the selector snapped back. It uses `replaceState`, not a
+  reload, so an open modal and a simulated negotiation survive the switch.
+
+**What was already bilingual and is NOT in the dictionary:** the FAQ
+(`faq-content.js` carries both languages and the page re-renders it on
+`av:langchange`) and the nav (`site-nav.js` uses `data-i18n`).
+
+**A dead control was found and wired while doing this.** `decision.html` inlines
+its own footer rather than using `layout.js`, and that footer carried a
+`Suomi / English` select with **no id and no handler** — it read `fi` whatever
+the page was rendering. It now carries `lang-selector`, the id `i18n.js` already
+keeps in sync, and calls the same setter the bar does. Its three link labels had
+no `data-i18n` either, so they live in the dictionary.
+
+**ON MOVING THE OTHER PAGES' SELECTOR TO THE BAR — I partly disagree, and the
+split is by surface.** On the decision page a switcher is proto chrome: prod's
+consumer app pages have none, and the audience is the team. On the marketing
+pages and the funnel it is **product UI** — prod offers FI/EN there and the
+seller chooses — so moving it to the bar would hide a real product control from
+user tests, where the bar is gone by design. Keep it in the footer there; put it
+on the bar wherever prod has no switcher.
+
+**Untranslated strings stay Finnish**, which is the right failure: one Finnish
+line among English reads as a gap to fill, where a half-translated page reads as
+broken. Coverage was checked by sweeping the rendered DOM for `ä`/`ö` after
+switching — zero leftovers in `control`, `v1` and `v2`, with every triage branch
+open and the negotiation modal up.
+
 **Adding proto-only UI:** prefer putting it on the bar. If it must be its own
 element, mark the root with `data-proto-dev` AND skip building it when
 `!window.protoDev`. The CSS rule (`[data-proto-dev]{display:none !important}`)

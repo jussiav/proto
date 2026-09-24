@@ -439,6 +439,34 @@
     modeWrap.appendChild(modeSel);
     bar.appendChild(modeWrap);
 
+    /* Language — ONLY on a page that registered a dictionary with proto-i18n.
+       It is proto chrome here, not product UI: production's decision page has no
+       language switcher, and this exists so the team can read the page in
+       English while ideating. The marketing pages and the funnel keep their own
+       in-page selector, because there the choice belongs to the seller and the
+       bar is hidden in test mode.
+
+       Migrating another page is its dictionary plus its script tag; this row
+       appears on its own once `available()` is true, and nothing renders on a
+       page that registers nothing. */
+    if (window.protoI18n && window.protoI18n.available() && typeof window.setLang === 'function') {
+      var langWrap = document.createElement('label');
+      langWrap.appendChild(document.createTextNode('Language'));
+      var langSel = document.createElement('select');
+      window.protoI18n.langs.forEach(function (l) {
+        var o = document.createElement('option');
+        o.value = l[0]; o.textContent = l[1];
+        langSel.appendChild(o);
+      });
+      langSel.value = (typeof window.getLang === 'function') ? window.getLang() : 'fi';
+      /* setLang stores the choice and fires av:langchange, which both the FAQ
+         renderer and proto-i18n already listen for — so no reload, and the
+         choice follows the tester to the pages that use data-i18n. */
+      langSel.addEventListener('change', function () { window.protoI18n.set(langSel.value); });
+      langWrap.appendChild(langSel);
+      bar.appendChild(langWrap);
+    }
+
     /* Scenario */
     var scWrap = document.createElement('label');
     scWrap.appendChild(document.createTextNode('Scenario'));

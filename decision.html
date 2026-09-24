@@ -37,6 +37,9 @@
   <script src="translations.js"></script>
   <script src="faq-content.js"></script>
   <script src="i18n.js"></script>
+  <!-- Prototype-only FI/EN for a page that hardcodes its Finnish. See proto-i18n.js. -->
+  <script src="proto-i18n.js"></script>
+  <script src="decision-i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
   <!-- StarRating.vue's five faces, used only by the reject survey. -->
@@ -427,7 +430,10 @@
         </div>
         <div class="flex items-center gap-4 font-body text-sm text-white">
           <span>Kieli</span>
-          <select class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
+          <!-- `lang-selector` is the id i18n.js keeps in sync with the stored
+               language; without it this select was dead markup showing `fi`
+               whatever the page was rendering. -->
+          <select id="lang-selector" class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
             <option value="fi">Suomi</option><option value="en">English</option>
           </select>
           <span class="font-body font-normal">© 2025 All rights reserved</span>
@@ -2648,6 +2654,18 @@
       buildFaqs();
 
       document.addEventListener('av:langchange', buildFaqs);
+
+      /* The footer's language select was transcribed from the site footer and
+         never wired, so it read `fi` while the page rendered whatever was
+         stored. `setLang` fires `av:langchange`, which the FAQ renderer above
+         and proto-i18n both already listen for, so one line drives both
+         translation paths and the bar's own row stays in step through the
+         same event. */
+      var footerLang = document.getElementById('lang-selector');
+      if (footerLang) {
+        footerLang.value = getLang();
+        footerLang.addEventListener('change', function () { window.protoI18n.set(footerLang.value); });
+      }
     }
 
     function revealOffers() {
