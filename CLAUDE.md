@@ -779,6 +779,60 @@ two messages chosen by offer count, and the pre-filled message to the
 dealership. Documented as its own section on the spec page rather than a
 seventeenth change, since it is coverage rather than new work.
 
+**QUICKNEGOTIATE'S TWO BODY COPIES ARE CHOSEN BY THE BIDDER COUNT, AND THE
+PROTO HAD THAT WRONG SINCE THE INITIAL COMMIT** (found by Jussi 2026-09-24,
+fixed the same day). `QuickNegotiate.vue` picks between
+`negotiation.quick_negotiation.one_offer_message`
+("Autostasi ei valitettavasti syntynyt tarjouskilpailua…") and
+`more_than_one_offer_message` on `offersLength === 1`. Both strings are
+production's and **neither has changed in any dump back to 2026-08-14**, so
+this was never a copy regression — only a gate the proto could not reproduce.
+
+**In production the gate cannot lie, because both numbers come from one
+collection.** `AuctionResultController` returns
+`'buyers' => $tenderOffers->count()` beside
+`'offers' => SellerTenderOfferResource::collection($tenderOffers)`, unlimited
+and unfiltered — one `tender_offers` row per bidding dealership. So
+`offersLength === buyers`, and "no auction happened" can only appear when one
+dealership bid.
+
+**The proto's `data.offers` is a SAMPLE of that collection, and that is the
+whole bug.** It seeds two rows against `buyers: 25`, and it is trimmed to one
+in two unrelated situations — the highest offer carrying `car_pickup`
+(`selectOffers`, prod's own rule) and the bar's single-offer setting. Keying
+the modal on its length produced
+*"Autostasi ei valitettavasti syntynyt tarjouskilpailua"* on a page whose
+result block said **25 autoliikettä / 138 tarjousta**, two screens apart.
+
+**The rule this establishes, and it is general:** in this prototype **the
+length of `data.offers` answers "how many cards" and never "how many
+dealerships bid"**. Anything transcribed from prod that reads `offers.length`
+has to be re-pointed at `auctionCounts(req).bidders` here, because the two are
+the same number in prod and deliberately are not here. The variable is now
+named `bidderCount` at both call sites — the modal body and the pre-filled
+seller message — so re-introducing it means writing the wrong word.
+
+**A `Dealerships` field joined the bar's Auction settings with the fix**, and
+it had to: no scenario seeds fewer than three bidders, so after re-pointing the
+gate the one-bidder copy — a real production state — would have become
+unreachable. `?buyers=` is world state, which is why it sits beside the prices
+rather than becoming a scenario, and **it beats the offers-page pin** inside
+`auctionCounts`: the pin keeps two pages telling one story, but a tester naming
+the count is saying what the world is. Setting it to 1 also trims the offer
+array to one row, which is the one case where the proto's sample and prod's
+full collection agree.
+
+Verified after the fix: one card with 25 bidders (`?second=`) now renders the
+more-than-one copy; `?buyers=1` renders the one-offer copy, drops the verdict
+block through `VERDICT_MIN_BIDDERS` and falls back to prod's own stats labels.
+
+**One thing the fix exposes and does NOT solve:** `idShow` gates the Informed
+decision sections on `fair_offer` alone, so at `?buyers=1` the triage still
+renders and its `low` branch still says
+`Autoliikkeet perehtyivät autoosi ja korottivat tarjouksiaan` — false in a
+one-bidder auction. That is the already-recorded "thin-auction version of this
+block is not designed" gap, now reachable in one click rather than in theory.
+
 **Change 9 now means EVERY state, and change 3 reaches the reject
 confirmation.** Both were widened after the reject flow was written up
 (2026-09-02). The modal routes the seller to customer support in three places

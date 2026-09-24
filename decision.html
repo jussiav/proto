@@ -642,6 +642,16 @@
        offer on the front end, so the real page reads its own flag too and this
        is the contract rather than a simplification. */
     var OV_FAIR = _params.get('fair') === '0' ? false : null;
+    /* HOW MANY DEALERSHIPS BID — the world state, not how many cards show.
+       Production returns ONE `tender_offers` row per bidding dealership and
+       builds both numbers from that same collection
+       (`AuctionResultController`: `'buyers' => $tenderOffers->count()` beside
+       `'offers' => …($tenderOffers)`), so there `offers.length === buyers`.
+       The proto seeds a SAMPLE of offer rows instead — two, against a `buyers`
+       of 25 — so its array length answers a different question and must never
+       stand in for the bidder count. This field is what a tester moves to
+       reach a genuinely thin auction. */
+    var OV_BUYERS = _params.get('buyers') ? parseInt(_params.get('buyers'), 10) : null;
 
     // OV_SECOND === undefined  → use scenario default (may show 2 offers)
     // OV_SECOND === null       → param present but empty → force single offer
@@ -768,7 +778,11 @@
       var same  = store.sharedExpiryScenario === SCENARIO;
       return {
         offers:  same && store.sharedOffers  != null ? store.sharedOffers  : req.offer_count,
-        bidders: same && store.sharedBidders != null ? store.sharedBidders : req.buyers
+        /* An explicit `?buyers=` beats the offers-page pin: the pin exists to
+           keep two pages telling one story, but a tester naming the count is
+           saying what the world IS. */
+        bidders: OV_BUYERS !== null ? OV_BUYERS
+               : (same && store.sharedBidders != null ? store.sharedBidders : req.buyers)
       };
     }
 
@@ -1251,8 +1265,17 @@
         d.request.highest_offer = OV_HIGHEST;
         d.request.insights_data = genInsights(d.request.offer_count, OV_HIGHEST);
       }
+      /* Set before the card trims below, so a one-bidder auction really does
+         carry one offer row — that is the one case where the proto's sample
+         and production's full collection agree. */
+      if (OV_BUYERS !== null) {
+        d.request.buyers = OV_BUYERS;
+        if (OV_BUYERS <= 1) d.offers = d.offers.slice(0, 1);
+      }
       if (OV_SECOND === null) {
-        // param present but empty → single offer only
+        /* Param present but empty → show ONE CARD. This is a display choice —
+           prod does the same whenever the highest offer carries car pickup —
+           and it says nothing about how many dealerships bid. */
         d.offers = d.offers.slice(0, 1);
       } else if (OV_SECOND !== undefined && d.offers.length > 1) {
         d.offers[1].amount = OV_SECOND;
@@ -2963,7 +2986,23 @@
       var data        = getData();
       var req         = data.request || {};
       var offers      = data.offers || [];
-      var offersCount = offers.length;
+      /* THE BIDDER COUNT, NOT THE CARD COUNT, AND THE DIFFERENCE IS A REAL BUG
+         THIS ONCE SHIPPED. Production's gate here is `offersLength === 1`
+         (`QuickNegotiate.vue`), where that array is the seller's whole offer
+         collection — one row per bidding dealership — so in prod it is
+         identical to the `Autoliikkeitä` figure and the copy below cannot
+         contradict it.
+
+         The proto's `data.offers` is a SAMPLE of that collection, usually two
+         rows against 25 bidders, and it is trimmed to one whenever a single
+         card is wanted: the highest offer carrying car pickup, or the bar's
+         own single-offer setting. Reading its length here produced
+         "Autostasi ei valitettavasti syntynyt tarjouskilpailua" on a page
+         whose result block said 25 dealerships and 138 offers.
+
+         So: hiding the second card is a DISPLAY choice; the bidder count is
+         the world. Only the second one may decide what this modal says. */
+      var bidderCount = auctionCounts(req).bidders || 0;
       var msgs        = (neg && neg.messages) || [];
       var sellerRounds = msgs.filter(function(m) { return m.sender === 'seller'; }).length;
       var lastMsg     = msgs[msgs.length - 1];
@@ -3025,7 +3064,7 @@
       } else if (sellerCanSend) {
         // Seller's turn to send
         if (isQuick) {
-          var quickBody = offersCount === 1
+          var quickBody = bidderCount === 1
             ? 'Autostasi ei valitettavasti syntynyt tarjouskilpailua. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.'
             : 'Korkein tarjoaja haluaa ostaa autosi, älä jätä peliä vielä kesken. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.';
           if (EN_V1) {
@@ -3285,7 +3324,7 @@
           return;
         }
         var message = messageEl ? (messageEl.value || '')
-          : (offersCount === 1
+          : (bidderCount === 1
               ? 'Hei! Autostani ei syntynyt hintakilpailua. Millä hinnalla olette valmiita kauppoihin?'
               : 'Moi! Tällä hinnalla olisin valmis myymään autoni.');
         var cur = NEGOTIATIONS[MODAL.offerId] || { messages: [], isStopped: false };
@@ -3998,7 +4037,13 @@
       fields: [
         { key: 'asking',  label: 'Asking price €',  placeholder: 'asking' },
         { key: 'highest', label: 'Highest offer €', placeholder: 'highest' },
-        { key: 'second',  label: '2nd highest €', placeholder: 'empty = 1 offer', width: '110px', keepEmpty: true },
+        { key: 'second',  label: '2nd highest €', placeholder: 'empty = 1 card', width: '110px', keepEmpty: true },
+        /* The bidder count is world state, so it belongs beside the prices
+           rather than in a scenario: it is the only way to reach a genuinely
+           thin auction, which prod has its own copy for and no scenario seeds.
+           Distinct from `2nd highest €` on purpose — that one hides a card,
+           this one changes how many dealerships bid. */
+        { key: 'buyers',  label: 'Dealerships', placeholder: 'bidders', width: '110px' },
         /* Not a price, but it belongs with them: it is the one other fact about
            the auction result that changes what the page renders. `0` turns the
            fair offer off; anything else leaves the scenario's own value. */
