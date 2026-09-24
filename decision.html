@@ -188,6 +188,18 @@
        own paragraph rhythm. */
     .belief-note.belief-note { margin-top: 1.75rem; }
 
+    /* v2's chain sits inside a triage panel, whose own `.triage-panel p` sets a
+       12px rhythm — so the lead sat 12px above the row while the footnote sat
+       28px below it, and the block read lopsided. Both are 16px here, which is
+       the `mb-4` the markup already asks for, so the chain reads the same
+       inside a panel as it would standing alone.
+
+       Specificity: `.resale-chain p` ties with `.triage-panel p` at one class
+       plus one element, so SOURCE ORDER decides and this block sits below it.
+       Keep it there. `.belief-note` above is untouched — v1 keeps its 28px. */
+    .resale-chain > p { margin: 0 0 1rem; }
+    .resale-chain .resale-note { margin: 1rem 0 0; }
+
     /* Below prod's `sm` three 200px terms cannot sit in a 287px column, so the
        equation stacks and the operators become row separators.
 
@@ -2092,7 +2104,8 @@
              (hasNeg ? NEG_RUNNING : NEG_BTN) },
         { id: 'timing',
           q: 'En tiedä kannattaako myydä nyt',
-          a: '<p>Tarjous on voimassa vain rajoitetun ajan. Voit myös kokeilla julkaista ilmoituksen uudelleen, mutta tarjoukset muodostuvat silloisen markkinatilanteen mukaan ja ostajat usein välttävät tarjoavansa autoista jotka ovat jo nähneet tarjouskilpailussa aiemmin.</p>' }
+          a: '<p>Tarjous on voimassa vain rajoitetun ajan.</p>' +
+             '<p>Voit julkaista ilmoituksen myöhemmin uudelleen, mutta tarjoukset muodostuvat silloisen markkinatilanteen mukaan. Autoliikkeet myös tarjoavat harvemmin autosta, jonka ne ovat jo nähneet aiemmassa tarjouskilpailussa.</p>' }
       ];
       var html = '<p class="text-base text-slate-700 mb-4">Kerro mikä mietityttää, niin vastaamme siihen.</p>';
       items.forEach(function (it) {
@@ -2200,20 +2213,31 @@
     function buildResaleChain() {
       var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.</p>';
 
-      /* The first chip keeps the green and the coins even without a figure:
-         it is still the money step and still the term the seller identifies
-         with, and three identical grey boxes would leave the sequence with no
-         start. */
+      /* `Saamasi tarjous`, not `Edelliselle omistajalle` (2026-09-24, Jussi).
+         The chain is a general model of how a dealership prices a car, and the
+         old sub-label described the OTHER car in the lead line — leaving the
+         seller to work out that they stand in the same place. This one says it:
+         the near end of the chain is their offer, the far end is the number
+         they saw advertised. **It names no figure**, so the block stays static
+         and the sentence stays true at any price.
+
+         The green and the coins stay for the same reason they always did: it is
+         the money step and the term the seller has to identify with, and three
+         grey boxes would leave the sequence with no start. */
       html += '<div class="belief-eq flex items-stretch gap-3">'
-        +      beliefChip('belief-chip--own', 'Sisäänosto', 'Edelliselle omistajalle', true)
+        +      beliefChip('belief-chip--own', 'Sisäänosto', 'Saamasi tarjous', true)
         +      BELIEF_ARROW
         +      beliefChip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
         +      BELIEF_ARROW
         +      beliefChip('', 'Autoliikkeen pyyntihinta', '', false)
         +    '</div>';
 
-      html += BELIEF_FOOTNOTE;
-      return html;
+      /* Its OWN footnote, not `BELIEF_FOOTNOTE`: v1 keeps the 28px gap it was
+         given and v2 sits symmetrically inside the chain — see `.resale-chain`
+         in the stylesheet. Forking a 12-word string is the cost of the two arms
+         being free to move apart. */
+      html += '<p class="resale-note font-dm text-xs text-slate-600">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
+      return '<div class="resale-chain">' + html + '</div>';
     }
 
     /* ── Informed decision, v1: the auction result, read back as an argument ──

@@ -2546,7 +2546,7 @@ primitive** rather than a flag on that one.
 
 | | `v1` — `buildBelief` | `v2` — `buildResaleChain` |
 |---|---|---|
-| first term | the seller's real figure · `Sinulle maksettava summa` | **`Sisäänosto`** · `Edelliselle omistajalle` |
+| first term | the seller's real figure · `Sinulle maksettava summa` | **`Sisäänosto`** · `Saamasi tarjous` |
 | third term | `Ilmoituksen pyyntihinta` | **`Autoliikkeen pyyntihinta`** |
 | middle term, lead, footnote | identical today | identical today |
 | reads seller data | yes | **no** |
@@ -2555,8 +2555,16 @@ primitive** rather than a flag on that one.
 opens on the seller's own money, which is relatable and ties the block to one
 auction — the inference "you are the previous owner" is made FOR them. `v2`
 opens on `Sisäänosto` in the general case, so the block is a statement about how
-resale works and the seller has to place themselves in the chain. That is the
-one step `v1` deliberately removed, and it is now the thing the test compares.
+resale works.
+
+**`Saamasi tarjous` IS WHAT PUTS THE SELLER BACK IN THE CHAIN** (2026-09-24,
+Jussi). The sub-label was `Edelliselle omistajalle`, which described the OTHER
+car — the one in the lead line — and left the seller to work out that they
+stand in the same place. Saying `Saamasi tarjous` says it outright: the near end
+is their offer, the far end is the number they saw advertised. **It names no
+figure**, so `v2` stays static and the label is true at any price. So the arms
+now differ on the FIGURE rather than on who the chain is about, which is a
+cleaner thing for the A/B to measure than the version before it.
 
 **The green and the coins stay on `Sisäänosto` even without a figure.** It is
 still the money step and still the term the seller has to identify with; three
@@ -2571,6 +2579,25 @@ one label by Jussi's earlier call. **Measured:** it wraps to two lines inside
 the triage panel from about 730px down (the panel's own 16px padding and border
 make it narrower than `v1`'s card at the same viewport); `items-stretch` grows
 all three chips together, so nothing overflows at any width down to 375px.
+
+**THE CHAIN IS SYMMETRIC INSIDE THE PANEL, AND IT NEEDED ITS OWN RULES.**
+`.triage-panel p` sets a 12px paragraph rhythm, so `v2`'s lead sat 12px above
+the row while the shared `.belief-note` put 28px below it — lopsided, and only
+in `v2`. `.resale-chain > p` and `.resale-chain .resale-note` now put **16px on
+both sides**, which is the `mb-4` the markup always asked for, so the chain
+reads the same inside a panel as it would standing alone. Both rules TIE with
+`.triage-panel p` on specificity (one class plus one element), so source order
+decides and they are placed below it deliberately — **keep them there.**
+
+That is also why `v2` has its own footnote string rather than
+`BELIEF_FOOTNOTE`: `v1` keeps the 28px it was given. Forking a twelve-word
+string is what the arms being free to move apart actually costs.
+
+**The `timing` branch is two paragraphs** (2026-09-24). It was one 250-character
+sentence and it carried a grammatical error — `välttävät tarjoavansa autoista
+jotka` — so it was rewritten rather than reflowed: the validity fact stands
+alone, and the re-listing consequence and the dealership-memory point follow
+together. My wording, not Jussi's.
 
 **`v1` was verified UNCHANGED after the fork** — 264px at 1024, `11 500 € /
 Sinulle maksettava summa`, `Ilmoituksen pyyntihinta`, 28px footnote gap. One
