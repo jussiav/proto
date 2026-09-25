@@ -68,10 +68,10 @@ window.DECISION_I18N = {
 
     /* The triage */
     'Kerro mikä mietityttää, niin vastaamme siihen.': 'Tell us what is on your mind and we will answer it.',
-    'Hinta tuntuu matalalta':              'The price feels low',
-    'Näin muualla korkeampia hintoja':     'I saw higher prices elsewhere',
-    'Minulla on toinen tarjous':           'I have another offer',
-    'En tiedä kannattaako myydä nyt':      'I am not sure whether to sell now',
+    'Hinta tuntuu matalalta':               'The price feels low',
+    'Näin Nettiautossa korkeampia hintoja': 'I saw higher prices on Nettiauto',
+    'Minulla on toinen tarjous':            'I have another offer',
+    'En tiedä kannattaako myydä nyt':       'I am not sure whether to sell now',
     'Korkein tarjous on onnistuneen tarjouskilpailun tulos. Autoliikkeet perehtyivät autoosi ja korottivat tarjouksiaan, joten hinta on se, mitä autostasi ollaan nyt valmiita maksamaan.':
       'The highest offer is the result of a successful auction. Dealerships studied your car and raised their offers, so the price is what buyers are willing to pay for it right now.',
     'Jos et ole täysin tyytyväinen saamaasi tarjoukseen, voit tehdä vastatarjouksen korkeimmalle tarjoajalle. Nykyinen tarjous pysyy voimassa neuvottelun ajan.':

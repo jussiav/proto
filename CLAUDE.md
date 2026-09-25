@@ -2520,10 +2520,34 @@ and only that branch answers. Same fair-offer gate as `v1`, same `EN_V1` forcing
 `section-triage` between the offers and the reject banner.
 
 Four branches, and they are **the reject survey's own reason taxonomy asked
-BEFORE the decision instead of after it** — hinta tuntuu matalalta · näin muualla
-korkeampia hintoja · minulla on toinen tarjous · en tiedä kannattaako myydä nyt.
-The Nettiauto argument is branch 2's answer rather than a section every seller
-reads, so the doubt is named only by the seller who has it.
+BEFORE the decision instead of after it** — hinta tuntuu matalalta · **näin
+Nettiautossa korkeampia hintoja** · minulla on toinen tarjous · en tiedä
+kannattaako myydä nyt. The Nettiauto argument is branch 2's answer rather than a
+section every seller reads, so the doubt is named only by the seller who has it.
+
+**BRANCH 2 NAMES THE SITE IN ITS LABEL** (2026-09-25, Jussi). It read
+`Näin muualla korkeampia hintoja`; `muualla` made the seller translate their own
+doubt before they could recognise it, and the doubt is almost always Nettiauto
+specifically. The label now says so, which is also what makes the branch
+self-selecting — a seller comparing against a trade-in quote or a private ad
+should NOT open it.
+
+**`Nettiauto` is a brand name and does not translate.** It stays `Nettiauto` in
+the English gloss (`I saw higher prices on Nettiauto`), the same way
+`Nettiauton hinta ja saamasi tarjous` already does in `v1`.
+
+**The brand was already named in this initiative**, in `v1`'s section title and
+in both retired ideation arms — so this is not a new exposure. It does still sit
+under the standing constraint that **naming Nettiauto in seller-facing copy
+needs legal and brand sign-off before production**, which is a decision for the
+team rather than something the proto settles. The label is the FOURTH place the
+brand appears in the arm; that is worth one line in whatever goes to legal, not
+a separate question.
+
+**Measured:** the longer label wraps to two lines at 375px — but so did the old
+one (36 characters against 31, both past the one-line ceiling), so the button is
+78px in both and nothing moved. `En tiedä kannattaako myydä nyt` already wraps
+the same way, so two of the four labels take two rows on a phone by design.
 
 **The counter-offer moves in with it.** In `v2` the card's negotiate button is
 suppressed unless a negotiation already exists — `Näytä vastaus` survives, because
