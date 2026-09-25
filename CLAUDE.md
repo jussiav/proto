@@ -2670,6 +2670,36 @@ the triage panel from about 730px down (the panel's own 16px padding and border
 make it narrower than `v1`'s card at the same viewport); `items-stretch` grows
 all three chips together, so nothing overflows at any width down to 375px.
 
+**`v2`'s TWO GREY CHIPS ARE WHITE NOW, AND THE FILL WAS ALSO A CONTRAST BUG**
+(2026-09-25, Jussi asked for the colour; the second half came out of measuring
+it). `.belief-chip` sets no background, so in `v1` the chips fall through to
+the section's **white** card — which is where the recorded 4.76:1 for the
+slate-500 sub-labels comes from. Inside `v2`'s triage panel they fell through
+to its **slate-50** instead, and nobody had re-measured after the fork:
+`Kulut, vastuu, riski ja kate` was at **4.55:1**, passing AA by 0.05. It reads
+4.76 again now.
+
+**WHITE IS THE ONLY FILL AVAILABLE, AND THAT IS A LIMIT RATHER THAN A CHOICE.**
+Every tint tried behind those sub-labels on this page has taken them under or
+to the edge of AA — 3.86 on slate-200, 4.32 on gray-100, 4.35 on blue-50. **Do
+not give these chips a tinted fill**; if one is ever wanted, the sub-label has
+to leave slate-500 first.
+
+**The BORDERS do the separating, because white on slate-50 is only a 1.05
+step.** Both go to **slate-400** — 2.45 against the panel, where the inherited
+slate-300/slate-200 pair measured 1.42 on the solid chip, which is why
+`Autoliikkeen pyyntihinta` still read as background after the fill alone.
+**Both at the same weight**, deliberately: the old pair made the dashed term
+darker than the solid one, which conflates "unknown" with "louder". At one
+weight the DASH PATTERN is the only difference between them, so it is the only
+thing carrying the meaning — and keeping that signal was Jussi's own condition
+on the change.
+
+**Scoped to `v2` by a `resale-paper` class on the two chips**, passed through
+`beliefChip`'s `cls`, so `v1` is untouched — verified after: transparent fills,
+slate-300 dashed, slate-200 solid, 264px. The green chip keeps its own
+green-50 fill and green-500 border in both arms.
+
 **THE CHAIN IS SYMMETRIC INSIDE THE PANEL, AND IT NEEDED ITS OWN RULES.**
 `.triage-panel p` sets a 12px paragraph rhythm, so `v2`'s lead sat 12px above
 the row while the shared `.belief-note` put 28px below it — lopsided, and only

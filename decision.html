@@ -203,6 +203,27 @@
     .resale-chain > p { margin: 0 0 1rem; }
     .resale-chain .resale-note { margin: 1rem 0 0; }
 
+    /* THE TWO UNFILLED CHIPS WERE TRANSPARENT, so inside a triage panel they
+       showed its slate-50 and read as part of the background. White lifts them
+       off it, the same card-on-tint idiom the decision page already uses.
+
+       **WHITE IS THE ONLY FILL AVAILABLE HERE, AND THAT IS A CONTRAST LIMIT,
+       NOT A PREFERENCE.** `Kulut, vastuu, riski ja kate` is slate-500 at 12px:
+       4.76:1 on white, and every tint tried on this page has taken it under or
+       to the edge of AA (3.86 on slate-200, 4.32 on gray-100). It measured
+       **4.55 on the panel's slate-50** before this — passing by 0.05. Do not
+       give these chips a tinted fill.
+
+       White against slate-50 is only a 1.05 step, so the EDGE is what separates
+       a chip from the panel and both borders go to slate-400 (2.45 against the
+       panel, against 1.42 for the slate-300 they replace). **Both, at the same
+       weight** — the inherited slate-300/slate-200 pair made the dashed term
+       darker than the solid one, which conflates "unknown" with "louder". At
+       one weight the DASH PATTERN is the only difference, so it is the only
+       thing carrying the meaning. */
+    .resale-paper                { background: #FFFFFF; }
+    .resale-chain .resale-paper  { border-color: #94A3B8; }   /* slate-400 */
+
     /* Below prod's `sm` three 200px terms cannot sit in a 287px column, so the
        equation stacks and the operators become row separators.
 
@@ -2233,9 +2254,9 @@
       html += '<div class="belief-eq flex items-stretch gap-3">'
         +      beliefChip('belief-chip--own', 'Sisäänosto', 'Saamasi tarjous', true)
         +      BELIEF_ARROW
-        +      beliefChip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
+        +      beliefChip('belief-chip--unknown resale-paper', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
         +      BELIEF_ARROW
-        +      beliefChip('', 'Autoliikkeen pyyntihinta', '', false)
+        +      beliefChip('resale-paper', 'Autoliikkeen pyyntihinta', '', false)
         +    '</div>';
 
       /* Its OWN footnote, not `BELIEF_FOOTNOTE`: v1 keeps the 28px gap it was
