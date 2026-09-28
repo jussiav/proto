@@ -3636,13 +3636,31 @@ screen; without it the card is a click between the seller and their offers.
 | | heading | body |
 |---|---|---|
 | `control`, `v1` | `Hyvä tarjouskilpailu takana!` | `Autosi kävi läpi koko tarjouskilpailun…` |
-| **`v3`** | **`Ennen kuin katsot tarjouksia`** | **`Nettiauton hinnat ovat autoliikkeiden pyyntihintoja. Tarjouksesi on summa, jonka saat autostasi nyt.`** |
+| **`v3`** | **`Pidä mielessä, kun vertaat hintoja`** | **`Nettiauton hinnat eivät vertaudu tarjoukseesi. Tarjouksesi on summa, jonka saat autostasi nyt.`** |
 
-**`v3`'s copy is MINE, offered as a starting point** at Jussi's request — he
-iterates from here. Only the heading and the body change: the badge
-(`Tarjouskilpailu on päättynyt`), the illustration and the CTA
-(`Katso tulokset`) are prod's and are deliberately untouched, so the card still
-reads as the same component.
+**`v3`'s copy is JUSSI'S** (2026-09-28). My first draft
+(`Ennen kuin katsot tarjouksia`) was a starting point he then redrafted in
+Figma; this is that version. `eivät vertaudu` is the sharper move — it says the
+two numbers are **not comparable** rather than explaining what each one is, so
+the seller is not invited to do the comparing better.
+
+**THE CTA CHANGED TOO, AND IT IS THE ONE THING HERE THAT ALTERS WHAT THE SELLER
+DOES.** `Katso tulokset` opens a reveal; **`Ymmärrän, jatka`** asks them to
+acknowledge the point before the number appears, which turns the screen from a
+beat into a small gate. Everything else on the card is prod's — badge,
+illustration, layout — so it still reads as the same component.
+
+**The CTA is arm-dependent now.** `#warmup-cta` takes `wc.cta` and falls back
+to prod's `Katso tulokset`, so an arm that names no CTA keeps prod's label and
+nothing else on the page has to know the button varies. Verified: the button
+still calls `revealOffers()` and the reveal works — the label changed, not the
+mechanism.
+
+**One grammar correction, as with the block.** Jussi's heading reads
+`Pidä mielessä kun vertaat hintoja`; a `kun` clause takes a comma in Finnish, so
+the proto ships `Pidä mielessä, kun vertaat hintoja`. **A missing internal comma
+is an error, not the heading convention** — dropping a terminal full stop in a
+heading is a style choice, this is not. The Figma frame still has it.
 
 **PRICE TIERS ONLY.** `WARMUP_COPY_V3` covers the four tiers and nothing else;
 `no_offers` and `offers_expired` fall through to prod's own cards, because a

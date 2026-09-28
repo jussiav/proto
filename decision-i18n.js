@@ -64,9 +64,10 @@ window.DECISION_I18N = {
     'Hyvä tarjouskilpailu takana!':        'A good auction behind you!',
     'Autosi kävi läpi koko tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.':
       'Your car went through the whole auction and reached a network of hundreds of dealerships.',
-    'Ennen kuin katsot tarjouksia':        'Before you look at the offers',
-    'Nettiauton hinnat ovat autoliikkeiden pyyntihintoja. Tarjouksesi on summa, jonka saat autostasi nyt.':
-      'Nettiauto prices are dealerships’ asking prices. Your offer is the amount you get for your car now.',
+    'Pidä mielessä, kun vertaat hintoja':    'Keep this in mind when you compare prices',
+    'Nettiauton hinnat eivät vertaudu tarjoukseesi. Tarjouksesi on summa, jonka saat autostasi nyt.':
+      'Nettiauto prices are not comparable to your offer. Your offer is the amount you get for your car now.',
+    'Ymmärrän, jatka':                     'Understood, continue',
     'Tarjouskilpailu on päättynyt':         'The auction has ended',
     'Katso tulokset':                      'See the results',
 

@@ -379,7 +379,7 @@
             <h2 id="warmup-heading" class="font-display text-3xl font-bold mt-2 lg:leading-[36px]"></h2>
             <p id="warmup-message" class="text-black text-base px-2.5 mb-16 md:mb-6 mt-1"></p>
 
-            <button onclick="revealOffers()" class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">
+            <button id="warmup-cta" onclick="revealOffers()" class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">
               Katso tulokset
             </button>
           </div>
@@ -1621,9 +1621,15 @@
        starting point on. The badge, the image and the CTA are prod's and are
        deliberately untouched. */
     var WARMUP_V3_TIERS = {
-      heading: 'Ennen kuin katsot tarjouksia',
-      message: 'Nettiauton hinnat ovat autoliikkeiden pyyntihintoja. Tarjouksesi on summa, jonka saat autostasi nyt.',
-      image: 'excellent_auction.png'
+      heading: 'Pidä mielessä, kun vertaat hintoja',
+      message: 'Nettiauton hinnat eivät vertaudu tarjoukseesi. Tarjouksesi on summa, jonka saat autostasi nyt.',
+      image: 'excellent_auction.png',
+      /* THE CTA CHANGES TOO, WHICH THE FIRST DRAFT DID NOT. `Katso tulokset`
+         opens a reveal; `Ymmärrän, jatka` asks the seller to acknowledge the
+         point before the number appears. That turns the screen from a beat
+         into a small gate — worth knowing, since it is the one thing here that
+         changes what the seller DOES rather than what they read. */
+      cta: 'Ymmärrän, jatka'
     };
     var WARMUP_COPY_V3 = {
       excellent_auction:    WARMUP_V3_TIERS,
@@ -2781,6 +2787,9 @@
         document.getElementById('warmup-heading').textContent = wc.heading;
         document.getElementById('warmup-message').textContent = wc.message;
         document.getElementById('warmup-img').src = 'assets/' + wc.image;
+        /* prod's label is in the markup, so an arm that names no `cta` keeps it
+           and nothing else on the page has to know this is arm-dependent. */
+        document.getElementById('warmup-cta').textContent = wc.cta || 'Katso tulokset';
         warmupEl.classList.remove('hidden');
         warmupEl.classList.add('flex');
       } else {
