@@ -3609,7 +3609,7 @@ page says so in its first card, in a warning-coloured status chip and in the
 hero. Same category as Seller file upload's draft copy, but weaker: that one is
 a proposal awaiting sign-off, this one is a conversation starter.
 
-### The arm also REMOVES the warm-up screen (2026-09-11)
+### The warm-up screen: removed, then brought back for two arms of three
 
 `showWarmup = !req.offers_seen_at && !ID_V1`. Prod's warm-up is a full screen
 standing between the seller and their offers: an illustration,
@@ -3619,6 +3619,42 @@ auction-details block says on the decision page itself** — same illustration,
 same claim, and the figures behind it — so keeping both makes the seller read
 the same thing twice, once behind a click, and only the second one carries the
 evidence.
+
+**BROUGHT BACK FOR `v1` AND `v3` ON 2026-09-28** (Jussi). The gate is now
+`showWarmup = !req.offers_seen_at && !ID_V2` — **only `v2` still removes it**,
+because its triage asks the seller to name their own doubt and a screen that
+pre-empts one gets in the way of that. Everything below describes why it was
+removed in the first place and still applies to `v2`.
+
+**`v3` KEEPS THE SCREEN AND RE-AIMS IT.** Prod's card is a beat before the
+reveal that celebrates the auction. `v3` spends that beat planting the
+Nettiauto distinction BEFORE the number lands, so the seller reads their offer
+already holding the right frame instead of forming a reaction and meeting the
+correction a screen later. That inoculation is the argument for keeping a whole
+screen; without it the card is a click between the seller and their offers.
+
+| | heading | body |
+|---|---|---|
+| `control`, `v1` | `Hyvä tarjouskilpailu takana!` | `Autosi kävi läpi koko tarjouskilpailun…` |
+| **`v3`** | **`Ennen kuin katsot tarjouksia`** | **`Nettiauton hinnat ovat autoliikkeiden pyyntihintoja. Tarjouksesi on summa, jonka saat autostasi nyt.`** |
+
+**`v3`'s copy is MINE, offered as a starting point** at Jussi's request — he
+iterates from here. Only the heading and the body change: the badge
+(`Tarjouskilpailu on päättynyt`), the illustration and the CTA
+(`Katso tulokset`) are prod's and are deliberately untouched, so the card still
+reads as the same component.
+
+**PRICE TIERS ONLY.** `WARMUP_COPY_V3` covers the four tiers and nothing else;
+`no_offers` and `offers_expired` fall through to prod's own cards, because a
+comparison against dealership asking prices means nothing to a seller with no
+offer to compare. The lookup is
+`(ID_V3 && WARMUP_COPY_V3[pas]) || WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED`,
+so the fallback chain is unchanged for every other arm and state.
+
+**IN FIGMA:** `7280:227` (v1/control copy) and `7280:238` (v3), appended to the
+desktop column as iteration frames. The illustration came back via the recorded
+`imageHash` — the Plugin API cannot fetch a URL, so that hash is the only route
+without re-uploading, which is why it is written down. Both 720×266.
 
 `control` keeps it, because it is prod. Nothing else changes: `revealOffers()`
 stays wired for control, `postAuctionStatus` is untouched, and the warm-up copy

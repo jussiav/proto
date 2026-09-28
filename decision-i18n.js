@@ -60,6 +60,16 @@ window.DECISION_I18N = {
       'When you compare prices, remember that AutoVex offers and Nettiauto prices mean different things. A dealership’s asking price does not tell you what the car’s previous owner was paid.',
     'Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.':
       'A dealership’s asking price does not tell you what the car’s previous owner was paid, nor necessarily what the car will sell for.',
+    /* The warm-up screen — prod's copy plus v3's own */
+    'Hyvä tarjouskilpailu takana!':        'A good auction behind you!',
+    'Autosi kävi läpi koko tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.':
+      'Your car went through the whole auction and reached a network of hundreds of dealerships.',
+    'Ennen kuin katsot tarjouksia':        'Before you look at the offers',
+    'Nettiauton hinnat ovat autoliikkeiden pyyntihintoja. Tarjouksesi on summa, jonka saat autostasi nyt.':
+      'Nettiauto prices are dealerships’ asking prices. Your offer is the amount you get for your car now.',
+    'Tarjouskilpailu on päättynyt':         'The auction has ended',
+    'Katso tulokset':                      'See the results',
+
     /* v3 — the Nettiauto bar */
     'Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä liike maksaa autostasi.':
       'If you are comparing prices, remember that Nettiauto prices and the AutoVex offer you received mean different things. A Nettiauto price does not tell you what a dealership pays for your car.',

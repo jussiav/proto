@@ -1606,6 +1606,32 @@
        only use excellent_auction.png and not_great_auction.png. */
     var WARMUP_AUCTION_ENDED = { heading: 'Hyvä tarjouskilpailu takana!', message: 'Autosi kävi läpi koko tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.', image: 'excellent_auction.png' };
 
+    /* v3 KEEPS THE WARM-UP AND RE-AIMS IT (2026-09-28, Jussi). Prod's card is a
+       beat before the reveal that celebrates the auction; v3's uses that beat
+       to plant the Nettiauto distinction BEFORE the number lands, so the seller
+       reads the offer already holding the right frame instead of forming a
+       reaction and meeting the correction afterwards. That is the whole reason
+       to spend a screen on it.
+
+       PRICE TIERS ONLY. `no_offers` and `offers_expired` fall through to prod's
+       own cards: a comparison against dealership asking prices means nothing to
+       a seller who has no offer to compare.
+
+       Placeholder copy, mine — the header and body are what Jussi asked for a
+       starting point on. The badge, the image and the CTA are prod's and are
+       deliberately untouched. */
+    var WARMUP_V3_TIERS = {
+      heading: 'Ennen kuin katsot tarjouksia',
+      message: 'Nettiauton hinnat ovat autoliikkeiden pyyntihintoja. Tarjouksesi on summa, jonka saat autostasi nyt.',
+      image: 'excellent_auction.png'
+    };
+    var WARMUP_COPY_V3 = {
+      excellent_auction:    WARMUP_V3_TIERS,
+      matches_expectations: WARMUP_V3_TIERS,
+      good_auction:         WARMUP_V3_TIERS,
+      not_great_auction:    WARMUP_V3_TIERS
+    };
+
     var WARMUP_COPY = {
       excellent_auction:    WARMUP_AUCTION_ENDED,
       matches_expectations: WARMUP_AUCTION_ENDED,
@@ -2735,7 +2761,10 @@
          the second time is the one with the evidence attached.
 
          `control` keeps it, because it is prod. */
-      var showWarmup = !req.offers_seen_at && !ID_ANY;
+      /* v1 and v3 SHOW IT AGAIN (2026-09-28). Only v2 still removes it — its
+         triage asks the seller to name a doubt, and a screen that pre-empts one
+         gets in the way of that. */
+      var showWarmup = !req.offers_seen_at && !ID_V2;
 
       var warmupEl = document.getElementById('state-warmup');
       var mainEl   = document.getElementById('state-main');
@@ -2748,7 +2777,7 @@
            seller already saw the offers) and unreachable here (every scenario
            with `offers_seen_at: null` resolves to a status that has content), so
            this keeps a guard rather than reproducing a blank card. */
-        var wc = WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED;
+        var wc = (ID_V3 && WARMUP_COPY_V3[pas]) || WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED;
         document.getElementById('warmup-heading').textContent = wc.heading;
         document.getElementById('warmup-message').textContent = wc.message;
         document.getElementById('warmup-img').src = 'assets/' + wc.image;
