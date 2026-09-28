@@ -61,8 +61,8 @@ window.DECISION_I18N = {
     'Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.':
       'A dealership’s asking price does not tell you what the car’s previous owner was paid, nor necessarily what the car will sell for.',
     /* v3 — the Nettiauto bar */
-    'Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä auton edelliselle omistajalle on maksettu.':
-      'If you are comparing prices, remember that Nettiauto prices and the AutoVex offer you received mean different things. A Nettiauto price does not tell you what the car’s previous owner was paid.',
+    'Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä liike maksaa autostasi.':
+      'If you are comparing prices, remember that Nettiauto prices and the AutoVex offer you received mean different things. A Nettiauto price does not tell you what a dealership pays for your car.',
     'Nettiauton hinta:':                   'A Nettiauto price:',
 
     'Sisäänosto':                          'Purchase price',

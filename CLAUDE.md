@@ -2506,8 +2506,8 @@ it is made of:
 ```
 Nettiauton hinta vs. tarjouksesi
 Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous
-tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä auton edelliselle
-omistajalle on maksettu.
+tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä liike maksaa
+autostasi.
 Nettiauton hinta:                                              (bold, 16px)
 ┌────────────────────────────────┐      ┌╌╌╌╌╌╌╌╌╌╌╌╌┐
 │ 🪙 Sisäänosto                     │  +   ╎ Jälleenmyynti ╎
@@ -2560,13 +2560,26 @@ rounding.
   is the live artefact and the screenshot a snapshot of it. One-line change if
   that is backwards.
 
+**THE SECOND SENTENCE POINTS AT THE SELLER'S OWN CAR NOW** (2026-09-28,
+Jussi's final pass before showing the team). It read
+`…ei kerro, mitä auton edelliselle omistajalle on maksettu` — a statement about
+SOME car's previous owner, which the reader had to map onto themselves. It now
+reads **`…ei kerro, mitä liike maksaa autostasi`**: their car, present tense,
+no inference.
+
+**This is the sentence `v1` and `v2` still carry in the old form**, and it is
+the sharpest difference between the arms. The previous-owner framing was
+chosen deliberately once — it defends nobody and gives a sceptical reader
+nothing to bounce off — so the trade here is directness against that. Worth
+naming in the team discussion rather than treating as a tidy-up.
+
 **One grammar correction, applied in the proto and NOT in Figma.** The lead
 reads `Jos vertaat hintoja – muista, että…` in the frame; Finnish puts a
 **comma** after a fronted `jos`-clause, not a dash. The proto ships
 `Jos vertaat hintoja, muista, että…`. Everything else in the copy is
 grammatical as written.
 
-**Measured:** `section-nettiauto` **284px desktop / 500px at 375px**, against
+**Measured:** `section-nettiauto` **284px desktop / 476px at 375px**, against
 `v1`'s 252 / 548. Taller than `v1` on desktop (the extra bold line), **48px
 shorter on a phone** — two stacked chips beat three, though the `+` takes a row
 back (444 before it was added). Zero digits
