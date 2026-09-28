@@ -55,8 +55,8 @@ window.DECISION_I18N = {
     /* The resale chain. The lead FORKED on 2026-09-28 — v1 opens on the claim,
        v2 still opens on the correction — so both keys have to exist or the arm
        that is not listed silently renders Finnish. */
-    'AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.':
-      'AutoVex offers and Nettiauto prices mean different things. A dealership’s asking price does not tell you what the car’s previous owner was paid, nor necessarily what the car will sell for.',
+    'Muistathan kun vertaat hintoja, että AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.':
+      'When you compare prices, remember that AutoVex offers and Nettiauto prices mean different things. A dealership’s asking price does not tell you what the car’s previous owner was paid.',
     'Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.':
       'A dealership’s asking price does not tell you what the car’s previous owner was paid, nor necessarily what the car will sell for.',
     'Sisäänosto':                          'Purchase price',

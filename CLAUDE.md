@@ -2642,21 +2642,18 @@ primitive** rather than a flag on that one.
 | middle term, footnote | identical today | identical today |
 | reads seller data | yes | **no** |
 
-**THE ARMS HAVE LARGELY CONVERGED, AND THAT IS THE THING TO KNOW BEFORE
-READING ANY OF THE REASONING BELOW** (2026-09-28). `v1` gave up its euro figure
-and took `Autoliikkeen pyyntihinta` as its third term, so **what used to be
-"the whole difference" is gone.** What is left between the two chains is one
-label pair — `Saamasi tarjous`/`Sinulle maksettava summa` against
-`Sisäänosto`/`Saamasi tarjous` — plus `v1`'s extra opening sentence and its own
-section title. Everything else is identical.
+**THE TWO ARMS ARE FOR INTERNAL DISCUSSION, NOT FOR A HEAD-TO-HEAD TEST**
+(Jussi, 2026-09-28, and it settles a question this file raised twice). `v1` and
+`v2` are how the team looks at two treatments side by side; **only ONE of them
+is ever A/B tested, and it is tested against control.** So the fact that their
+chains have converged — same third term, both static, one label pair and one
+sentence apart — **is not a problem and should not be flagged as one.** Do not
+keep them apart for the sake of a comparison that will not be run; keep them
+apart only where the ideas genuinely differ.
 
-**The A/B in the table at the top of this section therefore no longer compares
-what it was designed to compare.** Test 2 was `v1` = the seller's own money in
-the chain against `v2` = the general case; both are now the general case, and
-the real difference is the TRIAGE around the chain rather than the chain
-itself. That may be exactly right — the triage is the bigger idea — but it
-should be a decision rather than a drift. **Re-read that table before the arms
-go to the team.**
+The earlier table describing "test 2" as `v1` against `v2` was my reading, not
+the plan. What is real: the result block is common to both, and whichever
+treatment the team picks goes out against prod's chart.
 
 The history below is kept because the reasoning still explains why each term
 reads as it does; it no longer describes a difference between the arms. `v1`
@@ -2890,6 +2887,29 @@ asioita.` states what the block is about in the block, not in its heading. The
 old sentence follows as the support. **Keep that order** — flipped, the block
 corrects something the reader has not been told is in dispute.
 
+**THE LEAD OPENS ON AN INSTRUCTION NOW, AND THE SECOND SENTENCE LOST ITS
+SECOND CLAUSE** (2026-09-28, Jussi, `v1` only). It reads
+`Muistathan kun vertaat hintoja, että AutoVex-tarjoukset ja Nettiauton hinnat
+tarkoittavat eri asioita. Autoliikkeen pyyntihinta ei kerro, mitä auton
+edelliselle omistajalle on maksettu.`
+
+`Muistathan kun vertaat hintoja` names the MOMENT the block is for — the seller
+mid-comparison — which is work neither the title nor the claim was doing. And
+dropping `…tai välttämättä mihin hintaan auto myydään` (added 2026-09-24) puts
+the correction back to one clean claim: **`v2` keeps that clause, `v1` does
+not**, so the two leads are now different in substance rather than only in
+their opening.
+
+**The footnote gap is 16px, matching the lead's own `mb-4` above the row.** It
+had been 28px since 2026-09-24, when the footnote read as the row's next line
+at 16px and the fix overshot; `v2` was equalised to 16 on 2026-09-24 and `v1`
+now agrees. Measured 16/16 in both arms at 1024 and 375.
+
+**Measured (2026-09-28):** `v1`'s `section-belief` **252px desktop / 548px at
+375px**, against 288 / 560 before this pass and 264 / 536 before the claim
+sentence. The shorter second sentence and the 12px of footnote gap are where
+it went.
+
 **A SPELLING NOTE, BECAUSE IT WILL COME BACK.** The third term was asked for as
 `Autoliikeen pyyntihinta`; Finnish takes the double k — **`Autoliikkeen`** —
 which is what `v2`, the lead sentence and the support-banner copy already use.
@@ -2927,8 +2947,8 @@ are being relieved of. They cannot be dismissed as padding, and — unlike a lis
 of costs — they are assumptions carried as assumptions. **Protect both if the
 sub-label is ever shortened.**
 
-**Measured (2026-09-28, after the claim sentence):** `v1`'s `section-belief`
-**288px desktop / 560px at 375px** — the lead goes 2 lines to 3 on desktop and
+**Measured after the claim sentence landed, superseded by the figures above:**
+`v1`'s `section-belief` was **288px desktop / 560px at 375px** — the lead goes 2 lines to 3 on desktop and
 4 to 6 on a phone, so the sentence costs 24px either way. Before it, and after
 the 2026-09-24 second clause, it was **264 / 536**, against
 228 / 500 before that — the lead takes a second line on desktop and a fourth on a

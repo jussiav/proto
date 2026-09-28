@@ -189,7 +189,12 @@
        plus an element) out-specifies a single class and zeroes the top margin.
        Doubling wins without `!important` and without reaching into the panel's
        own paragraph rhythm. */
-    .belief-note.belief-note { margin-top: 1.75rem; }
+    /* 16px, matching the `mb-4` the lead puts above the row, so the block is
+       symmetric top and bottom. It was 28px: that was set on 2026-09-24 when
+       the footnote read as the row's next line at 16px, and the fix at the
+       time overshot. Doubled for the reason below — v2's own `.resale-note`
+       carries the same value under `.resale-chain`. */
+    .belief-note.belief-note { margin-top: 1rem; }
 
     /* v2's chain sits inside a triage panel, whose own `.triage-panel p` sets a
        12px rhythm — so the lead sat 12px above the row while the footnote sat
@@ -199,7 +204,8 @@
 
        Specificity: `.resale-chain p` ties with `.triage-panel p` at one class
        plus one element, so SOURCE ORDER decides and this block sits below it.
-       Keep it there. `.belief-note` above is untouched — v1 keeps its 28px. */
+       Keep it there. `.belief-note` above is the v1 twin of these two and now
+       carries the same 16px. */
     .resale-chain > p { margin: 0 0 1rem; }
     .resale-chain .resale-note { margin: 1rem 0 0; }
 
@@ -2204,7 +2210,7 @@
          offer card, and nothing here depends on a negotiation. Putting the
          figure back means restoring the parameter and its call site together;
          `fmtCurrency` is still available. */
-      var html = '<p class="font-dm text-base text-slate-700 mb-4">AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.</p>';
+      var html = '<p class="font-dm text-base text-slate-700 mb-4">Muistathan kun vertaat hintoja, että AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu.</p>';
 
       html += '<div class="belief-eq flex items-stretch gap-3">'
         +      beliefChip('belief-chip--own', 'Saamasi tarjous', 'Sinulle maksettava summa', true)
@@ -2266,8 +2272,9 @@
         +      beliefChip('resale-paper', 'Autoliikkeen pyyntihinta', '', false)
         +    '</div>';
 
-      /* Its OWN footnote, not `BELIEF_FOOTNOTE`: v1 keeps the 28px gap it was
-         given and v2 sits symmetrically inside the chain — see `.resale-chain`
+      /* Its OWN footnote, not `BELIEF_FOOTNOTE`, so the two arms' strings and
+         spacing can move apart — they happen to agree at 16px today. See
+         `.resale-chain`
          in the stylesheet. Forking a 12-word string is the cost of the two arms
          being free to move apart. */
       html += '<p class="resale-note font-dm text-xs text-slate-600">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
