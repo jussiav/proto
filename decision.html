@@ -395,7 +395,7 @@
       <section id="section-belief" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
-          <span class="text-blue-900 leading-[24px]">Tiesitkö?</span>
+          <span class="text-blue-900 leading-[24px]">Tarjous vai pyyntihinta?</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="belief-content"></div>
@@ -2147,7 +2147,7 @@
       return html;
     }
 
-    function buildBelief(amount) {
+    function buildBelief() {
       /* THIS REPLACED THE `Näin vertaat tarjoustasi` EQUATION (2026-09-18), and
          it came out of the ideation set rather than from another pass at the
          original. Same three terms and the same palette, but the operators are
@@ -2193,18 +2193,25 @@
          — the old six-item version existed to outrun what a reader could list
          themselves, and that mechanism is deliberately retired here.
 
-         THE THIRD TERM SAYS `Ilmoituksen pyyntihinta` AGAIN, which is Jussi's
-         call. The `ilmoitus` collision documented below therefore survives in
-         that one label; the lead line, where the correction actually lands,
-         keeps `Autoliikkeen`. */
+         THE THIRD TERM IS `Autoliikkeen pyyntihinta` NOW (2026-09-28), so the
+         `ilmoitus` collision documented below is gone from this arm too: that
+         word is the SELLER's everywhere else in the product, and this label is
+         the last place it was still naming the dealership's listing.
+
+         THE FIRST TERM NO LONGER CARRIES THE AMOUNT, which is why this takes
+         no arguments. It read `standingAmount(offer)` and now says
+         `Saamasi tarjous` — so nothing in this block goes stale against the
+         offer card, and nothing here depends on a negotiation. Putting the
+         figure back means restoring the parameter and its call site together;
+         `fmtCurrency` is still available. */
       var html = '<p class="font-dm text-base text-slate-700 mb-4">AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.</p>';
 
       html += '<div class="belief-eq flex items-stretch gap-3">'
-        +      beliefChip('belief-chip--own', (amount ? fmtCurrency(amount) : 'Tarjouksesi'), 'Sinulle maksettava summa', true)
+        +      beliefChip('belief-chip--own', 'Saamasi tarjous', 'Sinulle maksettava summa', true)
         +      BELIEF_ARROW
         +      beliefChip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
         +      BELIEF_ARROW
-        +      beliefChip('', 'Ilmoituksen pyyntihinta', '', false)
+        +      beliefChip('', 'Autoliikkeen pyyntihinta', '', false)
         +    '</div>';
 
       html += BELIEF_FOOTNOTE;
@@ -2232,11 +2239,11 @@
          inference v1 removed on purpose. That is the trade, and it is the
          reason both arms exist.
 
-       `Autoliikkeen pyyntihinta` closes the chain here where v1 says
-       `Ilmoituksen pyyntihinta`, so the term the lead line argues about and the
-       term the chain arrives at are the same words. It also keeps the
-       `ilmoitus` collision out of this arm entirely — that word is the
-       SELLER's everywhere else in the product. */
+       `Autoliikkeen pyyntihinta` closes the chain, so the term the lead argues
+       about and the term the chain arrives at are the same words. **v1 says
+       this too since 2026-09-28**, so the third term is no longer one of the
+       differences between the arms — see the table in CLAUDE.md for what is
+       left of them. */
     function buildResaleChain() {
       var html = '<p class="font-dm text-base text-slate-700 mb-4">Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.</p>';
 
@@ -2902,7 +2909,7 @@
       var beliefSec = document.getElementById('section-belief');
       if (idShow && ID_V1) {
         document.getElementById('belief-content').innerHTML =
-          buildBelief(standingAmount(offers[0]) || req.highest_offer || 0);
+          buildBelief();
         beliefSec.classList.remove('hidden');
       } else {
         beliefSec.classList.add('hidden');

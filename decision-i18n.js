@@ -35,7 +35,7 @@ window.DECISION_I18N = {
     /* Sections */
     'Tarjouskilpailun tulos':             'Auction result',
     'Tarjouskilpailun tiedot':            'Auction details',
-    'Tiesitkö?':                          'Did you know?',
+    'Tarjous vai pyyntihinta?':            'An offer or an asking price?',
     'Mietitkö vielä?':                    'Still weighing it up?',
     'Tarvitsetko apua?':                  'Need help?',
     'Usein kysytyt kysymykset':           'Frequently asked questions',
@@ -66,7 +66,6 @@ window.DECISION_I18N = {
     'Jälleenmyynti':                       'Resale',
     'Kulut, vastuu, riski ja kate':        'Costs, liability, risk and margin',
     'Autoliikkeen pyyntihinta':            'The dealership’s asking price',
-    'Ilmoituksen pyyntihinta':             'The listing’s asking price',
     '*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.':
       '*Reselling involves preparation, costs and seller liability, depending on the car.',
 

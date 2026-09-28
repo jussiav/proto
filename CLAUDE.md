@@ -2636,17 +2636,33 @@ primitive** rather than a flag on that one.
 
 | | `v1` — `buildBelief` | `v2` — `buildResaleChain` |
 |---|---|---|
-| first term | the seller's real figure · `Sinulle maksettava summa` | **`Sisäänosto`** · `Saamasi tarjous` |
-| third term | `Ilmoituksen pyyntihinta` | **`Autoliikkeen pyyntihinta`** |
+| first term | **`Saamasi tarjous`** · `Sinulle maksettava summa` | `Sisäänosto` · `Saamasi tarjous` |
+| third term | `Autoliikkeen pyyntihinta` | `Autoliikkeen pyyntihinta` — **the same since 2026-09-28** |
 | lead | opens on the CLAIM (`AutoVex-tarjoukset ja Nettiauton hinnat…`) | opens on the correction |
 | middle term, footnote | identical today | identical today |
 | reads seller data | yes | **no** |
 
-**The first term is the whole difference, and the trade is explicit.** `v1`
-opens on the seller's own money, which is relatable and ties the block to one
-auction — the inference "you are the previous owner" is made FOR them. `v2`
-opens on `Sisäänosto` in the general case, so the block is a statement about how
-resale works.
+**THE ARMS HAVE LARGELY CONVERGED, AND THAT IS THE THING TO KNOW BEFORE
+READING ANY OF THE REASONING BELOW** (2026-09-28). `v1` gave up its euro figure
+and took `Autoliikkeen pyyntihinta` as its third term, so **what used to be
+"the whole difference" is gone.** What is left between the two chains is one
+label pair — `Saamasi tarjous`/`Sinulle maksettava summa` against
+`Sisäänosto`/`Saamasi tarjous` — plus `v1`'s extra opening sentence and its own
+section title. Everything else is identical.
+
+**The A/B in the table at the top of this section therefore no longer compares
+what it was designed to compare.** Test 2 was `v1` = the seller's own money in
+the chain against `v2` = the general case; both are now the general case, and
+the real difference is the TRIAGE around the chain rather than the chain
+itself. That may be exactly right — the triage is the bigger idea — but it
+should be a decision rather than a drift. **Re-read that table before the arms
+go to the team.**
+
+The history below is kept because the reasoning still explains why each term
+reads as it does; it no longer describes a difference between the arms. `v1`
+used to open on the seller's own money, which was relatable and tied the block
+to one auction — the inference "you are the previous owner" made FOR them
+rather than by them.
 
 **`Saamasi tarjous` IS WHAT PUTS THE SELLER BACK IN THE CHAIN** (2026-09-24,
 Jussi). The sub-label was `Edelliselle omistajalle`, which described the OTHER
@@ -2720,8 +2736,9 @@ jotka` — so it was rewritten rather than reflowed: the validity fact stands
 alone, and the re-listing consequence and the dealership-memory point follow
 together. My wording, not Jussi's.
 
-**`v1` was verified UNCHANGED after the fork** — 264px at 1024, `11 500 € /
-Sinulle maksettava summa`, `Ilmoituksen pyyntihinta`, 28px footnote gap. One
+**`v1` was verified unchanged at the time of the fork** — 264px at 1024,
+`11 500 € / Sinulle maksettava summa`, `Ilmoituksen pyyntihinta`, 28px footnote
+gap. All three of those have since changed; the height is 288px now. One
 thing did cross over the day before the fork and has NOT been reverted: the
 lead's second clause and the 28px footnote gap landed in both arms on
 2026-09-24. Both are improvements to the same argument rather than v2-specific
@@ -2783,7 +2800,7 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — `Tiesitkö?`
+### Block 2 — `Tarjous vai pyyntihinta?`
 
 **REPLACED 2026-09-18, AND THE REPLACEMENT CAME OUT OF THE IDEATION SET RATHER
 THAN FROM ANOTHER PASS AT THE ORIGINAL.** Jussi iterated in Figma across three
@@ -2795,12 +2812,12 @@ scale all still govern, the strings do not.
 **What it is now:**
 
 ```
-Tiesitkö?
+Tarjous vai pyyntihinta?
 AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen
 pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai
 välttämättä mihin hintaan auto myydään.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
-│ 🪙 11 500 €      │ → ╎ Jälleenmyynti    ╎ → │ Ilmoituksen      │
+│ 🪙 Saamasi tarjous│ → ╎ Jälleenmyynti    ╎ → │ Autoliikkeen     │
 │ Sinulle maksett… │   ╎ Kulut, vastuu,   ╎   │ pyyntihinta      │   (no sub-label)
 └──────────────────┘   └╌ riski ja kate ╌╌┘   └──────────────────┘
 *Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.
@@ -2823,11 +2840,10 @@ footnote now says what reselling **involves** rather than what it **costs**,
 hedged with `autosta riippuen`. **Do not turn it back into a list** — the
 assumption is now carried honestly by `vastuu`, where a list carried it as fact.
 
-**THE THIRD TERM SAYS `Ilmoituksen pyyntihinta` AGAIN**, which is Jussi's call.
-So the `ilmoitus` collision below survives in that one label; the lead line,
-where the correction actually lands, keeps `Autoliikkeen`. At 186px it wraps to
-two lines in a 177px chip — which is what the Figma version does too, so it is
-faithful rather than a defect.
+**THE THIRD TERM SAYS `Autoliikkeen pyyntihinta` NOW** (2026-09-28, Jussi), so
+the `ilmoitus` collision below is closed in BOTH arms. That word is the
+SELLER's everywhere else in the product, and this label was the last place it
+still named the dealership's listing.
 
 **THE LEAD LINE IS THE WHOLE CORRECTION, and it is the strongest sentence this
 initiative has produced.** It stops arguing about the SIZE of the gap and says
@@ -2858,21 +2874,26 @@ line of defence behind the dashed box rather than a rename.
 **The third term lost its sub-label** (`Ilmoituksessa näkyvä hinta`). With
 `Liikkeen pyyntihinta` naming the party, the gloss restated it.
 
-**THE SECTION TITLE IS NOW THE PLAIN QUESTION `Tiesitkö?`, AND THE BODY HAD TO
-ABSORB WHAT IT USED TO DO** (2026-09-28, Jussi — `v1` only, `v2` untouched).
-`Nettiauton hinta ja saamasi tarjous` named both things being confused before
-the reader met a single sentence; `Tiesitkö?` names nothing. So the lead now
-opens on the claim — **`AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat
-eri asioita.`** — and the old sentence follows as the support. **Keep that
-order.** Flipped, the block corrects something the reader has not been told is
-in dispute.
+**THE SECTION TITLE IS `Tarjous vai pyyntihinta?`, AND IT TOOK TWO PASSES TO
+GET THERE** (2026-09-28, Jussi, `v1` only). It was
+`Nettiauton hinta ja saamasi tarjous`, which named both things being confused
+before the reader met a sentence. That went to `Tiesitkö?` — which names
+nothing, and addressed the reader as someone who does not know, the one posture
+the recorded reader for this block (*"of course I know how they trick us"*)
+rejects. **`Tarjous vai pyyntihinta?` names the CONFUSION rather than the two
+prices**, which is the job, without the quiz-question voice. The title-voice
+risk recorded against `Tiesitkö?` is closed.
 
-**One thing to watch in testing, and it is not a wording nit.** The recorded
-reader for this block is the seller who says *"of course I know how they trick
-us"*. `Tiesitkö?` addresses them as someone who does not know, which is the one
-posture that reader rejects — every earlier version of this block avoided it by
-stating a fact rather than asking a quiz question. The body still does the work
-and does not condescend, so the risk sits entirely in the title.
+**The body keeps the claim sentence the title change forced**, and it earns its
+place either way: `AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri
+asioita.` states what the block is about in the block, not in its heading. The
+old sentence follows as the support. **Keep that order** — flipped, the block
+corrects something the reader has not been told is in dispute.
+
+**A SPELLING NOTE, BECAUSE IT WILL COME BACK.** The third term was asked for as
+`Autoliikeen pyyntihinta`; Finnish takes the double k — **`Autoliikkeen`** —
+which is what `v2`, the lead sentence and the support-banner copy already use.
+The proto ships the correct spelling.
 
 **THE TWO ARMS' LEADS HAVE FORKED, AND `decision-i18n.js` NEEDS BOTH KEYS.**
 They were the same string, so the dictionary held one entry; `v1`'s change
@@ -2957,7 +2978,7 @@ completes themselves:
 Näin vertaat tarjoustasi
 Muualla näkemäsi pyyntihinnat sisältävät myös auton myyntiin liittyviä kuluja.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
-│ 🪙 11 500 €      │ + ╎ Kulut            ╎ = │ Liikkeen pyynti… │
+│ 🪙 Saamasi tarjous │ + ╎ Kulut            ╎ = │ Liikkeen pyynti… │
 │ Sinulle maksett… │   ╎ Vaihtelee autoit ╎   │ Ilmoituksessa n… │   (no full stops)
 └──────────────────┘   └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘   └──────────────────┘
 *Kuluja ovat autosta riippuen esim. kunnostus, katsastus, säilytys,
@@ -3053,10 +3074,13 @@ exhaustive or audited list. **No figure against any of them, `kate` least of
 all** — a euro amount there hands the seller something to resent rather than
 something to understand.
 
-**The first term is the STANDING offer**, via `standingAmount(offer)` — the same
-single definition the offer card and the accept handler read, so a negotiation
-moves all three together. With no amount it falls back to the word
-`Tarjouksesi`.
+**THE FIRST TERM NO LONGER CARRIES A FIGURE** (2026-09-28, Jussi). It read the
+STANDING offer via `standingAmount(offer)` — the same definition the card and
+the accept handler use — and it now says `Saamasi tarjous`. `buildBelief()`
+therefore takes no arguments, and **`v1` is as static as `v2`**: measured, zero
+digits anywhere in `#section-belief`. Nothing in the block can go stale against
+the offer card, and a negotiation moves nothing here. Restoring the figure
+means restoring the parameter and its call site together.
 
 **THESE TWO BLOCKS ARE ON THE SITE'S BODY SCALE, NOT THE DECISION PAGE'S OLD
 14px** (2026-09-14). Prod styles the `p` ELEMENT `text-base leading-snug
