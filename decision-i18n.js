@@ -63,7 +63,7 @@ window.DECISION_I18N = {
     /* v3 — the Nettiauto bar */
     'Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä auton edelliselle omistajalle on maksettu.':
       'If you are comparing prices, remember that Nettiauto prices and the AutoVex offer you received mean different things. A Nettiauto price does not tell you what the car’s previous owner was paid.',
-    'Nettiauton hinta sisältää:':          'A Nettiauto price is made up of:',
+    'Nettiauton hinta:':                   'A Nettiauto price:',
 
     'Sisäänosto':                          'Purchase price',
     'Saamasi tarjous':                     'The offer you received',

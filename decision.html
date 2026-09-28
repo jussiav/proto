@@ -202,7 +202,7 @@
        sequence. Same chips, different grammar.
 
        The green part GROWS and the dashed part is FIXED, so the split is the
-       same at every width. It is schematic: no figure appears in either part,
+       same at every width (472 / 166 at a 680px card, matching Figma). It is schematic: no figure appears in either part,
        so nothing states what share of the price the seller's offer is.
        **Putting a figure in the green part would turn the proportion into a
        claim** — that is the line this composition must not cross.
@@ -210,7 +210,7 @@
        Hand-written because the block is injected by JS and the Play CDN
        generates utilities a tick late; no Tailwind class sits on the row, so
        nothing competes with these rules. */
-    .na-bar { display: flex; align-items: stretch; gap: 0; }
+    .na-bar { display: flex; align-items: stretch; gap: 1rem; }
     .na-bar > .belief-chip { min-width: 0; }
     .na-bar > .belief-chip:first-child { flex: 1 1 auto; }
     .na-bar > .belief-chip:last-child  { flex: 0 0 166px; }
@@ -2104,6 +2104,9 @@
         +    '</div>';
     }
     var BELIEF_ARROW = '<span class="belief-op font-dm text-base font-bold text-slate-800 flex-shrink-0" aria-hidden="true">&rarr;</span>';
+    /* v3's operator. Same class as the arrow, so it centres on the row and
+       becomes a row separator when the bar stacks; a rotated plus is a plus. */
+    var BELIEF_PLUS = '<span class="belief-op font-dm text-base font-bold text-slate-800 flex-shrink-0" aria-hidden="true">+</span>';
 
     var BELIEF_FOOTNOTE = '<p class="belief-note font-dm text-xs text-slate-600 mt-7">*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.</p>';
 
@@ -2283,10 +2286,11 @@
        otherwise verbatim from that frame. */
     function buildNettiauto() {
       var html = '<p class="font-dm text-base text-slate-700">Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä auton edelliselle omistajalle on maksettu.</p>';
-      html += '<p class="font-dm text-base font-bold text-slate-800 mt-4">Nettiauton hinta sisältää:</p>';
+      html += '<p class="font-dm text-base font-bold text-slate-800 mt-4">Nettiauton hinta:</p>';
 
       html += '<div class="na-bar mt-4">'
         +      beliefChip('belief-chip--own', 'Sisäänosto', 'Sinulle maksettava summa', true)
+        +      BELIEF_PLUS
         +      beliefChip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
         +    '</div>';
 
