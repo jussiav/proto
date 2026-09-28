@@ -3361,7 +3361,7 @@ is derivable from the repo, so it is written down here.**
 
 Sections, desktop then mobile: Hero `7030:11` / `7030:17` · Offers `7030:12` /
 `7030:18` · Tarjouskilpailun tiedot `7030:13` / `7030:19` · **price belief —
-LIVE: `7236:227` / `7236:252`** · Tarvitsetko apua? `7030:15` / `7030:21` ·
+LIVE: `7275:227` / `7275:251`** (2026-09-28) · Tarvitsetko apua? `7030:15` / `7030:21` ·
 FAQ `7030:16` / `7030:22`.
 
 **FIGMA KEEPS EVERY ITERATION; THE PROTO KEEPS ONLY THE CURRENT ONE.** Jussi's
@@ -3430,6 +3430,34 @@ The Plugin API cannot fetch a URL, so a raster image gets in via `upload_assets`
 and is then reused by setting that hash on another node's fills. It is no longer
 on either screen — the seal replaced it — but the hash is the only way back
 without re-uploading.
+
+**SYNCED 2026-09-28 — `v1` AS `Tarjous vai pyyntihinta?`.** Desktop `7275:227`,
+mobile `7275:251`, both named `✅ Tarjous vai pyyntihinta? — IN PROTO` and both
+cloned from their own column's previous live frame, per the method below. Text
+verified string-for-string against the proto; heights 254 / 558 against the
+proto's 252 / 548, which is the usual Figma text-layout difference and is not
+worth chasing.
+
+**THREE THINGS THE FILE HAD DRIFTED ON, ALL FOUND BY READING IT FIRST:**
+
+- **`7236:227` NO LONGER EXISTS.** The desktop id recorded here as the live
+  price belief returns MISSING; it was removed in Figma between sessions. The
+  desktop live slot was `7239:39996`.
+- **That frame carried the wrong name** — `◻︎ Superseded — ketjun päässä /
+  5-stage chain`, which it has never contained. Flagged here on 2026-09-18 and
+  now **corrected** to `◻︎ Superseded — Nettiauton hinta ja saamasi tarjous
+  (not in proto)`, which is what it holds.
+- **Mobile's `✅ IN PROTO` frame was well behind the proto** — `Liikkeen
+  pyyntihinta`, `Kulut, riski ja kate` and the old six-item footnote, i.e. the
+  2026-09-16 state. The marker said IN PROTO for twelve days while it was not.
+  **A `✅` marker is a claim that has to be re-checked, not trusted** — read the
+  frame's text before treating it as the current one.
+
+**The two columns archive differently, and each was left in its own pattern.**
+Desktop keeps the live screen at 0–5 and every iteration below the FAQ, so the
+superseded frame was moved to the end. Mobile stacks its iterations directly
+under the live one, before `Tarvitsetko apua?`, so it only had to shift by one.
+Do not normalise these to each other without asking.
 
 **THE DRAFT VARIANTS ARE GONE, AND NOT BY ME** (checked 2026-09-18). The desktop
 column used to hold five versions of the price-belief block —
