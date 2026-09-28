@@ -36,6 +36,7 @@ window.DECISION_I18N = {
     'Tarjouskilpailun tulos':             'Auction result',
     'Tarjouskilpailun tiedot':            'Auction details',
     'Tarjous vai pyyntihinta?':            'An offer or an asking price?',
+    'Nettiauton hinta vs. tarjouksesi':    'A Nettiauto price vs. your offer',
     'Mietitkö vielä?':                    'Still weighing it up?',
     'Tarvitsetko apua?':                  'Need help?',
     'Usein kysytyt kysymykset':           'Frequently asked questions',
@@ -59,6 +60,11 @@ window.DECISION_I18N = {
       'When you compare prices, remember that AutoVex offers and Nettiauto prices mean different things. A dealership’s asking price does not tell you what the car’s previous owner was paid.',
     'Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.':
       'A dealership’s asking price does not tell you what the car’s previous owner was paid, nor necessarily what the car will sell for.',
+    /* v3 — the Nettiauto bar */
+    'Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä auton edelliselle omistajalle on maksettu.':
+      'If you are comparing prices, remember that Nettiauto prices and the AutoVex offer you received mean different things. A Nettiauto price does not tell you what the car’s previous owner was paid.',
+    'Nettiauton hinta sisältää:':          'A Nettiauto price is made up of:',
+
     'Sisäänosto':                          'Purchase price',
     'Saamasi tarjous':                     'The offer you received',
     'Sinulle maksettava summa':            'The amount paid to you',

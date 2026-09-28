@@ -2497,6 +2497,74 @@ of `Muutama neuvo` is block 2.
 Finnish once the shape is agreed, so there is no point spending on wording that
 will be replaced.
 
+### `v3` — the Nettiauto bar (2026-09-28)
+
+**`v1`'s argument in a different grammar.** `v1` walks a SEQUENCE — offer →
+resale → advertised price. `v3` states the WHOLE first and shows the two parts
+it is made of:
+
+```
+Nettiauton hinta vs. tarjouksesi
+Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous
+tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä auton edelliselle
+omistajalle on maksettu.
+Nettiauton hinta sisältää:                                      (bold, 16px)
+┌────────────────────────────────────┐┌╌╌╌╌╌╌╌╌╌╌╌╌┐
+│ 🪙 Sisäänosto                        │╎ Jälleenmyynti ╎   gap 0
+│ Sinulle maksettava summa           │╎ Kulut, vast… ╎
+└─────────── 514px, grows ──────────┘└╌ 166px, fixed ┘
+*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.
+```
+
+**THE THIRD TERM IS GONE BECAUSE THE BOLD LINE REPLACES IT.**
+`Nettiauton hinta sisältää:` names the advertised price in words, so a chip for
+it would be the same thing twice — once as a label, once as a box. That is the
+whole structural difference; the chips, the card, the palette and the gate are
+`v1`'s.
+
+**Built from Jussi's Figma frame `7275:227`**, which he edited IN PLACE — it was
+the `v1` frame synced there earlier the same day, so **that id now holds `v3`,
+not `v1`**. His duplicate of the old `v1` sits beside it as `7276:40127`.
+Geometry transcribed exactly: green FILL at 514px, dashed FIXED at 166px,
+**gap 0**, measured identical in the proto.
+
+**TWO THINGS TO WATCH, AND THE FIRST IS THE ONE THAT MATTERS:**
+
+- **The bar states a PROPORTION where the chain stated none.** A 514/166 split
+  says the seller's offer is roughly three quarters of the advertised price.
+  Nothing numeric backs that, and `docs/` history records "the seller's own
+  offer in a sized segment" among the rejected versions of this block — the
+  objection being that a sized segment invites running the arithmetic
+  backwards. **It survives here only because neither part carries a figure.**
+  Putting a euro amount in the green part turns the schematic into a claim.
+  That is the line this composition must not cross.
+- **The screenshot Jussi sent and the Figma frame disagree on one word.** The
+  screenshot's green chip reads `Saamasi tarjous`; the file reads
+  `Sisäänosto`. The proto follows **the file**, on the reasoning that the file
+  is the live artefact and the screenshot a snapshot of it. One-line change if
+  that is backwards.
+
+**One grammar correction, applied in the proto and NOT in Figma.** The lead
+reads `Jos vertaat hintoja – muista, että…` in the frame; Finnish puts a
+**comma** after a fronted `jos`-clause, not a dash. The proto ships
+`Jos vertaat hintoja, muista, että…`. Everything else in the copy is
+grammatical as written.
+
+**Measured:** `section-nettiauto` **284px desktop / 444px at 375px**, against
+`v1`'s 252 / 548. It is taller than `v1` on desktop (the extra bold line) and
+**104px shorter on a phone**, because two stacked chips beat three. Zero digits
+anywhere in the section. Below 620px the bar stacks and takes an 8px gap, since
+two full-width chips touching would read as one box.
+
+**No spec page entry**, following `v2`'s precedent while the shape settles.
+
+**THE FIGMA NAMES ARE NOW WRONG FOR BOTH FRAMES AND I DID NOT CHANGE THEM.**
+`7275:227` (now `v3`) and `7276:40127` (the old `v1`) both read
+`✅ Tarjous vai pyyntihinta? — IN PROTO`. Two frames claiming IN PROTO is the
+exact failure the marker convention exists to prevent, and neither title
+matches its contents any more. Left alone because Jussi was actively editing
+them; **rename before the next sync.**
+
 ### `v2` — the triage element (2026-09-23, first draft)
 
 **THE THREE THINGS ON THE TABLE, AND THEY ARE TWO SEPARATE TESTS** (Jussi,

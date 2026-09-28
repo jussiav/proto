@@ -196,6 +196,30 @@
        carries the same value under `.resale-chain`. */
     .belief-note.belief-note { margin-top: 1rem; }
 
+    /* v3's two terms are ADJACENT, not spaced. The row reads as one bar made
+       of two parts, which is exactly what the line above it promises —
+       `Nettiauton hinta sisältää:` — where v1's spaced, arrowed row reads as a
+       sequence. Same chips, different grammar.
+
+       The green part GROWS and the dashed part is FIXED, so the split is the
+       same at every width. It is schematic: no figure appears in either part,
+       so nothing states what share of the price the seller's offer is.
+       **Putting a figure in the green part would turn the proportion into a
+       claim** — that is the line this composition must not cross.
+
+       Hand-written because the block is injected by JS and the Play CDN
+       generates utilities a tick late; no Tailwind class sits on the row, so
+       nothing competes with these rules. */
+    .na-bar { display: flex; align-items: stretch; gap: 0; }
+    .na-bar > .belief-chip { min-width: 0; }
+    .na-bar > .belief-chip:first-child { flex: 1 1 auto; }
+    .na-bar > .belief-chip:last-child  { flex: 0 0 166px; }
+
+    @media (max-width: 619.98px) {
+      .na-bar { flex-direction: column; gap: .5rem; }
+      .na-bar > .belief-chip:last-child { flex: 0 0 auto; }
+    }
+
     /* v2's chain sits inside a triage panel, whose own `.triage-panel p` sets a
        12px rhythm — so the lead sat 12px above the row while the footnote sat
        28px below it, and the block read lopsided. Both are 16px here, which is
@@ -408,6 +432,20 @@
         </div>
       </section>
 
+      <!-- Section 3b-alt: the Nettiauto bar — Informed decision, v3 only.
+           Same argument and same gate as 3b, composed as a PART/WHOLE instead
+           of a sequence: `Nettiauton hinta sisältää:` and then the two things
+           it is made of. Built from Jussi's Figma frame 7275:227. -->
+      <section id="section-nettiauto" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
+          <span class="text-blue-900 leading-[24px]">Nettiauton hinta vs. tarjouksesi</span>
+        </h2>
+        <div class="w-full p-5 bg-white rounded-xl">
+          <div id="nettiauto-content"></div>
+        </div>
+      </section>
+
       <!-- Section 3c: the triage element — Informed decision, v2 only.
            Same fair-offer gate as 3a/3b. It sits between the offers and the
            reject banner because that is the path a hesitating seller walks:
@@ -537,7 +575,7 @@
        Copy is placeholder — the team locks the Finnish once the shape is
        agreed, so it is not worth polishing.
        Spec: design-specs/informed-decision.html */
-    var ID_ARMS = ['control', 'v1', 'v2'];
+    var ID_ARMS = ['control', 'v1', 'v2', 'v3'];
     var ID_ARM = (function () {
       var arm = window.protoVariant('informed-decision', 'control');
       if (ID_ARMS.indexOf(arm) === -1) { window.protoVariantSet('informed-decision', null); return 'control'; }
@@ -550,7 +588,12 @@
        it rather than a section every seller reads, and the counter-offer moves
        in there too - an offer card carrying accept alone is the point. */
     var ID_V2 = ID_ARM === 'v2';
-    var ID_ANY = ID_V1 || ID_V2;
+    /* v3 is v1's argument recomposed: the chain becomes a PART/WHOLE bar and
+       the third term goes, because `Nettiauton hinta sisältää:` makes the whole
+       explicit in words instead of arriving at it through arrows. Built from
+       Jussi's Figma frame; it shares v1's gate, its card and its chips. */
+    var ID_V3 = ID_ARM === 'v3';
+    var ID_ANY = ID_V1 || ID_V2 || ID_V3;
 
     /* INFORMED DECISION SUBSUMES ENHANCED NEGOTIATIONS, and the direction is
        one-way. The ideation arm is where the whole decision page is being
@@ -2225,6 +2268,32 @@
       return html;
     }
 
+    /* ── The Nettiauto bar — Informed decision v3 only ──────────────
+       Jussi's Figma frame `7275:227`, transcribed. It is v1's argument in a
+       different grammar: v1 walks a SEQUENCE from the seller's offer to the
+       advertised price, v3 states the WHOLE first and shows the two parts it
+       is made of.
+
+       THAT IS WHY THE THIRD TERM IS GONE. `Nettiauton hinta sisältää:` names
+       the advertised price in words, so a chip for it would be the same thing
+       twice — once as a label and once as a box.
+
+       **The lead's dash was corrected to a comma.** Finnish puts a comma after
+       a fronted `jos`-clause; the Figma frame still has the en dash. Copy is
+       otherwise verbatim from that frame. */
+    function buildNettiauto() {
+      var html = '<p class="font-dm text-base text-slate-700">Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Nettiauton hinta ei kerro, mitä auton edelliselle omistajalle on maksettu.</p>';
+      html += '<p class="font-dm text-base font-bold text-slate-800 mt-4">Nettiauton hinta sisältää:</p>';
+
+      html += '<div class="na-bar mt-4">'
+        +      beliefChip('belief-chip--own', 'Sisäänosto', 'Sinulle maksettava summa', true)
+        +      beliefChip('belief-chip--unknown', 'Jälleenmyynti', 'Kulut, vastuu, riski ja kate', false)
+        +    '</div>';
+
+      html += BELIEF_FOOTNOTE;
+      return html;
+    }
+
     /* ── The resale chain — Informed decision v2 only ─────────────────────
        v1's `buildBelief` and this are DELIBERATELY SEPARATE FUNCTIONS, not one
        with a flag. The two arms are alternatives the team will choose between,
@@ -2920,6 +2989,15 @@
         beliefSec.classList.remove('hidden');
       } else {
         beliefSec.classList.add('hidden');
+      }
+
+      /* v3: the same argument as a part/whole bar. */
+      var naSec = document.getElementById('section-nettiauto');
+      if (idShow && ID_V3) {
+        document.getElementById('nettiauto-content').innerHTML = buildNettiauto();
+        naSec.classList.remove('hidden');
+      } else {
+        naSec.classList.add('hidden');
       }
 
       /* v2: the same argument, demoted to one branch of the triage. */
@@ -4104,7 +4182,8 @@
           variants: [
             { id: 'control', label: 'Control — production decision page' },
             { id: 'v1',      label: 'Variant 1 — fair-offer treatment + enhanced negotiations' },
-            { id: 'v2',      label: 'Variant 2 — triage: seller names the doubt, counter-offer moves in' }
+            { id: 'v2',      label: 'Variant 2 — triage: seller names the doubt, counter-offer moves in' },
+            { id: 'v3',      label: 'Variant 3 — Nettiauto bar: the price stated as its parts' }
           ]
         }
       ],
