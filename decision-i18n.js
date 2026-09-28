@@ -71,6 +71,8 @@ window.DECISION_I18N = {
     'Tarjouksesi':                         'Your offer',
     'Jälleenmyynti':                       'Resale',
     'Kulut, vastuu, riski ja kate':        'Costs, liability, risk and margin',
+    /* v3 dropped `vastuu`; v1 and v2 keep it, so both keys have to exist. */
+    'Kulut, riski ja kate':                'Costs, risk and margin',
     'Autoliikkeen pyyntihinta':            'The dealership’s asking price',
     '*Jälleenmyyntiin liittyy autosta riippuen valmistelua, kuluja ja myyjän vastuuta.':
       '*Reselling involves preparation, costs and seller liability, depending on the car.',

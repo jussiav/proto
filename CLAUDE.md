@@ -2575,16 +2575,18 @@ two full-width chips touching would read as one box.
 
 **No spec page entry**, following `v2`'s precedent while the shape settles.
 
-**A THIRD FIGMA EDIT WAS FOUND AND DELIBERATELY NOT APPLIED.** The dashed
-chip's sub-label in `7275:227` now reads `Kulut, riski ja kate` — **`vastuu` has
-been dropped**. Jussi named only the `+` and the bold line, so this was not
-part of the ask, and it collides with two recorded decisions: `vastuu` is the
-word carrying the dealership's post-sale liability (the assumption the whole
-block rests on), the note below says **"protect both if the sub-label is ever
-shortened"**, and the footnote still ends `…ja myyjän vastuuta`, which the chip
-would no longer set up. **The proto keeps `Kulut, vastuu, riski ja kate`**, so
-proto and Figma disagree on that one string until the team says which way it
-goes.
+**`vastuu` IS OUT OF `v3`'s SUB-LABEL, AND ONLY `v3`'s** (2026-09-28, Jussi's
+call after it was flagged). The dashed chip reads `Kulut, riski ja kate` here;
+**`v1` and `v2` keep `Kulut, vastuu, riski ja kate`**, so the three arms now
+differ on that string too and `decision-i18n.js` carries both keys.
+
+**The idea is not lost, it moved.** The footnote still ends
+`…ja myyjän vastuuta`, so in `v3` the liability is introduced there rather than
+listed in the chip — which is arguably the cleaner division of labour: the chip
+names the phase, the small print says what the phase involves. **It does mean
+`vastuu` now appears exactly once in `v3`, in the footnote. Deleting the
+footnote would take the block's load-bearing assumption with it**, which the
+note below already says and now matters more.
 
 **THE FIGMA NAMES ARE NOW WRONG FOR BOTH FRAMES AND I DID NOT CHANGE THEM.**
 `7275:227` (now `v3`) and `7276:40127` (the old `v1`) both read
