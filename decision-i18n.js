@@ -35,7 +35,7 @@ window.DECISION_I18N = {
     /* Sections */
     'Tarjouskilpailun tulos':             'Auction result',
     'Tarjouskilpailun tiedot':            'Auction details',
-    'Nettiauton hinta ja saamasi tarjous': 'A Nettiauto price and the offer you received',
+    'Tiesitkö?':                          'Did you know?',
     'Mietitkö vielä?':                    'Still weighing it up?',
     'Tarvitsetko apua?':                  'Need help?',
     'Usein kysytyt kysymykset':           'Frequently asked questions',
@@ -52,7 +52,11 @@ window.DECISION_I18N = {
     'Autoliikettä':                        'Dealerships',
     'Odotettu hinta':                      'Expected price',
 
-    /* The resale chain — v1 and v2 */
+    /* The resale chain. The lead FORKED on 2026-09-28 — v1 opens on the claim,
+       v2 still opens on the correction — so both keys have to exist or the arm
+       that is not listed silently renders Finnish. */
+    'AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.':
+      'AutoVex offers and Nettiauto prices mean different things. A dealership’s asking price does not tell you what the car’s previous owner was paid, nor necessarily what the car will sell for.',
     'Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai välttämättä mihin hintaan auto myydään.':
       'A dealership’s asking price does not tell you what the car’s previous owner was paid, nor necessarily what the car will sell for.',
     'Sisäänosto':                          'Purchase price',

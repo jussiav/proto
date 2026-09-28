@@ -2638,7 +2638,8 @@ primitive** rather than a flag on that one.
 |---|---|---|
 | first term | the seller's real figure · `Sinulle maksettava summa` | **`Sisäänosto`** · `Saamasi tarjous` |
 | third term | `Ilmoituksen pyyntihinta` | **`Autoliikkeen pyyntihinta`** |
-| middle term, lead, footnote | identical today | identical today |
+| lead | opens on the CLAIM (`AutoVex-tarjoukset ja Nettiauton hinnat…`) | opens on the correction |
+| middle term, footnote | identical today | identical today |
 | reads seller data | yes | **no** |
 
 **The first term is the whole difference, and the trade is explicit.** `v1`
@@ -2782,7 +2783,7 @@ three-column `dl`, the chart and the date row. Never a stripped-down version. A
 thin auction (`VERDICT_MIN_BIDDERS`) lands in the same place, so the two
 exclusions share one fallback.
 
-### Block 2 — `Nettiauton hinta ja saamasi tarjous`
+### Block 2 — `Tiesitkö?`
 
 **REPLACED 2026-09-18, AND THE REPLACEMENT CAME OUT OF THE IDEATION SET RATHER
 THAN FROM ANOTHER PASS AT THE ORIGINAL.** Jussi iterated in Figma across three
@@ -2794,9 +2795,10 @@ scale all still govern, the strings do not.
 **What it is now:**
 
 ```
-Nettiauton hinta ja saamasi tarjous
-Autoliikkeen pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu
-tai välttämättä mihin hintaan auto myydään.
+Tiesitkö?
+AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat eri asioita. Autoliikkeen
+pyyntihinta ei kerro, mitä auton edelliselle omistajalle on maksettu tai
+välttämättä mihin hintaan auto myydään.
 ┌──────────────────┐   ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐   ┌──────────────────┐
 │ 🪙 11 500 €      │ → ╎ Jälleenmyynti    ╎ → │ Ilmoituksen      │
 │ Sinulle maksett… │   ╎ Kulut, vastuu,   ╎   │ pyyntihinta      │   (no sub-label)
@@ -2856,6 +2858,29 @@ line of defence behind the dashed box rather than a rename.
 **The third term lost its sub-label** (`Ilmoituksessa näkyvä hinta`). With
 `Liikkeen pyyntihinta` naming the party, the gloss restated it.
 
+**THE SECTION TITLE IS NOW THE PLAIN QUESTION `Tiesitkö?`, AND THE BODY HAD TO
+ABSORB WHAT IT USED TO DO** (2026-09-28, Jussi — `v1` only, `v2` untouched).
+`Nettiauton hinta ja saamasi tarjous` named both things being confused before
+the reader met a single sentence; `Tiesitkö?` names nothing. So the lead now
+opens on the claim — **`AutoVex-tarjoukset ja Nettiauton hinnat tarkoittavat
+eri asioita.`** — and the old sentence follows as the support. **Keep that
+order.** Flipped, the block corrects something the reader has not been told is
+in dispute.
+
+**One thing to watch in testing, and it is not a wording nit.** The recorded
+reader for this block is the seller who says *"of course I know how they trick
+us"*. `Tiesitkö?` addresses them as someone who does not know, which is the one
+posture that reader rejects — every earlier version of this block avoided it by
+stating a fact rather than asking a quiz question. The body still does the work
+and does not condescend, so the risk sits entirely in the title.
+
+**THE TWO ARMS' LEADS HAVE FORKED, AND `decision-i18n.js` NEEDS BOTH KEYS.**
+They were the same string, so the dictionary held one entry; `v1`'s change
+would have left `v2` rendering Finnish inside an English page. Both are listed
+now. **Any future edit to one arm's lead has to add a key rather than replace
+one** — the dictionary is keyed on rendered text, so a replaced key silently
+drops the other arm's translation and nothing errors.
+
 **THE LEAD GAINED A SECOND CLAUSE ON 2026-09-24** — `…tai välttämättä mihin
 hintaan auto myydään.` Jussi's wording, and it closes the one hole the sentence
 had: a seller could accept that the previous owner's figure is invisible and
@@ -2881,9 +2906,11 @@ are being relieved of. They cannot be dismissed as padding, and — unlike a lis
 of costs — they are assumptions carried as assumptions. **Protect both if the
 sub-label is ever shortened.**
 
-**Measured (2026-09-24, after the lead's second clause and the 28px footnote
-gap):** `v1`'s `section-belief` **264px desktop / 536px at 375px**, against
-228 / 500 before — the lead takes a second line on desktop and a fourth on a
+**Measured (2026-09-28, after the claim sentence):** `v1`'s `section-belief`
+**288px desktop / 560px at 375px** — the lead goes 2 lines to 3 on desktop and
+4 to 6 on a phone, so the sentence costs 24px either way. Before it, and after
+the 2026-09-24 second clause, it was **264 / 536**, against
+228 / 500 before that — the lead takes a second line on desktop and a fourth on a
 phone, and the footnote gap adds 12px. Below 620px the row stacks and
 `.belief-op` rotates 90°.
 Contrast unchanged: 8.70 for the figure and its sub, 14.63 for the two dark
