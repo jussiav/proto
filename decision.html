@@ -220,6 +220,71 @@
       .na-bar > .belief-chip:last-child { flex: 0 0 auto; }
     }
 
+    /* v4 puts the two prices SIDE BY SIDE and stops composing one out of the
+       other. v1 and v3 both build a single row the reader has to resolve —
+       offer → resale → asking price, or asking price = offer + resale. Here the
+       AutoVex column states ONE number and the Nettiauto column states the two
+       parts a listing price is made of, so the reader compares columns instead
+       of solving a row. Built from Jussi's Figma frame `7275:227`.
+
+       THE COLUMNS ARE BOTTOM-ALIGNED, AND THAT IS THE ARGUMENT. Figma drives it
+       with SPACE_BETWEEN on the shorter left column against a taller right one,
+       so the green chip lands level with `Sisäänosto`: the seller's offer sits
+       where the dealership's purchase price sits, and `Jälleenmyynti` is what
+       the listing adds on top of it. Nothing says that in words — the alignment
+       is the whole claim, which is why `align-items: stretch` plus
+       `justify-content: space-between` is load-bearing rather than cosmetic.
+       It also keeps holding as either column's text reflows.
+
+       IT STAYS TWO COLUMNS AT EVERY WIDTH, on Jussi's instruction: a comparison
+       that stacks stops being a comparison. What gives instead is each grey
+       chip's own row — label and sub sit inline while they fit and wrap
+       underneath when they do not. `flex-wrap` needs no breakpoint and degrades
+       the same way at 375px as at 700px. Worth knowing that the wrap is live
+       just below desktop, not only on a phone: at a 680px card
+       `Edelliselle omistajalle maksettu summa` clears its chip by about a pixel.
+
+       Hand-written for the usual reason — the block is injected by JS and the
+       Play CDN generates utilities a tick late. */
+    .na-cmp-row { display: flex; align-items: flex-end; gap: 1rem; }
+    .na-cmp-col { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: .5rem; }
+
+    /* THE TWO GREY CHIPS SHARE ONE BORDER, and Figma says so with a gap of
+       MINUS ONE — their 1px edges land on the same line instead of drawing two.
+       That is what makes the pair read as one composed box, which is the whole
+       point of `Kulut ja kate` sitting on `Sisäänosto`: the listing price is
+       the two of them together, and a gap would make them two separate facts.
+       CSS has no negative gap, so the second chip pulls itself up by its own
+       border width. */
+    .na-cmp-stack { display: flex; flex-direction: column; }
+    .na-cmp-stack > .belief-chip + .belief-chip { margin-top: -1px; }
+
+    /* `beliefChip` hardcodes `flex-1`, which in a COLUMN means "grow
+       vertically" — it would stretch the green chip and swallow the gap above
+       it. Two classes beat that one. */
+    .na-cmp-col > .belief-chip { flex: 0 0 auto; }
+
+    /* The grey chips keep `belief-chip--unknown`'s dash and override both its
+       colours: slate-400 border, slate-50 fill.
+
+       **THE FILL PUTS SLATE-500 BACK ON A TINT, AND THAT IS THE PAGE'S KNOWN
+       CONTRAST LIMIT.** Measured 4.55:1 here — passing AA by 0.05, the exact
+       number v2's chips hit on the same slate-50 before they were moved to
+       white. It passes only because BOTH chips are label-only now: the 12px
+       sub-labels that forced white in v2 are gone. **Reinstating a sub-label in
+       these chips means reinstating that problem**, and slate-500 would have to
+       darken first. The border goes to slate-400 for the same reason it did in
+       v2: white-on-tint is a 1.05 step, so the edge has to carry the shape.
+
+       DOUBLED so none of this depends on source order against
+       `.belief-chip--unknown`. Column, not row, matching the frame — a
+       sub-label would stack under its label rather than sit beside it. */
+    .na-cmp-chip.na-cmp-chip {
+      border-color: #94A3B8;                                 /* slate-400 */
+      background: #F8FAFC;                                   /* slate-50  */
+      display: flex; flex-direction: column; gap: .5rem;
+    }
+
     /* v2's chain sits inside a triage panel, whose own `.triage-panel p` sets a
        12px rhythm — so the lead sat 12px above the row while the footnote sat
        28px below it, and the block read lopsided. Both are 16px here, which is
@@ -446,6 +511,20 @@
         </div>
       </section>
 
+      <!-- Section 3b-alt2: the side-by-side comparison — Informed decision,
+           v4 only. Same heading and same gate as 3b-alt; its own section
+           rather than a branch inside it, because a shell with two possible
+           contents is how two arms quietly converge. Figma `7275:227`. -->
+      <section id="section-nettiauto-compare" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M128 24a104 104 0 1 0 104 104A104.11 104.11 0 0 0 128 24Zm0 48a12 12 0 1 1-12 12 12 12 0 0 1 12-12Zm8 112h-16a8 8 0 0 1 0-16h4v-40h-4a8 8 0 0 1 0-16h8a8 8 0 0 1 8 8v48h4a8 8 0 0 1 0 16Z"/></svg>
+          <span class="text-blue-900 leading-[24px]">Nettiauton hinta vs. tarjouksesi</span>
+        </h2>
+        <div class="w-full p-5 bg-white rounded-xl">
+          <div id="nettiauto-compare-content"></div>
+        </div>
+      </section>
+
       <!-- Section 3c: the triage element — Informed decision, v2 only.
            Same fair-offer gate as 3a/3b. It sits between the offers and the
            reject banner because that is the path a hesitating seller walks:
@@ -575,7 +654,7 @@
        Copy is placeholder — the team locks the Finnish once the shape is
        agreed, so it is not worth polishing.
        Spec: design-specs/informed-decision.html */
-    var ID_ARMS = ['control', 'v1', 'v2', 'v3'];
+    var ID_ARMS = ['control', 'v1', 'v2', 'v3', 'v4'];
     var ID_ARM = (function () {
       var arm = window.protoVariant('informed-decision', 'control');
       if (ID_ARMS.indexOf(arm) === -1) { window.protoVariantSet('informed-decision', null); return 'control'; }
@@ -593,7 +672,14 @@
        explicit in words instead of arriving at it through arrows. Built from
        Jussi's Figma frame; it shares v1's gate, its card and its chips. */
     var ID_V3 = ID_ARM === 'v3';
-    var ID_ANY = ID_V1 || ID_V2 || ID_V3;
+    /* v4 stops composing one price out of the other and sets the two SIDE BY
+       SIDE: the AutoVex column states what the seller is paid, the Nettiauto
+       column states the two parts a listing price is made of, and the columns
+       are bottom-aligned so the offer sits level with `Sisäänosto`. It is the
+       only arm whose block reads the seller's own amount. `tinkimisvara`
+       survives in the footnote. See `.na-cmp-row` and `buildNettiautoCompare`. */
+    var ID_V4 = ID_ARM === 'v4';
+    var ID_ANY = ID_V1 || ID_V2 || ID_V3 || ID_V4;
 
     /* INFORMED DECISION SUBSUMES ENHANCED NEGOTIATIONS, and the direction is
        one-way. The ideation arm is where the whole decision page is being
@@ -2330,6 +2416,76 @@
       return html;
     }
 
+    /* ── The side-by-side comparison — Informed decision v4 only ────────
+       Jussi's Figma frame `7275:227`, which he edited IN PLACE over the v3
+       frame for the second time — so that id now holds v4.
+
+       IT STOPS COMPOSING AND STARTS COMPARING. v1 walks offer → resale →
+       asking price; v3 states the asking price and shows its two parts. Both
+       are ONE row the reader has to resolve. This is two columns: what AutoVex
+       pays, and what a Nettiauto listing is made of. The reader puts them side
+       by side rather than doing arithmetic, which is the objection every
+       version of this block has been designed around.
+
+       THE BOTTOM ALIGNMENT IS THE CLAIM, and nothing states it in words. The
+       green chip lands level with `Sisäänosto`, so the seller's offer sits
+       where the dealership's purchase price sits and `Jälleenmyynti` is what
+       the listing adds on top. See `.na-cmp-row`.
+
+       `Edelliselle omistajalle maksettu summa` IS THE PREVIOUS-OWNER FRAMING,
+       BACK — and here it earns its place where it did not in v1. The right
+       column describes some other car on Nettiauto, so its purchase price
+       really was paid to a previous owner; the left column is this seller's
+       own. The parallel is drawn by the two columns rather than left as an
+       inference, which is what the framing always needed and never had.
+
+       IT READS THE SELLER'S OWN OFFER. `standingAmount(offer)` — the same
+       definition the card and the accept handler use, so a negotiation moves
+       this figure with them. **That makes v4 the only live arm with a figure
+       in this block, and the only one that can go stale against the offer
+       card.** It is a fact we hold rather than an example we made up, which is
+       what separates it from the arithmetic the other versions refuse.
+
+       THE GREY PAIR IS ONE BOX, NOT TWO. `Kulut ja kate` sits directly on
+       `Sisäänosto` with their borders merged (see `.na-cmp-stack`), so the two
+       read as the listing price's two parts rather than as two separate facts.
+       Both are label-only — every sub-label came out over three passes, which
+       is what lets the pair take a tinted fill at all (see `.na-cmp-chip`).
+
+       Two things kept from the page rather than the frame, both one-liners if
+       they are deliberate: the two grey labels' `#64758B` is one digit off
+       slate-500 `#64748B`, so both use the token; and the green chip's amount
+       stays `text-green-900` (8.70:1) where the frame now says green-800
+       (6.81:1) — that colour lives in the SHARED `beliefChip`, so changing it
+       would move v1, v2 and v3 with it. */
+    function naCmpChip(label, sub) {
+      return '<div class="belief-chip belief-chip--unknown na-cmp-chip">'
+        +      '<span class="font-dm text-base font-bold text-slate-500">' + label + '</span>'
+        +      (sub ? '<span class="font-dm text-xs text-slate-500">' + sub + '</span>' : '')
+        +    '</div>';
+    }
+
+    function buildNettiautoCompare(offer) {
+      var html = '<p class="font-dm text-base text-slate-700">Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Tarjouksesi on kilpailutettu hinta, jonka autoliike on valmis maksamaan autostasi nyt. Nettiauton hinta on pyyntihinta, joka sisältää kaikki auton kulut ja katteen.</p>';
+
+      html += '<div class="na-cmp-row mt-4">'
+        +      '<div class="na-cmp-col na-cmp-col--offer">'
+        +        '<p class="font-dm text-base font-bold text-slate-950">AutoVex-tarjouksesi:</p>'
+        +        beliefChip('belief-chip--own', fmtCurrency(standingAmount(offer)), 'Sinulle maksettava summa', true)
+        +      '</div>'
+        +      '<div class="na-cmp-col na-cmp-col--listing">'
+        +        '<p class="font-dm text-base font-bold text-slate-600">Nettiauton hinta:</p>'
+        +        '<div class="na-cmp-stack">'
+        +          naCmpChip('Kulut ja kate', '')
+        +          naCmpChip('Sisäänosto', '')
+        +        '</div>'
+        +      '</div>'
+        +    '</div>';
+
+      html += '<p class="belief-note font-dm text-xs text-slate-600 mt-4">*Jälleenmyyntiin sisältyvät autosta riippuen kulut, vastuu, riski, kate ja tinkimisvara.</p>';
+      return html;
+    }
+
     /* ── The resale chain — Informed decision v2 only ─────────────────────
        v1's `buildBelief` and this are DELIBERATELY SEPARATE FUNCTIONS, not one
        with a flag. The two arms are alternatives the team will choose between,
@@ -2783,7 +2939,7 @@
            seller already saw the offers) and unreachable here (every scenario
            with `offers_seen_at: null` resolves to a status that has content), so
            this keeps a guard rather than reproducing a blank card. */
-        var wc = (ID_V3 && WARMUP_COPY_V3[pas]) || WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED;
+        var wc = ((ID_V3 || ID_V4) && WARMUP_COPY_V3[pas]) || WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED;
         document.getElementById('warmup-heading').textContent = wc.heading;
         document.getElementById('warmup-message').textContent = wc.message;
         document.getElementById('warmup-img').src = 'assets/' + wc.image;
@@ -3040,6 +3196,15 @@
         naSec.classList.remove('hidden');
       } else {
         naSec.classList.add('hidden');
+      }
+
+      /* v4: the two prices side by side rather than one composed of the other. */
+      var naCmpSec = document.getElementById('section-nettiauto-compare');
+      if (idShow && ID_V4) {
+        document.getElementById('nettiauto-compare-content').innerHTML = buildNettiautoCompare(offers[0]);
+        naCmpSec.classList.remove('hidden');
+      } else {
+        naCmpSec.classList.add('hidden');
       }
 
       /* v2: the same argument, demoted to one branch of the triage. */
@@ -4225,7 +4390,8 @@
             { id: 'control', label: 'Control — production decision page' },
             { id: 'v1',      label: 'Variant 1 — fair-offer treatment + enhanced negotiations' },
             { id: 'v2',      label: 'Variant 2 — triage: seller names the doubt, counter-offer moves in' },
-            { id: 'v3',      label: 'Variant 3 — Nettiauto bar: the price stated as its parts' }
+            { id: 'v3',      label: 'Variant 3 — Nettiauto bar: the price stated as its parts' },
+            { id: 'v4',      label: 'Variant 4 — side by side: your offer against a listing price' }
           ]
         }
       ],

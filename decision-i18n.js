@@ -76,6 +76,19 @@ window.DECISION_I18N = {
       'If you are comparing prices, remember that Nettiauto prices and the AutoVex offer you received mean different things. A Nettiauto price does not tell you what a dealership pays for your car.',
     'Nettiauton hinta:':                   'A Nettiauto price:',
 
+    /* v4 — the side-by-side comparison. Its lead is a THIRD fork of the same
+       sentence pair, so it needs its own key: the dictionary is keyed on
+       rendered text, and replacing one arm's key silently drops another arm's
+       translation with nothing erroring. The amount is not keyed — it is
+       `fmtCurrency`'s Finnish formatting in both languages, as every other
+       amount on this page is. */
+    'Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous tarkoittavat eri asioita. Tarjouksesi on kilpailutettu hinta, jonka autoliike on valmis maksamaan autostasi nyt. Nettiauton hinta on pyyntihinta, joka sisältää kaikki auton kulut ja katteen.':
+      'If you are comparing prices, remember that Nettiauto prices and the AutoVex offer you received mean different things. Your offer is a competitively bid price that a dealership is willing to pay for your car now. A Nettiauto price is an asking price that includes every cost the car carries, plus the margin.',
+    'AutoVex-tarjouksesi:':                'Your AutoVex offer:',
+    'Kulut ja kate':                       'Costs and margin',
+    '*Jälleenmyyntiin sisältyvät autosta riippuen kulut, vastuu, riski, kate ja tinkimisvara.':
+      '*Depending on the car, resale involves costs, liability, risk, margin and haggling room.',
+
     'Sisäänosto':                          'Purchase price',
     'Saamasi tarjous':                     'The offer you received',
     'Sinulle maksettava summa':            'The amount paid to you',

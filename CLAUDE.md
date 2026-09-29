@@ -2602,11 +2602,127 @@ footnote would take the block's load-bearing assumption with it**, which the
 note below already says and now matters more.
 
 **THE FIGMA NAMES ARE NOW WRONG FOR BOTH FRAMES AND I DID NOT CHANGE THEM.**
-`7275:227` (now `v3`) and `7276:40127` (the old `v1`) both read
+`7275:227` (now `v4` — see that section) and `7276:40127` (the old `v1`) both read
 `✅ Tarjous vai pyyntihinta? — IN PROTO`. Two frames claiming IN PROTO is the
 exact failure the marker convention exists to prevent, and neither title
 matches its contents any more. Left alone because Jussi was actively editing
 them; **rename before the next sync.**
+
+### `v4` — the side-by-side comparison (2026-09-29)
+
+**IT STOPS COMPOSING AND STARTS COMPARING, and that is the whole idea.** `v1`
+walks a sequence (offer → resale → asking price) and `v3` states a whole and
+shows its parts. Both are ONE row the reader has to resolve. `v4` is TWO
+COLUMNS: what AutoVex pays on the left, what a Nettiauto listing is made of on
+the right. The reader sets them beside each other instead of doing arithmetic —
+the objection every version of this block has been designed around, answered
+structurally rather than by withholding figures.
+
+```
+Nettiauton hinta vs. tarjouksesi                    (v3's heading, unchanged)
+Jos vertaat hintoja, muista, että Nettiauton hinnat ja saamasi AutoVex-tarjous
+tarkoittavat eri asioita. Tarjouksesi on kilpailutettu hinta, jonka autoliike
+on valmis maksamaan autostasi nyt. Nettiauton hinta on pyyntihinta, joka
+sisältää kaikki auton kulut ja katteen.
+
+                                    Nettiauton hinta:      (slate-600)
+                                    ┌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┐
+AutoVex-tarjouksesi:  (slate-950)   ╎ Kulut ja kate      ╎  slate-50 fill
+┌───────────────────────────┐       ├╌╌╌ ONE SHARED EDGE ┤
+│ 🪙 11 500 €               │       ╎ Sisäänosto         ╎
+│ Sinulle maksettava summa  │       └╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┘
+└──── 332px ────────────────┘       └──── 332px ─────────┘
+*Jälleenmyyntiin sisältyvät autosta riippuen kulut, vastuu, riski, kate ja
+tinkimisvara.
+```
+
+**THE BOTTOM ALIGNMENT IS THE ARGUMENT, AND NOTHING STATES IT IN WORDS.** The
+green chip lands level with `Sisäänosto`, so the seller's offer sits exactly
+where the dealership's purchase price sits and `Kulut ja kate` is visibly what
+the listing adds ON TOP of it. Figma says `align:MAX` on the row; the proto is
+`align-items: flex-end`, both columns hugging. **This is load-bearing layout,
+not spacing** — take the alignment away and the two columns become two
+unrelated lists. (An earlier pass did it with SPACE_BETWEEN on a stretched left
+column; the frame moved to plain bottom-alignment and the proto followed. Same
+result, simpler mechanism.)
+
+**THE TWO GREY CHIPS SHARE ONE BORDER.** Figma sets a gap of **minus one**, so
+their 1px edges land on the same line rather than drawing two. That is what
+makes the pair read as one box — the listing price is the two of them together,
+where a gap would make them two separate facts. CSS has no negative gap, so
+`.na-cmp-stack > .belief-chip + .belief-chip` pulls itself up by `-1px`.
+
+**IT READS THE SELLER'S OWN OFFER, AND IT IS THE ONLY ARM THAT DOES.**
+`standingAmount(offer)` — the same definition the card and the accept handler
+use, so a negotiation moves this figure with them. Verified: `?highest=12750`
+renders `12 750 €` in the chip and the same figure on the card, twice on the
+page and agreeing; a stored dealer reply moves it to the raised amount. `v1`,
+`v2` and `v3` are static and zero-digit; **`v4` is the only one that can go
+stale against the offer card if that call is ever changed.** It is a fact we
+hold rather than an example we invented, which is what separates it from the
+arithmetic every earlier version refused.
+
+**THE CHIPS ARE LABEL-ONLY, AND THAT IS WHAT LETS THEM TAKE A TINT.** Every
+sub-label came out over three passes — `Kulut, riski ja kate`, then
+`Edelliselle omistajalle maksettu summa`, then `Edelliselle omistajalle`, then
+nothing. The chips now carry a **slate-50 fill** with a **slate-400** dashed
+border, and slate-500 on slate-50 measures **4.55:1** — passing AA by 0.05, the
+exact number v2's chips hit on the same tint before they were moved to white.
+It passes ONLY because there is no 12px text left in them; the 12px sub-labels
+are what forced white in v2. **Reinstating a sub-label in these chips
+reinstates that problem, and slate-500 would have to darken first.** The border
+goes slate-400 for v2's own reason: white-on-tint is a 1.05 step, so the edge
+has to carry the shape.
+
+**THE BLUE LABEL IS GONE.** `AutoVex-tarjouksesi:` was `blue-600` for one
+iteration and measured **4.52:1** — the thinnest margin anywhere on this page,
+16px bold being outside WCAG's large-text allowance. It is **slate-950** now
+(20.17:1), and the `-si` makes it the seller's own offer rather than a category.
+The concern recorded against that blue is closed for this arm; it still applies
+to every other `text-blue-600` on white in the product.
+
+**`tinkimisvara` SURVIVES IN THE FOOTNOTE ONLY.** A draft between these versions
+carried it in the lead as a verb; the frame replaced that clause. Worth knowing
+when reading the arm: the one idea in this family that SHRINKS the perceived gap
+rather than justifying it now sits in 12px small print. One-line change to raise
+it.
+
+**Transcribed from Figma `7299:40316`.** The id has changed twice — `7275:227`
+held `v3`, then `v4`, and no longer exists; `7293:40268` and `7286:40154` are
+copies left on the canvas. Geometry verified: card 720 (content 680), two 332px
+columns at a 16px gap, column gap 8, chips pad 11 radius 8, green
+`#F0FDF4`/`#22C55E`, dashed `#94A3B8` on `#F8FAFC`, label `#020617`. Measured
+**331px desktop / 476px at 375px** against the frame's 329; the 2px-per-chip
+difference is CSS border-box against Figma's stroke, same as every other arm.
+
+**TWO THINGS KEPT FROM THE PAGE RATHER THAN THE FRAME**, both one-liners if
+deliberate:
+
+| Frame | Proto | Why |
+|---|---|---|
+| grey labels `#64758B` | slate-500 `#64748B` | one digit off the token, across three passes — a typo that has survived every edit |
+| green amount `#166534` (green-800, 6.81:1) | `text-green-900` (8.70:1) | that colour lives in the SHARED `beliefChip`, so changing it moves `v1`, `v2` and `v3` too |
+
+**IT STAYS TWO COLUMNS AT EVERY WIDTH, on Jussi's explicit instruction** — a
+comparison that stacks stops being a comparison. Verified at 375px: columns
+136px each, still side by side, bottoms still aligned, no horizontal overflow,
+nothing clipped. The offer column's label wraps to two lines there and the
+bottom alignment absorbs it.
+
+**IT TAKES `v3`'s WARM-UP UNCHANGED**, still an assumption rather than a
+decision: `wc` reads `(ID_V3 || ID_V4) && WARMUP_COPY_V3[pas]`. A warm-up has
+not been among the asks. One-line fork if `v4` should say something of its own.
+
+**FOUR FIGMA FRAMES NOW CLAIM `✅ Tarjous vai pyyntihinta? — IN PROTO`** —
+`7299:40316` (this, the only true one), `7293:40268`, `7286:40154` (a `v3`
+copy) and `7276:40127` (the old `v1`). Flagged on 2026-09-28 and again on
+2026-09-29; it grows by one each iteration because the live frame is duplicated
+rather than renamed. **There is still no mobile frame for `v4`** — the mobile
+column's `7275:251` holds `v1`. The two-column-on-mobile rule came from Jussi
+in chat, not from the file.
+
+**No spec page entry**, following `v2`'s and `v3`'s precedent while the shape
+settles.
 
 ### `v2` — the triage element (2026-09-23, first draft)
 
@@ -3387,10 +3503,15 @@ Two reasons, and the second is the stronger:
 good evidence the auction creates value and naming it tells sellers to do it.
 
 **Delete, if the idea is dropped** — the registry entry, the page's declaration,
-the arm reader, `buildBelief`, `buildAuctionVerdict` + `VERDICT_MIN_BIDDERS`,
-the two `section-*` blocks, `fair_offer` from `BASE` and the `fair` field, the
-`idShow` gate (put `buildInsights` back to `APR_V1` alone for both the grid and
-the chart's top rule), `if (ID_V1) { EN_V1 = true; }`, and the spec page.
+the arm reader, `buildBelief` / `buildResaleChain` / `buildNettiauto` /
+`buildNettiautoCompare` / `buildTriage`, `buildAuctionVerdict` +
+`VERDICT_MIN_BIDDERS`, the five `section-*` blocks (`belief`, `nettiauto`,
+`nettiauto-compare`, `triage`, plus the verdict inside `insights`), the
+`beliefChip` / `naCmpChip` / `BELIEF_*` primitives and the `.belief-*` /
+`.na-bar` / `.na-cmp-*` / `.resale-*` rules, `WARMUP_COPY_V3`, `fair_offer` from `BASE` and
+the `fair` field, the `idShow` gate (put `buildInsights` back to `APR_V1` alone
+for both the grid and the chart's top rule), `if (ID_V1) { EN_V1 = true; }`,
+this initiative's keys in `decision-i18n.js`, and the spec page.
 
 ### It SUBSUMES Enhanced negotiations, one-way
 
