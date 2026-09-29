@@ -71,7 +71,25 @@ read as product bugs. These are preconditions, not steps to remember:
 
 ## How Claude runs it
 
-1. Launch headed browser (`channel: 'chrome'`, `headless: false`), fresh localStorage, front page.
+**The tooling is `usertest/` — read [`usertest/README.md`](usertest/README.md)
+before a run, and [`usertest/SKILL.md`](usertest/SKILL.md) for the checklist.**
+It launches a detached Chrome per participant and reconnects over CDP for each
+command, so browser state survives between the model's decisions. Three commands
+carry most of a run:
+
+```bash
+node ut.cjs state p1                 # compact structured page state, NOT a text dump
+node ut.cjs do    p1 '[{"fill":"#price-expectation","value":"29900"},{"click":"text=Jatka"}]'
+node ut.cjs event p1 new-offers      # world events, deterministic
+```
+
+Cost is driven by the NUMBER of commands, because every result stays in context
+for the rest of the run. So: one read per page *state* rather than per click, one
+`do` per step rather than per field, and `seed` past anything the study is not
+about.
+
+1. `node ut.cjs start <s> <port> <device> "<url>"` — it preflights the server,
+   kills a stale browser on the port and opens a fresh profile.
 2. Loop: **read → think as the persona → act**. Read the rendered page (text, layout, accessibility snapshot, screenshot when needed). Ask: what does the persona understand from this? What serves the goal? Would they trust it? Then act — click, type, scroll, hesitate, go back — like a human (typing delays, reading pauses proportional to the amount of text, scrolling before deciding).
 3. Invent realistic personal data in character (own car's plate/km, name, email, phone). Choices along the way (enter a price estimate or not? add photos now or later? counter-offer or accept?) are made *from the goal* — e.g. a price-maximizer likely negotiates rather than accepts the first number.
 4. Narrate: keep an on-page banner or log of what "the user" is thinking at each step, so the human observer can follow the reasoning live.
@@ -79,7 +97,12 @@ read as product bugs. These are preconditions, not steps to remember:
 
 ## World events (the only scripted part)
 
-These simulate the *system/backend*, not the user, using the prototype's own dev mechanisms (scenario panel / URL params). Apply them when the journey reaches the right state:
+These simulate the *system/backend*, not the user. Fire them with
+`node ut.cjs event <s> <name>` — `photos-filled`, `auction-live`, `new-offers`,
+`dealer-reply`, `dealer-close`, `dealer-close-silent`, `auto-close`,
+`reset-negotiation`. Navigation events carry the mode and arm params across, so a
+participant cannot fall out of test mode. Apply them when the journey reaches the
+right state:
 
 - Photos: after the user has understood the photos step (~few seconds), the photo set "arrives" via scenario **"filled"** (stands in for the user photographing their car).
 - Email: the verification email "arrives" through the prototype's email preview; the user reads it and clicks its link.

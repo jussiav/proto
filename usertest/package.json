@@ -1,0 +1,7 @@
+{
+  "name": "autovex-usertest",
+  "private": true,
+  "description": "Driver for simulated user tests against the AutoVex prototype",
+  "scripts": { "ut": "node ut.cjs" },
+  "dependencies": { "playwright": "^1.47.0" }
+}
