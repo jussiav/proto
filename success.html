@@ -327,7 +327,7 @@
            submit, or verified afterwards) land on the same Success.vue screen,
            so this is one scenario, not two. */
         { group: 'Published — no review', items: [
-          { id: 'queued',                  label: 'Queued — waiting for email verification' },
+          { id: 'queued',                  label: 'Not reviewed — waiting for email verification' },
           { id: 'published',               label: 'Auto-published — email verified, auction live' }
         ]}
       ]
@@ -834,12 +834,13 @@
       updateContent();
       renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus(), primaryCta: cardPrimaryCta() });
 
-      /* Back from an edit (funnel-guard.js): prod's own save toast. */
+      /* Back from an edit (funnel-guard.js): prod's success toast, with the
+         initiative's wording (see offers.html). */
       var _back = getStore();
       if (_back.pendingToast === 'saved') {
         delete _back.pendingToast;
         setStore(_back);
-        window.protoToastr('Tarjouspyyntö tallennettu', 'success');
+        window.protoToastr('Tarjouspyyntö päivitetty', 'success');
       }
 
       document.getElementById('success-email-resend').addEventListener('click', function () {

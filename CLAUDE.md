@@ -2433,7 +2433,12 @@ seller-edits-before-review assessment):
   in-review, rejected and open only, and `blankSlate` counts that filtered list,
   so a seller whose only ad awaits email verification sees
   "Valmiina myymään autosi? Aloita tästä!". Awkward, and prod's; `renderPage`
-  filters the same way.
+  filters the same way. **The `draft-queued` scenario was then removed**
+  (2026-09-30, Jussi): no seller can reach it. The offers page needs a login,
+  an ad is only queued when its seller has no verified account, and clicking
+  the verification link both logs them in and publishes the ad, so the first
+  offers page they can see is `live-no-bids`. The queued state lives on the
+  success page ("Not reviewed — waiting for email verification").
 - **An open draft resumes where the seller left off.** `funnel-guard.js`
   records `store.funnelPosition` on every funnel step, and success.html records
   itself when it renders the publish refusal. Both open-draft buttons on the
@@ -2455,8 +2460,10 @@ the funnel while the arm is `v1`. The walk is the **full funnel**; price keeps
 the optional estimate (the review decision is not re-run). Contact's submit
 saves instead of publishing — `FunnelGuard.finishReviewEdit` returns the seller
 to the page they started from with `store.pendingToast`, and offers.html or
-success.html shows prod's "Tarjouspyyntö tallennettu" toast. On success.html it
-can sit beside the proto-only email toast; accepted, it is proto chrome. **No new screen and no new copy.**
+success.html shows prod's success toast worded **"Tarjouspyyntö päivitetty"**
+(Jussi's copy; the auction modal keeps prod's "Tarjouspyyntö tallennettu").
+On success.html it
+can sit beside the proto-only email toast; accepted, it is proto chrome. **No new screen; one new string, the toast wording.**
 
 **Booked is world state, not a variant:** `?booked=1` on `draft-in-review`,
 listed as "Draft: In review — advisor booked" beside the call-timing copy items.
@@ -4821,7 +4828,7 @@ parameters.
 - `seen-offers` — auction ended, seller viewed offers
 - `no-offers` — auction ended, zero offers
 - `all-rejected` — seller rejected all offers
-- `draft-in-review`, `draft-open`, `draft-rejected`, `draft-queued` — draft states (Drafts section)
+- `draft-in-review`, `draft-open`, `draft-rejected` — draft states (Drafts section)
 - `accepted`, `deal-completed`, `deal-failed` — post-sale states
 - `blank` — empty state
 

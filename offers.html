@@ -265,7 +265,7 @@
     // Sync funnel flags to match scenario — Skenaario panel is master state
     (function() {
       var _DRAFT_ONLY = ['draft-open', 'draft-rejected', 'draft-rejected-images', 'blank'];
-      var _IN_REVIEW  = ['draft-in-review', 'draft-queued'];
+      var _IN_REVIEW  = ['draft-in-review'];
       try {
         var fs = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
         if (_DRAFT_ONLY.indexOf(SCENARIO) !== -1) {
@@ -451,14 +451,6 @@
       'draft-rejected-images': function() { return { requests: [], negotiations: [], drafts: [{
         id: 501, status: 'rejected', registration_number: DRAFT_CAR.registration_number,
         missing_images: true, created_at: _now() - 2 * 86400,
-        make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
-        model_specification: DRAFT_CAR.model_specification,
-        year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
-        driven: DRAFT_CAR.driven, asking_price: 12000,
-      }] }; },
-      'draft-queued': function() { return { requests: [], negotiations: [], drafts: [{
-        id: 501, status: 'queued_for_publishing_after_verification', registration_number: DRAFT_CAR.registration_number,
-        missing_images: false, created_at: _now() - 86400,
         make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
         model_specification: DRAFT_CAR.model_specification,
         year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
@@ -1052,13 +1044,15 @@
     renderPage();
 
     /* Back from an edit while waiting for review (funnel-guard.js): the view the
-       seller started from, with prod's own save toast. */
+       seller started from, in prod's own success toast. The wording is the
+       initiative's (Jussi, 2026-09-30); prod's auction-edit save says
+       "Tarjouspyyntö tallennettu". */
     (function () {
       var fs = getStore();
       if (fs.pendingToast !== 'saved') return;
       delete fs.pendingToast;
       setStore(fs);
-      window.protoToastr('Tarjouspyyntö tallennettu', 'success');
+      window.protoToastr('Tarjouspyyntö päivitetty', 'success');
     }());
 
     // Wire all "Avaa tiedot" buttons (draft cards + live car card) to open modal
@@ -1569,7 +1563,6 @@
         { id: 'draft-in-review',       label: 'Draft: In review' },
         { id: 'draft-rejected',        label: 'Draft: Rejected' },
         { id: 'draft-rejected-images', label: 'Draft: Missing photos' },
-        { id: 'draft-queued',          label: 'Draft: Queued' },
       ]},
       { group: 'Auction ongoing', items: [
         { id: 'live-no-bids',  label: 'Live, no bids' },
