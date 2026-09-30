@@ -2364,11 +2364,14 @@ seller-edits-before-review assessment):
   in-review or queued draft to its waiting/success screen on mount, and the
   draft save endpoint 422s those statuses. "Submitted" here is
   `successVisited` + photos complete + no rejection, so the photos-missing
-  ending (publish refused, draft still `open`) keeps the funnel editable. The
-  guard is skipped for `?scenario=`, `?plate=` (new draft from the front page)
-  and `?mode=mobile`. **A tester who wants a step after submitting uses
-  `?scenario=`, Seed car or Reset** — the bar's Go to links now bounce to
-  success.html, which is prod.
+  ending (publish refused, draft still `open`) keeps the funnel editable.
+  **The lock runs in test mode only** (2026-09-30): a participant runs with
+  `?mode=test`, while in dev mode the bar's Go to and Seed car are tooling and a
+  seeded car IS a submitted draft, so the lock bounced every Go to off the
+  funnel. Even in test mode it is skipped for `?scenario=`, `?plate=` (new draft
+  from the front page) and `?mode=mobile`. Everything else in `funnel-guard.js`
+  (the rejection doors, the in-review edit, the mid-edit booking) runs in both
+  modes.
 - **A rejected draft has two doors back in, recorded as `store.rejection`:**
 
   | `rejection` | Door | Enters at | Jatka / re-submit | Outcome |
@@ -2465,10 +2468,35 @@ success.html shows prod's success toast worded **"Tarjouspyyntö päivitetty"**
 On success.html it
 can sit beside the proto-only email toast; accepted, it is proto chrome. **No new screen; one new string, the toast wording.**
 
-**Booked is world state, not a variant:** `?booked=1` on `draft-in-review`,
-listed as "Draft: In review — advisor booked" beside the call-timing copy items.
-Prod shows nothing different to the seller when an advisor books, so control
-renders identically either way and `v1` simply drops the button. The reverse
+**Change 2, the booking during an edit (team decision pending):** the ad is
+never editable in Filament and the funnel at once. The proposed rule is a
+seller-editing hold that keeps the ad out of the review list and expires after a
+period without saves; if an advisor books anyway, the seller's next Jatka is
+refused and they land back where they started with prod's **info** toast (blue,
+`toastr.js`) "Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!" (draft
+copy). The proto shows the seller side only: a built-in prototype-bar control,
+**Advisor booking** (`proto-bar.js`), on all five funnel steps and success.html
+while `v1` is on. It books or clears `store.reviewBooked` and shows the state
+on its button; `funnel-guard.js` ends an edit in progress on the next page
+load. It was first a per-page action and missed photos (its own tools panel)
+and the success page, which left no way to clear a booking.
+Prod would lose the refused step's input; the proto has already stored it. The
+hold itself is Filament-side and lives on the spec only.
+
+**Booked is world state, not a variant, and it has ONE source:**
+`store.reviewBooked`, set from the bar's Advisor booking control, which is on
+the offers page too. offers.html, success.html and the funnel all read it, so
+it carries across every in-review scenario (including the call-timing copy
+ones). It replaced a `?booked=1` scenario item on the offers page (2026-09-30,
+Jussi): two ways to set one fact could disagree. **`?booked=1` / `?booked=0`
+came back as a plain URL param on every page**, read by `proto-mock.js` after
+any seeding, so a link reproduces the exact state; the bar control writes it
+back into the address (a reload on offers/success, `replaceState` on funnel
+steps), and an edit refused by a booking rewrites a `booked=0` in its return
+URL. For a link to a teammate, include the arm too:
+`offers.html?scenario=draft-in-review&seller-edits-before-review=v1&booked=1`. Prod shows nothing different
+to the seller when an advisor books, so control renders identically either way
+and `v1` simply drops the button. The reverse
 lock (no booking while the seller edits) is Filament-side and lives on the spec
 as an acceptance criterion only.
 

@@ -540,6 +540,7 @@
     var EDITABLE_WAITING = ['in_review', 'queued_for_publishing_after_verification'];
     function cardPrimaryCta() {
       if (!SEBR_V1 || EDITABLE_WAITING.indexOf(currentDraftStatus()) === -1) return null;
+      if (getStore().reviewBooked) return null;
       return {
         text: 'Muokkaa tietoja',
         href: 'details.html?edit=review&return=' + encodeURIComponent('success.html' + window.location.search)
@@ -834,13 +835,21 @@
       updateContent();
       renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus(), primaryCta: cardPrimaryCta() });
 
-      /* Back from an edit (funnel-guard.js): prod's success toast, with the
-         initiative's wording (see offers.html). */
+      /* Back from an edit before review (funnel-guard.js), in prod's toast
+         designs. 'saved': the initiative's "päivitetty" wording (Jussi,
+         2026-09-30); prod's auction-edit save says "Tarjouspyyntö tallennettu".
+         'booked': an advisor booked the ad mid-edit, so the edit was refused;
+         DRAFT wording pending the team's decision. */
+      var EDIT_TOASTS = {
+        saved:  { msg: 'Tarjouspyyntö päivitetty', type: 'success' },
+        booked: { msg: 'Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!', type: 'info' }
+      };
       var _back = getStore();
-      if (_back.pendingToast === 'saved') {
+      var _toast = EDIT_TOASTS[_back.pendingToast];
+      if (_toast) {
         delete _back.pendingToast;
         setStore(_back);
-        window.protoToastr('Tarjouspyyntö päivitetty', 'success');
+        window.protoToastr(_toast.msg, _toast.type);
       }
 
       document.getElementById('success-email-resend').addEventListener('click', function () {

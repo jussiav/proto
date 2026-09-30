@@ -238,8 +238,12 @@
     // (tenderform.review.content.would_contact_* in vue-i18n-locales.generated.js)
     var REVIEW_COPY_VARIANT = _offersParams.get('copy') === 'default' ? null : _offersParams.get('copy');
     /* World state, not a variant: an advisor has booked the draft for its review
-       call. prod has no seller-facing sign of it; it only matters to v1 below. */
-    var REVIEW_BOOKED = _offersParams.get('booked') === '1';
+       call. Set from the prototype bar's "Advisor booking" control, which the
+       funnel and the success page share (store.reviewBooked). prod has no
+       seller-facing sign of it; it only matters to v1 below. */
+    var REVIEW_BOOKED = (function () {
+      try { return !!(JSON.parse(localStorage.getItem('autovex_funnel') || '{}').reviewBooked); } catch (e) { return false; }
+    }());
     /* "Seller edits before review" (design-specs/seller-edits-before-review.html).
        v1 adds the draft card's "Muokkaa tietoja" to an in-review draft until an
        advisor books it. */
@@ -1043,16 +1047,22 @@
 
     renderPage();
 
-    /* Back from an edit while waiting for review (funnel-guard.js): the view the
-       seller started from, in prod's own success toast. The wording is the
-       initiative's (Jussi, 2026-09-30); prod's auction-edit save says
-       "Tarjouspyyntö tallennettu". */
+    /* Back from an edit before review (funnel-guard.js), in prod's toast
+       designs. 'saved': the initiative's "päivitetty" wording (Jussi,
+       2026-09-30); prod's auction-edit save says "Tarjouspyyntö tallennettu".
+       'booked': an advisor booked the ad mid-edit, so the edit was refused;
+       DRAFT wording pending the team's decision. */
+    var EDIT_TOASTS = {
+      saved:  { msg: 'Tarjouspyyntö päivitetty', type: 'success' },
+      booked: { msg: 'Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!', type: 'info' }
+    };
     (function () {
       var fs = getStore();
-      if (fs.pendingToast !== 'saved') return;
+      var toast = EDIT_TOASTS[fs.pendingToast];
+      if (!toast) return;
       delete fs.pendingToast;
       setStore(fs);
-      window.protoToastr('Tarjouspyyntö päivitetty', 'success');
+      window.protoToastr(toast.msg, toast.type);
     }());
 
     // Wire all "Avaa tiedot" buttons (draft cards + live car card) to open modal
@@ -1591,7 +1601,7 @@
        review-call timing copy variants (REVIEW_COPY_VARIANT above), which the
        old drawer offered and which are world state, not design candidates. */
     window.protoPage = {
-      scenarioExtraParams: ['copy', 'booked'],
+      scenarioExtraParams: ['copy'],
       initiatives: [
         {
           slug:    'seller-edits-before-review',
@@ -1611,7 +1621,6 @@
             items.push({ id: it.id, label: 'Draft: In review — call today',        params: { copy: 'soon' } });
             items.push({ id: it.id, label: 'Draft: In review — call tomorrow',     params: { copy: 'tomorrow' } });
             items.push({ id: it.id, label: 'Draft: In review — call next workday', params: { copy: 'next_work_day' } });
-            items.push({ id: it.id, label: 'Draft: In review — advisor booked',   params: { booked: '1' } });
           }
         });
         return { group: g.group, items: items };

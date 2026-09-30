@@ -389,8 +389,12 @@
     window.addEventListener('DOMContentLoaded', () => {
       // URL params
       const params  = new URLSearchParams(window.location.search);
-      const plate   = params.get('plate') || 'BOT-423';
-      const km      = params.get('km')    || '100 000';
+      /* The front page passes the plate and mileage on the first visit; any
+         later visit (the stepper, a rejected or in-review edit) reads the
+         draft's own, as prod's equipment step does. */
+      const hero    = getStore().hero || {};
+      const plate   = params.get('plate') || hero.plate || 'BOT-423';
+      const km      = params.get('km')    || hero.km    || '100 000';
       document.getElementById('plate-value').textContent = plate.toUpperCase();
       document.getElementById('km-value').textContent = km + ' km';
 

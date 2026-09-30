@@ -33,7 +33,8 @@
  *   ?edit=review      "Seller edits before review" v1 only, with ?return= the
  *                     page to go back to. Sets store.reviewEdit.
  *
- * The guard is skipped when the URL carries `?scenario=` (a tester forcing a
+ * The guard only runs in test mode (`?mode=test`, what user tests use), and is
+ * skipped even there when the URL carries `?scenario=` (a tester forcing a
  * state), `?plate=` (the front page starting a new draft) or `?mode=mobile`
  * (the photo-upload frame opened from a QR code).
  *
@@ -73,11 +74,20 @@
   }
 
   /* Ends the edit: the draft stays in review, and the seller goes back to the
-     view they started from, where prod's own save toast greets them. */
+     view they started from, where a toast greets them. If an advisor booked the
+     ad meanwhile (`store.reviewBooked`), the save is refused instead and the
+     toast says why. That is the rule the team is deciding on; see the spec. */
   function finishReviewEdit(s) {
     var back = (s.reviewEdit && s.reviewEdit.returnTo) || 'offers.html';
     delete s.reviewEdit;
-    s.pendingToast = 'saved';
+    if (s.reviewBooked) {
+      s.pendingToast = 'booked';
+      /* The return URL was taken when the edit began; a ?booked=0 in it would
+         undo the booking on arrival (proto-mock.js). */
+      back = back.replace(/([?&])booked=0\b/, '$1booked=1');
+    } else {
+      s.pendingToast = 'saved';
+    }
     return back;
   }
 
@@ -129,7 +139,25 @@
     history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
   }
 
-  var bypass = params.has('scenario') || params.has('plate') || params.get('mode') === 'mobile';
+  /* A booking that lands mid-edit is noticed on the seller's next Jatka: the
+     step they arrive at is where the next save would go. In production that
+     save is refused, so the answer on the step they just left would be lost;
+     the prototype has already stored it. */
+  if (activeReviewEdit(store) && store.reviewBooked) {
+    var back = finishReviewEdit(store);
+    setStore(store);
+    window.location.replace(back);
+    return;
+  }
+
+  /* The prototype bar's "Advisor booking" control sets store.reviewBooked. */
+
+  /* The lock applies in test mode only. It reproduces what a seller meets, and
+     a participant runs with ?mode=test; in dev mode the prototype bar's Go to
+     and Seed car are tooling, and a seeded car is a submitted draft, so the
+     lock would bounce every Go to off the funnel. */
+  var bypass = params.has('scenario') || params.has('plate') || params.get('mode') === 'mobile' ||
+    window.protoMode !== 'test';
   if (!bypass && isSubmitted(store)) {
     window.location.replace('success.html');
     return;

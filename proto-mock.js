@@ -282,4 +282,17 @@
     var asked = new URLSearchParams(window.location.search).get('scenario');
     if (asked && BUILDERS[asked]) window.PROTO_MOCK.seed(asked);
   }
+
+  /* "Seller edits before review": ?booked=1 / ?booked=0 pins whether an advisor
+     has booked the ad for its review call (store.reviewBooked), so a link
+     reproduces the exact state. Applied after the auto-seed, which rewrites the
+     store. The bar's Advisor booking control writes the same param back into
+     the address. */
+  var bookedParam = new URLSearchParams(window.location.search).get('booked');
+  if (bookedParam === '1' || bookedParam === '0') {
+    var fs = {};
+    try { fs = JSON.parse(localStorage.getItem(FUNNEL_KEY) || '{}') || {}; } catch (e) {}
+    if (bookedParam === '1') fs.reviewBooked = true; else delete fs.reviewBooked;
+    write(FUNNEL_KEY, fs);
+  }
 }());

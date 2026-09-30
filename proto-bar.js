@@ -741,6 +741,62 @@
       bar.appendChild(tools);
     }
 
+    /* "Seller edits before review" v1: whether an advisor has booked the ad for
+       its review call. It is world state that the funnel, the success page
+       and the offers page all read (store.reviewBooked), so it lives here, on
+       every one of those pages, rather than in each page's own tools. On a
+       funnel step the change takes effect at the seller's next Jatka, so the
+       page is not reloaded there; the success and offers pages reload to show
+       or hide their edit button. */
+    var BOOKING_PAGES = ['details.html', 'services.html', 'photos.html', 'price.html', 'contact.html', 'success.html', 'offers.html'];
+    var BOOKING_RELOADS = ['success.html', 'offers.html'];
+    if (BOOKING_PAGES.indexOf(file) !== -1 && window.protoVariant &&
+        window.protoVariant('seller-edits-before-review', 'control') === 'v1') {
+      var readFunnel = function () { try { return JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) { return {}; } };
+      var writeFunnel = function (s) { try { localStorage.setItem('autovex_funnel', JSON.stringify(s)); } catch (e) {} };
+      var bookingPop = makePopover('Advisor booking', 'Whether an advisor has booked this ad for its review call');
+      var bSec = document.createElement('div');
+      var bHead = document.createElement('h4');
+      bHead.textContent = 'Seller edits before review';
+      bSec.appendChild(bHead);
+      var bStack = document.createElement('div');
+      bStack.className = 'pb-stack';
+      var bookBtn = document.createElement('button');
+      bookBtn.type = 'button';
+      bookBtn.textContent = 'Advisor books the ad';
+      bookBtn.title = 'An edit in progress ends at the seller\'s next Jatka';
+      var clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.textContent = 'Clear the booking';
+      var syncBooking = function () {
+        var booked = !!readFunnel().reviewBooked;
+        bookingPop.button.textContent = 'Advisor booking: ' + (booked ? 'booked' : 'none') + ' \u25BE';
+        bookingPop.button.className = booked ? 'pb-on' : '';
+        bookBtn.disabled = booked;
+        clearBtn.disabled = !booked;
+      };
+      var setBooking = function (booked) {
+        var s = readFunnel();
+        if (booked) s.reviewBooked = true; else delete s.reviewBooked;
+        writeFunnel(s);
+        bookingPop.setOpen(false);
+        /* The address carries the state too (proto-mock.js reads ?booked=), so
+           the current URL can be sent as it is. */
+        var url = withParams({ booked: booked ? '1' : '0' });
+        if (BOOKING_RELOADS.indexOf(file) !== -1) { window.location.href = url; return; }
+        history.replaceState(null, '', url);
+        syncBooking();
+      };
+      bookBtn.addEventListener('click', function () { setBooking(true); });
+      clearBtn.addEventListener('click', function () { setBooking(false); });
+      bStack.appendChild(bookBtn);
+      bStack.appendChild(clearBtn);
+      bSec.appendChild(bStack);
+      bookingPop.panel.appendChild(bSec);
+      syncBooking();
+      bar.appendChild(bookingPop.wrap);
+    }
+
     /* Built-in data actions. Available everywhere PROTO_MOCK is loaded, because
        "show me this page with a car in it" and "give me a clean slate" are
        needed on every page, not per page. */

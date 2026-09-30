@@ -105,7 +105,7 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: ideation &middot; 1 change in the prototype &middot; nothing agreed
+          Status: ideation &middot; 2 changes in the prototype &middot; nothing agreed
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
       </div>
@@ -122,6 +122,18 @@
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Nothing here is agreed yet.</b> This page holds the direction so far, the first change as a prototype variant, and the questions still open.</p>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">The prototype's default state has been matched to production for every edit flow first, so a future variant is compared against what sellers really get today.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="goal">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What we are solving</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Fewer ads rejected just so the seller can fix them.</b> Today the only way to let a seller change an ad waiting for review is for an advisor to reject it for ad quality, most often to get service book photos added. That is manual work spent on something the seller could do themselves.</li>
+        <li><b>Fewer sellers lost after the review call.</b> Many sellers who are sent back after the call never return to finish.</li>
+        <li><b>Editing only after a rejection, or only during the auction, is the wrong moment.</b> The seller should be able to fix the ad while it waits.</li>
+        <li><b>Advisors keep what they do today.</b> They can still book ads whose seller has not verified their email, and have the seller verify it, or verify it for them, during the call.</li>
+      </ul>
       </div>
     </section>
 
@@ -163,9 +175,9 @@
           <p class="mb-0"><b>The missing-photos path stays as it is</b>: add photos, submit, published.</p>
         </div>
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Needs more thinking</p>
-          <p class="mb-2"><b>Lock the ad once an advisor books it for review.</b> The advisor's review form saves the whole ad, so a seller edit landing during review would overwrite their work, or be overwritten by it, without warning.</p>
-          <p class="mb-0"><b>And the reverse: while the seller is editing, the ad should not be bookable.</b> The funnel saves step by step, so an advisor booking mid-edit would review a half-edited ad. The shape of this is open.</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Proposed, for the team to decide</p>
+          <p class="mb-2"><b>The ad is never editable in the back office and in the funnel at the same time.</b> See <a class="text-av-blue underline" href="#c2">change 2</a>.</p>
+          <p class="mb-0"><b>But abandoned edits must not leave ads stuck</b> out of the advisors' list. A seller who stops halfway, or forgets to finish, releases the ad after a while.</p>
         </div>
       </div>
       </div>
@@ -194,6 +206,13 @@
               <td class="px-4 py-3 text-slate-600">Ad in review and not yet booked, or waiting for email verification</td>
               <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Proposal</span></td>
             </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">2</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">An advisor booking the ad ends the seller's edit</a></td>
+              <td class="px-4 py-3">Funnel &middot; back office review list</td>
+              <td class="px-4 py-3 text-slate-600">Advisor books the ad while the seller is editing it</td>
+              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Needs a decision</span></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -220,7 +239,7 @@
         </ul>
         <p class="mt-3 mb-0 text-slate-600">One new string: &ldquo;Tarjouspyyntö päivitetty&rdquo;. The button label and the toast's design are production's.</p>
       </div>
-      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=draft-in-review&seller-edits-before-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">- and the booked state: <a class="text-av-blue underline" href="../offers.html?scenario=draft-in-review&booked=1&seller-edits-before-review=v1" target="_blank" rel="noopener">advisor booked</a></span></p>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=draft-in-review&seller-edits-before-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">- and the <a class="text-av-blue underline" href="../offers.html?scenario=draft-in-review&seller-edits-before-review=v1&booked=1" target="_blank" rel="noopener">booked state</a> (<code>booked=1</code> in any prototype URL, or <i>Advisor booking</i> on the prototype bar)</span></p>
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
@@ -228,10 +247,42 @@
           <li>The button appears on an ad waiting for email verification, on the waiting screen.</li>
           <li>Saving leaves the ad in the state it was in, in review with its queue position, or waiting for verification, and does not re-run the review decision. The price step keeps the question the seller was asked when submitting.</li>
           <li>The seller lands back where they pressed the button, with the save toast.</li>
-          <li>An advisor cannot book the ad while the seller is part-way through an edit, or the edit is refused from the moment of booking. Which of the two is still open.</li>
+          <li>The ad is never editable in the back office and in the funnel at the same time; see change 2.</li>
         </ul>
       </div>
       <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> A seller who spots a mistake or remembers a detail after submitting has no way to fix it until the review call, and an advisor may then review an ad the seller already knows is wrong.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 - An advisor booking the ad ends the seller's edit</h2>
+      <div class="flex flex-wrap gap-2 font-dm text-xs mb-4">
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: the funnel, and the back office review list</span>
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Scenario: an advisor books the ad while the seller is editing it</span>
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5">Needs a decision</span>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Proposed rule</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>While the seller is editing, the ad is held out of the advisors' review list.</b> Each step the seller saves keeps the hold alive.</li>
+          <li><b>The hold expires</b> after a period with no saves, and ends as soon as the seller finishes. An abandoned or forgotten edit releases the ad on its own.</li>
+          <li><b>If an advisor books the ad anyway</b>, once the hold has expired, the seller's next Jatka is refused. They land back on the view they started the edit from, the offers page or the waiting screen, with a toast: <b>&ldquo;Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!&rdquo;</b> <span class="text-slate-500">(Editing is no longer possible. We'll call you soon!)</span></li>
+          <li>From then on the edit button is not shown, as in change 1.</li>
+        </ul>
+        <p class="mt-3 mb-0 text-slate-600">The toast uses production's existing info-toast design. Its Finnish is a <b>draft</b>, pending approval.</p>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=draft-in-review&seller-edits-before-review=v1" target="_blank" rel="noopener">Try it in the prototype</a> <span class="text-slate-500">- start the edit, then pick <i>Advisor booking &rarr; Advisor books the ad</i> on the prototype bar (the same control clears it again) and press Jatka.</span></p>
+      <div class="bg-warning-50 border border-warning-200 rounded-lg p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-sm font-bold text-slate-900 mb-2">For the team to decide</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li><b>How long the hold lasts</b> without a save before the ad returns to the list.</li>
+          <li><b>Whether advisors see that a seller is editing</b>, or the ad simply does not appear in the list during the hold.</li>
+          <li><b>What happens to the step being saved when the booking lands.</b> Production would refuse that save, so the seller loses what they typed on that step. The prototype keeps it.</li>
+          <li><b>The toast's wording.</b></li>
+        </ul>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> An advisor and a seller saving the same ad at the same time overwrite each other without warning. Blocking the seller silently would read as a broken page; landing them back with a reason, and a call to expect, does not.</p>
       </div>
     </section>
 
