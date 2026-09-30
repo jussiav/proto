@@ -656,7 +656,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
-| Seller edits before review | **Ideation** — no arms yet; direction and open questions only | `seller-edits-before-review` | — | `control` | — | `design-specs/seller-edits-before-review.html` |
+| Seller edits before review | **Ideation** — change 1 in `v1` | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 
 **Completed initiatives:**
 
@@ -2439,6 +2439,31 @@ seller-edits-before-review assessment):
   itself when it renders the publish refusal. Both open-draft buttons on the
   offers page go there, or to details.html (prod's lookup → equipment step)
   when nothing is saved.
+
+## Seller edits before review — `v1`
+
+Change 1 (2026-09-30, Jussi's shape): an in-review draft card on the offers
+page gets the existing "Muokkaa tietoja" button, **only while no advisor has
+booked it**. The success page's car card gets it too (`renderVehicleCard`'s
+`primaryCta`, the slot prod's `CarCard` has and its funnel preview leaves
+empty), for an ad **in review or queued for email verification** — queued ads
+are editable by Jussi's call, but prod never lists them on the offers page, so
+the waiting screen is their only entry. An edit keeps the price question the ad
+was submitted with (`store.reviewable`), so a queued ad keeps its asking price. It links to `details.html?edit=review&return=<offers url>`;
+`funnel-guard.js` stores `store.reviewEdit`, which lets a submitted draft walk
+the funnel while the arm is `v1`. The walk is the **full funnel**; price keeps
+the optional estimate (the review decision is not re-run). Contact's submit
+saves instead of publishing — `FunnelGuard.finishReviewEdit` returns the seller
+to the page they started from with `store.pendingToast`, and offers.html or
+success.html shows prod's "Tarjouspyyntö tallennettu" toast. On success.html it
+can sit beside the proto-only email toast; accepted, it is proto chrome. **No new screen and no new copy.**
+
+**Booked is world state, not a variant:** `?booked=1` on `draft-in-review`,
+listed as "Draft: In review — advisor booked" beside the call-timing copy items.
+Prod shows nothing different to the seller when an advisor books, so control
+renders identically either way and `v1` simply drops the button. The reverse
+lock (no booking while the seller edits) is Filament-side and lives on the spec
+as an acceptance criterion only.
 
 ## Mock Funnel Data — `proto-mock.js`
 

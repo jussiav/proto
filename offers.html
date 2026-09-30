@@ -237,6 +237,17 @@
     // review_comms_content variants — mirrors TenderRequestDraftResource::reviewCommsContent()
     // (tenderform.review.content.would_contact_* in vue-i18n-locales.generated.js)
     var REVIEW_COPY_VARIANT = _offersParams.get('copy') === 'default' ? null : _offersParams.get('copy');
+    /* World state, not a variant: an advisor has booked the draft for its review
+       call. prod has no seller-facing sign of it; it only matters to v1 below. */
+    var REVIEW_BOOKED = _offersParams.get('booked') === '1';
+    /* "Seller edits before review" (design-specs/seller-edits-before-review.html).
+       v1 adds the draft card's "Muokkaa tietoja" to an in-review draft until an
+       advisor books it. */
+    var SEBR_V1 = (function () {
+      var arm = window.protoVariant('seller-edits-before-review', 'control');
+      if (['control', 'v1'].indexOf(arm) === -1) { window.protoVariantSet('seller-edits-before-review', null); return false; }
+      return arm === 'v1';
+    }());
     var FI_WEEKDAY_NAMES = { 1: 'maanantaina', 2: 'tiistaina', 3: 'keskiviikkona', 4: 'torstaina', 5: 'perjantaina' };
     function _nextWorkDayName() {
       var d = new Date();
@@ -423,6 +434,7 @@
       'draft-in-review': function() { return { requests: [], negotiations: [], drafts: [{
         id: 501, status: 'in_review', registration_number: DRAFT_CAR.registration_number,
         review_comms_content: REVIEW_COMMS_CONTENT[REVIEW_COPY_VARIANT] || null, created_at: _now() - 86400,
+        booked: REVIEW_BOOKED,
         make_name: DRAFT_CAR.make_name, model_name: DRAFT_CAR.model_name,
         model_specification: DRAFT_CAR.model_specification,
         year: DRAFT_CAR.year, fuel_type: DRAFT_CAR.fuel_type, drive_type: DRAFT_CAR.drive_type,
@@ -623,7 +635,15 @@
       if (draft.status === 'rejected') {
         return draft.missing_images ? 'photos.html?step=add-images' : REJECTED_EDIT_HREF;
       }
+      if (draft.status === 'in_review') {
+        return 'details.html?edit=review&return=' + encodeURIComponent('offers.html' + window.location.search);
+      }
       return getStore().funnelPosition || 'details.html';
+    }
+
+    function draftPrimaryText(draft, cfg) {
+      if (draft.status === 'in_review' && SEBR_V1 && !draft.booked) return 'Muokkaa tietoja';
+      return cfg.primaryText;
     }
 
     // Adapter: draft object -> buildCarCard props. Markup lives in vehicle-card.js.
@@ -646,7 +666,7 @@
         statusIcon: cfg.icon,
         statusIconColor: cfg.iconColor,
 
-        primaryCta: cfg.primaryText ? { text: cfg.primaryText, href: draftEditHref(draft) } : null,
+        primaryCta: draftPrimaryText(draft, cfg) ? { text: draftPrimaryText(draft, cfg), href: draftEditHref(draft) } : null,
         secondaryCta: cfg.secondaryText
           ? {
               text: cfg.secondaryText,
@@ -1030,6 +1050,16 @@
     }
 
     renderPage();
+
+    /* Back from an edit while waiting for review (funnel-guard.js): the view the
+       seller started from, with prod's own save toast. */
+    (function () {
+      var fs = getStore();
+      if (fs.pendingToast !== 'saved') return;
+      delete fs.pendingToast;
+      setStore(fs);
+      window.protoToastr('Tarjouspyyntö tallennettu', 'success');
+    }());
 
     // Wire all "Avaa tiedot" buttons (draft cards + live car card) to open modal
     document.addEventListener('click', function(e) {
@@ -1568,7 +1598,17 @@
        review-call timing copy variants (REVIEW_COPY_VARIANT above), which the
        old drawer offered and which are world state, not design candidates. */
     window.protoPage = {
-      scenarioExtraParams: ['copy'],
+      scenarioExtraParams: ['copy', 'booked'],
+      initiatives: [
+        {
+          slug:    'seller-edits-before-review',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — current design' },
+            { id: 'v1',      label: 'Variant 1 — edit while waiting for review' }
+          ]
+        }
+      ],
       scenarios: SCENARIO_GROUPS.map(function (g) {
         if (g.group !== 'Draft') return g;
         var items = [];
@@ -1578,6 +1618,7 @@
             items.push({ id: it.id, label: 'Draft: In review — call today',        params: { copy: 'soon' } });
             items.push({ id: it.id, label: 'Draft: In review — call tomorrow',     params: { copy: 'tomorrow' } });
             items.push({ id: it.id, label: 'Draft: In review — call next workday', params: { copy: 'next_work_day' } });
+            items.push({ id: it.id, label: 'Draft: In review — advisor booked',   params: { booked: '1' } });
           }
         });
         return { group: g.group, items: items };

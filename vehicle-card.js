@@ -3,7 +3,8 @@
  * Included by contact.html, success.html and offers.html.
  *
  * Exposes:
- *   window.renderVehicleCard(containerId, options)  — funnel card (contact/success)
+ *   window.renderVehicleCard(containerId, options)  — funnel card (contact/success);
+ *                                                      options.primaryCta { text, href }
  *   window.carCardClasses                           — shared shell class names
  *   window.openAdModal() / closeAdModal()
  *
@@ -331,6 +332,7 @@
       statusIcon: badge.icon,
       statusIconColor: badge.iconColor,
 
+      primaryCta: options.primaryCta || null,
       secondaryCta: { text: t('card.openDetails'), attrs: 'id="av-open-modal-btn"' },
       // No ctaFullWidth: prod's CarCard row is md:justify-end with w-full
       // md:w-auto buttons, so "Avaa tiedot" sits at the right edge on desktop.

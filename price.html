@@ -420,6 +420,10 @@
          rejection is never reviewed again, any other rejection always is. */
       if (store.rejection === 'missing-images') return false;
       if (store.rejection) return true;
+      /* An ad edited while it waits (for review, or for email verification) keeps
+         the price question it was submitted with: editing does not re-run the
+         review decision. */
+      if (window.FunnelGuard && FunnelGuard.reviewEdit(store)) return store.reviewable !== false;
 
       var km = parseInt(String((store.hero || {}).km || '').replace(/\D/g, ''), 10);
       if (!isNaN(km) && km > REVIEW_MAX_MILEAGE) return false;

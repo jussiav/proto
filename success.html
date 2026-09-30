@@ -230,6 +230,7 @@
     </div>
   </div>
 
+  <script src="toastr.js"></script>
   <script src="vehicle-card.js"></script>
   <script>
     const STORE_KEY = 'autovex_funnel';
@@ -287,6 +288,14 @@
           variants: [
             { id: 'control', label: 'Control — production behaviour' },
             { id: 'v1',      label: 'Variant 1 — receipt, then what is missing (draft)' }
+          ]
+        },
+        {
+          slug:    'seller-edits-before-review',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — current design' },
+            { id: 'v1',      label: 'Variant 1 — edit while waiting for review' }
           ]
         }
       ],
@@ -523,6 +532,20 @@
       'in-review-verified':       'in_review',
       'queued':                   'queued_for_publishing_after_verification'
     };
+    /* "Seller edits before review" v1: the waiting screen's car card gets the
+       same "Muokkaa tietoja" as the offers page, for an ad in review or one
+       queued until the seller verifies their email. prod's CarCard already has
+       the primary-button slot; its funnel preview fills only the secondary one. */
+    var SEBR_V1 = window.protoVariant('seller-edits-before-review', 'control') === 'v1';
+    var EDITABLE_WAITING = ['in_review', 'queued_for_publishing_after_verification'];
+    function cardPrimaryCta() {
+      if (!SEBR_V1 || EDITABLE_WAITING.indexOf(currentDraftStatus()) === -1) return null;
+      return {
+        text: 'Muokkaa tietoja',
+        href: 'details.html?edit=review&return=' + encodeURIComponent('success.html' + window.location.search)
+      };
+    }
+
     function currentDraftStatus() {
       /* Follows the organic path too, not just ?scenario=. Without that the card
          badge stayed on "Tarkastus käynnissä" while the page rendered the queued
@@ -809,7 +832,15 @@
       s.successVisited = true;
       setStore(s);
       updateContent();
-      renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus() });
+      renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus(), primaryCta: cardPrimaryCta() });
+
+      /* Back from an edit (funnel-guard.js): prod's own save toast. */
+      var _back = getStore();
+      if (_back.pendingToast === 'saved') {
+        delete _back.pendingToast;
+        setStore(_back);
+        window.protoToastr('Tarjouspyyntö tallennettu', 'success');
+      }
 
       document.getElementById('success-email-resend').addEventListener('click', function () {
         showEmailToast();
@@ -828,7 +859,7 @@
     });
 
     window.addEventListener('pageshow', function (e) {
-      if (e.persisted) { updateContent(); renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus() }); }
+      if (e.persisted) { updateContent(); renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus(), primaryCta: cardPrimaryCta() }); }
     });
 
     var emailToastTimer = null;

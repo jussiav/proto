@@ -105,7 +105,7 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: ideation &middot; nothing specified yet &middot; no prototype variant yet
+          Status: ideation &middot; 1 change in the prototype &middot; nothing agreed
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
       </div>
@@ -120,7 +120,7 @@
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Nothing here is agreed yet.</b> This page holds the direction so far and the questions still open. Changes will be added as numbered sections, each with a prototype variant, once they are shaped.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Nothing here is agreed yet.</b> This page holds the direction so far, the first change as a prototype variant, and the questions still open.</p>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">The prototype's default state has been matched to production for every edit flow first, so a future variant is compared against what sellers really get today.</p>
       </div>
     </section>
@@ -174,7 +174,64 @@
     <section class="av-band av-band-grey" id="changes">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
-      <p class="font-dm text-sm text-slate-700 max-w-3xl">No changes specified yet.</p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Each row links to its own section below.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">What would change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Scenario</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-bold">1</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Edit the ad while it waits for review</a></td>
+              <td class="px-4 py-3">Offers page draft card &middot; waiting screen car card &middot; funnel</td>
+              <td class="px-4 py-3 text-slate-600">Ad in review and not yet booked, or waiting for email verification</td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Proposal</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c1">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 - Edit the ad while it waits for review</h2>
+      <div class="flex flex-wrap gap-2 font-dm text-xs mb-4">
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: offers page draft card &middot; waiting screen car card &middot; the funnel</span>
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Scenario: ad in review and not yet booked, or waiting for email verification</span>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>The in-review draft card on the offers page gets the same <b>&ldquo;Muokkaa tietoja&rdquo;</b> <span class="text-slate-500">(Edit details)</span> button the open and rejected draft cards already have.</li>
+          <li>The car card on the waiting screen after submitting gets the same button, next to &ldquo;Avaa tiedot&rdquo;. The card already has room for a primary button; today only the secondary one is used.</li>
+          <li><b>An ad waiting for the seller to verify their email is editable too</b>, from the waiting screen. It is otherwise ready and will publish as soon as the email is verified.</li>
+          <li>It opens the funnel at the equipment step, as the rejected-ad edit does, and the seller walks every step through to contact.</li>
+          <li>The last step saves instead of submitting: the ad stays in review, in the same queue position, and nothing is published.</li>
+          <li>The seller returns to the page they started from, the offers page or the waiting screen, and sees the existing save toast, <b>&ldquo;Tarjouspyyntö tallennettu&rdquo;</b> <span class="text-slate-500">(Listing saved)</span>. No new screen.</li>
+          <li><b>Once an advisor books the ad for its review call, the button is not shown.</b> The card looks exactly as it does today. The seller is not told that the review has started.</li>
+        </ul>
+        <p class="mt-3 mb-0 text-slate-600">No new copy: both strings are production's.</p>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=draft-in-review&seller-edits-before-review=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">- and the booked state: <a class="text-av-blue underline" href="../offers.html?scenario=draft-in-review&booked=1&seller-edits-before-review=v1" target="_blank" rel="noopener">advisor booked</a></span></p>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>The button appears on an in-review ad only while no advisor has booked it, and disappears once one has.</li>
+          <li>The button appears on an ad waiting for email verification, on the waiting screen.</li>
+          <li>Saving leaves the ad in the state it was in, in review with its queue position, or waiting for verification, and does not re-run the review decision. The price step keeps the question the seller was asked when submitting.</li>
+          <li>The seller lands back where they pressed the button, with the save toast.</li>
+          <li>An advisor cannot book the ad while the seller is part-way through an edit, or the edit is refused from the moment of booking. Which of the two is still open.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> A seller who spots a mistake or remembers a detail after submitting has no way to fix it until the review call, and an advisor may then review an ad the seller already knows is wrong.</p>
       </div>
     </section>
 
@@ -183,6 +240,7 @@
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Notes for whoever builds this</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
         <li><b>The prototype's funnel step indicator is more generous than production's, and stays that way for now.</b> In the prototype a seller can jump to any step they have started. In production the progress bar only goes back one step, and the equipment step, where editing a rejected ad starts, has no way back at all. Keep that in mind when judging how easy editing feels in the prototype.</li>
+        <li><b>The last step's button still reads &ldquo;Lähetä ilmoitus&rdquo;</b> <span class="text-slate-500">(Send listing)</span> during an edit, although it saves rather than sends. It is production's label; whether it should change is a copy question for this initiative.</li>
         <li><b>The rejection email's link could not be checked.</b> It is sent through the marketing email tool, so its button target lives in Marketing's template rather than in the product code. Wherever it points, a seller landing on the funnel meets the same saved-position behaviour described above.</li>
       </ul>
       </div>
@@ -195,7 +253,7 @@
         <li><b>Which details can be edited?</b> Equipment, service history, damage and photos look safe. Make, model, year and fuel type feed the review decision and the price estimate.</li>
         <li><b>Is the review decision re-evaluated after an edit,</b> or are edited ads at least flagged, so the decision's performance is not measured against data it never saw?</li>
         <li><b>Can the seller change their own price estimate?</b> It is the price question sellers most want to revisit.</li>
-        <li><b>Do ads waiting for email verification get the same editing?</b> Today they do not appear on the offers page at all.</li>
+        <li><b>Should ads waiting for email verification appear on the offers page?</b> They are editable from the waiting screen, but production does not list them on the offers page at all, so there is no card there to carry the button.</li>
         <li><b>Should editing during the auction be removed?</b> Dealers bid on the car as described and are not told when it changes. Removing it would also free the edit modal for editing before publish.</li>
       </ul>
       </div>

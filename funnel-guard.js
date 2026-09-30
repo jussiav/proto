@@ -30,6 +30,8 @@
  *   ?step=add-images  prod's param, verbatim
  *   ?edit=rejected    proto-only. Prod fires EDIT_DRAFT in-page; the proto
  *                     crosses a page boundary, so the event travels as a param.
+ *   ?edit=review      "Seller edits before review" v1 only, with ?return= the
+ *                     page to go back to. Sets store.reviewEdit.
  *
  * The guard is skipped when the URL carries `?scenario=` (a tester forcing a
  * state), `?plate=` (the front page starting a new draft) or `?mode=mobile`
@@ -56,8 +58,27 @@
     return total >= 5 && !!(ph.ulkopuoli && ph.ulkopuoli.length) && !!(ph.sisatilat && ph.sisatilat.length);
   }
 
+  /* "Seller edits before review" v1: an in-review draft opened from the offers
+     page's edit button may walk the funnel. Honoured only while that arm is on,
+     so control keeps prod's redirect to the waiting screen. */
+  function reviewEditArm() {
+    return window.protoVariant && window.protoVariant('seller-edits-before-review', 'control') === 'v1';
+  }
+  function activeReviewEdit(s) {
+    return reviewEditArm() && s.reviewEdit ? s.reviewEdit : null;
+  }
+
   function isSubmitted(s) {
-    return !s.rejection && !!s.successVisited && photosComplete(s);
+    return !s.rejection && !activeReviewEdit(s) && !!s.successVisited && photosComplete(s);
+  }
+
+  /* Ends the edit: the draft stays in review, and the seller goes back to the
+     view they started from, where prod's own save toast greets them. */
+  function finishReviewEdit(s) {
+    var back = (s.reviewEdit && s.reviewEdit.returnTo) || 'offers.html';
+    delete s.reviewEdit;
+    s.pendingToast = 'saved';
+    return back;
   }
 
   /* Re-submitting a rejected draft either publishes it, which ends the
@@ -79,21 +100,31 @@
     rejection: function (s) { return (s || getStore()).rejection || null; },
     photosComplete: photosComplete,
     isSubmitted: isSubmitted,
-    recordPublishAttempt: recordPublishAttempt
+    recordPublishAttempt: recordPublishAttempt,
+    reviewEdit: function (s) { return activeReviewEdit(s || getStore()); },
+    finishReviewEdit: finishReviewEdit
   };
 
   var params = new URLSearchParams(window.location.search);
   var entry = params.get('step') === 'add-images' ? 'missing-images'
             : params.get('edit') === 'rejected'   ? 'other'
             : null;
+  var reviewEntry = params.get('edit') === 'review';
 
   var store = getStore();
-  if (entry) {
-    store.rejection = entry;
-    delete store.publishRefused;
+  if (reviewEntry) {
+    store.reviewEdit = { returnTo: params.get('return') || 'offers.html' };
     setStore(store);
+  }
+  if (entry || reviewEntry) {
+    if (entry) {
+      store.rejection = entry;
+      delete store.publishRefused;
+      setStore(store);
+    }
     params.delete('step');
     params.delete('edit');
+    params.delete('return');
     var qs = params.toString();
     history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
   }

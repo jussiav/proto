@@ -286,6 +286,12 @@
         s.loggedIn = false;
         s.dac7Completed = false;
       }
+      if (FunnelGuard.reviewEdit(s)) {
+        const back = FunnelGuard.finishReviewEdit(s);
+        setStore(s);
+        window.location.href = back;
+        return;
+      }
       /* Submitting re-publishes a rejected draft, and prod's funnel then lands
          on its own waiting screen whichever page the edit started from. Short of
          photos, publishing is refused and the draft stays rejected. */
