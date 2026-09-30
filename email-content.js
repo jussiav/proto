@@ -191,7 +191,7 @@
         '<p>Melkein valmista! Lataa puuttuvat kuvat asiantuntijamme kanssa käymäsi puhelun mukaisesti. Tämän jälkeen kaikki on kunnossa myyntiä varten.</p>' +
         '<p>Klikkaa alla olevaa painiketta lisätäksesi kuvat. Myydään autosi yhdessä!</p>' +
         '{{BUTTON}}',
-      cta: btn('Lisää kuvat', 'photos.html', '$draft->imageUploadLink()')
+      cta: btn('Lisää kuvat', 'photos.html?step=add-images', '$draft->imageUploadLink()')
     },
 
     {

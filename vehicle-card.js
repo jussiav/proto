@@ -344,60 +344,103 @@
     document.getElementById('av-open-modal-btn').addEventListener('click', window.openAdModal);
   };
 
-  // ── Modal ─────────────────────────────────────────────────────
+  // ── Car details sheet ─────────────────────────────────────────
+  /* A transcription of prod's CarDetailsCard.vue, the read-only sheet behind
+     "Avaa tiedot" in both the funnel preview and the offers page (the dead
+     PreviewModal.vue is what this used to follow). Its `advert` prop is the raw
+     draft or request resource, so the store is mapped onto prod's field names
+     first (advertFromStore) and rendered from those.
+
+     Three values print RAW in prod, reproduced as-is: `fuel_type` and
+     `drive_type` are enum keys (CarCard translates them, this card does not),
+     and `last_service_date` is its key, because the translation beside it is
+     commented out. Also prod's: the VAT line sits above the "Varusteet" heading.
+
+     Hand-written CSS, not utilities: the markup is JS-built and the Play CDN
+     generates arbitrary-value classes a tick after render. */
+  const CDC_ICON = {
+    x: '<svg width="24" height="24" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',
+    check: '<svg class="cdc-ico" width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg>',
+    cross: '<svg class="cdc-ico" width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm37.66,130.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>',
+    location: '<svg class="cdc-ico" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z"/></svg>'
+  };
+
+  const CDC_CSS = [
+    '#av-ad-modal{display:none;position:fixed;inset:0;z-index:9999;}',
+    '#av-ad-modal .cdc-overlay{position:fixed;inset:0;background:rgba(17,24,39,.5);}',
+    '#av-ad-modal .cdc-scroll{position:fixed;inset:0;overflow-y:auto;}',
+    '#av-ad-modal .cdc-center{min-height:100vh;padding:0;text-align:center;}',
+    '#av-ad-modal .cdc-panel{position:relative;overflow:hidden;border-radius:.5rem;background:#fff;text-align:left;box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1);}',
+    '@media(min-width:620px){#av-ad-modal .cdc-center{display:flex;justify-content:center;align-items:center;}',
+    '  #av-ad-modal .cdc-panel{margin:2rem 0;width:100%;max-width:44rem;}}',
+    '#av-ad-modal .cdc-close{position:absolute;top:1rem;right:1rem;background:#fff;padding:.5rem;border:0;border-radius:.375rem;z-index:1;cursor:pointer;color:#000;line-height:0;}',
+    '#av-ad-modal .cdc-figure{margin:0;width:100%;}',
+    '#av-ad-modal .cdc-figure img{display:block;width:100%;height:100%;object-fit:cover;}',
+    '@media(min-width:460px){#av-ad-modal .cdc-figure{height:22.5rem;}}',
+    '#av-ad-modal .cdc-thumbs{display:flex;flex-wrap:wrap;gap:1rem;padding:1rem;}',
+    '#av-ad-modal .cdc-thumb{cursor:pointer;padding-bottom:.25rem;border-bottom:2px solid transparent;background:none;border-top:0;border-left:0;border-right:0;padding-left:0;padding-right:0;padding-top:0;}',
+    '#av-ad-modal .cdc-thumb.is-main{border-bottom-color:#0B6DFF;}',
+    '#av-ad-modal .cdc-thumb img{display:block;width:3rem;height:3rem;object-fit:cover;}',
+    '#av-ad-modal .cdc-more{width:3rem;height:3rem;border:1px solid #6B7280;border-radius:.25rem;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;font-size:1.25rem;line-height:1.75rem;color:inherit;}',
+    '#av-ad-modal .cdc-body{width:100%;padding:1.25rem;}',
+    '@media(min-width:992px){#av-ad-modal .cdc-body{padding:1rem;}}',
+    '#av-ad-modal .cdc-head{padding-bottom:.625rem;display:flex;flex-direction:column;gap:.625rem;border-bottom:1px solid #D1D5DB;}',
+    '#av-ad-modal .cdc-plate{width:100%;display:flex;border-radius:.375rem;}',
+    '#av-ad-modal .cdc-plate-strip{width:.5rem;background:#0B6DFF;border-radius:.375rem 0 0 .375rem;}',
+    '#av-ad-modal .cdc-plate-text{padding:.25rem .375rem;border:1px solid #E2E8F0;border-left:0;border-radius:0 .375rem .375rem 0;}',
+    '#av-ad-modal .cdc-name{display:flex;flex-direction:column;}',
+    '#av-ad-modal .cdc-name .cdc-make{font-weight:500;}',
+    '#av-ad-modal .cdc-pills{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;font-size:.875rem;line-height:1.25rem;}',
+    '#av-ad-modal .cdc-pill{padding:.125rem .25rem;background:#F0F1F4;font-size:.75rem;line-height:1rem;color:#585D64;border-radius:.125rem;}',
+    '#av-ad-modal .cdc-grid{margin-top:.625rem;padding-bottom:.625rem;display:grid;grid-template-columns:1fr;gap:1rem;border-bottom:1px solid #D1D5DB;word-break:break-all;}',
+    '@media(min-width:620px){#av-ad-modal .cdc-grid{grid-template-columns:1fr 1fr;}}',
+    '#av-ad-modal .cdc-col{display:flex;flex-direction:column;gap:.5rem;font-size:.75rem;line-height:1rem;color:#585D64;}',
+    '#av-ad-modal .cdc-col-title{font-weight:500;font-size:1rem;line-height:1.5rem;color:#000;}',
+    '#av-ad-modal .cdc-ico{display:inline-block;vertical-align:middle;}',
+    '#av-ad-modal .cdc-blue{color:#0B6DFF;}',
+    '#av-ad-modal .cdc-grey{color:#1F2937;}',
+    '#av-ad-modal .cdc-ml{margin-left:.25rem;}',
+    '#av-ad-modal .cdc-mr{margin-right:.25rem;}',
+    '#av-ad-modal .cdc-files{margin-top:.625rem;display:flex;flex-direction:column;gap:.5rem;font-size:.75rem;line-height:1rem;}',
+    '#av-ad-modal .cdc-files a{color:#0B6DFF;text-decoration:underline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;}',
+    '#av-ad-modal .cdc-actions{margin-bottom:1rem;padding:.75rem 2rem;display:flex;flex-direction:column;justify-content:center;align-items:center;}',
+    '@media(min-width:768px){#av-ad-modal .cdc-actions{flex-direction:row;}}',
+    /* elements/Button.vue, color blue, size medium. Its pt-13px/pb-15px out-rank
+       the size's py-2 in Tailwind's property order, hence 13/15. */
+    '#av-ad-modal .cdc-btn{margin-bottom:.5rem;padding:13px 1.25rem 15px;display:inline-block;line-height:1;font-weight:500;font-size:1rem;letter-spacing:.05em;border-radius:.5rem;background:#0B6DFF;color:#fff;border:2px solid #0B6DFF;cursor:pointer;}'
+  ].join('');
+
   function ensureModal() {
     if (document.getElementById('av-ad-modal')) return;
-
-    // Inject responsive style for bottom-sheet on mobile / centered on desktop
     if (!document.getElementById('av-ad-modal-style')) {
-      const s = document.createElement('style');
-      s.id = 'av-ad-modal-style';
-      s.textContent = [
-        '#av-ad-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.5);align-items:flex-end;justify-content:center;}',
-        '#av-ad-modal-sheet{background:#fff;border-radius:1rem 1rem 0 0;width:100%;max-height:85vh;box-shadow:0 -4px 30px rgba(0,0,0,.15);display:flex;flex-direction:column;overflow:hidden;}',
-        '@media(min-width:768px){',
-        '  #av-ad-modal{align-items:center;padding:2rem 1rem;}',
-        '  #av-ad-modal-sheet{border-radius:1rem;max-width:600px;max-height:calc(100vh - 4rem);box-shadow:0 20px 60px rgba(0,0,0,.2);}',
-        '}',
-      ].join('');
-      document.head.appendChild(s);
+      const st = document.createElement('style');
+      st.id = 'av-ad-modal-style';
+      st.textContent = CDC_CSS;
+      document.head.appendChild(st);
     }
-
     const wrap = document.createElement('div');
     wrap.id = 'av-ad-modal';
-    wrap.innerHTML = `
-      <div id="av-ad-modal-sheet">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9;flex-shrink:0;">
-          <span style="font-family:'Barlow',sans-serif;font-weight:700;font-size:1.25rem;color:#0f172a;">${t('modal.previewTitle')}</span>
-          <button id="av-modal-close" style="width:2rem;height:2rem;display:flex;align-items:center;justify-content:center;border:none;background:transparent;border-radius:9999px;cursor:pointer;" onmouseover="this.style.background='#f1f5f9'" onmouseout="this.style.background='transparent'">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M14 4L4 14M4 4l10 10" stroke="#475569" stroke-width="1.75" stroke-linecap="round"/></svg>
-          </button>
-        </div>
-        <div id="av-modal-body" style="display:flex;flex-direction:column;overflow-y:auto;flex:1;"></div>
-        <div style="padding:1.25rem 1.5rem;border-top:1px solid #f1f5f9;flex-shrink:0;">
-          <button id="av-modal-close-btn" style="width:100%;height:3rem;display:flex;align-items:center;justify-content:center;background:#0B6DFF;border:none;border-radius:.5rem;font-family:'DM Sans',sans-serif;font-weight:500;font-size:1rem;color:#fff;cursor:pointer;" onmouseover="this.style.background='#0A59EB'" onmouseout="this.style.background='#0B6DFF'">
-            ${t('modal.closeBtn')}
-          </button>
-        </div>
-      </div>`;
+    wrap.setAttribute('role', 'dialog');
+    wrap.setAttribute('aria-modal', 'true');
+    wrap.innerHTML = '<div class="cdc-overlay" aria-hidden="true"></div>' +
+      '<div class="cdc-scroll"><div class="cdc-center"><div class="cdc-panel" id="av-ad-modal-panel"></div></div></div>';
     document.body.appendChild(wrap);
-    document.getElementById('av-modal-close').addEventListener('click', window.closeAdModal);
-    document.getElementById('av-modal-close-btn').addEventListener('click', window.closeAdModal);
-    wrap.addEventListener('click', function (e) { if (e.target === wrap) window.closeAdModal(); });
+    wrap.addEventListener('click', function (e) {
+      if (!document.getElementById('av-ad-modal-panel').contains(e.target)) window.closeAdModal();
+    });
   }
 
   window.openAdModal = function () {
+    cdcMain = 0;
+    cdcShowAll = false;
     ensureModal();
     populateModal();
-    const m = document.getElementById('av-ad-modal');
-    m.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    document.getElementById('av-ad-modal').style.display = 'block';
   };
 
   window.closeAdModal = function () {
     const m = document.getElementById('av-ad-modal');
     if (m) m.style.display = 'none';
-    document.body.style.overflow = '';
   };
 
   document.addEventListener('keydown', function (e) {
@@ -421,181 +464,186 @@
     } catch (e) { return null; }
   }
 
+  /* The funnel stores RENDERED LABELS for these answers (services.html's
+     radioGroups), so a stored value is matched against both languages. */
+  function labelKey(value, pairs) {
+    var T = window.TRANSLATIONS || {};
+    for (var k in pairs) {
+      var path = pairs[k].split('.');
+      var hit = ['fi', 'en'].some(function (l) {
+        var node = T[l];
+        path.forEach(function (p) { node = node && node[p]; });
+        return node === value;
+      });
+      if (hit) return k;
+    }
+    return null;
+  }
+
+  function enumKey(label) {
+    if (!label) return null;
+    for (var k in ENUM_LABELS_FI) if (ENUM_LABELS_FI[k] === label) return k;
+    return label;
+  }
+
+  /* prod's lastServiceYears() ends at currentYear - 3, labelled "or before";
+     the funnel stores that option as 'before'. */
+  function serviceYear(v) {
+    if (v === 'before') return String(new Date().getFullYear() - 3);
+    return v || null;
+  }
+
+  function advertFromStore(s) {
+    const hero = s.hero || {}, d = s.details || {}, sv = s.services || {};
+    const rg = Array.isArray(sv.radioGroups) ? sv.radioGroups : [];
+    const ls = sv.lastServiceDetail || {};
+    const photos = s.photos || {};
+    const km = parseInt(String(hero.km || '').replace(/\D/g, ''), 10);
+    const images = [];
+    ['ulkopuoli', 'sisatilat', 'huoltokirja', 'renkaat', 'naarmut', 'tuulilasi'].forEach(function (name) {
+      (photos[name] || []).forEach(function (u) {
+        if (typeof u === 'string' && !u.startsWith('data:application/pdf')) images.push(u);
+      });
+    });
+    return {
+      registration_number: hero.plate ? String(hero.plate).toUpperCase() : null,
+      make: d.merkki || '',
+      model: d.malli || '',
+      model_specification: d.mallitarkennus || null,
+      year: d.vuosimalli || null,
+      driven: isNaN(km) ? null : km,
+      drive_type: enumKey(d.vetotapa),
+      fuel_type: enumKey(d.polttoaine),
+      postalcode: d.sijainti || null,
+      vat_deductible: !!d.yrityskaytto,
+      summer_tires_condition: d.kesarenkaat || null,
+      summer_tires: d.kesavanteet || null,
+      winter_tires_condition: d.talvirenkaat || null,
+      winter_tires: d.talvivanteet || null,
+      keys: d.avaimet || null,
+      accessories: d.varustelu || null,
+      windscreen_condition: rg[3] || null,
+      windscreen_insurance: labelKey(rg[4], { yes: 'service.yes', no: 'service.no' }),
+      service_book: rg[0] || null,
+      last_service_date: labelKey(rg[2], {
+        within_6_months: 'service.lastService6mo',
+        over_6_months:   'service.lastServiceOlder',
+        dont_remember:   'service.lastServiceUnsure'
+      }),
+      last_service_month: ls.month || null,
+      last_service_year: serviceYear(ls.year),
+      last_service_km: ls.km ? parseInt(ls.km, 10) : null,
+      damage_and_service_information: sv.korjaukset || null,
+      images: images
+    };
+  }
+
+  function rimIcon(v) {
+    if (v === 'Vanteilla') return '<span class="cdc-blue">' + CDC_ICON.check + '</span>';
+    if (v === 'Ilman vanteita') return '<span class="cdc-grey">' + CDC_ICON.cross + '</span>';
+    return '';
+  }
+
+  function tireRow(labelKey2, cond, rims) {
+    if (!cond) return '';
+    return '<div><span>' + esc(t(labelKey2)) + ': </span> ' + esc(cond) +
+      '<span class="cdc-ml">' + rimIcon(rims) + ' ' + esc(rims || '') + '</span></div>';
+  }
+
+  let cdcShowAll = false;
+  let cdcMain = 0;
+
   function populateModal() {
     modalFileUrls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} });
     modalFileUrls = [];
     ensureModal();
-    const s        = getStore();
-    const hero     = s.hero     || {};
-    const details  = s.details  || {};
-    const services = s.services || {};
-    const photos   = s.photos   || {};
-    const body     = document.getElementById('av-modal-body');
-    const DASH     = '–';
+    const s = getStore();
+    const a = advertFromStore(s);
+    const panel = document.getElementById('av-ad-modal-panel');
+    const mileage = a.driven ? a.driven.toLocaleString('fi-FI') + ' km' : null;
+    const lastServiceMileage = a.last_service_km ? a.last_service_km.toLocaleString('fi-FI') + ' km' : null;
+    const shown = cdcShowAll ? a.images : a.images.slice(0, 5);
+    if (cdcMain >= a.images.length) cdcMain = 0;
 
-    function val(v) {
-      return (v !== null && v !== undefined && v !== '') ? esc(String(v)) : DASH;
-    }
-    function row(label, value) {
-      return `<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;">
-        <span style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#64748b;flex-shrink:0;">${label}</span>
-        <span style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#0f172a;text-align:right;">${val(value)}</span>
-      </div>`;
-    }
-    function section(title, url, inner) {
-      return `<div style="display:flex;flex-direction:column;gap:.75rem;padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <span style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1rem;color:#0f172a;">${title}</span>
-          <a href="${url}" style="font-family:'DM Sans',sans-serif;font-weight:500;font-size:.875rem;color:#0B6DFF;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${t('modal.editLink')}</a>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:.5rem;">${inner}</div>
-      </div>`;
-    }
+    let html = '<button type="button" class="cdc-close" id="av-modal-close" aria-label="' + esc(t('carDetails.close')) + '">' + CDC_ICON.x + '</button>';
 
-    let html = '';
+    html += '<figure class="cdc-figure">' + (a.images.length
+      ? '<img src="' + esc(a.images[cdcMain]) + '" alt="">'
+      : '<img src="assets/missing-images-fi.svg" loading="lazy" alt="">') + '</figure>';
 
-    // ── Perustiedot ──
-    html += section(t('modal.sections.basicInfo'), 'details.html', [
-      row(t('modal.labels.registration'), hero.plate ? hero.plate.toUpperCase() : null),
-      row(t('modal.labels.mileage'), hero.km ? fmtKm(hero.km) : null),
-      row(t('modal.labels.make'), details.merkki),
-      row(t('modal.labels.model'), details.malli),
-      row(t('modal.labels.year'), details.vuosimalli),
-      row(t('modal.labels.trim'), details.mallitarkennus),
-      row(t('modal.labels.fuel'), details.polttoaine),
-      row(t('modal.labels.location'), details.sijainti),
-      row(t('modal.labels.deliveryRange'), details.deliveryRange ? details.deliveryRange + ' km' : null),
-      row(t('modal.labels.companyUse'), details.yrityskaytto != null ? (details.yrityskaytto ? t('modal.labels.yes') : t('modal.labels.no')) : null),
-    ].join(''));
-
-    // ── Huollot & kunto ──
-    const rg = Array.isArray(services.radioGroups) ? services.radioGroups : [];
-    const vauriot = [
-      services.vaurio_naky   ? t('modal.labels.visibleDamage')    : null,
-      services.vaurio_kolari ? t('modal.labels.accidentHistory')   : null,
-    ].filter(Boolean);
-    let svcInner = [
-      row(t('modal.labels.serviceHistory'),   rg[0]),
-      row(t('modal.labels.serviceBookType'),  rg[1]),
-      row(t('modal.labels.lastService'),      rg[2]),
-      row(t('modal.labels.windshield'),       rg[3]),
-      row(t('modal.labels.glassInsurance'),   rg[4]),
-      row(t('modal.labels.damages'),          vauriot.length ? vauriot.join(', ') : null),
-    ].join('');
-    if (services.korjaukset) {
-      svcInner += `<div style="display:flex;flex-direction:column;gap:.25rem;padding-top:.25rem;">
-        <span style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#64748b;">${t('modal.labels.repairsAndFaults')}</span>
-        <span style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#0f172a;white-space:pre-wrap;">${esc(services.korjaukset)}</span>
-      </div>`;
-    } else {
-      svcInner += row(t('modal.labels.repairsAndFaults'), null);
-    }
-    html += section(t('modal.sections.serviceCondition'), 'services.html', svcInner);
-
-    // ── Kuvat ──
-    const PNAMES  = ['ulkopuoli', 'sisatilat', 'huoltokirja', 'renkaat', 'naarmut', 'tuulilasi'];
-    const PLABELS = {
-      ulkopuoli:   t('modal.photoCategories.ulkopuoli'),
-      sisatilat:   t('modal.photoCategories.sisatilat'),
-      huoltokirja: t('modal.photoCategories.huoltokirja'),
-      renkaat:     t('modal.photoCategories.renkaat'),
-      naarmut:     t('modal.photoCategories.naarmut'),
-      tuulilasi:   t('modal.photoCategories.tuulilasi'),
-    };
-    const isPdf      = u => typeof u === 'string' && u.startsWith('data:application/pdf');
-    const isHeicDataUrl = u => typeof u === 'string' && /^data:image\/hei[cf]/i.test(u);
-    const docCard = label => `<div style="height:5rem;width:calc(50% - .25rem);border-radius:.375rem;background:#f8fafc;border:1px solid #e2e8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span style="font-size:.6rem;font-weight:700;color:#ef4444;letter-spacing:.05em;font-family:'DM Sans',sans-serif;">${label}</span></div>`;
-    const pdfCard  = () => docCard('PDF');
-    const heicCard = () => docCard('HEIC');
-
-    let photoHTML = '';
-    let hasPhotos = false;
-    PNAMES.forEach(name => {
-      const urls = photos[name];
-      if (!urls || !urls.length) return;
-      hasPhotos = true;
-      photoHTML += `<div style="display:flex;flex-direction:column;gap:.375rem;">
-        <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">${PLABELS[name]}</span>
-        <div style="display:flex;flex-wrap:wrap;gap:.5rem;">
-          ${urls.map(u => isPdf(u) ? pdfCard() : isHeicDataUrl(u) ? heicCard() : `<img src="${u}" style="height:5rem;width:calc(50% - .25rem);object-fit:cover;border-radius:.375rem;" alt="" />`).join('')}
-        </div>
-      </div>`;
-    });
-
-    /* "Muut tiedostot" ("Seller file upload") is a category row in the SAME
-       Kuvat section as ulkopuoli/sisätilat, not a section of its own — it is
-       the last thing the photos step collects, so it is the last category here.
-       No variant gate: it renders whenever the seller has uploaded files, which
-       is the initiative's own rule. Filenames only, no thumbnails, each linking
-       to the file in a new tab. No delete here: this sheet is read-only and
-       links back to the step where editing happens, same as every other
-       category's edit link above the whole section. */
-    const sellerFiles = Array.isArray(s.files) ? s.files : [];
-    if (sellerFiles.length) {
-      hasPhotos = true;
-      /* Same paperclip as the photos step's own file rows (DRAFT_ICON_PAPERCLIP,
-         prod's ph-bold-paperclip) — one icon for "there is an attachment here"
-         across the whole funnel, left of the filename in both places. */
-      const fileRows = sellerFiles.map(f => {
-        const href = modalFileUrl(f);
-        return `<div style="display:flex;align-items:center;gap:.5rem;">
-          <svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor" style="color:#94a3b8;flex-shrink:0" aria-hidden="true"><path d="m11.62 7.464-4.487 4.484a3.282 3.282 0 0 1-4.64-4.642L7.86 1.953a2.188 2.188 0 1 1 3.093 3.095l-.01.008L5.707 10.1a.658.658 0 0 1-1.066-.234.656.656 0 0 1 .156-.712l5.234-5.038a.875.875 0 0 0-1.242-1.234L3.42 8.234a1.97 1.97 0 0 0 2.786 2.784l4.487-4.485a.659.659 0 0 1 1.123.465.656.656 0 0 1-.193.465h-.002Z"/></svg>
-          <a href="${href || '#'}" target="_blank" rel="noopener"
-            style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#0B6DFF;text-decoration:underline;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(f.name)}</a>
-        </div>`;
+    if (a.images.length) {
+      html += '<div class="cdc-thumbs">' + shown.map(function (src, i) {
+        return '<button type="button" class="cdc-thumb' + (i === cdcMain ? ' is-main' : '') + '" data-cdc-img="' + i + '"><img src="' + esc(src) + '" alt=""></button>';
       }).join('');
-      photoHTML += `<div style="display:flex;flex-direction:column;gap:.375rem;">
-        <span style="font-family:'DM Sans',sans-serif;font-size:.75rem;font-weight:500;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;">${t('modal.photoCategories.tiedostot')}</span>
-        <div style="display:flex;flex-direction:column;gap:.375rem;">${fileRows}</div>
-      </div>`;
+      if (shown.length < a.images.length) {
+        html += '<button type="button" class="cdc-more" id="cdc-more">+' + (a.images.length - shown.length) + '</button>';
+      }
+      html += '</div>';
     }
 
-    if (!hasPhotos) photoHTML = `<span style="font-family:'DM Sans',sans-serif;font-size:.875rem;color:#64748b;">${t('modal.labels.noPhotos')}</span>`;
+    const pills = [a.year, mileage, a.drive_type, a.fuel_type].filter(Boolean)
+      .map(function (v) { return '<span class="cdc-pill">' + esc(v) + '</span>'; });
+    if (a.postalcode) pills.push('<span class="cdc-pill"><span style="color:#585D64">' + CDC_ICON.location + '</span> ' + esc(a.postalcode) + '</span>');
 
-    html += `<div style="display:flex;flex-direction:column;gap:1rem;padding:1.25rem 1.5rem;border-bottom:1px solid #f1f5f9;">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-family:'DM Sans',sans-serif;font-weight:700;font-size:1rem;color:#0f172a;">${t('modal.sections.photos')}</span>
-        <a href="photos.html" style="font-family:'DM Sans',sans-serif;font-weight:500;font-size:.875rem;color:#0B6DFF;text-decoration:none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${t('modal.editLink')}</a>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:1rem;">${photoHTML}</div>
-    </div>`;
+    html += '<div class="cdc-body">' +
+      '<div class="cdc-head">' +
+        '<div class="cdc-plate"><div class="cdc-plate-strip"></div><div class="cdc-plate-text">' + esc(a.registration_number) + '</div></div>' +
+        '<div class="cdc-name"><span class="cdc-make">' + esc(a.make) + ' ' + esc(a.model) + '</span><span>' + esc(a.model_specification || '') + '</span></div>' +
+        '<div class="cdc-pills">' + pills.join('') + '</div>' +
+      '</div>';
 
-    /* ── Hinta ──
-       This sheet is the seller's own summary of what they entered, so the row is
-       labelled with the field they actually filled: the required asking price
-       outside the review segment (prod's price_info.asking_price_label), the
-       optional estimate inside it. `askingPrice` is only written by the price
-       step in the non-reviewable variant, which is what makes it the test. */
-    const askedForAskingPrice = !!s.askingPrice || s.reviewable === false;
-    const priceRowLabel = t(askedForAskingPrice ? 'price.askingLabel' : 'price.targetLabel');
-    const priceRowValue = s.priceExpectation
-      ? Number(s.priceExpectation).toLocaleString('fi-FI') + ' €'
-      : null;
-    html += section(t('modal.sections.price'), 'price.html', row(priceRowLabel, priceRowValue));
+    let col1 = '';
+    if (a.vat_deductible) col1 += '<div><span class="cdc-blue cdc-mr">' + CDC_ICON.check + '</span><span>' + esc(t('carDetails.vatDeductible')) + '</span></div>';
+    col1 += '<span class="cdc-col-title">' + esc(t('carDetails.accessories')) + '</span>';
+    col1 += tireRow('carDetails.summerTires', a.summer_tires_condition, a.summer_tires);
+    col1 += tireRow('carDetails.winterTires', a.winter_tires_condition, a.winter_tires);
+    if (a.keys) col1 += '<div><span>' + esc(t('carDetails.keys')) + ': </span> ' + esc(a.keys) + '</div>';
+    if (a.accessories) col1 += '<div><span>' + esc(t('carDetails.accessoriesDescription')) + ': </span><span>' + esc(a.accessories) + '</span></div>';
 
-    // ── Yhteystiedot ──
-    const contact = s.contact || {};
-    html += section(t('modal.sections.contact'), 'contact.html', [
-      row(t('modal.labels.name'), contact.kokoNimi),
-      row(t('modal.labels.email'), contact.sahkoposti),
-      row(t('modal.labels.phone'), contact.puhelin),
-    ].join(''));
+    let col2 = '<span class="cdc-col-title">' + esc(t('carDetails.serviceHistory')) + '</span>';
+    if (a.windscreen_condition) {
+      let ins = '';
+      if (a.windscreen_insurance === 'yes') ins = '<span class="cdc-ml"><span class="cdc-blue">' + CDC_ICON.check + '</span> ' + esc(t('carDetails.insurance')) + '</span>';
+      if (a.windscreen_insurance === 'no')  ins = '<span class="cdc-ml"><span class="cdc-grey">' + CDC_ICON.cross + '</span> ' + esc(t('carDetails.noInsurance')) + '</span>';
+      col2 += '<div><span>' + esc(t('carDetails.windshield')) + ': </span> ' + esc(a.windscreen_condition) + ins + '</div>';
+    }
+    if (a.service_book) col2 += '<div><span>' + esc(t('carDetails.serviceHistory')) + ': </span> ' + esc(a.service_book) + '</div>';
+    if (a.last_service_date) {
+      const when = (a.last_service_month || a.last_service_year)
+        ? ' - ' + (a.last_service_month ? a.last_service_month + '/' : '') + (a.last_service_year || '')
+        : '';
+      col2 += '<div><span>' + esc(t('carDetails.lastService')) + ': </span> ' + esc(a.last_service_date) + esc(when) + '</div>';
+    }
+    if (lastServiceMileage) col2 += '<div><span>' + esc(t('carDetails.lastServiceMileage')) + ': </span> ' + esc(lastServiceMileage) + '</div>';
+    if (a.damage_and_service_information) col2 += '<div><span>' + esc(t('carDetails.serviceAndDamage')) + ': ' + esc(a.damage_and_service_information) + '</span></div>';
 
-    // ── Delete link (inside scrollable body) ──
-    html += `<div style="padding:1.5rem;display:flex;justify-content:center;">
-      <button id="av-modal-delete-btn" style="font-family:'DM Sans',sans-serif;font-size:.9375rem;font-weight:500;color:#ef4444;background:none;border:none;cursor:pointer;text-decoration:underline;text-underline-offset:2px;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#ef4444'">
-        ${t('modal.labels.deleteAd')}
-      </button>
-    </div>`;
+    html += '<div class="cdc-grid"><div class="cdc-col">' + col1 + '</div><div class="cdc-col">' + col2 + '</div></div>';
 
-    body.innerHTML = html;
+    /* "Seller file upload" v1 only. prod has no files, and Seed car writes them
+       in every state, so listing them unconditionally put something production
+       cannot show into control. Filenames open in a new tab; no delete. */
+    const sellerFiles = Array.isArray(s.files) ? s.files : [];
+    const filesArm = window.protoVariant ? window.protoVariant('seller-file-upload', 'control') : 'control';
+    if (filesArm === 'v1' && sellerFiles.length) {
+      html += '<div class="cdc-files"><span class="cdc-col-title">' + esc(t('carDetails.files')) + '</span>' +
+        sellerFiles.map(function (f) {
+          const href = modalFileUrl(f);
+          return '<a href="' + (href || '#') + '" target="_blank" rel="noopener">' + esc(f.name) + '</a>';
+        }).join('') + '</div>';
+    }
 
-    document.getElementById('av-modal-delete-btn').addEventListener('click', function () {
-      window.confirmDeleteAd(function () {
-        window.closeAdModal();
-        window.location.href = 'index.html';
-      });
+    html += '</div>';
+    html += '<div class="cdc-actions"><button type="button" class="cdc-btn" id="av-modal-close-btn">' + esc(t('carDetails.close')) + '</button></div>';
+
+    panel.innerHTML = html;
+
+    document.getElementById('av-modal-close').addEventListener('click', window.closeAdModal);
+    document.getElementById('av-modal-close-btn').addEventListener('click', window.closeAdModal);
+    panel.querySelectorAll('[data-cdc-img]').forEach(function (b) {
+      b.addEventListener('click', function () { cdcMain = parseInt(b.dataset.cdcImg, 10); populateModal(); });
     });
+    const more = document.getElementById('cdc-more');
+    if (more) more.addEventListener('click', function () { cdcShowAll = true; populateModal(); });
   }
 
   // ── Delete confirmation dialog ────────────────────────────────

@@ -112,6 +112,7 @@
     document.documentElement.dataset.filesArm = FILES_ARM;
   </script>
   <script src="proto-mock.js"></script>
+  <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
     // ── Shared storage helpers ──
@@ -613,7 +614,25 @@
 
     function confirmSkipPhotos() {
       closeSkipModal();
+      if (window.FunnelGuard && FunnelGuard.rejection() === 'missing-images') { submitMissingImages(); return; }
       window.location.href = 'price.html';
+    }
+
+    /* A draft rejected for its photos skips price and contact: prod's
+       hasMissingImages guard sends providingImages straight to publishingDraft,
+       whether the seller pressed Jatka or skipped. That rejection also made the
+       draft unreviewable, so publishing requires an asking price. The publish
+       endpoint validates every field at once, and the funnel routes an
+       asking_price error to the price step before anything else
+       (publishFailedOnAskingPrice); too few photos lands on the publish step's
+       refusal instead, with the draft still rejected. */
+    function submitMissingImages() {
+      const s = getStore();
+      s.reviewable = false;
+      if (!s.askingPrice) { setStore(s); window.location = 'price.html'; return; }
+      FunnelGuard.recordPublishAttempt(s);
+      setStore(s);
+      window.location = 'success.html';
     }
 
     function ctaNavigate() {
@@ -628,6 +647,7 @@
         }
         return;
       }
+      if (window.FunnelGuard && FunnelGuard.rejection() === 'missing-images') { submitMissingImages(); return; }
       const from = new URLSearchParams(window.location.search).get('from');
       window.location = from === 'success' ? 'success.html' : 'price.html';
     }

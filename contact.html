@@ -103,6 +103,7 @@
   <script>
   </script>
   <script src="proto-mock.js"></script>
+  <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
     // ── Shared storage helpers ──
@@ -285,8 +286,13 @@
         s.loggedIn = false;
         s.dac7Completed = false;
       }
+      /* Submitting re-publishes a rejected draft, and prod's funnel then lands
+         on its own waiting screen whichever page the edit started from. Short of
+         photos, publishing is refused and the draft stays rejected. */
+      const resubmitted = !!s.rejection;
+      if (resubmitted) FunnelGuard.recordPublishAttempt(s);
       setStore(s);
-      if (_offersScenario) {
+      if (_offersScenario && !resubmitted) {
         window.location.href = 'offers.html?scenario=' + encodeURIComponent(_offersScenario);
       } else {
         window.location.href = 'success.html';

@@ -116,6 +116,7 @@
     document.documentElement.dataset.intentArm = SELLER_INTENT_ARM;
   </script>
   <script src="proto-mock.js"></script>
+  <script src="funnel-guard.js"></script>
 </head>
 <body class="font-dm bg-white min-h-screen">
 
@@ -413,6 +414,12 @@
       var forced = new URLSearchParams(window.location.search).get('scenario');
       if (forced === 'asking-price')   return false;
       if (forced === 'price-estimate') return true;
+
+      /* A re-edited rejection skips the segment check. EvaluateDraftForReview
+         runs its rejection rules first: an ad-quality (missing photos)
+         rejection is never reviewed again, any other rejection always is. */
+      if (store.rejection === 'missing-images') return false;
+      if (store.rejection) return true;
 
       var km = parseInt(String((store.hero || {}).km || '').replace(/\D/g, ''), 10);
       if (!isNaN(km) && km > REVIEW_MAX_MILEAGE) return false;
@@ -717,7 +724,12 @@
         clearPriceError('price-expectation-error', 'price-expectation');
       });
 
-      if (s.priceExpectation) {
+      /* Reached from the photos step because publishing failed on asking_price
+         (publishFailedOnAskingPrice): prod lands here with the field empty and
+         the server's error already in context. */
+      if (s.rejection === 'missing-images' && !s.askingPrice) {
+        showPriceError('price-expectation-error', 'price-error-msg', t('price.askingError'));
+      } else if (s.priceExpectation) {
         document.getElementById('price-expectation').value =
           Number(s.priceExpectation).toLocaleString('fi-FI');
       }

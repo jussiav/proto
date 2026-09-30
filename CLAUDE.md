@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-09-24)
+## Reference Source Locations (updated 2026-09-30)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-09-24-760241d9dd71/` (previous: `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-09-30-d0e39db1a975/` (previous: `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -1790,14 +1790,13 @@ name one format, and **Seed car** loads two PDFs (`huoltokirja.pdf`,
 `fileTypeOk` stays — a browser can still hand over an empty mime type. `photos.html` gates the section on `html[data-files-arm="v1"]`, stamped in
 `<head>` so control never paints it.
 
-Two things about it are deliberately NOT variants. **Listing is unconditional:**
-any surface that shows sellers their own ad content lists files when
-`store.files` is non-empty — on the ad-preview sheet they join the existing
-**Kuvat** section as a `Muut tiedostot` category row, the same shape as
-Ulkopuoli/Sisätilat, not a section of their own — because there is nothing to
-A/B about showing someone what they attached. The sheet stays read-only:
-filename links, no delete, per-section edit links as before. And **the car
-card shows nothing** — prod has no file concept there.
+**Listing files on the ad-preview sheet is gated on `v1`** (2026-09-30). It
+used to be unconditional, on the reasoning that there is nothing to A/B about
+showing someone what they attached — but Seed car writes two PDFs in every
+state, so control showed a block production cannot have. The sheet is now
+prod's `CarDetailsCard`, and in `v1` a `Muut dokumentit` block follows its
+two-column grid: filename links, a new tab each, no delete, no edit links. And
+**the car card shows nothing** — prod has no file concept there.
 
 The add control on the photos step is a **text link with a plus icon**, not a
 filled button — a full-width blue block read as equally important as the
@@ -1815,8 +1814,7 @@ second document glyph, shows no file size, and deletes with the EXACT button a
 photo thumbnail uses — a `bg-gray-100` square with a bold "+" rotated 45°,
 prod's own `.remove-button` technique (`ImagePreview.vue`), not a redrawn SVG X
 — one delete affordance and one "there is an attachment" icon across the step,
-not component-specific ones. The ad-preview modal's file rows use the same
-paperclip, left of the filename, for the same reason.
+not component-specific ones.
 
 **The whole photos step's baseline styling was brought in line with prod**
 (`ImageUpload.vue`/`ImagePreview.vue`/`ImageSections.vue`) at the same time,
@@ -2299,11 +2297,9 @@ the prop is declared and unused — and `CarDetailsCard`, the modal behind the
 card's CTA, has no price field at all. (`PreviewModal.vue` does render it, but
 nothing imports that component.) The proto's card had a price tag overlaid on the
 photo; it is gone, along with `card.priceLabelTarget` and `buildCarCard`'s
-`mediaOverlay` prop, whose only caller it was. The ad-preview sheet still echoes
-the value — it is the seller's own summary of what they typed, per section — and
-labels it with the field they actually filled: `price.askingLabel`
-("Pyyntihintasi", prod's `price_info.asking_price_label`) outside the review
-segment, `price.targetLabel` inside it.
+`mediaOverlay` prop, whose only caller it was. The ad-preview sheet showed the
+value too, until it was rebuilt as `CarDetailsCard` (2026-09-30); it no longer
+does, so no surface after the price step shows the seller their own price.
 
 **Mirroring a prod inconsistency deliberately:** the sidebar bullet count
 follows LOGIN state, not `can_review`. `WhatHappensNext` has no `can_review`
@@ -2356,6 +2352,74 @@ part of their scenario setup.
 
 The URL param `?emailVerified=1` and the `emailVerified` postMessage keep their
 names: those are the email link's contract, not the stored state.
+
+## Funnel entry by draft status — `funnel-guard.js`
+
+Loaded in `<head>` of the five funnel steps, after `proto-mock.js`. It
+reproduces what prod decides before any step renders (2026-09-30, from the
+seller-edits-before-review assessment):
+
+- **A submitted draft cannot open a step.** Prod's funnel routes a published,
+  in-review or queued draft to its waiting/success screen on mount, and the
+  draft save endpoint 422s those statuses. "Submitted" here is
+  `successVisited` + photos complete + no rejection, so the photos-missing
+  ending (publish refused, draft still `open`) keeps the funnel editable. The
+  guard is skipped for `?scenario=`, `?plate=` (new draft from the front page)
+  and `?mode=mobile`. **A tester who wants a step after submitting uses
+  `?scenario=`, Seed car or Reset** — the bar's Go to links now bounce to
+  success.html, which is prod.
+- **A rejected draft has two doors back in, recorded as `store.rejection`:**
+
+  | `rejection` | Door | Enters at | Jatka / re-submit | Outcome |
+  |---|---|---|---|---|
+  | `other` | "Päivitä tarjouspyyntöä" (`details.html?edit=rejected`, proto-only param for prod's in-page EDIT_DRAFT) | details (equipment); reg + mileage skipped | full funnel; price shows the optional estimate whatever the segment | **always back to review** (`ReviewRejections`) |
+  | `missing-images` | prod's own `photos.html?step=add-images` | photos; back reaches services and details | photos Jatka skips price + contact | **no review** (`DoNotReviewAdQualityRejections`): published if logged in, queued if not. No asking price → price step with the field empty and the required error shown (`publishFailedOnAskingPrice`), then contact |
+
+  `store.rejection` IS the draft status while rejected: success.html renders
+  the rejected screen organically from it, ahead of the photos check, and the
+  step that re-submits (contact submit, or photos Jatka in `missing-images`
+  mode) clears it, but only if photos are complete. offers.html's
+  `draft-rejected` / `draft-rejected-images` scenarios write it. Both
+  offers-page rejected buttons go where prod's `editDraft` goes: the
+  missing-photos one to `?step=add-images`, the other to success.html. Prod
+  opens the funnel without a step param, so it resumes the form state saved in
+  Redis (`FormStateController`), and `CONFIRM_PUBLISHED` has no branch for
+  `rejected`, so it stays on waitingForReview — the rejected screen. **That key
+  expires at the draft's `expires_at` as of the last save: two weeks after the
+  draft entered review.** Rejecting it later does not extend the key, so a
+  seller who comes back after that starts from the funnel's first step
+  (registration and mileage) instead. The proto models the first case only.
+- **A refused re-publish shows the publish step's refusal.** The photos step
+  offers skip and "not enough photos → continue" in every flow, and in the
+  missing-photos flow both go straight to publishing. The endpoint validates
+  every field at once; the funnel sends an `asking_price` error to the price
+  step first, and too few photos lands on "Lisää vielä kuvat autostasi" with
+  the draft still rejected. `FunnelGuard.recordPublishAttempt` either clears
+  the rejection or sets `store.publishRefused`, which makes success.html render
+  that screen instead of the rejected one — prod persists it with the form
+  state, so a reload keeps it. Entering through either door clears the marker.
+  One divergence left: the proto's photos Jatka is blocked below the minimum
+  where prod offers "continue anyway"; the skip button covers the same path.
+- **The ad-preview sheet IS prod's `CarDetailsCard`** (rebuilt 2026-09-30,
+  `vehicle-card.js`). Prod opens that read-only card from the funnel preview
+  and the offers page; the proto had followed `PreviewModal.vue`, which nothing
+  imports — sections, price, contact, a delete link and per-step edit links,
+  all gone. `advertFromStore` maps the store onto prod's field names and the
+  card renders from those. **Three raw values are prod's, reproduced:**
+  `fuel_type` and `drive_type` print as enum keys (`diesel`, `fwd`; CarCard
+  translates them, this card does not) and `last_service_date` prints its key
+  (`within_6_months`) because the translation beside it is commented out —
+  worth a prod ticket. The VAT line sits above the "Varusteet" heading, also
+  prod's. Copy is `carDetails.*` (prod's `tenderform.preview.*`); the old
+  `modal.*` keys went with the sheet except `deleteConfirm`, which the front
+  page still uses. Seed car's `sijainti` is now a postal code, `00100` — the
+  field is one, and the card shows it as a postcode chip.
+- **The offers edit modal edits the funnel's own answers** —
+  `details.varustelu`, `services.korjaukset`, `services.radioGroups[2]` (label
+  text, matched in both languages) and `services.lastServiceDetail` (the oldest
+  year chip is the funnel's `before`). The inspection date keeps a top-level
+  key: the funnel never asks it, prod reads it from the registry. The old
+  invented defaults it wrote on open are gone.
 
 ## Mock Funnel Data — `proto-mock.js`
 
@@ -3081,7 +3145,7 @@ about what a number omits.
 **IT SAYS `Autoliikkeen`, NOT `Myynti-ilmoituksen`, AND THIS IS A GENERAL RULE
 FOR THIS PRODUCT.** `ilmoitus` is the **seller's own word** everywhere else —
 the funnel submits with `Lähetä ilmoitus`, the success screen says
-`Ilmoituksesi tarkistetaan`, the preview sheet labels their figure
+`Ilmoituksesi tarkistetaan`, the price step labels their figure
 `Pyyntihintasi`. A seller who published an ad twenty minutes ago reads
 "myynti-ilmoituksen pyyntihinta" as **theirs**. It is the same collision that
 killed `Auto-ilmoituksien pyyntihinnat…` an iteration earlier, where the fix

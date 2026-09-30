@@ -444,8 +444,9 @@
         badge: { text: 'Ei hyväksytty', color: 'red' },
         card: false,   // prod: waitingForReview + rejected is not in canPreviewDraft
         steps: [],
-        // Review.vue: <Notification icon="ph-fill-car" theme="info"> + primary button (editDraft)
-        actionCard: { icon: 'car', color: 'blue', title: 'Mietitkö vielä?', body: 'Ymmärrämme täysin. Monet asiakkaamme palaavat myynnin pariin myöhemmin ja tekevät hyvät kaupat. Voit päivittää tarjouspyyntöä milloin tahansa.', cta: 'Päivitä tarjouspyyntöä', href: 'index.html' },
+        // Review.vue: <Notification icon="ph-fill-car" theme="info"> + primary button (editDraft).
+        // editDraft sends EDIT_DRAFT, which enters the funnel at the equipment step — see funnel-guard.js.
+        actionCard: { icon: 'car', color: 'blue', title: 'Mietitkö vielä?', body: 'Ymmärrämme täysin. Monet asiakkaamme palaavat myynnin pariin myöhemmin ja tekevät hyvät kaupat. Voit päivittää tarjouspyyntöä milloin tahansa.', cta: 'Päivitä tarjouspyyntöä', href: 'details.html?edit=rejected' },
         // Copied from prod: resources/assets/img/rejected.png
         illustration: 'assets/success-rejected.png',
       },
@@ -459,7 +460,7 @@
         // reproduced as-is rather than corrected.
         steps: ['review', 'published', 'auction', 'auction_ends'],
         // Review.vue: <Notification icon="ph-fill-warning-octagon" theme="danger"> + primary button (addMissingImages)
-        actionCard: { icon: 'warning', color: 'red', title: 'Lataa kuvat jatkaaksesi', body: 'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia tehdäkseen parhaat tarjouksensa. 🚗 📸', cta: 'Lisää kuvat', href: 'photos.html' },
+        actionCard: { icon: 'warning', color: 'red', title: 'Lataa kuvat jatkaaksesi', body: 'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia tehdäkseen parhaat tarjouksensa. 🚗 📸', cta: 'Lisää kuvat', href: 'photos.html?step=add-images' },
         // Prod's rejected_info_missing.png — already in this prototype byte-identical
         // as success-photos-missing.png (same image, used by the organic photos-missing state).
         illustration: 'assets/success-photos-missing.png',
@@ -531,6 +532,7 @@
          publish, so the draft is still `open` and its card reads "Keskeneräinen".
          This holds in both arms — the enhanced design changes what the page says,
          not what the draft is. */
+      if (!FORCED_SCENARIO && getStore().rejection) return 'rejected';
       if (!FORCED_SCENARIO && !photosComplete(getStore())) return 'open';
       return SCENARIO_DRAFT_STATUS[FORCED_SCENARIO || draftScenario(getStore())] || 'in_review';
     }
@@ -614,6 +616,16 @@
       var offersBtn = document.getElementById('success-offers-btn');
 
       var vehicleCard = document.getElementById('av-vehicle-card');
+      /* Ahead of the photo check on purpose: a rejected-for-photos draft is short
+         of photos by definition, and prod shows it the rejected screen, not the
+         publish step's refusal. The exception is a re-submission that was just
+         refused for its photos (funnel-guard.js recordPublishAttempt): that seller
+         is on the publish step, so the photo check below renders its screen. */
+      if (s.rejection && !(s.publishRefused && !photosOk)) {
+        existing?.remove();
+        renderForcedScenario(draftScenario(s), null);
+        return;
+      }
       if (!photosOk) {
         // ── PHOTOS MISSING ──
         setNotice(null); setActionCard(null);
@@ -695,7 +707,7 @@
            about. */
         existing?.remove();
         renderForcedScenario(draftScenario(s), null);
-        showEmailToast();
+        if (!s.rejection) showEmailToast();
         return;
       }
     }
@@ -716,6 +728,12 @@
     /* Which of the four post-submit states the draft is in: the review outcome
        crossed with whether the email has been confirmed. */
     function draftScenario(store) {
+      /* A rejected draft stays rejected until the seller re-submits it, and
+         prod's funnel routes it to the same waitingForReview screen on every
+         visit. `store.rejection` is set by the two doors back in and cleared by
+         the step that re-submits (funnel-guard.js). */
+      if (store.rejection === 'missing-images') return 'rejected-missing-images';
+      if (store.rejection) return 'rejected';
       var reviewable = effectiveReviewable(store);
       if (store.loggedIn) return reviewable ? 'in-review-verified' : 'published';
       return reviewable ? 'in-review-unverified' : 'queued';

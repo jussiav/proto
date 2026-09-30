@@ -54,7 +54,7 @@
     details: {
       merkki: 'Volkswagen', malli: 'Amarok', mallitarkennus: '2.0 TDI Highline',
       vuosimalli: '2019', polttoaine: 'Diesel', vetotapa: 'Etuveto',
-      vaihteisto: 'Automaatti', sijainti: 'Helsinki', deliveryRange: '50',
+      vaihteisto: 'Automaatti', sijainti: '00100', deliveryRange: '50',
       kesarenkaat: 'Hyvät', kesavanteet: 'Vanteilla',
       talvirenkaat: 'Hyvät', talvivanteet: 'Vanteilla',
       avaimet: '2 tai enemmän', varustelu: '', yrityskaytto: false

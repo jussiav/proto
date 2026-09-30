@@ -322,6 +322,12 @@
         } else {
           fs.loggedIn = true; fs.successVisited = true; fs.offersVisited = true;
         }
+        /* A rejected draft's reason decides which door back into the funnel it
+           gets (funnel-guard.js), so the scenario writes it too. */
+        if (SCENARIO === 'draft-rejected') fs.rejection = 'other';
+        else if (SCENARIO === 'draft-rejected-images') fs.rejection = 'missing-images';
+        else delete fs.rejection;
+        delete fs.publishRefused;
         localStorage.setItem('autovex_funnel', JSON.stringify(fs));
       } catch(e) {}
     })();
@@ -613,14 +619,14 @@
               NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
               'Lataa kuvat jatkaaksesi',
               'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia voidakseen tehdä parhaat tarjouksensa.',
-              '<a href="photos.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lataa kuvat</a>'
+              '<a href="photos.html?step=add-images" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lataa kuvat</a>'
             );
           } else {
             html = buildDraftNotifHtml(
               NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
               'Autoasi ei hyväksytty - tällä kertaa.',
               'Syynä saattaa olla ajoitus tai puuttuvat tiedot. Ei hätää - voit aina palata myöhemmin.',
-              '<a href="index.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Muokkaa tarjouspyyntöäsi</a>'
+              '<a href="' + REJECTED_EDIT_HREF + '" class="' + BTN_PRIMARY + '" style="text-decoration:none">Muokkaa tarjouspyyntöäsi</a>'
             );
           }
         }
@@ -660,6 +666,22 @@
     });
 
 
+    /* prod's editDraft (Drafts.vue, updates/main.vue) opens the draft's funnel
+       URL, adding ?step=add-images for a missing-photos rejection. Without that
+       param the funnel resumes the form state it saved in Redis, and
+       CONFIRM_PUBLISHED has no branch for `rejected`, so it stays there. For a
+       draft that went through review that state is waitingForReview, whose
+       screen shows the rejection and its "Päivitä tarjouspyyntöä" button.
+       The Redis key expires at the draft's expires_at as of the last save,
+       which is two weeks after it entered review; rejecting it later does not
+       extend the key. After that the funnel starts from its first step
+       (registration and mileage). The proto models the first case. */
+    var REJECTED_EDIT_HREF = 'success.html';
+    function draftEditHref(draft) {
+      if (draft.status !== 'rejected') return 'photos.html';
+      return draft.missing_images ? 'photos.html?step=add-images' : REJECTED_EDIT_HREF;
+    }
+
     // Adapter: draft object -> buildCarCard props. Markup lives in vehicle-card.js.
     function buildDraftCard(draft) {
       var cfg = DRAFT_STATUS_CFG[draft.status] || DRAFT_STATUS_CFG['open'];
@@ -680,7 +702,7 @@
         statusIcon: cfg.icon,
         statusIconColor: cfg.iconColor,
 
-        primaryCta: cfg.primaryText ? { text: cfg.primaryText, href: 'photos.html' } : null,
+        primaryCta: cfg.primaryText ? { text: cfg.primaryText, href: draftEditHref(draft) } : null,
         secondaryCta: cfg.secondaryText
           ? {
               text: cfg.secondaryText,
@@ -941,10 +963,10 @@
       var data = getData();
       var req  = (data.requests || [])[0];
       if (req) {
-        var _fs = getStore();
         var _editOverride = {};
-        ['accessories','last_service_km','damage_and_service_information','edited_last_tech_inspection','last_service_date','last_service_year','last_service_month'].forEach(function(k) {
-          if (_fs[k] != null) _editOverride[k] = _fs[k];
+        var _editValues = readEditFields(getStore());
+        Object.keys(_editValues).forEach(function(k) {
+          if (_editValues[k] != null) _editOverride[k] = _editValues[k];
         });
         if (Object.keys(_editOverride).length) req = Object.assign({}, req, _editOverride);
       }
@@ -1080,6 +1102,67 @@
       '2026':'2026','2025':'2025','2024':'2024','2023':'2023 tai ennen'
     };
 
+    /* The modal edits answers the funnel already collected, so it reads and
+       writes the funnel's own keys: accessories in `details.varustelu`, the
+       damage text in `services.korjaukset`, the last-service answer in
+       `services.radioGroups[2]` and `services.lastServiceDetail`. The inspection
+       date is the one field with no funnel step, because prod reads it from the
+       vehicle registry rather than asking the seller.
+       radioGroups holds the RENDERED LABEL of the chosen option (services.html's
+       saveServices), so a stored answer is matched against both languages. */
+    var _SERVICE_DATE_KEYS = {
+      within_6_months: 'lastService6mo',
+      over_6_months:   'lastServiceOlder',
+      dont_remember:   'lastServiceUnsure'
+    };
+    var _OLDEST_YEAR_CHIP = '2023';
+
+    function _serviceDateFromLabel(label) {
+      var T = window.TRANSLATIONS || {};
+      for (var k in _SERVICE_DATE_KEYS) {
+        var key = _SERVICE_DATE_KEYS[k];
+        if (label && ['fi', 'en'].some(function (l) { return ((T[l] || {}).service || {})[key] === label; })) return k;
+      }
+      return null;
+    }
+
+    function readEditFields(fs) {
+      var d  = fs.details  || {};
+      var sv = fs.services || {};
+      var ls = sv.lastServiceDetail || {};
+      var rg = Array.isArray(sv.radioGroups) ? sv.radioGroups : [];
+      return {
+        accessories: d.varustelu || null,
+        last_service_km: (ls.km != null && ls.km !== '') ? Number(ls.km) : null,
+        damage_and_service_information: sv.korjaukset || null,
+        edited_last_tech_inspection: fs.edited_last_tech_inspection || null,
+        last_service_date: _serviceDateFromLabel(rg[2]),
+        last_service_year: ls.year === 'before' ? _OLDEST_YEAR_CHIP : (ls.year ? String(ls.year) : null),
+        last_service_month: ls.month ? String(ls.month) : null
+      };
+    }
+
+    function writeEditFields(fs, v) {
+      fs.details  = fs.details  || {};
+      fs.services = fs.services || {};
+      var sv = fs.services;
+      var rg = Array.isArray(sv.radioGroups) ? sv.radioGroups.slice() : [];
+      while (rg.length < 5) rg.push(null);
+      if (v.last_service_date) rg[2] = t('service.' + _SERVICE_DATE_KEYS[v.last_service_date]);
+      sv.radioGroups = rg;
+      fs.details.varustelu = v.accessories || '';
+      sv.korjaukset = v.damage_and_service_information || '';
+      sv.lastServiceDetail = {
+        km: v.last_service_km != null ? String(v.last_service_km) : null,
+        year: v.last_service_year === _OLDEST_YEAR_CHIP ? 'before' : v.last_service_year,
+        month: v.last_service_month || null
+      };
+      fs.edited_last_tech_inspection = v.edited_last_tech_inspection;
+      ['accessories', 'last_service_km', 'damage_and_service_information',
+       'last_service_date', 'last_service_year', 'last_service_month'].forEach(function (k) { delete fs[k]; });
+      return fs;
+    }
+
     function _renderEditChips(containerId, options, selected) {
       var el = document.getElementById(containerId); if (!el) return;
       el.innerHTML = '';
@@ -1095,12 +1178,7 @@
     }
 
     function openEditModal() {
-      var fs = getStore();
-      // Initialize mock defaults for fields not populated by the funnel
-      var _dirty = false;
-      if (fs.last_service_date == null) { fs.last_service_date = 'over_6_months'; _dirty = true; }
-      if (fs.last_service_year == null) { fs.last_service_year = '2024'; _dirty = true; }
-      if (_dirty) setStore(fs);
+      var fs = readEditFields(getStore());
       var _accVal = fs.accessories || '';
       var _damVal = fs.damage_and_service_information || '';
       document.getElementById('edit-accessories').value = _accVal;
@@ -1180,17 +1258,16 @@
     });
 
     document.getElementById('edit-modal-save-btn').addEventListener('click', function() {
-      var fs = getStore();
-      var accVal = document.getElementById('edit-accessories').value.trim();
-      fs.accessories = accVal || null;
       var km = parseInt(document.getElementById('edit-last-service-km').value);
-      fs.last_service_km = isNaN(km) ? null : km;
-      var damVal = document.getElementById('edit-damage').value.trim();
-      fs.damage_and_service_information = damVal || null;
-      fs.edited_last_tech_inspection = document.getElementById('edit-tech-inspection').value || null;
-      fs.last_service_date = _editState.sd;
-      fs.last_service_year = _editState.sy || null;
-      fs.last_service_month = (_editState.sm != null) ? _editState.sm : null;
+      var fs = writeEditFields(getStore(), {
+        accessories: document.getElementById('edit-accessories').value.trim() || null,
+        last_service_km: isNaN(km) ? null : km,
+        damage_and_service_information: document.getElementById('edit-damage').value.trim() || null,
+        edited_last_tech_inspection: document.getElementById('edit-tech-inspection').value || null,
+        last_service_date: _editState.sd,
+        last_service_year: _editState.sy || null,
+        last_service_month: _editState.sm
+      });
       setStore(fs);
       closeEditModal();
       renderPage();
