@@ -656,6 +656,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
+| Seller edits before review | **Ideation** — no arms yet; direction and open questions only | `seller-edits-before-review` | — | `control` | — | `design-specs/seller-edits-before-review.html` |
 
 **Completed initiatives:**
 
@@ -2414,12 +2415,30 @@ seller-edits-before-review assessment):
   `modal.*` keys went with the sheet except `deleteConfirm`, which the front
   page still uses. Seed car's `sijainti` is now a postal code, `00100` — the
   field is one, and the card shows it as a postcode chip.
-- **The offers edit modal edits the funnel's own answers** —
-  `details.varustelu`, `services.korjaukset`, `services.radioGroups[2]` (label
-  text, matched in both languages) and `services.lastServiceDetail` (the oldest
-  year chip is the funnel's `before`). The inspection date keeps a top-level
-  key: the funnel never asks it, prod reads it from the registry. The old
-  invented defaults it wrote on open are gone.
+- **The offers edit modal is prod's `EditRequest.vue`** (transcribed 2026-09-30):
+  prod's Reveal shell, its `TextArea` / `Input` / `DatePicker` / `Chips` and
+  the 10-slot `ImageUpload` (hero plus a 3-column grid: the `columns: 5` prop is
+  capped at 3 for a consumer seller) with prod's own placeholder silhouettes in
+  `assets/edit-placeholders/`, copy verbatim. **Chip order is prod's quirk:**
+  numeric PHP keys re-ordered by JS, so the years run ascending with
+  "… tai ennen" first and "En tiedä" after the months. It edits the funnel's own
+  answers — `details.varustelu`, `services.korjaukset`, `services.radioGroups[2]`
+  and `services.lastServiceDetail` (`before` ↔ "… tai ennen") — and the
+  inspection date keeps a top-level key because prod reads it from the registry.
+  Saving shows prod's success toast "Tarjouspyyntö tallennettu" through
+  **`toastr.js`**, a transcription of `useToastr` + `_toast.scss`, shared so the
+  initiative below can reuse it. Drag-to-reorder is not reproduced; photos
+  added here join the `ulkopuoli` section, since prod stores one flat list.
+- **Queued drafts never reach the offers page.** Prod's drafts endpoint returns
+  in-review, rejected and open only, and `blankSlate` counts that filtered list,
+  so a seller whose only ad awaits email verification sees
+  "Valmiina myymään autosi? Aloita tästä!". Awkward, and prod's; `renderPage`
+  filters the same way.
+- **An open draft resumes where the seller left off.** `funnel-guard.js`
+  records `store.funnelPosition` on every funnel step, and success.html records
+  itself when it renders the publish refusal. Both open-draft buttons on the
+  offers page go there, or to details.html (prod's lookup → equipment step)
+  when nothing is saved.
 
 ## Mock Funnel Data — `proto-mock.js`
 

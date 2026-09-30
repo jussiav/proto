@@ -148,6 +148,14 @@
       name: 'Informed decision (fair offer)',
       spec: 'design-specs/informed-decision.html',
       prodArm: 'control'
+    },
+    /* No page declares an arm yet: the spec holds the direction and the open
+       questions until the first change is shaped. */
+    {
+      slug: 'seller-edits-before-review',
+      name: 'Seller edits before review',
+      spec: 'design-specs/seller-edits-before-review.html',
+      prodArm: 'control'
     }
   ];
 

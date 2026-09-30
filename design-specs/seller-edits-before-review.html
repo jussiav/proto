@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller edits before review · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    /* Long unbroken identifiers have no break opportunity and pushed the page
+       20px wide at 375px. */
+    code { overflow-wrap: anywhere; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .spec-num-input { -moz-appearance: textfield; appearance: textfield; }
+    .spec-num-input::-webkit-outer-spin-button,
+    .spec-num-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Inert replica of the removed range slider, for the before/after section */
+    .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
+    .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <!-- Hero -->
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; after the ad is submitted</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Seller edits before review</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Once a seller submits their ad and it waits for a review call, they cannot change anything about their car. This initiative lets them edit it while it waits, before an advisor picks it up.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: ideation &middot; nothing specified yet &middot; no prototype variant yet
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Nothing here is agreed yet.</b> This page holds the direction so far and the questions still open. Changes will be added as numbered sections, each with a prototype variant, once they are shaped.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">The prototype's default state has been matched to production for every edit flow first, so a future variant is compared against what sellers really get today.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="today">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What sellers can edit today</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-4xl">
+        <table class="w-full font-dm text-sm text-left">
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-4 py-3 font-medium">Ad is</th><th class="px-4 py-3 font-medium">Can edit?</th><th class="px-4 py-3 font-medium">How</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
+            <tr><td class="px-4 py-3 font-medium">Still being filled in</td><td class="px-4 py-3">Yes</td><td class="px-4 py-3">The funnel steps</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Waiting for review</td><td class="px-4 py-3"><b>No</b></td><td class="px-4 py-3">The offers page offers only a read-only details view</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Waiting for email verification</td><td class="px-4 py-3"><b>No</b></td><td class="px-4 py-3">The ad does not appear on the offers page at all</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Rejected</td><td class="px-4 py-3">Yes</td><td class="px-4 py-3">&ldquo;Päivitä tarjouspyyntöä&rdquo; <span class="text-slate-500">(Update your listing)</span> reopens the funnel at the equipment step; re-submitting sends it back to review</td></tr>
+            <tr><td class="px-4 py-3 font-medium">Rejected for its photos</td><td class="px-4 py-3">Yes</td><td class="px-4 py-3">Opens on the photos step; submitting publishes without another review</td></tr>
+            <tr><td class="px-4 py-3 font-medium">In the auction</td><td class="px-4 py-3">Some fields</td><td class="px-4 py-3">&ldquo;Muokkaa tietoja&rdquo; <span class="text-slate-500">(Edit details)</span> modal on the offers page</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="bg-warning-50 border-l-4 border-warning-300 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mt-5">
+        <p class="mb-2"><b>Editing a rejected ad from the offers page takes two clicks today, and depends on timing.</b> Both of its edit buttons first open the waiting screen showing the rejection; the seller then presses &ldquo;Päivitä tarjouspyyntöä&rdquo; to reach the funnel steps.</p>
+        <p class="mb-0">That happens because the funnel resumes the position it last saved, and that saved position expires two weeks after the ad entered review. After that, the same buttons land straight on the equipment step. The prototype reproduces the two-click path, since that is what production does. A new edit entry built on the same mechanism would inherit both behaviours.</p>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="direction">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Direction so far</h2>
+      <div class="flex flex-col gap-4 max-w-3xl">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Decided</p>
+          <p class="mb-2"><b>Editing before the ad is published goes through the funnel.</b> The auction edit modal saves to the published ad, and an ad waiting for review is not published yet, so the funnel is the editor that already owns this data.</p>
+          <p class="mb-0"><b>Any link back to the funnel is enough to begin with.</b> A link that opens a specific step would save clicks and avoid the timing issue above; it may join the initiative later.</p>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Leaning towards</p>
+          <p class="mb-2"><b>No new &ldquo;ad updated&rdquo; screen.</b> After editing, the seller returns to the view they started from and is greeted with a notification that already exists. Production already shows a success toast when an auction edit is saved: &ldquo;Tarjouspyyntö tallennettu&rdquo; <span class="text-slate-500">(Listing saved)</span>. Reusing it keeps the seller where they were and adds no screen.</p>
+          <p class="mb-0"><b>The missing-photos path stays as it is</b>: add photos, submit, published.</p>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Needs more thinking</p>
+          <p class="mb-2"><b>Lock the ad once an advisor books it for review.</b> The advisor's review form saves the whole ad, so a seller edit landing during review would overwrite their work, or be overwritten by it, without warning.</p>
+          <p class="mb-0"><b>And the reverse: while the seller is editing, the ad should not be bookable.</b> The funnel saves step by step, so an advisor booking mid-edit would review a half-edited ad. The shape of this is open.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="changes">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
+      <p class="font-dm text-sm text-slate-700 max-w-3xl">No changes specified yet.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="notes">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Notes for whoever builds this</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>The prototype's funnel step indicator is more generous than production's, and stays that way for now.</b> In the prototype a seller can jump to any step they have started. In production the progress bar only goes back one step, and the equipment step, where editing a rejected ad starts, has no way back at all. Keep that in mind when judging how easy editing feels in the prototype.</li>
+        <li><b>The rejection email's link could not be checked.</b> It is sent through the marketing email tool, so its button target lives in Marketing's template rather than in the product code. Wherever it points, a seller landing on the funnel meets the same saved-position behaviour described above.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="open">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Which details can be edited?</b> Equipment, service history, damage and photos look safe. Make, model, year and fuel type feed the review decision and the price estimate.</li>
+        <li><b>Is the review decision re-evaluated after an edit,</b> or are edited ads at least flagged, so the decision's performance is not measured against data it never saw?</li>
+        <li><b>Can the seller change their own price estimate?</b> It is the price question sellers most want to revisit.</li>
+        <li><b>Do ads waiting for email verification get the same editing?</b> Today they do not appear on the offers page at all.</li>
+        <li><b>Should editing during the auction be removed?</b> Dealers bid on the car as described and are not told when it changes. Removing it would also free the edit modal for editing before publish.</li>
+      </ul>
+      </div>
+    </section>
+  </main>
+  <!-- Footer — same structure as the prototype's site footer (layout.js). -->
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Seller edits before review</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>

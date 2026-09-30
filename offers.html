@@ -180,67 +180,10 @@
     </div>
   </div>
 
-  <!-- Edit details modal -->
-  <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background:rgba(30,41,59,0.5)">
-    <div class="min-h-full flex items-start justify-center py-8 px-4">
-      <div id="edit-modal-panel" class="bg-white rounded-2xl shadow-xl w-full max-w-4xl">
-        <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-100">
-          <h2 class="text-lg font-bold text-slate-800">Muokkaa tietoja</h2>
-          <button id="edit-modal-close-x" type="button" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
-            <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>
-          </button>
-        </div>
-        <div class="px-6 py-6 space-y-8 overflow-y-auto" style="max-height:65vh">
-          <div>
-            <label class="block text-base font-medium text-slate-800 mb-2">Lisävarusteet</label>
-            <textarea id="edit-accessories" maxlength="1500" rows="3" placeholder="Vetokoukku, lasikatto, ratinlämmitin, mobiiliyhteys..." class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
-            <p class="text-xs text-slate-400 text-right mt-1"><span id="edit-accessories-count">0</span> / 1500</p>
-          </div>
-          <div>
-            <label class="block text-base font-medium text-slate-800 mb-2">Viimeisimmän huollon km</label>
-            <input id="edit-last-service-km" type="number" min="0" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <label class="block text-base font-medium text-slate-800 mb-2">Huollot ja vauriot</label>
-            <textarea id="edit-damage" maxlength="1500" rows="3" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
-            <p class="text-xs text-slate-400 text-right mt-1"><span id="edit-damage-count">0</span> / 1500</p>
-          </div>
-          <div>
-            <label class="block text-base font-medium text-slate-800 mb-2">Viimeisin katsastus</label>
-            <input id="edit-tech-inspection" type="date" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div>
-            <fieldset>
-              <legend class="text-base font-medium text-slate-800 mb-3">Viimeisimmän huollon ajankohta <span class="text-red-500">*</span></legend>
-              <div id="edit-service-date-chips" class="flex flex-wrap gap-2"></div>
-            </fieldset>
-          </div>
-          <div>
-            <fieldset>
-              <legend class="text-base font-medium text-slate-800 mb-3">Auto huollettu viimeksi (vuosi)</legend>
-              <div id="edit-service-year-chips" class="flex flex-wrap gap-2"></div>
-            </fieldset>
-          </div>
-          <div id="edit-service-month-wrap" class="hidden">
-            <fieldset>
-              <legend class="text-base font-medium text-slate-800 mb-3">Auto huollettu viimeksi (kuukausi)</legend>
-              <div id="edit-service-month-chips" class="flex flex-wrap gap-2"></div>
-            </fieldset>
-          </div>
-          <div>
-            <p class="mb-1"><strong class="text-base font-semibold text-slate-800">Lisää 6-15 kuvaa</strong></p>
-            <p class="text-sm text-slate-600 mb-4">Ota kuva ulkoa, sisältä, virheistä sekä huoltokirjasta. Hyvillä kuvilla saat enemmän ja parempia tarjouksia. Varmista että pääkuvassa näkyy koko auto. Vaihdat kuvien järjestystä raahaamalla.</p>
-            <div id="edit-photo-grid"></div>
-          </div>
-        </div>
-        <div class="flex items-center justify-between px-6 py-4 border-t border-slate-100">
-          <button id="edit-modal-close-btn" type="button" class="px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-50">Sulje</button>
-          <button id="edit-modal-save-btn" type="button" class="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium">Tallenna</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- Edit details modal: built by openEditModal() -->
+  <div id="edit-modal" role="dialog" aria-modal="true"></div>
 
+  <script src="toastr.js"></script>
   <script src="vehicle-card.js"></script>
   <script>
     // ── Helpers ──
@@ -306,7 +249,6 @@
       next_work_day: 'Olemme sinuun yhteydessä vielä puhelimitse viimeistään ' + _nextWorkDayName() + ', jotta autosi saadaan myytyä mahdollisimman pian.',
     };
     try { var _ds = JSON.parse(localStorage.getItem('autovex_decision') || '{}'); _ds.scenario = SCENARIO; localStorage.setItem('autovex_decision', JSON.stringify(_ds)); } catch(e) {}
-    var _editState = { sd: null, sy: null, sm: null };
     var _neg2ndCounter = false;
     function decisionHref() { return 'decision.html?scenario=' + SCENARIO; }
     // Sync funnel flags to match scenario — Skenaario panel is master state
@@ -604,7 +546,7 @@
             NICON_FILL_FILE_DASHED, 'text-amber-500', 'border-amber-400', 'bg-white', d.registration_number,
             'Täydennä puuttuvat tiedot saadaksesi tarjouksia.',
             'Tarjouspyynnöstäsi puuttuu tärkeitä tietoja. Täydennä tiedot, jotta voimme käynnistää tarjouskilpailun autoliikkeiden kanssa ympäri maan.',
-            '<a href="photos.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lisää puuttuvat tiedot</a>'
+            '<a href="' + draftEditHref(d) + '" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lisää puuttuvat tiedot</a>'
           );
         } else if (d.status === 'in_review') {
           html = buildDraftNotifHtml(
@@ -653,9 +595,6 @@
       'rejected': {
         primaryText: 'Muokkaa tietoja', secondaryText: null,
       },
-      'queued_for_publishing_after_verification': {
-        primaryText: null, secondaryText: 'Avaa tiedot',
-      },
     };
     Object.keys(DRAFT_STATUS_CFG).forEach(function (k) {
       var b = window.DRAFT_BADGES[k];
@@ -677,9 +616,14 @@
        extend the key. After that the funnel starts from its first step
        (registration and mileage). The proto models the first case. */
     var REJECTED_EDIT_HREF = 'success.html';
+    /* An open draft resumes the same saved position — whichever step the seller
+       was on. With none saved, prod's funnel runs the vehicle lookup and lands
+       on the equipment step. */
     function draftEditHref(draft) {
-      if (draft.status !== 'rejected') return 'photos.html';
-      return draft.missing_images ? 'photos.html?step=add-images' : REJECTED_EDIT_HREF;
+      if (draft.status === 'rejected') {
+        return draft.missing_images ? 'photos.html?step=add-images' : REJECTED_EDIT_HREF;
+      }
+      return getStore().funnelPosition || 'details.html';
     }
 
     // Adapter: draft object -> buildCarCard props. Markup lives in vehicle-card.js.
@@ -971,7 +915,14 @@
         if (Object.keys(_editOverride).length) req = Object.assign({}, req, _editOverride);
       }
       var negs = data.negotiations || [];
-      var drafts = data.drafts || [];
+      /* prod's drafts endpoint (UserTenderRequestDraftController::index) returns
+         in_review, rejected and open only, so a draft queued for publishing never
+         reaches this page. With nothing else listed, C2B.vue's blankSlate then
+         shows the "Valmiina myymään autosi? Aloita tästä!" prompt to a seller
+         who has an ad waiting on email verification. */
+      var drafts = (data.drafts || []).filter(function (d) {
+        return ['in_review', 'rejected', 'open'].indexOf(d.status) !== -1;
+      });
 
       renderDrafts(drafts);
 
@@ -1087,20 +1038,125 @@
     });
 
     // ── Edit details modal ──
+    /* A transcription of prod's EditRequest.vue — the "Muokkaa tietoja" modal of
+       a live auction — inside prod's Reveal shell, built from prod's own
+       elements/TextArea, Input, DatePicker, Chips/Chip and ImageUpload. Copy is
+       prod's, verbatim. Saving shows prod's success toast
+       (tenderRequest store: useToastr(t('tender.status.saved'), 'success')).
+
+       A prod quirk, reproduced: Chips iterate a PHP array keyed by numbers,
+       which a JS object re-orders by key, so the years run ascending, oldest
+       ("… tai ennen") first, and "En tiedä" comes after the months. The funnel
+       sorts its years; this modal does not. TextArea and DatePicker pass
+       `class` through to the field itself, which is why the margins sit on the
+       textarea and the date input rather than on their wrappers.
+
+       Hand-written CSS: the markup is JS-built. */
+    var ERQ_CSS = [
+      '#edit-modal{display:none;position:fixed;inset:0;z-index:50;justify-content:center;overflow-y:auto;overflow-x:hidden;background:rgba(30,41,59,.5);padding:2rem 1rem;cursor:default;}',
+      '#edit-modal.is-open{display:flex;}',
+      '#edit-modal .erq-container{margin:0 auto;width:100%;max-width:56rem;}',
+      '#edit-modal .erq-panel{background:#fff;position:relative;border-radius:.5rem;}',
+      '#edit-modal .erq-body{padding:1rem;}',
+      '@media(min-width:992px){#edit-modal .erq-body{padding:3rem 1.5rem 1.5rem;}}',
+      '#edit-modal .erq-footer{padding:1rem;border-top:1px solid #D1D5DB;}',
+      '#edit-modal .erq-footer-row{display:flex;justify-content:center;gap:.25rem;}',
+      '@media(min-width:992px){#edit-modal .erq-footer-row{justify-content:space-between;}}',
+      '#edit-modal .erq-x{position:absolute;top:-.125rem;right:-.125rem;font-size:1.5rem;line-height:1;color:#000;background:none;border:0;cursor:pointer;}',
+      '#edit-modal .erq-x span{padding:1rem;height:3rem;width:3rem;display:flex;align-items:center;justify-content:center;}',
+      '@media(min-width:620px){#edit-modal .erq-x{font-size:2rem;}#edit-modal .erq-x span{height:4rem;width:4rem;}}',
+      '#edit-modal .erq-label{margin-bottom:.75rem;display:inline-block;font-size:1rem;line-height:1;font-weight:500;}',
+      '@media(min-width:992px){#edit-modal .erq-label{font-size:1.125rem;}}',
+      '#edit-modal .erq-required:after{content:" *";color:#EF4444;}',
+      '#edit-modal .erq-ta-wrap{position:relative;}',
+      '#edit-modal textarea{padding:1rem;font-size:1rem;line-height:21px;display:block;width:100%;border:1px solid #94A3B8;border-radius:.5rem;background:#fff;margin-bottom:2rem;font-family:inherit;resize:vertical;}',
+      '#edit-modal .erq-count{position:absolute;right:.75rem;bottom:.25rem;font-size:.875rem;line-height:1.25rem;}',
+      '#edit-modal .erq-field{margin-bottom:2rem;display:block;width:100%;}',
+      '#edit-modal input[type=number],#edit-modal input[type=date]{font-size:1rem;font-weight:400;line-height:1.625;display:block;width:100%;padding:.875rem 1rem;appearance:none;font-family:inherit;background:#fff;}',
+      '#edit-modal input[type=number]{border:1px solid #94A3B8;border-radius:.5rem;}',
+      '#edit-modal input[type=date]{border:1px solid #1E293B;border-radius:.25rem;text-transform:uppercase;margin-bottom:2rem;}',
+      '#edit-modal .erq-date{margin-bottom:1rem;display:block;width:100%;}',
+      '#edit-modal fieldset{border:0;margin:0;padding:0;min-width:0;}',
+      '#edit-modal legend{margin-bottom:1rem;display:inline-block;font-size:1rem;line-height:1;font-weight:500;padding:0;}',
+      '@media(min-width:992px){#edit-modal legend{font-size:1.125rem;}}',
+      '#edit-modal .erq-mt10{margin-top:2.5rem;}',
+      '#edit-modal .erq-mt8{margin-top:2rem;}',
+      '#edit-modal .erq-chips{display:flex;flex-wrap:wrap;margin-left:-.5rem;}',
+      '#edit-modal .erq-chip{display:flex;align-items:center;border:1px solid #000;padding:.375rem 1.25rem;border-radius:.5rem;cursor:pointer;margin:0 0 .5rem .5rem;background:#fff;color:#000;font:inherit;transition:background-color .15s,color .15s;}',
+      '#edit-modal .erq-chip.is-selected{background:#0B6DFF;color:#fff;border-color:#0B6DFF;}',
+      '#edit-modal .erq-tip{margin:2rem .5rem 0;}',
+      '#edit-modal .erq-images{display:flex;flex-wrap:wrap;}',
+      '#edit-modal .erq-cell{padding:.5rem;display:flex;flex-direction:column;width:33.333%;}',
+      '#edit-modal .erq-cell.is-hero{width:100%;}',
+      '#edit-modal .erq-slot{position:relative;aspect-ratio:2/1;background:#F3F4F6;border:1px solid #E5E7EB;border-radius:.25rem;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);}',
+      '#edit-modal .erq-slot.is-dummy{transition:transform .15s,box-shadow .15s;}',
+      '#edit-modal .erq-slot.is-dummy:hover{transform:scale(1.02);box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);}',
+      '#edit-modal .erq-slot.is-filled{border-color:transparent;}',
+      '#edit-modal .erq-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none;}',
+      '#edit-modal .erq-slot img.erq-ph{mix-blend-mode:multiply;opacity:.3;}',
+      '#edit-modal .erq-upload{position:absolute;inset:0;z-index:10;width:100%;padding:.5rem;display:flex;justify-content:flex-end;align-items:flex-start;cursor:pointer;background:none;border:0;}',
+      '#edit-modal .erq-upload::after{content:"+";font-weight:600;font-size:24px;line-height:1;}',
+      '#edit-modal .erq-upload::before{content:attr(title);white-space:nowrap;margin-right:2px;font-size:14px;line-height:24px;color:#000;transform:scaleX(0);transform-origin:right;transition:transform .15s;}',
+      '#edit-modal .erq-upload:hover::before{transform:scaleX(1);}',
+      '#edit-modal .erq-cover{position:absolute;top:.5rem;left:.5rem;padding:.25rem .5rem;background:rgba(30,41,59,.9);color:#fff;font-size:1.125rem;line-height:1.75rem;}',
+      '#edit-modal .erq-remove{position:absolute;top:-.5rem;right:-.5rem;z-index:10;padding:1rem;background:none;border:0;cursor:pointer;font-size:2.25rem;font-weight:600;}',
+      '#edit-modal .erq-remove span{background:#F3F4F6;display:flex;justify-content:center;align-items:center;font-weight:600;font-size:16px;width:24px;height:24px;line-height:1;}',
+      '#edit-modal .erq-remove span span{transform:rotate(45deg);background:none;}',
+      /* elements/Button.vue, medium; pt-13px/pb-15px beat the size's py-2. */
+      '#edit-modal .erq-btn{padding:13px 1.25rem 15px;display:inline-block;line-height:1;font-weight:500;font-size:1rem;letter-spacing:.05em;border-radius:.5rem;cursor:pointer;font-family:inherit;}',
+      '#edit-modal .erq-btn.is-blue{background:#0B6DFF;color:#fff;border:2px solid #0B6DFF;}',
+      '#edit-modal .erq-btn.is-transparent{background:transparent;color:#000;border:2px solid #000;text-align:center;}',
+      '#edit-modal .erq-btn.is-transparent:hover{background:rgba(209,213,219,.5);}'
+    ].join('');
+
+    var ERQ_COPY = {
+      accessories:        'Lisävarusteet',
+      accessoriesPh:      'Vetokoukku, lasikatto, ratinlämmitin, mobiiliyhteys...',
+      lastServiceKm:      'Viimeisimmän huollon km',
+      damage:             'Huollot ja vauriot',
+      techInspection:     'Viimeisin katsastus',
+      lastServiceDate:    'Viimeisimmän huollon ajankohta',
+      lastServiceYear:    'Auto huollettu viimeksi (vuosi)',
+      lastServiceMonth:   'Auto huollettu viimeksi (kuukausi)',
+      images:             'Lisää 6-15 kuvaa',
+      tipOnEdit:          'Ota kuva ulkoa, sisältä, virheistä sekä huoltokirjasta. Hyvillä kuvilla saat enemmän ja parempia tarjouksia. Varmista että pääkuvassa näkyy koko auto. Vaihdat kuvien järjestystä raahaamalla.',
+      coverImage:         'Kansikuva',
+      removeImage:        'Poista kuva',
+      addImage:           'Lisää kuva',
+      close:              'Sulje',
+      save:               'Tallenna',
+      saved:              'Tarjouspyyntö tallennettu'
+    };
+
     var _SERVICE_DATES = {
       'within_6_months': 'Viimeisen 6 kuukauden aikana',
       'over_6_months':   'Yli 6 kuukautta sitten',
       'dont_remember':   'En ole varma'
     };
+    /* In the order the browser iterates prod's arrays — see the note above. */
+    var _MONTH_KEYS = ['1','2','3','4','5','6','7','8','9','10','11','12',''];
     var _MONTHS = {
       '1':'Tammikuu','2':'Helmikuu','3':'Maaliskuu','4':'Huhtikuu',
       '5':'Toukokuu','6':'Kesäkuu','7':'Heinäkuu','8':'Elokuu',
       '9':'Syyskuu','10':'Lokakuu','11':'Marraskuu','12':'Joulukuu',
       '':'En tiedä'
     };
-    var _SERVICE_YEARS = {
-      '2026':'2026','2025':'2025','2024':'2024','2023':'2023 tai ennen'
-    };
+    var _CUR_YEAR = new Date().getFullYear();
+    var _OLDEST_YEAR_LABEL = (_CUR_YEAR - 3) + ' tai ennen';
+    var _YEAR_LABELS = [_OLDEST_YEAR_LABEL, String(_CUR_YEAR - 2), String(_CUR_YEAR - 1), String(_CUR_YEAR)];
+
+    /* EditRequest's placeholders, in its order: exterior, interior, service and
+       tyres, damage. */
+    var ERQ_PLACEHOLDERS = ['left_new.png', 'right_new.png', 'front_new.png', 'back_new.png', 'inside.jpg',
+      'seat.png', 'servicebook.jpg', 'tire.png', 'dent.png', 'scratches.png'].map(function (f) {
+      return 'assets/edit-placeholders/' + f;
+    });
+    /* ImageUpload: rows 4 with a hero means (4 - 1) × 3 + 1 slots. EditRequest
+       passes columns 5, which ImageUpload caps at 3 for a consumer seller. */
+    var ERQ_SLOTS = 10;
+    var ERQ_MIN_IMAGES = 5;
+    var ERQ_MAX_IMAGES = 15;
+    var ERQ_SECTIONS = ['ulkopuoli', 'sisatilat', 'huoltokirja', 'renkaat', 'naarmut', 'tuulilasi'];
 
     /* The modal edits answers the funnel already collected, so it reads and
        writes the funnel's own keys: accessories in `details.varustelu`, the
@@ -1115,7 +1171,6 @@
       over_6_months:   'lastServiceOlder',
       dont_remember:   'lastServiceUnsure'
     };
-    var _OLDEST_YEAR_CHIP = '2023';
 
     function _serviceDateFromLabel(label) {
       var T = window.TRANSLATIONS || {};
@@ -1137,7 +1192,7 @@
         damage_and_service_information: sv.korjaukset || null,
         edited_last_tech_inspection: fs.edited_last_tech_inspection || null,
         last_service_date: _serviceDateFromLabel(rg[2]),
-        last_service_year: ls.year === 'before' ? _OLDEST_YEAR_CHIP : (ls.year ? String(ls.year) : null),
+        last_service_year: ls.year === 'before' ? _OLDEST_YEAR_LABEL : (ls.year ? String(ls.year) : null),
         last_service_month: ls.month ? String(ls.month) : null
       };
     }
@@ -1154,7 +1209,7 @@
       sv.korjaukset = v.damage_and_service_information || '';
       sv.lastServiceDetail = {
         km: v.last_service_km != null ? String(v.last_service_km) : null,
-        year: v.last_service_year === _OLDEST_YEAR_CHIP ? 'before' : v.last_service_year,
+        year: v.last_service_year === _OLDEST_YEAR_LABEL ? 'before' : v.last_service_year,
         month: v.last_service_month || null
       };
       fs.edited_last_tech_inspection = v.edited_last_tech_inspection;
@@ -1163,143 +1218,179 @@
       return fs;
     }
 
-    function _renderEditChips(containerId, options, selected) {
-      var el = document.getElementById(containerId); if (!el) return;
-      el.innerHTML = '';
-      Object.keys(options).forEach(function(k) {
-        var btn = document.createElement('button');
-        btn.type = 'button'; btn.dataset.editKey = k; btn.dataset.editContainer = containerId;
-        btn.textContent = options[k];
-        var active = k === String(selected || '');
-        btn.className = 'px-3 py-1.5 text-sm rounded-full border cursor-pointer ' +
-          (active ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-blue-400 hover:text-blue-700');
-        el.appendChild(btn);
+    var _erqForm = null;
+
+    function _erqImages(fs) {
+      var out = [];
+      ERQ_SECTIONS.forEach(function (sec) {
+        (((fs.photos || {})[sec]) || []).forEach(function (src, idx) { out.push({ sec: sec, idx: idx, src: src }); });
       });
+      return out;
+    }
+
+    function _erqChips(name, options, selected) {
+      return '<div class="erq-chips">' + options.map(function (o) {
+        return '<button type="button" class="erq-chip' + (String(o.value) === String(selected == null ? '\u0000' : selected) ? ' is-selected' : '') +
+          '" data-erq-chip="' + name + '" data-value="' + _esc(o.value) + '"><span>' + _esc(o.label) + '</span></button>';
+      }).join('') + '</div>';
+    }
+
+    function _esc(s) {
+      return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function _erqImagesHtml() {
+      var files = _erqImages(getStore());
+      var cells = files.map(function (f) { return { file: f }; });
+      var length = cells.length;
+      while (length++ < ERQ_SLOTS) cells.push({ ph: ERQ_PLACEHOLDERS[length - 1] || null });
+      if (cells.length === files.length && files.length < ERQ_MAX_IMAGES) cells.push({ ph: ERQ_PLACEHOLDERS[files.length] || null });
+      return '<div class="erq-images">' + cells.map(function (c, i) {
+        var hero = i === 0;
+        var inner;
+        if (c.file) {
+          inner = '<div class="erq-slot is-filled"><img src="' + _esc(c.file.src) + '" alt="">' +
+            (hero ? '<span class="erq-cover">' + ERQ_COPY.coverImage + '</span>' : '') +
+            '<button type="button" class="erq-remove" title="' + ERQ_COPY.removeImage + '" data-photo-del-sec="' + c.file.sec + '" data-photo-del-idx="' + c.file.idx + '"><span><span>+</span></span></button></div>';
+        } else {
+          inner = '<div class="erq-slot is-dummy' + (i > ERQ_MIN_IMAGES ? ' is-filled' : '') + '">' +
+            '<button type="button" class="erq-upload" title="' + ERQ_COPY.addImage + '" data-erq-upload></button>' +
+            (c.ph ? '<img class="erq-ph" src="' + c.ph + '" alt="">' : '') + '</div>';
+        }
+        return '<div class="erq-cell' + (hero ? ' is-hero' : '') + '">' + inner + '</div>';
+      }).join('') + '</div>';
+    }
+
+    function _erqRender() {
+      var f = _erqForm;
+      var today = new Date().toISOString().split('T')[0];
+      var html =
+        '<div class="erq-container"><div class="erq-panel" id="edit-modal-panel">' +
+        '<div class="erq-body"><form id="edit-modal-form">' +
+          '<span class="erq-label">' + ERQ_COPY.accessories + '</span>' +
+          '<div class="erq-ta-wrap"><label><textarea id="edit-accessories" rows="6" maxlength="1500" placeholder="' + ERQ_COPY.accessoriesPh + '">' + _esc(f.accessories || '') + '</textarea></label>' +
+          '<div class="erq-count"><span id="edit-accessories-count">' + (f.accessories || '').length + '</span> / 1500</div></div>' +
+          '<label class="erq-field"><span class="erq-label">' + ERQ_COPY.lastServiceKm + '</span><div><input id="edit-last-service-km" type="number" value="' + (f.last_service_km != null ? f.last_service_km : '') + '"></div></label>' +
+          '<div class="erq-ta-wrap"><label><span class="erq-label">' + ERQ_COPY.damage + '</span><textarea id="edit-damage" rows="6" maxlength="1500">' + _esc(f.damage_and_service_information || '') + '</textarea></label>' +
+          '<div class="erq-count"><span id="edit-damage-count">' + (f.damage_and_service_information || '').length + '</span> / 1500</div></div>' +
+          '<label class="erq-date"><span class="erq-label">' + ERQ_COPY.techInspection + '</span><input id="edit-tech-inspection" type="date" max="' + today + '" value="' + (f.edited_last_tech_inspection || '') + '"></label>' +
+          '<div class="erq-mt10"><fieldset><legend class="erq-required">' + ERQ_COPY.lastServiceDate + '</legend>' +
+            _erqChips('date', Object.keys(_SERVICE_DATES).map(function (k) { return { value: k, label: _SERVICE_DATES[k] }; }), f.last_service_date) + '</fieldset></div>' +
+          '<div class="erq-mt10"><fieldset><legend>' + ERQ_COPY.lastServiceYear + '</legend>' +
+            _erqChips('year', _YEAR_LABELS.map(function (y) { return { value: y, label: y }; }), f.last_service_year) + '</fieldset></div>' +
+          (f.last_service_year ? '<div class="erq-mt8"><fieldset><legend>' + ERQ_COPY.lastServiceMonth + '</legend>' +
+            _erqChips('month', _MONTH_KEYS.map(function (k) { return { value: k, label: _MONTHS[k] }; }), f.last_service_month == null ? null : f.last_service_month) + '</fieldset></div>' : '') +
+          '<p class="erq-tip"><strong>' + ERQ_COPY.images + '</strong><br><span>' + ERQ_COPY.tipOnEdit + '</span></p>' +
+          '<div id="edit-photo-grid">' + _erqImagesHtml() + '</div>' +
+          '<input type="file" id="edit-photo-input" multiple accept="image/jpeg,image/png,image/heic,image/heif" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none">' +
+        '</form></div>' +
+        '<footer class="erq-footer"><div class="erq-footer-row">' +
+          '<button type="button" class="erq-btn is-transparent" id="edit-modal-close-btn">' + ERQ_COPY.close + '</button>' +
+          '<button type="button" class="erq-btn is-blue" id="edit-modal-save-btn">' + ERQ_COPY.save + '</button>' +
+        '</div></footer>' +
+        '<button type="button" class="erq-x" id="edit-modal-close-x" aria-label="' + ERQ_COPY.close + '"><span aria-hidden="true">&times;</span></button>' +
+        '</div></div>';
+      document.getElementById('edit-modal').innerHTML = html;
+    }
+
+    /* Keeps typed values when a chip or photo change re-renders the form. */
+    function _erqCapture() {
+      if (!_erqForm || !document.getElementById('edit-accessories')) return;
+      var km = parseInt(document.getElementById('edit-last-service-km').value, 10);
+      _erqForm.accessories = document.getElementById('edit-accessories').value;
+      _erqForm.last_service_km = isNaN(km) ? null : km;
+      _erqForm.damage_and_service_information = document.getElementById('edit-damage').value;
+      _erqForm.edited_last_tech_inspection = document.getElementById('edit-tech-inspection').value || null;
     }
 
     function openEditModal() {
-      var fs = readEditFields(getStore());
-      var _accVal = fs.accessories || '';
-      var _damVal = fs.damage_and_service_information || '';
-      document.getElementById('edit-accessories').value = _accVal;
-      document.getElementById('edit-accessories-count').textContent = _accVal.length;
-      document.getElementById('edit-last-service-km').value = fs.last_service_km != null ? fs.last_service_km : '';
-      document.getElementById('edit-damage').value = _damVal;
-      document.getElementById('edit-damage-count').textContent = _damVal.length;
-      document.getElementById('edit-tech-inspection').max = new Date().toISOString().split('T')[0];
-      document.getElementById('edit-tech-inspection').value = fs.edited_last_tech_inspection || '';
-      _editState.sd = fs.last_service_date || null;
-      _editState.sy = fs.last_service_year ? String(fs.last_service_year) : null;
-      _editState.sm = (fs.last_service_month != null) ? String(fs.last_service_month) : null;
-      _renderEditChips('edit-service-date-chips', _SERVICE_DATES, _editState.sd);
-      _renderEditChips('edit-service-year-chips', _SERVICE_YEARS, _editState.sy);
-      _renderEditChips('edit-service-month-chips', _MONTHS, _editState.sm);
-      document.getElementById('edit-service-month-wrap').classList.toggle('hidden', !_editState.sy);
-      _renderEditPhotos();
-      document.getElementById('edit-modal').classList.remove('hidden');
+      if (!document.getElementById('erq-style')) {
+        var st = document.createElement('style');
+        st.id = 'erq-style';
+        st.textContent = ERQ_CSS;
+        document.head.appendChild(st);
+      }
+      _erqForm = readEditFields(getStore());
+      _erqRender();
+      document.getElementById('edit-modal').classList.add('is-open');
     }
 
     function closeEditModal() {
-      document.getElementById('edit-modal').classList.add('hidden');
+      document.getElementById('edit-modal').classList.remove('is-open');
     }
 
-    function _renderEditPhotos() {
-      var grid = document.getElementById('edit-photo-grid');
-      if (!grid) return;
-      var fs = getStore();
-      var secs = ['ulkopuoli','sisatilat','huoltokirja','renkaat','naarmut','tuulilasi'];
-      var all = [];
-      secs.forEach(function(sec) {
-        var arr = ((fs.photos || {})[sec]) || [];
-        arr.forEach(function(src, idx) { all.push({ sec: sec, idx: idx, src: src }); });
-      });
-      if (!all.length) {
-        grid.innerHTML = '<p class="text-sm text-slate-400 italic py-2">Ei kuvia lisätty</p>';
+    document.getElementById('edit-modal').addEventListener('click', function (e) {
+      var chip = e.target.closest('[data-erq-chip]');
+      if (chip) {
+        _erqCapture();
+        var name = chip.dataset.erqChip, val = chip.dataset.value;
+        if (name === 'date')  _erqForm.last_service_date = val;
+        if (name === 'year')  _erqForm.last_service_year = val;
+        if (name === 'month') _erqForm.last_service_month = val;
+        _erqRender();
         return;
       }
-      var hero = all[0];
-      var rest = all.slice(1);
-      var xSvg = '<svg width="12" height="12" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg>';
-      var html = '<div class="relative bg-slate-100 rounded-lg overflow-hidden mb-3">' +
-        '<span class="absolute top-2 left-2 z-10 bg-slate-800 text-white text-xs font-semibold px-2 py-0.5 rounded select-none">Kansikuva</span>' +
-        '<button type="button" class="absolute top-2 right-2 z-10 bg-white hover:bg-slate-100 text-slate-700 rounded w-6 h-6 flex items-center justify-center shadow-sm border border-slate-200" data-photo-del-sec="' + hero.sec + '" data-photo-del-idx="' + hero.idx + '">' + xSvg + '</button>' +
-        '<img src="' + hero.src + '" class="w-full object-cover" style="max-height:280px;display:block">' +
-        '</div>';
-      if (rest.length) {
-        html += '<div class="grid grid-cols-3 gap-2">';
-        rest.forEach(function(p) {
-          html += '<div class="relative rounded overflow-hidden bg-slate-100" style="aspect-ratio:1">' +
-            '<button type="button" class="absolute top-1 right-1 z-10 bg-white hover:bg-slate-100 text-slate-700 rounded w-5 h-5 flex items-center justify-center shadow-sm border border-slate-200" style="font-size:10px" data-photo-del-sec="' + p.sec + '" data-photo-del-idx="' + p.idx + '">' + xSvg + '</button>' +
-            '<img src="' + p.src + '" class="w-full h-full object-cover">' +
-            '</div>';
+      if (e.target.closest('[data-erq-upload]')) { document.getElementById('edit-photo-input').click(); return; }
+      var del = e.target.closest('[data-photo-del-sec]');
+      if (del) {
+        _erqCapture();
+        var fs = getStore();
+        var sec = del.dataset.photoDelSec, idx = parseInt(del.dataset.photoDelIdx, 10);
+        if (fs.photos && fs.photos[sec]) { fs.photos[sec].splice(idx, 1); setStore(fs); }
+        _erqRender();
+        return;
+      }
+      if (e.target.closest('#edit-modal-close-btn') || e.target.closest('#edit-modal-close-x')) { closeEditModal(); return; }
+      if (e.target.closest('#edit-modal-save-btn')) {
+        _erqCapture();
+        var saved = writeEditFields(getStore(), {
+          accessories: (_erqForm.accessories || '').trim() || null,
+          last_service_km: _erqForm.last_service_km,
+          damage_and_service_information: (_erqForm.damage_and_service_information || '').trim() || null,
+          edited_last_tech_inspection: _erqForm.edited_last_tech_inspection,
+          last_service_date: _erqForm.last_service_date,
+          last_service_year: _erqForm.last_service_year,
+          last_service_month: _erqForm.last_service_month
         });
-        html += '</div>';
-      }
-      grid.innerHTML = html;
-    }
-
-    // Chip selection inside edit modal
-    document.addEventListener('click', function(e) {
-      var chip = e.target.closest('[data-edit-key]');
-      if (!chip) return;
-      var cid = chip.dataset.editContainer;
-      if (cid === 'edit-service-date-chips') {
-        _editState.sd = chip.dataset.editKey;
-        _renderEditChips('edit-service-date-chips', _SERVICE_DATES, _editState.sd);
-      } else if (cid === 'edit-service-year-chips') {
-        _editState.sy = chip.dataset.editKey;
-        _renderEditChips('edit-service-year-chips', _SERVICE_YEARS, _editState.sy);
-        document.getElementById('edit-service-month-wrap').classList.remove('hidden');
-        _renderEditChips('edit-service-month-chips', _MONTHS, _editState.sm);
-      } else if (cid === 'edit-service-month-chips') {
-        _editState.sm = chip.dataset.editKey;
-        _renderEditChips('edit-service-month-chips', _MONTHS, _editState.sm);
+        setStore(saved);
+        closeEditModal();
+        renderPage();
+        window.protoToastr(ERQ_COPY.saved, 'success');
       }
     });
 
-    document.getElementById('edit-modal-save-btn').addEventListener('click', function() {
-      var km = parseInt(document.getElementById('edit-last-service-km').value);
-      var fs = writeEditFields(getStore(), {
-        accessories: document.getElementById('edit-accessories').value.trim() || null,
-        last_service_km: isNaN(km) ? null : km,
-        damage_and_service_information: document.getElementById('edit-damage').value.trim() || null,
-        edited_last_tech_inspection: document.getElementById('edit-tech-inspection').value || null,
-        last_service_date: _editState.sd,
-        last_service_year: _editState.sy || null,
-        last_service_month: _editState.sm
+    /* prod stores one flat image list on the request. The proto keeps the
+       funnel's sections, so a photo added here joins the first one. */
+    document.getElementById('edit-modal').addEventListener('change', function (e) {
+      if (e.target.id !== 'edit-photo-input') return;
+      _erqCapture();
+      var files = [].slice.call(e.target.files || []);
+      var pending = files.length;
+      if (!pending) return;
+      var added = [];
+      files.forEach(function (file) {
+        var r = new FileReader();
+        r.onload = function () { added.push(r.result); done(); };
+        r.onerror = done;
+        r.readAsDataURL(file);
       });
-      setStore(fs);
-      closeEditModal();
-      renderPage();
-    });
-
-    document.getElementById('edit-modal-close-btn').addEventListener('click', closeEditModal);
-    document.getElementById('edit-modal-close-x').addEventListener('click', closeEditModal);
-    document.getElementById('edit-modal').addEventListener('click', function(e) {
-      if (!document.getElementById('edit-modal-panel').contains(e.target)) closeEditModal();
-    });
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && !document.getElementById('edit-modal').classList.contains('hidden')) closeEditModal();
-    });
-
-    document.getElementById('edit-accessories').addEventListener('input', function() {
-      document.getElementById('edit-accessories-count').textContent = this.value.length;
-    });
-    document.getElementById('edit-damage').addEventListener('input', function() {
-      document.getElementById('edit-damage-count').textContent = this.value.length;
-    });
-
-    document.addEventListener('click', function(e) {
-      var btn = e.target.closest('[data-photo-del-sec]');
-      if (!btn) return;
-      var sec = btn.dataset.photoDelSec;
-      var idx = parseInt(btn.dataset.photoDelIdx);
-      var fs = getStore();
-      if (fs.photos && fs.photos[sec]) {
-        fs.photos[sec].splice(idx, 1);
-        setStore(fs);
-        _renderEditPhotos();
+      function done() {
+        if (--pending) return;
+        var fs = getStore();
+        fs.photos = fs.photos || {};
+        fs.photos.ulkopuoli = (fs.photos.ulkopuoli || []).concat(added);
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(fs)); } catch (err) {}
+        _erqRender();
       }
+    });
+
+    document.getElementById('edit-modal').addEventListener('input', function (e) {
+      if (e.target.id === 'edit-accessories') document.getElementById('edit-accessories-count').textContent = e.target.value.length;
+      if (e.target.id === 'edit-damage') document.getElementById('edit-damage-count').textContent = e.target.value.length;
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && document.getElementById('edit-modal').classList.contains('is-open')) closeEditModal();
     });
 
     // Wire "Muokkaa tietoja" button

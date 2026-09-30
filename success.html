@@ -628,6 +628,9 @@
       }
       if (!photosOk) {
         // ── PHOTOS MISSING ──
+        /* The draft stays open on the publish step, which is where prod's saved
+           funnel position resumes it (funnel-guard.js). */
+        if (!FORCED_SCENARIO) { s.funnelPosition = 'success.html'; setStore(s); }
         setNotice(null); setActionCard(null);
         if (vehicleCard) vehicleCard.style.display = '';
         if (offersBtn) offersBtn.style.display = 'none';

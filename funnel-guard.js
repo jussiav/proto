@@ -24,6 +24,8 @@
  * `store.rejection` is the draft's status while it is rejected, not a UI flag:
  * it is cleared by whichever step re-submits the draft.
  *
+ * It also records `store.funnelPosition`, the step the seller is on.
+ *
  * Entry params:
  *   ?step=add-images  prod's param, verbatim
  *   ?edit=rejected    proto-only. Prod fires EDIT_DRAFT in-page; the proto
@@ -99,5 +101,14 @@
   var bypass = params.has('scenario') || params.has('plate') || params.get('mode') === 'mobile';
   if (!bypass && isSubmitted(store)) {
     window.location.replace('success.html');
+    return;
+  }
+
+  /* prod saves the funnel's position on every step change and resumes it when
+     the draft's link is opened without a step (FormStateController). The
+     offers page's "Muokkaa tietoja" on an open draft reads this. */
+  if (params.get('mode') !== 'mobile') {
+    store.funnelPosition = window.location.pathname.split('/').pop() || 'details.html';
+    setStore(store);
   }
 })();
