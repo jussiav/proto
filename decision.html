@@ -447,6 +447,17 @@
             <button id="warmup-cta" onclick="revealOffers()" class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]">
               Katso tulokset
             </button>
+
+            <!-- The funnel's own info line, reused rather than redrawn: the same
+                 16px blue-600 glyph, `items-start gap-2`, `mt-0.5` on the icon
+                 and `font-dm text-sm text-slate-700` that price.html puts under
+                 the estimate field and the seller-intent question. Left-aligned
+                 inside a centred column, as the frame draws it. Shown only by an
+                 arm that names a `note`; hidden for every other arm and state. -->
+            <div id="warmup-note" class="hidden mt-4 items-start gap-2 text-left">
+              <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
+              <p id="warmup-note-text" class="font-dm text-sm text-slate-700"></p>
+            </div>
           </div>
 
         </div>
@@ -1724,6 +1735,30 @@
       not_great_auction:    WARMUP_V3_TIERS
     };
 
+    /* v4 TAKES THE OPPOSITE APPROACH TO v3, and that is the point of it.
+       v3 REPLACES prod's celebration with the Nettiauto correction, so the
+       seller reads the point instead of the congratulation. v4 leaves prod's
+       card exactly as it is — badge, illustration, heading, body, `Katso
+       tulokset` — and APPENDS one info line under the CTA. Lower blast radius:
+       nothing prod says is taken away, and the screen is still the beat it
+       always was rather than a small gate.
+
+       It therefore names only a `note`. Everything else falls through to
+       `WARMUP_AUCTION_ENDED`, so prod's copy cannot drift out of step with it,
+       and the CTA keeps the markup's own label through the `wc.cta` fallback.
+
+       Same four price tiers as v3, for the same reason: a comparison against
+       dealership asking prices means nothing to a seller with no offer. */
+    var WARMUP_V4_NOTE = {
+      note: 'Muistathan, että Nettiauton hintaa ei kannata verrata saamaasi tarjoukseen. Pyyntihinta ei ole sama asia kuin saamasi tarjous.'
+    };
+    var WARMUP_COPY_V4 = {
+      excellent_auction:    WARMUP_V4_NOTE,
+      matches_expectations: WARMUP_V4_NOTE,
+      good_auction:         WARMUP_V4_NOTE,
+      not_great_auction:    WARMUP_V4_NOTE
+    };
+
     var WARMUP_COPY = {
       excellent_auction:    WARMUP_AUCTION_ENDED,
       matches_expectations: WARMUP_AUCTION_ENDED,
@@ -2939,13 +2974,32 @@
            seller already saw the offers) and unreachable here (every scenario
            with `offers_seen_at: null` resolves to a status that has content), so
            this keeps a guard rather than reproducing a blank card. */
-        var wc = ((ID_V3 || ID_V4) && WARMUP_COPY_V3[pas]) || WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED;
+        /* v3 and v4 fork here. v3 REPLACES prod's copy; v4 keeps every word of
+           it and only adds a note, so its entry carries `note` alone and the
+           spread below fills the rest from prod. Reading v4 out of
+           `WARMUP_COPY_V3` would have given it v3's heading and CTA. */
+        var armWc = (ID_V3 && WARMUP_COPY_V3[pas]) || (ID_V4 && WARMUP_COPY_V4[pas]) || null;
+        var base  = WARMUP_COPY[pas] || WARMUP_AUCTION_ENDED;
+        var wc    = { heading: base.heading, message: base.message, image: base.image, cta: base.cta, note: null };
+        if (armWc) {
+          if (armWc.heading) wc.heading = armWc.heading;
+          if (armWc.message) wc.message = armWc.message;
+          if (armWc.image)   wc.image   = armWc.image;
+          if (armWc.cta)     wc.cta     = armWc.cta;
+          if (armWc.note)    wc.note    = armWc.note;
+        }
+
         document.getElementById('warmup-heading').textContent = wc.heading;
         document.getElementById('warmup-message').textContent = wc.message;
         document.getElementById('warmup-img').src = 'assets/' + wc.image;
         /* prod's label is in the markup, so an arm that names no `cta` keeps it
            and nothing else on the page has to know this is arm-dependent. */
         document.getElementById('warmup-cta').textContent = wc.cta || 'Katso tulokset';
+
+        var noteEl = document.getElementById('warmup-note');
+        document.getElementById('warmup-note-text').textContent = wc.note || '';
+        noteEl.classList.toggle('hidden', !wc.note);
+        noteEl.classList.toggle('flex', !!wc.note);
         warmupEl.classList.remove('hidden');
         warmupEl.classList.add('flex');
       } else {

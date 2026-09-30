@@ -68,6 +68,10 @@ window.DECISION_I18N = {
     'Nettiauton hinnat eivät vertaudu tarjoukseesi. Tarjouksesi on summa, jonka saat autostasi nyt.':
       'Nettiauto prices are not comparable to your offer. Your offer is the amount you get for your car now.',
     'Ymmärrän, jatka':                     'Understood, continue',
+    /* v4's warm-up keeps every word of prod's card and adds only this line,
+       so its keys are prod's plus one. */
+    'Muistathan, että Nettiauton hintaa ei kannata verrata saamaasi tarjoukseen. Pyyntihinta ei ole sama asia kuin saamasi tarjous.':
+      'Remember that a Nettiauto price is not worth comparing to the offer you received. An asking price is not the same thing as the offer you received.',
     'Tarjouskilpailu on päättynyt':         'The auction has ended',
     'Katso tulokset':                      'See the results',
 

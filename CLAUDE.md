@@ -2709,9 +2709,9 @@ comparison that stacks stops being a comparison. Verified at 375px: columns
 nothing clipped. The offer column's label wraps to two lines there and the
 bottom alignment absorbs it.
 
-**IT TAKES `v3`'s WARM-UP UNCHANGED**, still an assumption rather than a
-decision: `wc` reads `(ID_V3 || ID_V4) && WARMUP_COPY_V3[pas]`. A warm-up has
-not been among the asks. One-line fork if `v4` should say something of its own.
+**ITS WARM-UP IS ITS OWN NOW** (2026-09-30) — prod's card untouched plus one
+info line under the CTA, where `v3` replaces prod's copy outright. See
+**The warm-up screen** below for the fork and for the component the note reuses.
 
 **FOUR FIGMA FRAMES NOW CLAIM `✅ Tarjous vai pyyntihinta? — IN PROTO`** —
 `7299:40316` (this, the only true one), `7293:40268`, `7286:40154` (a `v3`
@@ -3754,10 +3754,57 @@ already holding the right frame instead of forming a reaction and meeting the
 correction a screen later. That inoculation is the argument for keeping a whole
 screen; without it the card is a click between the seller and their offers.
 
-| | heading | body |
-|---|---|---|
-| `control`, `v1` | `Hyvä tarjouskilpailu takana!` | `Autosi kävi läpi koko tarjouskilpailun…` |
-| **`v3`** | **`Pidä mielessä, kun vertaat hintoja`** | **`Nettiauton hinnat eivät vertaudu tarjoukseesi. Tarjouksesi on summa, jonka saat autostasi nyt.`** |
+| | heading | body | CTA | note under the CTA |
+|---|---|---|---|---|
+| `control`, `v1` | `Hyvä tarjouskilpailu takana!` | `Autosi kävi läpi koko tarjouskilpailun…` | `Katso tulokset` | — |
+| **`v3`** | **`Pidä mielessä, kun vertaat hintoja`** | **`Nettiauton hinnat eivät vertaudu tarjoukseesi. Tarjouksesi on summa, jonka saat autostasi nyt.`** | **`Ymmärrän, jatka`** | — |
+| **`v4`** | prod's, unchanged | prod's, unchanged | prod's, unchanged | **`Muistathan, että Nettiauton hintaa ei kannata verrata saamaasi tarjoukseen. Pyyntihinta ei ole sama asia kuin saamasi tarjous.`** |
+
+**`v3` AND `v4` TAKE OPPOSITE APPROACHES TO THE SAME SCREEN, AND THAT IS THE
+POINT OF HAVING BOTH** (2026-09-30, Jussi's Figma edit). `v3` REPLACES prod's
+celebration with the correction, so the seller reads the point instead of the
+congratulation, and the CTA becomes an acknowledgement. `v4` leaves every word
+of prod's card alone — badge, illustration, heading, body, `Katso tulokset` —
+and APPENDS one info line under the button. Lower blast radius: nothing prod
+says is taken away, and the screen stays the beat it always was rather than
+becoming a small gate. It is the same additive-versus-replacive split the two
+arms' decision-page blocks do not have, so the warm-up is where the team can
+see that trade on its own.
+
+**THE LOOKUP HAD TO FORK, and reading `v4` out of `WARMUP_COPY_V3` would have
+given it `v3`'s heading and CTA.** `armWc` now picks `WARMUP_COPY_V3` for `v3`
+and `WARMUP_COPY_V4` for `v4`, and the result is SPREAD over prod's entry field
+by field — so an arm naming only a `note` inherits prod's copy rather than
+blanking it, and prod's wording cannot drift out of step with `v4`.
+`WARMUP_COPY_V4` therefore carries one key.
+
+**THE NOTE IS THE FUNNEL'S OWN INFO LINE, REUSED RATHER THAN REDRAWN** (Jussi's
+instruction: *the same component as the (i) info blocks in the funnel steps*).
+`price.html` puts it under the estimate field and under the seller-intent
+question: a 16px blue-600 glyph, `flex items-start gap-2`, `mt-0.5` on the icon
+and `font-dm text-sm text-slate-700` on the paragraph. Transcribed verbatim,
+left-aligned inside the card's centred column. Measured **10.35:1**.
+
+**Three numbers in the Figma instance differ from that component**, and the
+proto follows the component because that is what "the same component" means —
+one-liners if any is deliberate: the frame's instance draws **gap 4** against
+the funnel's 8, its text at **12px/14** against the funnel's 14px, and in
+**black** against the funnel's slate-700. The instance still carries the
+component's original English string in its layer name
+(`Dealerships that offer pick-up option…`), which is what identifies the source.
+
+**PRICE TIERS ONLY, same as `v3`.** Verified: `?scenario=no-offers` renders
+prod's own `Ei tarjouksia tällä kertaa` card with no note. Verified too that
+`control`, `v1` and `v3` show no note, that the CTA still calls
+`revealOffers()` and lands on the compare block, and that the line translates
+(zero Finnish left in the card after switching).
+
+**IN FIGMA: `7280:238`, and its NAME IS NOW WRONG** — it reads
+`✅ Warm-up — v3 / Nettiauto framing (IN PROTO)` and holds `v4`'s design. There
+is no frame left matching what `v3` renders. `v3` was kept as it was because
+the ask named `v4`; **if `v3` should take this screen too it is a one-line
+change** (point its lookup at `WARMUP_COPY_V4`), and then `v3`'s own copy has
+no frame either way.
 
 **`v3`'s copy is JUSSI'S** (2026-09-28). My first draft
 (`Ennen kuin katsot tarjouksia`) was a starting point he then redrafted in
