@@ -313,11 +313,27 @@
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>Which details can be edited?</b> Equipment, service history, damage and photos look safe. Make, model, year and fuel type feed the review decision and the price estimate.</li>
-        <li><b>Is the review decision re-evaluated after an edit,</b> or are edited ads at least flagged, so the decision's performance is not measured against data it never saw?</li>
-        <li><b>Can the seller change their own price estimate?</b> It is the price question sellers most want to revisit.</li>
-        <li><b>Should ads waiting for email verification appear on the offers page?</b> They are editable from the waiting screen, but production does not list them on the offers page at all, so there is no card there to carry the button.</li>
-        <li><b>Should editing during the auction be removed?</b> Dealers bid on the car as described and are not told when it changes. Removing it would also free the edit modal for editing before publish.</li>
+        <li><b>Is the review decision re-evaluated after an edit,</b> or are edited ads at least flagged, so the decision&rsquo;s performance is not measured against data it never saw? Editing through the funnel makes this sharper: model year and fuel type can change, and both decide whether a car is reviewed.</li>
+        <li><b>Should the registration number and mileage be editable?</b> The seller enters them on the front page before the funnel starts, and the equipment step shows them read-only, so an edit cannot change them. Mileage also decides whether a car is reviewed. Today a wrong mileage can only be corrected by the advisor.</li>
+        <li><b>What happens when contact details change during an edit?</b> The last step lets the seller change their phone number and, if they are not logged in, their email address. Advisors book by phone number: booking one ad books every in-review ad with the same number. An ad waiting for email verification has already sent its link to the address it was submitted with, and production&rsquo;s waiting screen has its own flow for changing the address, which an edit should not get around.</li>
+        <li><b>Should editing during the auction be removed?</b> Dealers bid on the car as described and are not told when it changes. Removing it would free the edit modal for editing before publish, which would also improve on the funnel in two ways:
+          <ul class="list-[circle] pl-5 mt-1 space-y-1">
+            <li>The edit is linear. The seller changes what they came to change on one screen, instead of walking every step to the end.</li>
+            <li>The modal can leave out any detail that should not change after submitting. The funnel offers every field it asks.</li>
+          </ul>
+        </li>
+      </ul>
+
+      <h3 class="font-barlow font-bold text-black text-xl leading-tight mt-8 mb-3">Settled</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Which details can be edited?</b> Everything the funnel asks, because the edit is the funnel: equipment, location and delivery distance, tyres, keys, service history, repairs and damage, photos, price and contact details. That includes make, model, year, fuel type, drive and transmission, which the seller can correct on the equipment step. The registration number and mileage are the exception (above). Two rules follow:
+          <ul class="list-[circle] pl-5 mt-1 space-y-1">
+            <li>The save passes the same checks as a publish: the photo minimum, and the asking price on an ad that will not be reviewed.</li>
+            <li>The review decision and the price estimate are not re-run, though the details they read can change (see the first open question).</li>
+          </ul>
+        </li>
+        <li><b>Can the seller change their own price estimate?</b> Yes, on the price step. An ad in review keeps the optional estimate, and an ad waiting for email verification keeps its required asking price, so an edit asks the same price question the ad was submitted with. No reason found to block it.</li>
+        <li><b>Should ads waiting for email verification appear on the offers page?</b> No, and no seller could see them there. The offers page needs a login, an ad is only waiting while its seller has not verified their email, and the verification link logs the seller in and publishes the ad in one step. So the first offers page that seller sees already shows the ad live, and production&rsquo;s draft list leaves these ads out anyway. The waiting screen is their only way to edit, which change 1 covers. The prototype works the same way.</li>
       </ul>
       </div>
     </section>
