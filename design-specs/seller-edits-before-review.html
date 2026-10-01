@@ -154,7 +154,7 @@
         </table>
       </div>
       <div class="bg-warning-50 border-l-4 border-warning-300 rounded-lg p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mt-5">
-        <p class="mb-2"><b>Editing a rejected ad from the offers page takes two clicks today, and depends on timing.</b> Both of its edit buttons first open the waiting screen showing the rejection; the seller then presses &ldquo;Päivitä tarjouspyyntöä&rdquo; to reach the funnel steps.</p>
+        <p class="mb-2"><b>Editing a rejected ad from the offers page takes two clicks today, and depends on timing.</b> Both of its edit buttons first open the waiting screen (funnel success) showing the rejection; the seller then presses &ldquo;Päivitä tarjouspyyntöä&rdquo; to reach the funnel steps.</p>
         <p class="mb-0">That happens because the funnel resumes the position it last saved, and that saved position expires two weeks after the ad entered review. After that, the same buttons land straight on the equipment step. The prototype reproduces the two-click path, since that is what production does. A new edit entry built on the same mechanism would inherit both behaviours.</p>
       </div>
       </div>
@@ -202,7 +202,7 @@
             <tr>
               <td class="px-4 py-3 font-bold">1</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Edit the ad while it waits for review</a></td>
-              <td class="px-4 py-3">Offers page draft card &middot; waiting screen car card &middot; funnel</td>
+              <td class="px-4 py-3">Offers page draft card &middot; waiting screen (funnel success) car card &middot; funnel</td>
               <td class="px-4 py-3 text-slate-600">Ad in review and not yet booked, or waiting for email verification</td>
               <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Proposal</span></td>
             </tr>
@@ -223,18 +223,18 @@
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 - Edit the ad while it waits for review</h2>
       <div class="flex flex-wrap gap-2 font-dm text-xs mb-4">
-        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: offers page draft card &middot; waiting screen car card &middot; the funnel</span>
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: offers page draft card &middot; waiting screen (funnel success) car card &middot; the funnel</span>
         <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Scenario: ad in review and not yet booked, or waiting for email verification</span>
       </div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes</p>
         <ul class="list-disc pl-5 space-y-1">
           <li>The in-review draft card on the offers page gets the same <b>&ldquo;Muokkaa tietoja&rdquo;</b> <span class="text-slate-500">(Edit details)</span> button the open and rejected draft cards already have.</li>
-          <li>The car card on the waiting screen after submitting gets the same button, next to &ldquo;Avaa tiedot&rdquo;. The card already has room for a primary button; today only the secondary one is used.</li>
-          <li><b>An ad waiting for the seller to verify their email is editable too</b>, from the waiting screen. It is otherwise ready and will publish as soon as the email is verified.</li>
+          <li>The car card on the waiting screen (funnel success) after submitting gets the same button, next to &ldquo;Avaa tiedot&rdquo;. The card already has room for a primary button; today only the secondary one is used.</li>
+          <li><b>An ad waiting for the seller to verify their email is editable too</b>, from the waiting screen (funnel success). It is otherwise ready and will publish as soon as the email is verified.</li>
           <li>It opens the funnel at the equipment step, as the rejected-ad edit does, and the seller walks every step through to contact.</li>
           <li>The last step saves instead of submitting: the ad stays in review, in the same queue position, and nothing is published.</li>
-          <li>The seller returns to the page they started from, the offers page or the waiting screen, and sees production's success toast reading <b>&ldquo;Tarjouspyyntö päivitetty&rdquo;</b> <span class="text-slate-500">(Listing updated)</span>. No new screen.</li>
+          <li>The seller returns to the page they started from, the offers page or the waiting screen (funnel success), and sees production's success toast reading <b>&ldquo;Tarjouspyyntö päivitetty&rdquo;</b> <span class="text-slate-500">(Listing updated)</span>. No new screen.</li>
           <li><b>Once an advisor books the ad for its review call, the button is not shown.</b> The card looks exactly as it does today. The seller is not told that the review has started.</li>
         </ul>
         <p class="mt-3 mb-0 text-slate-600">One new string: &ldquo;Tarjouspyyntö päivitetty&rdquo;. The button label and the toast's design are production's.</p>
@@ -244,7 +244,7 @@
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>The button appears on an in-review ad only while no advisor has booked it, and disappears once one has.</li>
-          <li>The button appears on an ad waiting for email verification, on the waiting screen.</li>
+          <li>The button appears on an ad waiting for email verification, on the waiting screen (funnel success).</li>
           <li>Saving leaves the ad in the state it was in, in review with its queue position, or waiting for verification, and does not re-run the review decision. The price step keeps the question the seller was asked when submitting.</li>
           <li>The seller lands back where they pressed the button, with the save toast.</li>
           <li>The ad is never editable in the back office and in the funnel at the same time; see change 2.</li>
@@ -266,10 +266,10 @@
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Proposed rule</p>
         <ul class="list-disc pl-5 space-y-1">
           <li><b>No change in the back office.</b> The ad stays in the advisors' review list while the seller edits it, and an advisor can book it at any time, as today.</li>
-          <li><b>A booking ends the edit.</b> Once an advisor has booked the ad, the seller's next Jatka is refused. They land back on the view they started the edit from, the offers page or the waiting screen, with a toast: <b>&ldquo;Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!&rdquo;</b> <span class="text-slate-500">(Editing is no longer possible. We'll call you soon!)</span></li>
+          <li><b>A booking ends the edit.</b> Once an advisor has booked the ad, the seller's next Jatka is refused. They land back on the view they started the edit from, the offers page or the waiting screen (funnel success), with a toast: <b>&ldquo;Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!&rdquo;</b> <span class="text-slate-500">(Editing is no longer possible. We'll call you soon!)</span></li>
           <li><b>Steps saved before the booking stay saved.</b> The advisor sees them when they open the ad.</li>
           <li>From then on the edit button is not shown, as in change 1.</li>
-          <li><b>A page opened before the booking still shows the button.</b> A seller can be looking at the offers page or the waiting screen with &ldquo;Muokkaa tietoja&rdquo; on it when an advisor books the ad. Pressing it then shows the same toast in place, and the button goes away, instead of opening the funnel.</li>
+          <li><b>A page opened before the booking still shows the button.</b> A seller can be looking at the offers page or the waiting screen (funnel success) with &ldquo;Muokkaa tietoja&rdquo; on it when an advisor books the ad. Pressing it then shows the same toast in place, and the button goes away, instead of opening the funnel.</li>
         </ul>
         <p class="mt-3 mb-0 text-slate-600">The toast uses production's existing info-toast design. Its Finnish is a <b>draft</b>, pending approval.</p>
       </div>
@@ -319,7 +319,7 @@
           </ul>
         </li>
         <li><b>Should the registration number and mileage be editable?</b> The seller enters them on the front page before the funnel starts, and the equipment step shows them read-only, so an edit cannot change them. Mileage also decides whether a car is reviewed. Today a wrong mileage can only be corrected by the advisor.</li>
-        <li><b>What happens when contact details change during an edit?</b> The last step lets the seller change their phone number and, if they are not logged in, their email address. Advisors book by phone number: booking one ad books every in-review ad with the same number. A save that carries an email address stores it, counts it as an email change and sends a new verification email to it, and the waiting screen offers its own change-email action only up to a set number of changes. Walking the funnel again should not send a second verification email or use up the seller&rsquo;s changes.</li>
+        <li><b>What happens when contact details change during an edit?</b> The last step lets the seller change their phone number and, if they are not logged in, their email address. Advisors book by phone number: booking one ad books every in-review ad with the same number. A save that carries an email address stores it, counts it as an email change and sends a new verification email to it, and the waiting screen (funnel success) offers its own change-email action only up to a set number of changes. Walking the funnel again should not send a second verification email or use up the seller&rsquo;s changes.</li>
         <li><b>Should editing during the auction be removed?</b> Dealers bid on the car as described and are not told when it changes. Removing it would free the edit modal for editing before publish, which would also improve on the funnel in two ways:
           <ul class="list-[circle] pl-5 mt-1 space-y-1">
             <li>The edit is linear. The seller changes what they came to change on one screen, instead of walking every step to the end.</li>
@@ -337,7 +337,7 @@
           </ul>
         </li>
         <li><b>Can the seller change their own price estimate?</b> Yes, on the price step. An ad in review keeps the optional estimate, and an ad waiting for email verification keeps its required asking price, so an edit asks the same price question the ad was submitted with. No reason found to block it.</li>
-        <li><b>Should ads waiting for email verification appear on the offers page?</b> No, and no seller could see them there. The offers page needs a login, an ad is only waiting while its seller has not verified their email, and the verification link logs the seller in and publishes the ad in one step. So the first offers page that seller sees already shows the ad live, and production&rsquo;s draft list leaves these ads out anyway. The waiting screen is their only way to edit, which change 1 covers. The prototype works the same way.</li>
+        <li><b>Should ads waiting for email verification appear on the offers page?</b> No, and no seller could see them there. The offers page needs a login, an ad is only waiting while its seller has not verified their email, and the verification link logs the seller in and publishes the ad in one step. So the first offers page that seller sees already shows the ad live, and production&rsquo;s draft list leaves these ads out anyway. The waiting screen (funnel success) is their only way to edit, which change 1 covers. The prototype works the same way.</li>
       </ul>
       </div>
     </section>

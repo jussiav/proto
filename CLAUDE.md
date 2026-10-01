@@ -2456,7 +2456,7 @@ booked it**. The success page's car card gets it too (`renderVehicleCard`'s
 `primaryCta`, the slot prod's `CarCard` has and its funnel preview leaves
 empty), for an ad **in review or queued for email verification** — queued ads
 are editable by Jussi's call, but prod never lists them on the offers page, so
-the waiting screen is their only entry. An edit keeps the price question the ad
+the waiting screen (funnel success) is their only entry. An edit keeps the price question the ad
 was submitted with (`store.reviewable`), so a queued ad keeps its asking price. It links to `details.html?edit=review&return=<offers url>`;
 `funnel-guard.js` stores `store.reviewEdit`, which lets a submitted draft walk
 the funnel while the arm is `v1`. The walk is the **full funnel**; price keeps
@@ -2527,7 +2527,7 @@ review decision and GT-X estimate are not re-run though their inputs can change.
 in-review draft sharing a phone number, so a changed number changes which
 drafts get booked together. A draft save carrying an email sets it, increments
 `email_updates_count` and queues the verification mail to it
-(`UpdateDraft::handleEmail`), and the waiting screen's own change-email is
+(`UpdateDraft::handleEmail`), and the change-email action on the waiting screen (funnel success) is
 offered only while that count is under `EMAIL_UPDATE_THRESHOLD`
 (`can_update_email`). Walking the funnel again must not resend the mail or use
 up a change.
