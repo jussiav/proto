@@ -2500,6 +2500,13 @@ and `v1` simply drops the button. The reverse
 lock (no booking while the seller edits) is Filament-side and lives on the spec
 as an acceptance criterion only.
 
+**The stale button is spec-only, deliberately** (2026-10-01, Jussi). A seller
+can have offers or success open with "Muokkaa tietoja" showing when an advisor
+books; the spec and the team page say pressing it then shows the booked info
+toast in place and hides the button. The proto does NOT simulate it: the bar's
+booking reloads offers/success, so the button is simply gone, which reads
+better in a demo. Do not change the reload to demonstrate the case.
+
 ## Mock Funnel Data — `proto-mock.js`
 
 Seeds `localStorage` as if a seller had walked the funnel. Loaded in `<head>`

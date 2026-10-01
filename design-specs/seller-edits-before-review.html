@@ -269,6 +269,7 @@
           <li><b>The hold expires</b> after a period with no saves, and ends as soon as the seller finishes. An abandoned or forgotten edit releases the ad on its own.</li>
           <li><b>If an advisor books the ad anyway</b>, once the hold has expired, the seller's next Jatka is refused. They land back on the view they started the edit from, the offers page or the waiting screen, with a toast: <b>&ldquo;Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!&rdquo;</b> <span class="text-slate-500">(Editing is no longer possible. We'll call you soon!)</span></li>
           <li>From then on the edit button is not shown, as in change 1.</li>
+          <li><b>A page opened before the booking still shows the button.</b> A seller can be looking at the offers page or the waiting screen with &ldquo;Muokkaa tietoja&rdquo; on it when an advisor books the ad. Pressing it then shows the same toast in place, and the button goes away, instead of opening the funnel.</li>
         </ul>
         <p class="mt-3 mb-0 text-slate-600">The toast uses production's existing info-toast design. Its Finnish is a <b>draft</b>, pending approval.</p>
       </div>
@@ -280,6 +281,17 @@
           <li><b>Whether advisors see that a seller is editing</b>, or the ad simply does not appear in the list during the hold.</li>
           <li><b>What happens to the step being saved when the booking lands.</b> Production would refuse that save, so the seller loses what they typed on that step. The prototype keeps it.</li>
           <li><b>The toast's wording.</b></li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What the back office needs</p>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><b>The review list</b> leaves out ads with an active editing hold, or marks them, depending on the decision above, and updates when a hold starts or ends.</li>
+          <li><b>Booking</b> refuses, or warns about, an ad that is being edited. Booking takes all of one seller's in-review ads at once, so the check covers each of them.</li>
+          <li><b>The review screen</b> shows that the seller edited the ad after submitting it, and ideally what changed, so the advisor is not surprised on the call.</li>
+          <li><b>The hold's length</b> is a setting in the back office, beside the existing review settings, rather than a value in code.</li>
+          <li><b>A call logged without a decision</b> puts the ad back in the list today. Whether editing reopens then needs a rule.</li>
+          <li><b>Fewer ad-quality rejections</b> is the goal, so the reject-for-photos path may need a lighter alternative: asking the seller to add photos without rejecting the ad. Open.</li>
         </ul>
       </div>
       <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> An advisor and a seller saving the same ad at the same time overwrite each other without warning. Blocking the seller silently would read as a broken page; landing them back with a reason, and a call to expect, does not.</p>
