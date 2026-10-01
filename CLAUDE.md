@@ -656,7 +656,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
-| Seller edits before review | **Ideation** — change 1 in `v1` | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
+| Seller edits before review | **Ideation** — changes 1 and 2 (seller side) in `v1`; change 2 awaits a team decision | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 
 **Completed initiatives:**
 
@@ -2506,6 +2506,69 @@ books; the spec and the team page say pressing it then shows the booked info
 toast in place and hides the button. The proto does NOT simulate it: the bar's
 booking reloads offers/success, so the button is simply gone, which reads
 better in a demo. Do not change the reload to demonstrate the case.
+
+**Three open questions were settled on 2026-10-01** and moved to a
+**Settled** list under the spec's Open questions. What each rests on, from the
+09-30 dump:
+
+| Question | Answer | Rests on |
+|---|---|---|
+| Which details can be edited? | **Everything the funnel asks** — the edit IS the funnel | The equipment step's `EDIT_RETRIEVED_INFO` lets the seller correct make, model, year, spec, fuel, drive and transmission. Registration and mileage are shown read-only there and `UpdateDraft` drops them from the save, so they are **not** editable (now an open question: mileage is a review-segment input, only the advisor can fix it). Postal code IS saved (`handlePostalCode`); the team page once listed it as locked, which was wrong |
+| Can the seller change their price estimate? | **Yes**, on the price step | The edit asks the question the ad was submitted with: the optional estimate in review, the required asking price while queued |
+| Should queued ads appear on the offers page? | **No, and no seller could see them** | The offers page needs a login, an ad is only queued while its seller is unverified, and the verification link logs in AND publishes |
+
+Two rules follow from "everything": an edit's save has to pass the same checks
+as a publish (photo minimum, the asking price on an unreviewed ad), and the
+review decision and GT-X estimate are not re-run though their inputs can change.
+
+**New open question, contact details mid-edit.** `BookAction` books every
+in-review draft sharing a phone number, so a changed number changes which
+drafts get booked together. A draft save carrying an email sets it, increments
+`email_updates_count` and queues the verification mail to it
+(`UpdateDraft::handleEmail`), and the waiting screen's own change-email is
+offered only while that count is under `EMAIL_UPDATE_THRESHOLD`
+(`can_update_email`). Walking the funnel again must not resend the mail or use
+up a change.
+
+**The auction-time edit question gained two reasons** for freeing the edit
+modal: the edit becomes linear (one screen, one save, no walk to the end), and
+the modal can leave out fields that should not change after submit — the
+funnel offers all of them.
+
+**What edits do to the review algorithm's analytics** (2026-10-01, asked by
+Jussi). The algorithm is scored on the ad as submitted and its outcomes are
+measured on the ad as it went live:
+
+- **One observation per draft.** `review_engine_observations` is unique on
+  `draft_id` and `RecordEngineObservation` writes with `updateOrCreate`, so a
+  re-run would overwrite the decision that actually routed the ad.
+  `ResolveEngineObservationOutcomes` fills the outcomes later (offers,
+  distinct dealers, acceptance and price, the call tags).
+- **Almost any edit changes an input** — `QualificationPayloadBuilder` reads
+  nearly every funnel field, down to photo count and text lengths.
+- **A rejected ad's re-publish does not re-run it**: `RouteDraftOnPublish`
+  runs `DoNotReviewAdQualityRejections` and `ReviewRejections` before
+  `DecideViaQualificationEngine`.
+- **Who it reaches:** review-decided ads until booked (moderate — advisors
+  already change them on the call); auto-publish ads only while queued for
+  verification, the cleanest case since no advisor is in between; verified
+  auto-publish ads cannot be edited at all.
+- **The bias has a direction** — sellers fix weak photos, service history or
+  price, so ad-quality and price-realism scores look less predictive than they
+  are. The comparison with the legacy filters is less affected: both decide on
+  the same pre-edit data.
+- **Suggested MVP: flag, don't re-run** — record a seller save after
+  `evaluated_at`, ideally with the changed fields. Size is unknown until the
+  flag exists.
+
+**The spec carries this in product terms only** (no class or table names, per
+the spec-page rule); the team page (the org-only artifact) carries the class
+names, the three-case table and the observation fields. Neither the
+fair-offer ratio nor the endpoint security findings go on the public spec.
+
+**The missing-photos re-publish uses the advisor's asking price** — see the
+rejection table under *Funnel entry by draft status*; `funnel-guard.js` stands
+in `12000` because the proto has no advisor.
 
 ## Mock Funnel Data — `proto-mock.js`
 
