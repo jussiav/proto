@@ -177,7 +177,7 @@
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Proposed, for the team to decide</p>
           <p class="mb-2"><b>The ad is never editable in the back office and in the funnel at the same time.</b> See <a class="text-av-blue underline" href="#c2">change 2</a>.</p>
-          <p class="mb-0"><b>But abandoned edits must not leave ads stuck</b> out of the advisors' list. A seller who stops halfway, or forgets to finish, releases the ad after a while.</p>
+          <p class="mb-0"><b>Nothing changes in the back office.</b> Advisors keep booking any ad as they do today, including one a seller is editing; the seller's side gives way instead.</p>
         </div>
       </div>
       </div>
@@ -209,7 +209,7 @@
             <tr>
               <td class="px-4 py-3 font-bold">2</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">An advisor booking the ad ends the seller's edit</a></td>
-              <td class="px-4 py-3">Funnel &middot; back office review list</td>
+              <td class="px-4 py-3">Funnel &middot; saving the ad</td>
               <td class="px-4 py-3 text-slate-600">Advisor books the ad while the seller is editing it</td>
               <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Needs a decision</span></td>
             </tr>
@@ -258,16 +258,16 @@
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 - An advisor booking the ad ends the seller's edit</h2>
       <div class="flex flex-wrap gap-2 font-dm text-xs mb-4">
-        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: the funnel, and the back office review list</span>
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: the funnel, and saving the ad</span>
         <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Scenario: an advisor books the ad while the seller is editing it</span>
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5">Needs a decision</span>
       </div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Proposed rule</p>
         <ul class="list-disc pl-5 space-y-1">
-          <li><b>While the seller is editing, the ad is held out of the advisors' review list.</b> Each step the seller saves keeps the hold alive.</li>
-          <li><b>The hold expires</b> after a period with no saves, and ends as soon as the seller finishes. An abandoned or forgotten edit releases the ad on its own.</li>
-          <li><b>If an advisor books the ad anyway</b>, once the hold has expired, the seller's next Jatka is refused. They land back on the view they started the edit from, the offers page or the waiting screen, with a toast: <b>&ldquo;Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!&rdquo;</b> <span class="text-slate-500">(Editing is no longer possible. We'll call you soon!)</span></li>
+          <li><b>No change in the back office.</b> The ad stays in the advisors' review list while the seller edits it, and an advisor can book it at any time, as today.</li>
+          <li><b>A booking ends the edit.</b> Once an advisor has booked the ad, the seller's next Jatka is refused. They land back on the view they started the edit from, the offers page or the waiting screen, with a toast: <b>&ldquo;Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!&rdquo;</b> <span class="text-slate-500">(Editing is no longer possible. We'll call you soon!)</span></li>
+          <li><b>Steps saved before the booking stay saved.</b> The advisor sees them when they open the ad.</li>
           <li>From then on the edit button is not shown, as in change 1.</li>
           <li><b>A page opened before the booking still shows the button.</b> A seller can be looking at the offers page or the waiting screen with &ldquo;Muokkaa tietoja&rdquo; on it when an advisor books the ad. Pressing it then shows the same toast in place, and the button goes away, instead of opening the funnel.</li>
         </ul>
@@ -277,24 +277,21 @@
       <div class="bg-warning-50 border border-warning-200 rounded-lg p-5 mt-5 max-w-3xl">
         <p class="font-dm text-sm font-bold text-slate-900 mb-2">For the team to decide</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>How long the hold lasts</b> without a save before the ad returns to the list.</li>
-          <li><b>Whether advisors see that a seller is editing</b>, or the ad simply does not appear in the list during the hold.</li>
+          <li><b>Whether the advisor sees that the seller edited the ad</b> after submitting it, and ideally what changed. That would be the one change in the back office, and it is optional.</li>
           <li><b>What happens to the step being saved when the booking lands.</b> Production would refuse that save, so the seller loses what they typed on that step. The prototype keeps it.</li>
           <li><b>The toast's wording.</b></li>
         </ul>
       </div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What the back office needs</p>
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What has to change behind the scenes</p>
         <ul class="list-disc pl-5 space-y-2">
-          <li><b>The review list</b> leaves out ads with an active editing hold, or marks them, depending on the decision above, and updates when a hold starts or ends.</li>
-          <li><b>Booking</b> refuses, or warns about, an ad that is being edited. Booking takes all of one seller's in-review ads at once, so the check covers each of them.</li>
-          <li><b>The review screen</b> shows that the seller edited the ad after submitting it, and ideally what changed, so the advisor is not surprised on the call.</li>
-          <li><b>The hold's length</b> is a setting in the back office, beside the existing review settings, rather than a value in code.</li>
+          <li><b>Saving the ad</b> refuses a seller's save once the ad is booked, and returns a reason the funnel can turn into the toast. This is the only required change, and it is not in the back office.</li>
+          <li><b>Booking itself does not change.</b> It takes all of one seller's in-review ads at once, so a booking can end an edit on a different ad from the one the advisor picked; the same refusal covers it.</li>
           <li><b>A call logged without a decision</b> puts the ad back in the list today. Whether editing reopens then needs a rule.</li>
           <li><b>Fewer ad-quality rejections</b> is the goal, so the reject-for-photos path may need a lighter alternative: asking the seller to add photos without rejecting the ad. Open.</li>
         </ul>
       </div>
-      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> An advisor and a seller saving the same ad at the same time overwrite each other without warning. Blocking the seller silently would read as a broken page; landing them back with a reason, and a call to expect, does not.</p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> An advisor and a seller saving the same ad at the same time overwrite each other without warning. Letting the booking win keeps the advisors' work exactly as it is. Blocking the seller silently would read as a broken page; landing them back with a reason, and a call to expect, does not.</p>
       </div>
     </section>
 

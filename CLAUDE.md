@@ -2469,19 +2469,22 @@ On success.html it
 can sit beside the proto-only email toast; accepted, it is proto chrome. **No new screen; one new string, the toast wording.**
 
 **Change 2, the booking during an edit (team decision pending):** the ad is
-never editable in Filament and the funnel at once. The proposed rule is a
-seller-editing hold that keeps the ad out of the review list and expires after a
-period without saves; if an advisor books anyway, the seller's next Jatka is
-refused and they land back where they started with prod's **info** toast (blue,
-`toastr.js`) "Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!" (draft
-copy). The proto shows the seller side only: a built-in prototype-bar control,
-**Advisor booking** (`proto-bar.js`), on all five funnel steps and success.html
-while `v1` is on. It books or clears `store.reviewBooked` and shows the state
-on its button; `funnel-guard.js` ends an edit in progress on the next page
-load. It was first a per-page action and missed photos (its own tools panel)
-and the success page, which left no way to clear a booking.
-Prod would lose the refused step's input; the proto has already stored it. The
-hold itself is Filament-side and lives on the spec only.
+never edited in Filament and the funnel at once, and **nothing changes in
+Filament or in how advisors pick an ad to book** (revised 2026-10-01, Jussi;
+an expiring seller-editing hold that kept the ad out of the review list was
+the earlier direction and is dropped). The booking wins: once an advisor has
+booked the ad, the seller's next Jatka is refused and they land back where
+they started with prod's **info** toast (blue, `toastr.js`) "Muokkaus ei ole
+enää mahdollista. Soitamme sinulle pian!" (draft copy). Steps saved before the
+booking stay saved. The only required change is the draft save refusing a
+seller save while a booking is active; showing advisors that a seller edited is
+optional. The proto shows the seller side only: a built-in prototype-bar
+control, **Advisor booking** (`proto-bar.js`), on all five funnel steps and
+success.html while `v1` is on. It books or clears `store.reviewBooked` and
+shows the state on its button; `funnel-guard.js` ends an edit in progress on
+the next page load. It was first a per-page action and missed photos (its own
+tools panel) and the success page, which left no way to clear a booking.
+Prod would lose the refused step's input; the proto has already stored it.
 
 **Booked is world state, not a variant, and it has ONE source:**
 `store.reviewBooked`, set from the bar's Advisor booking control, which is on
@@ -2496,9 +2499,8 @@ steps), and an edit refused by a booking rewrites a `booked=0` in its return
 URL. For a link to a teammate, include the arm too:
 `offers.html?scenario=draft-in-review&seller-edits-before-review=v1&booked=1`. Prod shows nothing different
 to the seller when an advisor books, so control renders identically either way
-and `v1` simply drops the button. The reverse
-lock (no booking while the seller edits) is Filament-side and lives on the spec
-as an acceptance criterion only.
+and `v1` simply drops the button. Booking is never blocked while the seller
+edits; that reverse lock went with the hold.
 
 **The stale button is spec-only, deliberately** (2026-10-01, Jussi). A seller
 can have offers or success open with "Muokkaa tietoja" showing when an advisor
