@@ -19,7 +19,9 @@
  *                                        photos step, and Jatka there skips
  *                                        price and contact. Re-submitting
  *                                        publishes without review
- *                                        (DoNotReviewAdQualityRejections).
+ *                                        (DoNotReviewAdQualityRejections),
+ *                                        using the asking price the advisor
+ *                                        set in the call.
  *
  * `store.rejection` is the draft's status while it is rejected, not a UI flag:
  * it is cleared by whichever step re-submits the draft.
@@ -43,6 +45,7 @@
  */
 (function () {
   var KEY = 'autovex_funnel';
+  var ADVISOR_ASKING_PRICE = '12000';
 
   function getStore() {
     try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
@@ -137,6 +140,16 @@
     params.delete('return');
     var qs = params.toString();
     history.replaceState(null, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+  }
+
+  /* An ad-quality rejection makes the draft unreviewable, so publishing it
+     requires an asking price. Prod's review screen will not accept or reject a
+     consumer ad until the pricing tool saves, and that tool's asking price is
+     required, so a draft rejected in a call always has one. The proto has no
+     advisor, so it stands in for that value however the rejection was set. */
+  if (store.rejection === 'missing-images' && !store.askingPrice) {
+    store.askingPrice = ADVISOR_ASKING_PRICE;
+    setStore(store);
   }
 
   /* A booking that lands mid-edit is noticed on the seller's next Jatka: the

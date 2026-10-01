@@ -621,11 +621,12 @@
     /* A draft rejected for its photos skips price and contact: prod's
        hasMissingImages guard sends providingImages straight to publishingDraft,
        whether the seller pressed Jatka or skipped. That rejection also made the
-       draft unreviewable, so publishing requires an asking price. The publish
-       endpoint validates every field at once, and the funnel routes an
-       asking_price error to the price step before anything else
-       (publishFailedOnAskingPrice); too few photos lands on the publish step's
-       refusal instead, with the draft still rejected. */
+       draft unreviewable, so publishing requires an asking price; the advisor
+       set one in the call (funnel-guard.js), so this normally publishes. A
+       draft without one is prod's fallback: the funnel routes an asking_price
+       error to the price step (publishFailedOnAskingPrice). Too few photos
+       lands on the publish step's refusal instead, with the draft still
+       rejected. */
     function submitMissingImages() {
       const s = getStore();
       s.reviewable = false;

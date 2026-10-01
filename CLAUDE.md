@@ -2377,7 +2377,7 @@ seller-edits-before-review assessment):
   | `rejection` | Door | Enters at | Jatka / re-submit | Outcome |
   |---|---|---|---|---|
   | `other` | "Päivitä tarjouspyyntöä" (`details.html?edit=rejected`, proto-only param for prod's in-page EDIT_DRAFT) | details (equipment); reg + mileage skipped | full funnel; price shows the optional estimate whatever the segment | **always back to review** (`ReviewRejections`) |
-  | `missing-images` | prod's own `photos.html?step=add-images` | photos; back reaches services and details | photos Jatka skips price + contact | **no review** (`DoNotReviewAdQualityRejections`): published if logged in, queued if not. No asking price → price step with the field empty and the required error shown (`publishFailedOnAskingPrice`), then contact |
+  | `missing-images` | prod's own `photos.html?step=add-images` | photos; back reaches services and details | photos Jatka skips price + contact | **no review** (`DoNotReviewAdQualityRejections`): published if logged in, queued if not, with the asking price the advisor set in the call. Prod's review screen will not accept or reject a consumer ad until the pricing tool saves, and its asking price is required, so this draft always has one; `funnel-guard.js` stands in `12000` when the store has none. Only a draft with no asking price falls back to the price step with the required error shown (`publishFailedOnAskingPrice`), then contact |
 
   `store.rejection` IS the draft status while rejected: success.html renders
   the rejected screen organically from it, ahead of the photos check, and the
@@ -2396,9 +2396,9 @@ seller-edits-before-review assessment):
 - **A refused re-publish shows the publish step's refusal.** The photos step
   offers skip and "not enough photos → continue" in every flow, and in the
   missing-photos flow both go straight to publishing. The endpoint validates
-  every field at once; the funnel sends an `asking_price` error to the price
-  step first, and too few photos lands on "Lisää vielä kuvat autostasi" with
-  the draft still rejected. `FunnelGuard.recordPublishAttempt` either clears
+  every field at once; a missing asking price (only possible without the
+  advisor's) goes to the price step first, and too few photos lands on
+  "Lisää vielä kuvat autostasi" with the draft still rejected. `FunnelGuard.recordPublishAttempt` either clears
   the rejection or sets `store.publishRefused`, which makes success.html render
   that screen instead of the rejected one — prod persists it with the form
   state, so a reload keeps it. Entering through either door clears the marker.
