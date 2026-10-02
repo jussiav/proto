@@ -657,7 +657,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Ideation** — changes 1 and 2 (seller side) in `v1`; change 2 awaits a team decision | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
-| Huutokaupat routing | **Built in proto, 2026-10-02** — spec page not written yet | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` *(to be created)* |
+| Huutokaupat routing | Live — 2 changes in `v1`, copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 
 **Completed initiatives:**
 
@@ -2055,6 +2055,11 @@ The business case is in private notes, not in this public repo.
   the title.
 - **Copy** (`huutokaupat.*`): body, CTA and disclaimer are Jussi's wording
   (2026-10-02); the title and the English are draft.
+- **The spec page flags prod's 280 000 inconsistency**: the front page form and
+  the funnel's first step reject exactly 280 000, the server (`between:0,max`)
+  and `/hinta-arvio` (`> max`) accept it. `v1` follows the front page. The
+  funnel's first step and `/hinta-arvio` show the same error and are out of
+  scope, listed as an open question.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

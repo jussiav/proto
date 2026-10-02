@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Huutokaupat routing · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ── AutoVex design-spec page template ─────────────────────────────────────
+       Reusable shell for future spec pages. Hero and band gradients are taken
+       verbatim from the prototype front page (index.html): hero
+       #0B6DFF → #0050C8, content bands #fdfdfd → #f5f5f5.
+       Hero text stays solid white — on av-blue nothing lighter reaches WCAG AA
+       4.5:1, so brand teal is used for decoration only, never for text.
+       ───────────────────────────────────────────────────────────────────────── */
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    /* Arc / wave edge, same path as the front page hero (index.html). The fill matches the
+       neighbouring band so the blue reads as curving away; the drop shadow keeps the depth
+       the flat box-shadow used to give. */
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }  /* hero → content */
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }   /* content → footer */
+    .av-arc-flip { transform: rotate(180deg); }
+    /* Shared content column — same as the front page (index.html): max-w-[1366px] with
+       px-10 / px-5. Used by the hero, every band and the footer so all edges line up. */
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); } /* every content band */
+    .av-band-white { background: #ffffff; }                                          /* available, unused here */
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    .av-rule { width: 56px; height: 4px; border-radius: 999px; background: #00F0DC; }
+    /* Long unbroken identifiers have no break opportunity and pushed the page
+       20px wide at 375px. */
+    code { overflow-wrap: anywhere; }
+    .av-error-msg   { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    /* Copy diffs: colour is never the only signal - a deletion is struck
+       through and an insertion is bold. Values are tokens.css error-700 and
+       success-800/100. */
+    .av-del { color: #B91C1B; text-decoration: line-through; text-decoration-thickness: 1px; }
+    .av-ins { color: #3F6212; background: #ECFCCB; font-weight: 700; border-radius: 2px; padding: 0 2px; }
+    /* A quoted string: the Finnish is the copy itself, the grey line under it
+       is an English gloss for reading only. */
+    .av-copy  { font-family: "DM Sans", sans-serif; font-size: 0.9375rem; line-height: 1.65; color: #1e293b; margin: 0; }
+    .av-gloss { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.6; color: #64748B; margin: 0.25rem 0 0; }
+    .av-copy-label { font-family: "DM Sans", sans-serif; font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: #64748B; margin: 0 0 0.375rem; }
+    .av-copy-block + .av-copy-block { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #F1F5F9; }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <!-- Hero -->
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; front page</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Huutokaupat routing</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller whose car has been driven 280 000 km or more is stopped by an error on the front page form today, with nowhere to go. This initiative removes that error and sends them to Huutokaupat.com, a separate service that can sell their car.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: in the prototype &middot; copy pending approval
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Two changes, both on the front page form. Change 1 takes away the mileage error; change 2 is the screen the seller lands on instead.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">In the prototype both live behind a variant: <i>Huutokaupat routing &rarr; Variant 1</i> on the prototype bar. With no variant selected the front page behaves as production does today. Finnish copy carries a grey English gloss for reading only; the gloss is not copy.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="goal">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What we are solving</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>A dead end on the first screen.</b> A high-mileage seller types their mileage, sees a red &ldquo;we can't sell this&rdquo; line under the field and has nothing to press. The error tells them no, but not what to do instead.</li>
+        <li><b>Give them a real next step.</b> Huutokaupat.com runs auctions for private sellers and takes high-mileage cars. Pointing the seller there turns a rejection into a recommendation.</li>
+        <li><b>Be clear that it is someone else.</b> Huutokaupat.com is a separate company. The screen says so, so the seller does not expect AutoVex to handle the sale from there.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="changes">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Each row links to its own section below.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">Change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Scenario</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-bold">1</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">High mileage is no longer a form error</a></td>
+              <td class="px-4 py-3">Front page form &middot; mileage field</td>
+              <td class="px-4 py-3 text-slate-600">Mileage 280 000 km or more</td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ready to build</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">2</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">Huutokaupat.com screen with automatic redirect</a></td>
+              <td class="px-4 py-3">Front page, after the form is submitted</td>
+              <td class="px-4 py-3 text-slate-600">Valid registration number and mileage 280 000 km or more</td>
+              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Copy pending approval</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c1">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 - High mileage is no longer a form error</h2>
+      <div class="flex flex-wrap gap-2 font-dm text-xs mb-4">
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: front page form &middot; mileage field</span>
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Scenario: mileage 280 000 km or more</span>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>The mileage field accepts any number. No error appears while typing, however high the value.</li>
+          <li>The form submits. Where it goes depends on the mileage: 280 000 km or more opens the screen in <a class="text-av-blue underline" href="#c2">change 2</a>; anything lower continues to the funnel exactly as today.</li>
+          <li>Everything else on the form stays: the registration number is still checked first, and an empty mileage still shows its own error.</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
+        <div class="av-copy-block">
+          <p class="av-copy-label">Today &middot; under the mileage field, shown while typing</p>
+          <p class="av-copy"><span class="av-del">Valitettavasti kauttamme voi myydä vain alle 280 000 km ajettuja autoja</span></p>
+          <p class="av-gloss"><span class="av-del">Unfortunately only cars driven under 280 000 km can be sold through our service</span></p>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">After</p>
+          <p class="av-copy text-slate-500">No message. The line is removed from this form.</p>
+        </div>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../index.html?huutokaupat-routing=v1" target="_blank" rel="noopener">Try it in the prototype</a> <span class="text-slate-500">- enter any valid registration number (e.g. ABC-123) and a mileage of 280 000 or more.</span></p>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>Typing 280 000 or more into the mileage field shows no error and no red outline.</li>
+          <li>With a valid registration number, submitting at 280 000 km or more opens the change 2 screen; below 280 000 km the seller continues to the funnel as today.</li>
+          <li>An invalid registration number and an empty mileage show their errors as today, and the form does not submit.</li>
+          <li>The limit stays the country setting it is today (280 000 km in Finland), not a number written into the form.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> An error is the right tool for a typo, not for a car that is simply outside what we sell. Blocking the form leaves the seller with nothing to do.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 - Huutokaupat.com screen with automatic redirect</h2>
+      <div class="flex flex-wrap gap-2 font-dm text-xs mb-4">
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: front page, after the form is submitted</span>
+        <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Scenario: valid registration number, mileage 280 000 km or more</span>
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5">Copy pending approval</span>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>A full-screen white view replaces the page, built like production's &ldquo;Haetaan autosi perustiedot&rdquo; <span class="text-slate-500">(Fetching your car's basic details)</span> loading screen: AutoVex logo at the top, everything else centred horizontally and vertically. No animation.</li>
+          <li>Below the title and one sentence of text, a large primary button goes to Huutokaupat.com. The button counts down from <b>20 seconds</b> in its own label; at zero the seller is taken there automatically, in the same tab.</li>
+          <li>Directly under it, a text button <b>&ldquo;Takaisin etusivulle&rdquo;</b> <span class="text-slate-500">(Back to the front page)</span> cancels the countdown and returns to the front page. The logo does the same.</li>
+          <li>A small disclaimer at the bottom says the two services are separate.</li>
+          <li>Nothing is saved: no listing is started, and the registration number and mileage are not passed on.</li>
+        </ul>
+      </div>
+
+      <!-- Replica of the prototype screen, same classes. Static: the count is fixed at 20. -->
+      <div class="mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">The screen</p>
+        <div class="relative bg-white rounded-lg border border-slate-200 h-[460px] flex flex-col items-center overflow-hidden">
+          <div class="absolute top-0 inset-x-0 flex justify-center p-4">
+            <img src="../assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+          </div>
+          <div class="flex-1 flex items-center justify-center w-full px-5 py-16">
+            <div class="flex flex-col items-center gap-y-4 max-w-md text-center">
+              <div role="heading" aria-level="3" class="font-dm text-lg md:text-xl font-medium text-center text-slate-900">Suosittelemme autollesi Huutokaupat.comia</div>
+              <p class="m-0 font-dm text-base md:text-lg text-slate-500 text-center">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
+              <span class="mt-4 inline-flex justify-center items-center text-base leading-tight rounded-lg px-8 h-14 bg-blue-600 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] font-dm">Siirrytään Huutokaupat.comiin (20 s)</span>
+              <span class="text-sm leading-tight text-blue-600 font-dm">Takaisin etusivulle</span>
+              <p class="m-0 font-dm text-xs text-slate-500 text-center">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../index.html?huutokaupat-routing=v1#huutokaupat" target="_blank" rel="noopener">Open the screen in the prototype</a> <span class="text-slate-500">- it opens straight away and redirects after 20 seconds; or <a class="text-av-blue underline" href="../index.html?huutokaupat-routing=v1" target="_blank" rel="noopener">walk it from the form</a>.</span></p>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy, top to bottom</p>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Title &middot; draft</p>
+          <p class="av-copy">Suosittelemme autollesi Huutokaupat.comia</p>
+          <p class="av-gloss">We recommend Huutokaupat.com for your car</p>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Text</p>
+          <p class="av-copy">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
+          <p class="av-gloss">Only cars driven under 280 000 km can be sold on AutoVex.</p>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Primary button &middot; [n] counts down from 20</p>
+          <p class="av-copy">Siirrytään Huutokaupat.comiin ([n] s)</p>
+          <p class="av-gloss">Taking you to Huutokaupat.com ([n] s)</p>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Text button</p>
+          <p class="av-copy">Takaisin etusivulle</p>
+          <p class="av-gloss">Back to the front page</p>
+        </div>
+        <div class="av-copy-block">
+          <p class="av-copy-label">Disclaimer</p>
+          <p class="av-copy">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
+          <p class="av-gloss">AutoVex works together with Huutokaupat.com as separate services.</p>
+        </div>
+        <p class="font-dm text-xs leading-5 text-slate-500 mt-4 mb-0">All five strings are new and none is approved yet. The title is a draft; the rest is the wording agreed in the design. The English is a reading aid, not copy.</p>
+      </div>
+
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+          <li>The screen covers the whole viewport on a white background, with the logo at the top and the content centred both ways, at every width from 360px up.</li>
+          <li>The button label shows the seconds left, starting at 20 and updating every second. At zero the same tab opens <code>https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa</code>.</li>
+          <li>Pressing the button opens the same page at once, in the same tab.</li>
+          <li>&ldquo;Takaisin etusivulle&rdquo; and the logo stop the countdown, close the screen and leave the seller on the front page with the form as they filled it, focus in the mileage field.</li>
+          <li>Coming back from Huutokaupat.com with the browser's back button shows the front page, not this screen stuck at zero.</li>
+          <li>Screen readers meet it as a dialog with the title focused when it opens; the countdown stays visible in the button the whole time.</li>
+          <li>No listing is created and nothing about the car is stored or sent.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The screen follows the loading screen's layout so it reads as AutoVex's own next step rather than an ad. The countdown in the button means the redirect is never a surprise, and the back button is right under it so it is easy to say no.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="unchanged">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What stays the same</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Below 280 000 km nothing changes.</b> The seller sees production's &ldquo;Haetaan autosi perustiedot&rdquo; <span class="text-slate-500">(Fetching your car's basic details)</span> screen while the car's details load, then the equipment step. The prototype now shows that screen too, for a fixed 5 seconds; production keeps it up until the car lookup returns, which can take up to around 25 seconds and is near-instant when the car's details are already known.</li>
+        <li><b>The registration number is checked before the mileage</b>, as today.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="notes">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Notes for whoever builds this</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Production disagrees with itself about exactly 280 000 km.</b> The front page form and the funnel's own first step reject 280 000, while the server and the price estimate page accept it. This change follows the front page: 280 000 and above go to Huutokaupat.com. If the limit is meant to include 280 000, the copy's &ldquo;alle 280 000 km&rdquo; <span class="text-slate-500">(under 280 000 km)</span> needs to change with it.</li>
+        <li><b>Only the front page form is in scope.</b> The same limit and the same error also appear on the funnel's first step (reached when the funnel opens without a registration number and mileage) and on the price estimate page. See the open questions.</li>
+        <li><b>The server check stays.</b> A listing over the limit must still be refused when saved; this change only decides what the seller sees before that.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="open">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>How does Huutokaupat.com know the visit came from us?</b> The link has no tracking parameter yet. Whatever they need, a campaign parameter or a referral code, has to be agreed and added to the link.</li>
+        <li><b>Do we measure it ourselves?</b> An analytics event when the screen opens, when the seller presses the button, when the countdown sends them, and when they go back, would show how many leave and how many return.</li>
+        <li><b>Should the registration number and mileage go with the seller?</b> It would save them typing it again. It also means sharing data with another company, so it needs a privacy decision first.</li>
+        <li><b>Should the funnel's first step and the price estimate page route the same way?</b> Both stop high mileage with the same error today.</li>
+        <li><b>Naming another company in the product</b> needs legal and brand sign-off before production.</li>
+      </ul>
+      </div>
+    </section>
+  </main>
+  <!-- Footer — same structure as the prototype's site footer (layout.js). -->
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Huutokaupat routing</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>
