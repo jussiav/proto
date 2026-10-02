@@ -1064,7 +1064,9 @@
   <div id="huutokaupat-screen" class="hidden fixed inset-0 z-50 bg-white flex-col items-center overflow-y-auto"
        role="dialog" aria-modal="true" aria-labelledby="huutokaupat-title">
     <div class="absolute top-0 inset-x-0 flex justify-center p-4">
-      <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+      <a id="huutokaupat-logo" href="index.html" aria-label="Takaisin etusivulle" class="block">
+        <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+      </a>
     </div>
     <div class="flex-1 flex items-center justify-center w-full px-5 py-16">
       <div class="flex flex-col items-center gap-y-4 max-w-md text-center">
@@ -1216,7 +1218,7 @@
       }
 
       const HK_URL = 'https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa';
-      const HK_SECONDS = 30;
+      const HK_SECONDS = 20;
       const hkScreen = document.getElementById('huutokaupat-screen');
       let hkTimer = null;
 
@@ -1259,6 +1261,10 @@
       }
 
       document.getElementById('huutokaupat-back').addEventListener('click', closeHuutokaupat);
+      document.getElementById('huutokaupat-logo').addEventListener('click', function (e) {
+        e.preventDefault();
+        closeHuutokaupat();
+      });
       document.getElementById('huutokaupat-cta').addEventListener('click', hkStop);
       /* Coming back from Huutokaupat.com restores this page from bfcache with
          the sheet still up and its timer spent, so it would sit at 0 forever. */

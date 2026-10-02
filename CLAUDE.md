@@ -2038,10 +2038,11 @@ The business case is in private notes, not in this public repo.
   in the space under the logo.
 - CTA is `AButton` primary `lg` as a plain link; "Takaisin etusivulle" is
   `AButton` link at `text-sm`. Both are transcriptions, no new component.
-  The logo is prod's `logo-fi.svg` at 108×22, the same as the loading screen.
-- **Auto-redirect after 30 s — TEMPORARY, for ideation; set `HK_SECONDS` to
-  20 when Jussi says the page is done** (was 10). Same tab. The countdown is
-  in the CTA label, `Siirrytään Huutokaupat.comiin (30 s)`, prod's
+  The logo is prod's `logo-fi.svg` at 108×22, the same as the loading screen,
+  and like there it links to the front page; on this sheet that means closing
+  it exactly as "Takaisin etusivulle" does.
+- **Auto-redirect after 20 s**, same tab. The countdown is
+  in the CTA label, `Siirrytään Huutokaupat.comiin (20 s)`, prod's
   count-in-the-label pattern (`reply_to_negotiation`); a visible count is what
   WCAG 2.2.1 needs. The CTA click and the back button stop the timer;
   back closes the sheet and returns focus to the mileage field. Nothing is
