@@ -156,6 +156,12 @@
       name: 'Seller edits before review',
       spec: 'design-specs/seller-edits-before-review.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'huutokaupat-routing',
+      name: 'Huutokaupat routing',
+      spec: 'design-specs/huutokaupat-routing.html',
+      prodArm: 'control'
     }
   ];
 

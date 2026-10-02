@@ -55,6 +55,23 @@ window.TRANSLATIONS = {
       dealCompleted:   'Kaupankäynti on päättynyt',
     },
 
+    /* Prod's tenderform.loading_screen.*, verbatim. Prod has no English for
+       it, so the EN page falls back to these. */
+    loadingScreen: {
+      title:       'Haetaan autosi perustiedot',
+      description: 'Muutama sekunti jäljellä',
+    },
+
+    /* Huutokaupat routing, v1 only. Not approved: `body`, `cta` and
+       `disclaimer` are Jussi's wording, the rest is draft. */
+    huutokaupat: {
+      title:      'Suosittelemme autollesi Huutokaupat.comia',
+      body:       'AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.',
+      disclaimer: 'AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.',
+      cta:        'Siirrytään Huutokaupat.comiin',
+      back:       'Takaisin etusivulle',
+    },
+
     howItWorks: {
       title:      'Näin löydämme autollesi ostajan',
       subtitle:   'Fiksuin tapa myydä auto on antaa AutoVexin kilpailuttaa autoliikkeet puolestasi.',
@@ -682,6 +699,14 @@ window.TRANSLATIONS = {
       auctionOngoing:  'Auction is live',
       auctionEnded:    'Auction has ended',
       dealCompleted:   'Transaction complete',
+    },
+
+    huutokaupat: {
+      title:      'We recommend Huutokaupat.com for your car',
+      body:       'Only cars driven under 280 000 km can be sold on AutoVex.',
+      disclaimer: 'AutoVex works together with Huutokaupat.com as separate services.',
+      cta:        'Taking you to Huutokaupat.com',
+      back:       'Back to front page',
     },
 
     faq: {

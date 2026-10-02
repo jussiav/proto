@@ -144,7 +144,17 @@
       }),
       /* No ?scenario= param needed: report what the store actually holds, so the
          menu stays in step with Seed car / Reset data. */
-      scenarioCurrent: window.PROTO_MOCK.detect
+      scenarioCurrent: window.PROTO_MOCK.detect,
+      initiatives: [
+        {
+          slug:    'huutokaupat-routing',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — 280 000 km error on the form' },
+            { id: 'v1',      label: 'Variant 1 — route to Huutokaupat.com (draft copy)' }
+          ]
+        }
+      ]
     };
   </script>
 
@@ -1047,6 +1057,32 @@
 
   <div id="site-footer"></div>
 
+  <!-- Huutokaupat routing, v1: prod's OFullscreenLoading shell (fixed white
+       sheet, logo on top) with a decision in place of the loading animation.
+       The logo is taken out of flow so the message centres on the viewport
+       itself rather than on the space below the logo. -->
+  <div id="huutokaupat-screen" class="hidden fixed inset-0 z-50 bg-white flex-col items-center overflow-y-auto"
+       role="dialog" aria-modal="true" aria-labelledby="huutokaupat-title">
+    <div class="absolute top-0 inset-x-0 flex justify-center p-4">
+      <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+    </div>
+    <div class="flex-1 flex items-center justify-center w-full px-5 py-16">
+      <div class="flex flex-col items-center gap-y-4 max-w-md text-center">
+        <div id="huutokaupat-title" role="heading" aria-level="2" tabindex="-1"
+             class="font-dm text-lg md:text-xl font-medium text-center outline-none"
+             data-i18n="huutokaupat.title">Suosittelemme autollesi Huutokaupat.comia</div>
+        <p class="m-0 font-dm text-base md:text-lg text-slate-500 text-center" data-i18n="huutokaupat.body">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
+        <a id="huutokaupat-cta" href="https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa"
+           class="mt-4 inline-flex justify-center items-center transition cursor-pointer outline-offset-2 text-base leading-tight rounded-lg relative px-8 h-14 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white active:text-blue-100 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] font-dm"
+           ><span data-i18n="huutokaupat.cta">Siirrytään Huutokaupat.comiin</span><span id="huutokaupat-countdown" class="whitespace-pre tabular-nums"></span></a>
+        <button id="huutokaupat-back" type="button"
+                class="inline-flex justify-center items-center transition cursor-pointer outline-offset-2 text-sm leading-tight bg-transparent border-none p-0 h-auto rounded-none shadow-none hover:underline text-blue-600 font-dm"
+                data-i18n="huutokaupat.back">Takaisin etusivulle</button>
+        <p class="m-0 font-dm text-xs text-slate-500 text-center" data-i18n="huutokaupat.disclaimer">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
+      </div>
+    </div>
+  </div>
+
   <script src="layout.js"></script>
   <script src="vehicle-card.js"></script>
   <script>
@@ -1166,11 +1202,70 @@
          value stops being `< maxMileage`, so the notice appears while typing,
          not on submit — and 280 000 itself is already too high. */
       const MAX_MILEAGE = 280000;
+      /* In v1 the cap stops being a form error and becomes a route instead,
+         so the field accepts any number and only the submit looks at it. */
+      const HK_V1 = window.protoVariant('huutokaupat-routing', 'control') === 'v1';
 
-      function mileageTooHigh() {
+      function mileageOverMax() {
         const digits = document.getElementById('mileage').value.replace(/\D/g, '');
         return digits.length > 0 && Number(digits) >= MAX_MILEAGE;
       }
+
+      function mileageTooHigh() {
+        return !HK_V1 && mileageOverMax();
+      }
+
+      const HK_URL = 'https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa';
+      const HK_SECONDS = 30;
+      const hkScreen = document.getElementById('huutokaupat-screen');
+      let hkTimer = null;
+
+      function hkRenderCountdown(n) {
+        document.getElementById('huutokaupat-countdown').textContent = ' (' + n + ' s)';
+      }
+
+      function hkStop() {
+        if (hkTimer) clearInterval(hkTimer);
+        hkTimer = null;
+      }
+
+      function openHuutokaupat() {
+        let left = HK_SECONDS;
+        hkScreen.classList.remove('hidden');
+        hkScreen.classList.add('flex');
+        document.documentElement.style.overflow = 'hidden';
+        hkRenderCountdown(left);
+        document.getElementById('huutokaupat-title').focus();
+        hkStop();
+        hkTimer = setInterval(function () {
+          left -= 1;
+          if (left <= 0) {
+            hkStop();
+            window.location.assign(HK_URL);
+            return;
+          }
+          hkRenderCountdown(left);
+        }, 1000);
+      }
+
+      function closeHuutokaupat() {
+        hkStop();
+        hkScreen.classList.add('hidden');
+        hkScreen.classList.remove('flex');
+        document.documentElement.style.overflow = '';
+        if (location.hash === '#huutokaupat') history.replaceState(null, '', location.pathname + location.search);
+        window.scrollTo(0, 0);
+        document.getElementById('mileage').focus({ preventScroll: true });
+      }
+
+      document.getElementById('huutokaupat-back').addEventListener('click', closeHuutokaupat);
+      document.getElementById('huutokaupat-cta').addEventListener('click', hkStop);
+      /* Coming back from Huutokaupat.com restores this page from bfcache with
+         the sheet still up and its timer spent, so it would sit at 0 forever. */
+      window.addEventListener('pageshow', function (e) {
+        if (e.persisted && !hkScreen.classList.contains('hidden')) closeHuutokaupat();
+      });
+      if (HK_V1 && location.hash === '#huutokaupat') openHuutokaupat();
 
       function syncMileageMaxError() {
         const wrapper = document.getElementById('mileage-wrapper');
@@ -1287,6 +1382,10 @@
 
         if (!plateValid) {
           heroFieldError('plate-field', 'plate-wrapper', 'plate', true);
+          return;
+        }
+        if (HK_V1 && mileageOverMax()) {
+          openHuutokaupat();
           return;
         }
         if (!kmValid) {

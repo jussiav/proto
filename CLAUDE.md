@@ -657,6 +657,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Ideation** — changes 1 and 2 (seller side) in `v1`; change 2 awaits a team decision | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
+| Huutokaupat routing | **Built in proto, 2026-10-02** — spec page not written yet | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` *(to be created)* |
 
 **Completed initiatives:**
 
@@ -1990,6 +1991,69 @@ clamp is also what keeps a 300px panel on screen when its button sits near the
 right edge of a phone. It sets `bottom` from the button too, not from the bar:
 once the bar opens into a column its rows sit at different heights, and a panel
 pinned to the bar's top edge would cover the control that opened it.
+
+## Vehicle info loading screen — `details.html`
+
+Prod's `retrievingVehicleInfo` state, transcribed 2026-10-02:
+`VehicleInfoRetrieval.vue` → `OFullscreenLoading` → `MAnimatedLoadingMessage`
+→ `ALoadingAnimation`. Copy `tenderform.loading_screen.title` /
+`.description` ("Haetaan autosi perustiedot" / "Muutama sekunti jäljellä");
+**prod has no English for it**, so the EN page falls back to Finnish.
+`assets/car_loading.svg` (it carries its own CSS animation) and
+`assets/logo-fi.svg` (`ABrandLogo`'s default, 108×22) are byte-identical
+copies of prod's.
+
+- **When prod shows it:** every new draft passes the state on its way from the
+  front page to the equipment step. It stays up until
+  `GET tender-request-drafts/{id}/vehicle-information` returns: the GT-X lookup,
+  up to ~25 s under load. `RetrieveVehicleInformation` returns at once when
+  the draft already has `make_id`/`model_id` (or lacks plate or mileage), so
+  the screen then only flashes.
+- **The proto holds a fixed 5 s**, and only on the front page's new-draft
+  entry (`?plate=`). Both Huutokaupat routing arms reach it for mileage under
+  280 000 km. Afterwards `plate`/`km` are dropped from the URL, so a reload
+  resumes on the step, as prod's persisted machine state does. The step
+  underneath is `inert` while the screen is up.
+- **One deliberate divergence:** the logo links to the front page (Jussi's
+  call). Prod's `ABrandLogo` on this screen is a plain image.
+- **Not transcribed:** the same organism also covers prod's funnel while it
+  restores form state from Redis (`!restoredState || syncingState` in
+  `tenderRequestDraftForm/index.vue`) on every funnel load. That is a short
+  flash, and the proto has no restore to wait for.
+
+## Huutokaupat routing — `v1`
+
+Sellers of cars at or over 280 000 km get only the hero form's
+`driven_more_than_max` error today. `v1` drops that error and routes them to a
+full-screen white sheet recommending **Huutokaupat.com**, a separate company,
+landing on `https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa`.
+The business case is in private notes, not in this public repo.
+
+- **Boundary is prod's**: `>= 280 000` routes, same as the error it replaces.
+  Plate validation and the empty-mileage error are unchanged.
+- **Shell is prod's `OFullscreenLoading`** (`fixed inset-0 z-50 bg-white`, logo
+  `p-4` on top, title `text-lg md:text-xl font-medium`, subtitle
+  `text-base md:text-lg text-slate-500`) with no animation. The logo is taken
+  out of flow so the message centres on the viewport, as asked; prod centres it
+  in the space under the logo.
+- CTA is `AButton` primary `lg` as a plain link; "Takaisin etusivulle" is
+  `AButton` link at `text-sm`. Both are transcriptions, no new component.
+  The logo is prod's `logo-fi.svg` at 108×22, the same as the loading screen.
+- **Auto-redirect after 30 s — TEMPORARY, for ideation; set `HK_SECONDS` to
+  20 when Jussi says the page is done** (was 10). Same tab. The countdown is
+  in the CTA label, `Siirrytään Huutokaupat.comiin (30 s)`, prod's
+  count-in-the-label pattern (`reply_to_negotiation`); a visible count is what
+  WCAG 2.2.1 needs. The CTA click and the back button stop the timer;
+  back closes the sheet and returns focus to the mileage field. Nothing is
+  written to the funnel store.
+- `index.html?huutokaupat-routing=v1#huutokaupat` opens the sheet on load —
+  the link the spec page will use. A bfcache `pageshow` closes a sheet left
+  open by a redirect; not verifiable in the in-app pane, which has no history.
+- **Order:** title, one-sentence body, CTA, "Takaisin etusivulle", then the
+  disclaimer in `text-xs`. The body's second sentence was cut as a repeat of
+  the title.
+- **Copy** (`huutokaupat.*`): body, CTA and disclaimer are Jussi's wording
+  (2026-10-02); the title and the English are draft.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

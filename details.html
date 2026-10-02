@@ -718,7 +718,61 @@
 </head>
 <body class="font-dm bg-white min-h-screen">
 
-  <div class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
+  <!-- Prod's retrievingVehicleInfo screen: OFullscreenLoading >
+       MAnimatedLoadingMessage > ALoadingAnimation, tenderform.loading_screen.*
+       copy. Prod holds it until the GT-X lookup returns (up to ~25 s, or at
+       once when the draft already has make/model); the proto has no lookup,
+       so it holds a fixed 5 s. -->
+  <div id="vehicle-info-loading" class="hidden fixed inset-0 flex-col items-center z-50 bg-white">
+    <div class="p-4">
+      <!-- Proto-only link, Jussi's call: prod's ABrandLogo here is a plain image. -->
+      <a href="index.html" aria-label="Takaisin etusivulle" class="block">
+        <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+      </a>
+    </div>
+    <div class="flex-1 flex items-center justify-center">
+      <div class="sr-only" role="status" aria-live="polite" aria-atomic="true"><span data-i18n="loadingScreen.title">Haetaan autosi perustiedot</span> <span data-i18n="loadingScreen.description">Muutama sekunti jäljellä</span></div>
+      <div class="flex flex-col items-center gap-y-4">
+        <div class="p-4">
+          <img class="pointer-events-none min-h-32 max-h-40" src="assets/car_loading.svg" aria-hidden="true" role="presentation" alt="" />
+        </div>
+        <div role="heading" aria-level="2" class="text-lg md:text-xl font-medium text-center" data-i18n="loadingScreen.title">Haetaan autosi perustiedot</div>
+        <p class="m-0 text-base md:text-lg text-slate-500 text-center" data-i18n="loadingScreen.description">Muutama sekunti jäljellä</p>
+      </div>
+    </div>
+  </div>
+  <script>
+    /* Runs before the step markup exists so the step never paints first. Only
+       the front page's new-draft entry (?plate=) passes retrievingVehicleInfo;
+       the params are dropped afterwards so a reload resumes on the step, as
+       prod's persisted machine state does. */
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      if (!params.has('plate')) return;
+      var screen = document.getElementById('vehicle-info-loading');
+      screen.classList.remove('hidden');
+      screen.classList.add('flex');
+      document.documentElement.style.overflow = 'hidden';
+      window.scrollTo(0, 0);
+      document.addEventListener('DOMContentLoaded', function () {
+        var root = document.getElementById('funnel-root');
+        if (!screen.classList.contains('hidden') && root) root.inert = true;
+      });
+      setTimeout(function () {
+        screen.classList.add('hidden');
+        screen.classList.remove('flex');
+        document.documentElement.style.overflow = '';
+        var root = document.getElementById('funnel-root');
+        if (root) root.inert = false;
+        params.delete('plate');
+        params.delete('km');
+        var query = params.toString();
+        history.replaceState(null, '', window.location.pathname + (query ? '?' + query : '') + window.location.hash);
+      }, 5000);
+    })();
+  </script>
+
+  <div id="funnel-root" class="flex flex-col items-center pt-8 pb-16 min-h-screen max-md:pt-0 max-md:pb-0">
     <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 lg:px-0 lg:gap-0 max-md:flex-col max-md:px-0 max-md:gap-0">
 
       <!-- ── Left column ── -->
