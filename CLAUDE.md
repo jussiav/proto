@@ -2085,7 +2085,9 @@ The business case is in private notes, not in this public repo.
   small text for the disclaimer. From `md` (768, the details step's own
   breakpoint) `assets/huutokaupat-advisor.png` stands 159px wide beside the
   actions, which are centred (`md:justify-center`) and overlap it by 16px
-  (`md:-ml-4`) so the hand reaches the button; below `md` the
+  (`md:-ml-4`) so the hand reaches over the button — the image is stacked on
+  top (`relative z-10`, Jussi's call) with `pointer-events-none` so the
+  covered 16px of the button stays clickable; below `md` the
   image is hidden and the actions stack. **No automatic redirect and no
   countdown** (Jussi's call). Image exported from the Figma fill at 418×517 —
   a repo copy, not a Figma link. Its own block (`#huutokaupat-content-v3`) in

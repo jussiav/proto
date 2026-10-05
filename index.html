@@ -1115,12 +1115,13 @@
              class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px] outline-none"
              data-i18n="huutokaupat.titleV3">Suosittelemme Huutokaupat.comia</div>
         <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="huutokaupat.body">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
-        <!-- From md the advisor's hand reaches the button: the actions sit centred
-             beside the image and overlap it by 16px. Below md the image goes and
-             the two actions stack. -->
+        <!-- From md the advisor's hand reaches over the button: the actions sit
+             centred beside the image and tuck 16px under it, so the image is
+             stacked on top and lets clicks through to the button. Below md the
+             image goes and the two actions stack. -->
         <div class="flex items-stretch">
-          <img src="assets/huutokaupat-advisor.png" alt="" aria-hidden="true" class="hidden md:block w-[159px] h-auto flex-shrink-0" />
-          <div class="relative flex flex-col gap-5 md:justify-center md:-ml-4">
+          <img src="assets/huutokaupat-advisor.png" alt="" aria-hidden="true" class="hidden md:block relative z-10 pointer-events-none w-[159px] h-auto flex-shrink-0" />
+          <div class="flex flex-col gap-5 md:justify-center md:-ml-4">
             <a id="huutokaupat-cta-v3" href="https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa"
                class="self-start h-14 px-8 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors whitespace-nowrap"
                ><span data-i18n="huutokaupat.ctaV3">Huutokaupat.comiin</span><img src="assets/b20aa3f2-b224-4816-a54e-7c0c6e18444b.svg" class="w-6 h-6" alt="" /></a>
