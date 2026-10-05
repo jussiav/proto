@@ -66,9 +66,12 @@ window.TRANSLATIONS = {
        `disclaimer` are Jussi's wording, the rest is draft. */
     huutokaupat: {
       title:      'Suosittelemme autollesi Huutokaupat.comia',
+      entered:    'Syötit ajokilometreiksi {km}.',
       body:       'AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.',
       disclaimer: 'AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.',
       cta:        'Siirrytään Huutokaupat.comiin',
+      titleV3:    'Suosittelemme Huutokaupat.comia',
+      ctaV3:      'Huutokaupat.comiin',
       back:       'Takaisin etusivulle',
     },
 
@@ -703,9 +706,12 @@ window.TRANSLATIONS = {
 
     huutokaupat: {
       title:      'We recommend Huutokaupat.com for your car',
+      entered:    'You entered a mileage of {km}.',
       body:       'Only cars driven under 280 000 km can be sold on AutoVex.',
       disclaimer: 'AutoVex works together with Huutokaupat.com as separate services.',
       cta:        'Taking you to Huutokaupat.com',
+      titleV3:    'We recommend Huutokaupat.com',
+      ctaV3:      'To Huutokaupat.com',
       back:       'Back to front page',
     },
 

@@ -125,7 +125,7 @@
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Two changes, both on the front page form. Change 1 takes away the mileage error; change 2 is the screen the seller lands on instead.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">In the prototype both live behind a variant: <i>Huutokaupat routing &rarr; Variant 1</i> on the prototype bar. With no variant selected the front page behaves as production does today. Finnish copy carries a grey English gloss for reading only; the gloss is not copy.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">In the prototype both live behind a variant: <i>Huutokaupat routing &rarr; Variant 1</i> on the prototype bar. <i>Variant 2</i> is the same with one difference in how the typed mileage is shown, and <i>Variant 3</i> is a more illustrated layout with no automatic redirect; see <a class="text-av-blue underline" href="#c2-alt">the alternatives</a> under change 2. With no variant selected the front page behaves as production does today. Finnish copy carries a grey English gloss for reading only; the gloss is not copy.</p>
       </div>
     </section>
 
@@ -228,14 +228,15 @@
         <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes</p>
         <ul class="list-disc pl-5 space-y-1">
           <li>A full-screen white view replaces the page, built like production's &ldquo;Haetaan autosi perustiedot&rdquo; <span class="text-slate-500">(Fetching your car's basic details)</span> loading screen: AutoVex logo at the top, everything else centred horizontally and vertically. No animation.</li>
-          <li>Below the title and one sentence of text, a large primary button goes to Huutokaupat.com. The button counts down from <b>20 seconds</b> in its own label; at zero the seller is taken there automatically, in the same tab.</li>
+          <li>The text repeats the mileage the seller typed next to the limit, so a typing mistake (800 000 for 80 000) is easy to spot before the redirect.</li>
+          <li>Below the title and the text, a large primary button goes to Huutokaupat.com. The button counts down from <b>20 seconds</b> in its own label; at zero the seller is taken there automatically, in the same tab.</li>
           <li>Directly under it, a text button <b>&ldquo;Takaisin etusivulle&rdquo;</b> <span class="text-slate-500">(Back to the front page)</span> cancels the countdown and returns to the front page. The logo does the same.</li>
           <li>A small disclaimer at the bottom says the two services are separate.</li>
           <li>Nothing is saved: no listing is started, and the registration number and mileage are not passed on.</li>
         </ul>
       </div>
 
-      <!-- Replica of the prototype screen, same classes. Static: the count is fixed at 20. -->
+      <!-- Replica of the prototype screen, same classes. Static: the count is fixed at 20 and the typed mileage at 800 000. -->
       <div class="mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">The screen</p>
         <div class="relative bg-white rounded-lg border border-slate-200 h-[460px] flex flex-col items-center overflow-hidden">
@@ -245,7 +246,7 @@
           <div class="flex-1 flex items-center justify-center w-full px-5 py-16">
             <div class="flex flex-col items-center gap-y-4 max-w-md text-center">
               <div role="heading" aria-level="3" class="font-dm text-lg md:text-xl font-medium text-center text-slate-900">Suosittelemme autollesi Huutokaupat.comia</div>
-              <p class="m-0 font-dm text-base md:text-lg text-slate-500 text-center">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
+              <p class="m-0 font-dm text-base md:text-lg text-slate-500 text-center">Syötit ajokilometreiksi <span class="font-medium text-slate-900 whitespace-nowrap">800&nbsp;000&nbsp;km</span>. AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
               <span class="mt-4 inline-flex justify-center items-center text-base leading-tight rounded-lg px-8 h-14 bg-blue-600 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] font-dm">Siirrytään Huutokaupat.comiin (20 s)</span>
               <span class="text-sm leading-tight text-blue-600 font-dm">Takaisin etusivulle</span>
               <p class="m-0 font-dm text-xs text-slate-500 text-center">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
@@ -255,6 +256,58 @@
       </div>
       <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../index.html?huutokaupat-routing=v1#huutokaupat" target="_blank" rel="noopener">Open the screen in the prototype</a> <span class="text-slate-500">- it opens straight away and redirects after 20 seconds; or <a class="text-av-blue underline" href="../index.html?huutokaupat-routing=v1" target="_blank" rel="noopener">walk it from the form</a>.</span></p>
 
+      <div id="c2-alt" class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Alternative &middot; Variant 2 in the prototype</p>
+        <p class="mb-3">Everything as above, except the typed figures move out of the text. The sentence &ldquo;Syötit ajokilometreiksi [km].&rdquo; is dropped, and the registration number and mileage the seller typed sit above the title, in the same row the funnel's equipment step already shows them in. No new copy.</p>
+        <div class="flex flex-col items-center gap-y-4 border border-slate-200 rounded-lg py-6 px-4">
+          <div class="flex items-center gap-4">
+            <div class="inline-flex border border-slate-200 rounded overflow-hidden">
+              <div class="flex items-center border-l-[6px] border-l-av-blue px-3 pl-3 py-1.5">
+                <span class="font-dm text-sm leading-4 text-slate-800 whitespace-nowrap">ADD-123</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <img src="../assets/e4f0c453-ba9b-4bda-83cb-c76e90d3f93d.svg" class="w-4 h-4" alt="" />
+              <span class="font-dm text-base leading-5 text-slate-900 whitespace-nowrap">400&nbsp;000&nbsp;km</span>
+            </div>
+          </div>
+          <div role="heading" aria-level="3" class="font-dm text-lg md:text-xl font-medium text-center text-slate-900">Suosittelemme autollesi Huutokaupat.comia</div>
+          <p class="m-0 font-dm text-base md:text-lg text-slate-500 text-center">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
+        </div>
+        <p class="mt-3 mb-0"><a class="text-av-blue underline font-medium" href="../index.html?huutokaupat-routing=v2" target="_blank" rel="noopener">Try Variant 2 in the prototype</a> <span class="text-slate-500">- enter a registration number and a mileage of 280 000 or more.</span></p>
+        <p class="mt-2 mb-0 text-xs text-slate-500">Trade-off: the row shows both values the seller typed in a shape they have not seen yet (they meet it on the next step), while the sentence names the mileage in words right next to the limit.</p>
+      </div>
+
+      <div id="c2-alt-v3" class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Alternative &middot; Variant 3 in the prototype</p>
+        <ul class="list-disc pl-5 space-y-1 mb-4">
+          <li><b>Built from the funnel's equipment step:</b> left-aligned, the registration number and mileage row first, then the step's title and subtitle styles, its primary button and its link style. Nothing is styled specially for this screen.</li>
+          <li><b>On a wider screen</b> the AutoVex advisor illustration stands beside the actions, its hand reaching the button; the button and back link sit centred beside it. <b>On a phone</b> (below 768px) the illustration is left out and the button, back link and disclaimer stack.</li>
+          <li><b>No automatic redirect and no countdown.</b> The seller moves on only by pressing the button.</li>
+          <li>Title <b>&ldquo;Suosittelemme Huutokaupat.comia&rdquo;</b> <span class="text-slate-500">(We recommend Huutokaupat.com)</span>; button <b>&ldquo;Huutokaupat.comiin&rdquo;</b> <span class="text-slate-500">(To Huutokaupat.com)</span> with an arrow; &ldquo;Takaisin etusivulle&rdquo; as an underlined link with a back arrow. Text and disclaimer unchanged.</li>
+        </ul>
+        <div class="border border-slate-200 rounded-lg p-6 flex justify-center">
+          <div class="flex flex-col gap-6 w-full max-w-md text-left">
+            <div class="flex items-center gap-4">
+              <div class="inline-flex border border-slate-200 rounded overflow-hidden"><div class="flex items-center border-l-[6px] border-l-av-blue px-3 py-1.5"><span class="text-sm leading-4 text-slate-800">LRX-554</span></div></div>
+              <div class="flex items-center gap-2"><img src="../assets/e4f0c453-ba9b-4bda-83cb-c76e90d3f93d.svg" class="w-4 h-4" alt="" /><span class="text-base leading-5 text-slate-900">450&nbsp;000&nbsp;km</span></div>
+            </div>
+            <div role="heading" aria-level="3" class="font-barlow font-bold text-slate-900 text-[28px] leading-[36px] md:text-[40px] md:leading-[48px]">Suosittelemme Huutokaupat.comia</div>
+            <p class="text-base leading-5 text-black -mt-2 mb-0">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
+            <div class="flex items-stretch">
+              <img src="../assets/huutokaupat-advisor.png" alt="" class="hidden md:block w-[159px] h-auto flex-shrink-0" />
+              <div class="relative flex flex-col gap-5 md:justify-center md:-ml-4">
+                <span class="self-start h-14 px-8 bg-av-blue text-white font-medium text-base rounded-lg flex items-center gap-2 whitespace-nowrap">Huutokaupat.comiin<img src="../assets/b20aa3f2-b224-4816-a54e-7c0c6e18444b.svg" class="w-6 h-6" alt="" /></span>
+                <span class="self-start font-medium text-base leading-5 text-av-blue underline">&larr; Takaisin etusivulle</span>
+              </div>
+            </div>
+            <p class="m-0 text-xs leading-[14px] text-slate-600">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
+          </div>
+        </div>
+        <p class="mt-3 mb-0"><a class="text-av-blue underline font-medium" href="../index.html?huutokaupat-routing=v3" target="_blank" rel="noopener">Try Variant 3 in the prototype</a> <span class="text-slate-500">- enter a registration number and a mileage of 280 000 or more; narrow the window below 768px for the phone layout.</span></p>
+        <p class="mt-2 mb-0 text-xs text-slate-500">Trade-off: without the redirect the seller always makes the choice themselves, which also removes the timed-redirect accessibility requirement; the cost is that a seller who leaves the tab open never reaches Huutokaupat.com. The title and button copy are drafts.</p>
+      </div>
+
       <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy, top to bottom</p>
         <div class="av-copy-block">
@@ -263,9 +316,9 @@
           <p class="av-gloss">We recommend Huutokaupat.com for your car</p>
         </div>
         <div class="av-copy-block">
-          <p class="av-copy-label">Text</p>
-          <p class="av-copy">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
-          <p class="av-gloss">Only cars driven under 280 000 km can be sold on AutoVex.</p>
+          <p class="av-copy-label">Text &middot; [km] is the mileage as the seller typed it, in medium weight and dark</p>
+          <p class="av-copy">Syötit ajokilometreiksi [km]. AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
+          <p class="av-gloss">You entered a mileage of [km]. Only cars driven under 280 000 km can be sold on AutoVex.</p>
         </div>
         <div class="av-copy-block">
           <p class="av-copy-label">Primary button &middot; [n] counts down from 20</p>
@@ -282,7 +335,7 @@
           <p class="av-copy">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
           <p class="av-gloss">AutoVex works together with Huutokaupat.com as separate services.</p>
         </div>
-        <p class="font-dm text-xs leading-5 text-slate-500 mt-4 mb-0">All five strings are new and none is approved yet. The title is a draft; the rest is the wording agreed in the design. The English is a reading aid, not copy.</p>
+        <p class="font-dm text-xs leading-5 text-slate-500 mt-4 mb-0">All of these strings are new and none is approved yet. The title is a draft; the rest is the wording agreed in the design. The English is a reading aid, not copy.</p>
       </div>
 
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5 max-w-3xl">
@@ -290,6 +343,7 @@
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>The screen covers the whole viewport on a white background, with the logo at the top and the content centred both ways, at every width from 360px up.</li>
           <li>The button label shows the seconds left, starting at 20 and updating every second. At zero the same tab opens <code>https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa</code>.</li>
+          <li>The text shows the mileage exactly as the seller typed it, with thousands separated and &ldquo;km&rdquo; after it, never wrapping across lines.</li>
           <li>Pressing the button opens the same page at once, in the same tab.</li>
           <li>&ldquo;Takaisin etusivulle&rdquo; and the logo stop the countdown, close the screen and leave the seller on the front page with the form as they filled it, focus in the mileage field.</li>
           <li>Coming back from Huutokaupat.com with the browser's back button shows the front page, not this screen stuck at zero.</li>
@@ -297,7 +351,7 @@
           <li>No listing is created and nothing about the car is stored or sent.</li>
         </ul>
       </div>
-      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The screen follows the loading screen's layout so it reads as AutoVex's own next step rather than an ad. The countdown in the button means the redirect is never a surprise, and the back button is right under it so it is easy to say no.</p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> The screen follows the loading screen's layout so it reads as AutoVex's own next step rather than an ad. The countdown in the button means the redirect is never a surprise, and the back button is right under it so it is easy to say no. Showing the typed mileage covers the seller who simply mistyped: they see the figure, go back, and the mileage field is where they land.</p>
       </div>
     </section>
 

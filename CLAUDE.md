@@ -657,7 +657,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Ideation** — changes 1 and 2 (seller side) in `v1`; change 2 awaits a team decision | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
-| Huutokaupat routing | Live — 2 changes in `v1`, copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
+| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 
 **Completed initiatives:**
 
@@ -2050,8 +2050,46 @@ The business case is in private notes, not in this public repo.
 - `index.html?huutokaupat-routing=v1#huutokaupat` opens the sheet on load —
   the link the spec page will use. A bfcache `pageshow` closes a sheet left
   open by a redirect; not verifiable in the in-app pane, which has no history.
-- **Order:** title, one-sentence body, CTA, "Takaisin etusivulle", then the
-  disclaimer in `text-xs`. The body's second sentence was cut as a repeat of
+- **Order:** title, body, CTA, "Takaisin etusivulle", then the disclaimer in
+  `text-xs`. The body opens by echoing the mileage as typed
+  (`huutokaupat.entered`, "Syötit ajokilometreiksi [km].", the figure
+  `font-medium text-slate-900`), added 2026-10-05 for the mistype case
+  (800 000 for 80 000); back lands focus in the mileage field to fix it.
+  Omitted when the field is empty (the `#huutokaupat` deep link).
+- **`v2` (2026-10-05) is `v1` with the echo moved:** no "Syötit…" sentence;
+  instead `details.html`'s plate badge + mileage row (same markup, same
+  speedometer asset) sits above the title, filled with the normalised plate and
+  the mileage as typed. Hidden when the mileage is empty. Jussi asked for it as
+  "V5"; registered as `v2` because arm ids run sequentially per initiative.
+- **Figma** (2026-10-05), file `sHQk3FUhEZM7EFbYaAcjxX`, page
+  `Huutokaupat routing (AI drafting)` `7311:5`, wrapper `7311:6` with two
+  parts for Jussi to design a richer version from: prod's equipment-step
+  header in the car-not-found state (`7311:9` — "Täytä autosi tiedot",
+  `equipment-info.svg` uploaded as vectors, prod's `ARegistrationNumberBadge` +
+  `AMileage`) and the `v2` screen at 1440×900 (`7311:26`). Hand-built, editable
+  layers, no design-system instances.
+- **The proto's plate badge is NOT prod's**, found while building that frame:
+  prod's `ARegistrationNumberBadge` is an 8px blue bar with `rounded-l-md`
+  beside a `py-1 px-1.5` box at the inherited 16px; the proto's details step
+  (and so `v2`) draws a 6px left border, `px-3 py-1.5`, `text-sm`, `rounded`.
+  Not fixed — flagged to Jussi.
+- **`v3` (2026-10-05) is Jussi's Figma design `7309:654`** (desktop + mobile
+  frames; replaced `7309:579`, which replaced `7309:259`). **Figma gives structure
+  only — every class is `details.html`'s own** (Jussi: the proto uses
+  consistent styling, Figma fonts/spacing are reference): the step's `h1`
+  classes for the title, its subtitle with `-mt-2` in a `gap-6` column, its
+  plate badge + km row (so the proto badge, not prod's), the `details-cta`
+  Jatka button classes hugging with `px-8` + the same arrow asset, the
+  "Muokkaa" link classes for "Takaisin etusivulle" (+ prod's
+  `arrow-left-bold`), and the step's `text-xs leading-[14px] text-slate-600`
+  small text for the disclaimer. From `md` (768, the details step's own
+  breakpoint) `assets/huutokaupat-advisor.png` stands 159px wide beside the
+  actions, which are centred (`md:justify-center`) and overlap it by 16px
+  (`md:-ml-4`) so the hand reaches the button; below `md` the
+  image is hidden and the actions stack. **No automatic redirect and no
+  countdown** (Jussi's call). Image exported from the Figma fill at 418×517 —
+  a repo copy, not a Figma link. Its own block (`#huutokaupat-content-v3`) in
+  the same sheet; shell, back/logo close and focus are shared. The body's second sentence was cut as a repeat of
   the title.
 - **Copy** (`huutokaupat.*`): body, CTA and disclaimer are Jussi's wording
   (2026-10-02); the title and the English are draft.
