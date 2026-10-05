@@ -2081,7 +2081,8 @@ The business case is in private notes, not in this public repo.
   plate badge + km row (so the proto badge, not prod's), the `details-cta`
   Jatka button classes hugging with `px-8` + the same arrow asset, the
   "Muokkaa" link classes for "Takaisin etusivulle" (+ prod's
-  `arrow-left-bold`), and the step's `text-xs leading-[14px] text-slate-600`
+  `arrow-left-bold`) but underlined on hover only — the Figma instance was the
+  link's hover state, and Jussi set the default to no underline, and the step's `text-xs leading-[14px] text-slate-600`
   small text for the disclaimer. From `md` (768, the details step's own
   breakpoint) `assets/huutokaupat-advisor.png` stands 159px wide beside the
   actions, which are centred (`md:justify-center`) and overlap it by 16px
