@@ -2077,8 +2077,10 @@ The business case is in private notes, not in this public repo.
   frames; replaced `7309:579`, which replaced `7309:259`). **Figma gives structure
   only — every class is `details.html`'s own** (Jussi: the proto uses
   consistent styling, Figma fonts/spacing are reference): the step's `h1`
-  classes for the title, its subtitle with `-mt-2` in a `gap-6` column, its
-  plate badge + km row (so the proto badge, not prod's), the `details-cta`
+  classes for the title, its subtitle, its plate badge + km row (so the proto
+  badge, not prod's) — the three in one `gap-4` group (16px, the step's own
+  title→subtitle spacing; Jussi moved the plate row into that group in Figma),
+  the group in a `gap-6` column, the `details-cta`
   Jatka button classes hugging with `px-8` + the same arrow asset, the
   "Muokkaa" link classes for "Takaisin etusivulle" (+ prod's
   `arrow-left-bold`) but underlined on hover only — the Figma instance was the

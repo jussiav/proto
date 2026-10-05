@@ -1100,21 +1100,25 @@
            the funnel details step's own (title, subtitle, plate row, Jatka
            button, "Muokkaa" link, small grey text). No automatic redirect. -->
       <div id="huutokaupat-content-v3" class="hidden flex-col gap-6 w-full max-w-md text-left">
-        <div id="huutokaupat-car-v3" class="hidden items-center gap-4">
-          <div class="inline-flex border border-slate-200 rounded overflow-hidden">
-            <div class="flex items-center border-l-[6px] border-l-av-blue px-3 pl-3 py-1.5">
-              <span id="huutokaupat-plate-v3" class="font-dm text-sm leading-4 text-slate-800 whitespace-nowrap"></span>
+        <!-- Plate row, title and subtitle share one group, 16px apart: the details
+             step's own title-to-subtitle spacing (gap-6 with -mt-2). -->
+        <div class="flex flex-col gap-4">
+          <div id="huutokaupat-car-v3" class="hidden items-center gap-4">
+            <div class="inline-flex border border-slate-200 rounded overflow-hidden">
+              <div class="flex items-center border-l-[6px] border-l-av-blue px-3 pl-3 py-1.5">
+                <span id="huutokaupat-plate-v3" class="font-dm text-sm leading-4 text-slate-800 whitespace-nowrap"></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <img src="assets/e4f0c453-ba9b-4bda-83cb-c76e90d3f93d.svg" class="w-4 h-4" alt="" />
+              <span id="huutokaupat-km-v3" class="font-dm text-base leading-5 text-slate-900 whitespace-nowrap"></span>
             </div>
           </div>
-          <div class="flex items-center gap-2">
-            <img src="assets/e4f0c453-ba9b-4bda-83cb-c76e90d3f93d.svg" class="w-4 h-4" alt="" />
-            <span id="huutokaupat-km-v3" class="font-dm text-base leading-5 text-slate-900 whitespace-nowrap"></span>
-          </div>
+          <div id="huutokaupat-title-v3" role="heading" aria-level="2" tabindex="-1"
+               class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px] outline-none"
+               data-i18n="huutokaupat.titleV3">Suosittelemme Huutokaupat.comia</div>
+          <p class="font-dm text-base leading-5 text-black" data-i18n="huutokaupat.body">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
         </div>
-        <div id="huutokaupat-title-v3" role="heading" aria-level="2" tabindex="-1"
-             class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px] outline-none"
-             data-i18n="huutokaupat.titleV3">Suosittelemme Huutokaupat.comia</div>
-        <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="huutokaupat.body">AutoVexissä voi myydä vain alle 280 000 km ajettuja autoja.</p>
         <!-- From md the advisor's hand reaches over the button: the actions sit
              centred beside the image and tuck 16px under it, so the image is
              stacked on top and lets clicks through to the button. Below md the
