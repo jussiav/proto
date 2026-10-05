@@ -2509,6 +2509,18 @@ seller-edits-before-review assessment):
   from the front page) and `?mode=mobile`. Everything else in `funnel-guard.js`
   (the rejection doors, the in-review edit, the mid-edit booking) runs in both
   modes.
+- **Prod has ONE rejected status; the reason tag splits it in two.** The
+  advisor rejects in the review call and picks one call tag (a single select).
+  If it is the ad-quality tag (`reject_due_to_ad_quality_tag_id`, 65 in
+  Finland), the draft resource adds `missing_images` and the seller gets the
+  missing-photos screen and email. **Any other tag** gives the plain rejected
+  screen ("Ei hyväksytty", "Päivitä tarjouspyyntöä"). The tag names live in the
+  prod database, not in the dump, so "other reason" cannot be listed. Scenario
+  labels say so since 2026-10-05: success.html's group is
+  `Rejected in the review call` with `Rejected — other reason` /
+  `Rejected — missing photos`, and offers.html's are
+  `Draft: Rejected — other reason` / `Draft: Rejected — missing photos`
+  (that one used to read `Draft: Missing photos`). Ids unchanged.
 - **A rejected draft has two doors back in, recorded as `store.rejection`:**
 
   | `rejection` | Door | Enters at | Jatka / re-submit | Outcome |
