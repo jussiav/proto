@@ -105,9 +105,9 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: ideation &middot; 2 changes in the prototype &middot; nothing agreed
+          Status: ready for technical assessment &middot; 2 changes &middot; 1 open question
         </span>
-        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
     </div>
     <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -120,7 +120,7 @@
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">How to read this</h2>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Nothing here is agreed yet.</b> This page holds the direction so far, the first change as a prototype variant, and the questions still open.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>The direction is agreed</b> (team meeting, October 2026). This page lists what production has to change, in two changes, plus the one question still open: what happens when the seller changes their contact details during an edit.</p>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">The prototype's default state has been matched to production for every edit flow first, so a future variant is compared against what sellers really get today.</p>
       </div>
     </section>
@@ -162,22 +162,16 @@
 
     <section class="av-band av-band-grey" id="direction">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Direction so far</h2>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Direction</h2>
       <div class="flex flex-col gap-4 max-w-3xl">
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Decided</p>
           <p class="mb-2"><b>Editing before the ad is published goes through the funnel.</b> The auction edit modal saves to the published ad, and an ad waiting for review is not published yet, so the funnel is the editor that already owns this data.</p>
-          <p class="mb-0"><b>Any link back to the funnel is enough to begin with.</b> A link that opens a specific step would save clicks and avoid the timing issue above; it may join the initiative later.</p>
-        </div>
-        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Leaning towards</p>
-          <p class="mb-2"><b>No new &ldquo;ad updated&rdquo; screen.</b> After editing, the seller returns to the view they started from and is greeted with a notification in a design that already exists: the success toast production shows when an auction edit is saved. Its wording here is &ldquo;Tarjouspyyntö päivitetty&rdquo; <span class="text-slate-500">(Listing updated)</span>; the auction edit keeps &ldquo;Tarjouspyyntö tallennettu&rdquo; <span class="text-slate-500">(Listing saved)</span>. It keeps the seller where they were and adds no screen.</p>
-          <p class="mb-0"><b>The missing-photos path stays as it is</b>: add photos, submit, published.</p>
-        </div>
-        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Proposed, for the team to decide</p>
-          <p class="mb-2"><b>The ad is never editable in the back office and in the funnel at the same time.</b> See <a class="text-av-blue underline" href="#c2">change 2</a>.</p>
-          <p class="mb-0"><b>Nothing changes in the back office.</b> Advisors keep booking any ad as they do today, including one a seller is editing; the seller's side gives way instead.</p>
+          <p class="mb-2"><b>Any link back to the funnel is enough to begin with.</b> A link that opens a specific step would save clicks and avoid the timing issue above; it may join the initiative later.</p>
+          <p class="mb-2"><b>No new &ldquo;ad updated&rdquo; screen.</b> After editing, the seller returns to the view they started from and is greeted with a notification in a design that already exists: the success toast production shows when an auction edit is saved. Its wording here is &ldquo;Tarjouspyyntö päivitetty&rdquo; <span class="text-slate-500">(Listing updated)</span>; the auction edit keeps &ldquo;Tarjouspyyntö tallennettu&rdquo; <span class="text-slate-500">(Listing saved)</span>.</p>
+          <p class="mb-2"><b>The missing-photos path stays as it is</b>: add photos, submit, published.</p>
+          <p class="mb-2"><b>The ad stays in the review queue while the seller edits it</b>, keeps its place there, and advisors can book it at any time. Nothing changes in the back office; the seller's side gives way instead (change 2).</p>
+          <p class="mb-0"><b>The review decision is not re-run after an edit.</b> The team follows the data on edited ads to see whether a re-run is worth building later, so edits have to be recorded (change 1).</p>
         </div>
       </div>
       </div>
@@ -204,14 +198,14 @@
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Edit the ad while it waits for review</a></td>
               <td class="px-4 py-3">Offers page draft card &middot; waiting screen (funnel success) car card &middot; funnel</td>
               <td class="px-4 py-3 text-slate-600">Ad in review and not yet booked, or waiting for email verification</td>
-              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Proposal</span></td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Agreed</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">2</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">An advisor booking the ad ends the seller's edit</a></td>
               <td class="px-4 py-3">Funnel &middot; saving the ad</td>
               <td class="px-4 py-3 text-slate-600">Advisor books the ad while the seller is editing it</td>
-              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Needs a decision</span></td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Agreed</span></td>
             </tr>
           </tbody>
         </table>
@@ -245,9 +239,21 @@
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>The button appears on an in-review ad only while no advisor has booked it, and disappears once one has.</li>
           <li>The button appears on an ad waiting for email verification, on the waiting screen (funnel success).</li>
-          <li>Saving leaves the ad in the state it was in, in review with its queue position, or waiting for verification, and does not re-run the review decision. The price step keeps the question the seller was asked when submitting.</li>
+          <li>Saving leaves the ad in the state it was in, in review with its queue position, or waiting for verification. The review decision is not re-run (decided). The price step keeps the question the seller was asked when submitting.</li>
+          <li>Every seller save after the review decision is recorded, so the team can follow the data on edited ads.</li>
           <li>The seller lands back where they pressed the button, with the save toast.</li>
           <li>The ad is never editable in the back office and in the funnel at the same time; see change 2.</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What has to change behind the scenes</p>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><b>Saving the ad.</b> Today a save is refused once the ad is in review or waiting for email verification. It has to accept the seller's own saves in those two states, with change 2's booking check on top. Every other status keeps refusing.</li>
+          <li><b>Opening the funnel.</b> Today a submitted ad that opens the funnel is sent straight to the waiting screen (funnel success). From the edit button it has to open at the equipment step instead.</li>
+          <li><b>The last step saves, it does not submit.</b> No publish, no new routing decision, no status change, no change to the ad's place in the queue, and no second &ldquo;in review&rdquo; email.</li>
+          <li><b>Back where the seller started.</b> The edit has to remember which page it began from, the offers page or the waiting screen (funnel success), so the last step returns there and shows the toast.</li>
+          <li><b>Whether the ad is booked.</b> The offers page draft card and the waiting screen (funnel success) need to know if an advisor has booked the ad, to hide the button.</li>
+          <li><b>Recording the edit.</b> Store that the seller saved the ad after the review decision was made, with the time and ideally which details changed, so analytics can follow edited ads separately. This is how the team decides later whether a re-run of the review decision is needed.</li>
         </ul>
       </div>
       <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> A seller who spots a mistake or remembers a detail after submitting has no way to fix it until the review call, and an advisor may then review an ad the seller already knows is wrong.</p>
@@ -260,10 +266,10 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs mb-4">
         <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Where: the funnel, and saving the ad</span>
         <span class="bg-slate-100 text-slate-700 rounded-full px-2.5 py-0.5">Scenario: an advisor books the ad while the seller is editing it</span>
-        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5">Needs a decision</span>
+        <span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5">Agreed</span>
       </div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Proposed rule</p>
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">The rule</p>
         <ul class="list-disc pl-5 space-y-1">
           <li><b>No change in the back office.</b> The ad stays in the advisors' review list while the seller edits it, and an advisor can book it at any time, as today.</li>
           <li><b>A booking ends the edit.</b> Once an advisor has booked the ad, the seller's next Jatka is refused. They land back on the view they started the edit from, the offers page or the waiting screen (funnel success), with a toast: <b>&ldquo;Muokkaus ei ole enää mahdollista. Soitamme sinulle pian!&rdquo;</b> <span class="text-slate-500">(Editing is no longer possible. We'll call you soon!)</span></li>
@@ -274,12 +280,12 @@
         <p class="mt-3 mb-0 text-slate-600">The toast uses production's existing info-toast design. Its Finnish is a <b>draft</b>, pending approval.</p>
       </div>
       <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=draft-in-review&seller-edits-before-review=v1" target="_blank" rel="noopener">Try it in the prototype</a> <span class="text-slate-500">- start the edit, then pick <i>Advisor booking &rarr; Advisor books the ad</i> on the prototype bar (the same control clears it again) and press Jatka.</span></p>
-      <div class="bg-warning-50 border border-warning-200 rounded-lg p-5 mt-5 max-w-3xl">
-        <p class="font-dm text-sm font-bold text-slate-900 mb-2">For the team to decide</p>
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>Whether the advisor sees that the seller edited the ad</b> after submitting it, and ideally what changed. That would be the one change in the back office, and it is optional.</li>
-          <li><b>What happens to the step being saved when the booking lands.</b> Production would refuse that save, so the seller loses what they typed on that step. The prototype keeps it.</li>
-          <li><b>The toast's wording.</b></li>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Good to know</p>
+        <ul class="list-disc pl-5 space-y-2">
+          <li><b>The step being saved when the booking lands is lost.</b> The save is refused, so what the seller typed on that step is not kept. Steps saved earlier stay. The prototype keeps the refused step's input, which production will not.</li>
+          <li><b>Showing the advisor that the seller edited the ad</b>, and ideally what changed, would be the one change in the back office. It is optional and not part of this scope.</li>
+          <li><b>A call logged without a decision ends the booking</b> and puts the ad back in the queue, so the edit button returns with it. The rule is simply &ldquo;editable while no booking is active&rdquo;.</li>
         </ul>
       </div>
       <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
@@ -287,8 +293,6 @@
         <ul class="list-disc pl-5 space-y-2">
           <li><b>Saving the ad</b> refuses a seller's save once the ad is booked, and returns a reason the funnel can turn into the toast. This is the only required change, and it is not in the back office.</li>
           <li><b>Booking itself does not change.</b> It takes all of one seller's in-review ads at once, so a booking can end an edit on a different ad from the one the advisor picked; the same refusal covers it.</li>
-          <li><b>A call logged without a decision</b> puts the ad back in the list today. Whether editing reopens then needs a rule.</li>
-          <li><b>Fewer ad-quality rejections</b> is the goal, so the reject-for-photos path may need a lighter alternative: asking the seller to add photos without rejecting the ad. Open.</li>
         </ul>
       </div>
       <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> An advisor and a seller saving the same ad at the same time overwrite each other without warning. Letting the booking win keeps the advisors' work exactly as it is. Blocking the seller silently would read as a broken page; landing them back with a reason, and a call to expect, does not.</p>
@@ -300,7 +304,7 @@
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Notes for whoever builds this</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
         <li><b>The prototype's funnel step indicator is more generous than production's, and stays that way for now.</b> In the prototype a seller can jump to any step they have started. In production the progress bar only goes back one step, and the equipment step, where editing a rejected ad starts, has no way back at all. Keep that in mind when judging how easy editing feels in the prototype.</li>
-        <li><b>The last step's button still reads &ldquo;Lähetä ilmoitus&rdquo;</b> <span class="text-slate-500">(Send listing)</span> during an edit, although it saves rather than sends. It is production's label; whether it should change is a copy question for this initiative.</li>
+        <li><b>The last step's button keeps production's label &ldquo;Lähetä ilmoitus&rdquo;</b> <span class="text-slate-500">(Send listing)</span> during an edit, although it saves rather than sends.</li>
         <li><b>The rejection email's link could not be checked.</b> It is sent through the marketing email tool, so its button target lives in Marketing's template rather than in the product code. Wherever it points, a seller landing on the funnel meets the same saved-position behaviour described above.</li>
       </ul>
       </div>
@@ -308,36 +312,37 @@
 
     <section class="av-band av-band-grey" id="open">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open question</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>Is the review decision re-evaluated after an edit,</b> or are edited ads at least flagged, so the decision&rsquo;s performance is not measured against data it never saw? Editing through the funnel makes this sharper: model year and fuel type can change, and both decide whether a car is reviewed.
+        <li><b>What happens when contact details change during an edit?</b> The last step lets the seller change their phone number and, if they are not logged in, their email address.
           <ul class="list-[circle] pl-5 mt-1 space-y-1">
-            <li><b>Why it matters for the review algorithm.</b> It scores the ad as submitted, and its results are measured on the ad as it went live: offers, accepted offers, the price, what the advisor found on the call. It reads almost every detail the funnel asks, so nearly any edit changes something it scored.</li>
-            <li><b>Which ads it reaches.</b> An ad sent to review can be edited until an advisor books it. Advisors already change these ads in the call, so the data is noisy anyway; seller edits add a change nothing records. An ad cleared to publish without a call can be edited only while it waits for email verification, and that is the cleanest case of the problem: no advisor in between, and the decision being tested is that this ad needs no call. An ad from a verified seller publishes straight away, so it cannot be edited.</li>
-            <li><b>The bias has a direction.</b> Sellers will add photos, fill in the service history or lower their price. An ad scored weak on ad quality or price can be fixed before its result is measured, so those scores look less predictive than they are. That matters most when the algorithm is tuned on this data.</li>
-            <li><b>Suggested for the first version:</b> no re-run. Record that the seller saved the ad after the decision, with the time and ideally which details changed, so analytics can leave those ads out or report them separately. If a re-run is built later, it has to keep the original decision, because that is the one that routed the ad. How many ads this affects is unknown until the flag exists.</li>
-          </ul>
-        </li>
-        <li><b>Should the registration number and mileage be editable?</b> The seller enters them on the front page before the funnel starts, and the equipment step shows them read-only, so an edit cannot change them. Mileage also decides whether a car is reviewed. Today a wrong mileage can only be corrected by the advisor.</li>
-        <li><b>What happens when contact details change during an edit?</b> The last step lets the seller change their phone number and, if they are not logged in, their email address. Advisors book by phone number: booking one ad books every in-review ad with the same number. For a logged-in seller, saving the last step also updates their <b>account</b>, not just this ad: the name, phone number and marketing choice they confirm there become the account&rsquo;s, so a phone number changed in an edit changes it for all their ads. A save that carries an email address stores it, counts it as an email change and sends a new verification email to it, and the waiting screen (funnel success) offers its own change-email action only up to a set number of changes. Walking the funnel again should not send a second verification email or use up the seller&rsquo;s changes.</li>
-        <li><b>Should editing during the auction be removed?</b> Dealers bid on the car as described and are not told when it changes. Removing it would free the edit modal for editing before publish, which would also improve on the funnel in two ways:
-          <ul class="list-[circle] pl-5 mt-1 space-y-1">
-            <li>The edit is linear. The seller changes what they came to change on one screen, instead of walking every step to the end.</li>
-            <li>The modal can leave out any detail that should not change after submitting. The funnel offers every field it asks.</li>
+            <li><b>Phone number.</b> Advisors book by phone number: booking one ad books every in-review ad with the same number. For a logged-in seller, saving the last step also updates their <b>account</b>, not just this ad: the name, phone number and marketing choice they confirm there become the account&rsquo;s, so a phone number changed in an edit changes it for all their ads.</li>
+            <li><b>Email.</b> A save that carries an email address stores it, counts it as an email change and sends a new verification email to it, and the waiting screen (funnel success) offers its own change-email action only up to a set number of changes. Walking the funnel again should not send a second verification email or use up the seller&rsquo;s changes.</li>
           </ul>
         </li>
       </ul>
 
       <h3 class="font-barlow font-bold text-black text-xl leading-tight mt-8 mb-3">Settled</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>Which details can be edited?</b> Everything the funnel asks, because the edit is the funnel: equipment, location and delivery distance, tyres, keys, service history, repairs and damage, photos, price and contact details. That includes make, model, year, fuel type, drive and transmission, which the seller can correct on the equipment step. The registration number and mileage are the exception (above). Two rules follow:
+        <li><b>Is the review decision re-run after an edit?</b> No (team meeting, October 2026). The team follows the data on edited ads to see whether a re-run is worth building, which is why every edit is recorded (change 1). Why the data needs that record:
           <ul class="list-[circle] pl-5 mt-1 space-y-1">
-            <li>The save passes the same checks as a publish: the photo minimum, and the asking price on an ad that will not be reviewed.</li>
-            <li>The review decision and the price estimate are not re-run, though the details they read can change (see the first open question).</li>
+            <li>The review algorithm scores the ad as submitted, and its results are measured on the ad as it went live: offers, accepted offers, the price, what the advisor found on the call. It reads almost every detail the funnel asks, so nearly any edit changes something it scored.</li>
+            <li>Edits reach ads sent to review, until an advisor books them, and ads cleared to publish without a call while they wait for email verification. The second is the cleanest case: no advisor in between, and the decision being tested is that the ad needs no call. An ad from a verified seller publishes straight away and cannot be edited.</li>
+            <li>The bias has a direction. Sellers will add photos, fill in the service history or lower their price, so a weak ad-quality or price score can be fixed before its result is measured, and those scores look less predictive than they are.</li>
           </ul>
         </li>
-        <li><b>Can the seller change their own price estimate?</b> Yes, on the price step. An ad in review keeps the optional estimate, and an ad waiting for email verification keeps its required asking price, so an edit asks the same price question the ad was submitted with. No reason found to block it.</li>
-        <li><b>Should ads waiting for email verification appear on the offers page?</b> No, and no seller could see them there. The offers page needs a login, an ad is only waiting while its seller has not verified their email, and the verification link logs the seller in and publishes the ad in one step. So the first offers page that seller sees already shows the ad live, and production&rsquo;s draft list leaves these ads out anyway. The waiting screen (funnel success) is their only way to edit, which change 1 covers. The prototype works the same way.</li>
+        <li><b>Does the ad leave the review queue while the seller edits it?</b> No (team meeting, October 2026). It keeps its place and stays bookable; a booking ends the edit (change 2).</li>
+        <li><b>Which details can be edited?</b> Everything the funnel asks, because the edit is the funnel: equipment, location and delivery distance, tyres, keys, service history, repairs and damage, photos, price and contact details. That includes make, model, year, fuel type, drive and transmission, which the seller can correct on the equipment step. The save passes the same checks as a publish: the photo minimum, and the asking price on an ad that will not be reviewed.</li>
+        <li><b>Are the registration number and mileage editable?</b> No, and that is intended. The seller enters them on the front page before the funnel starts, and the equipment step shows them read-only.</li>
+        <li><b>Can the seller change their own price estimate?</b> Yes, on the price step. An ad in review keeps the optional estimate, and an ad waiting for email verification keeps its required asking price, so an edit asks the same price question the ad was submitted with.</li>
+        <li><b>Should ads waiting for email verification appear on the offers page?</b> No, and no seller could see them there. The offers page needs a login, an ad is only waiting while its seller has not verified their email, and the verification link logs the seller in and publishes the ad in one step. The waiting screen (funnel success) is their only way to edit, which change 1 covers.</li>
+      </ul>
+
+      <h3 class="font-barlow font-bold text-black text-xl leading-tight mt-8 mb-3">Out of scope</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Editing during the auction</b> stays as it is. Whether it should be removed is a separate question.</li>
+        <li><b>A lighter alternative to rejecting for photos</b>, such as asking the seller to add photos while the ad stays in review.</li>
+        <li><b>Showing advisors what the seller edited</b> in the back office.</li>
       </ul>
       </div>
     </section>

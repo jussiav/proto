@@ -656,7 +656,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
-| Seller edits before review | **Ideation** — changes 1 and 2 (seller side) in `v1`; change 2 awaits a team decision | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
+| Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 
 **Completed initiatives:**
@@ -2617,7 +2617,18 @@ success.html shows prod's success toast worded **"Tarjouspyyntö päivitetty"**
 On success.html it
 can sit beside the proto-only email toast; accepted, it is proto chrome. **No new screen; one new string, the toast wording.**
 
-**Change 2, the booking during an edit (team decision pending):** the ad is
+**Team meeting decisions (2026-10-05), now on the spec:** the review decision
+is NOT re-run after an edit; the team follows the data on edited ads instead,
+so every seller save after the decision must be recorded (change 1). The ad
+stays in the review queue and bookable while being edited. Registration and
+mileage are intentionally not editable. Editing during the auction is out of
+scope. The only open question is contact details changing mid-edit. Change 1
+now has its own behind-the-scenes list (save accepts in-review/queued, funnel
+opens a submitted ad at equipment, last step saves without submitting, return
+target, booked state, edit record). A call logged without a decision ends the
+booking, so the button returns: "editable while no booking is active".
+
+**Change 2, the booking during an edit (agreed):** the ad is
 never edited in Filament and the funnel at once, and **nothing changes in
 Filament or in how advisors pick an ad to book** (revised 2026-10-01, Jussi;
 an expiring seller-editing hold that kept the ad out of the review list was
