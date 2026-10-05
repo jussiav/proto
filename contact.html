@@ -146,7 +146,7 @@
           case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const bookTypeOk=rg[0]==='Ei huoltokirjaa'?true:rg[1]!=null; return rg.length>=5&&rg[0]!=null&&bookTypeOk&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
           case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
           case 'price':    return !!s.priceVisited;
-          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.sahkoposti&&c.puhelin&&c.kayttoehdot); }
+          case 'contact':  { const c=s.contact||{}; return !!(c.kokoNimi&&c.puhelin&&(s.loggedIn||(c.sahkoposti&&c.kayttoehdot))); }
           default: return false;
         }
       }
@@ -263,12 +263,13 @@
         const tgt = setFieldError(puhelin, t('contact.phoneError'));
         if (!firstTarget) firstTarget = tgt;
       }
+      const loggedIn = !!getStore().loggedIn;
       const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sposti.value.trim());
-      if (!emailOk) {
+      if (!loggedIn && !emailOk) {
         const tgt = setFieldError(sposti, sposti.value.trim() ? t('contact.emailInvalidError') : t('contact.emailEmptyError'));
         if (!firstTarget) firstTarget = tgt;
       }
-      if (!ehdot.checked) {
+      if (!loggedIn && !ehdot.checked) {
         const tgt = setFieldError(ehdot, t('contact.termsError'));
         if (!firstTarget) firstTarget = tgt;
       }
@@ -342,8 +343,24 @@
     }
     document.addEventListener('av:langchange', applySubmitLabel);
 
+    /* A logged-in seller has a complete profile in prod: verifying the email
+       copies name, phone and terms onto the account, and the step always sends
+       ready_to_sell_car. PersonalInfo.vue then swaps the heading and drops the
+       email field and both checkboxes. The terms checkbox would return if newer
+       terms were published; the proto has no terms versions. */
+    function applyLoggedInProfile() {
+      if (!getStore().loggedIn) return;
+      document.getElementById('contact-title').setAttribute('data-i18n', 'contact.titleLoggedIn');
+      document.getElementById('contact-title').textContent = t('contact.titleLoggedIn');
+      document.getElementById('contact-subtitle').setAttribute('data-i18n', 'contact.subtitleLoggedIn');
+      document.getElementById('contact-subtitle').textContent = t('contact.subtitleLoggedIn');
+      document.getElementById('sahkoposti-row').style.display = 'none';
+      document.getElementById('contact-consents').style.display = 'none';
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       loadContact();
+      applyLoggedInProfile();
       initStepNav('contact');
       if (typeof renderVehicleCard === 'function') renderVehicleCard('av-vehicle-card', {});
       ['koko-nimi','sahkoposti','puhelin'].forEach(id => {
@@ -409,8 +426,8 @@
 
         <!-- Headline + intro -->
         <div class="flex flex-col gap-2.5 w-full">
-          <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="contact.title">Miten tavoitamme sinut?</h1>
-          <p class="font-dm text-base leading-5 text-black" data-i18n="contact.subtitle">Olemme tarvittaessa sinuun yhteydessä tarjouskilpailuun liittyen. Ostava autoliike ottaa yhteyttä, jos hyväksyt tarjouksen.</p>
+          <h1 id="contact-title" class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="contact.title">Miten tavoitamme sinut?</h1>
+          <p id="contact-subtitle" class="font-dm text-base leading-5 text-black" data-i18n="contact.subtitle">Olemme tarvittaessa sinuun yhteydessä tarjouskilpailuun liittyen. Ostava autoliike ottaa yhteyttä, jos hyväksyt tarjouksen.</p>
         </div>
 
         <!-- Form -->
@@ -452,7 +469,7 @@
           </div>
 
           <!-- Checkboxes -->
-          <div class="flex flex-col gap-3.5 w-full">
+          <div id="contact-consents" class="flex flex-col gap-3.5 w-full">
             <!-- Terms -->
             <label class="flex items-start gap-2.5 cursor-pointer">
               <input id="kayttoehdot" type="checkbox" class="av-checkbox mt-0.5" />

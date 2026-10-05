@@ -2467,6 +2467,30 @@ part of their scenario setup.
 The URL param `?emailVerified=1` and the `emailVerified` postMessage keep their
 names: those are the email link's contract, not the stored state.
 
+**The contact step reads it too** (2026-10-05, Jussi's catch: an edit started
+from the offers page still asked for the email). Prod's `PersonalInfo.vue`
+switches on `user.has_complete_profile`, and every verified seller has one:
+`HandleEmailVerificationCallback` copies name, phone and terms onto the
+account, and the step always sends `ready_to_sell_car: true`. So
+`loggedIn` stands in for it. With it set, `contact.html`:
+
+| | Not logged in | Logged in |
+|---|---|---|
+| Title / text | "Miten tavoitamme sinut?" + subtitle | `contact.titleLoggedIn` "Yhteystiedot" / `contact.subtitleLoggedIn` "Tarkista yhteystietosi" (prod's `*_for_login_user`) |
+| Name, phone | shown | shown, prefilled from the store |
+| Email | shown, required | hidden, not validated |
+| Terms, marketing | shown, terms required | both hidden (`#contact-consents`) |
+| Submit | "Lähetä ilmoitus" | unchanged |
+
+Prod shows the terms checkbox again when newer terms are published
+(`has_accepted_latest_terms`); the proto has no terms versions, so it never
+returns. **Prod has no English for the two logged-in strings**, so the EN page
+shows the Finnish. The `case 'contact'` completeness check on all five funnel
+steps skips email and terms when `loggedIn`. This is control, not an arm: it
+applies to any logged-in seller, including one starting a new draft. A seller
+editing from the waiting screen (funnel success) before verifying is not logged
+in and still sees the email field, as in prod.
+
 ## Funnel entry by draft status — `funnel-guard.js`
 
 Loaded in `<head>` of the five funnel steps, after `proto-mock.js`. It

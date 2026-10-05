@@ -606,6 +606,8 @@ window.TRANSLATIONS = {
     contact: {
       title:              'Miten tavoitamme sinut?',
       subtitle:           'Olemme tarvittaessa sinuun yhteydessä tarjouskilpailuun liittyen. Ostava autoliike ottaa yhteyttä, jos hyväksyt tarjouksen.',
+      titleLoggedIn:      'Yhteystiedot',
+      subtitleLoggedIn:   'Tarkista yhteystietosi',
       nameLabel:          'Koko nimi',
       namePlaceholder:    'Etunimi Sukunimi',
       phoneLabel:         'Puhelinnumero',
@@ -1128,6 +1130,9 @@ window.TRANSLATIONS = {
     contact: {
       title:             'How do we reach you?',
       subtitle:          'We\'ll contact you if needed regarding the auction. The purchasing dealership will reach out once you accept an offer.',
+      /* Prod has no English for these two keys, so the EN page shows the Finnish. */
+      titleLoggedIn:     'Yhteystiedot',
+      subtitleLoggedIn:  'Tarkista yhteystietosi',
       nameLabel:         'Full name',
       namePlaceholder:   'First Last',
       phoneLabel:        'Phone number',
