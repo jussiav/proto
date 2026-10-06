@@ -751,9 +751,11 @@ DOM order while rendering the primary action on top, both buttons `w-full
 sm:w-auto`; the row returns at 620px. v1 only.
 
 **It covers TWO footers, and only two.** A sweep of every state found one other
-pair: the reject confirmation's `Tee vastatarjous` + `Hylkää tarjous`, measured
-at 360px as 163 + 133 = **296px in a 296px row** — no overflow, no slack either,
-so it stacks the same way. There the DOM already leads with the primary button,
+pair: the reject confirmation's `Tee vastatarjous` + `Hylkää tarjous`. It was
+first measured as 296px in a 296px row at 360px, but that used the proto's old
+40px buttons; with prod's legacy buttons (2026-10-06) both labels wrap onto two
+lines at 375px and both buttons grow to 64px, so prod's row is already broken.
+It stacks the same way. There the DOM already leads with the primary button,
 so plain `flex-col` is enough, and it applies only when both buttons are present
 (`showNeg`). Every other state ends with a single button: prod's negotiation
 modal has no footer accept at all since the 2026-09-24 dump, so accept + send
@@ -1010,6 +1012,32 @@ rounded-md`). `Reveal` itself renders no header at all — every consumer of it
 supplies its own, and the negotiate modal's is an `h2 text-lg leading-4` running
 straight into a bulleted list. The proto keeps the Reveal's own × rather than the
 header icon that modal draws for itself (it passes `:show-close-button="false"`).
+
+**The title is Barlow, not that modal's `font-body`** (2026-10-06, Jussi's call
+after testing PR 2493). The PR builds it as an `h2`, which takes Barlow from the
+element rule, and that was judged more correct than the proto's DM Sans. Proto
+and spec now say 20px Barlow bold at an explicit 28px line-height: the `h2`'s
+element leading (46px from 992px) is what the PR still has to override. The PR
+introduced that: prod's old heading was `h2 text-lg leading-4`, and the new one
+dropped `leading-4`. In prod's remapped scale `leading-7` is 40px, so the fix is
+`leading-4` (27px) or `leading-[28px]`, never `leading-7`.
+
+**The v1 footer buttons are prod's `AButton` at `lg`**, matched to the PR on
+the same day: 56px, weight 400, primary blue, and "Hylkää tarjous" as the
+outlined `default` destructive variant (`ABTN_*` in `decision.html`).
+
+**Control's modal footer is prod's legacy `elements/Button.vue`** (`legacyBtn()`
+in `decision.html`), fixed the same day. It had drawn "Hylkää tarjous" as red
+text, but prod's `color="transparent"` is a black label with a 2px black border.
+Every footer button is 48px: the base `pt-13px pb-15px` comes after size
+medium's `py-2` in prod's compiled CSS, so it wins (checked in the preview's
+stylesheet). Labels are `font-medium tracking-wider`, the blue has no hover
+change (`bg-blue hover:bg-blue-600` are the same colour), and disabled is
+`bg-gray-200 text-gray-500 border-gray-200`. The padding is the hand-written
+`.legacy-btn`, since the Play CDN cannot generate prod's custom `13px`/`15px`
+keys. **Consequence for change 17:** at 375px the control reject confirmation's
+two buttons wrap to two lines each (64px), so prod's row is already broken
+there, not merely full.
 
 **The closed state is where change 12 earns its place.** Control says only
 "Voit hyväksyä tarjouksen" at `text-sm` — the modal never states that the
