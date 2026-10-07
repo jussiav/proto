@@ -2623,7 +2623,7 @@
     /* Reads the two COUNTS and no euro amount — the copy points at the offer
        card rather than quoting a price, so nothing here can go stale against
        the number beside it, and it works unchanged on a final offer. */
-    function buildAuctionVerdict(buyers, offerCount, statsHtml) {
+    function buildAuctionVerdict(buyers, offerCount, auctionAmount, statsHtml) {
       /* ORDER: verdict, then the explanation, then the figures — the figures
          used to lead and now close. Reading it that way, the block answers
          "is this a good offer?" in its first line and spends the rest earning
@@ -2684,28 +2684,18 @@
            the two do not compete. */
         +      '<h3 class="font-display text-xl font-bold leading-snug">Paras hinta autostasi on nyt selvillä!</h3>'
         +      '</div>'
-        /* TWO SENTENCES, AND THE FIRST ONE IS WHAT ANSWERS "where are the
-           other 136 offers?".
+        /* Who competed, what the competition did to the price, and AutoVex's
+           view of it.
 
-           `25 autoliikettä … tekemällä yhteensä 138 tarjousta` states the two
-           figures IN ONE CLAUSE, so the gap between them is a fact about how
-           the auction ran rather than a contradiction the seller has to
-           resolve. A row of two bare counts cannot do that: it prints 25 and
-           138 side by side and leaves the reader to guess whether 136 offers
-           are being withheld. This is why the counts are back in the copy
-           after a pass that took them out — the duplication with the row is
-           the price of the sentence working.
+           The price is the AUCTION result, the highest offer's `amount`, not
+           `standingAmount`: a dealer's raise in a negotiation is not something
+           the competition did (prod reads `auction_amount` for the same reason).
+           On a final offer the proto's `amount` is the raised figure.
 
-           `perehtyi autoosi`, never `arvioi`. Sellers do not know a person
-           looked at all, and many assume we pull generic prices for similar
-           cars. `arvio` is both what a sceptical seller dismisses ("se on vaan
-           arvio") and the product's own word for the machine estimate.
-
-           `Korkein tarjous on kilpailun tulos` is the second half of the same
-           answer: the other offers were SUPERSEDED, not hidden. It replaces
-           `kunnes korkein tarjous jäi voimaan`, which said the same thing in
-           the passive and buried it at the end of a subordinate clause. */
-        +      '<p class="font-dm text-base text-slate-700 mt-2">' + buyers + ' autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä ' + offerCount + ' tarjousta. Korkein tarjous on kilpailun tulos, jonka suosittelemme hyväksymään.</p>'
+           `perehtyi autoosi`, never `arvioi`: sellers do not know a person
+           looked at all, and `arvio` is the product's own word for the machine
+           estimate. */
+        +      '<p class="font-dm text-base text-slate-700 mt-2">' + buyers + ' autoliikettä perehtyi autoosi ja kilpaili siitä. Kilpailu nosti hinnan ' + auctionAmount.toLocaleString('fi-FI') + ' euroon. Pidämme sitä hyvänä markkinahintana ja suosittelemme hyväksymään tarjouksen.</p>'
         +    '</div>'
         +  '</div>';
 
@@ -2775,10 +2765,11 @@
              sentence above it clause for clause. Row and copy teach one shape
              rather than two.
 
-             `Tehtyjä tarjouksia`, not prod's `Tarjouksia yhteensä`: past tense,
-             because the auction is over and the block is a result.
+             `Korotuksia` (raises), not prod's `Tarjouksia yhteensä`: every bid
+             in an ascending auction raises the price, and the sentence above
+             says the competition raised it.
 
-             It carries NO euro figure. A third `Korkein tarjous` cell was built
+             The ROW carries no euro figure; the sentence above names the price. A third `Korkein tarjous` cell was built
              and dropped — the amount is already the largest thing on the offer
              card directly above, so the cell restated it in a smaller font, and
              it duplicated the belief block's own chip further down the page.
@@ -2789,7 +2780,7 @@
              component — see the prop's own note in AuctionStats.vue. */
           var resultCells = [
             { label: 'Autoliikkeitä',     value: buyers,     icon: 'ph-bold-users-three' },
-            { label: 'Tehtyjä tarjouksia', value: offerCount, icon: 'ph-bold-chart-bar' }
+            { label: 'Korotuksia',        value: offerCount, icon: 'ph-bold-chart-bar' }
           ];
           html = '<div data-auction-stats data-cells="'
             + JSON.stringify(resultCells).replace(/"/g, '&quot;') + '"></div>';
@@ -2806,7 +2797,7 @@
       /* Informed decision v1 stops here: the chart and the date row are what
          this arm replaces. Everything below is control's, untouched. */
       if (idShow && buyers >= VERDICT_MIN_BIDDERS) {
-        return buildAuctionVerdict(buyers, offerCount, html);
+        return buildAuctionVerdict(buyers, offerCount, offers[0] ? offers[0].amount : 0, html);
       }
 
       // Chart — uses req.insights_data (pre-generated bid progression, mirrors offers.astro formula)

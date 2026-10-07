@@ -21,8 +21,8 @@
  */
 window.DECISION_I18N = {
   patterns: [
-    { re: /^(\d+) autoliikettä perehtyi autoosi ja kilpaili siitä tekemällä yhteensä (\d+) tarjousta\. Korkein tarjous on kilpailun tulos, jonka suosittelemme hyväksymään\.$/,
-      en: '$1 dealerships studied your car and competed over it by making $2 offers in total. The highest offer is the result of that competition, and we recommend accepting it.' },
+    { re: /^(\d+) autoliikettä perehtyi autoosi ja kilpaili siitä\. Kilpailu nosti hinnan ([\d\s\u00a0]+) euroon\. Pidämme sitä hyvänä markkinahintana ja suosittelemme hyväksymään tarjouksen\.$/,
+      en: '$1 dealerships studied your car and competed over it. The competition raised the price to €$2. We consider it a good market price and recommend accepting the offer.' },
     { re: /^(\d+)\+ kauppaa AutoVexissä$/,            en: '$1+ deals on AutoVex' },
     { re: /^(\d+) pv sitten$/,                        en: '$1 d ago' },
     { re: /^Toimita liikkeeseen \((\d+) km\)$/,       en: 'Deliver to the dealership ($1 km)' },
@@ -46,7 +46,7 @@ window.DECISION_I18N = {
     'Suosittelemme hyväksymään':           'We recommend accepting',
     'Paras hinta autostasi on nyt selvillä!': 'The best price for your car is now known!',
     'Autoliikkeitä':                       'Dealerships',
-    'Tehtyjä tarjouksia':                  'Offers made',
+    'Korotuksia':                          'Raises',
     'Tarjouksia yhteensä':                 'Offers in total',
     'Tarjoajat':                           'Bidders',
     'Tarjousta':                           'Offers',
