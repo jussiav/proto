@@ -2145,7 +2145,8 @@ The business case is in private notes, not in this public repo.
   block `#huutokaupat-content-v4`, the same at every width: no illustration.
   Order: plate + mileage row, then `huutokaupat.body` in **`text-red-500`** (the
   form error's colour, deliberately; 3.8:1, under AA, as the form error already
-  is), then `huutokaupat.titleV4` "Suosittelemme Huutokaupat.comia" (no
+  is; pulled to 10px under the plate row with `-mt-1.5` so it reads as about
+  the typed mileage, back to 0 via `[.hidden+&]:mt-0` when that row is hidden), then `huutokaupat.titleV4` "Suosittelemme Huutokaupat.comia" (no
   "sinulle", unlike `v3`), then a checklist (`check1V4`…`check3V4`, draft: "Ei
   kilometri- tai ikärajoja", "Huutokaupat.com hoitaa kaupan", "Ei kauppaa, ei
   kuluja") in `px-2` with no top padding, then the full-width Huutokaupat.com
