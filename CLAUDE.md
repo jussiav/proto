@@ -1049,9 +1049,10 @@ the class `leading-4` means 16px on the CDN's scale, and the markup carries
 (`COUNTEROFFER_CEILING`, present since the 2026-10-05 dump) changes how the
 counter-offer ceiling is computed and, in its variant, replaces the asking-price
 warning under the field with "Korkein suositeltava vastatarjous on [amount]."
-The formula is pricing logic and stays out of this public repo. Not modelled
-pending Jussi's call; the "Asking price removal" note that such a test "may
-still arrive" is now out of date.
+The formula is pricing logic and stays out of this public repo. **Not modelled,
+by Jussi's decision (2026-10-07):** once the test concludes, the proto's default
+takes whatever gets deployed, from the next dump. The "Asking price removal" note
+that such a test "may still arrive" is now out of date.
 
 **The closed state is where change 12 earns its place.** Control says only
 "Voit hyväksyä tarjouksen" at `text-sm` — the modal never states that the
