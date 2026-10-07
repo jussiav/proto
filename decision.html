@@ -70,14 +70,18 @@
        Still hand-written rather than utilities, since every class in this modal
        is injected by JS and the Play CDN only generates what is present at first
        paint. */
-    /* Prod's legacy Button padding, `pt-13px px-5 pb-15px`: custom spacing keys
-       the Play CDN cannot generate for markup built after first paint. */
-    .legacy-btn { padding: 13px 1.25rem 15px; }
     .modal-help {
       font-size: .875rem;
-      line-height: 1.25rem;
+      line-height: 1.375;        /* prod's text-sm pairing: 19.25px */
       color: #475569;            /* slate-600 */
     }
+    /* NegotiationGuidance.vue's wrapper and title. `leading-4` is 27px on prod's
+       own scale, which this proto does not port, and the title is an h2, so its
+       element rule would otherwise set 46px from 992px. */
+    .neg-guidance { margin-bottom: 1rem; }
+    .neg-guidance-title { font-size: 1.25rem; line-height: 1.6875rem; font-weight: 700; color: #0f172a; padding-bottom: .5rem; padding-right: 3rem; }
+    @media (min-width: 620px) { .neg-guidance-title { padding-right: 4rem; } }
+    @media (min-width: 992px) { .neg-guidance { margin-top: -1.5rem; } }
     .modal-help ul { list-style: disc outside; padding-left: 1rem; margin: 0; }
     .modal-help li + li { margin-top: .25rem; }
 
@@ -714,6 +718,18 @@
        about Enhanced negotiations changes. */
     if (ID_ANY) { EN_V1 = true; }
 
+    /* The negotiation modal's footer is prod's AButton at size lg: 56px tall and
+       no font weight of its own, so labels are 400. Disabled swaps the colour
+       classes for AButton's own disabled compound variants. */
+    var ABTN_LG = 'inline-flex justify-center items-center transition rounded-lg px-8 h-14 text-base leading-tight';
+    var ABTN_PRIMARY = 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
+    var ABTN_DESTRUCTIVE = 'border bg-white border-red-400 hover:bg-red-50 active:bg-red-50 text-red-700 active:text-red-600';
+    var ABTN_DESTRUCTIVE_PRIMARY = 'bg-red-500 hover:bg-red-600 active:bg-red-700 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
+    var ABTN_NEUTRAL = 'border bg-white border-slate-400 hover:bg-gray-100 active:bg-slate-200 text-slate-700 hover:text-slate-800 active:text-slate-600';
+    var ABTN_SUCCESS = 'bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-lime-900 active:text-lime-950 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
+    var ABTN_DISABLED_PRIMARY = '!text-slate-300 bg-slate-200 hover:bg-slate-200 active:bg-slate-200 cursor-not-allowed';
+    var ABTN_DISABLED_DEFAULT = 'border bg-white !text-slate-300 border-slate-200 cursor-not-allowed';
+
     /* Change 17. The accept colour, in one place because it appears on the card,
        inside the dealership's last bubble and on the accept confirmation step —
        and the three have to agree.
@@ -751,26 +767,6 @@
        is 2.28:1 — so the contrast moves into the label and the fill stays
        bright. Candidates were compared on `accept-button-lab.html`, which
        measures each from its own rendered colours. */
-    /* v1's modal footer is prod's AButton at size lg: 56px tall and no font
-       weight of its own, so labels are 400. "Hylkää tarjous" is the outlined
-       `default` destructive variant, not the text-only `ghost`. */
-    var ABTN_LG = 'inline-flex justify-center items-center transition rounded-lg px-8 h-14 text-base leading-tight';
-    var ABTN_PRIMARY = 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
-    var ABTN_DESTRUCTIVE = 'border bg-white border-red-400 hover:bg-red-50 active:bg-red-50 text-red-700 active:text-red-600';
-
-    /* Control's modal footer is prod's legacy elements/Button.vue, 48px tall:
-       its `pt-13px pb-15px` out-rank the `py-2` of size "medium" in prod's
-       compiled CSS. Disabled drops the colour classes, as prod does. */
-    var LEGACY_BTN_COLORS = {
-      'blue':        'bg-blue-600 hover:bg-blue-600 text-white border-blue-600',
-      'green-600':   'bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700',
-      'transparent': 'bg-transparent text-black border-black hover:bg-gray-300 hover:bg-opacity-50'
-    };
-    function legacyBtn(color, disabled) {
-      return 'legacy-btn inline-block leading-none font-medium rounded-lg transition tracking-wider text-center text-base border-2 ' +
-        (disabled ? 'bg-gray-200 text-gray-500 border-gray-200 cursor-not-allowed' : LEGACY_BTN_COLORS[color || 'blue']);
-    }
-
     function acceptCls() {
       return 'bg-green-400 hover:bg-green-500 active:bg-green-600 text-black shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]';
     }
@@ -781,14 +777,6 @@
        its Finnish; adding one arm's strings to the corpus would make this the
        only translated copy on the page. */
     var EN_COPY = {
-      /* Changes 2 and 3, now ONE sentence pair. It states all three outcomes of a
-         counter offer in the order they matter: accepted and the sale closes
-         (change 3 — an accepted counter offer runs the same accept action the
-         seller's own does), raised, or held (change 2 — a reply is validated
-         against the standing amount and a close preserves it). The separate
-         binding bullet went with it; it now says the same thing twice. */
-      counterOutcomes: 'Autoliike voi hyväksyä vastatarjouksesi, jolloin kaupat syntyvät. Se voi myös nostaa tai pitäytyä tarjouksessaan.',
-
       /* The waiting state's second line. It used to be change 5's deadline —
          24 hours of business time, then the auto-close — and now answers a
          different question: the standing offer is still yours while you wait, so
@@ -798,20 +786,7 @@
 
       /* Prod's own reply-time line (negotiation_round_one.first_list_item), which
          spends most of its length on hedging. The hours are the fact. */
-      replyHours: 'Liikkeet vastaavat arkisin klo 10–16.',
-
-      /* prod's contact_info_not_allowed is a full sentence on its own paragraph
-         under the textarea. Beside the label it has to fit next to "Viesti" at
-         360px, so it states the rule and nothing else — parenthesised, because at
-         12px directly after the label it reads as an aside to it rather than as a
-         second label. */
-      noContactInfo: '(Älä lisää yhteystietojasi)',
-
-      /* Closed state. The title says the negotiation ended, so the help line does
-         not repeat it — it answers what happens next instead, which control never
-         states anywhere. The decision page's own hero body was used here first
-         and read as a second announcement of the same fact. */
-      stoppedHelp: 'Hyväksyttyäsi tarjouksen, autoliike ottaa sinuun yhteyttä.'
+      replyHours: 'Liikkeet vastaavat arkisin klo 10–16.'
 
       /* Change 6 needs no string of its own: batch 2 replaced batch 1's hint
          line with prod's rounds-carrying send button
@@ -1069,11 +1044,7 @@
          field was touched, the deep watcher never fired at all and the POST body
          has no `amount` key — Laravel's `required` fails either way.) */
       if (amount === null) {
-        /* Change 10. prod's message is Laravel's `required` rendered against the
-           attribute name `Pyyntihinta` — the ASKING PRICE — on a field labelled
-           `Vastatarjous`, so it names a field that is not on screen. v1 shows
-           prod's own generic `tenderform.*.mandatory_information`. */
-        errors.push(EN_V1 ? 'Pakollinen tieto' : 'Kenttä Pyyntihinta vaaditaan.');
+        errors.push('Pakollinen tieto');
         return errors;
       }
       if (amount < 1 || amount > NEG_AMOUNT_MAX) {
@@ -1100,23 +1071,14 @@
       return errors;
     }
 
-    /* Changes 11 and 12, both transcribed from DeliveryDateModal.vue — the one
-       consumer modal that builds a real header inside this same Reveal shell.
-
-       Control's negotiate modal opens with `<h2 class="text-lg leading-4">` and
-       runs straight into a bulleted list at body size, so the title, the tips and
-       the form all read as one block. DeliveryDateModal states its title at
-       `text-xl font-bold` on its own row, then puts its help text in a peach
-       block, then the content. The close control stays the Reveal's own × rather
-       than the header icon that modal draws for itself (it passes
-       `:show-close-button="false"`; this modal does not). */
-    function buildModalHeader(title, trailing) {
-      var html = '<div class="mb-4">';
-      html += '<div class="flex items-center gap-3 pb-2">';
-      html += '<div class="flex-1 font-display text-xl leading-7 font-bold text-slate-900">' + title + '</div>';
-      html += trailing || '';
-      html += '</div>';
-      return html; // caller adds the help block, then closes the wrapper
+    /* NegotiationGuidance.vue: a title and the guidance under it, no container.
+       The wrapper's lg:-mt-6 pulls the title up into the Reveal's 48px desktop
+       top padding so it lines up with the close button; pr-12 / sm:pr-16 keep a
+       long title clear of that button. */
+    function buildModalHeader(title) {
+      return '<div class="neg-guidance mb-4 lg:-mt-6">' +
+        '<h2 class="neg-guidance-title text-xl leading-[27px] font-bold text-slate-900 pb-2 pr-12 sm:pr-16">' + title + '</h2>';
+      // caller adds the guidance, then closes the wrapper
     }
 
     /* NegotiationMessage.vue scrolls its list to the bottom `onMounted` and again
@@ -1175,9 +1137,13 @@
 
     }
 
-    /* The guidance under the header — text only, no container. */
+    /* The guidance under the title: one string is a paragraph, several a list. */
     function buildModalHelp(inner) {
-      return '<div class="modal-help">' + inner + '</div>';
+      if (Array.isArray(inner)) {
+        return '<div class="modal-help"><ul class="list-disc pl-4 space-y-1">' +
+          inner.map(function (i) { return '<li>' + i + '</li>'; }).join('') + '</ul></div>';
+      }
+      return '<p class="modal-help text-sm text-slate-600">' + inner + '</p>';
     }
 
     /* NumberInput.vue, transcribed. The label is the field's own name; the €
@@ -1209,20 +1175,8 @@
 
       var html = '<div class="relative">';
       html += '<label>';
-      /* Control puts the contact-info warning on its own paragraph BELOW the
-         textarea, where it costs a line (two on a phone) at the bottom of an
-         already tall modal. Here it sits on the label row instead — the rule
-         applies while typing, so it belongs beside the field's name.
-
-         Directly after the label, not pushed to the right end: right-aligned it
-         sat alone in white space away from anything the eye was tracking and was
-         easy to miss entirely. Shortened, it fits next to "Viesti" at 360px. */
-      html += EN_V1
-        ? '<span class="mb-3 flex items-baseline gap-2">' +
-            '<span class="text-base font-medium leading-none lg:text-lg">Viesti</span>' +
-            '<span class="text-xs text-slate-500 leading-none">' + EN_COPY.noContactInfo + '</span>' +
-          '</span>'
-        : '<span class="mb-3 inline-block text-base font-medium leading-none lg:text-lg">Viesti</span>';
+      html += '<span class="mb-3 inline-block text-base font-medium leading-none lg:text-lg">Viesti</span>';
+      html += '<span class="ml-2 inline-block text-xs text-slate-500">(Älä lisää yhteystietojasi)</span>';
       /* v1 borrows the dealer form's own placeholder (app.negotiations
          .counter_offer_message) — existing prod copy that says the message is
          optional and what it is for. Control has no placeholder at all. */
@@ -3404,10 +3358,9 @@
     function renderAcceptModal(body, footer, offer) {
       body.innerHTML = '<p class="text-base text-slate-700">Mahtavaa, olet nyt hyväksymässä autoliikkeen tarjouksen!</p>';
       footer.innerHTML =
-        '<div class="flex justify-end">' +
-          '<button id="modal-btn-accept" class="' +
-            (EN_V1 ? 'inline-flex items-center justify-center px-8 h-10 rounded-lg text-base font-medium ' + acceptCls() : legacyBtn('green-600')) +
-            '">Hyväksy tarjous</button>' +
+        '<div class="flex justify-center lg:justify-end">' +
+          /* AButton primary + success: lime in prod until change 15's green lands. */
+          '<button id="modal-btn-accept" class="' + ABTN_LG + ' mr-4 ' + (EN_V1 ? acceptCls() : ABTN_SUCCESS) + '">Hyväksy tarjous</button>' +
         '</div>';
       document.getElementById('modal-btn-accept').addEventListener('click', function() {
         var _acceptAmt = standingAmount(offer);
@@ -3481,87 +3434,38 @@
         });
       }
 
+      /* NegotiationGuidance in every state: a title, then the guidance under it.
+         Change 9 is the one part still v1 only: prod's waiting states keep the
+         reply-time line and the support-email line, where v1 says the hours
+         plainly and replaces the support route with the standing offer. */
+      var waitingHelp = function (prodReplyLine) {
+        return EN_V1
+          ? [EN_COPY.replyHours, EN_COPY.acceptAnyTime]
+          : [prodReplyLine, 'Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi'];
+      };
+      var ENDED_TITLE = 'Neuvottelu päättyi';
+      var ENDED_HELP  = 'Hyväksyttyäsi tarjouksen, autoliike ottaa sinuun yhteyttä.';
+      var WAITING_TITLE = 'Hyvä! Nyt odotellaan autoliikkeen vastausta.';
+
       if (isStopped) {
-        // Negotiation stopped — seller accepts or closes
-        if (EN_V1) {
-          /* Change 12. Control says only "Voit hyväksyä tarjouksen" at
-             `text-sm` — the modal never states that the negotiation is over, so
-             the one fact the seller opened it to check is the one thing missing.
-             The dealership's side marks a close by REMOVING affordances: their
-             reply button disappears (`canShowReplyButton`) and the thread
-             collapses behind `negotiation.open_message_history`. The seller gets
-             the same collapse in v1, and the header now names the state with the
-             decision page's own hero copy, so it is stated rather than inferred
-             from a missing button. prod's line stays as the help text. */
-          html += buildModalHeader('Neuvottelu päättyi');
-          html += buildModalHelp(EN_COPY.stoppedHelp) + '</div>';
-        } else {
-          html += '<h2 class="text-sm leading-4 mb-3">Voit hyväksyä tarjouksen</h2>';
-        }
+        html += buildModalHeader(ENDED_TITLE) + buildModalHelp(ENDED_HELP) + '</div>';
         html += thread();
 
       } else if (sellerCanSend) {
-        // Seller's turn to send
         if (isQuick) {
+          /* QuickNegotiate's two bodies are chosen by the bidder count, not by
+             the length of this page's offer sample. */
           var quickBody = bidderCount === 1
             ? 'Autostasi ei valitettavasti syntynyt tarjouskilpailua. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.'
             : 'Korkein tarjoaja haluaa ostaa autosi, älä jätä peliä vielä kesken. Nyt sinun kannattaa kertoa autoliikkeelle summa, jolla olisit valmis myymään autosi.';
-          if (EN_V1) {
-            /* Prod's own header, plus a question mark. The seller pressed
-               "Hylkää tarjouskilpailu" and got a counter-offer form, which as a
-               statement reads as though rejecting is no longer on offer — the
-               question mark makes it the alternative it actually is. The reject
-               button is right there in the footer. */
-            html += buildModalHeader('Tee vielä vastatarjous autoliikkeelle?');
-            html += buildModalHelp(quickBody) + '</div>';
-          } else {
-            html += '<div class="text-lg leading-4">';
-            html += '<h2 class="text-lg leading-4">Tee vielä vastatarjous autoliikkeelle</h2>';
-            html += '<p class="mt-2">' + quickBody + '</p>';
-            html += '</div>';
-          }
+          html += buildModalHeader('Tee vielä vastatarjous autoliikkeelle?') + buildModalHelp(quickBody) + '</div>';
         } else {
-          var negTitle = hasNegotiation ? 'Tee uusi vastatarjous' : 'Tee vastatarjous';
-          if (EN_V1) { html += buildModalHeader(negTitle); }
-          else { html += '<h2 class="text-lg leading-4">' + negTitle + '</h2>'; }
-          if (EN_V1) {
-            /* Changes 2 and 3, now one sentence pair rather than a list. Control's
-               three bullets all go: two of them because they restate the action
-               the seller has already taken and encourage more counter offers,
-               which is explicitly not this initiative's goal, and the third
-               because the pair below already contains it — a separate "kauppa
-               syntyy tällä hinnalla" line said the same thing twice.
-
-               The guidance sits under the header at `text-sm` in slate-600 —
-               separated from the modal's own copy by size and weight rather than
-               by a container. With one item there is nothing to bullet, so it is
-               a paragraph. */
-            html += buildModalHelp(EN_COPY.counterOutcomes) + '</div>';
-          } else {
-            html += '<ul class="list-disc list-inside mt-2 mb-4">';
-            html += '<li>' + (hasNegotiation ? 'Tee uusi vastatarjous eniten tarjonneelle' : 'Tee vastatarjous eniten tarjonneelle') + '</li>';
-            html += '<li>Et menetä jo saamaasi tarjousta.</li>';
-            html += '<li>Vastatarjouksen avulla päästään usein kauppoihin.</li>';
-            html += '</ul>';
-          }
+          html += buildModalHeader(hasNegotiation ? 'Tee uusi vastatarjous' : 'Tee vastatarjous');
+          html += buildModalHelp('Autoliike voi hyväksyä vastatarjouksesi, jolloin kaupat syntyvät. Se voi myös nostaa tai pitäytyä tarjouksessaan.') + '</div>';
         }
         /* The thread renders even with no negotiation yet — prod's Negotiate.vue
            dropped its `v-if="negotiation"`, so it opens on the auction result. */
         html += thread();
-        if (hasNegotiation) {
-          /* Change 6. Control's filled blue block sits directly above the form
-             and reads as forbidding it. v1 drops it entirely — the rounds left
-             ride on the send button instead, which is what the dealership's own
-             side already does (tender.button.deal.reply_to_negotiation), so the
-             seller reads the count at the moment they press rather than as a
-             notice over the field. */
-          if (!EN_V1) {
-            html += '<p class="mt-4 p-4 flex items-center text-white bg-blue-600 rounded-lg">';
-            html += '<span class="mr-2 flex items-center text-white flex-shrink-0">' + ICO_INFO_FILL + '</span>';
-            html += '<span class="text-base leading-normal">Vastatarjouksia ei tämän jälkeen tehdä enempää.</span>';
-            html += '</p>';
-          }
-        }
         /* The amount field and its live asking-price warning are one block in
            prod (Negotiate.vue's first div.my-4), the warning a sibling of the
            NumberInput rather than one of its errors. */
@@ -3573,62 +3477,28 @@
           html += '<div class="my-4">';
           html += buildNegMessageField(errors.message);
           html += '</div>';
-          if (!EN_V1) html += '<p class="text-sm text-gray-700">Ethän kirjoita puhelinnumeroasi tai sähköpostiosoitettasi viestikenttään.</p>';
         }
 
       } else {
         // Waiting for dealer
         if (isQuick && sellerRounds === 1) {
-          if (EN_V1) { html += buildModalHeader('Eikö autoliike ole ollut yhteydessä?'); }
-          else { html += '<h2 class="text-lg leading-4">Eikö autoliike ole ollut yhteydessä?</h2>'; }
-          html += EN_V1
-            ? '<div class="modal-help"><ul>'
-            : '<ul class="list-disc list-inside mt-2 mb-4">';
-          html += '<li>' + (EN_V1 ? EN_COPY.replyHours : 'Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä).') + '</li>';
-          /* Change 9 reaches this waiting state too. It had been left with the
-             support-email line while its sibling below lost it, which made the
-             two waiting states disagree — and change 9's reading is that the
-             modal answers the question rather than routing it to support. Same
-             replacement: the standing offer is still theirs while they wait. */
-          html += '<li>' + (EN_V1 ? EN_COPY.acceptAnyTime : 'Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi') + '</li>';
-          html += EN_V1 ? '</ul></div></div>' : '</ul>';
+          /* Unreachable in prod: the reject banner is hidden in the one state
+             that would show it. Specified so nothing is left behind if that
+             banner rule changes. */
+          html += buildModalHeader('Eikö autoliike ole ollut yhteydessä?');
+          html += buildModalHelp(waitingHelp('Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä).')) + '</div>';
         } else if (sellerRounds === 1) {
-          if (EN_V1) { html += buildModalHeader('Hyvä! Nyt odotellaan autoliikkeen vastausta.'); }
-          else {
-            html += '<div class="mb-4">';
-            html += '<h2 class="text-lg leading-4">Hyvä! Nyt odotellaan autoliikkeen vastausta.</h2>';
-          }
-          html += EN_V1
-            ? '<div class="modal-help"><ul>'
-            : '<ul class="list-disc list-inside mt-2 mb-4">';
-          html += '<li>' + (EN_V1 ? EN_COPY.replyHours : 'Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä).') + '</li>';
-          if (EN_V1) {
-            /* The waiting state's second line. The support-email line goes —
-               change 8's reading is that the modal should answer the question
-               rather than route it to a phone call, and this is the state where
-               there is nothing for the seller to decide anyway. What replaces it
-               is the fact that removes the pressure: the standing offer is still
-               theirs while they wait. */
-            html += '<li>' + EN_COPY.acceptAnyTime + '</li>';
-          } else {
-            html += '<li>Jos sinulla on kysyttävää, ota meihin yhteyttä osoitteessa tiimi@autovex.fi</li>';
-          }
-          html += EN_V1 ? '</ul></div></div>' : '</ul></div>';
+          html += buildModalHeader(WAITING_TITLE);
+          html += buildModalHelp(waitingHelp('Useimmiten saat sen saman päivän aikana (arkisin kello 10–16 välillä).')) + '</div>';
         } else if (sellerRounds === 2) {
-          /* Two rounds used and the dealer has already answered: prod stops
-             talking about waiting and points at the accept button instead. */
-          var r2 = waitingForSeller
-            ? 'Voit hyväksyä tarjouksen'
-            : 'Nyt odotellaan taas autoliikkeen vastausta. Tämän jälkeen voit hyväksyä tai hylätä autoliikkeen tarjouksen, vastatarjouksia ei tehdä enempää. Toivottavasti pääsette kauppoihin!';
-          if (EN_V1) {
-            /* Both rounds used. Same treatment as every other state: the title
-               names where the negotiation is, prod's own sentence becomes the
-               help text under it. Titles are existing copy — the waiting side
-               reuses the round-one title, the finished side the hero's. */
-            html += buildModalHeader(waitingForSeller ? 'Neuvottelu päättyi' : 'Hyvä! Nyt odotellaan autoliikkeen vastausta.');
-            html += buildModalHelp(r2) + '</div>';
+          /* Both rounds used. Waiting on the dealership reuses the round-one
+             title; once they have answered, the seller can only accept, so it
+             reads as the closed state. */
+          if (waitingForSeller) {
+            html += buildModalHeader(ENDED_TITLE) + buildModalHelp(ENDED_HELP) + '</div>';
           } else {
-            html += '<p>' + r2 + '</p>';
+            html += buildModalHeader(WAITING_TITLE);
+            html += buildModalHelp('Nyt odotellaan taas autoliikkeen vastausta. Tämän jälkeen voit hyväksyä tai hylätä autoliikkeen tarjouksen, vastatarjouksia ei tehdä enempää. Toivottavasti pääsette kauppoihin!') + '</div>';
           }
         }
         html += thread();
@@ -3644,11 +3514,7 @@
       var showClose  = !sellerCanSend;
       var showTimer  = reactionSecs < 181 && sellerCanSend;
 
-      var disabledCls = ' bg-gray-200 text-gray-500 border-2 border-gray-200 cursor-not-allowed';
-      /* Set here rather than beside the footer markup below: the buttons are
-         assembled first, so a `var` declared later hoists as undefined and lands
-         in the class string. fLeft exists exactly when isQuick does. */
-      var stackCls = (EN_V1 && isQuick) ? ' w-full sm:w-auto' : '';
+      var stackCls = isQuick ? ' w-full sm:w-auto' : '';
 
       var fRight = '';
       if (showTimer) {
@@ -3659,50 +3525,26 @@
         fRight += '</div>';
       }
       if (showSend) {
-        /* Change 6, solved the way the dealership's side already solves it:
-           `tender.button.deal.reply_to_negotiation` is
-           "Lähetä vastatarjous (:roundsLeft jäljellä)", so the count rides on the
-           action instead of sitting in a notice above the field. That removes
-           control's filled blue block AND batch 1's hint line — the seller reads
-           how many they have left at the moment they press. */
-        var sendLabel = EN_V1
-          ? 'Lähetä vastatarjous (' + Math.max(0, 2 - sellerRounds) + ' jäljellä)'
-          : 'Lähetä';
         fRight += '<button id="modal-btn-send-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="' + (EN_V1
-            ? ABTN_LG + stackCls + ' ' + (buttonDisabled ? disabledCls : ABTN_PRIMARY)
-            : legacyBtn('blue', buttonDisabled)) +
-          '">' + sendLabel + '</button>';
+          ' class="' + ABTN_LG + stackCls + ' ' + (buttonDisabled ? ABTN_DISABLED_PRIMARY : ABTN_PRIMARY) + '">' +
+          'Lähetä vastatarjous (' + Math.max(0, 2 - sellerRounds) + ' jäljellä)</button>';
       }
       if (showClose) {
-        fRight += '<button id="modal-btn-close" class="' + (EN_V1 ? 'inline-flex items-center justify-center px-6 h-10 rounded-lg bg-transparent text-slate-600 hover:bg-slate-100 text-base font-medium' : legacyBtn('transparent')) + '">Sulje</button>';
+        fRight += '<button id="modal-btn-close" class="' + ABTN_LG + stackCls + ' ' + ABTN_NEUTRAL + '">Sulje</button>';
       }
 
-      // QuickNegotiate (reached via "Hylkää tarjouskilpailu") always keeps the
-      // continue-to-reject path visible next to the counter-offer, like
-      // production OfferActions.vue
+      // QuickNegotiate keeps the continue-to-reject path beside the counter offer.
       var fLeft = '';
       if (isQuick) {
         fLeft = '<button id="modal-btn-reject-from-neg"' + (buttonDisabled ? ' disabled' : '') +
-          ' class="' + (EN_V1
-            ? ABTN_LG + stackCls + ' ' + (buttonDisabled ? disabledCls : ABTN_DESTRUCTIVE)
-            : legacyBtn('transparent', buttonDisabled)) +
-          '">Hylkää tarjous</button>';
+          ' class="' + ABTN_LG + stackCls + ' ' + (buttonDisabled ? ABTN_DISABLED_DEFAULT : ABTN_DESTRUCTIVE) + '">Hylkää tarjous</button>';
       }
-      /* Both actions on one row is prod's layout, and it stops working here:
-         the send button carries the rounds left ("Lähetä vastatarjous (2
-         jäljellä)"), so on a narrow modal it collides with "Hylkää tarjous"
-         beside it. Below prod's own `sm` the footer becomes a column —
-         `flex-col-reverse`, so the DOM keeps prod's order while the primary
-         action renders on top — and both buttons go full width. v1 only; the
-         row returns at 620px. */
-      var fRightWrap = '<div class="' + (stackCls ? 'w-full sm:w-auto ' : '') +
-        'lg:flex lg:justify-end text-center space-x-1 lg:space-y-0 space-y-1' +
+      /* Below prod's `sm` the QuickNegotiate footer is a column: `flex-col-reverse`
+         keeps prod's DOM order while the send button renders on top. */
+      var fRightWrap = '<div class="lg:flex lg:justify-end text-center sm:space-x-1 lg:space-y-0 space-y-1' +
         (isQuick ? ' text-right' : '') + '">' + fRight + '</div>';
       footer.innerHTML = fLeft
-        ? (EN_V1
-            ? '<div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between sm:items-end sm:gap-0 sm:space-x-1"><div class="w-full sm:w-auto">' + fLeft + '</div>' + fRightWrap + '</div>'
-            : '<div class="flex justify-between items-end space-x-1"><div>' + fLeft + '</div>' + fRightWrap + '</div>')
+        ? '<div class="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between sm:items-end sm:gap-0 sm:space-x-1"><div>' + fLeft + '</div>' + fRightWrap + '</div>'
         : '<div class="flex justify-center lg:justify-end">' + fRightWrap + '</div>';
 
       var closeBtn       = document.getElementById('modal-btn-close');
@@ -3789,50 +3631,29 @@
       var isFinal    = offer && offer.status === 3;
       var showNeg    = !hasNeg && isHighest && !isFinal;
 
-      /* Changes 3 and 9 reach this step as well — it is the other modal in the
-         reject flow, and control gives it no header at all: prod's whole
-         confirmation is one paragraph at `text-sm`, question and advice running
-         together. v1 promotes prod's own question to the title row and puts the
-         advice in the contained help block, the same treatment every other state
-         in this modal gets.
-
-         The support sentence goes with it ("Asiakaspalvelumme auttaa myös
-         mielellään tarvittaessa"): change 9 keeps the customer-support route out
-         of this modal in every state, and the advice above it already says what
-         to do instead. prod's `negotiation` variant is the bare question, so
-         there the title stands alone. */
-      if (EN_V1) {
-        var rejectHtml = buildModalHeader('Oletko varma että haluat hylätä tarjouksen?');
-        if (!hasNeg) {
-          rejectHtml += buildModalHelp('Suosittelemme tekemään vastatarjouksen autoliikkeelle jos haluat autollesi noudon, paremman hinnan tai muuta lisätietoa.') + '</div>';
-        }
-        body.innerHTML = rejectHtml;
-      } else {
-        body.innerHTML =
-          '<p class="text-sm text-slate-700">' +
-            (hasNeg
-              ? 'Oletko varma että haluat hylätä tarjouksen?'
-              : 'Oletko varma että haluat hylätä tarjouksen? Suosittelemme tekemään vastatarjouksen autoliikkeelle jos haluat autollesi noudon, paremman hinnan tai muuta lisätietoa. Asiakaspalvelumme auttaa myös mielellään tarvittaessa.') +
-          '</p>';
+      /* Reject.vue: prod's question as the title. Without a negotiation the
+         advice is the guidance under it; v1 drops its closing support sentence
+         (change 9 keeps the customer-support route out of this modal). */
+      var rejectHtml = buildModalHeader('Oletko varma että haluat hylätä tarjouksen?');
+      if (!hasNeg) {
+        rejectHtml += buildModalHelp('Suosittelemme tekemään vastatarjouksen autoliikkeelle jos haluat autollesi noudon, paremman hinnan tai muuta lisätietoa.' +
+          (EN_V1 ? '' : ' Asiakaspalvelumme auttaa myös mielellään tarvittaessa.'));
       }
+      body.innerHTML = rejectHtml + '</div>';
 
-      /* Change 17's stacking, for the other footer that pairs a primary action
-         with the destructive one. With prod's legacy buttons both labels
-         already wrap onto two lines at 375px, so the same rule applies: a
-         column below prod's `sm`, primary on top, both full width.
-         Here the DOM already leads with the primary button, so a plain
-         `flex-col` is enough. Only when both buttons are actually present. */
-      var rejStack = EN_V1 && showNeg;
-      var rejBtnCls = rejStack ? ' w-full sm:w-auto' : '';
-      var fHtml = '<div class="' + (rejStack
-        ? 'flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center sm:gap-0'
-        : 'flex justify-between items-center') + '">';
+      /* OfferActions.vue: "Hylkää tarjous" first in the DOM and "Tee vastatarjous"
+         after it. Below `sm` the pair is a reversed column, so the counter offer
+         renders on top; from `sm` it is a row, centred and then right-aligned at
+         `lg`, with no gap between the two buttons, as prod draws it. */
+      var rejBtnCls = showNeg ? ' w-full sm:w-auto' : '';
+      var fHtml = '<div class="' + (showNeg
+        ? 'flex flex-col-reverse gap-2 sm:flex-row sm:justify-center sm:gap-0 lg:justify-end'
+        : 'flex justify-center lg:justify-end') + '">';
+      fHtml += '<div><button id="modal-btn-reject-confirm" class="' + ABTN_LG + rejBtnCls + ' ' + ABTN_DESTRUCTIVE + '">Hylkää tarjous</button></div>';
       if (showNeg) {
-        fHtml += '<button id="modal-btn-to-neg" class="' + (EN_V1 ? ABTN_LG + ' ' + ABTN_PRIMARY : legacyBtn('blue')) + rejBtnCls + '">Tee vastatarjous</button>';
-      } else {
-        fHtml += '<span></span>';
+        fHtml += '<div class="lg:flex lg:justify-end text-center sm:space-x-1 lg:space-y-0 space-y-1">' +
+          '<button id="modal-btn-to-neg" class="' + ABTN_LG + ' w-full sm:w-auto ' + ABTN_PRIMARY + '">Tee vastatarjous</button></div>';
       }
-      fHtml += '<button id="modal-btn-reject-confirm" class="' + (EN_V1 ? ABTN_LG + ' ' + ABTN_DESTRUCTIVE : legacyBtn('transparent')) + rejBtnCls + '">Hylkää tarjous</button>';
       fHtml += '</div>';
       footer.innerHTML = fHtml;
 
@@ -4137,7 +3958,7 @@
       var enabled = !!(f.reason && f.rejected_reason && f.StarRating);
       footer.innerHTML =
         '<div class="flex justify-center lg:justify-end"><button id="modal-btn-do-reject"' + (enabled ? '' : ' disabled') +
-        ' class="' + legacyBtn('blue', !enabled) +
+        ' class="' + ABTN_LG + ' ' + (enabled ? ABTN_DESTRUCTIVE_PRIMARY : ABTN_DISABLED_PRIMARY) +
         '">Hylkää tarjous</button></div>';
       if (!enabled) return;
       document.getElementById('modal-btn-do-reject').addEventListener('click', function() {

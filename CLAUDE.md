@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-10-05)
+## Reference Source Locations (updated 2026-10-07)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-05-8ba5fbef5f7a/` (previous: `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` and the 10-05 one as `autovex-autovex-8ba5fbef5f7a`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-07-25320dd885e6/` (previous: `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -230,7 +230,7 @@ These rules apply to all new pages and components in this prototype, without exc
     | Decision offer card — accept, counter offer | `UiButton` `lg` | 16 | **14** |
     | Decision warm-up — `Katso tulokset` | `UiButton` `lg` | 16 | **14** |
     | Decision support banner | `UiButton` `fw` | 16 | 16 ✓ |
-    | Negotiate / reject / thank-you modal footers | `Button.vue` medium | 16 | **14** |
+    | Negotiate / reject modal footers | `AButton` `lg` since the 2026-10-07 dump (was `Button.vue` medium) | 16 | matched |
     | In-thread accept (`DealerAcceptCounterOfferAction`) | `UiButton` `md` | 14 | 14 ✓ |
     | Offers page — car card CTAs, notification CTAs | `UiButton` `md` | 14 | `text-xs sm:text-sm` |
 
@@ -651,7 +651,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 |---|---|---|---|---|---|---|
 | Delivery distance A/B test | **In production A/B test** | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
-| Enhanced negotiations | Live — **changes 4 + 5 shipped** (2026-09-24 dump), rest `v1` only | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
+| Enhanced negotiations | Live — **changes 1–8 and 17 shipped** (4 + 5 in the 2026-09-24 dump, the rest in 2026-10-07), 9–16 `v1` only | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
@@ -1013,31 +1013,45 @@ supplies its own, and the negotiate modal's is an `h2 text-lg leading-4` running
 straight into a bulleted list. The proto keeps the Reveal's own × rather than the
 header icon that modal draws for itself (it passes `:show-close-button="false"`).
 
-**The title is Barlow, not that modal's `font-body`** (2026-10-06, Jussi's call
-after testing PR 2493). The PR builds it as an `h2`, which takes Barlow from the
-element rule, and that was judged more correct than the proto's DM Sans. Proto
-and spec now say 20px Barlow bold at an explicit 28px line-height: the `h2`'s
-element leading (46px from 992px) is what the PR still has to override. The PR
-introduced that: prod's old heading was `h2 text-lg leading-4`, and the new one
-dropped `leading-4`. In prod's remapped scale `leading-7` is 40px, so the fix is
-`leading-4` (27px) or `leading-[28px]`, never `leading-7`.
+**SHIPPED IN THE 2026-10-07 DUMP: changes 1, 2, 3, 6, 7, 8 and 17** (PR 2493,
+tested in its preview on 2026-10-06). The proto's `control` now renders all of
+them, so they look the same in both arms. What prod does:
 
-**The v1 footer buttons are prod's `AButton` at `lg`**, matched to the PR on
-the same day: 56px, weight 400, primary blue, and "Hylkää tarjous" as the
-outlined `default` destructive variant (`ABTN_*` in `decision.html`).
+| Part | Prod, 2026-10-07 |
+|---|---|
+| component | new `NegotiationGuidance.vue` (`pages/offers/components`): title + guidance, used by `Negotiate`, `QuickNegotiate` and `Reject` |
+| title | `h2 text-xl leading-4 font-bold text-slate-900 pb-2 pr-12 sm:pr-16`, so Barlow (the h2 element rule) at **27px** (prod's `leading-4`). The PR preview had dropped `leading-4` and showed 46px; that was fixed before merge |
+| wrapper | `mb-4 lg:-mt-6`, deliberate: its own comment says it offsets Reveal's `lg:pt-12` so the title lines up with the close button |
+| guidance | one string = `p text-sm text-slate-600`, several = `ul list-disc pl-4 space-y-1` |
+| titles | before sending `Tee vastatarjous` / `Tee uusi vastatarjous`; waiting `Hyvä! Nyt odotellaan…`; closed, and both rounds used after the dealer's reply, `Neuvottelu päättyi` + `Hyväksyttyäsi tarjouksen…`; reject entry `Tee vielä vastatarjous autoliikkeelle?`; reject confirmation `Oletko varma…` with the advice as guidance |
+| copy | `counter_offer.send_button` "Lähetä vastatarjous (:rounds_left jäljellä)", `amount_required` "Pakollinen tieto" (now the `amount.required` message), `message_no_contact_info` beside the label via `TextArea`'s new `labelNote` (`ml-2 inline-block text-xs text-slate-500`). The blue last-round block and the three tips are gone |
+| footer | every `OfferActions` button is `AButton` `lg`: send and Tee vastatarjous primary, Hylkää tarjous `default` + `destructive` (outlined red), accept step `primary` + `success` (**still lime**), survey submit `primary` + `destructive` (red fill), Sulje `default` + `neutral`. Below `sm` the QuickNegotiate footer and the paired reject confirmation stack, primary on top |
 
-**Control's modal footer is prod's legacy `elements/Button.vue`** (`legacyBtn()`
-in `decision.html`), fixed the same day. It had drawn "Hylkää tarjous" as red
-text, but prod's `color="transparent"` is a black label with a 2px black border.
-Every footer button is 48px: the base `pt-13px pb-15px` comes after size
-medium's `py-2` in prod's compiled CSS, so it wins (checked in the preview's
-stylesheet). Labels are `font-medium tracking-wider`, the blue has no hover
-change (`bg-blue hover:bg-blue-600` are the same colour), and disabled is
-`bg-gray-200 text-gray-500 border-gray-200`. The padding is the hand-written
-`.legacy-btn`, since the Play CDN cannot generate prod's custom `13px`/`15px`
-keys. **Consequence for change 17:** at 375px the control reject confirmation's
-two buttons wrap to two lines each (64px), so prod's row is already broken
-there, not merely full.
+**Still `v1` only:** change 9 (waiting states keep prod's reply-time and
+support-email lines; the reject confirmation keeps "Asiakaspalvelumme auttaa
+myös mielellään tarvittaessa."), 10 (auto-close message), 11 (email link
+target), 12–16 (card, colours, green accept, hero) and the message
+placeholder, which Jussi keeps in `v1` though it was never specced.
+
+**One prod oddity reproduced, not reported yet:** in the paired reject
+confirmation from `sm` up, "Hylkää tarjous" and "Tee vastatarjous" sit in a row
+with **no gap** between them (the row is `sm:gap-0` and the only spacing class is
+on the second div's own children). Worth raising with the devs.
+
+**What went with it in the proto:** `legacyBtn()` and `.legacy-btn` (the
+2026-10-06 transcription of `elements/Button.vue`, now unused), the `EN_V1`
+branches for every shipped change, and three `EN_COPY` keys. The modal title and
+wrapper are hand-written CSS (`.neg-guidance`, `.neg-guidance-title`) because
+the class `leading-4` means 16px on the CDN's scale, and the markup carries
+`leading-[27px]` for the record.
+
+**A second negotiation-modal A/B is live and NOT in the proto:** `106_combi`
+(`COUNTEROFFER_CEILING`, present since the 2026-10-05 dump) changes how the
+counter-offer ceiling is computed and, in its variant, replaces the asking-price
+warning under the field with "Korkein suositeltava vastatarjous on [amount]."
+The formula is pricing logic and stays out of this public repo. Not modelled
+pending Jussi's call; the "Asking price removal" note that such a test "may
+still arrive" is now out of date.
 
 **The closed state is where change 12 earns its place.** Control says only
 "Voit hyväksyä tarjouksen" at `text-sm` — the modal never states that the
