@@ -2124,13 +2124,15 @@ The business case is in private notes, not in this public repo.
   badge, not prod's) — the three in one `gap-4` group (16px, the step's own
   title→subtitle spacing; Jussi moved the plate row into that group in Figma),
   the group in a `gap-6` column, the `details-cta`
-  Jatka button classes hugging with `px-8` + the same arrow asset, the
+  Jatka button classes at full width (2026-10-07, Jussi: both widths; it was
+  hugging with `px-8`) + the same arrow asset, the
   "Muokkaa" link classes for "Takaisin etusivulle" (+ prod's
   `arrow-left-bold`) but underlined on hover only — the Figma instance was the
   link's hover state, and Jussi set the default to no underline, and the step's `text-xs leading-[14px] text-slate-600`
   small text for the disclaimer. From `md` (768, the details step's own
   breakpoint) `assets/huutokaupat-advisor.png` stands 159px wide beside the
-  actions, which are centred (`md:justify-center`) and overlap it by 16px
+  actions, which fill the rest of the row (`flex-1`), are centred vertically
+  (`md:justify-center`), keep the back link centred under the button, and overlap it by 16px
   (`md:-ml-4`) so the hand reaches over the button — the image is stacked on
   top (`relative z-10`, Jussi's call) with `pointer-events-none` so the
   covered 16px of the button stays clickable; below `md` the
@@ -2146,8 +2148,12 @@ The business case is in private notes, not in this public repo.
   is), then `huutokaupat.titleV4` "Suosittelemme Huutokaupat.comia" (no
   "sinulle", unlike `v3`), then a checklist (`check1V4`…`check3V4`, draft: "Ei
   kilometri- tai ikärajoja", "Huutokaupat.com hoitaa kaupan", "Ei kauppaa, ei
-  kuluja") in `px-2` with no top padding, then the full-width blue "Huutokaupat.comiin" button
-  and the centred back link. The checks are prod's plain `check-bold`, 20px, in
+  kuluja") in `px-2` with no top padding, then the full-width Huutokaupat.com
+  button and the centred back link. The button (Figma `7333:1452`, 2026-10-07)
+  is `h-14` in their dark green `#142C10` with their white logo
+  (`assets/huutokaupat-logo-white.svg`, 26px tall) and prod's `arrow-right`,
+  `gap-3`; no secondary line, since the checklist now says it. Its accessible
+  name is an `sr-only` `huutokaupat.ctaV3`. The checks are prod's plain `check-bold`, 20px, in
   the text's slate-600 (`text-sm font-medium`), not AutoVex blue, and the second
   item names Huutokaupat.com, so the list does not read as AutoVex's own offer.
   **The list sits optically centred between title and button** (2026-10-07):
@@ -2157,8 +2163,8 @@ The business case is in private notes, not in this public repo.
   mostly empty; Figma's `pt-2` made the top read 8px heavier, so it is dropped.
   `HK_OWN` ('v3' | 'v4' | null) drives the shared JS: which block shows, the
   plate row, focus, the back button, no countdown.
-  **The green logo button it replaced is gone** with its logo asset and
-  `ctaV4Note`; Jussi's green frames (`7323:1066` "Desktop — Variant 5",
+  **The earlier green button's secondary line (`ctaV4Note`) is gone**, and the
+  64px height went with it; Jussi's green frames (`7323:1066` "Desktop — Variant 5",
   `7323:981`) stay in Figma as iterations, and `7325:31` is marked superseded.
 - **`v4` in Figma:** `7328:54` (desktop, in Jussi's `7309:656`) is the source.
   There is no separate mobile frame: Jussi's instruction is the same design at
