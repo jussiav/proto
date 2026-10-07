@@ -657,7 +657,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
-| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` is `v3` with a Huutokaupat.com-branded button; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
+| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 
 **Completed initiatives:**
 
@@ -2139,27 +2139,30 @@ The business case is in private notes, not in this public repo.
   a repo copy, not a Figma link. Its own block (`#huutokaupat-content-v3`) in
   the same sheet; shell, back/logo close and focus are shared. The body's second sentence was cut as a repeat of
   the title.
-- **`v4` (2026-10-07) is `v3` with one change, the button** (Jussi's brief):
-  no arrow, Huutokaupat.com's white wordmark as the label
-  (`assets/huutokaupat-logo-white.svg`, fetched from their site header)
-  with `huutokaupat.ctaV4Note` "Ei kilometri- tai ikärajoja" (draft) centred
-  2px under it, on their `brand-secondary` dark green `#142C10`. **The logo
-  file's viewBox is cropped to its drawn area** (1753×291, was 1753×340 with
-  the lowest 49 units empty), so spacing set in CSS is the spacing you see.
-  Geometry is Jussi's Figma edit (2026-10-07, `7323:1082`): a **custom 64px**
-  button (`h-16`, his call, though AButton `lg` is 56), logo 26px tall, the note
-  in solid `#EAF2E5` picked from huutokaupat.com (their `background-success`,
-  13.1:1 on the fill). Full width at every width: beside the illustration from
-  `md`, the screen width below it, with "Takaisin etusivulle" centred under it (JS
-  adds the classes for `v4` only). It shares `v3`'s block:
-  `HK_V3` covers both arms and `v4` only swaps `#huutokaupat-cta-v3` for
-  `#huutokaupat-cta-v4`. Partner sign-off on the logo and colours is flagged on
-  the spec page.
-- **`v4` in Figma:** the live frames are in Jussi's `7309:656`: desktop
-  `7323:1066` (he named it "Desktop — Variant 5") and mobile `7323:981`, buttons
-  `7323:1082` / `7323:1045`. They started as my clones of his v3 frames, which
-  he moved in and edited. My first build, `7325:31` below `7309:654`, is
-  marked `◻︎ Superseded`.
+- **`v4` is Jussi's simplified layout** (Figma `7328:54`, 2026-10-07), its own
+  block `#huutokaupat-content-v4`, the same at every width: no illustration.
+  Order: plate + mileage row, then `huutokaupat.body` in **`text-red-500`** (the
+  form error's colour, deliberately; 3.8:1, under AA, as the form error already
+  is), then `huutokaupat.titleV4` "Suosittelemme Huutokaupat.comia" (no
+  "sinulle", unlike `v3`), then a checklist (`check1V4`…`check3V4`, draft: "Ei
+  kilometri- tai ikärajoja", "Huutokaupat.com hoitaa kaupan", "Ei kauppaa, ei
+  kuluja") in `px-2` with no top padding, then the full-width blue "Huutokaupat.comiin" button
+  and the centred back link. The checks are prod's plain `check-bold`, 20px, in
+  the text's slate-600 (`text-sm font-medium`), not AutoVex blue, and the second
+  item names Huutokaupat.com, so the list does not read as AutoVex's own offer.
+  **The list sits optically centred between title and button** (2026-10-07):
+  measured baseline to ink, the title's last baseline to the first item is
+  ~28px and the last item's baseline to the button ~29px, at 1100 and 375. The
+  box gaps differ (16 above, 24 below) because the title's descender space is
+  mostly empty; Figma's `pt-2` made the top read 8px heavier, so it is dropped.
+  `HK_OWN` ('v3' | 'v4' | null) drives the shared JS: which block shows, the
+  plate row, focus, the back button, no countdown.
+  **The green logo button it replaced is gone** with its logo asset and
+  `ctaV4Note`; Jussi's green frames (`7323:1066` "Desktop — Variant 5",
+  `7323:981`) stay in Figma as iterations, and `7325:31` is marked superseded.
+- **`v4` in Figma:** `7328:54` (desktop, in Jussi's `7309:656`) is the source.
+  There is no separate mobile frame: Jussi's instruction is the same design at
+  both widths. `7328:90` is the superseded checklist-v3 mobile.
 - **Button arrows are prod's `arrow-right` icon inline** (`viewBox 0 0 20 20`,
   `w-6 h-6`, `currentColor`) on `v3`'s button and the funnel's Jatka
   (`details.html`, `services.html`), since 2026-10-07. The Figma-exported
