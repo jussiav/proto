@@ -72,6 +72,7 @@ window.TRANSLATIONS = {
       cta:        'Siirrytään Huutokaupat.comiin',
       titleV3:    'Suosittelemme sinulle Huutokaupat.comia',
       ctaV3:      'Huutokaupat.comiin',
+      ctaV4Note:  'Ei kilometri- tai ikärajoja',
       back:       'Takaisin etusivulle',
     },
 
@@ -714,6 +715,7 @@ window.TRANSLATIONS = {
       cta:        'Taking you to Huutokaupat.com',
       titleV3:    'We recommend Huutokaupat.com to you',
       ctaV3:      'To Huutokaupat.com',
+      ctaV4Note:  'No mileage or age limits',
       back:       'Back to front page',
     },
 

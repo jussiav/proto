@@ -657,7 +657,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Ideation → A/B candidate** — fair-offer sellers only; also renders Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
-| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
+| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` is `v3` with a Huutokaupat.com-branded button; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 
 **Completed initiatives:**
 
@@ -2139,6 +2139,33 @@ The business case is in private notes, not in this public repo.
   a repo copy, not a Figma link. Its own block (`#huutokaupat-content-v3`) in
   the same sheet; shell, back/logo close and focus are shared. The body's second sentence was cut as a repeat of
   the title.
+- **`v4` (2026-10-07) is `v3` with one change, the button** (Jussi's brief):
+  no arrow, Huutokaupat.com's white wordmark as the label
+  (`assets/huutokaupat-logo-white.svg`, fetched from their site header)
+  with `huutokaupat.ctaV4Note` "Ei kilometri- tai ikärajoja" (draft) centred
+  2px under it, on their `brand-secondary` dark green `#142C10`. **The logo
+  file's viewBox is cropped to its drawn area** (1753×291, was 1753×340 with
+  the lowest 49 units empty), so spacing set in CSS is the spacing you see.
+  Geometry is Jussi's Figma edit (2026-10-07, `7323:1082`): a **custom 64px**
+  button (`h-16`, his call, though AButton `lg` is 56), logo 26px tall, the note
+  in solid `#EAF2E5` picked from huutokaupat.com (their `background-success`,
+  13.1:1 on the fill). Full width at every width: beside the illustration from
+  `md`, the screen width below it, with "Takaisin etusivulle" centred under it (JS
+  adds the classes for `v4` only). It shares `v3`'s block:
+  `HK_V3` covers both arms and `v4` only swaps `#huutokaupat-cta-v3` for
+  `#huutokaupat-cta-v4`. Partner sign-off on the logo and colours is flagged on
+  the spec page.
+- **`v4` in Figma:** the live frames are in Jussi's `7309:656`: desktop
+  `7323:1066` (he named it "Desktop — Variant 5") and mobile `7323:981`, buttons
+  `7323:1082` / `7323:1045`. They started as my clones of his v3 frames, which
+  he moved in and edited. My first build, `7325:31` below `7309:654`, is
+  marked `◻︎ Superseded`.
+- **Button arrows are prod's `arrow-right` icon inline** (`viewBox 0 0 20 20`,
+  `w-6 h-6`, `currentColor`) on `v3`'s button and the funnel's Jatka
+  (`details.html`, `services.html`), since 2026-10-07. The Figma-exported
+  `b20aa3f2…svg` they used was cropped tight to an 18×15 glyph, so at `w-6 h-6`
+  it filled the whole 24px box, ~40% larger than prod's arrow, whose glyph is
+  14/20 of its box (17×14 at AButton `lg`'s 1.5em). Do not reintroduce it.
 - **Copy** (`huutokaupat.*`): body, CTA and disclaimer are Jussi's wording
   (2026-10-02); the title and the English are draft.
 - **The spec page flags prod's 280 000 inconsistency**: the front page form and

@@ -153,7 +153,8 @@
             { id: 'control', label: 'Control — 280 000 km error on the form' },
             { id: 'v1',      label: 'Variant 1 — route to Huutokaupat.com (draft copy)' },
             { id: 'v2',      label: 'Variant 2 — as v1, plate + mileage above the title' },
-            { id: 'v3',      label: 'Variant 3 — illustrated layout, no automatic redirect' }
+            { id: 'v3',      label: 'Variant 3 — illustrated layout, no automatic redirect' },
+            { id: 'v4',      label: 'Variant 4 — as v3, Huutokaupat.com-branded button' }
           ]
         }
       ]
@@ -1125,10 +1126,21 @@
              image goes and the two actions stack. -->
         <div class="flex items-stretch">
           <img src="assets/huutokaupat-advisor.png" alt="" aria-hidden="true" class="hidden md:block relative z-10 pointer-events-none w-[159px] h-auto flex-shrink-0" />
-          <div class="flex flex-col gap-5 md:justify-center md:-ml-4">
+          <div id="huutokaupat-actions-v3" class="flex flex-col gap-5 md:justify-center md:-ml-4">
             <a id="huutokaupat-cta-v3" href="https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa"
                class="self-start h-14 px-8 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors whitespace-nowrap"
-               ><span data-i18n="huutokaupat.ctaV3">Huutokaupat.comiin</span><img src="assets/b20aa3f2-b224-4816-a54e-7c0c6e18444b.svg" class="w-6 h-6" alt="" /></a>
+               ><span data-i18n="huutokaupat.ctaV3">Huutokaupat.comiin</span><svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+            <!-- v4: the same link in Huutokaupat.com's own colours. The logo is
+                 their white wordmark (huutokaupat.com header), the fill their
+                 brand-secondary #142C10. No arrow: the logo is the label. The
+                 logo file is cropped to its drawn area, so the 2px gap is the
+                 real distance to the note. A custom 64px height (Jussi's Figma,
+                 7323:1082), full width beside the illustration as well as
+                 without it. The note is #EAF2E5, picked from huutokaupat.com
+                 (their background-success), 13.1:1 on the fill. -->
+            <a id="huutokaupat-cta-v4" href="https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa"
+               class="hidden w-full h-16 px-8 bg-[#142C10] text-white font-dm rounded-lg items-center justify-center shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:opacity-[0.94] transition-opacity"
+               ><span class="flex flex-col items-center gap-0.5 text-center"><img src="assets/huutokaupat-logo-white.svg" class="h-[26px] w-auto" alt="Huutokaupat.com" /><span class="text-xs leading-[14px] text-[#EAF2E5] whitespace-nowrap" data-i18n="huutokaupat.ctaV4Note">Ei kilometri- tai ikärajoja</span></span></a>
             <button id="huutokaupat-back-v3" type="button"
                     class="self-start inline-flex items-center gap-2 bg-transparent border-none p-0 cursor-pointer font-dm font-medium text-base leading-5 text-av-blue hover:underline"
                     ><svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.1406 8.49999C15.1406 8.71133 15.0567 8.91402 14.9072 9.06346C14.7578 9.2129 14.5551 9.29686 14.3438 9.29686H4.58205L8.0033 12.7174C8.153 12.8671 8.2371 13.0702 8.2371 13.2819C8.2371 13.4936 8.153 13.6967 8.0033 13.8464C7.8536 13.9961 7.65056 14.0802 7.43885 14.0802C7.22713 14.0802 7.0241 13.9961 6.87439 13.8464L2.09314 9.0651C2.01885 8.99107 1.95991 8.9031 1.91969 8.80624C1.87947 8.70938 1.85876 8.60553 1.85876 8.50065C1.85876 8.39577 1.87947 8.29192 1.91969 8.19506C1.95991 8.0982 2.01885 8.01023 2.09314 7.9362L6.87439 3.15495C6.94852 3.08082 7.03652 3.02202 7.13337 2.98191C7.23022 2.94179 7.33402 2.92114 7.43885 2.92114C7.54367 2.92114 7.64748 2.94179 7.74433 2.98191C7.84118 3.02202 7.92917 3.08082 8.0033 3.15495C8.07742 3.22907 8.13622 3.31707 8.17634 3.41392C8.21646 3.51077 8.2371 3.61457 8.2371 3.7194C8.2371 3.82423 8.21646 3.92803 8.17634 4.02488C8.13622 4.12173 8.07742 4.20973 8.0033 4.28385L4.58205 7.70311H14.3438C14.5551 7.70311 14.7578 7.78707 14.9072 7.93651C15.0567 8.08595 15.1406 8.28864 15.1406 8.49999Z"/></svg><span data-i18n="huutokaupat.back">Takaisin etusivulle</span></button>
@@ -1261,9 +1273,18 @@
       /* In v1 the cap stops being a form error and becomes a route instead,
          so the field accepts any number and only the submit looks at it. */
       const HK_ARM = window.protoVariant('huutokaupat-routing', 'control');
-      const HK_ON = HK_ARM === 'v1' || HK_ARM === 'v2' || HK_ARM === 'v3';
-      /* v3 waits for the seller: no countdown, no automatic redirect. */
-      const HK_V3 = HK_ARM === 'v3';
+      const HK_ON = HK_ARM === 'v1' || HK_ARM === 'v2' || HK_ARM === 'v3' || HK_ARM === 'v4';
+      /* v3 waits for the seller: no countdown, no automatic redirect. v4 is v3
+         with the Huutokaupat.com-branded button. */
+      const HK_V3 = HK_ARM === 'v3' || HK_ARM === 'v4';
+      if (HK_ARM === 'v4') {
+        document.getElementById('huutokaupat-cta-v3').classList.add('hidden');
+        document.getElementById('huutokaupat-cta-v4').classList.replace('hidden', 'flex');
+        /* The actions column fills the row, so the button is full width with
+           or without the illustration, and the back link centres under it. */
+        document.getElementById('huutokaupat-actions-v3').classList.add('flex-1', 'min-w-0');
+        document.getElementById('huutokaupat-back-v3').classList.replace('self-start', 'self-center');
+      }
       if (HK_V3) {
         document.getElementById('huutokaupat-content').classList.add('hidden');
         document.getElementById('huutokaupat-content-v3').classList.replace('hidden', 'flex');
