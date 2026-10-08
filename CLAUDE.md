@@ -657,7 +657,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
-| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
+| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; `v5` = `v4` with a car card + status tag; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 
 **Completed initiatives:**
@@ -2170,6 +2170,48 @@ The business case is in private notes, not in this public repo.
   **The earlier green button's secondary line (`ctaV4Note`) is gone**, and the
   64px height went with it; Jussi's green frames (`7323:1066` "Desktop — Variant 5",
   `7323:981`) stay in Figma as iterations, and `7325:31` is marked superseded.
+- **`v5` (2026-10-08) is `v4` with the top as a car card** (Jussi's brief, no
+  Figma): `#huutokaupat-content-v5`, everything from the title down is `v4`'s.
+  The plate row and red limit line become `#huutokaupat-card-v5`, rendered in
+  `hkRenderCardV5` from the typed plate and km: the offers card's body without
+  photo, name or pills — `buildRegBadge` + a status badge in the card's
+  `av-card__badge` slot, then the mileage as typed (gauge + the details step's
+  `text-base leading-5 text-slate-900`), then a message worded after prod's
+  Swedish `AutoRejectionInfo` screen (2026-10-08, Jussi: that pattern was
+  already accepted for Sweden, and the CEO asked for v4's blunt red line to be
+  softened): `sorryV5` "Pahoittelut!" (16px bold, the card's one bold line),
+  then `limitV5` "Valitettavasti kauttamme voi myydä tällä hetkellä vain alle
+  280 000 km ajettuja autoja." in `text-sm text-slate-600` — prod's form error
+  with "tällä hetkellä" and a full stop (Jussi, 2026-10-08), its own key so
+  `hero.mileageMaxError` stays verbatim prod for control and `v4`. A criterion
+  sentence + one-item list ("Autosi ei täytä autoliikkeidemme kriteeriä:" /
+  "Enintään 280 000 km") was tried and dropped the same day — Jussi: a
+  single-bullet list does not make sense. "Pahoittelut!" is draft Finnish. The tag is `huutokaupat.statusV5` "Yli kilometrirajan" (draft;
+  was "Ei myytävissä AutoVexissä", softened 2026-10-08 at Jussi's ask as too
+  harsh — it now names the reason, not a verdict; the Swedish screen has no
+  tag copy to borrow) as prod's `UiBadge` `red` variant, the offers-page
+  end-of-journey tag
+  `offersRejected` ("Ei hyväksyttyjä tarjouksia": `bg-red-500 border-red-700
+  text-white` + prohibit icon), 3.8:1 as in prod. Card: `bg-white rounded-xl
+  border border-slate-300 p-5` (the front page's returning-user card border,
+  since the sheet is white). With no typed values (the `#huutokaupat` deep
+  link) the card shows the tag and the limit only. **`UiBadge` has no
+  Storybook story and no deprecation note**, and two consumers: `CarCard`
+  (offers page) and `WarmUpCard` (decision page). Its `light_red` variant
+  (outlined) is the softer option if the solid red still reads too hard. **Prod precedent worth
+  knowing:** `tenderform.auto_rejection_info` is a Sweden-only screen for
+  unfit cars that recommends selling on Blocket — the same idea, never built
+  for Finland, and its keys sit untranslated in Swedish in the FI file.
+  **Sketched in Figma** (2026-10-08, Jussi had no other access to it):
+  wrapper `7339:54` on the `Huutokaupat routing (AI drafting)` page —
+  desktop `7339:57` (funnel frame, empty cream sidebar), mobile `7339:80`,
+  notes `7339:100` with English glosses. Built from
+  `steps/AutoRejectionInfo.vue` inside `TenderRequestDraftForm.vue`: Wheelaway
+  `sv/logo.svg` top left, `max-w-md` text column, `h3` "Beklagar!", one
+  sentence, a two-item list ("Max 20 000 mil", "Endast svensksålda bilar") and
+  "Vi rekommenderar dig därför att sälja privat via Blocket". No button, no
+  link, no tag. Logo size and body leading not verified (the SVG has no
+  width/height).
 - **`v4` in Figma:** `7328:54` (desktop, in Jussi's `7309:656`) is the source.
   There is no separate mobile frame: Jussi's instruction is the same design at
   both widths. `7328:90` is the superseded checklist-v3 mobile.
