@@ -379,12 +379,12 @@ media wrapper and leaves `flex-shrink` at its default 1, with the body at
 | **File** | `similar-cars.js` → `window.SimilarCars.render(el, opts)` |
 | **Bundle** | — (no build step) |
 | **Prod equivalent** | — (Similar cars initiative, `design-specs/similar-cars.html`) |
-| **Figma** | _Add link_ |
+| **Figma** | [https://www.figma.com/design/sHQk3FUhEZM7EFbYaAcjxX/C2B-Seller-Ad-creation?node-id=7335-9](https://www.figma.com/design/sHQk3FUhEZM7EFbYaAcjxX/C2B-Seller-Ad-creation?node-id=7335-9) (component `Similar car card`, page `Similar cars (AI drafting)`) |
 | **Storybook** | — |
 
 Highest offers on cars similar to the seller's. Brings no section heading, so
 the offers page, decision page or a funnel step can each wrap it in their own.
-Returns `false` and renders nothing when no group reaches `SimilarCars.MIN_RESULTS` (3) cars. The caveat line renders once, after the last group.
+Returns `false` and renders nothing when no group reaches `SimilarCars.MIN_RESULTS` (3) cars.
 Re-renders on `av:langchange`. Asset paths resolve from the script's own `src`,
 so `design-specs/` pages can mount it.
 
@@ -392,7 +392,7 @@ so `design-specs/` pages can mount it.
 | Option | Type | Notes |
 |---|---|---|
 | `variant` | `'table'` \| `'cards'` | Default `'table'` |
-| `groups` | Array | `[{ car: { make, model }, cars }]`, one list per seller's car, each opened by a "make model · vuosimallit from–to" line. Groups under 3 cars are dropped |
+| `groups` | Array | `[{ car: { make, model }, cars }]`, one list per seller's car, each opened by a "make model · vuosimallit from–to" line. Groups sharing make + model collapse into the first; groups under 3 cars are dropped |
 | `car` + `cars` | Object + Array | Single-group shorthand. `cars`: `{ make, model, model_specification, year, driven, highest_offer, image, plate_box }`, pre-sorted by the caller |
 | `initial` / `step` | Number | Shown first / added per "Näytä lisää". Default 5 / 5 |
 
@@ -401,10 +401,12 @@ so `design-specs/` pages can mount it.
 Amarok set); `mode` is `'same' | 'mixed' | 'few' | 'none'`.
 
 **Built from:** `Timer.vue`'s card shell and `ComissionList.vue`'s row rule
-(table); `OProductCard` + `OProductCardMedia` with
-`ListingCardAuctionRows`/`ListingCardBiddingInfo`'s "Korkein tarjous" row
-(cards — the row sits under the photo, not over it); the funnel's info line;
-`UiButton` secondary.
+(table); `OProductCard` + `OProductCardMedia` used unchanged through their
+slots — the highest offer in `#footer` (label 14px medium, amount 20px bold),
+title and subtitle as props,
+CarCard's year/mileage pills in `#status` (cards). NOT the `CarListingCard`
+wrappers (B2B seller, dealership), which carry their own state logic;
+`UiButton` secondary. Card arrows page two cards per press.
 
 **Responsiveness:** container query at 520px of the block's own width — year
 and mileage columns fold into a meta line, and the card arrows appear.

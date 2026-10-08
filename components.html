@@ -702,9 +702,9 @@
                   <p class="font-dm text-slate-500 text-sm mt-1">Highest offers on cars similar to the seller's, for the Similar cars initiative. Two shapes: a table and a sideways row of photo cards, one list per seller's car. Brings no section heading, so any page can host it. The table folds year and mileage under the specification below 520px of its own width; renders nothing below 3 cars.</p>
                 </div>
                 <div class="flex flex-col gap-2 items-end flex-shrink-0">
-                  <span class="inline-flex items-center gap-1 text-xs font-dm text-slate-300 border border-slate-100 rounded px-2.5 py-1 cursor-not-allowed select-none" title="Not yet in Figma">
+                  <a href="https://www.figma.com/design/sHQk3FUhEZM7EFbYaAcjxX/C2B-Seller-Ad-creation?node-id=7335-9" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="Similar car card component in Figma">
                     Figma <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
-                  </span>
+                  </a>
                   <a href="https://github.com/jussiav/proto/blob/main/similar-cars.js" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-dm text-av-blue border border-av-blue/30 rounded px-2.5 py-1 hover:bg-av-blue/5 transition-colors" title="similar-cars.js → SimilarCars.render()">
                     Source <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8L8 2M8 2H4M8 2V6"/></svg>
                   </a>
@@ -730,7 +730,7 @@
                 <thead><tr class="text-slate-400"><th class="text-left pb-2 font-medium">Option</th><th class="text-left pb-2 font-medium">Type</th><th class="text-left pb-2 font-medium">Notes</th></tr></thead>
                 <tbody class="text-slate-700">
                   <tr class="prop-row"><td class="py-1 pr-4"><code>variant</code></td><td class="pr-4">'table'|'cards'</td><td>Default 'table'</td></tr>
-                  <tr class="prop-row"><td class="py-1 pr-4"><code>groups</code></td><td class="pr-4">Array</td><td>[{ car: { make, model }, cars }] — one list per seller's car, each under a "make model · vuosimallit" line; groups under 3 cars are dropped</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>groups</code></td><td class="pr-4">Array</td><td>[{ car: { make, model }, cars }] — one list per seller's car, each under a "make model · vuosimallit" line; same make + model collapse into one list; groups under 3 cars are dropped</td></tr>
                   <tr class="prop-row"><td class="py-1 pr-4"><code>car</code> + <code>cars</code></td><td class="pr-4">Object + Array</td><td>Single-group shorthand. cars: { make, model, model_specification, year, driven, highest_offer, image, plate_box }, pre-sorted</td></tr>
                   <tr class="prop-row"><td class="py-1 pr-4"><code>initial</code> / <code>step</code></td><td class="pr-4">Number</td><td>Shown first / added per "Näytä lisää". Default 5 / 5</td></tr>
                   <tr class="prop-row"><td class="py-1 pr-4"><code>SimilarCars.mock(car, mode)</code></td><td class="pr-4">fn</td><td>Proto data; mode 'same' | 'mixed' | 'few' | 'none'</td></tr>
@@ -803,7 +803,7 @@
   <script src="similar-cars.js"></script>
   <script>
     (function () {
-      var car = { make: 'Volkswagen', model: 'Amarok', registration_number: 'LRX-345' };
+      var car = { make: 'Volkswagen', model: 'Amarok' };
       SimilarCars.render(document.getElementById('gallery-similar-table'),        { variant: 'table', car: car, cars: SimilarCars.mock(car, 'same') });
       SimilarCars.render(document.getElementById('gallery-similar-table-narrow'), { variant: 'table', car: car, cars: SimilarCars.mock(car, 'mixed') });
       SimilarCars.render(document.getElementById('gallery-similar-cards'),        { variant: 'cards', car: car, cars: SimilarCars.mock(car, 'same') });

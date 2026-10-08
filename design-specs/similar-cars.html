@@ -117,7 +117,7 @@
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">In short</h2>
       <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>One block, two shapes.</b> Variant 1 is a table, Variant 2 a sideways-scrolling row of photo cards. Both show the same data and the same caveat.</li>
+          <li><b>One block, two shapes.</b> Variant 1 is a table, Variant 2 a sideways-scrolling row of photo cards. Both show the same data.</li>
           <li><b>Shown only while the seller is forming an expectation</b>: ad in review, auction live, offers waiting for a decision or under negotiation. Hidden once the seller has accepted or rejected.</li>
           <li><b>The figure is always the auction's highest offer</b>, labelled with the product's existing "Korkein tarjous" — never a sale price.</li>
           <li><b>One list per car.</b> A seller with several cars sees a list for each car in review or at auction, each under its own make, model and model-year line. Unfinished drafts and decided cars get no list.</li>
@@ -138,7 +138,7 @@
       <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What it shows</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
-          <li><b>Each list opens with the seller's car</b>: its registration plate badge (the same badge as on the seller's own car card), make and model in bold, then the model-year range of the list, e.g. "Volkswagen Amarok · vuosimallit 2018–2020". No intro sentence — the section heading already says these are similar cars.</li>
+          <li><b>Each list opens with the seller's car</b>: make and model in bold, then the model-year range of the list, e.g. "Volkswagen Amarok · vuosimallit 2018–2020". No intro sentence — the section heading already says these are similar cars.</li>
           <li><b>Make and model are not repeated in the rows</b> when every car is the same model; the first column is then the model specification.</li>
           <li><b>When models differ</b>, the first column becomes "Auto" and each row leads with make and model in bold, the specification under it.</li>
           <li>Columns: specification · model year · mileage · highest offer. Offer right-aligned and bold — it is the figure the block exists for.</li>
@@ -171,10 +171,13 @@
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What it shows</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
           <li>Each list opens with the same seller's-car line as Variant 1, with the arrow buttons beside it.</li>
-          <li>One card per car: photo, a "Korkein tarjous" row under it, make and model, specification, year and mileage.</li>
+          <li>One card per car: photo, make and model, specification, year and mileage, and the <b>highest offer at the bottom of the card</b>, label left and amount right in large bold.</li>
+          <li><b>Make and model stay on one line</b> (18px), so long names such as "Mercedes-Benz A-sarja" fit a 260px card; only a longer one ends in an ellipsis. The specification is 14px and at most two lines, so every card in a row keeps one height.</li>
+          <li><b>The price stays off the photo.</b> These cards are much narrower than the ones dealers browse, so a price tag on the photo hid too much of it. The bottom of the card is the last thing read and stays level across the row.</li>
+          <li><b>The card is the design system's product card, unchanged</b> — the same generic card the business seller's listings and the dealership's task list are built on, used through its own slots. The buyer-side and business-seller listing cards are wrappers around it with their own logic; this block does not use those wrappers, so it adds no case for them to support.</li>
           <li><b>The photo is the front three-quarter shot</b> — the first photo the funnel asks for, which the product treats as the main photo.</li>
           <li><b>The registration plate is blurred</b> before the photo is shown. In the prototype only the second card's photo has a visible plate.</li>
-          <li>The row scrolls sideways with the finger and snaps to a card. From 520px of block width, arrow buttons page it.</li>
+          <li>The row scrolls sideways with the finger and snaps to a card. From 520px of block width, arrow buttons move it <b>two cards per press</b>.</li>
           <li>5 cards first; the last tile is "Näytä lisää", which adds 5.</li>
           <li><b>Prototype photos are placeholders</b> and do not show the model named on the card. Real photos will replace them.</li>
         </ul>
@@ -194,10 +197,11 @@
       <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
-          <li>The block repeats from the seller's-car line down: <b>one list per car</b>, in the order the page lists the cars (drafts in review first, then published cars). The plate badge tells two cars of the same model apart.</li>
+          <li>The block repeats from the seller's-car line down: <b>one list per car</b>, in the order the page lists the cars (drafts in review first, then published cars).</li>
+          <li><b>One list per make and model.</b> Two of the seller's cars of the same model share one list, under the first. No registration plate on the list: it belongs to the seller's own car, and next to "similar cars" it reads as if the list were about that exact car.</li>
           <li>The rest of the page already repeats per car: one notification and one car card for each.</li>
           <li>A car gets a list only while it is <b>in review or at auction</b> (live, offers waiting, negotiating). Unfinished drafts, accepted, rejected and sold cars get none.</li>
-          <li>Each list has its own "Näytä lisää". The caveat line appears once, at the end.</li>
+          <li>Each list has its own "Näytä lisää".</li>
           <li>A car whose list is too short is simply left out; if no car has a list, the section is hidden.</li>
         </ul>
       </div>
@@ -205,6 +209,7 @@
       <div class="demo-stage max-w-[768px]"><div id="demo-table-multi"></div></div>
       <p class="font-dm text-sm text-slate-700 mt-4">
         <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-review&similar-cars=v1">Two cars in review</a> ·
+        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-same-model&similar-cars=v1">Two cars in review, same model</a> ·
         <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-live&similar-cars=v1">Live auction + draft in review + unfinished draft</a> ·
         <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-sold&similar-cars=v1">Offer accepted + draft in review</a>
       </p>
@@ -239,8 +244,7 @@
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
           <li><b>Table frame</b> — the offers page's own white auction card; row dividers from the one existing consumer-side table.</li>
           <li><b>Photo card</b> — the product card the business seller's listings already use, with its 16:9 photo.</li>
-          <li><b>"Korkein tarjous" row</b> — the row that already shows a business seller the highest offer on their own listing card. One deliberate change: it sits under the photo instead of over its bottom edge, where on a 260px card it covered a third of the photo.</li>
-          <li><b>Caveat line</b> — the funnel's blue info-icon line.</li>
+          <li><b>Highest offer</b> — in the product card's own footer slot, the bottom of the white area. Amount enlarged.</li>
           <li><b>"Näytä lisää"</b> and the arrows — the standard secondary button.</li>
           <li>Labels "Mallitarkennus", "Vuosimalli", "Ajokilometrit", "Korkein tarjous" and "Näytä lisää" are production copy.</li>
         </ul>
@@ -298,7 +302,7 @@
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy (FI / EN)</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Rows marked <b>prod</b> are production strings, <b>approved</b> is agreed wording. The rest are drafts. The English is a reading aid.</p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Rows marked <b>prod</b> are production strings. The rest are drafts. The English is a reading aid.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Use</th><th class="px-5 py-3 font-medium">Finnish</th><th class="px-5 py-3 font-medium">English</th><th class="px-5 py-3 font-medium">Source</th></tr></thead>
@@ -354,14 +358,13 @@
     }
     window.t = function (key) { return pick(FI, key); };
   </script>
-  <script src="../vehicle-card.js"></script>
   <script src="../similar-cars.js"></script>
   <script>
-    const SEED = { make: 'Volkswagen', model: 'Amarok', registration_number: 'LRX-345' };
+    const SEED = { make: 'Volkswagen', model: 'Amarok' };
     SimilarCars.render(document.getElementById('demo-table-same'),  { variant: 'table', car: SEED, cars: SimilarCars.mock(SEED, 'same') });
     SimilarCars.render(document.getElementById('demo-table-mixed'), { variant: 'table', car: SEED, cars: SimilarCars.mock(SEED, 'mixed') });
     SimilarCars.render(document.getElementById('demo-cards'),       { variant: 'cards', car: SEED, cars: SimilarCars.mock(SEED, 'same') });
-    const OTHER = { make: 'Toyota', model: 'Corolla', registration_number: 'XYZ-789' };
+    const OTHER = { make: 'Toyota', model: 'Corolla' };
     SimilarCars.render(document.getElementById('demo-table-multi'), { variant: 'table', groups: [
       { car: SEED,  cars: SimilarCars.mock(SEED, 'same') },
       { car: OTHER, cars: SimilarCars.mock(OTHER, 'same') }
@@ -374,7 +377,7 @@
         ['years', 'Model-year range beside the seller\'s car', 'draft'], ['colCar', 'First column, mixed models', 'draft'],
         ['colSpec', 'First column, one model', 'prod'], ['colYear', 'Column', 'prod'], ['colKm', 'Column', 'prod'],
         ['highestOffer', 'Column and card row', 'prod'], ['loadMore', 'Button', 'prod'],
-        ['caveat', 'Info line under the last list', 'approved'], ['prev', 'Arrow, screen reader only', 'draft'], ['next', 'Arrow, screen reader only', 'draft']
+['prev', 'Arrow, screen reader only', 'draft'], ['next', 'Arrow, screen reader only', 'draft']
       ];
       document.getElementById('copy-table').innerHTML = rows.map(r =>
         '<tr><td class="px-5 py-3">' + r[1] + '</td>' +

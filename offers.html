@@ -295,7 +295,7 @@
     // Sync funnel flags to match scenario — Skenaario panel is master state
     (function() {
       var _DRAFT_ONLY = ['draft-open', 'draft-rejected', 'draft-rejected-images', 'blank'];
-      var _IN_REVIEW  = ['draft-in-review', 'multi-car-review'];
+      var _IN_REVIEW  = ['draft-in-review', 'multi-car-review', 'multi-car-same-model'];
       try {
         var fs = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
         if (_DRAFT_ONLY.indexOf(SCENARIO) !== -1) {
@@ -408,6 +408,12 @@
         Object.assign({ id: 501, status: 'in_review', created_at: _now() - 86400, booked: REVIEW_BOOKED, asking_price: 12000,
           review_comms_content: REVIEW_COMMS_CONTENT[REVIEW_COPY_VARIANT] || null }, DRAFT_CAR),
         Object.assign({ id: 502, status: 'in_review', created_at: _now() - 2 * 86400, booked: REVIEW_BOOKED, asking_price: 12000 }, OTHER_CAR)
+      ] }; },
+      'multi-car-same-model': function() { return { requests: [], negotiations: [], drafts: [
+        Object.assign({ id: 501, status: 'in_review', created_at: _now() - 86400, booked: REVIEW_BOOKED, asking_price: 12000,
+          review_comms_content: REVIEW_COMMS_CONTENT[REVIEW_COPY_VARIANT] || null }, DRAFT_CAR),
+        Object.assign({ id: 504, status: 'in_review', created_at: _now() - 2 * 86400, booked: REVIEW_BOOKED, asking_price: 12000 },
+          DRAFT_CAR, { registration_number: 'MKA-904', year: DRAFT_CAR.year - 1, driven: DRAFT_CAR.driven + 23000 })
       ] }; },
       'multi-car-live': function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() + 20*3600, published_at: _now() - 16*3600,
@@ -999,9 +1005,9 @@
       var groups = [];
       if (SIMILAR_ARM !== 'control') {
         drafts.forEach(function (d) {
-          if (d.status === 'in_review') groups.push({ car: { make: d.make_name, model: d.model_name, registration_number: d.registration_number } });
+          if (d.status === 'in_review') groups.push({ car: { make: d.make_name, model: d.model_name } });
         });
-        if (req && SIMILAR_STATES.indexOf(state) !== -1) groups.push({ car: { make: req.make, model: req.model, registration_number: req.registration_number } });
+        if (req && SIMILAR_STATES.indexOf(state) !== -1) groups.push({ car: { make: req.make, model: req.model } });
         groups.forEach(function (g) { g.cars = window.SimilarCars.mock(g.car, SIMILAR_DATA); });
       }
       var drawn = groups.length > 0 && window.SimilarCars.render(document.getElementById('similar-cars'), {
@@ -1689,6 +1695,7 @@
       ]},
       { group: 'Several cars', items: [
         { id: 'multi-car-review', label: 'Two cars in review' },
+        { id: 'multi-car-same-model', label: 'Two cars in review, same model' },
         { id: 'multi-car-live', label: 'Live auction + draft in review + unfinished draft' },
         { id: 'multi-car-sold', label: 'Offer accepted + draft in review' },
       ]},

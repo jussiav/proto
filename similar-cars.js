@@ -6,8 +6,9 @@
  *
  * window.SimilarCars.render(el, opts) -> boolean, false when nothing was drawn
  *   opts.variant  'table' | 'cards'
- *   opts.groups   Array<{ car: {make, model, registration_number}, cars: Array<SimilarCar> }>,
- *                 one per seller's car, in the order the host lists those cars
+ *   opts.groups   Array<{ car: {make, model}, cars: Array<SimilarCar> }>, one per
+ *                 seller's car in the order the host lists them; cars sharing a
+ *                 make and model collapse into the first one's list
  *   opts.car + opts.cars  shorthand for a single group
  *   opts.initial  shown per group before "Näytä lisää" (default 5)
  *   opts.step     added per press (default 5)
@@ -59,12 +60,20 @@
       '.sc-table th+th,.sc-table td+td{padding-left:16px;}',
       /* OProductCard + OProductCardMedia (aspect-ratio-16/9). */
       '.sc-strip{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;padding-bottom:6px;}',
-      '.sc-card{flex:0 0 260px;scroll-snap-align:start;}',
+      /* OProductCard carries h-full, which in a flex row with no set height
+         resolves to auto and stops the row stretching its cards level. */
+      '.sc-strip > .sc-card{flex:0 0 260px;scroll-snap-align:start;height:auto;}',
       '.sc-media{position:relative;aspect-ratio:16/9;overflow:hidden;background:#88CFFF;}',
       '.sc-media img.sc-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}',
       '.sc-plate{position:absolute;border-radius:2px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(255,255,255,.2);}',
-      /* ListingCardBiddingInfo's label is leading-4 on prod's scale = 28px. */
-      '.sc-bid-label{line-height:28px;}',
+      '.sc-price-amount{font-size:1.25rem;line-height:1.75rem;}',
+      /* The card's content slot is ours, so its rhythm is set here rather
+         than taking OProductCard's default space-y-4: title one line at 18px
+         (ellipsis only past ~22 characters), specification at most two lines,
+         so a row of cards stays one height. */
+      '.sc-title{font-size:1.125rem;line-height:1.5rem;}',
+      '.sc-spec{margin-top:4px;font-size:.875rem;line-height:1.25rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
+      '.sc-pills{margin-top:10px;}',
       '.sc-arrows{display:none;}',
       '@container (min-width: 520px){.sc-arrows{display:flex;}}'
     ].join('');
@@ -99,7 +108,6 @@
     return { from: Math.min.apply(null, ys), to: Math.max.apply(null, ys) };
   }
 
-  var ICON_INFO = '<svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>';
   var ICON_CARET_LEFT = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z"/></svg>';
   var ICON_CARET_RIGHT = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z"/></svg>';
   var ICON_CAR = '<img src="' + ROOT + 'assets/ph-car-simple-white.svg" class="relative opacity-60" style="width:70px;height:70px" alt="" />';
@@ -108,12 +116,6 @@
   var BTN_SECONDARY = 'inline-flex items-center justify-center rounded-lg font-dm text-sm px-5 h-10 bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 transition-colors cursor-pointer';
   /* UiButton secondary, size sm, iconOnly. */
   var BTN_ICON = 'inline-flex items-center justify-center rounded-lg h-8 w-8 bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default disabled:hover:bg-blue-100';
-
-  function infoLine() {
-    return '<div class="flex items-start gap-2">' + ICON_INFO +
-      '<p class="font-dm text-sm text-slate-700">' + esc(tr('caveat', 'Jokainen auto on yksilö. Kunto, varustelu ja huoltohistoria vaikuttavat siihen, mitä siitä tarjotaan.')) + '</p>' +
-    '</div>';
-  }
 
   function loadMore(gi, shown, total) {
     if (shown >= total) return '';
@@ -130,16 +132,10 @@
     var years = tr('years', 'vuosimallit {from}–{to}').replace('{from}', range.from).replace('{to}', range.to);
     return { name: name, years: years };
   }
-  /* The plate badge is vehicle-card.js's ARegistrationNumberBadge, so the
-     heading matches the seller's own car card and notification above it;
-     a host that does not load vehicle-card.js gets the heading without it. */
   function subject(g) {
     var t = subjectText(g);
-    var plate = g.car && g.car.registration_number && window.buildRegBadge ? window.buildRegBadge(g.car.registration_number) : '';
-    return '<div role="heading" aria-level="3" class="flex flex-wrap items-center gap-x-3 gap-y-1 font-dm text-base">' +
-      (plate ? '<span class="flex-shrink-0">' + plate + '</span>' : '') +
-      '<span><span class="font-bold text-slate-900">' + esc(t.name) + '</span>' +
-      ' <span class="text-slate-500">· <span class="whitespace-nowrap">' + esc(t.years) + '</span></span></span></div>';
+    return '<div role="heading" aria-level="3" class="font-dm text-base"><span class="font-bold text-slate-900">' + esc(t.name) + '</span>' +
+      ' <span class="text-slate-500">· <span class="whitespace-nowrap">' + esc(t.years) + '</span></span></div>';
   }
 
   /* Timer.vue's card shell, so the block reads as one of the offers page's
@@ -180,15 +176,17 @@
   function buildTable(groups, shown) {
     return '<div class="sc sc--table bg-white border border-gray-200 shadow-sm rounded-xl p-4 sm:p-5 flex flex-col gap-8">' +
       groups.map(function (g, gi) { return buildTableGroup(g, gi, shown[gi]); }).join('') +
-      infoLine() +
     '</div>';
   }
 
-  /* OProductCard (default variant) with OProductCardMedia. The price row is
-     ListingCardAuctionRows + ListingCardBiddingInfo, the one place prod already
-     shows a seller "Korkein tarjous" on a car card. Deliberate deviation: prod
-     overlays that row on the photo's bottom edge; on a 260px card it covered a
-     third of a 146px photo, so here it sits under the photo instead. */
+  /* OProductCard + OProductCardMedia used as they are, no structural change.
+     The price fills the card's own #footer slot (mt-auto pt-4), so it sits
+     lowest in the white area whatever the text above it wraps to. Nothing
+     sits on the photo: at 260px it is far smaller than on the buyer-side
+     cards, so anything over it hides too much. The amount is enlarged because
+     it is the figure the block exists for. Title and subtitle are the card's props;
+     CarCard's year and mileage pills fill #status. The plate blur is
+     proto-only; production blurs the image before it is served. */
   function buildCard(c) {
     var media = c.image
       ? '<img class="sc-photo" src="' + esc(/^(https?:|data:|\/)/.test(c.image) ? c.image : ROOT + c.image) + '" alt="" />' +
@@ -199,18 +197,20 @@
     var pill = function (v) {
       return '<span class="px-1.5 py-0.5 font-dm text-xs text-slate-500 rounded border border-slate-200">' + esc(v) + '</span>';
     };
-    return '<article role="listitem" class="sc-card w-full rounded-2xl overflow-hidden flex flex-col bg-white border border-slate-200">' +
+    return '<article role="listitem" class="sc-card w-full rounded-2xl overflow-hidden h-full flex flex-col bg-white border border-slate-200">' +
       '<div class="sc-media">' + media + '</div>' +
-      '<div class="bg-white px-5 py-3 border-b border-gray-200">' +
-        '<div class="flex justify-between items-center w-full font-dm">' +
-          '<span class="sc-bid-label font-medium text-slate-800">' + esc(tr('highestOffer', 'Korkein tarjous')) + '</span>' +
-          '<span class="text-slate-800">' + esc(eur(c.highest_offer)) + '</span>' +
+      '<div class="flex-1 flex flex-col p-6">' +
+        '<div class="flex flex-col">' +
+          '<p class="sc-title font-body font-bold leading-snug text-slate-800 text-lg truncate" title="' + esc(c.make + ' ' + c.model) + '">' + esc(c.make + ' ' + c.model) + '</p>' +
+          '<p class="sc-spec font-body font-medium leading-tight text-slate-600 text-sm">' + esc(c.model_specification) + '</p>' +
+          '<div class="sc-pills flex flex-wrap gap-1.5 items-center">' + pill(c.year) + pill(km(c.driven)) + '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="flex-1 flex flex-col p-6 space-y-4">' +
-        '<p class="font-body font-bold leading-snug text-slate-800 text-xl">' + esc(c.make + ' ' + c.model) + '</p>' +
-        '<p class="font-body font-medium leading-tight text-slate-600 text-base">' + esc(c.model_specification) + '</p>' +
-        '<div class="flex flex-wrap gap-1.5 items-center">' + pill(c.year) + pill(km(c.driven)) + '</div>' +
+        '<div class="mt-auto pt-4">' +
+          '<div class="flex justify-between items-baseline gap-2 font-dm">' +
+            '<span class="text-sm font-medium text-slate-600">' + esc(tr('highestOffer', 'Korkein tarjous')) + '</span>' +
+            '<span class="sc-price-amount font-bold text-slate-900 whitespace-nowrap">' + esc(eur(c.highest_offer)) + '</span>' +
+          '</div>' +
+        '</div>' +
       '</div>' +
     '</article>';
   }
@@ -233,7 +233,6 @@
   function buildCards(groups, shown) {
     return '<div class="sc sc--cards flex flex-col gap-8">' +
       groups.map(function (g, gi) { return buildCardsGroup(g, gi, shown[gi]); }).join('') +
-      infoLine() +
     '</div>';
   }
 
@@ -265,10 +264,13 @@
       strip.scrollLeft = scrolls[gi] || 0;
       var prev = group.querySelector('[data-sc-prev]');
       var next = group.querySelector('[data-sc-next]');
+      /* Two cards per press; one made the user click too often. Capped at
+         what is visible, so a narrow strip never skips a card unseen. */
       function page(dir) {
         var card = strip.querySelector('.sc-card');
         var w = card ? card.getBoundingClientRect().width + 16 : 276;
-        strip.scrollBy({ left: dir * w, behavior: 'smooth' });
+        var n = Math.min(2, Math.max(1, Math.floor((strip.clientWidth + 16) / w)));
+        strip.scrollBy({ left: dir * n * w, behavior: 'smooth' });
       }
       function sync() {
         prev.disabled = strip.scrollLeft <= 1;
@@ -307,7 +309,13 @@
     m.opts = opts;
     m.step = opts.step || 5;
     var groups = opts.groups || [{ car: opts.car || null, cars: opts.cars || [] }];
-    m.groups = groups.filter(function (g) { return (g.cars || []).length >= MIN_RESULTS; });
+    var seen = {};
+    m.groups = groups.filter(function (g) {
+      var key = g.car && g.car.make ? (g.car.make + ' ' + g.car.model).toLowerCase() : null;
+      if (key && seen[key]) return false;
+      if (key) seen[key] = true;
+      return (g.cars || []).length >= MIN_RESULTS;
+    });
     m.shown = m.groups.map(function () { return opts.initial || 5; });
     return draw(m);
   }
@@ -348,6 +356,7 @@
         ['Toyota', 'Hilux', '2.4 D-4D Double Cab Active 4WD', 2019, 155000, 26100, 9],
         ['Nissan', 'Navara', '2.3 dCi N-Connecta 4x4', 2018, 163000, 20900, 16],
         ['Mitsubishi', 'L200', '2.2 DI-D Intense 4WD', 2020, 137000, 24300, 24],
+        ['Mercedes-Benz', 'X-sarja', 'X 250 d 4MATIC Power Double Cab Automatic', 2019, 158000, 28700, 29],
         ['Ford', 'Ranger', '3.2 TDCi Limited 4x4', 2018, 176000, 22400, 33]
       ]
     },
@@ -368,7 +377,8 @@
         ['Volkswagen', 'Golf', '1.5 eTSI Life DSG', 2020, 83000, 17900, 5],
         ['Ford', 'Focus', '1.0 EcoBoost Titanium', 2020, 77000, 13800, 12],
         ['Skoda', 'Octavia', '1.5 TSI Style DSG', 2020, 95000, 17200, 19],
-        ['Hyundai', 'i30', '1.5 T-GDI Comfort', 2020, 81000, 14400, 28]
+        ['Hyundai', 'i30', '1.5 T-GDI Comfort', 2020, 81000, 14400, 28],
+        ['Mercedes-Benz', 'A-sarja', 'A 180 Business Style Edition Launch DCT Automatic', 2020, 76000, 21900, 35]
       ]
     }
   };

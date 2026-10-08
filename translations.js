@@ -65,8 +65,7 @@ window.TRANSLATIONS = {
     /* Similar cars (design-specs/similar-cars.html). Prod strings, verbatim:
        colSpec, colYear, colKm (tenderform.*), highestOffer
        (seller-listings.b2b.cards.auction_ongoing.highest_offer) and loadMore
-       (tenderform view_more). `caveat` is Jussi's wording. Everything else is
-       draft, not approved, and
+       (tenderform view_more). Everything else is draft, not approved, and
        the English is a working translation: prod has none for these. */
     similarCars: {
       title:        'Vastaavien autojen tarjouksia',
@@ -77,7 +76,6 @@ window.TRANSLATIONS = {
       colKm:        'Ajokilometrit',
       highestOffer: 'Korkein tarjous',
       loadMore:     'Näytä lisää',
-      caveat:       'Jokainen auto on yksilö. Kunto, varustelu ja huoltohistoria vaikuttavat siihen, mitä siitä tarjotaan.',
       prev:         'Edelliset',
       next:         'Seuraavat',
     },
@@ -739,7 +737,6 @@ window.TRANSLATIONS = {
       colKm:        'Mileage',
       highestOffer: 'Highest offer',
       loadMore:     'Show more',
-      caveat:       'Every car is different. Condition, equipment and service history affect what is offered for it.',
       prev:         'Previous',
       next:         'Next',
     },

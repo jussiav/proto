@@ -2198,13 +2198,15 @@ data exists.
   the decision page or a funnel step can host it later with one script tag and
   `SimilarCars.render(el, { variant, groups })`. Offers page wraps it in its own
   `#section-similar` (ph-bold-chart-bar heading), under the seller's cars.
-- **One list per seller's car** (Jussi, 2026-10-08): each opens with the car's
-  plate badge (`window.buildRegBadge`, so the host must load
-  `vehicle-card.js`; without it the heading just omits the badge) and
-  "Volkswagen Amarok · vuosimallit 2018–2020" (the seller's car + the list's
-  year range), then its rows or cards and its own "Näytä lisää". The caveat
-  renders once at the end. **No intro sentence** — Jussi removed it, the
-  section heading already says it.
+- **One list per make + model of the seller's cars** (Jussi, 2026-10-08): two
+  cars of the same model share one list, under the first (the component
+  collapses them). Each opens with "Volkswagen Amarok · vuosimallit 2018–2020"
+  (the seller's car + the list's year range). **No plate badge** — tried and
+  removed: the plate is the seller's own car, so beside "similar cars" it reads
+  as if the list were about that exact car. Then its rows or cards and its
+  own "Näytä lisää". **No intro sentence and no caveat line** — Jussi removed
+  both ("Jokainen auto on yksilö…" with its info icon went 2026-10-08); the
+  section heading says what the lists are.
 - **Which cars get a list (Jussi's rule):** a draft in review, or a published
   car whose auction is live, ended with offers waiting, or negotiating. Not an
   unfinished draft (details not final, so similar cars cannot be matched) and
@@ -2215,32 +2217,64 @@ data exists.
   when they differ the first column becomes "Auto" and each row leads with
   make + model. Below 520px of the BLOCK's width (container query) year and
   mileage fold into a grey line under the specification.
-- **`v2` photo cards:** `OProductCard` shape (Jussi recognised it from the
-  buyer side and likes it) in a scroll-snap row, 260px cards, arrows beside the
-  seller's-car line from 520px. The "Korkein tarjous" row is prod's
-  `ListingCardBiddingInfo` chrome, moved UNDER the photo. **The photo is the
+- **`v2` photo cards:** prod's `OProductCard` + `OProductCardMedia` used
+  UNCHANGED through their slots (Jussi's call: reuse the component if it can be
+  done without giving the buyer side a new case to support). It is the generic
+  design-system organism, in Storybook, not deprecated; its two consumers are
+  both wrappers named `CarListingCard` (B2B seller offers landing; dealership
+  `MyUnfinishedTasks`) that carry the state/slot-registry logic. This block uses
+  the organism, never the wrappers. **Price = the product card's own
+  `#footer` slot** (`mt-auto pt-4`): lowest in the white area, label
+  "Korkein tarjous" 14px medium slate-600 left, amount 20px bold slate-900
+  right. Prominent on the cards, Jussi's ask (not needed in the table). Two
+  earlier placements, both rejected: `ListingCardBiddingInfo`'s row in
+  `#header` (weak), then the buyer marketplace `teasers/Teaser.vue` price
+  sticker on the photo's top-left (`#media-top-start`) — our 260px photos are
+  much smaller than the buyer side's, so the sticker hid too much of them.
+  **Keep the price off the photo.** Title/subtitle props, `#status` = CarCard's year/km pills. 260px cards
+  in a scroll-snap row; arrows beside the seller's-car line from 520px **page
+  TWO cards per press** (capped at what is visible) — one at a time meant too
+  many presses. **The photo is the
   front three-quarter shot**, the funnel's first photo slot; the side profiles
   were dropped from the mock pool. Jussi will supply real photos later; do not
   generate any. Plates are blurred by a proto overlay (`plate_box`); production
   must blur server-side.
+- **Card typography is tighter than OProductCard's defaults, on purpose**
+  (Jussi, 2026-10-08): title 18/24 bold on ONE line (ellipsis + `title`
+  attribute only past ~22 characters; "Mercedes-Benz A-sarja" fits),
+  specification 14/20 medium clamped to two lines, 4px title→spec, 10px
+  spec→pills. Set in `.sc-title`/`.sc-spec`/`.sc-pills`, since the content slot
+  is ours. Card height 319px with one-line specs, 339px when one wraps (was
+  361). The mock peers include two long Mercedes-Benz names to keep this
+  honest.
+- **Figma:** file `sHQk3FUhEZM7EFbYaAcjxX`, page `Similar cars (AI drafting)`
+  `7334:5`, wrapper `7335:5`. Local component **`Similar car card` `7335:9`**
+  (TEXT props Title / Specification / Year / Mileage / Highest offer, BOOLEAN
+  Plate blur; photo swapped via the Photo layer's image fill). Frames:
+  `7336:203` v1 table desktop, `7336:329` v1 table mobile (mixed models),
+  `7335:30` v2 cards desktop (two lists), `7335:218` v2 cards mobile.
+  Hand-built editable layers, DM Sans + Barlow, mock photos uploaded as image
+  fills (hashes `67e4999c…` Corolla, `977b9648…` EQC, `31c062c5…` Focus).
+  Keep in step with the proto by hand; the `✅ … — IN PROTO` names claim it.
 - **Open, escalated, not ours to answer:** whether other sellers' photos may be
   shown at all, even blurred. Privacy/legal review; v2 depends on it.
 - **World state:** `?similar=same|mixed|few|none` from the bar's **Similar cars
   data** panel ("mixed" = other models inside each list, NOT several seller
   cars). Several seller cars are **Scenarios** under **Several cars**:
-  `multi-car-review` (two in review), `multi-car-live` (live auction +
+  `multi-car-review` (two in review), `multi-car-same-model` (two Amaroks or
+  Corollas in review, one list), `multi-car-live` (live auction +
   in-review draft + unfinished draft) and `multi-car-sold` (accepted +
   in-review draft).
 - **The offers page now renders one notification per draft**, as prod's
   `updates/main.vue` does: every in-review draft before the request's own
   notification, every open and rejected draft after it. It used to show only
-  `drafts[0]`, and no draft notification at all once a published car existed. The second car is whichever mock dataset the funnel car is not (VW
-  Amarok / Toyota Corolla). Figures are invented.
+  `drafts[0]`, and no draft notification at all once a published car existed.
+- **Mock data:** the second car in the Several-cars scenarios is whichever
+  dataset the funnel car is not (VW Amarok / Toyota Corolla). Figures are
+  invented.
 - **Copy:** `similarCars.*` in `translations.js`. `colSpec`, `colYear`,
   `colKm`, `highestOffer`, `loadMore` are prod; title, years, colCar, prev/next
-  are draft; `caveat` is Jussi's ("Jokainen auto on yksilö. Kunto, varustelu ja
-  huoltohistoria vaikuttavat siihen, mitä siitä tarjotaan."). Prod has no
-  English for any of them.
+  are draft. Prod has no English for any of them.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 
