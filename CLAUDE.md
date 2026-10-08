@@ -2143,7 +2143,9 @@ The business case is in private notes, not in this public repo.
   the title.
 - **`v4` is Jussi's simplified layout** (Figma `7328:54`, 2026-10-07), its own
   block `#huutokaupat-content-v4`, the same at every width: no illustration.
-  Order: plate + mileage row, then `huutokaupat.body` in **`text-red-500`** (the
+  Order: plate + mileage row, then the front page form's own error,
+  `hero.mileageMaxError` (prod's `driven_more_than_max` verbatim, no full stop,
+  "Valitettavasti kauttamme voi myydä…", since 2026-10-08) in **`text-red-500`** (the
   form error's colour, deliberately; 3.8:1, under AA, as the form error already
   is; pulled to 10px under the plate row with `-mt-1.5` so it reads as about
   the typed mileage, back to 0 via `[.hidden+&]:mt-0` when that row is hidden), then `huutokaupat.titleV4` "Suosittelemme Huutokaupat.comia" (no
