@@ -139,10 +139,8 @@
       spec: 'design-specs/enhanced-success-page.html',
       prodArm: 'control'
     },
-    /* Ideation only, and TEMPORARY — registered so the arm is switchable and
-       traceable, not because anything here is proposed for build yet. Delete the
-       entry (and the page's own declaration) if the idea is dropped rather than
-       promoted. */
+    /* Change 1 (the result block) is ready for dev as arm v5; v1-v4 carry
+       out-of-scope price-comparison designs kept for reference. */
     {
       slug: 'informed-decision',
       name: 'Informed decision (fair offer)',

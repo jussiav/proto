@@ -669,10 +669,10 @@
        It also turns on every Enhanced negotiations change; see the note under
        `ID_V1` below.
 
-       Copy is placeholder — the team locks the Finnish once the shape is
-       agreed, so it is not worth polishing.
+       The result block's copy is approved by Marketing (2026-10-08); the
+       price-comparison and triage copy is placeholder and out of scope.
        Spec: design-specs/informed-decision.html */
-    var ID_ARMS = ['control', 'v1', 'v2', 'v3', 'v4'];
+    var ID_ARMS = ['control', 'v1', 'v2', 'v3', 'v4', 'v5'];
     var ID_ARM = (function () {
       var arm = window.protoVariant('informed-decision', 'control');
       if (ID_ARMS.indexOf(arm) === -1) { window.protoVariantSet('informed-decision', null); return 'control'; }
@@ -697,7 +697,12 @@
        only arm whose block reads the seller's own amount. `tinkimisvara`
        survives in the footnote. See `.na-cmp-row` and `buildNettiautoCompare`. */
     var ID_V4 = ID_ARM === 'v4';
-    var ID_ANY = ID_V1 || ID_V2 || ID_V3 || ID_V4;
+    /* v5 is the scope that is ready for development: the result block alone,
+       with every other part of the page as production renders it — no price
+       comparison, no triage, prod's warm-up screen, and no Enhanced
+       negotiations changes. It is the link an Asana ticket carries. */
+    var ID_V5 = ID_ARM === 'v5';
+    var ID_ANY = ID_V1 || ID_V2 || ID_V3 || ID_V4 || ID_V5;
 
     /* INFORMED DECISION SUBSUMES ENHANCED NEGOTIATIONS, and the direction is
        one-way. The ideation arm is where the whole decision page is being
@@ -716,7 +721,7 @@
 
        If Informed decision is dropped, delete these two lines and nothing else
        about Enhanced negotiations changes. */
-    if (ID_ANY) { EN_V1 = true; }
+    if (ID_ANY && !ID_V5) { EN_V1 = true; }
 
     /* The negotiation modal's footer is prod's AButton at size lg: 56px tall and
        no font weight of its own, so labels are 400. Disabled swaps the colour
@@ -4278,7 +4283,8 @@
             { id: 'v1',      label: 'Variant 1 — fair-offer treatment + enhanced negotiations' },
             { id: 'v2',      label: 'Variant 2 — triage: seller names the doubt, counter-offer moves in' },
             { id: 'v3',      label: 'Variant 3 — Nettiauto bar: the price stated as its parts' },
-            { id: 'v4',      label: 'Variant 4 — side by side: your offer against a listing price' }
+            { id: 'v4',      label: 'Variant 4 — side by side: your offer against a listing price' },
+            { id: 'v5',      label: 'Variant 5 — ready for dev: auction result block only' }
           ]
         }
       ],

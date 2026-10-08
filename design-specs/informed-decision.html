@@ -117,9 +117,9 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Ready for dev: change 1 only &middot; copy unapproved
+          Ready for dev: change 1 only &middot; copy approved
         </span>
-        <span class="bg-white/90 text-slate-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">Changes 2 and 3: not for dev</span>
+        <span class="bg-white/90 text-slate-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">Changes 2 and 3: out of scope</span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
       </div>
     </div>
@@ -140,33 +140,35 @@
           <div class="grid gap-3 md:grid-cols-2 font-dm text-sm leading-5">
             <div class="rounded-lg border border-success-200 bg-white p-4">
               <p class="font-bold text-success-800 mb-1">Ready for dev</p>
-              <p class="text-slate-800"><a class="text-av-blue underline" href="#change-1">1 &mdash; The auction result, as an answer</a>: the <i>&ldquo;Paras hinta autostasi on nyt selvill&auml;!&rdquo;</i> block, its recommendation tag and its two-cell figures row, for sellers with a fair offer.</p>
+              <p class="text-slate-800"><a class="text-av-blue underline" href="#change-1">1 &mdash; The auction result, as an answer</a>: the <i>&ldquo;Paras hinta autostasi on nyt selvill&auml;!&rdquo;</i> block, its recommendation tag and its two-cell figures row, for sellers with a fair offer. <b>Copy approved by Marketing.</b></p>
+              <p class="text-slate-800 mt-2">See it alone, with the rest of the page as production: <a class="text-av-blue underline break-all" href="../decision.html?scenario=seen-offers&amp;informed-decision=v5">Variant 5 in the prototype</a>.</p>
             </div>
             <div class="rounded-lg border border-warning-300 bg-white p-4">
-              <p class="font-bold text-warning-800 mb-1">Not for dev &middot; already being A/B tested</p>
-              <p class="text-slate-800"><a class="text-av-blue underline" href="#change-2">2 &mdash; the Nettiauto price comparison</a> and its triage version, and <a class="text-av-blue underline" href="#change-3">3 &mdash; the warm-up screen</a>. The price-comparison concern is being tested in a different format as <b>front-end tests in VWO</b>, which do not appear in the codebase. Nothing to build from these sections.</p>
+              <p class="font-bold text-warning-800 mb-1">Out of scope &middot; not for dev</p>
+              <p class="text-slate-800"><a class="text-av-blue underline" href="#change-2">2 &mdash; the Nettiauto price comparison</a> and its triage version, and <a class="text-av-blue underline" href="#change-3">3 &mdash; the warm-up screen</a>. The price-comparison concern is already being A/B tested in a different format as <b>front-end tests in VWO</b>, which do not appear in the codebase. The warm-up screen stays as production has it. Nothing to build from these sections.</p>
             </div>
           </div>
-          <p class="font-dm text-sm leading-5 text-slate-700 mt-4">Changes 2 and 3 stay on this page and in the prototype&rsquo;s variants as design reference, so the team can compare them with what the VWO tests show.</p>
+          <p class="font-dm text-sm leading-5 text-slate-700 mt-4">Changes 2 and 3 stay on this page and in the prototype&rsquo;s Variants 1&ndash;4 as design reference, so the team can compare them with what the VWO tests show. <b>Variant 5 is the one to build from</b>: the result block and nothing else.</p>
         </div>
 
         <div class="rounded-xl border-2 border-warning-300 bg-warning-50 p-6 max-w-3xl">
           <h2 class="font-barlow font-bold text-2xl text-warning-900 mb-3">Read this before anything else</h2>
           <ul class="font-dm text-base leading-6 text-slate-800 list-disc pl-5 space-y-2">
-            <li><b>The Finnish is placeholder.</b> It is written to make the idea reviewable, not to be shipped, and the team owns the wording once the shape is agreed.</li>
+            <li><b>Change 1&rsquo;s Finnish is approved by Marketing</b> and is the copy to ship. The Finnish in changes 2 and 3 is placeholder and out of scope.</li>
             <li><b>This page stays deliberately thin while the idea moves.</b> It describes where the initiative is now, not how it got here, and it gains acceptance criteria and a copy table once the shape is locked.</li>
             <li><b>One euro figure, and only in block 1.</b> Its middle sentence names the price the auction reached. The second block explains how a price is built, not what the parts cost &mdash; see its own section for why that is the design rather than a gap.</li>
-            <li><b>Building change 1 alone is the intended scope.</b> The prototype&rsquo;s <code class="font-mono text-sm">v1</code> also shows block 2 below it; ignore that block when building.</li>
+            <li><b>Build from Variant 5.</b> It shows the result block with everything else on the page as production renders it. Variants 1&ndash;4 also show out-of-scope price-comparison designs and Enhanced negotiations changes.</li>
           </ul>
         </div>
 
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-3">Try it</h2>
-          <p class="font-dm text-base leading-6 text-slate-700 mb-3">Two blocks on the decision page. Switchable from the prototype bar under <b>Informed decision</b>, or by URL:</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>The ready-for-dev scope, Variant 5:</b> the result block only, with the rest of the decision page as production renders it.</p>
+          <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=seen-offers&amp;informed-decision=v5">../decision.html?scenario=seen-offers&amp;informed-decision=v5</a>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3">The out-of-scope designs are on the prototype bar under <b>Informed decision</b> as Variants 1&ndash;4, for reference. Variant 1 adds block 2 below the result block:</p>
           <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=seen-offers&amp;informed-decision=v1">../decision.html?scenario=seen-offers&amp;informed-decision=v1</a>
-          <p class="font-dm text-base leading-6 text-slate-700 mt-3">For change 3, open the page as a <b>first-time visitor</b> &mdash; the arm goes straight to the offers where production shows the warm-up screen first:</p>
-          <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=new-offers&amp;informed-decision=v1">../decision.html?scenario=new-offers&amp;informed-decision=v1</a>
-          <p class="font-dm text-base leading-6 text-slate-700 mt-3">Swap <code class="font-mono text-sm">v1</code> for <code class="font-mono text-sm">control</code> on that link to see the screen it replaces.</p>
+          <p class="font-dm text-base leading-6 text-slate-700 mt-3">As a <b>first-time visitor</b>, Variant 5 shows production&rsquo;s warm-up screen before the offers, unchanged:</p>
+          <a class="font-dm text-sm text-av-blue underline break-all" href="../decision.html?scenario=new-offers&amp;informed-decision=v5">../decision.html?scenario=new-offers&amp;informed-decision=v5</a>
           <p class="font-dm text-base leading-6 text-slate-700 mt-3">Add <code class="font-mono text-sm">&amp;fair=0</code> &mdash; or set <b>Fair offer</b> to <code class="font-mono text-sm">0</code> in the bar&rsquo;s Auction settings &mdash; to see what a seller outside the audience gets, which is production unchanged.</p>
         </div>
       </div>
@@ -194,7 +196,7 @@
       <div class="av-container flex flex-col gap-8">
         <div class="max-w-3xl">
           <h2 id="change-1" class="font-barlow font-bold text-3xl mb-3">1 &mdash; The auction result, as an answer</h2>
-          <p class="mb-4"><span class="inline-flex items-center rounded-full bg-success-100 text-success-800 font-dm text-xs font-bold px-3 py-1">Ready for dev &middot; copy pending approval</span></p>
+          <p class="mb-4"><span class="inline-flex items-center rounded-full bg-success-100 text-success-800 font-dm text-xs font-bold px-3 py-1">Ready for dev &middot; copy approved by Marketing</span></p>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3">Today the block reports two figures and draws a chart of the bidding. The seller&rsquo;s question is <b>&ldquo;is this a good offer?&rdquo;</b>, and two bare numbers answer that only for a reader who already knows how the auction works. The chart is the clearest case: it draws the bids rising, which looks like evidence and is really just the shape every ascending auction makes.</p>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3">So the chart and the date row go, the figures stay, and the block reads them back as the argument they are. <b>The verdict opens it and the figures close it</b> &mdash; evidence reads better after the claim.</p><p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>One job per layer.</b> The verdict recommends, the middle says what happened, the figures give the scale. The middle used to argue all three at once &mdash; 232 characters over six lines on a phone. The payoff line is the headline now and the mechanic is three short sentences beneath it.</p><p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>Every phrase answers something sellers tell us in research, and none of them are decoration.</b> <i>&ldquo;perehtyi autoosi&rdquo;</i> &mdash; sellers do not know a person looked at all, and it lands on the car rather than on a document. <b>Not <i>&ldquo;arvioi&rdquo;</i>:</b> <i>arvio</i> is what a sceptical seller dismisses (<i>&ldquo;se on vaan arvio&rdquo;</i>) and it is also the product&rsquo;s own word for the machine estimate. <i>&ldquo;kilpaili siit&auml;&rdquo;</i> &mdash; the dealerships bid against each other to a deadline, the direct answer to <i>&ldquo;you just pull prices for similar cars&rdquo;</i>.</p>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>Three sentences: who competed, what the competition did to the price, and our view of it.</b> <i>&ldquo;Kilpailu nosti hinnan 11&nbsp;500 euroon&rdquo;</i> ties the figure on the offer card to the auction that produced it, and <i>&ldquo;Pid&auml;mme sit&auml; hyv&auml;n&auml; markkinahintana&rdquo;</i> says why we recommend it, in our own voice. <b>The price is the auction result</b>, the highest offer as the auction ended. A raise the dealership makes later in a negotiation is not something the competition did, so it does not change this figure.</p>
@@ -238,7 +240,7 @@
         <div class="max-w-3xl">
           <h2 id="change-2" class="font-barlow font-bold text-3xl mb-3">2 &mdash; Tarjous vai pyyntihinta?</h2>
           <div class="rounded-lg border-2 border-warning-300 bg-warning-50 p-4 mb-4">
-            <p class="font-dm text-sm font-bold text-warning-900 mb-1">Not for dev &middot; already being A/B tested in VWO</p>
+            <p class="font-dm text-sm font-bold text-warning-900 mb-1">Out of scope &middot; not for dev &middot; already being A/B tested in VWO</p>
             <p class="font-dm text-sm leading-5 text-slate-800">The concern this block addresses, sellers comparing their offer with Nettiauto prices, is being tested in a different format as front-end tests in VWO. Those tests do not appear in the codebase. This block, and the other price-comparison versions in the prototype (the Nettiauto bar, the side-by-side comparison and the triage), are kept here as design reference only. <b>Do not build them.</b></p>
           </div>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3">The single largest reason a seller rejects, and almost always the same mistake: the number they saw online is a dealership&rsquo;s <b>advertised</b> price. Nobody was paid that for that car.</p>
@@ -304,8 +306,8 @@
         <div class="max-w-3xl">
           <h2 id="change-3" class="font-barlow font-bold text-3xl mb-3">3 &mdash; The warm-up screen goes</h2>
           <div class="rounded-lg border-2 border-warning-300 bg-warning-50 p-4 mb-4">
-            <p class="font-dm text-sm font-bold text-warning-900 mb-1">Not for dev</p>
-            <p class="font-dm text-sm leading-5 text-slate-800">The warm-up screen stays as production has it; removing it is not part of this build. The prototype&rsquo;s warm-up versions that carry Nettiauto copy belong to the price-comparison work being A/B tested in VWO, and are kept here as design reference only.</p>
+            <p class="font-dm text-sm font-bold text-warning-900 mb-1">Out of scope &middot; not for dev</p>
+            <p class="font-dm text-sm leading-5 text-slate-800">The warm-up screen stays exactly as production has it; removing it is not part of this build, and Variant 5 shows it unchanged. The prototype&rsquo;s warm-up versions that carry Nettiauto copy belong to the price-comparison work being A/B tested in VWO, and are kept here as design reference only.</p>
           </div>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3">Production stands a full screen between the seller and their offers the first time they open the decision page. It says the auction went well, and it carries none of the evidence for that.</p>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3"><b>Block 1 now makes that claim on the page itself, with the figures behind it</b> &mdash; same illustration, same message. Keeping both would make the seller read the same sentence twice, once behind a click, and only the second one earns it. <b>So this arm skips the screen and takes the seller straight to the offers.</b></p>
@@ -368,7 +370,7 @@
     <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
     <div class="av-container flex flex-col gap-3.5">
       <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
-        <span class="font-dm font-bold">Informed decision · change 1 ready for dev</span>
+        <span class="font-dm font-bold">Informed decision · change 1 ready for dev · Variant 5</span>
         <span class="font-dm font-normal">© 2026 All rights reserved</span>
       </div>
     </div>
