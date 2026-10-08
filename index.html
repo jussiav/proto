@@ -155,7 +155,8 @@
             { id: 'v2',      label: 'Variant 2 — as v1, plate + mileage above the title' },
             { id: 'v3',      label: 'Variant 3 — illustrated layout, no automatic redirect' },
             { id: 'v4',      label: 'Variant 4 — no illustration, checklist, limit in red' },
-            { id: 'v5',      label: 'Variant 5 — as v4, the car as a card with a status tag' }
+            { id: 'v5',      label: 'Variant 5 — as v4, the car as a card with a status tag' },
+            { id: 'v6',      label: 'Variant 6 — as v5, the offers page notification instead of the card' }
           ]
         }
       ]
@@ -1212,6 +1213,38 @@
         </div>
         <p class="m-0 font-dm text-xs leading-[14px] text-slate-600" data-i18n="huutokaupat.disclaimer">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
       </div>
+      <!-- v6: v5 with the car card replaced by the offers page's red draft
+           notification. The typed mileage moves into the red tag; the
+           notification's own warning icon and border carry the stop. -->
+      <div id="huutokaupat-content-v6" class="hidden flex-col gap-6 w-full max-w-md text-left">
+        <!-- The offers page's draft notification (prod's update card), without
+             its CTA: the Huutokaupat button below is the action. Rendered in
+             hkRenderEntered, since the plate and mileage exist only after the
+             form submits. -->
+        <div id="huutokaupat-card-v6"></div>
+        <div class="flex flex-col gap-4">
+          <div id="huutokaupat-title-v6" role="heading" aria-level="2" tabindex="-1"
+               class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px] outline-none"
+               data-i18n="huutokaupat.titleV4">Suosittelemme Huutokaupat.comia</div>
+          <ul class="flex flex-col gap-2 m-0 px-2 list-none font-dm text-sm font-medium text-slate-600">
+              <li class="flex items-center gap-2"><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="huutokaupat.check1V4">Ei kilometri- tai ikärajoja</span></li>
+              <li class="flex items-center gap-2"><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="huutokaupat.check2V4">Huutokaupat.com hoitaa kaupan</span></li>
+              <li class="flex items-center gap-2"><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="huutokaupat.check3V4">Ei kauppaa, ei kuluja</span></li>
+          </ul>
+        </div>
+        <div class="flex flex-col items-center gap-5">
+            <!-- Huutokaupat.com's own dark green and white logo (Figma 7333:1452),
+                 so the button reads as leaving AutoVex. The logo is an image,
+                 so the link's accessible name is the visually hidden label. -->
+            <a id="huutokaupat-cta-v6" href="https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa"
+               class="w-full h-14 px-8 bg-[#142C10] text-white rounded-lg flex items-center justify-center gap-3 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:opacity-[0.94] transition-opacity"
+               ><span class="sr-only" data-i18n="huutokaupat.ctaV3">Huutokaupat.comiin</span><img src="assets/huutokaupat-logo-white.svg" class="h-[26px] w-auto" alt="" /><svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+            <button id="huutokaupat-back-v6" type="button"
+                    class="self-center inline-flex items-center gap-2 bg-transparent border-none p-0 cursor-pointer font-dm font-medium text-base leading-5 text-av-blue hover:underline"
+                    ><svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.1406 8.49999C15.1406 8.71133 15.0567 8.91402 14.9072 9.06346C14.7578 9.2129 14.5551 9.29686 14.3438 9.29686H4.58205L8.0033 12.7174C8.153 12.8671 8.2371 13.0702 8.2371 13.2819C8.2371 13.4936 8.153 13.6967 8.0033 13.8464C7.8536 13.9961 7.65056 14.0802 7.43885 14.0802C7.22713 14.0802 7.0241 13.9961 6.87439 13.8464L2.09314 9.0651C2.01885 8.99107 1.95991 8.9031 1.91969 8.80624C1.87947 8.70938 1.85876 8.60553 1.85876 8.50065C1.85876 8.39577 1.87947 8.29192 1.91969 8.19506C1.95991 8.0982 2.01885 8.01023 2.09314 7.9362L6.87439 3.15495C6.94852 3.08082 7.03652 3.02202 7.13337 2.98191C7.23022 2.94179 7.33402 2.92114 7.43885 2.92114C7.54367 2.92114 7.64748 2.94179 7.74433 2.98191C7.84118 3.02202 7.92917 3.08082 8.0033 3.15495C8.07742 3.22907 8.13622 3.31707 8.17634 3.41392C8.21646 3.51077 8.2371 3.61457 8.2371 3.7194C8.2371 3.82423 8.21646 3.92803 8.17634 4.02488C8.13622 4.12173 8.07742 4.20973 8.0033 4.28385L4.58205 7.70311H14.3438C14.5551 7.70311 14.7578 7.78707 14.9072 7.93651C15.0567 8.08595 15.1406 8.28864 15.1406 8.49999Z"/></svg><span data-i18n="huutokaupat.back">Takaisin etusivulle</span></button>
+        </div>
+        <p class="m-0 font-dm text-xs leading-[14px] text-slate-600" data-i18n="huutokaupat.disclaimer">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
+      </div>
     </div>
   </div>
 
@@ -1337,13 +1370,14 @@
       /* In v1 the cap stops being a form error and becomes a route instead,
          so the field accepts any number and only the submit looks at it. */
       const HK_ARM = window.protoVariant('huutokaupat-routing', 'control');
-      const HK_ON = ['v1', 'v2', 'v3', 'v4', 'v5'].indexOf(HK_ARM) !== -1;
+      const HK_ON = ['v1', 'v2', 'v3', 'v4', 'v5', 'v6'].indexOf(HK_ARM) !== -1;
       /* v3 and v4 wait for the seller: no countdown, no automatic redirect.
          Each has its own block; HK_OWN names it. */
       const HK_V3 = HK_ARM === 'v3';
       const HK_V4 = HK_ARM === 'v4';
       const HK_V5 = HK_ARM === 'v5';
-      const HK_OWN = HK_V3 ? 'v3' : (HK_V4 ? 'v4' : (HK_V5 ? 'v5' : null));
+      const HK_V6 = HK_ARM === 'v6';
+      const HK_OWN = ['v3', 'v4', 'v5', 'v6'].indexOf(HK_ARM) !== -1 ? HK_ARM : null;
       if (HK_OWN) {
         document.getElementById('huutokaupat-content').classList.add('hidden');
         document.getElementById('huutokaupat-content-' + HK_OWN).classList.replace('hidden', 'flex');
@@ -1411,6 +1445,31 @@
           '</div>';
       }
 
+      /* The offers page's buildDraftNotifHtml shell, rejected-draft colours
+         (2px red-400 border), with the plate where that notification draws its
+         warning icon. The red UiBadge on the right carries the typed mileage
+         with v5's prohibit icon, so the figure a seller may have mistyped is
+         the one marked. */
+
+      function hkRenderNoticeV6(plate, km) {
+        const kmTag = km
+          ? '<div class="av-card__badge inline-flex items-center space-x-2 px-2 py-1 font-dm rounded border bg-red-500 border-red-700 text-white whitespace-nowrap">' +
+              '<span class="inline-flex">' + HK_ICON_PROHIBIT + '</span>' +
+              '<span>' + hkEsc(km) + '\u00a0km</span></div>'
+          : '';
+        const plateBadge = km && plate ? window.buildRegBadge(plate) : '';
+        document.getElementById('huutokaupat-card-v6').innerHTML =
+          '<div class="p-6 flex flex-col space-y-4 rounded-xl border-2 overflow-auto bg-white border-red-400 font-dm">' +
+            (plateBadge || kmTag
+              ? '<div class="flex justify-between items-center gap-2">' + (plateBadge || '<span></span>') + kmTag + '</div>'
+              : '') +
+            '<div class="flex flex-col space-y-2.5">' +
+              '<span class="text-xl text-slate-800 font-bold">' + hkEsc(window.t('huutokaupat.sorryV5')) + '</span>' +
+              '<span class="text-slate-600">' + hkEsc(window.t('huutokaupat.limitV5')) + '</span>' +
+            '</div>' +
+          '</div>';
+      }
+
       function hkRenderEntered() {
         const km = document.getElementById('mileage').value.trim();
         const plate = normalizePlate(document.getElementById('plate').value.trim());
@@ -1426,6 +1485,10 @@
         });
         if (HK_V5) {
           hkRenderCardV5(plate, km);
+          return;
+        }
+        if (HK_V6) {
+          hkRenderNoticeV6(plate, km);
           return;
         }
         if (!km) return;
@@ -1484,6 +1547,7 @@
       document.getElementById('huutokaupat-back-v3').addEventListener('click', closeHuutokaupat);
       document.getElementById('huutokaupat-back-v4').addEventListener('click', closeHuutokaupat);
       document.getElementById('huutokaupat-back-v5').addEventListener('click', closeHuutokaupat);
+      document.getElementById('huutokaupat-back-v6').addEventListener('click', closeHuutokaupat);
       document.addEventListener('av:langchange', hkRenderEntered);
       document.getElementById('huutokaupat-logo').addEventListener('click', function (e) {
         e.preventDefault();

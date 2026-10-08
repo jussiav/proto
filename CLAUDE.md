@@ -657,7 +657,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
-| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; `v5` = `v4` with a car card + status tag; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
+| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; `v5` = `v4` with a car card + status tag; `v6` = `v5` with the offers notification; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 
 **Completed initiatives:**
@@ -2212,6 +2212,24 @@ The business case is in private notes, not in this public repo.
   "Vi rekommenderar dig därför att sälja privat via Blocket". No button, no
   link, no tag. Logo size and body leading not verified (the SVG has no
   width/height).
+- **`v6` (2026-10-08) is `v5` with the card swapped for the offers page's
+  red draft notification** (Jussi's ask): `#huutokaupat-content-v6`, mount
+  `#huutokaupat-card-v6`, rendered by `hkRenderNoticeV6` — the
+  `buildDraftNotifHtml` shell from `offers.html` with the rejected-draft
+  colours (`border-2 border-red-400`), no CTA, and no warning icon: the plate
+  sits where it was (left) and the typed mileage in a `UiBadge` `red` tag on
+  the right with `v5`'s prohibit icon (both Jussi's calls, 2026-10-08; a
+  first pass had the octagon icon and a gauge in the tag). No "Yli
+  kilometrirajan" label and no separate mileage line. Title `sorryV5` at the notification's
+  `text-xl font-bold text-slate-800`, body `limitV5` in `text-slate-600`.
+  Everything from the title down is `v4`'s. No Figma frame yet.
+- **`v5` in Figma:** `7340:54` "✅ Desktop + mobile — Variant 5, car card (IN
+  PROTO)" (2026-10-08), cloned from `7328:54` and placed first in Jussi's
+  `7309:656` column, above the `v4` frames; card `7340:105`. Built after the
+  proto, so the proto is the source. The limit sentence uses non-breaking
+  spaces in "280 000 km" so Figma does not split the figure. **Two `v4`
+  frames both claim IN PROTO** (`7328:54` and its copy `7333:1385`); left
+  alone, flagged.
 - **`v4` in Figma:** `7328:54` (desktop, in Jussi's `7309:656`) is the source.
   There is no separate mobile frame: Jussi's instruction is the same design at
   both widths. `7328:90` is the superseded checklist-v3 mobile.
