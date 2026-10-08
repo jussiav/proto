@@ -115,7 +115,7 @@
           </svg>
           <span class="text-blue-900 leading-[24px]">Ajankohtaista</span>
         </h2>
-        <div id="notification-container"></div>
+        <div id="notification-container" class="flex flex-col gap-y-5"></div>
       </section>
 
       <!-- Drafts section — shown when there are draft listings -->
@@ -140,6 +140,19 @@
 
         <!-- Rendered by buildCarCard (vehicle-card.js) -->
         <div id="published-card" class="av-card-shell w-full"></div>
+      </section>
+
+      <!-- Similar cars initiative (v1 table, v2 photo cards). The block is
+           similar-cars.js; this section only supplies the page's own heading. -->
+      <section id="section-similar" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <!-- ph-bold-chart-bar -->
+          <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true">
+            <path d="M16.416 14.0625H16.1348V3.09375C16.1348 2.86997 16.0459 2.65536 15.8876 2.49713C15.7294 2.33889 15.5148 2.25 15.291 2.25H11.3535C11.1297 2.25 10.9151 2.33889 10.7569 2.49713C10.5987 2.65536 10.5098 2.86997 10.5098 3.09375V5.625H7.41602C7.19224 5.625 6.97763 5.71389 6.81939 5.87213C6.66116 6.03036 6.57227 6.24497 6.57227 6.46875V9H4.04102C3.81724 9 3.60263 9.08889 3.44439 9.24713C3.28616 9.40536 3.19727 9.61997 3.19727 9.84375V14.0625H2.91602C2.69224 14.0625 2.47763 14.1514 2.31939 14.3096C2.16116 14.4679 2.07227 14.6825 2.07227 14.9062C2.07227 15.13 2.16116 15.3446 2.31939 15.5029C2.47763 15.6611 2.69224 15.75 2.91602 15.75H16.416C16.6398 15.75 16.8544 15.6611 17.0126 15.5029C17.1709 15.3446 17.2598 15.13 17.2598 14.9062C17.2598 14.6825 17.1709 14.4679 17.0126 14.3096C16.8544 14.1514 16.6398 14.0625 16.416 14.0625ZM12.1973 3.9375H14.4473V14.0625H12.1973V3.9375ZM8.25977 7.3125H10.5098V14.0625H8.25977V7.3125ZM4.88477 10.6875H6.57227V14.0625H4.88477V10.6875Z"/>
+          </svg>
+          <span class="text-blue-900 leading-[24px]" data-i18n="similarCars.title">Vastaavien autojen tarjouksia</span>
+        </h2>
+        <div id="similar-cars"></div>
       </section>
 
       <!-- FAQ section -->
@@ -185,6 +198,7 @@
 
   <script src="toastr.js"></script>
   <script src="vehicle-card.js"></script>
+  <script src="similar-cars.js"></script>
   <script>
     // ── Helpers ──
     function _now() { return Math.floor(Date.now() / 1000); }
@@ -252,6 +266,18 @@
       if (['control', 'v1'].indexOf(arm) === -1) { window.protoVariantSet('seller-edits-before-review', null); return false; }
       return arm === 'v1';
     }());
+    /* "Similar cars" (design-specs/similar-cars.html): v1 table, v2 photo cards. */
+    var SIMILAR_ARM = (function () {
+      var arm = window.protoVariant('similar-cars', 'control');
+      if (['control', 'v1', 'v2'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
+      return arm;
+    }());
+    /* World state, not a variant: what the Analytics query would return.
+       Set from the bar's "Similar cars data" panel. */
+    var SIMILAR_DATA = (function () {
+      var v = _offersParams.get('similar');
+      return ['same', 'mixed', 'few', 'none'].indexOf(v) !== -1 ? v : 'same';
+    }());
     var FI_WEEKDAY_NAMES = { 1: 'maanantaina', 2: 'tiistaina', 3: 'keskiviikkona', 4: 'torstaina', 5: 'perjantaina' };
     function _nextWorkDayName() {
       var d = new Date();
@@ -269,7 +295,7 @@
     // Sync funnel flags to match scenario — Skenaario panel is master state
     (function() {
       var _DRAFT_ONLY = ['draft-open', 'draft-rejected', 'draft-rejected-images', 'blank'];
-      var _IN_REVIEW  = ['draft-in-review'];
+      var _IN_REVIEW  = ['draft-in-review', 'multi-car-review'];
       try {
         var fs = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
         if (_DRAFT_ONLY.indexOf(SCENARIO) !== -1) {
@@ -311,6 +337,17 @@
       drive_type: (s.details || {}).vetotapa || 'fwd',
       driven: km
     };
+
+    /* A seller with several cars (the "Several cars" scenarios). The second
+       car is whichever of the two mock datasets the funnel car is not, so its
+       similar-cars list differs from the first one's. */
+    var OTHER_CAR = (merkki + ' ' + malli).toLowerCase() === 'toyota corolla'
+      ? { registration_number: 'KOT-218', make_name: 'Volkswagen', model_name: 'Amarok', model_specification: '2.0 TDI Highline 4Motion',
+          year: 2019, fuel_type: 'diesel', drive_type: 'awd', driven: 151000, image: null }
+      : { registration_number: 'XYZ-789', make_name: 'Toyota', model_name: 'Corolla', model_specification: '1.8 Hybrid Active',
+          year: 2020, fuel_type: 'hybrid', drive_type: 'fwd', driven: 82000, image: 'assets/review-car-corolla.jpg' };
+    var THIRD_CAR = { registration_number: 'BKM-552', make_name: 'Skoda', model_name: 'Octavia', model_specification: '1.5 TSI Style DSG',
+      year: 2020, fuel_type: 'gasoline', drive_type: 'fwd', driven: 95000, image: null };
 
     var BASE = {
       id: 1001, make: merkki, model: malli, year: parseInt(vuosi) || 2020,
@@ -367,6 +404,26 @@
         offers_seen_at: new Date((_now() - 3*86400) * 1000).toISOString(), has_final_offer: false,
         highest_offer: 9500, second_highest_offer: 9000,
       })], negotiations: [] }; },
+      'multi-car-review': function() { return { requests: [], negotiations: [], drafts: [
+        Object.assign({ id: 501, status: 'in_review', created_at: _now() - 86400, booked: REVIEW_BOOKED, asking_price: 12000,
+          review_comms_content: REVIEW_COMMS_CONTENT[REVIEW_COPY_VARIANT] || null }, DRAFT_CAR),
+        Object.assign({ id: 502, status: 'in_review', created_at: _now() - 2 * 86400, booked: REVIEW_BOOKED, asking_price: 12000 }, OTHER_CAR)
+      ] }; },
+      'multi-car-live': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() + 20*3600, published_at: _now() - 16*3600,
+        offer_count: LIVE_BIDS, buyers: LIVE_BUYERS, offers: [{id:201,status:0},{id:202,status:0}], offers_seen_at: null, has_final_offer: false,
+      })], negotiations: [], drafts: [
+        Object.assign({ id: 502, status: 'in_review', created_at: _now() - 86400, booked: REVIEW_BOOKED, asking_price: 12000 }, OTHER_CAR),
+        Object.assign({ id: 503, status: 'open', created_at: _now() - 3 * 86400 }, THIRD_CAR)
+      ] }; },
+      'multi-car-sold': function() { return { requests: [Object.assign({}, BASE, {
+        auction_ends_at: _now() - 2*86400, published_at: _now() - 2*86400 - 36*3600,
+        offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
+        offers: [{id:201,status:1},{id:202,status:2},{id:203,status:2}],
+        offers_seen_at: new Date((_now() - 2*86400) * 1000).toISOString(), has_final_offer: false,
+      })], negotiations: [], drafts: [
+        Object.assign({ id: 502, status: 'in_review', created_at: _now() - 86400, booked: REVIEW_BOOKED, asking_price: 12000 }, OTHER_CAR)
+      ] }; },
       'accepted':       function() { return { requests: [Object.assign({}, BASE, {
         auction_ends_at: _now() - 2*86400, published_at: _now() - 2*86400 - 36*3600,
         offer_count: ENDED_BIDS, buyers: ENDED_BUYERS,
@@ -534,12 +591,54 @@
       '</div>';
     }
 
+    /* One notification per draft, as prod's updates/main.vue does: every
+       in-review draft before the request notifications, every open and
+       rejected draft after them. */
+    function draftNotifHtml(d) {
+      if (d.status === 'open') {
+        return buildDraftNotifHtml(
+          NICON_FILL_FILE_DASHED, 'text-amber-500', 'border-amber-400', 'bg-white', d.registration_number,
+          'Täydennä puuttuvat tiedot saadaksesi tarjouksia.',
+          'Tarjouspyynnöstäsi puuttuu tärkeitä tietoja. Täydennä tiedot, jotta voimme käynnistää tarjouskilpailun autoliikkeiden kanssa ympäri maan.',
+          '<a href="' + draftEditHref(d) + '" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lisää puuttuvat tiedot</a>'
+        );
+      }
+      if (d.status === 'in_review') {
+        return buildDraftNotifHtml(
+          NICON_FILL_HEADSET, 'text-blue-500', 'border-blue-500', 'bg-white', d.registration_number,
+          'Tarjouspyyntösi on vastaanotettu - Tarkastus on käynnissä!',
+          d.review_comms_content || 'Kiitos tarjouspyynnöstäsi! Soitamme sinulle pian varmistaaksemme, että kaikki on kunnossa parhaan mahdollisen myyntikokemuksen takaamiseksi.',
+          ''
+        );
+      }
+      if (d.status === 'rejected') {
+        return d.missing_images
+          ? buildDraftNotifHtml(
+              NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
+              'Lataa kuvat jatkaaksesi',
+              'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia voidakseen tehdä parhaat tarjouksensa.',
+              '<a href="photos.html?step=add-images" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lataa kuvat</a>'
+            )
+          : buildDraftNotifHtml(
+              NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
+              'Autoasi ei hyväksytty - tällä kertaa.',
+              'Syynä saattaa olla ajoitus tai puuttuvat tiedot. Ei hätää - voit aina palata myöhemmin.',
+              '<a href="' + REJECTED_EDIT_HREF + '" class="' + BTN_PRIMARY + '" style="text-decoration:none">Muokkaa tarjouspyyntöäsi</a>'
+            );
+      }
+      return '';
+    }
+    function draftNotifGroups(drafts) {
+      function of(status) {
+        return drafts.filter(function (d) { return d.status === status; }).map(draftNotifHtml).join('');
+      }
+      return { before: of('in_review'), after: of('open') + of('rejected') };
+    }
+
     function renderDraftNotification(drafts, isBlank) {
       var sectionUpdates = document.getElementById('section-updates');
       var container = document.getElementById('notification-container');
-      container.innerHTML = '';
       var html = '';
-
       if (isBlank) {
         html = buildDraftNotifHtml(
           NICON_FILL_CAR, 'text-blue-500', 'border-blue-500', 'bg-white', null,
@@ -547,48 +646,21 @@
           'Luo tarjouspyyntö nyt ja saat tarjouksia autoliikkeiltä ympäri maan. Mitä nopeammin aloitat, sitä nopeammin tarjouksia alkaa tulla!',
           '<a href="index.html" class="' + BTN_PRIMARY + '" style="text-decoration:none">Luo tarjouspyyntö</a>'
         );
-      } else if (drafts.length) {
-        var d = drafts[0];
-        if (d.status === 'open') {
-          html = buildDraftNotifHtml(
-            NICON_FILL_FILE_DASHED, 'text-amber-500', 'border-amber-400', 'bg-white', d.registration_number,
-            'Täydennä puuttuvat tiedot saadaksesi tarjouksia.',
-            'Tarjouspyynnöstäsi puuttuu tärkeitä tietoja. Täydennä tiedot, jotta voimme käynnistää tarjouskilpailun autoliikkeiden kanssa ympäri maan.',
-            '<a href="' + draftEditHref(d) + '" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lisää puuttuvat tiedot</a>'
-          );
-        } else if (d.status === 'in_review') {
-          html = buildDraftNotifHtml(
-            NICON_FILL_HEADSET, 'text-blue-500', 'border-blue-500', 'bg-white', d.registration_number,
-            'Tarjouspyyntösi on vastaanotettu - Tarkastus on käynnissä!',
-            d.review_comms_content || 'Kiitos tarjouspyynnöstäsi! Soitamme sinulle pian varmistaaksemme, että kaikki on kunnossa parhaan mahdollisen myyntikokemuksen takaamiseksi.',
-            ''
-          );
-        } else if (d.status === 'rejected') {
-          if (d.missing_images) {
-            html = buildDraftNotifHtml(
-              NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
-              'Lataa kuvat jatkaaksesi',
-              'Ilmoituksesi tarvitsee lisää kuvia ennen julkaisua. Autoliikkeet tarvitsevat selkeitä kuvia voidakseen tehdä parhaat tarjouksensa.',
-              '<a href="photos.html?step=add-images" class="' + BTN_PRIMARY + '" style="text-decoration:none">Lataa kuvat</a>'
-            );
-          } else {
-            html = buildDraftNotifHtml(
-              NICON_FILL_WARN_OCT, 'text-red-500', 'border-red-400', 'bg-white', d.registration_number,
-              'Autoasi ei hyväksytty - tällä kertaa.',
-              'Syynä saattaa olla ajoitus tai puuttuvat tiedot. Ei hätää - voit aina palata myöhemmin.',
-              '<a href="' + REJECTED_EDIT_HREF + '" class="' + BTN_PRIMARY + '" style="text-decoration:none">Muokkaa tarjouspyyntöäsi</a>'
-            );
-          }
-        }
-        // 'queued_for_publishing_after_verification' → no notification per production
-      }
-
-      if (html) {
-        container.innerHTML = html;
-        sectionUpdates.classList.remove('hidden');
       } else {
-        sectionUpdates.classList.add('hidden');
+        var g = draftNotifGroups(drafts);
+        html = g.before + g.after;
       }
+      container.innerHTML = html;
+      sectionUpdates.classList.toggle('hidden', !html);
+    }
+
+    function addDraftNotifications(drafts) {
+      var g = draftNotifGroups(drafts);
+      if (!g.before && !g.after) return;
+      var container = document.getElementById('notification-container');
+      if (g.before) container.insertAdjacentHTML('afterbegin', g.before);
+      if (g.after) container.insertAdjacentHTML('beforeend', g.after);
+      document.getElementById('section-updates').classList.remove('hidden');
     }
 
     // Status text/icon/badge come from DRAFT_BADGES (vehicle-card.js), mirroring
@@ -655,7 +727,7 @@
         mileage:   draft.driven ? draft.driven.toLocaleString('fi-FI') + ' km' : null,
         driveType: draft.drive_type,
         fuelType:  draft.fuel_type,
-        image: firstPhoto,
+        image: draft.image !== undefined ? draft.image : firstPhoto,
 
         status: t(cfg.textKey),
         statusColor: cfg.badge,
@@ -916,6 +988,29 @@
     }
 
     // ── Render page from scenario data ──
+    /* One list per car the seller is still forming a price expectation for:
+       a draft in review, or a published car whose auction is live, ended
+       with offers waiting, or in negotiation. An unfinished draft has no
+       reliable details to match on; an accepted, completed or all-rejected
+       car is left out so the seller does not second-guess the decision. */
+    var SIMILAR_STATES = ['auctionOngoing', 'auctionEnded', 'negotiations'];
+    function renderSimilarCars(req, state, drafts) {
+      var section = document.getElementById('section-similar');
+      var groups = [];
+      if (SIMILAR_ARM !== 'control') {
+        drafts.forEach(function (d) {
+          if (d.status === 'in_review') groups.push({ car: { make: d.make_name, model: d.model_name, registration_number: d.registration_number } });
+        });
+        if (req && SIMILAR_STATES.indexOf(state) !== -1) groups.push({ car: { make: req.make, model: req.model, registration_number: req.registration_number } });
+        groups.forEach(function (g) { g.cars = window.SimilarCars.mock(g.car, SIMILAR_DATA); });
+      }
+      var drawn = groups.length > 0 && window.SimilarCars.render(document.getElementById('similar-cars'), {
+        variant: SIMILAR_ARM === 'v2' ? 'cards' : 'table',
+        groups: groups
+      });
+      section.classList.toggle('hidden', !drawn);
+    }
+
     function renderPage() {
       if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
       if (notifIntervals.length) { notifIntervals.forEach(clearInterval); notifIntervals = []; }
@@ -941,6 +1036,7 @@
       });
 
       renderDrafts(drafts);
+      renderSimilarCars(req, req ? computeRequestState(req, negs) : null, drafts);
 
       document.getElementById('timer-reg-badge').innerHTML = buildRegBadge(plate);
 
@@ -1015,6 +1111,7 @@
 
       // ── Notification (updates/main.vue) ──
       renderNotification(req, negs, state);
+      addDraftNotifications(drafts);
 
       // ── Published car card — adapter: request state -> buildCarCard props ──
       var _cardHref = cfg.primaryHref === 'decision.html' ? decisionHref() : cfg.primaryHref;
@@ -1590,6 +1687,11 @@
         { id: 'offers-expired-unseen', label: 'Expired, unseen' },
         { id: 'offers-auto-rejected',  label: 'Auto-rejected' },
       ]},
+      { group: 'Several cars', items: [
+        { id: 'multi-car-review', label: 'Two cars in review' },
+        { id: 'multi-car-live', label: 'Live auction + draft in review + unfinished draft' },
+        { id: 'multi-car-sold', label: 'Offer accepted + draft in review' },
+      ]},
       { group: 'Deal completed', items: [
         { id: 'accepted',       label: 'Offer accepted' },
         { id: 'deal-completed', label: 'Deal completed' },
@@ -1610,8 +1712,36 @@
             { id: 'control', label: 'Control — current design' },
             { id: 'v1',      label: 'Variant 1 — edit while waiting for review' }
           ]
+        },
+        {
+          slug:    'similar-cars',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no similar cars block' },
+            { id: 'v1',      label: 'Variant 1 — table' },
+            { id: 'v2',      label: 'Variant 2 — photo cards' }
+          ]
         }
       ],
+      panelLabel:   'Similar cars data',
+      panelTitle:   'What the similar-cars query returns (world state, applies to both variants)',
+      actionsLabel: 'Query result',
+      actions: [
+        { label: 'Same model only',          key: 'same' },
+        { label: 'Mixed models in each list', key: 'mixed' },
+        { label: 'Only 3 cars (minimum shown)', key: 'few' },
+        { label: '2 cars — block hidden',     key: 'none' }
+      ].map(function (a) {
+        return {
+          label: (SIMILAR_DATA === a.key ? '✓ ' : '') + a.label,
+          title: 'Sets ?similar=' + a.key,
+          run: function () {
+            var u = new URL(window.location.href);
+            if (a.key === 'same') u.searchParams.delete('similar'); else u.searchParams.set('similar', a.key);
+            window.location.href = u.toString();
+          }
+        };
+      }),
       scenarios: SCENARIO_GROUPS.map(function (g) {
         if (g.group !== 'Draft') return g;
         var items = [];

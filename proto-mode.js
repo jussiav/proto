@@ -160,6 +160,12 @@
       name: 'Huutokaupat routing',
       spec: 'design-specs/huutokaupat-routing.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'similar-cars',
+      name: 'Similar cars',
+      spec: 'design-specs/similar-cars.html',
+      prodArm: 'control'
     }
   ];
 

@@ -367,3 +367,48 @@ media wrapper and leaves `flex-shrink` at its default 1, with the body at
 
 **Used on:** `contact.html`, `success.html` (via `renderVehicleCard()`),
 `offers.html` (published listing + draft cards)
+
+---
+
+## SimilarCars
+
+| Field | Value |
+|---|---|
+| **Status** | `prototype` |
+| **Renderer** | `vanilla` |
+| **File** | `similar-cars.js` → `window.SimilarCars.render(el, opts)` |
+| **Bundle** | — (no build step) |
+| **Prod equivalent** | — (Similar cars initiative, `design-specs/similar-cars.html`) |
+| **Figma** | _Add link_ |
+| **Storybook** | — |
+
+Highest offers on cars similar to the seller's. Brings no section heading, so
+the offers page, decision page or a funnel step can each wrap it in their own.
+Returns `false` and renders nothing when no group reaches `SimilarCars.MIN_RESULTS` (3) cars. The caveat line renders once, after the last group.
+Re-renders on `av:langchange`. Asset paths resolve from the script's own `src`,
+so `design-specs/` pages can mount it.
+
+**Options:**
+| Option | Type | Notes |
+|---|---|---|
+| `variant` | `'table'` \| `'cards'` | Default `'table'` |
+| `groups` | Array | `[{ car: { make, model }, cars }]`, one list per seller's car, each opened by a "make model · vuosimallit from–to" line. Groups under 3 cars are dropped |
+| `car` + `cars` | Object + Array | Single-group shorthand. `cars`: `{ make, model, model_specification, year, driven, highest_offer, image, plate_box }`, pre-sorted by the caller |
+| `initial` / `step` | Number | Shown first / added per "Näytä lisää". Default 5 / 5 |
+
+`SimilarCars.mock(car, mode)` returns proto data for the seller's car
+(`'volkswagen amarok'` and `'toyota corolla'`, anything else falls back to the
+Amarok set); `mode` is `'same' | 'mixed' | 'few' | 'none'`.
+
+**Built from:** `Timer.vue`'s card shell and `ComissionList.vue`'s row rule
+(table); `OProductCard` + `OProductCardMedia` with
+`ListingCardAuctionRows`/`ListingCardBiddingInfo`'s "Korkein tarjous" row
+(cards — the row sits under the photo, not over it); the funnel's info line;
+`UiButton` secondary.
+
+**Responsiveness:** container query at 520px of the block's own width — year
+and mileage columns fold into a meta line, and the card arrows appear.
+
+**Used on:** `offers.html` (`similar-cars` arm `v1`/`v2`),
+`design-specs/similar-cars.html`, `components.html`
+

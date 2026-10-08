@@ -658,6 +658,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
+| Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 
 **Completed initiatives:**
 
@@ -2185,6 +2186,61 @@ The business case is in private notes, not in this public repo.
   and `/hinta-arvio` (`> max`) accept it. `v1` follows the front page. The
   funnel's first step and `/hinta-arvio` show the same error and are out of
   scope, listed as an open question.
+
+## Similar cars — `v1` / `v2`
+
+Shows the seller the highest offers dealerships made on AutoVex for cars like
+theirs, to anchor expectations to real offers. Started 2026-10-08. How similar
+the cars are, how many, and the sort order are open; Analytics is checking what
+data exists.
+
+- **One block, `similar-cars.js`, vanilla, no section heading of its own**, so
+  the decision page or a funnel step can host it later with one script tag and
+  `SimilarCars.render(el, { variant, groups })`. Offers page wraps it in its own
+  `#section-similar` (ph-bold-chart-bar heading), under the seller's cars.
+- **One list per seller's car** (Jussi, 2026-10-08): each opens with the car's
+  plate badge (`window.buildRegBadge`, so the host must load
+  `vehicle-card.js`; without it the heading just omits the badge) and
+  "Volkswagen Amarok · vuosimallit 2018–2020" (the seller's car + the list's
+  year range), then its rows or cards and its own "Näytä lisää". The caveat
+  renders once at the end. **No intro sentence** — Jussi removed it, the
+  section heading already says it.
+- **Which cars get a list (Jussi's rule):** a draft in review, or a published
+  car whose auction is live, ended with offers waiting, or negotiating. Not an
+  unfinished draft (details not final, so similar cars cannot be matched) and
+  not accepted / completed / all rejected (no second-guessing the decision).
+  Nothing before review. Order follows the page: drafts in review, then
+  published.
+- **`v1` table:** make + model not repeated in rows when every row shares them;
+  when they differ the first column becomes "Auto" and each row leads with
+  make + model. Below 520px of the BLOCK's width (container query) year and
+  mileage fold into a grey line under the specification.
+- **`v2` photo cards:** `OProductCard` shape (Jussi recognised it from the
+  buyer side and likes it) in a scroll-snap row, 260px cards, arrows beside the
+  seller's-car line from 520px. The "Korkein tarjous" row is prod's
+  `ListingCardBiddingInfo` chrome, moved UNDER the photo. **The photo is the
+  front three-quarter shot**, the funnel's first photo slot; the side profiles
+  were dropped from the mock pool. Jussi will supply real photos later; do not
+  generate any. Plates are blurred by a proto overlay (`plate_box`); production
+  must blur server-side.
+- **Open, escalated, not ours to answer:** whether other sellers' photos may be
+  shown at all, even blurred. Privacy/legal review; v2 depends on it.
+- **World state:** `?similar=same|mixed|few|none` from the bar's **Similar cars
+  data** panel ("mixed" = other models inside each list, NOT several seller
+  cars). Several seller cars are **Scenarios** under **Several cars**:
+  `multi-car-review` (two in review), `multi-car-live` (live auction +
+  in-review draft + unfinished draft) and `multi-car-sold` (accepted +
+  in-review draft).
+- **The offers page now renders one notification per draft**, as prod's
+  `updates/main.vue` does: every in-review draft before the request's own
+  notification, every open and rejected draft after it. It used to show only
+  `drafts[0]`, and no draft notification at all once a published car existed. The second car is whichever mock dataset the funnel car is not (VW
+  Amarok / Toyota Corolla). Figures are invented.
+- **Copy:** `similarCars.*` in `translations.js`. `colSpec`, `colYear`,
+  `colKm`, `highestOffer`, `loadMore` are prod; title, years, colCar, prev/next
+  are draft; `caveat` is Jussi's ("Jokainen auto on yksilö. Kunto, varustelu ja
+  huoltohistoria vaikuttavat siihen, mitä siitä tarjotaan."). Prod has no
+  English for any of them.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

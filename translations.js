@@ -62,6 +62,26 @@ window.TRANSLATIONS = {
       description: 'Muutama sekunti jäljellä',
     },
 
+    /* Similar cars (design-specs/similar-cars.html). Prod strings, verbatim:
+       colSpec, colYear, colKm (tenderform.*), highestOffer
+       (seller-listings.b2b.cards.auction_ongoing.highest_offer) and loadMore
+       (tenderform view_more). `caveat` is Jussi's wording. Everything else is
+       draft, not approved, and
+       the English is a working translation: prod has none for these. */
+    similarCars: {
+      title:        'Vastaavien autojen tarjouksia',
+      years:        'vuosimallit {from}–{to}',
+      colCar:       'Auto',
+      colSpec:      'Mallitarkennus',
+      colYear:      'Vuosimalli',
+      colKm:        'Ajokilometrit',
+      highestOffer: 'Korkein tarjous',
+      loadMore:     'Näytä lisää',
+      caveat:       'Jokainen auto on yksilö. Kunto, varustelu ja huoltohistoria vaikuttavat siihen, mitä siitä tarjotaan.',
+      prev:         'Edelliset',
+      next:         'Seuraavat',
+    },
+
     /* Huutokaupat routing, v1 only. Not approved: `body`, `cta` and
        `disclaimer` are Jussi's wording, the rest is draft. */
     huutokaupat: {
@@ -708,6 +728,20 @@ window.TRANSLATIONS = {
       auctionOngoing:  'Auction is live',
       auctionEnded:    'Auction has ended',
       dealCompleted:   'Transaction complete',
+    },
+
+    similarCars: {
+      title:        'Offers on similar cars',
+      years:        'model years {from}–{to}',
+      colCar:       'Car',
+      colSpec:      'Model specification',
+      colYear:      'Model year',
+      colKm:        'Mileage',
+      highestOffer: 'Highest offer',
+      loadMore:     'Show more',
+      caveat:       'Every car is different. Condition, equipment and service history affect what is offered for it.',
+      prev:         'Previous',
+      next:         'Next',
     },
 
     huutokaupat: {
