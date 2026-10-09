@@ -2259,7 +2259,12 @@ The business case is in private notes, not in this public repo.
   first pass had the octagon icon and a gauge in the tag). No "Yli
   kilometrirajan" label and no separate mileage line. Title `sorryV5` at the notification's
   `text-xl font-bold text-slate-800`, body `limitV5` in `text-slate-600`.
-  Everything from the title down is `v4`'s. No Figma frame yet.
+  Everything from the title down is `v4`'s. **Figma:** `7341:126`
+  "✅ Desktop + mobile — Variant 6, offers notification (IN PROTO)", first in
+  the `7309:656` column (notification `7341:127`), cloned from Jussi's own
+  edited `v5` frame `7340:54` (he had already removed its mileage row there,
+  so the clone keeps the rest of his edits). `7338:1483` is a second
+  "Variant 5 (IN PROTO)" frame not made by me; left alone.
 - **`v5` in Figma:** `7340:54` "✅ Desktop + mobile — Variant 5, car card (IN
   PROTO)" (2026-10-08), cloned from `7328:54` and placed first in Jussi's
   `7309:656` column, above the `v4` frames; card `7340:105`. Built after the
