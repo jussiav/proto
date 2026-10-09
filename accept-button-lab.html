@@ -3,39 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Success button — where green and lime are today</title>
+  <title>Success Colour Change</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* Working page for a conversation with devs and designers. Not linked from
-       the prototype, not part of it.
-
-       Every colour below is a token the product already ships: the AutoVex blue
-       scale from tailwind.config.js, and Tailwind's own `lime` and `green`
-       ramps, which that config passes through untouched (`lime: colors.lime`,
-       `green: colors.green`). Nothing here is invented.
-
-       Every contrast number is measured by the page from the rendered pixels —
-       the element's own computed text colour against its own computed
-       background, walking up to the first opaque ancestor where the element is
-       transparent. Hover and active states are rendered statically as their own
-       tiles so they can be measured too; a state you have to find with the
-       pointer is a state nobody checks. */
+    /* Dev brief for the success-intent colour change. Not linked from the
+       prototype. Every colour is a Tailwind token the product already ships;
+       every contrast number is measured by the page from the rendered pixels,
+       walking up to the first opaque ancestor where an element is transparent. */
     :root {
-      --lime-50:#F7FEE7;  --lime-100:#ECFCCB; --lime-200:#D9F99D; --lime-300:#BEF264;
-      --lime-400:#A3E635; --lime-500:#84CC16; --lime-600:#65A30D; --lime-700:#4D7C0F;
-      --lime-800:#3F6212; --lime-900:#365314; --lime-950:#1A2E05;
+      --lime-50:#F7FEE7;  --lime-200:#D9F99D; --lime-300:#BEF264; --lime-400:#A3E635;
+      --lime-500:#84CC16; --lime-600:#65A30D; --lime-700:#4D7C0F; --lime-800:#3F6212;
+      --lime-900:#365314; --lime-950:#1A2E05;
 
       --green-50:#F0FDF4;  --green-100:#DCFCE7; --green-200:#BBF7D0; --green-300:#86EFAC;
       --green-400:#4ADE80; --green-500:#22C55E; --green-600:#16A34A; --green-700:#15803D;
-      --green-800:#166534; --green-900:#14532D; --green-950:#052E16;
+      --green-800:#166534; --green-900:#14532D;
 
-      --blue-50:#EEF6FA;  --blue-100:#D7EDFF; --blue-600:#0B6DFF; --blue-700:#0A59EB;
-      --blue-800:#0F47BE;
+      --blue-100:#D7EDFF; --blue-600:#0B6DFF; --blue-700:#0A59EB; --blue-800:#0F47BE;
 
-      --slate-50:#F8FAFC;  --slate-100:#F1F5F9; --slate-200:#E2E8F0; --slate-400:#94A3B8;
-      --slate-500:#64748B; --slate-600:#475569; --slate-700:#334155; --slate-900:#0F172A;
+      --slate-100:#F1F5F9; --slate-200:#E2E8F0; --slate-400:#94A3B8; --slate-500:#64748B;
+      --slate-600:#475569; --slate-700:#334155; --slate-800:#1E293B; --slate-900:#0F172A;
       --white:#FFFFFF; --black:#000000;
     }
 
@@ -44,105 +33,70 @@
       margin: 0; background: var(--white); color: var(--slate-900);
       font-family: "DM Sans", ui-sans-serif, system-ui, sans-serif;
       font-size: 15px; line-height: 1.6;
-      padding: 40px 20px 120px;
+      padding: 40px 16px 120px;
     }
-    .wrap { max-width: 1120px; margin: 0 auto; }
+    .wrap { max-width: 1040px; margin: 0 auto; }
 
-    h1 { font-family: Barlow, sans-serif; font-size: 32px; line-height: 1.15; margin: 0 0 10px; font-weight: 700; }
+    h1 { font-family: Barlow, sans-serif; font-size: 32px; line-height: 1.15; margin: 0 0 10px; font-weight: 700; text-wrap: balance; }
     h2 { font-family: Barlow, sans-serif; font-size: 22px; line-height: 1.25; margin: 56px 0 6px; font-weight: 700; }
     h3 { font-family: Barlow, sans-serif; font-size: 17px; line-height: 1.3; margin: 28px 0 4px; font-weight: 600; }
     p  { margin: 0 0 12px; max-width: 74ch; }
     .lede { font-size: 16px; color: var(--slate-600); max-width: 74ch; }
-    .sub  { font-size: 14px; color: var(--slate-500); max-width: 74ch; margin: 0 0 20px; }
-    code  { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em;
-            background: var(--slate-100); padding: 1px 5px; border-radius: 4px; }
-    strong { font-weight: 700; }
+    .sub  { font-size: 14px; color: var(--slate-500); max-width: 74ch; margin: 0 0 16px; }
+    code  { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .86em;
+            background: var(--slate-100); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+    ul, ol { margin: 0 0 12px; padding-left: 20px; max-width: 76ch; }
+    li { margin-bottom: 6px; }
 
-    .rule { height: 1px; background: var(--slate-200); border: 0; margin: 40px 0 0; }
-
-    /* ── cards ──────────────────────────────────────────────────────────── */
     .card { border: 1px solid var(--slate-200); border-radius: 12px; padding: 20px 22px; margin: 18px 0; }
     .card.accent { border-color: var(--green-400); background: var(--green-50); }
-    .card.warn   { border-color: #FCD34D; background: #FFFBEB; }
-    .card h3:first-child, .card h2:first-child { margin-top: 0; }
-    .card p:last-child { margin-bottom: 0; }
+    .card h3:first-child { margin-top: 0; }
+    .card > :last-child { margin-bottom: 0; }
 
-    .chip { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em;
-            text-transform: uppercase; border-radius: 999px; padding: 3px 9px; margin: 0 6px 8px 0; }
-    .chip.now     { background: var(--slate-200); color: var(--slate-700); }
-    .chip.option  { background: var(--blue-100); color: var(--blue-800); }
-    .chip.target  { background: var(--green-200); color: var(--green-900); }
-    .chip.dep     { background: #FEE2E2; color: #7F1D1D; }
-    .chip.keep    { background: #FEF3C7; color: #78350F; }
+    .decisions { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+    .decisions li { margin: 0; display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; }
+    .decisions .q { font-family: ui-monospace, Menlo, monospace; font-size: 12px; font-weight: 700;
+                    color: var(--green-900); background: var(--green-200); border-radius: 6px;
+                    text-align: center; padding: 3px 0; }
+    .decisions .q.none { background: var(--slate-200); color: var(--slate-700); }
 
-    /* ── tables ─────────────────────────────────────────────────────────── */
-    .tablewrap { overflow-x: auto; margin: 16px 0 8px; }
-    table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 620px; }
+    .tablewrap { overflow-x: auto; margin: 14px 0 8px; }
+    table { border-collapse: collapse; width: 100%; font-size: 14px; min-width: 640px; }
     th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--slate-200); vertical-align: top; }
     th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--slate-500); font-weight: 700;
          border-bottom: 1px solid var(--slate-400); }
-    td.num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
-    tr.fail td { background: #FEF2F2; }
+    td code { background: transparent; padding: 0; }
+    td.new code { color: var(--green-900); }
 
-    /* ── buttons: the real class strings, resolved ──────────────────────── */
-    /* Geometry only. Colour is applied per tile so each state can be measured. */
+    /* Buttons: AButton geometry, colour applied per tile so every state is measurable. */
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
       font-family: "DM Sans", sans-serif; font-weight: 400;
-      border-radius: 8px; border: 1px solid transparent; cursor: pointer;
-      transition: none; white-space: nowrap;
+      border-radius: 8px; border: 1px solid transparent; cursor: default; white-space: nowrap;
     }
-    /* UiButton / AButton sizes, from the cva: base text-base leading-tight,
-       md and sm override the label size, lg and fw do not. */
     .btn.sz-md { height: 40px; padding: 0 20px; font-size: 14px; line-height: 1.25; }
     .btn.sz-lg { height: 56px; padding: 0 32px; font-size: 16px; line-height: 1.25; }
-    .btn.sz-fw { height: 56px; padding: 0 32px; font-size: 16px; line-height: 1.25; width: 100%; }
-    .btn.w-full { width: 100%; }
-    .btn.primary,
-    .btn.nav-cta  { box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.20); }
-    .btn.secondary{ box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.25); }
-    .btn.linkish  { padding: 0; height: auto; border: 0; background: transparent;
-                    border-radius: 0; box-shadow: none; text-decoration: none; }
-    .btn.linkish:hover { text-decoration: underline; }
+    .btn.primary   { box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.20); }
+    .btn.secondary { box-shadow: inset 0 1px 2px 1px rgba(255,255,255,0.25); }
+    .btn.linkish   { padding: 0; height: auto; border: 0; background: transparent; border-radius: 0; box-shadow: none; }
 
-    /* ── colour sets ────────────────────────────────────────────────────── */
-    /* LIME — the `success` intent exactly as UiButton.vue and AButton.vue
-       define it today. Identical in both files. */
-    .L-default-rest   { background: var(--white);     color: var(--lime-700); border-color: var(--lime-400); }
-    .L-default-hover  { background: var(--lime-50);   color: var(--lime-700); border-color: var(--lime-400); }
-    .L-default-active { background: var(--lime-50);   color: var(--lime-600); border-color: var(--lime-400); }
-    .L-primary-rest   { background: var(--lime-400);  color: var(--lime-900); }
-    .L-primary-hover  { background: var(--lime-500);  color: var(--lime-900); }
-    .L-primary-active { background: var(--lime-600);  color: var(--lime-950); }
+    /* Lime: AButton's success intent as shipped today. */
+    .L-default-rest   { background: var(--white);    color: var(--lime-700); border-color: var(--lime-400); }
+    .L-default-hover  { background: var(--lime-50);  color: var(--lime-700); border-color: var(--lime-400); }
+    .L-default-active { background: var(--lime-50);  color: var(--lime-600); border-color: var(--lime-400); }
+    .L-primary-rest   { background: var(--lime-400); color: var(--lime-900); }
+    .L-primary-hover  { background: var(--lime-500); color: var(--lime-900); }
+    .L-primary-active { background: var(--lime-600); color: var(--lime-950); }
     .L-secondary-rest   { background: var(--lime-200); color: var(--lime-700); }
     .L-secondary-hover  { background: var(--lime-300); color: var(--lime-700); }
     .L-secondary-active { background: var(--lime-400); color: var(--lime-700); }
-    .L-ghost-rest   { background: transparent;      color: var(--lime-700); }
-    .L-ghost-hover  { background: var(--lime-50);   color: var(--lime-700); }
-    .L-ghost-active { background: var(--lime-50);   color: var(--lime-600); }
+    .L-ghost-rest   { background: transparent;    color: var(--lime-700); }
+    .L-ghost-hover  { background: var(--lime-50);  color: var(--lime-700); }
+    .L-ghost-active { background: var(--lime-50);  color: var(--lime-600); }
     .L-link-rest    { color: var(--lime-700); }
     .L-link-active  { color: var(--lime-600); }
 
-    /* LIME + BLACK — the dealership designer's counter-proposal: keep the hue,
-       move the contrast into the label. Same three corrections as the green set,
-       applied to lime instead. */
-    .LB-default-rest   { background: var(--white);    color: var(--lime-700); border-color: var(--lime-400); }
-    .LB-default-hover  { background: var(--lime-50);  color: var(--lime-700); border-color: var(--lime-400); }
-    .LB-default-active { background: var(--lime-50);  color: var(--lime-700); border-color: var(--lime-400); }
-    .LB-primary-rest   { background: var(--lime-400); color: var(--black); }
-    .LB-primary-hover  { background: var(--lime-500); color: var(--black); }
-    .LB-primary-active { background: var(--lime-600); color: var(--black); }
-    .LB-secondary-rest   { background: var(--lime-200); color: var(--lime-900); }
-    .LB-secondary-hover  { background: var(--lime-300); color: var(--lime-900); }
-    .LB-secondary-active { background: var(--lime-400); color: var(--lime-900); }
-    .LB-ghost-rest   { background: transparent;    color: var(--lime-700); }
-    .LB-ghost-hover  { background: var(--lime-50); color: var(--lime-700); }
-    .LB-ghost-active { background: var(--lime-50); color: var(--lime-700); }
-    .LB-link-rest    { color: var(--lime-700); }
-    .LB-link-active  { color: var(--lime-700); }
-
-    /* GREEN — the proposal. Same structure, one ramp over, with three
-       deliberate deviations the numbers force. Marked * in the table. */
+    /* Green: the decided values. */
     .G-default-rest   { background: var(--white);     color: var(--green-700); border-color: var(--green-400); }
     .G-default-hover  { background: var(--green-50);  color: var(--green-700); border-color: var(--green-400); }
     .G-default-active { background: var(--green-50);  color: var(--green-700); border-color: var(--green-400); }
@@ -158,639 +112,189 @@
     .G-link-rest    { color: var(--green-700); }
     .G-link-active  { color: var(--green-700); }
 
-    /* The two non-success colours the seller's accept wears today. */
+    /* The card accept today: UiButton primary with no intent. */
     .B-primary-rest  { background: var(--blue-600); color: var(--white); }
     .B-primary-hover { background: var(--blue-700); color: var(--white); }
 
-    /* ── measurement furniture ──────────────────────────────────────────── */
-    .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 12px; }
+    /* Tabs: UiTab geometry (md), colour per tile. */
+    .tab { display: inline-flex; flex-direction: column; align-items: flex-start; background: transparent;
+           border: 0; padding: 0; font-family: "DM Sans", sans-serif; font-size: 16px; line-height: 1.5; cursor: default; }
+    .tab .ul { display: block; height: 3px; width: 100%; margin-top: 4px; border-radius: 999px; background: transparent; }
+    .T-L-rest     { color: var(--slate-500); }
+    .T-L-hover    { color: var(--lime-700); }
+    .T-L-active   { color: var(--lime-800); }
+    .T-L-selected { color: var(--lime-700); }
+    .T-L-selected .ul { background: var(--lime-700); }
+    .T-G-rest     { color: var(--slate-500); }
+    .T-G-hover    { color: var(--green-700); }
+    .T-G-active   { color: var(--green-800); }
+    .T-G-selected { color: var(--green-700); }
+    .T-G-selected .ul { background: var(--green-700); }
+
+    .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-top: 10px; }
     .state  { min-width: 0; }
-    .state .lab { font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
-                  color: var(--slate-500); font-weight: 700; margin-bottom: 6px; }
-    .state .btnbox { display: flex; }
-    .state .btnbox .btn { width: 100%; }
-    .readout { display: flex; align-items: center; gap: 7px; margin-top: 8px; flex-wrap: wrap; }
+    .lab { font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--slate-500); font-weight: 700; margin-bottom: 6px; }
+    .box { display: flex; min-height: 40px; align-items: center; }
+    .box .btn { width: 100%; }
+    .readout { display: flex; align-items: center; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
     .ratio { font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; }
-    .verdict { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
-               border-radius: 999px; padding: 3px 7px; }
+    .verdict { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; border-radius: 999px; padding: 3px 7px; }
     .pass { background: var(--green-100); color: var(--green-900); }
     .aaa  { background: var(--green-200); color: var(--green-900); }
     .fail { background: #FEE2E2; color: #7F1D1D; }
-    .tokens { font-size: 11px; color: var(--slate-500); margin-top: 5px; font-variant-numeric: tabular-nums; }
+    .tokens { font-size: 11px; color: var(--slate-500); margin-top: 4px; font-variant-numeric: tabular-nums; }
 
-    /* Surface comparison: three columns, one per option. */
-    .compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin-top: 14px; }
-    .col { border: 1px solid var(--slate-200); border-radius: 12px; padding: 18px; min-width: 0; }
-    .col.is-target { border-color: var(--green-400); background: var(--green-50); }
-    .col .colname { font-family: Barlow, sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 2px; }
-    .col .colnote { font-size: 12px; color: var(--slate-500); margin-bottom: 14px; line-height: 1.5; }
-    .col .comp { font-size: 11px; color: var(--slate-500); margin-top: 10px; font-family: ui-monospace, Menlo, monospace; line-height: 1.5; }
-
-    /* Section 4's impact strip: who this lands on, one box each. */
-    .impact { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin: 16px 0 4px; }
-    .impact .box { border: 1px solid var(--slate-200); border-radius: 10px; padding: 16px 18px; background: var(--white); min-width: 0; }
-    .impact .box .who { font-family: Barlow, sans-serif; font-weight: 700; font-size: 15px; margin-bottom: 2px; }
-    .impact .box .what { font-size: 13px; font-weight: 700; color: var(--green-800); margin-bottom: 8px; }
-    .impact .box p { font-size: 14px; margin: 0; color: var(--slate-600); }
-    .outcome { font-size: 15px; font-weight: 700; margin: 0; }
-
+    .compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 12px; }
+    .col { border: 1px solid var(--slate-200); border-radius: 12px; padding: 16px; min-width: 0; }
+    .col.new { border-color: var(--green-400); background: var(--green-50); }
+    .colname { font-family: Barlow, sans-serif; font-weight: 700; font-size: 15px; }
+    .colnote { font-size: 12px; color: var(--slate-500); margin-bottom: 10px; line-height: 1.5; }
     .stage { background: var(--white); border: 1px solid var(--slate-200); border-radius: 10px; padding: 14px; }
-    .col.is-target .stage { border-color: var(--green-200); }
+    .comp { font-size: 11px; color: var(--slate-500); margin-top: 8px; font-family: ui-monospace, Menlo, monospace; line-height: 1.5; overflow-wrap: anywhere; }
 
-    .varrow { margin-top: 26px; }
-    .varhead { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-    .varhead .vname { font-family: Barlow, sans-serif; font-weight: 700; font-size: 16px; }
-    .varhead .vuse  { font-size: 12px; color: var(--slate-500); }
-    .side { margin-top: 12px; }
-    .side .sidelab { font-size: 12px; font-weight: 700; color: var(--slate-600); margin-bottom: 2px; }
+    .varrow { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--slate-200); }
+    .varname { font-family: Barlow, sans-serif; font-weight: 700; font-size: 16px; }
+    .varuse { font-size: 12px; color: var(--slate-500); margin-left: 8px; }
+    .side { margin-top: 10px; }
+    .sidelab { font-size: 12px; font-weight: 700; color: var(--slate-600); }
+    .sidelab.new { color: var(--green-800); }
 
-    ul { margin: 0 0 12px; padding-left: 20px; max-width: 74ch; }
-    li { margin-bottom: 6px; }
-    .footnote { font-size: 13px; color: var(--slate-500); max-width: 74ch; }
+    .footnote { font-size: 13px; color: var(--slate-500); max-width: 76ch; }
   </style>
 </head>
 <body>
 <div class="wrap">
 
-  <h1>The success button: green and lime today, and the change we are making</h1>
+  <h1>Success colour: lime to green</h1>
   <p class="lede">
-    AutoVex has three button components, two of them deprecated, and the act of
-    <em>accepting</em> is currently drawn in different colours depending on
-    which side of the marketplace you are on and which component the surface
-    happens to use. This page shows exactly what is on screen today, then the
-    change we would like to make, with every state rendered and every contrast
-    ratio measured from the rendered pixels.
+    The <code>success</code> colour on the current button component and on the
+    tab component moves from lime to the brand green. This page has the
+    decisions, the exact classes, and every state drawn with its contrast
+    measured.
   </p>
   <p class="sub">
-    Audience: devs and designers, both sides of the product. Read against the
-    2026-10-07 production dump. Not part of the prototype.
-    <br /><strong>Status: decided and announced to the dealership product team,
-    2026-09-17. Confirmed 2026-10-09: all five <code>success</code> variants in
-    <code>AButton</code> take the green values below.</strong> Sections 1–3
-    describe production as it stands today; section 4 onwards is what was agreed,
-    and <a href="#classes">the exact class strings</a> are in section 4.
+    For the dev building Enhanced negotiations change 15. Decided by UX,
+    9 October 2026. Read against the production code of 7 October 2026.
   </p>
 
   <div class="card accent">
-    <h3>In short</h3>
-    <ul>
-      <li>The seller's three accept buttons are <strong>two different colours</strong> — blue on the offer card, lime inside the negotiation thread and on the accept confirmation. The card is on the deprecated <code>UiButton</code> with no intent; the other two are already on <code>AButton intent="success"</code>.</li>
-      <li>The dealership's three accept buttons are one colour, <strong>lime</strong>, from the shared <code>intent="success"</code>.</li>
-      <li><code>intent="success"</code> already means <strong>green-600 in the icon components</strong>. The same intent name resolves to two hues in one design system.</li>
-      <li>Lime fails WCAG AA in <strong>7 of its 14 states</strong>, including three that are not transient. The cause is the <em>label</em>, not the hue — see the next point.</li>
-      <li><strong>Contrast decides the label, not the colour.</strong> Once the primary label is black, <em>both</em> hues pass, and lime actually scores higher than green. So the accessibility case settles <code>lime-900</code> and white out of the running; it does not, on its own, choose between lime and green.</li>
-      <li><strong>What was decided:</strong> the seller side migrates its accepts onto <code>AButton</code>, the current component, and <code>AButton</code>'s <code>success</code> intent goes from lime to <strong>green-400 with a black label</strong>, all five variants. No new component, no new intent. The argument for green over corrected lime is the icon inconsistency above, plus the seller-side view that lime does not read as an accept.</li>
-      <li><strong>The dealership side is not touched, and that is deliberate.</strong> Their accepts run on <code>UiButton</code>, which is <em>also</em> deprecated and which this change leaves alone. Their buttons turn green when they migrate to <code>AButton</code> on a ticket of their own — see section 4.</li>
+    <h3>Decisions</h3>
+    <ul class="decisions">
+      <li><span class="q">Q12</span><div><strong>Repaint all five button variants</strong> — <code>default</code>, <code>primary</code>, <code>secondary</code>, <code>ghost</code> and <code>link</code> — in <code>AButton.vue</code>. Each uses brand green steps and passes WCAG 2.0 AA in every state. Classes in <a href="#buttons">section 2</a>.</div></li>
+      <li><span class="q">Q12</span><div><strong>The primary label is black.</strong> Confirmed. The label is 14–16px, so it needs 4.5:1. White and the dark green steps both fail on a green bright enough to read as the main action; black on green-400 is 12:1.</div></li>
+      <li><span class="q">Q11</span><div><strong>Repaint the tab too.</strong> <code>UiTab.vue</code>'s <code>success</code> colours move to the same green steps as the button. Classes and states in <a href="#tabs">section 3</a>.</div></li>
+      <li><span class="q none">Scope</span><div><strong><code>UiButton.vue</code> is not changed.</strong> The dealership's three accept buttons run on it and stay lime until that team moves them to <code>AButton</code>. That was agreed with them on 17 September.</div></li>
+      <li><span class="q none">Seller</span><div><strong>All three seller accept buttons end up green.</strong> Two already use <code>AButton</code> and change with the colour. The offer card's accept moves from <code>UiButton</code> to <code>AButton</code>. See <a href="#seller">section 1</a>.</div></li>
     </ul>
   </div>
 
-  <hr class="rule" />
+  <h2 id="seller">1 — What the seller sees</h2>
+  <p class="sub">The three accept buttons on the decision page, today and after the change.</p>
 
-  <h2>1 — Three button components, two of them deprecated</h2>
+  <div class="compare">
+    <div class="col">
+      <div class="colname">Today</div>
+      <div class="colnote">Two colours for one act: blue on the card, lime in the modal.</div>
+      <div class="stage">
+        <div class="lab">Offer card</div>
+        <div class="box"><button class="btn sz-lg primary B-primary-rest" type="button">Hyväksy korkein tarjous</button></div>
+        <div class="readout" data-measure></div>
+        <div class="comp">C2BOfferCard.vue · UiButton primary, no intent</div>
+        <div class="lab" style="margin-top:16px">Accept confirmation</div>
+        <div class="box"><button class="btn sz-lg primary L-primary-rest" type="button">Hyväksy tarjous</button></div>
+        <div class="readout" data-measure></div>
+        <div class="comp">OfferActions.vue · AButton primary success</div>
+        <div class="lab" style="margin-top:16px">Inside the dealership's message</div>
+        <div class="box"><button class="btn sz-md primary L-primary-rest" type="button">Hyväksy korkein tarjous</button></div>
+        <div class="readout" data-measure></div>
+        <div class="comp">NegotiationMessage.vue · AButton primary success</div>
+      </div>
+    </div>
+    <div class="col new">
+      <div class="colname">After</div>
+      <div class="colnote">One component, one green.</div>
+      <div class="stage">
+        <div class="lab">Offer card</div>
+        <div class="box"><button class="btn sz-lg primary G-primary-rest" type="button">Hyväksy korkein tarjous</button></div>
+        <div class="readout" data-measure></div>
+        <div class="comp">C2BOfferCard.vue · AButton primary success — component swap</div>
+        <div class="lab" style="margin-top:16px">Accept confirmation</div>
+        <div class="box"><button class="btn sz-lg primary G-primary-rest" type="button">Hyväksy tarjous</button></div>
+        <div class="readout" data-measure></div>
+        <div class="comp">OfferActions.vue · no code change</div>
+        <div class="lab" style="margin-top:16px">Inside the dealership's message</div>
+        <div class="box"><button class="btn sz-md primary G-primary-rest" type="button">Hyväksy korkein tarjous</button></div>
+        <div class="readout" data-measure></div>
+        <div class="comp">NegotiationMessage.vue · no code change</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 id="buttons">2 — Buttons: <code>AButton.vue</code></h2>
   <p class="sub">
-    This is the part that is easy to get wrong: there is not one deprecated
-    button and one current one. There are two deprecated layers.
+    Replace the five <code>success</code> rows in
+    <code>app/components/atoms/AButton/AButton.vue</code> (lines 150–154 today).
+    Rows marked <strong>*</strong> are not a straight lime-to-green swap; the
+    notes under the table say what differs and why.
   </p>
 
   <div class="tablewrap">
     <table>
-      <thead>
-        <tr><th>Component</th><th>Status</th><th>Consumers</th><th>Colour API</th></tr>
-      </thead>
+      <thead><tr><th>Variant</th><th>Today (lime)</th><th>New (green)</th></tr></thead>
       <tbody>
-        <tr>
-          <td><code>js/components/elements/Button.vue</code></td>
-          <td><span class="chip dep">deprecated</span></td>
-          <td class="num">15</td>
-          <td>a <code>color</code> prop taking <code>'blue' | 'red' | 'green-600' | 'transparent'</code> — a palette step baked into the API. Nothing passes <code>green-600</code> any more</td>
-        </tr>
-        <tr>
-          <td><code>js/components/ui/UiButton.vue</code></td>
-          <td><span class="chip dep">deprecated</span></td>
-          <td class="num">68</td>
-          <td><code>intent</code> + <code>variant</code>, semantic. <code>success</code> = lime</td>
-        </tr>
-        <tr>
-          <td><code>app/components/atoms/AButton/AButton.vue</code></td>
-          <td><span class="chip target">current</span></td>
-          <td class="num">11</td>
-          <td><code>intent</code> + <code>variant</code>, semantic. <code>success</code> = lime, byte-for-byte the same values as UiButton</td>
-        </tr>
+        <tr><td><code>default</code> *</td><td><code>border-lime-400 hover:bg-lime-50 active:bg-lime-50 text-lime-700 active:text-lime-600</code></td><td class="new"><code>border-green-400 hover:bg-green-50 active:bg-green-50 text-green-700 active:text-green-700</code></td></tr>
+        <tr><td><code>primary</code> *</td><td><code>bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-lime-900 active:text-lime-950</code></td><td class="new"><code>bg-green-400 hover:bg-green-500 active:bg-green-600 text-black active:text-black</code></td></tr>
+        <tr><td><code>secondary</code> *</td><td><code>bg-lime-200 hover:bg-lime-300 active:bg-lime-400 text-lime-700</code></td><td class="new"><code>bg-green-200 hover:bg-green-300 active:bg-green-400 text-green-900</code></td></tr>
+        <tr><td><code>ghost</code> *</td><td><code>bg-transparent hover:bg-lime-50 active:bg-lime-50 text-lime-700 active:text-lime-600</code></td><td class="new"><code>bg-transparent hover:bg-green-50 active:bg-green-50 text-green-700 active:text-green-700</code></td></tr>
+        <tr><td><code>link</code> *</td><td><code>text-lime-700 active:text-lime-600</code></td><td class="new"><code>text-green-700 active:text-green-700</code></td></tr>
       </tbody>
     </table>
   </div>
-  <p class="footnote">
-    Both deprecated components carry the same JSDoc: <em>use the TypeScript atom
-    instead</em>. <code>UiButton</code> has 68 consumers against <code>AButton</code>'s 11
-    (files that use each, outside stories and tests), so the migration it asks for
-    has barely started — which matters below, because the
-    lime <code>success</code> definition is currently duplicated in both files and a
-    colour change has to land in both until one of them is gone.
-  </p>
+  <ul>
+    <li><strong>primary:</strong> label <code>black</code> in every state. <code>green-900</code> drops to 4.0:1 on hover.</li>
+    <li><strong>secondary:</strong> label <code>green-900</code>. <code>green-700</code> fails on all three green fills.</li>
+    <li><strong>default, ghost, link:</strong> the pressed label stays <code>green-700</code>. The lighter <code>green-600</code> fails on white and on green-50.</li>
+  </ul>
 
-  <h2>2 — The seller side today</h2>
-  <p class="sub">
-    Three accepts, two components, two colours. The accept confirmation and the
-    in-thread accept are the shared <code>success</code> intent on
-    <code>AButton</code>, and they are its only two consumers (production
-    snapshot of 7 October 2026). The card is the odd one out.
-  </p>
-
-  <div class="compare">
-    <div class="col">
-      <div class="colname">Decision page — offer card</div>
-      <div class="colnote">The primary accept. <code>UiButton variant="primary" size="lg"</code>, <strong>no intent at all</strong>, so it falls to the default intent and renders blue.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-lg primary B-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-lg primary B-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">C2BOfferCard.vue — blue-600 / blue-700, white label</div>
-    </div>
-
-    <div class="col">
-      <div class="colname">Accept confirmation — footer</div>
-      <div class="colnote">The same act, one click later. <code>AButton variant="primary" intent="success" size="lg"</code> since the 7 October 2026 snapshot — it was the deprecated <code>Button color="green-600"</code> before. The negotiation modal has no footer accept; this is the confirmation step every accept goes through.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-lg primary L-primary-rest w-full" type="button">Hyväksy tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-lg primary L-primary-hover w-full" type="button">Hyväksy tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">OfferActions.vue — lime-400 / lime-500, lime-900 label</div>
-    </div>
-
-    <div class="col">
-      <div class="colname">Negotiation thread — in-message accept</div>
-      <div class="colnote">Inside the dealership's last message. <code>AButton variant="primary" intent="success" size="md"</code> — already on the current component, so it turns green the moment <code>AButton</code>'s <code>success</code> does.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">NegotiationMessage.vue — lime-400 / lime-500, lime-900 label</div>
-    </div>
-  </div>
-
-  <div class="card warn">
-    <p style="margin:0">
-      <strong>The confirmation already moved, and it went lime.</strong> It used to
-      be white on green-600, which fails at rest. On <code>AButton</code> it now
-      takes the shared <code>success</code> intent, so it turns green with the
-      token change below and needs no further migration.
-    </p>
-  </div>
-
-  <h2>3 — The dealership side today</h2>
-  <p class="sub">
-    Three surfaces, all on <code>UiButton variant="primary" intent="success"</code>. This
-    is the shared token, and it is lime.
-  </p>
-
-  <div class="compare">
-    <div class="col">
-      <div class="colname">Accept a counter offer</div>
-      <div class="colnote">The dealership's mirror of the seller's own accept — the same act, the same moment in the negotiation.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-rest w-full" type="button">Hyväksy tämä tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-hover w-full" type="button">Hyväksy tämä tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">DealerAcceptCounterOfferAction.vue</div>
-    </div>
-
-    <div class="col">
-      <div class="colname">Confirm the sale</div>
-      <div class="colnote">After the handover call.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-rest w-full" type="button">Kauppa toteutunut</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-hover w-full" type="button">Kauppa toteutunut</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">DeliveryAgreedActions.vue</div>
-    </div>
-
-    <div class="col">
-      <div class="colname">Mark handover completed</div>
-      <div class="colnote">The past-delivery-date modal.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-rest w-full" type="button">Kyllä, merkitse toteutuneeksi</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-md primary L-primary-hover w-full" type="button">Kyllä, merkitse toteutuneeksi</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">PastDeliveryDateConfirmModal.vue</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>The inconsistency worth naming first</h3>
-    <p>
-      <code>intent="success"</code> is not only a button prop. <code>UiIcon.vue</code> and
-      <code>ASpriteIcon.vue</code> both map it to <code>text-green-600</code>.
-    </p>
-    <p style="margin-bottom:0">
-      So the design system already says success is green — in every component
-      except the one where it is most visible. A dealership accept today puts a
-      lime button next to green success icons. Changing the button is not
-      introducing a new meaning for green; it is making the button agree with the
-      icon.
-    </p>
-  </div>
-
-  <hr class="rule" />
-
-  <h2>4 — The change, as agreed</h2>
-
-  <div class="card accent">
-    <h3>One change, arriving on each side separately</h3>
-    <p>
-      <strong>Read this part carefully — it is the thing most easily got wrong.</strong>
-      <code>AButton</code> is the current button component. <strong>Two seller
-      accepts use it</strong> — the one inside the negotiation thread and the
-      accept confirmation (7 October 2026 snapshot). The card accept is still on
-      <code>ui/UiButton.vue</code>, and so is the dealership. That component is
-      deprecated. So the dealership is one generation behind, and the seller side
-      is one button away from done.
-    </p>
-
-    <div class="impact">
-      <div class="box">
-        <div class="who">Seller side — now</div>
-        <div class="what">Component change and colour change.</div>
-        <p>
-          The card comes off <code>UiButton</code> and onto
-          <code>AButton intent="success"</code>, so it stops being blue. The
-          confirmation and the in-thread accept are already there and turn from
-          lime to green with the token. All three render the new green.
-        </p>
-      </div>
-      <div class="box">
-        <div class="who">Dealership side — nothing now</div>
-        <div class="what">Unchanged until they migrate. Then both at once.</div>
-        <p>
-          Their three accepts stay <strong>lime</strong>. They run on
-          <code>UiButton</code>, which this change does not touch. When they
-          migrate to <code>AButton</code> on a ticket of their own, the buttons
-          turn green as part of that move — so it is
-          <strong>not a no-op refactor</strong> and should not be scoped as one.
-        </p>
-      </div>
-    </div>
-
-    <p class="outcome" style="margin-top:14px">
-      Where this lands: one button component and one success colour across both
-      sides — reached in two steps, one per team, instead of one deploy that
-      changes another team's UI for them.
-    </p>
-  </div>
-
-  <ol style="max-width:74ch">
-    <li style="margin-bottom:8px"><strong>Take the last seller accept off the deprecated component.</strong> The card accept moves from a bare <code>UiButton variant="primary"</code> to <code>AButton variant="primary" intent="success"</code>. The confirmation and the in-thread accept are already there. All three seller accepts then match each other.</li>
-    <li style="margin-bottom:8px"><strong>Redefine <code>success</code> from lime to green in <code>AButton</code>, and only there.</strong> <code>UiButton</code> carries its own copy of the same values and is deliberately left alone.</li>
-    <li><strong>Move all five variants, not only <code>primary</code>.</strong> <code>default</code>, <code>primary</code>, <code>secondary</code>, <code>ghost</code> and <code>link</code> each have their own compound row. Leaving any of them lime would put two greens in one intent.</li>
-  </ol>
-
-  <div class="card accent" id="classes">
-    <h3>The exact class strings for <code>AButton.vue</code></h3>
-    <p>
-      Replace the five <code>success</code> compound rows in
-      <code>app/components/atoms/AButton/AButton.vue</code> with these. Three rows
-      are not a straight lime → green swap, marked <strong>*</strong>; section 5
-      shows why each is forced by contrast.
-    </p>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Variant</th><th>Today (lime)</th><th>New (green)</th></tr></thead>
-        <tbody>
-          <tr><td><code>default</code> *</td><td><code>border-lime-400 hover:bg-lime-50 active:bg-lime-50 text-lime-700 active:text-lime-600</code></td><td><code>border-green-400 hover:bg-green-50 active:bg-green-50 text-green-700 active:text-green-700</code></td></tr>
-          <tr><td><code>primary</code> *</td><td><code>bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-lime-900 active:text-lime-950</code></td><td><code>bg-green-400 hover:bg-green-500 active:bg-green-600 text-black active:text-black</code></td></tr>
-          <tr><td><code>secondary</code> *</td><td><code>bg-lime-200 hover:bg-lime-300 active:bg-lime-400 text-lime-700</code></td><td><code>bg-green-200 hover:bg-green-300 active:bg-green-400 text-green-900</code></td></tr>
-          <tr><td><code>ghost</code> *</td><td><code>bg-transparent hover:bg-lime-50 active:bg-lime-50 text-lime-700 active:text-lime-600</code></td><td><code>bg-transparent hover:bg-green-50 active:bg-green-50 text-green-700 active:text-green-700</code></td></tr>
-          <tr><td><code>link</code> *</td><td><code>text-lime-700 active:text-lime-600</code></td><td><code>text-green-700 active:text-green-700</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <ul style="margin-bottom:0">
-      <li><strong>primary:</strong> the label is <code>black</code> in every state, not the ramp's <code>-900</code>/<code>-950</code>.</li>
-      <li><strong>secondary:</strong> the label is <code>green-900</code>, not <code>green-700</code>, which fails on the green-200/300/400 fills.</li>
-      <li><strong>default, ghost, link:</strong> the active label stays <code>green-700</code> instead of going lighter to <code>green-600</code>.</li>
-      <li><strong>Tests:</strong> <code>AButton.spec.ts</code> asserts <code>lime-400</code> on the primary success case and needs updating.</li>
-      <li><strong>Not in this change:</strong> <code>UiButton.vue</code> keeps lime (section 4) and so does <code>UiTab.vue</code>'s success tab (section 7).</li>
-    </ul>
-  </div>
-
-  <div class="card accent">
-    <h3>Why <code>AButton</code> only, rather than editing both files</h3>
-    <p>
-      The <code>success</code> values are duplicated byte-for-byte in
-      <code>UiButton</code> and <code>AButton</code>. Editing both would turn the
-      dealership's buttons green on our deploy, without their team doing anything
-      or choosing when. Editing only <code>AButton</code> was the call, for three
-      reasons:
-    </p>
-    <ul style="margin-bottom:0">
-      <li><strong><code>AButton</code>'s only <code>success</code> consumers are two seller accepts</strong> — the in-thread accept and the accept confirmation — so the colour edit changes exactly those buttons, in the intended direction, and nothing on the dealership side. Every other change arrives with its own migration, one at a time, reviewable on its own.</li>
-      <li><strong>No user sees both sides.</strong> A seller never opens the dealership UI, so the interim lime-here-green-there split is a design-system inconsistency, not a user-facing one. That is what makes waiting cost nothing.</li>
-      <li>It gives the dealership team an <strong>easy path rather than an obligation</strong>: nothing to do now, and the colour comes free with a migration they want anyway.</li>
-    </ul>
-  </div>
-
-  <div class="card warn">
-    <h3>For whoever writes the dealership's migration ticket</h3>
-    <p style="margin-bottom:8px">
-      <strong>It is not a no-op refactor.</strong> Scoped as "swap the component,
-      should look identical", the colour change reads as a regression and gets
-      reverted. Scope it as a visual change. It is small otherwise:
-    </p>
-    <ul style="margin-bottom:8px">
-      <li><strong>3 files, ~6 button instances</strong> — <code>DealerAcceptCounterOfferAction</code>, <code>DeliveryAgreedActions</code>, <code>PastDeliveryDateConfirmModal</code></li>
-      <li>the icon props carry over unchanged — <code>check-bold</code> and <code>flag-checkered-fill</code> are both in the shared sprite directory that feeds either component</li>
-    </ul>
-    <p style="margin-bottom:0">
-      <strong>And the migration is worth doing on its own merits.</strong>
-      <code>UiButton</code> is missing three things <code>AButton</code> has: the
-      <code>accent</code> (turquoise) intent, the <code>nav-cta</code> variant, and
-      <code>px-0</code> on <code>iconOnly</code> — which <code>AButton</code>'s own
-      source names as a defect in <code>UiButton</code>, "leaving px-8 fighting
-      w-14 at lg". The deprecated file has already drifted, which is what a
-      duplicated cva does.
-    </p>
-  </div>
-
-  <h3>What that looks like on the seller's accept</h3>
-  <p class="sub">The same button, three ways. Column 2 is step 1 alone; column 3 is steps 1 and 2 together.</p>
-
-  <div class="compare">
-    <div class="col">
-      <span class="chip now">today</span>
-      <div class="colname">Two components, two colours</div>
-      <div class="colnote">Card blue, confirmation lime. The confirmation already shares the dealership's colour; the card shares nothing.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">card — rest</div>
-            <div class="btnbox"><button class="btn sz-lg primary B-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">confirmation — rest</div>
-            <div class="btnbox"><button class="btn sz-lg primary L-primary-rest w-full" type="button">Hyväksy tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">UiButton (no intent) + AButton intent="success"</div>
-    </div>
-
-    <div class="col">
-      <span class="chip option">option — migrate only</span>
-      <div class="colname">One component, lime</div>
-      <div class="colnote">Deprecated components gone, seller and dealership finally identical. Inherits lime's contrast problems unchanged.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-lg primary L-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-lg primary L-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">AButton intent="success" variant="primary"<br />— as the intent is defined today</div>
-    </div>
-
-    <div class="col">
-      <span class="chip option">option — keep lime, fix the label</span>
-      <div class="colname">One component, lime + black</div>
-      <div class="colnote">The dealership designer's counter. Same migration, hue untouched, contrast moved into the label. Passes AAA at rest and hover.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-lg primary LB-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-lg primary LB-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">AButton intent="success" variant="primary"<br />— lime kept, label to black</div>
-    </div>
-
-    <div class="col is-target">
-      <span class="chip target">proposed</span>
-      <div class="colname">One component, green</div>
-      <div class="colnote">The same migration, with the intent redefined. This is where we would like to land.</div>
-      <div class="stage">
-        <div class="states" style="grid-template-columns:1fr">
-          <div class="state">
-            <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn sz-lg primary G-primary-rest w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-          <div class="state">
-            <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn sz-lg primary G-primary-hover w-full" type="button">Hyväksy korkein tarjous</button></div>
-            <div class="readout" data-measure></div>
-          </div>
-        </div>
-      </div>
-      <div class="comp">AButton intent="success" variant="primary"<br />— intent redefined to green-400 + black</div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Why the label goes black rather than staying on the green ramp</h3>
-    <p>
-      Lime pairs its primary fill with <code>lime-900</code>. Mirroring that with
-      <code>green-900</code> works at rest and breaks on hover, which is the same
-      trap lime is already in. Black is what lets the fill stay bright enough to
-      read as the primary action while every state passes.
-    </p>
-    <div class="tablewrap">
-      <table>
-        <thead><tr><th>Fill</th><th>black</th><th>green-900</th><th>green-950</th><th>white</th></tr></thead>
-        <tbody>
-          <tr data-ladder="green-400"><td><code>green-400</code> (rest)</td><td data-cell="black|green-400"></td><td data-cell="green-900|green-400"></td><td data-cell="green-950|green-400"></td><td data-cell="white|green-400"></td></tr>
-          <tr data-ladder="green-500"><td><code>green-500</code> (hover)</td><td data-cell="black|green-500"></td><td data-cell="green-900|green-500"></td><td data-cell="green-950|green-500"></td><td data-cell="white|green-500"></td></tr>
-          <tr data-ladder="green-600"><td><code>green-600</code> (active)</td><td data-cell="black|green-600"></td><td data-cell="green-900|green-600"></td><td data-cell="green-950|green-600"></td><td data-cell="white|green-600"></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="footnote" style="margin-bottom:0">
-      <code>green-950</code> is the one tinted label that survives the whole ladder, and it is
-      a legitimate alternative to black if a fully neutral label reads as too
-      hard. It is within a hair of black visually at that darkness.
-    </p>
-  </div>
-
-  <hr class="rule" />
-
-  <h2>5 — All five variants, three ways</h2>
-  <p>
-    This is the part that has to be agreed rather than assumed. Changing
-    <code>success</code> touches five compound rows, and each one has three states.
-    Every tile below is the resolved class string rendered statically so it can
-    be measured; the label size is the <code>md</code> size, 14px, so the large-text
-    allowance does not apply and the bar is 4.5:1 throughout.
-  </p>
-
-  <div class="card warn">
-    <p style="margin-bottom:8px">
-      <strong>Neither hue fixes itself by changing hue.</strong> <code>green-700</code>
-      on the green-200/300/400 fills fails exactly as <code>lime-700</code> does on
-      its own ramp. Both sets therefore need the <strong>same three corrections</strong>,
-      each forced by a number rather than chosen:
-    </p>
-    <ul style="margin-bottom:0">
-      <li><code>primary</code> label: <strong>black</strong>, not the ramp's own <code>-900</code></li>
-      <li><code>secondary</code> label: the <strong><code>-900</code></strong> step, not <code>-700</code></li>
-      <li><code>default</code> / <code>ghost</code> / <code>link</code> active: <strong>keep the <code>-700</code></strong> rather than lightening to <code>-600</code></li>
-    </ul>
-  </div>
-
-  <div class="card accent">
-    <h3>Why the middle set is here</h3>
-    <p style="margin-bottom:0">
-      Asked by the dealership-side designer, and it is the right question: the
-      proposal changes two things at once — the hue and the label — so which one
-      is doing the work? The middle set answers it. Apply the same three
-      corrections to lime and <strong>it passes everywhere too</strong>, scoring
-      <em>higher</em> than green at rest and hover, because <code>lime-400</code> is a
-      lighter fill than <code>green-400</code> and black has more room on it.
-      Contrast chooses the label. It does not choose the hue.
-    </p>
-  </div>
-
+  <p class="footnote">Every state below is drawn from the classes above at the <code>md</code> size (14px label) and measured. Today's lime is shown for comparison; seven of its states fail. All fourteen green states pass.</p>
   <div id="variants"></div>
 
-  <hr class="rule" />
-
-  <h2>6 — The full scorecard</h2>
+  <h2 id="tabs">3 — Tabs: <code>UiTab.vue</code></h2>
   <p class="sub">
-    Every state of all three sets, measured. Rows where any set fails are shaded.
+    Same green steps as the button's text: <code>green-700</code> for the
+    label, <code>green-800</code> while pressed. No screen uses a success tab
+    today (the photo gallery's tabs are <code>primary</code>), so this changes
+    Storybook only until one does.
   </p>
-  <div class="tablewrap"><table id="scorecard">
-    <thead><tr><th>Variant</th><th>State</th><th>Lime today</th><th></th><th>Lime + black</th><th></th><th>Green proposed</th><th></th></tr></thead>
-    <tbody></tbody>
-  </table></div>
 
-  <div class="card">
-    <h3>Honest framing for the conversation</h3>
-    <p>
-      Lime's <code>active</code> failures are the weakest part of the case — an active
-      state is held only while the pointer is down, and how strictly WCAG applies
-      to it is arguable. The three that are <strong>not</strong> arguable are
-      <code>primary</code> hover, and <code>secondary</code> at rest and on hover. Those are
-      steady states a user reads.
-    </p>
-    <p style="margin-bottom:0">
-      And this is not a lime-only problem: the <strong>default (blue) intent fails in
-      three of its own states</strong> too — <code>default</code> hover 4.13, <code>default</code>
-      active 2.67, <code>secondary</code> active 3.41. The honest version of this ask is
-      <em>success is the worst of them and it is the one we are opening anyway</em>,
-      not <em>lime is uniquely broken</em>. A pass across every intent is its own
-      piece of work.
-    </p>
-    <p style="margin-bottom:0">
-      <strong>And the strongest correction of all:</strong> with the label fixed,
-      lime passes too. Do not take an accessibility argument into this
-      conversation as though it settles the hue — it settles
-      <code>lime-900</code> and white, both of which lose on either ramp. What
-      remains for green is that the icon components already call success green,
-      and a seller-side view that lime does not read as an accept. Those are the
-      arguments worth making.
-    </p>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Where in <code>UiTab.vue</code></th><th>Today (lime)</th><th>New (green)</th></tr></thead>
+      <tbody>
+        <tr><td>Line 93 · intent <code>success</code></td><td><code>text-slate-500 hover:text-lime-700 active:text-lime-800</code></td><td class="new"><code>text-slate-500 hover:text-green-700 active:text-green-800</code></td></tr>
+        <tr><td>Line 100 · selected + success</td><td><code>text-lime-700</code></td><td class="new"><code>text-green-700</code></td></tr>
+        <tr><td>Line 147 · underline, success</td><td><code>bg-lime-700</code></td><td class="new"><code>bg-green-700</code></td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <h2>7 — What this does not touch</h2>
-  <p class="sub">
-    Lime does not leave the product. It stays wherever it is a status colour
-    rather than an action colour, and none of these read <code>intent</code> from a
-    button.
-  </p>
-  <ul>
-    <li><code>UiBadge</code>'s <code>lime</code> and <code>light_lime</code> variants — including the seller's own auction-ended badge</li>
-    <li><code>UiTab</code>'s success tab</li>
-    <li><code>OProductCard</code> and <code>OContainer</code> success framing</li>
-    <li>the B2B reserve-price surfaces — <code>ReservePriceNotice</code>, <code>B2BReserveStatusBadge</code></li>
-  </ul>
-  <p class="footnote">
-    Worth deciding separately whether those should follow. The argument for
-    leaving them is that a lime <em>status</em> and a green <em>action</em> is a
-    usable distinction; the argument against is that we would then have two
-    success colours on purpose. Not part of this proposal either way.
-  </p>
+  <div id="tab-states"></div>
+  <p class="footnote">Labels are measured at 4.5:1. The selected underline is not text, so it is measured against 3:1.</p>
 
-  <h2>8 — What the dealership side needs to do</h2>
-  <p class="sub">
-    Announced 2026-09-17. Short answer: nothing now.
-  </p>
+  <h2 id="checklist">4 — Checklist</h2>
+  <ol>
+    <li><code>app/components/atoms/AButton/AButton.vue</code>: replace the five <code>success</code> rows with the classes in section 2.</li>
+    <li><code>app/components/atoms/AButton/AButton.spec.ts</code>: lines 74–75 expect <code>border-lime-400</code> and <code>bg-lime-400</code>; change them to <code>border-green-400</code> and <code>bg-green-400</code>.</li>
+    <li><code>js/components/ui/UiTab.vue</code>: lines 93, 100 and 147 as in section 3.</li>
+    <li><code>js/pages/offers/components/decision/C2BOfferCard.vue</code>: the accept button moves from <code>UiButton variant="primary" size="lg"</code> to <code>AButton variant="primary" intent="success" size="lg"</code>, keeping its label and click handler.</li>
+    <li>Check the <code>AButton</code> and <code>UiTab</code> stories: the success examples should render green.</li>
+  </ol>
+
+  <h3>Do not change</h3>
   <ul>
-    <li><strong>Nothing changes for you on this deploy.</strong> Your accepts stay lime; <code>UiButton</code> is untouched.</li>
-    <li><strong>Acknowledgement</strong>, and a heads-up when a related ticket comes up so the timing can be lined up.</li>
-    <li><strong>When you do migrate</strong>, use the ticket card above — three files, and it carries a visual change rather than being a pure refactor.</li>
-    <li>Still open, and yours to answer whenever you get there: <strong>black vs <code>green-950</code></strong> for the primary label, and whether <code>green-400</code> is the right step. The comparison that picked it was scoped to the seller's accept. If there is a reason to prefer a different green, the rest of the case is unaffected — it is about one token and one component, not this exact step.</li>
+    <li><code>js/components/ui/UiButton.vue</code>. The dealership's accept buttons stay lime until they move to <code>AButton</code>.</li>
+    <li>Lime used as a status colour, not an action: <code>UiBadge</code>'s <code>lime</code> and <code>light_lime</code>, <code>OProductCard</code>, <code>OContainer</code>, <code>ReservePriceNotice</code>, <code>B2BReserveStatusBadge</code>.</li>
+    <li>The success icons in <code>UiIcon.vue</code> and <code>ASpriteIcon.vue</code>. They are already <code>green-600</code>, which is one reason the button moves to green.</li>
   </ul>
 
 </div>
@@ -799,204 +303,123 @@
 (function () {
   'use strict';
 
-  var HEX = {
-    'lime-50':'#F7FEE7','lime-100':'#ECFCCB','lime-200':'#D9F99D','lime-300':'#BEF264',
-    'lime-400':'#A3E635','lime-500':'#84CC16','lime-600':'#65A30D','lime-700':'#4D7C0F',
-    'lime-800':'#3F6212','lime-900':'#365314','lime-950':'#1A2E05',
-    'green-50':'#F0FDF4','green-100':'#DCFCE7','green-200':'#BBF7D0','green-300':'#86EFAC',
-    'green-400':'#4ADE80','green-500':'#22C55E','green-600':'#16A34A','green-700':'#15803D',
-    'green-800':'#166534','green-900':'#14532D','green-950':'#052E16',
-    'white':'#FFFFFF','black':'#000000'
-  };
-
   function srgb(c) { c = c / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
   function lum(rgb) { return 0.2126 * srgb(rgb[0]) + 0.7152 * srgb(rgb[1]) + 0.0722 * srgb(rgb[2]); }
   function parse(v) {
-    if (!v) return null;
-    if (v.charAt(0) === '#') {
-      var h = v.slice(1);
-      return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
-    }
-    var m = v.match(/[\d.]+/g);
+    var m = v && v.match(/[\d.]+/g);
     if (!m) return null;
-    if (m.length > 3 && parseFloat(m[3]) === 0) return null;   // fully transparent
-    return [ +m[0], +m[1], +m[2] ];
+    if (m.length > 3 && parseFloat(m[3]) === 0) return null;
+    return [+m[0], +m[1], +m[2]];
   }
-  function ratio(fg, bg) {
-    var a = lum(fg), b = lum(bg);
-    var hi = Math.max(a, b), lo = Math.min(a, b);
-    return (hi + 0.05) / (lo + 0.05);
+  function ratio(a, b) {
+    var x = lum(a), y = lum(b);
+    return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05);
   }
-  function verdictFor(r) {
-    if (r >= 7)   return { cls:'aaa',  text:'AAA' };
-    if (r >= 4.5) return { cls:'pass', text:'AA' };
-    return { cls:'fail', text:'fails AA' };
+  function verdict(r, min) {
+    if (min === 3) return r >= 3 ? { cls: 'pass', text: '≥ 3:1' } : { cls: 'fail', text: 'fails' };
+    if (r >= 7)   return { cls: 'aaa',  text: 'AAA' };
+    if (r >= 4.5) return { cls: 'pass', text: 'AA' };
+    return { cls: 'fail', text: 'fails AA' };
   }
-
-  /* The effective background of an element: its own if opaque, otherwise the
-     first ancestor that paints one. This is what makes ghost and link tiles
-     measurable without declaring anything by hand. */
   function effectiveBg(el) {
-    var node = el;
-    while (node && node !== document.documentElement) {
-      var c = parse(getComputedStyle(node).backgroundColor);
+    for (var n = el; n && n !== document.documentElement; n = n.parentElement) {
+      var c = parse(getComputedStyle(n).backgroundColor);
       if (c) return c;
-      node = node.parentElement;
     }
-    return [255,255,255];
+    return [255, 255, 255];
+  }
+  function write(box, r, min) {
+    var v = verdict(r, min);
+    box.innerHTML = '<span class="ratio">' + r.toFixed(2) + ':1</span><span class="verdict ' + v.cls + '">' + v.text + '</span>';
   }
 
-  function readoutInto(box, btn) {
-    var fg = parse(getComputedStyle(btn).color);
-    var bg = effectiveBg(btn);
-    var r  = ratio(fg, bg);
-    var v  = verdictFor(r);
-    box.innerHTML = '';
-    var num = document.createElement('span');
-    num.className = 'ratio'; num.textContent = r.toFixed(2) + ':1';
-    var vd = document.createElement('span');
-    vd.className = 'verdict ' + v.cls; vd.textContent = v.text;
-    box.appendChild(num); box.appendChild(vd);
-    return r;
+  function tile(cls, label, tokens, kind) {
+    var cell = document.createElement('div');
+    cell.className = 'state';
+    var inner = kind === 'tab'
+      ? '<button class="tab ' + cls + '" type="button"><span>' + label + '</span><span class="ul"></span></button>'
+      : '<button class="' + cls + '" type="button">' + label + '</button>';
+    cell.innerHTML = '<div class="lab">' + tokens[0] + '</div><div class="box">' + inner + '</div>' +
+      '<div class="readout" data-measure' + (kind === 'tab' ? '-tab' : '') + '></div><div class="tokens">' + tokens[1] + '</div>';
+    return cell;
+  }
+  function side(title, isNew, cells) {
+    var s = document.createElement('div');
+    s.className = 'side';
+    s.innerHTML = '<div class="sidelab' + (isNew ? ' new' : '') + '">' + title + '</div>';
+    var g = document.createElement('div');
+    g.className = 'states';
+    cells.forEach(function (c) { g.appendChild(c); });
+    s.appendChild(g);
+    return s;
   }
 
-  /* ── the variant matrix ────────────────────────────────────────────────── */
   var VARIANTS = [
-    { key:'default', name:'default', use:'the outlined button — a secondary confirm',
-      lime:      [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
-      limeblack: [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-700 on lime-50 *']],
-      green:     [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
-    { key:'primary', name:'primary', use:'every accept button in the product',
-      lime:      [['rest','lime-900 on lime-400'],['hover','lime-900 on lime-500'],['active','lime-950 on lime-600']],
-      limeblack: [['rest','black on lime-400 *'],['hover','black on lime-500 *'],['active','black on lime-600 *']],
-      green:     [['rest','black on green-400 *'],['hover','black on green-500 *'],['active','black on green-600 *']] },
-    { key:'secondary', name:'secondary', use:'a quieter confirm beside a primary one',
-      lime:      [['rest','lime-700 on lime-200'],['hover','lime-700 on lime-300'],['active','lime-700 on lime-400']],
-      limeblack: [['rest','lime-900 on lime-200 *'],['hover','lime-900 on lime-300 *'],['active','lime-900 on lime-400 *']],
-      green:     [['rest','green-900 on green-200 *'],['hover','green-900 on green-300 *'],['active','green-900 on green-400 *']] },
-    { key:'ghost', name:'ghost', use:'a borderless action inside a dense row',
-      lime:      [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
-      limeblack: [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-700 on lime-50 *']],
-      green:     [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50 *']] },
-    { key:'link', name:'link', use:'inline text action',
-      lime:      [['rest','lime-700'],['active','lime-600']],
-      limeblack: [['rest','lime-700'],['active','lime-700 *']],
-      green:     [['rest','green-700'],['active','green-700 *']] }
+    { key: 'default', use: 'outlined',
+      lime:  [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
+      green: [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50']] },
+    { key: 'primary', use: 'filled — every accept button',
+      lime:  [['rest','lime-900 on lime-400'],['hover','lime-900 on lime-500'],['active','lime-950 on lime-600']],
+      green: [['rest','black on green-400'],['hover','black on green-500'],['active','black on green-600']] },
+    { key: 'secondary', use: 'tinted',
+      lime:  [['rest','lime-700 on lime-200'],['hover','lime-700 on lime-300'],['active','lime-700 on lime-400']],
+      green: [['rest','green-900 on green-200'],['hover','green-900 on green-300'],['active','green-900 on green-400']] },
+    { key: 'ghost', use: 'no border, no fill',
+      lime:  [['rest','lime-700 on white'],['hover','lime-700 on lime-50'],['active','lime-600 on lime-50']],
+      green: [['rest','green-700 on white'],['hover','green-700 on green-50'],['active','green-700 on green-50']] },
+    { key: 'link', use: 'text only',
+      lime:  [['rest','lime-700'],['active','lime-600']],
+      green: [['rest','green-700'],['active','green-700']] }
   ];
+  var LABEL = { 'default': 'Hyväksy', primary: 'Hyväksy tarjous', secondary: 'Hyväksy', ghost: 'Hyväksy', link: 'Hyväksy tarjous' };
 
-  var LABELS = { 'default':'Hyväksy', 'primary':'Hyväksy tarjous', 'secondary':'Hyväksy', 'ghost':'Hyväksy', 'link':'Hyväksy tarjous' };
   var host = document.getElementById('variants');
-  var SCORES = [];
-
   VARIANTS.forEach(function (v) {
     var row = document.createElement('div');
     row.className = 'varrow';
-
-    var head = document.createElement('div');
-    head.className = 'varhead';
-    head.innerHTML = '<span class="vname">' + v.name + '</span><span class="vuse">' + v.use + '</span>';
-    row.appendChild(head);
-
-    [['lime','Today — lime, as shipped','L'],
-     ['limeblack','Option — lime, corrected labels','LB'],
-     ['green','Proposed — green, corrected labels','G']].forEach(function (pair) {
-      var setKey = pair[0], setName = pair[1], prefix = pair[2];
-
-      var side = document.createElement('div');
-      side.className = 'side';
-      var lab = document.createElement('div');
-      lab.className = 'sidelab'; lab.textContent = setName;
-      side.appendChild(lab);
-
-      var grid = document.createElement('div');
-      grid.className = 'states';
-
-      v[setKey].forEach(function (st) {
-        var stateName = st[0], tokens = st[1];
-
-        var cell = document.createElement('div');
-        cell.className = 'state';
-
-        var sl = document.createElement('div');
-        sl.className = 'lab'; sl.textContent = stateName;
-
-        var box = document.createElement('div');
-        box.className = 'btnbox';
-
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'btn sz-md ' + v.key + ' ' + prefix + '-' + v.key + '-' + stateName;
-        if (v.key === 'link') btn.className += ' linkish';
-        btn.textContent = LABELS[v.key];
-        box.appendChild(btn);
-
-        var ro = document.createElement('div');
-        ro.className = 'readout';
-
-        var tk = document.createElement('div');
-        tk.className = 'tokens'; tk.textContent = tokens;
-
-        /* Measured in a second pass, after everything is in the document —
-           getComputedStyle on a detached element returns nothing. */
-        ro.setAttribute('data-measure', '');
-        ro.setAttribute('data-variant', v.name);
-        ro.setAttribute('data-state', stateName);
-        ro.setAttribute('data-set', setKey);
-
-        cell.appendChild(sl); cell.appendChild(box); cell.appendChild(ro); cell.appendChild(tk);
-        grid.appendChild(cell);
+    row.innerHTML = '<span class="varname">' + v.key + '</span><span class="varuse">' + v.use + '</span>';
+    function cells(set, prefix) {
+      return v[set].map(function (st) {
+        var cls = 'btn sz-md ' + v.key + ' ' + prefix + '-' + v.key + '-' + st[0] + (v.key === 'link' ? ' linkish' : '');
+        return tile(cls, LABEL[v.key], st, 'btn');
       });
-
-      side.appendChild(grid);
-      row.appendChild(side);
-    });
-
+    }
+    row.appendChild(side('Today', false, cells('lime', 'L')));
+    row.appendChild(side('New', true, cells('green', 'G')));
     host.appendChild(row);
   });
 
-  /* ── measure everything, now that it is all in the document ────────────── */
+  var TAB_STATES = [
+    ['rest',     'slate-500, not selected'],
+    ['hover',    '%-700'],
+    ['active',   '%-800, while pressed'],
+    ['selected', '%-700 + %-700 underline']
+  ];
+  var tabHost = document.getElementById('tab-states');
+  [['Today', false, 'T-L', 'lime'], ['New', true, 'T-G', 'green']].forEach(function (s) {
+    tabHost.appendChild(side(s[0], s[1], TAB_STATES.map(function (st) {
+      return tile(s[2] + '-' + st[0], 'Ulkopuoli', [st[0], st[1].replace(/%/g, s[3])], 'tab');
+    })));
+  });
+
+  /* Measured after everything is in the document: getComputedStyle on a
+     detached element returns nothing. */
   Array.prototype.forEach.call(document.querySelectorAll('.readout[data-measure]'), function (box) {
-    var btn = box.parentElement.querySelector('.btn');
-    if (!btn) return;
-    var r = readoutInto(box, btn);
-    if (box.hasAttribute('data-variant')) {
-      SCORES.push({
-        variant: box.getAttribute('data-variant'),
-        state:   box.getAttribute('data-state'),
-        set:     box.getAttribute('data-set'),
-        ratio:   r
-      });
+    var el = box.previousElementSibling.querySelector('.btn');
+    write(box, ratio(parse(getComputedStyle(el).color), effectiveBg(el)));
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('.readout[data-measure-tab]'), function (box) {
+    var tab = box.previousElementSibling.querySelector('.tab');
+    var bg = effectiveBg(tab);
+    write(box, ratio(parse(getComputedStyle(tab).color), bg));
+    var ul = parse(getComputedStyle(tab.querySelector('.ul')).backgroundColor);
+    if (ul) {
+      var extra = document.createElement('div');
+      extra.className = 'readout';
+      box.after(extra);
+      write(extra, ratio(ul, bg), 3);
+      extra.insertAdjacentHTML('afterbegin', '<span class="tokens" style="margin:0">underline</span>');
     }
-  });
-
-  /* ── the black / green-900 / green-950 / white ladder ──────────────────── */
-  Array.prototype.forEach.call(document.querySelectorAll('[data-cell]'), function (td) {
-    var parts = td.getAttribute('data-cell').split('|');
-    var r = ratio(parse(HEX[parts[0]]), parse(HEX[parts[1]]));
-    var v = verdictFor(r);
-    td.className = 'num';
-    td.innerHTML = r.toFixed(2) + ' <span class="verdict ' + v.cls + '">' + v.text + '</span>';
-  });
-
-  /* ── scorecard ─────────────────────────────────────────────────────────── */
-  var tbody = document.querySelector('#scorecard tbody');
-  var seen = {};
-  SCORES.forEach(function (s) {
-    var id = s.variant + '|' + s.state;
-    if (!seen[id]) seen[id] = { variant: s.variant, state: s.state };
-    seen[id][s.set] = s.ratio;
-  });
-  Object.keys(seen).forEach(function (id) {
-    var e = seen[id];
-    var tr = document.createElement('tr');
-    if (e.lime < 4.5 || e.limeblack < 4.5 || e.green < 4.5) tr.className = 'fail';
-    function cell(r) {
-      if (r === undefined) return '<td></td><td></td>';
-      var v = verdictFor(r);
-      return '<td class="num">' + r.toFixed(2) + '</td><td><span class="verdict ' + v.cls + '">' + v.text + '</span></td>';
-    }
-    tr.innerHTML = '<td>' + e.variant + '</td><td>' + e.state + '</td>' + cell(e.lime) + cell(e.limeblack) + cell(e.green);
-    tbody.appendChild(tr);
   });
 }());
 </script>

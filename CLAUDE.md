@@ -295,7 +295,7 @@ These rules apply to all new pages and components in this prototype, without exc
     | Dealership side | three accepts, all `UiButton variant="primary" intent="success"` — `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`, `PastDeliveryDateConfirmModal` |
     | All of them sit on **white** | Reveal's panel, the CallSeller card, and — for the dealer accept — the seller's own `bg-white` speech bubble |
     | Variants with **zero** consumers | `default`, `secondary`, `ghost`, `link` of `success`. Every consumer is `primary`, so today the fill is always opaque and the page background cannot affect a label |
-    | Untouched by the change | `UiBadge` `lime`/`light_lime`, `UiTab` success, `OProductCard`, `OContainer`, `ReservePriceNotice`, `B2BReserveStatusBadge` — none reads a button's `intent` |
+    | Untouched by the change | `UiBadge` `lime`/`light_lime`, `OProductCard`, `OContainer`, `ReservePriceNotice`, `B2BReserveStatusBadge` — none reads a button's `intent`. **`UiTab`'s success was added to the change on 2026-10-09** (Jussi): `green-700` label and underline, `green-800` pressed; no live consumer |
 
     **And the check that cost me the argument, kept here because it is the one
     most likely to repeat:** I led with "lime fails AA in 7 of 14 states". With
@@ -1227,9 +1227,10 @@ linked from nowhere and loads no `tw-tokens.js`.
   *success is the worst of them and it is the one we are opening anyway*, not
   *lime is uniquely broken*. A pass across every intent is separate work.
 - **Lime does not leave the product.** `UiBadge`'s `lime`/`light_lime`,
-  `UiTab`'s success, `OProductCard`, `OContainer`, `ReservePriceNotice` and
+  `OProductCard`, `OContainer`, `ReservePriceNotice` and
   `B2BReserveStatusBadge` are untouched — none reads a button's `intent`.
-  Whether status lime should follow is flagged as a separate decision.
+  Whether status lime should follow is a separate decision. `UiTab`'s success
+  joined the change on 2026-10-09, matched to the button's text greens.
 
 **Section 4 opens with a two-box impact strip, and that is the point of the
 page for a reader in a hurry.** The change reads as a seller-side tidy-up and is
@@ -1273,8 +1274,16 @@ is the one that makes it safe:
   (2026-10-09, after a dev's artifact asked the same questions again): all
   five variants, with the three contrast deviations — primary label `black`,
   secondary label `green-900`, default/ghost/link active label kept at
-  `green-700`. Change 15 on the spec links there. `UiButton` and `UiTab` stay
-  lime.
+  `green-700`. Change 15 on the spec links there. `UiButton` stays lime.
+
+  **The page was rewritten the same day as a dev brief** (Jussi: "answers he
+  can take action on that carry a UX decision"): decisions first, the seller's
+  three accepts before/after, the five variants lime vs green measured, the
+  tab (`UiTab.vue` lines 93/100/147 → `green-700`/`green-800`, underline
+  measured at 3:1), and a file checklist incl. `AButton.spec.ts` 74–75 and the
+  card's `UiButton` → `AButton` swap. The lime+black option, the green-950
+  ladder, the three-set scorecard and the dealership migration notes are gone
+  (git history has them); the reasoning above stays here.
 - **No user sees both sides.** A seller never opens the dealership UI, so the
   interim lime/green split is a design-system inconsistency, not a user-facing
   one. That is what makes waiting cost nothing — do not restate it as a UX
