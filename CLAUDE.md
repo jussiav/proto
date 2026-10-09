@@ -628,10 +628,10 @@ in — change 1 is the help block because changes 2, 3 and 9 put copy inside it,
 the thread and its first bubble sit together. Two of the old numbers are gone: the
 "binding" change folded into change 2's sentence pair, and "standing offer visible
 while typing" folded into the auction-result bubble. The deadline is out of the
-numbered list entirely and sits in its own **Needs a decision before build**
-section, because prod tells the consumer nothing about the dealership's 24
-business hours today and the line that would have said so was replaced during the
-copy pass. The batch history lives here in CLAUDE.md instead.
+numbered list entirely and sits in its own section, now **The dealership's
+deadline** (anchor still `#open-questions`). It was "Needs a decision before
+build" until 2026-10-09, when the team decided to state it in the waiting hero
+(change 16) as "(viim. 24 h kuluessa)" — see PR 2526 below. The batch history lives here in CLAUDE.md instead.
 
 **The spec page lists five changes, numbered 1–5** — price step, contact step,
 support FAQ, transactional emails, SendGrid lifecycle emails. It was cut from 942
@@ -1034,6 +1034,21 @@ myös mielellään tarvittaessa."), 10 (auto-close message), 11 (email link
 target), 12–16 (card, colours, green accept, hero) and the message
 placeholder, which Jussi keeps in `v1` though it was never specced.
 
+**PR 2526 (preview tested 2026-10-09) builds changes 10, 12, 13 and 16**; all
+four matched `v1`. Two decisions came out of the test, both Jussi's:
+
+- **The waiting hero keeps "(viim. 24 h kuluessa)"**, which the PR had added
+  beyond the spec: "Liikkeet vastaavat arkisin klo 10–16 (viim. 24 h kuluessa).
+  Voit hyväksyä nykyisen tarjouksen myös neuvottelun aikana." The proto and spec
+  now carry it. It is knowingly inexact across weekends (the dealership's 24 h
+  is business time), and the team keeps it for now. The modal's waiting line
+  was not part of the decision.
+- **The help lines under the card's two buttons stay as they are**, even though
+  on the last round "…vaikka tekisit vastatarjouksen" sits beside a hero saying
+  no more counter offers can be made. Both lines (under accept and under the
+  negotiate / Näytä vastaus button) get rewritten together in a later
+  optimisation, not in this initiative.
+
 **One prod oddity reproduced, not reported yet:** in the paired reject
 confirmation from `sm` up, "Hylkää tarjous" and "Tee vastatarjous" sit in a row
 with **no gap** between them (the row is `sm:gap-0` and the only spacing class is
@@ -1315,8 +1330,8 @@ of them changed what the modal SAYS, not just how long it says it:
 
 **Change 5 therefore has no copy in the UI any more.** The deadline was the
 waiting state's second line and that line now says something else. The mechanic
-is unchanged and change 9 still rests on it, but nothing tells the seller about
-the 24 business hours. Flagged in the spec, not silently dropped. The in-message
+is unchanged and change 9 still rests on it. The 24 hours came back on
+2026-10-09, in the waiting HERO rather than the modal (change 16, PR 2526). The in-message
 accept also lost its checkmark icon.
 
 **Change 19 puts the negotiation in the hero.** The copy under the round photo
