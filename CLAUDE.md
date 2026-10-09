@@ -1284,6 +1284,14 @@ is the one that makes it safe:
   card's `UiButton` → `AButton` swap. The lime+black option, the green-950
   ladder, the three-set scorecard and the dealership migration notes are gone
   (git history has them); the reasoning above stays here.
+
+  **Goal, in Jussi's words: no blue accept button on the consumer side once
+  Enhanced negotiations is done.** `C2BOfferCard.vue` draws one accept with
+  three labels (highest, lower, final), so its swap to `AButton` covers all of
+  them; its spec stubs `UiButton` and moves to `AButton`. **B2B is deferred**
+  (2026-10-09): `B2BOfferCard.vue`'s accept stays a blue `UiButton` for now,
+  while the shared confirmation step turns green — blue + green for a B2B
+  seller until a later ticket.
 - **No user sees both sides.** A seller never opens the dealership UI, so the
   interim lime/green split is a design-system inconsistency, not a user-facing
   one. That is what makes waiting cost nothing — do not restate it as a UX

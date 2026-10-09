@@ -286,13 +286,15 @@
     <li><code>app/components/atoms/AButton/AButton.vue</code>: replace the five <code>success</code> rows with the classes in section 2.</li>
     <li><code>app/components/atoms/AButton/AButton.spec.ts</code>: lines 74–75 expect <code>border-lime-400</code> and <code>bg-lime-400</code>; change them to <code>border-green-400</code> and <code>bg-green-400</code>.</li>
     <li><code>js/components/ui/UiTab.vue</code>: lines 93, 100 and 147 as in section 3.</li>
-    <li><code>js/pages/offers/components/decision/C2BOfferCard.vue</code>: the accept button moves from <code>UiButton variant="primary" size="lg"</code> to <code>AButton variant="primary" intent="success" size="lg"</code>, keeping its label and click handler.</li>
+    <li><code>js/pages/offers/components/decision/C2BOfferCard.vue</code>: the accept button moves from <code>UiButton variant="primary" size="lg"</code> to <code>AButton variant="primary" intent="success" size="lg"</code>, keeping its label and click handler. It is one button with three labels, so this covers "Hyväksy korkein tarjous", "Hyväksy alhaisempi tarjous" and the final-offer accept.</li>
+    <li><code>js/pages/offers/components/decision/__tests__/C2BOfferCard.spec.js</code>: it stubs <code>UiButton</code>; stub <code>AButton</code> instead.</li>
     <li>Check the <code>AButton</code> and <code>UiTab</code> stories: the success examples should render green.</li>
   </ol>
 
   <h3>Do not change</h3>
   <ul>
     <li><code>js/components/ui/UiButton.vue</code>. The dealership's accept buttons stay lime until they move to <code>AButton</code>.</li>
+    <li><code>js/pages/offers/components/decision/B2BOfferCard.vue</code>. The B2B seller's card accept stays blue for now; it will move to the green button later, outside this initiative. Its accept confirmation is shared with the consumer side, so that step does turn green.</li>
     <li>Lime used as a status colour, not an action: <code>UiBadge</code>'s <code>lime</code> and <code>light_lime</code>, <code>OProductCard</code>, <code>OContainer</code>, <code>ReservePriceNotice</code>, <code>B2BReserveStatusBadge</code>.</li>
     <li>The success icons in <code>UiIcon.vue</code> and <code>ASpriteIcon.vue</code>. They are already <code>green-600</code>, which is one reason the button moves to green.</li>
   </ul>
