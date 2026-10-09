@@ -809,6 +809,19 @@
       } catch(e) {}
     }
     var _savedState = _loadState();
+    /* A scenario in the URL that differs from the saved one was picked from the
+       bar or a link, so it starts from its own seeded state instead of the
+       previous scenario's negotiation. In-page actions that change the scenario
+       go through setScenario, which keeps the URL in step so a reload is not
+       mistaken for a pick. */
+    var _scenarioPicked = !!_params.get('scenario') && _params.get('scenario') !== _savedState.scenario;
+    function setScenario(name) {
+      SCENARIO = name;
+      saveState();
+      var u = new URL(window.location.href);
+      u.searchParams.set('scenario', name);
+      window.history.replaceState({}, '', u.toString());
+    }
 
     var SCENARIO = _params.get('scenario') || _savedState.scenario || 'new-offers';
     // All decision scenarios are post-auction — ensure funnel flags reflect that
@@ -3271,8 +3284,7 @@
     /* What the reject survey captured, kept so a tester can read it back.
        prod POSTs the same payload to offers/{id}/nps-tracking. */
     var REJECT_FEEDBACK          = _savedState.rejectFeedback          || null;
-    // Restore negotiations from localStorage across all scenarios
-    if (_savedState.negotiations) {
+    if (_savedState.negotiations && !_scenarioPicked) {
       Object.keys(_savedState.negotiations).forEach(function(k) {
         NEGOTIATIONS[parseInt(k, 10)] = _savedState.negotiations[k];
       });
@@ -3617,10 +3629,7 @@
         cur.messages.push({ sender: 'seller', amount: amount, message: message, created_at: new Date().toISOString() });
         NEGOTIATIONS[MODAL.offerId] = cur;
         MODAL.errors = {}; MODAL.amount = null; MODAL.message = '';
-        SCENARIO = 'counter-offer-sent'; saveState();
-        var _negUrl = new URL(window.location.href);
-        _negUrl.searchParams.set('scenario', 'counter-offer-sent');
-        window.history.replaceState({}, '', _negUrl.toString());
+        setScenario('counter-offer-sent');
         renderPage();
         openModal('Negotiate', MODAL.offerId);
       });
@@ -3970,7 +3979,7 @@
            The proto keeps the payload so a tester can read back what the survey
            captured; nothing on any page renders it. */
         REJECT_FEEDBACK = Object.assign({}, rejectFormState, { submitted_at: new Date().toISOString() });
-        SCENARIO = 'all-rejected'; saveState(); renderPage();
+        setScenario('all-rejected'); renderPage();
         MODAL.action = 'RejectConfirmThanks';
         renderModal();
       });
@@ -4250,8 +4259,7 @@
          `rounds == 2 && waitingForSeller` branch rather than the stopped one. */
       if (_reply.closes) _neg.isStopped = true;
       NEGOTIATIONS[_h.id] = _neg;
-      SCENARIO = _neg.isStopped ? 'negotiation-stopped' : 'dealer-replied';
-      saveState();
+      setScenario(_neg.isStopped ? 'negotiation-stopped' : 'dealer-replied');
       renderPage();
       openModal('Negotiate', _h.id);
     }
@@ -4385,9 +4393,7 @@
     if (SCENARIO === 'dealer-replied') {
       var _drData = getData();
       (_drData.offers || []).forEach(function(o) {
-        if (!o.dealer_replied) return;
-        if (!NEGOTIATIONS[o.id]) {
-          // No negotiation yet — seed full thread with default seller + dealer messages
+        if (o.dealer_replied && !NEGOTIATIONS[o.id]) {
           NEGOTIATIONS[o.id] = {
             messages: [
               { sender: 'seller', amount: 11700, message: 'Hei! Haluaisin tästä hieman enemmän. Minkä verran joustoa teillä on?', created_at: new Date((_now()-5*3600)*1000).toISOString() },
@@ -4395,18 +4401,6 @@
             ],
             isStopped: false
           };
-        } else {
-          // Negotiation exists from prior scenario — add dealer reply if none present
-          var _hasDealerReply = NEGOTIATIONS[o.id].messages.some(function(m) { return m.sender === 'dealer'; });
-          if (!_hasDealerReply) {
-            var _seedReply = computeDealerReply(o, NEGOTIATIONS[o.id], { deterministic: true });
-            NEGOTIATIONS[o.id].messages.push({
-              sender: 'dealer',
-              amount: _seedReply.amount,
-              message: _seedReply.message,
-              created_at: new Date((_now()-1*3600)*1000).toISOString()
-            });
-          }
         }
       });
     }

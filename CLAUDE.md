@@ -407,6 +407,20 @@ without a negotiation: same request shape, offers already revealed, reaction
 window open) and reloads. Any other scenario is kept — reset undoes the
 negotiation, not the tester's setup.
 
+**Picking a scenario starts that scenario's world** (2026-10-09). The saved
+negotiation used to be restored for every scenario, and each negotiation
+scenario seeded its thread only when none existed — so 8 of the 12 switches
+between `seen-offers` / `counter-offer-sent` / `dealer-replied` /
+`negotiation-stopped` rendered the PREVIOUS scenario's state (closed showed
+"Vastatarjous lähetetty", and so on). Now a `?scenario=` that differs from the
+saved one is treated as a pick and the saved negotiation is dropped; a reload
+keeps it. Every in-page action that changes the scenario goes through
+`setScenario()`, which also rewrites `?scenario=`, so a reload after a
+simulated dealer reply, a sent counter offer or a reject is not mistaken for a
+pick. Cost, accepted: sending your own counter offer and then picking "Dealer
+replied" from the bar (or an email link) shows the seeded thread, not yours —
+use Auction settings → Dealer response for that.
+
 Inline, these were seven controls on a strip shared with every page's own rows —
 decision.html alone put more on the bar than the rest of it held. The cost of
 collapsing is that an override becomes invisible, so **the button reports one**:
