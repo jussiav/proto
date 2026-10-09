@@ -173,6 +173,8 @@ window.DECISION_I18N = {
     'Liikkeet vastaavat arkisin klo 10–16.': 'Dealerships reply on weekdays between 10 and 16.',
     'Liikkeet vastaavat arkisin klo 10–16 (viim. 24 h kuluessa). Voit hyväksyä nykyisen tarjouksen myös neuvottelun aikana.': 'Dealerships reply on weekdays between 10 and 16 (within 24 h at the latest). You can also accept the current offer while the negotiation is running.',
     'Autoliike vastasi':                   'The dealership replied',
+    'Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen tai jatkaa myyntiä kanssamme.': 'The dealership has ended the negotiation. You can still accept the standing offer or continue selling with us.',
+    'Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen.': 'The dealership has ended the negotiation. You can still accept the standing offer.',
     'Avaa neuvottelu ja katso liikkeen tarjous. Voit hyväksyä sen tai tehdä vielä yhden vastatarjouksen.': 'Open the negotiation and see their offer. You can accept it or make one more counter offer.',
     'Avaa neuvottelu ja katso liikkeen tarjous. Vastatarjouksia ei tehdä enempää, joten voit hyväksyä tarjouksen tai hylätä sen.': 'Open the negotiation and see their offer. No further counter offers can be made, so you can accept or reject it.',
     'Hyväksyttyäsi tarjouksen, autoliike ottaa sinuun yhteyttä.': 'Once you accept the offer, the dealership will contact you.',

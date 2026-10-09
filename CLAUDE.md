@@ -1049,6 +1049,14 @@ four matched `v1`. Two decisions came out of the test, both Jussi's:
   negotiate / Näytä vastaus button) get rewritten together in a later
   optimisation, not in this initiative.
 
+**Change 18 (2026-10-09) drops "…tai jatkaa myyntiä kanssamme" from the
+closed-negotiation hero** in `v1` (`HERO_NEGOTIATION.stopped` via `heroCopy`):
+"Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan
+tarjouksen." A seller phoned support to ask what the clause meant; nothing in
+that state continues a sale. The string is prod's
+`auction.auction_hero.negotiation_stopped.text`, older than the initiative, so
+control keeps it until prod ships. Sent to the PR 2526 dev as finding F3.
+
 **One prod oddity reproduced, not reported yet:** in the paired reject
 confirmation from `sm` up, "Hylkää tarjous" and "Tee vastatarjous" sit in a row
 with **no gap** between them (the row is `sm:gap-0` and the only spacing class is

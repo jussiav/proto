@@ -1660,6 +1660,13 @@
       repliedLastRound: {
         title: 'Autoliike vastasi',
         desc:  'Avaa neuvottelu ja katso liikkeen tarjous. Vastatarjouksia ei tehdä enempää, joten voit hyväksyä tarjouksen tai hylätä sen.'
+      },
+      /* Prod's closed hero ends "…tai jatkaa myyntiä kanssamme", which a seller
+         had to phone support to decode: nothing in this state is a way to
+         "continue selling with us". Same title, clause dropped. */
+      stopped: {
+        title: 'Neuvottelu päättyi',
+        desc:  'Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen.'
       }
     };
 
@@ -1676,6 +1683,7 @@
         var sellerRounds = ((neg && neg.messages) || []).filter(function (m) { return m.sender === 'seller'; }).length;
         return sellerRounds >= 2 ? HERO_NEGOTIATION.repliedLastRound : HERO_NEGOTIATION.repliedCanCounter;
       }
+      if (pas === 'negotiation_stopped') return HERO_NEGOTIATION.stopped;
       return hc;
     }
 
@@ -3082,8 +3090,7 @@
       var hasAccepted = offers.some(function(o) { return o.status === 1; });
       /* prod hides the reject-all banner only while the seller is WAITING on the
          dealer (`highestOfferIsBeingNegotiated` = negotiation && waitingForDealer),
-         so a closed negotiation shows it again — which is the point of the
-         hero's "tai jatkaa myyntiä kanssamme". Both flags come from the same
+         so a closed negotiation shows it again. Both flags come from the same
          derivation the card uses, so the two cannot disagree; `dealer_replied` is
          a static scenario flag and went stale the moment a dealer replied live. */
       var highestProps = selected.length > 0 ? offerDisplayProps(selected[0], offers, expiryTs) : null;

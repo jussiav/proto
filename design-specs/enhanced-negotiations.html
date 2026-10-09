@@ -88,6 +88,7 @@
     .old-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; background: #D7EDFF; border-radius: 10px; outline: none; pointer-events: none; }
     .old-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
     .old-slider::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: #2890FF; border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); }
+    .av-del { color: #B91C1B; text-decoration: line-through; text-decoration-thickness: 1px; }
   </style>
 </head>
 <body class="font-body text-slate-900" style="background:#f5f5f5">
@@ -188,6 +189,7 @@
             <tr><td class="px-4 py-3 font-bold">15</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c15">Updated green</a></td><td class="px-4 py-3">Decision page · card and modal</td><td class="px-4 py-3 text-slate-600">All states</td></tr>
             <tr><td class="px-4 py-3 font-bold">16</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c16">Hero shows status, not auction result</a></td><td class="px-4 py-3">Decision page · hero</td><td class="px-4 py-3 text-slate-600">Waiting · dealership replied</td></tr>
             <tr><td class="px-4 py-3 font-bold">17</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c17">The reject entry reads as a choice</a><br><span class="text-xs text-success-800 font-medium">Shipped, October 2026</span></td><td class="px-4 py-3">Negotiation modal · reject flow</td><td class="px-4 py-3 text-slate-600">Rejecting · reject confirmation</td></tr>
+            <tr><td class="px-4 py-3 font-bold">18</td><td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c18">Closed-negotiation hero without &ldquo;continue selling with us&rdquo;</a></td><td class="px-4 py-3">Decision page · hero</td><td class="px-4 py-3 text-slate-600">Negotiation closed</td></tr>
           </tbody>
         </table>
       </div>
@@ -502,6 +504,24 @@
       </div>
     </section>
 
+    <section class="av-band av-band-grey" id="c18">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">18 — Closed-negotiation hero without &ldquo;continue selling with us&rdquo;</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page · hero</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Negotiation closed</span></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>When the dealership has closed the negotiation, the hero body drops its last clause. The title &ldquo;Neuvottelu päättyi&rdquo; and the styling are unchanged.</li>
+          <li><b>Today:</b> &ldquo;Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen <span class="av-del">tai jatkaa myyntiä kanssamme</span>.&rdquo;<br><span class="text-slate-500">EN: The dealership has ended the negotiation. You can still accept the standing offer or continue selling with us.</span></li>
+          <li><b>After:</b> &ldquo;Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen.&rdquo;<br><span class="text-slate-500">EN: The dealership has ended the negotiation. You can still accept the standing offer.</span></li>
+          <li>No new copy: one clause is removed from an existing sentence.</li>
+        </ul>
+      </div>
+      <p class="font-dm text-sm mt-4 max-w-3xl"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=negotiation-stopped&enhanced-negotiations=v1" target="_blank" rel="noopener">See it in the prototype</a> <span class="text-slate-500">— negotiation closed by the dealership</span></p>
+      <p class="font-dm text-xs leading-5 text-slate-500 mt-3 max-w-3xl"><b class="text-slate-600">Why:</b> A seller phoned customer support to ask what &ldquo;jatkaa myyntiä kanssamme&rdquo; means. Nothing on the page in this state is a way to continue selling with us: the seller can accept, reject the auction or phone support. The clause promises an option the page does not offer.</p>
+      </div>
+    </section>
+
     <section class="av-band av-band-grey" id="copy">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Copy</h2>
@@ -529,6 +549,7 @@
             <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">15</td><td class="px-4 py-3">Hyväksy korkein tarjous <span class="text-slate-500">(in the message)</span></td><td class="px-4 py-3 text-slate-500">Accept the highest offer</td><td class="px-4 py-3 text-slate-600"><i>Hyväksy tarjous</i>, in the modal footer</td><td class="px-4 py-3 text-success-800 font-medium whitespace-nowrap">Shipped</td></tr>
             <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">16</td><td class="px-4 py-3">Vastatarjous lähetetty · Autoliike vastasi <span class="text-slate-500">+ bodies, see change 16</span></td><td class="px-4 py-3 text-slate-500">Counter offer sent · The dealership replied</td><td class="px-4 py-3 text-slate-600"><i>Nyt on aikasi toimia! / Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.</i></td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">New, placeholder</td></tr>
             <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">17</td><td class="px-4 py-3">Tee vielä vastatarjous autoliikkeelle<b>?</b></td><td class="px-4 py-3 text-slate-500">Make one more counter offer to the dealership?</td><td class="px-4 py-3 text-slate-600"><i>Tee vielä vastatarjous autoliikkeelle</i></td><td class="px-4 py-3 text-success-800 font-medium whitespace-nowrap">Shipped</td></tr>
+            <tr><td class="px-4 py-3 font-bold align-top whitespace-nowrap">18</td><td class="px-4 py-3">Autoliike on päättänyt neuvottelun. Voit edelleen hyväksyä voimassa olevan tarjouksen.</td><td class="px-4 py-3 text-slate-500">The dealership has ended the negotiation. You can still accept the standing offer.</td><td class="px-4 py-3 text-slate-600"><i>&hellip;tarjouksen tai jatkaa myyntiä kanssamme.</i></td><td class="px-4 py-3 text-slate-500 whitespace-nowrap">Existing, one clause removed</td></tr>
           </tbody>
         </table>
       </div>
