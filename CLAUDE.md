@@ -1042,7 +1042,7 @@ four matched `v1`. Two decisions came out of the test, both Jussi's:
   Voit hyväksyä nykyisen tarjouksen myös neuvottelun aikana." The proto and spec
   now carry it. It is knowingly inexact across weekends (the dealership's 24 h
   is business time), and the team keeps it for now. The modal's waiting line
-  was not part of the decision.
+  stays without it (as the PR has it): hero only.
 - **The help lines under the card's two buttons stay as they are**, even though
   on the last round "…vaikka tekisit vastatarjouksen" sits beside a hero saying
   no more counter offers can be made. Both lines (under accept and under the
