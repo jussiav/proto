@@ -105,15 +105,6 @@
                     border-radius: 0; box-shadow: none; text-decoration: none; }
     .btn.linkish:hover { text-decoration: underline; }
 
-    /* The legacy elements/Button.vue, resolved from its own class string:
-       pt-13px px-5 pb-15px leading-none font-medium rounded-lg tracking-wider,
-       plus py-2 text-base from size="medium" and border-2 from the colour map. */
-    .btn.legacy {
-      height: auto; padding: 13px 20px 15px; font-size: 16px; line-height: 1;
-      font-weight: 500; letter-spacing: 0.05em; border-width: 2px; border-style: solid;
-      box-shadow: none;
-    }
-
     /* ── colour sets ────────────────────────────────────────────────────── */
     /* LIME — the `success` intent exactly as UiButton.vue and AButton.vue
        define it today. Identical in both files. */
@@ -170,8 +161,6 @@
     /* The two non-success colours the seller's accept wears today. */
     .B-primary-rest  { background: var(--blue-600); color: var(--white); }
     .B-primary-hover { background: var(--blue-700); color: var(--white); }
-    .legacy-green-rest  { background: var(--green-600); color: var(--white); border-color: var(--green-600); }
-    .legacy-green-hover { background: var(--green-700); color: var(--white); border-color: var(--green-700); }
 
     /* ── measurement furniture ──────────────────────────────────────────── */
     .states { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px; margin-top: 12px; }
@@ -226,7 +215,7 @@
   <h1>The success button: green and lime today, and the change we are making</h1>
   <p class="lede">
     AutoVex has three button components, two of them deprecated, and the act of
-    <em>accepting</em> is currently drawn in three different colours depending on
+    <em>accepting</em> is currently drawn in different colours depending on
     which side of the marketplace you are on and which component the surface
     happens to use. This page shows exactly what is on screen today, then the
     change we would like to make, with every state rendered and every contrast
@@ -234,16 +223,18 @@
   </p>
   <p class="sub">
     Audience: devs and designers, both sides of the product. Read against the
-    2026-09-16 production dump. Not part of the prototype.
+    2026-10-07 production dump. Not part of the prototype.
     <br /><strong>Status: decided and announced to the dealership product team,
-    2026-09-17.</strong> Sections 1–3 describe production as it stands today;
-    section 4 onwards is what was agreed.
+    2026-09-17. Confirmed 2026-10-09: all five <code>success</code> variants in
+    <code>AButton</code> take the green values below.</strong> Sections 1–3
+    describe production as it stands today; section 4 onwards is what was agreed,
+    and <a href="#classes">the exact class strings</a> are in section 4.
   </p>
 
   <div class="card accent">
     <h3>In short</h3>
     <ul>
-      <li>The seller's three accept buttons are <strong>three different colours</strong> — blue on the offer card, lime inside the negotiation thread, green on the accept confirmation — because they are three different components.</li>
+      <li>The seller's three accept buttons are <strong>two different colours</strong> — blue on the offer card, lime inside the negotiation thread and on the accept confirmation. The card is on the deprecated <code>UiButton</code> with no intent; the other two are already on <code>AButton intent="success"</code>.</li>
       <li>The dealership's three accept buttons are one colour, <strong>lime</strong>, from the shared <code>intent="success"</code>.</li>
       <li><code>intent="success"</code> already means <strong>green-600 in the icon components</strong>. The same intent name resolves to two hues in one design system.</li>
       <li>Lime fails WCAG AA in <strong>7 of its 14 states</strong>, including three that are not transient. The cause is the <em>label</em>, not the hue — see the next point.</li>
@@ -270,19 +261,19 @@
         <tr>
           <td><code>js/components/elements/Button.vue</code></td>
           <td><span class="chip dep">deprecated</span></td>
-          <td class="num">16</td>
-          <td>a <code>color</code> prop taking <code>'blue' | 'red' | 'green-600' | 'transparent'</code> — a palette step baked into the API</td>
+          <td class="num">15</td>
+          <td>a <code>color</code> prop taking <code>'blue' | 'red' | 'green-600' | 'transparent'</code> — a palette step baked into the API. Nothing passes <code>green-600</code> any more</td>
         </tr>
         <tr>
           <td><code>js/components/ui/UiButton.vue</code></td>
           <td><span class="chip dep">deprecated</span></td>
-          <td class="num">77</td>
+          <td class="num">68</td>
           <td><code>intent</code> + <code>variant</code>, semantic. <code>success</code> = lime</td>
         </tr>
         <tr>
           <td><code>app/components/atoms/AButton/AButton.vue</code></td>
           <td><span class="chip target">current</span></td>
-          <td class="num">8</td>
+          <td class="num">11</td>
           <td><code>intent</code> + <code>variant</code>, semantic. <code>success</code> = lime, byte-for-byte the same values as UiButton</td>
         </tr>
       </tbody>
@@ -290,17 +281,19 @@
   </div>
   <p class="footnote">
     Both deprecated components carry the same JSDoc: <em>use the TypeScript atom
-    instead</em>. <code>UiButton</code> has 77 consumers against <code>AButton</code>'s 8, so the
-    migration it asks for has barely started — which matters below, because the
+    instead</em>. <code>UiButton</code> has 68 consumers against <code>AButton</code>'s 11
+    (files that use each, outside stories and tests), so the migration it asks for
+    has barely started — which matters below, because the
     lime <code>success</code> definition is currently duplicated in both files and a
     colour change has to land in both until one of them is gone.
   </p>
 
   <h2>2 — The seller side today</h2>
   <p class="sub">
-    Three accepts, three components, three colours. Only the one inside the
-    negotiation thread is the shared <code>success</code> intent, and it is the
-    only seller-side consumer of it (production snapshot of 24 September 2026).
+    Three accepts, two components, two colours. The accept confirmation and the
+    in-thread accept are the shared <code>success</code> intent on
+    <code>AButton</code>, and they are its only two consumers (production
+    snapshot of 7 October 2026). The card is the odd one out.
   </p>
 
   <div class="compare">
@@ -326,22 +319,22 @@
 
     <div class="col">
       <div class="colname">Accept confirmation — footer</div>
-      <div class="colnote">The same act, one click later. The deprecated <code>Button</code> with <code>color="green-600"</code> — the only consumer of that colour anywhere in the product. The negotiation modal no longer has a footer accept; this is the confirmation step every accept goes through.</div>
+      <div class="colnote">The same act, one click later. <code>AButton variant="primary" intent="success" size="lg"</code> since the 7 October 2026 snapshot — it was the deprecated <code>Button color="green-600"</code> before. The negotiation modal has no footer accept; this is the confirmation step every accept goes through.</div>
       <div class="stage">
         <div class="states" style="grid-template-columns:1fr">
           <div class="state">
             <div class="lab">rest</div>
-            <div class="btnbox"><button class="btn legacy legacy-green-rest w-full" type="button">Hyväksy tarjous</button></div>
+            <div class="btnbox"><button class="btn sz-lg primary L-primary-rest w-full" type="button">Hyväksy tarjous</button></div>
             <div class="readout" data-measure></div>
           </div>
           <div class="state">
             <div class="lab">hover</div>
-            <div class="btnbox"><button class="btn legacy legacy-green-hover w-full" type="button">Hyväksy tarjous</button></div>
+            <div class="btnbox"><button class="btn sz-lg primary L-primary-hover w-full" type="button">Hyväksy tarjous</button></div>
             <div class="readout" data-measure></div>
           </div>
         </div>
       </div>
-      <div class="comp">OfferActions.vue — green-600 / green-700, white label</div>
+      <div class="comp">OfferActions.vue — lime-400 / lime-500, lime-900 label</div>
     </div>
 
     <div class="col">
@@ -367,9 +360,10 @@
 
   <div class="card warn">
     <p style="margin:0">
-      <strong>Note the resting ratio on the green one.</strong> White on green-600
-      is the pairing that fails while the darker hover passes — the button is at
-      its least readable in the state it spends almost all of its life in.
+      <strong>The confirmation already moved, and it went lime.</strong> It used to
+      be white on green-600, which fails at rest. On <code>AButton</code> it now
+      takes the shared <code>success</code> intent, so it turns green with the
+      token change below and needs no further migration.
     </p>
   </div>
 
@@ -464,12 +458,12 @@
     <h3>One change, arriving on each side separately</h3>
     <p>
       <strong>Read this part carefully — it is the thing most easily got wrong.</strong>
-      <code>AButton</code> is the current button component. <strong>One seller
-      accept uses it</strong> — the one inside the negotiation thread, since the
-      24 September 2026 snapshot. The other two seller accepts are on
-      <code>elements/Button.vue</code> and <code>ui/UiButton.vue</code>; the
-      dealership is on <code>ui/UiButton.vue</code>. Those are deprecated. So the
-      dealership is one generation behind, and the seller side is part-way over.
+      <code>AButton</code> is the current button component. <strong>Two seller
+      accepts use it</strong> — the one inside the negotiation thread and the
+      accept confirmation (7 October 2026 snapshot). The card accept is still on
+      <code>ui/UiButton.vue</code>, and so is the dealership. That component is
+      deprecated. So the dealership is one generation behind, and the seller side
+      is one button away from done.
     </p>
 
     <div class="impact">
@@ -477,12 +471,10 @@
         <div class="who">Seller side — now</div>
         <div class="what">Component change and colour change.</div>
         <p>
-          The card and the confirmation step come off the two deprecated
-          components and onto <code>AButton intent="success"</code>. The card
-          stops being blue, the confirmation loses its hardcoded
-          <code>color="green-600"</code>, and the in-thread accept, already on
-          <code>AButton</code>, turns from lime to green with the token. All three
-          render the new green.
+          The card comes off <code>UiButton</code> and onto
+          <code>AButton intent="success"</code>, so it stops being blue. The
+          confirmation and the in-thread accept are already there and turn from
+          lime to green with the token. All three render the new green.
         </p>
       </div>
       <div class="box">
@@ -506,10 +498,39 @@
   </div>
 
   <ol style="max-width:74ch">
-    <li style="margin-bottom:8px"><strong>Take the seller side off the deprecated components.</strong> The confirmation accept moves from <code>Button color="green-600"</code> to <code>AButton intent="success"</code>; the card accept moves from a bare <code>variant="primary"</code> to the same. The in-thread accept is already there. All three seller accepts then match each other.</li>
+    <li style="margin-bottom:8px"><strong>Take the last seller accept off the deprecated component.</strong> The card accept moves from a bare <code>UiButton variant="primary"</code> to <code>AButton variant="primary" intent="success"</code>. The confirmation and the in-thread accept are already there. All three seller accepts then match each other.</li>
     <li style="margin-bottom:8px"><strong>Redefine <code>success</code> from lime to green in <code>AButton</code>, and only there.</strong> <code>UiButton</code> carries its own copy of the same values and is deliberately left alone.</li>
     <li><strong>Move all five variants, not only <code>primary</code>.</strong> <code>default</code>, <code>primary</code>, <code>secondary</code>, <code>ghost</code> and <code>link</code> each have their own compound row. Leaving any of them lime would put two greens in one intent.</li>
   </ol>
+
+  <div class="card accent" id="classes">
+    <h3>The exact class strings for <code>AButton.vue</code></h3>
+    <p>
+      Replace the five <code>success</code> compound rows in
+      <code>app/components/atoms/AButton/AButton.vue</code> with these. Three rows
+      are not a straight lime → green swap, marked <strong>*</strong>; section 5
+      shows why each is forced by contrast.
+    </p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Variant</th><th>Today (lime)</th><th>New (green)</th></tr></thead>
+        <tbody>
+          <tr><td><code>default</code> *</td><td><code>border-lime-400 hover:bg-lime-50 active:bg-lime-50 text-lime-700 active:text-lime-600</code></td><td><code>border-green-400 hover:bg-green-50 active:bg-green-50 text-green-700 active:text-green-700</code></td></tr>
+          <tr><td><code>primary</code> *</td><td><code>bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-lime-900 active:text-lime-950</code></td><td><code>bg-green-400 hover:bg-green-500 active:bg-green-600 text-black active:text-black</code></td></tr>
+          <tr><td><code>secondary</code> *</td><td><code>bg-lime-200 hover:bg-lime-300 active:bg-lime-400 text-lime-700</code></td><td><code>bg-green-200 hover:bg-green-300 active:bg-green-400 text-green-900</code></td></tr>
+          <tr><td><code>ghost</code> *</td><td><code>bg-transparent hover:bg-lime-50 active:bg-lime-50 text-lime-700 active:text-lime-600</code></td><td><code>bg-transparent hover:bg-green-50 active:bg-green-50 text-green-700 active:text-green-700</code></td></tr>
+          <tr><td><code>link</code> *</td><td><code>text-lime-700 active:text-lime-600</code></td><td><code>text-green-700 active:text-green-700</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <ul style="margin-bottom:0">
+      <li><strong>primary:</strong> the label is <code>black</code> in every state, not the ramp's <code>-900</code>/<code>-950</code>.</li>
+      <li><strong>secondary:</strong> the label is <code>green-900</code>, not <code>green-700</code>, which fails on the green-200/300/400 fills.</li>
+      <li><strong>default, ghost, link:</strong> the active label stays <code>green-700</code> instead of going lighter to <code>green-600</code>.</li>
+      <li><strong>Tests:</strong> <code>AButton.spec.ts</code> asserts <code>lime-400</code> on the primary success case and needs updating.</li>
+      <li><strong>Not in this change:</strong> <code>UiButton.vue</code> keeps lime (section 4) and so does <code>UiTab.vue</code>'s success tab (section 7).</li>
+    </ul>
+  </div>
 
   <div class="card accent">
     <h3>Why <code>AButton</code> only, rather than editing both files</h3>
@@ -521,7 +542,7 @@
       reasons:
     </p>
     <ul style="margin-bottom:0">
-      <li><strong><code>AButton</code> has one <code>success</code> consumer today</strong> — the seller's in-thread accept — so the colour edit changes exactly that button, in the intended direction, and nothing on the dealership side. Every other change arrives with its own migration, one at a time, reviewable on its own.</li>
+      <li><strong><code>AButton</code>'s only <code>success</code> consumers are two seller accepts</strong> — the in-thread accept and the accept confirmation — so the colour edit changes exactly those buttons, in the intended direction, and nothing on the dealership side. Every other change arrives with its own migration, one at a time, reviewable on its own.</li>
       <li><strong>No user sees both sides.</strong> A seller never opens the dealership UI, so the interim lime-here-green-there split is a design-system inconsistency, not a user-facing one. That is what makes waiting cost nothing.</li>
       <li>It gives the dealership team an <strong>easy path rather than an obligation</strong>: nothing to do now, and the colour comes free with a migration they want anyway.</li>
     </ul>
@@ -556,7 +577,7 @@
     <div class="col">
       <span class="chip now">today</span>
       <div class="colname">Two components, two colours</div>
-      <div class="colnote">Card blue, modal green. Nothing shared with the dealership.</div>
+      <div class="colnote">Card blue, confirmation lime. The confirmation already shares the dealership's colour; the card shares nothing.</div>
       <div class="stage">
         <div class="states" style="grid-template-columns:1fr">
           <div class="state">
@@ -565,13 +586,13 @@
             <div class="readout" data-measure></div>
           </div>
           <div class="state">
-            <div class="lab">modal — rest</div>
-            <div class="btnbox"><button class="btn legacy legacy-green-rest w-full" type="button">Hyväksy tarjous</button></div>
+            <div class="lab">confirmation — rest</div>
+            <div class="btnbox"><button class="btn sz-lg primary L-primary-rest w-full" type="button">Hyväksy tarjous</button></div>
             <div class="readout" data-measure></div>
           </div>
         </div>
       </div>
-      <div class="comp">UiButton (no intent) + elements/Button</div>
+      <div class="comp">UiButton (no intent) + AButton intent="success"</div>
     </div>
 
     <div class="col">

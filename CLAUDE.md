@@ -288,10 +288,10 @@ These rules apply to all new pages and components in this prototype, without exc
 
     | | |
     |---|---|
-    | Components serving this role | **three**, and **two are deprecated** — `elements/Button.vue` (16 consumers) and `ui/UiButton.vue` (77) both point at `atoms/AButton.vue` (8) — counts from the 2026-09-24 dump |
+    | Components serving this role | **three**, and **two are deprecated** — `elements/Button.vue` (15 consumers) and `ui/UiButton.vue` (68) both point at `atoms/AButton.vue` (11) — files using each, outside stories and tests, 2026-10-07 dump |
     | Consequence of the ratio | the migration has barely started, so a token change has to land in **both** `UiButton` and `AButton` until one is gone |
     | Same name, two hues | `intent="success"` is lime on the button and **`text-green-600`** in `UiIcon.vue` / `ASpriteIcon.vue`. The button is the outlier — this turned out to be the strongest argument in the whole proposal |
-    | Seller side | three accepts, **three colours**: the card is `UiButton variant="primary"` with **no intent** (blue); the accept confirmation step is the legacy `Button color="green-600"` — the only consumer of that colour anywhere; and since the 2026-09-24 dump the in-thread accept is `AButton variant="primary" intent="success"` (lime), the only seller-side `success` consumer |
+    | Seller side | three accepts, **two colours** (2026-10-07 dump): the card is `UiButton variant="primary"` with **no intent** (blue); the accept confirmation step and the in-thread accept are both `AButton variant="primary" intent="success"` (lime) — `AButton`'s only two `success` consumers. Nothing passes `Button color="green-600"` any more |
     | Dealership side | three accepts, all `UiButton variant="primary" intent="success"` — `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`, `PastDeliveryDateConfirmModal` |
     | All of them sit on **white** | Reveal's panel, the CallSeller card, and — for the dealer accept — the seller's own `bg-white` speech bubble |
     | Variants with **zero** consumers | `default`, `secondary`, `ghost`, `link` of `success`. Every consumer is `primary`, so today the fill is always opaque and the page background cannot affect a label |
@@ -1176,18 +1176,18 @@ linked from nowhere and loads no `tw-tokens.js`.
 **What it now establishes, and the numbers are the deliverable:**
 
 - **There are THREE button components, two deprecated**, which is the thing that
-  gets described wrongly. `elements/Button.vue` (16 consumers, a `color` prop
+  gets described wrongly. `elements/Button.vue` (15 consumers, a `color` prop
   taking `'blue' | 'red' | 'green-600' | 'transparent'`) AND `ui/UiButton.vue`
-  (77 consumers) both carry the same JSDoc pointing at `atoms/AButton.vue`
-  (8 consumers, 2026-09-24 dump). So the lime `success` definition is **duplicated byte-for-byte
+  (68 consumers) both carry the same JSDoc pointing at `atoms/AButton.vue`
+  (11 consumers, 2026-10-07 dump). So the lime `success` definition is **duplicated byte-for-byte
   in UiButton and AButton**, and a colour change lands in both until one goes.
-- **The seller's three accepts are three different colours today.** The
-  decision page's card accept is `UiButton variant="primary" size="lg"` with
-  **no intent at all**, so it renders blue-600/white. The accept confirmation
-  step (`OfferActions.vue`) is the legacy `Button color="green-600"`, the
-  **only** consumer of that colour anywhere. And since the 2026-09-24 dump the
-  in-thread accept is `AButton intent="success"` — lime, and the one seller
-  accept already on the shared intent.
+- **The seller's three accepts are two different colours today** (2026-10-07
+  dump). The decision page's card accept is `UiButton variant="primary"
+  size="lg"` with **no intent at all**, so it renders blue-600/white. The
+  accept confirmation step (`OfferActions.vue`, moved off the legacy
+  `Button color="green-600"` by PR 2493) and the in-thread accept are both
+  `AButton intent="success"` — lime. So the card is the last seller accept to
+  migrate.
 - **The dealership's three accepts ARE the shared intent** — lime, via
   `UiButton variant="primary" intent="success"`:
   `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`,
@@ -1263,11 +1263,18 @@ is the substance of the decision — it was posted to the dealership product tea
 **Why this shape rather than editing both files.** Three reasons, and the second
 is the one that makes it safe:
 
-- **`AButton` has ONE `success` consumer** (the seller's in-thread accept,
-  shipped in the 2026-09-24 dump), so the colour edit changes exactly that
-  button, in the intended direction, and nothing on the dealership side. When
-  this was decided it had zero; `accept-button-lab.html` now says one. Every
-  other change arrives with its own migration, one at a time.
+- **`AButton`'s only `success` consumers are two seller accepts** (the
+  in-thread accept and the accept confirmation, 2026-10-07 dump), so the colour
+  edit changes exactly those buttons, in the intended direction, and nothing on
+  the dealership side. Every other change arrives with its own migration, one
+  at a time.
+
+  **The exact class strings live on `accept-button-lab.html#classes`**
+  (2026-10-09, after a dev's artifact asked the same questions again): all
+  five variants, with the three contrast deviations — primary label `black`,
+  secondary label `green-900`, default/ghost/link active label kept at
+  `green-700`. Change 15 on the spec links there. `UiButton` and `UiTab` stay
+  lime.
 - **No user sees both sides.** A seller never opens the dealership UI, so the
   interim lime/green split is a design-system inconsistency, not a user-facing
   one. That is what makes waiting cost nothing — do not restate it as a UX
