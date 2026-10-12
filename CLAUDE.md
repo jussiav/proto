@@ -687,7 +687,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 
 | Initiative | Outcome | Spec |
 |---|---|---|
-| Delivery distance A/B test | **Variant 2 promoted, October 2026** (VWO `105_combi`): +9 % average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders V2 unasked; registry entry, `?delivery=` and `deliveryRangeNoteCurrent` are gone. All three arms are restorable from the git tag `delivery-distance-arms`. **Re-check against the first prod dump that contains the rollout** | `design-specs/delivery-distance.html` |
+| Delivery distance A/B test | **Variant 2 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders V2 unasked; registry entry, `?delivery=` and `deliveryRangeNoteCurrent` are gone. All three arms are restorable from the git tag `delivery-distance-arms`. **Re-check against the first prod dump that contains the rollout** | `design-specs/delivery-distance.html` |
 | Review/No review | **Changes 1–3 shipped, September 2026**; change 4 closed as no change; change 5 still with the PM, Marketing-owned. No arms remain — `price.html` and `contact.html` render the shipped design unasked, and the registry entry is gone | `design-specs/review-no-review.html` |
 
 **One is in a live production A/B test** — Seller intent (VWO `104_combi`),
