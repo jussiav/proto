@@ -681,7 +681,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
 | Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
-| Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; `v5` = `v4` with a car card + status tag; `v6` = `v5` with the offers notification; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
+| Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 
 **Completed initiatives:**
@@ -2125,8 +2125,8 @@ copies of prod's.
   the draft already has `make_id`/`model_id` (or lacks plate or mileage), so
   the screen then only flashes.
 - **The proto holds a fixed 5 s**, and only on the front page's new-draft
-  entry (`?plate=`). Both Huutokaupat routing arms reach it for mileage under
-  280 000 km. Afterwards `plate`/`km` are dropped from the URL, so a reload
+  entry (`?plate=`). Huutokaupat routing's control reaches it up to and
+  including 280 000 km (prod's bug), `v6` only under 280 000 km. Afterwards `plate`/`km` are dropped from the URL, so a reload
   resumes on the step, as prod's persisted machine state does. The step
   underneath is `inert` while the screen is up.
 - **One deliberate divergence:** the logo links to the front page (Jussi's
@@ -2136,192 +2136,74 @@ copies of prod's.
   `tenderRequestDraftForm/index.vue`) on every funnel load. That is a short
   flash, and the proto has no restore to wait for.
 
-## Huutokaupat routing — `v1`
+## Huutokaupat routing — `v6`, decided
 
 Sellers of cars at or over 280 000 km get only the hero form's
-`driven_more_than_max` error today. `v1` drops that error and routes them to a
-full-screen white sheet recommending **Huutokaupat.com**, a separate company,
-landing on `https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa`.
-The business case is in private notes, not in this public repo.
+`driven_more_than_max` error today. **The team chose `v6` on 2026-10-12 and it
+ships as a VWO A/B test, most likely 99 % variant / 1 % control** (VWO cannot
+allocate 100 % to one arm). `v1`–`v5` were deleted from the proto, the bar and
+the spec the same day; their history is in git and their Figma frames stay in
+Jussi's iteration column `7309:656`. The arm id stays `v6` so existing links and
+the Figma frame names keep resolving; `index.html` clears a remembered retired
+arm (`protoVariantSet`). The business case is in private notes, not in this
+public repo.
 
-- **Boundary is prod's**: `>= 280 000` routes, same as the error it replaces.
-  Plate validation and the empty-mileage error are unchanged.
-- **Shell is prod's `OFullscreenLoading`** (`fixed inset-0 z-50 bg-white`, logo
-  `p-4` on top, title `text-lg md:text-xl font-medium`, subtitle
-  `text-base md:text-lg text-slate-500`) with no animation. The logo is taken
-  out of flow so the message centres on the viewport, as asked; prod centres it
-  in the space under the logo.
-- CTA is `AButton` primary `lg` as a plain link; "Takaisin etusivulle" is
-  `AButton` link at `text-sm`. Both are transcriptions, no new component.
-  The logo is prod's `logo-fi.svg` at 108×22, the same as the loading screen,
-  and like there it links to the front page; on this sheet that means closing
-  it exactly as "Takaisin etusivulle" does.
-- **Auto-redirect after 20 s**, same tab. The countdown is
-  in the CTA label, `Siirrytään Huutokaupat.comiin (20 s)`, prod's
-  count-in-the-label pattern (`reply_to_negotiation`); a visible count is what
-  WCAG 2.2.1 needs. The CTA click and the back button stop the timer;
-  back closes the sheet and returns focus to the mileage field. Nothing is
-  written to the funnel store.
-- `index.html?huutokaupat-routing=v1#huutokaupat` opens the sheet on load —
-  the link the spec page will use. A bfcache `pageshow` closes a sheet left
-  open by a redirect; not verifiable in the in-app pane, which has no history.
-- **Order:** title, body, CTA, "Takaisin etusivulle", then the disclaimer in
-  `text-xs`. The body opens by echoing the mileage as typed
-  (`huutokaupat.entered`, "Syötit ajokilometreiksi [km].", the figure
-  `font-medium text-slate-900`), added 2026-10-05 for the mistype case
-  (800 000 for 80 000); back lands focus in the mileage field to fix it.
-  Omitted when the field is empty (the `#huutokaupat` deep link).
-- **`v2` (2026-10-05) is `v1` with the echo moved:** no "Syötit…" sentence;
-  instead `details.html`'s plate badge + mileage row (same markup, same
-  speedometer asset) sits above the title, filled with the normalised plate and
-  the mileage as typed. Hidden when the mileage is empty. Jussi asked for it as
-  "V5"; registered as `v2` because arm ids run sequentially per initiative.
-- **Figma** (2026-10-05), file `sHQk3FUhEZM7EFbYaAcjxX`, page
-  `Huutokaupat routing (AI drafting)` `7311:5`, wrapper `7311:6` with two
-  parts for Jussi to design a richer version from: prod's equipment-step
-  header in the car-not-found state (`7311:9` — "Täytä autosi tiedot",
-  `equipment-info.svg` uploaded as vectors, prod's `ARegistrationNumberBadge` +
-  `AMileage`) and the `v2` screen at 1440×900 (`7311:26`). Hand-built, editable
-  layers, no design-system instances.
-- **The proto's plate badge is NOT prod's**, found while building that frame:
-  prod's `ARegistrationNumberBadge` is an 8px blue bar with `rounded-l-md`
-  beside a `py-1 px-1.5` box at the inherited 16px; the proto's details step
-  (and so `v2`) draws a 6px left border, `px-3 py-1.5`, `text-sm`, `rounded`.
-  Not fixed — flagged to Jussi.
-- **`v3` (2026-10-05) is Jussi's Figma design `7309:654`** (desktop + mobile
-  frames; replaced `7309:579`, which replaced `7309:259`). **Figma gives structure
-  only — every class is `details.html`'s own** (Jussi: the proto uses
-  consistent styling, Figma fonts/spacing are reference): the step's `h1`
-  classes for the title, its subtitle, its plate badge + km row (so the proto
-  badge, not prod's) — the three in one `gap-4` group (16px, the step's own
-  title→subtitle spacing; Jussi moved the plate row into that group in Figma),
-  the group in a `gap-6` column, the `details-cta`
-  Jatka button classes at full width (2026-10-07, Jussi: both widths; it was
-  hugging with `px-8`) + the same arrow asset, the
-  "Muokkaa" link classes for "Takaisin etusivulle" (+ prod's
-  `arrow-left-bold`) but underlined on hover only — the Figma instance was the
-  link's hover state, and Jussi set the default to no underline, and the step's `text-xs leading-[14px] text-slate-600`
-  small text for the disclaimer. From `md` (768, the details step's own
-  breakpoint) `assets/huutokaupat-advisor.png` stands 159px wide beside the
-  actions, which fill the rest of the row (`flex-1`), are centred vertically
-  (`md:justify-center`), keep the back link centred under the button, and overlap it by 16px
-  (`md:-ml-4`) so the hand reaches over the button — the image is stacked on
-  top (`relative z-10`, Jussi's call) with `pointer-events-none` so the
-  covered 16px of the button stays clickable; below `md` the
-  image is hidden and the actions stack. **No automatic redirect and no
-  countdown** (Jussi's call). Image exported from the Figma fill at 418×517 —
-  a repo copy, not a Figma link. Its own block (`#huutokaupat-content-v3`) in
-  the same sheet; shell, back/logo close and focus are shared. The body's second sentence was cut as a repeat of
-  the title.
-- **`v4` is Jussi's simplified layout** (Figma `7328:54`, 2026-10-07), its own
-  block `#huutokaupat-content-v4`, the same at every width: no illustration.
-  Order: plate + mileage row, then the front page form's own error,
-  `hero.mileageMaxError` (prod's `driven_more_than_max` verbatim, no full stop,
-  "Valitettavasti kauttamme voi myydä…", since 2026-10-08) in **`text-red-500`** (the
-  form error's colour, deliberately; 3.8:1, under AA, as the form error already
-  is; pulled to 10px under the plate row with `-mt-1.5` so it reads as about
-  the typed mileage, back to 0 via `[.hidden+&]:mt-0` when that row is hidden), then `huutokaupat.titleV4` "Suosittelemme Huutokaupat.comia" (no
-  "sinulle", unlike `v3`), then a checklist (`check1V4`…`check3V4`, draft: "Ei
-  kilometri- tai ikärajoja", "Huutokaupat.com hoitaa kaupan", "Ei kauppaa, ei
-  kuluja") in `px-2` with no top padding, then the full-width Huutokaupat.com
-  button and the centred back link. The button (Figma `7333:1452`, 2026-10-07)
-  is `h-14` in their dark green `#142C10` with their white logo
-  (`assets/huutokaupat-logo-white.svg`, 26px tall) and prod's `arrow-right`,
-  `gap-3`; no secondary line, since the checklist now says it. Its accessible
-  name is an `sr-only` `huutokaupat.ctaV3`. The checks are prod's plain `check-bold`, 20px, in
-  the text's slate-600 (`text-sm font-medium`), not AutoVex blue, and the second
-  item names Huutokaupat.com, so the list does not read as AutoVex's own offer.
-  **The list sits optically centred between title and button** (2026-10-07):
-  measured baseline to ink, the title's last baseline to the first item is
-  ~28px and the last item's baseline to the button ~29px, at 1100 and 375. The
-  box gaps differ (16 above, 24 below) because the title's descender space is
-  mostly empty; Figma's `pt-2` made the top read 8px heavier, so it is dropped.
-  `HK_OWN` ('v3' | 'v4' | null) drives the shared JS: which block shows, the
-  plate row, focus, the back button, no countdown.
-  **The earlier green button's secondary line (`ctaV4Note`) is gone**, and the
-  64px height went with it; Jussi's green frames (`7323:1066` "Desktop — Variant 5",
-  `7323:981`) stay in Figma as iterations, and `7325:31` is marked superseded.
-- **`v5` (2026-10-08) is `v4` with the top as a car card** (Jussi's brief, no
-  Figma): `#huutokaupat-content-v5`, everything from the title down is `v4`'s.
-  The plate row and red limit line become `#huutokaupat-card-v5`, rendered in
-  `hkRenderCardV5` from the typed plate and km: the offers card's body without
-  photo, name or pills — `buildRegBadge` + a status badge in the card's
-  `av-card__badge` slot, then the mileage as typed (gauge + the details step's
-  `text-base leading-5 text-slate-900`), then a message worded after prod's
-  Swedish `AutoRejectionInfo` screen (2026-10-08, Jussi: that pattern was
-  already accepted for Sweden, and the CEO asked for v4's blunt red line to be
-  softened): `sorryV5` "Pahoittelut!" (16px bold, the card's one bold line),
-  then `limitV5` "Valitettavasti kauttamme voi myydä tällä hetkellä vain alle
-  280 000 km ajettuja autoja." in `text-sm text-slate-600` — prod's form error
-  with "tällä hetkellä" and a full stop (Jussi, 2026-10-08), its own key so
-  `hero.mileageMaxError` stays verbatim prod for control and `v4`. A criterion
-  sentence + one-item list ("Autosi ei täytä autoliikkeidemme kriteeriä:" /
-  "Enintään 280 000 km") was tried and dropped the same day — Jussi: a
-  single-bullet list does not make sense. "Pahoittelut!" is draft Finnish. The tag is `huutokaupat.statusV5` "Yli kilometrirajan" (draft;
-  was "Ei myytävissä AutoVexissä", softened 2026-10-08 at Jussi's ask as too
-  harsh — it now names the reason, not a verdict; the Swedish screen has no
-  tag copy to borrow) as prod's `UiBadge` `red` variant, the offers-page
-  end-of-journey tag
-  `offersRejected` ("Ei hyväksyttyjä tarjouksia": `bg-red-500 border-red-700
-  text-white` + prohibit icon), 3.8:1 as in prod. Card: `bg-white rounded-xl
-  border border-slate-300 p-5` (the front page's returning-user card border,
-  since the sheet is white). With no typed values (the `#huutokaupat` deep
-  link) the card shows the tag and the limit only. **`UiBadge` has no
-  Storybook story and no deprecation note**, and two consumers: `CarCard`
-  (offers page) and `WarmUpCard` (decision page). Its `light_red` variant
-  (outlined) is the softer option if the solid red still reads too hard. **Prod precedent worth
-  knowing:** `tenderform.auto_rejection_info` is a Sweden-only screen for
-  unfit cars that recommends selling on Blocket — the same idea, never built
-  for Finland, and its keys sit untranslated in Swedish in the FI file.
-  **Sketched in Figma** (2026-10-08, Jussi had no other access to it):
-  wrapper `7339:54` on the `Huutokaupat routing (AI drafting)` page —
-  desktop `7339:57` (funnel frame, empty cream sidebar), mobile `7339:80`,
-  notes `7339:100` with English glosses. Built from
-  `steps/AutoRejectionInfo.vue` inside `TenderRequestDraftForm.vue`: Wheelaway
-  `sv/logo.svg` top left, `max-w-md` text column, `h3` "Beklagar!", one
-  sentence, a two-item list ("Max 20 000 mil", "Endast svensksålda bilar") and
-  "Vi rekommenderar dig därför att sälja privat via Blocket". No button, no
-  link, no tag. Logo size and body leading not verified (the SVG has no
-  width/height).
-- **`v6` (2026-10-08) is `v5` with the card swapped for the offers page's
-  red draft notification** (Jussi's ask): `#huutokaupat-content-v6`, mount
-  `#huutokaupat-card-v6`, rendered by `hkRenderNoticeV6` — the
-  `buildDraftNotifHtml` shell from `offers.html` with the rejected-draft
-  colours (`border-2 border-red-400`), no CTA, and no warning icon: the plate
-  sits where it was (left) and the typed mileage in a `UiBadge` `red` tag on
-  the right with `v5`'s prohibit icon (both Jussi's calls, 2026-10-08; a
-  first pass had the octagon icon and a gauge in the tag). No "Yli
-  kilometrirajan" label and no separate mileage line. Title `sorryV5` at the notification's
-  `text-xl font-bold text-slate-800`, body `limitV5` in `text-slate-600`.
-  Everything from the title down is `v4`'s. **Figma:** `7341:126`
-  "✅ Desktop + mobile — Variant 6, offers notification (IN PROTO)", first in
-  the `7309:656` column (notification `7341:127`), cloned from Jussi's own
-  edited `v5` frame `7340:54` (he had already removed its mileage row there,
-  so the clone keeps the rest of his edits). `7338:1483` is a second
-  "Variant 5 (IN PROTO)" frame not made by me; left alone.
-- **`v5` in Figma:** `7340:54` "✅ Desktop + mobile — Variant 5, car card (IN
-  PROTO)" (2026-10-08), cloned from `7328:54` and placed first in Jussi's
-  `7309:656` column, above the `v4` frames; card `7340:105`. Built after the
-  proto, so the proto is the source. The limit sentence uses non-breaking
-  spaces in "280 000 km" so Figma does not split the figure. **Two `v4`
-  frames both claim IN PROTO** (`7328:54` and its copy `7333:1385`); left
-  alone, flagged.
-- **`v4` in Figma:** `7328:54` (desktop, in Jussi's `7309:656`) is the source.
-  There is no separate mobile frame: Jussi's instruction is the same design at
-  both widths. `7328:90` is the superseded checklist-v3 mobile.
-- **Button arrows are prod's `arrow-right` icon inline** (`viewBox 0 0 20 20`,
-  `w-6 h-6`, `currentColor`) on `v3`'s button and the funnel's Jatka
-  (`details.html`, `services.html`), since 2026-10-07. The Figma-exported
-  `b20aa3f2…svg` they used was cropped tight to an 18×15 glyph, so at `w-6 h-6`
-  it filled the whole 24px box, ~40% larger than prod's arrow, whose glyph is
-  14/20 of its box (17×14 at AButton `lg`'s 1.5em). Do not reintroduce it.
-- **Copy** (`huutokaupat.*`): body, CTA and disclaimer are Jussi's wording
-  (2026-10-02); the title and the English are draft.
-- **The spec page flags prod's 280 000 inconsistency**: the front page form and
-  the funnel's first step reject exactly 280 000, the server (`between:0,max`)
-  and `/hinta-arvio` (`> max`) accept it. `v1` follows the front page. The
-  funnel's first step and `/hinta-arvio` show the same error and are out of
-  scope, listed as an open question.
+**Prod's 280 000 bug, and control reproduces it.** `LandingPageForm.vue` shows
+the error once the value is `>= maxMileage`, but its `submit()` ignores client
+errors and posts; the server rule is `between:0,280000`, inclusive. So at
+exactly 280 000 prod shows the error AND opens the funnel; only 280 001+ is
+refused. Control now does exactly that (`kmValid` is `<= MAX_MILEAGE`, the
+error still shows from 280 000). `v6` routes **280 000 and up** with no error,
+which matches the copy's "alle 280 000 km". The funnel's first step and
+`/hinta-arvio` show the same error and are out of scope (open question).
+
+**The `v6` screen** (`#huutokaupat-content-v6` in `#huutokaupat-screen`):
+
+- Shell is prod's `OFullscreenLoading` (`fixed inset-0 z-50 bg-white`, logo
+  `p-4` on top, taken out of flow so the content centres on the viewport). Logo
+  is prod's `logo-fi.svg` 108×22 and closes the sheet like the back link.
+- First the offers page's red draft notification (`buildDraftNotifHtml` shell,
+  rejected colours `border-2 border-red-400`, no CTA, no warning icon),
+  rendered by `hkRenderNoticeV6`: the typed plate (`buildRegBadge`) top left,
+  the typed mileage in a `UiBadge` `red` tag with the prohibit icon top right,
+  then `huutokaupat.sorry` "Pahoittelut!" (`text-xl font-bold
+  text-slate-800`) and `huutokaupat.limit` (prod's form error with "tällä
+  hetkellä" and a full stop, its own key so `hero.mileageMaxError` stays prod's).
+  With no typed values (the `#huutokaupat` deep link) only the apology and limit.
+- Then `huutokaupat.title` "Suosittelemme Huutokaupat.comia" (the details
+  step's `h1` classes), a checklist `check1`–`check3` (prod's `check-bold`,
+  20px, slate-600, `px-2`; the second item names Huutokaupat.com so it is not
+  read as AutoVex's offer), the full-width `h-14` button in Huutokaupat's
+  `#142C10` with `assets/huutokaupat-logo-white.svg` and prod's `arrow-right`
+  (accessible name `huutokaupat.cta`, sr-only), the back link, and the
+  disclaimer in `text-xs`. **No automatic redirect, no countdown.**
+- Back/logo close the sheet, clear `#huutokaupat` and focus the mileage field;
+  a bfcache `pageshow` closes a sheet left open. Nothing is written to the store.
+- `index.html?huutokaupat-routing=v6#huutokaupat` opens the sheet on load.
+- Copy (`huutokaupat.*`, 9 keys) is Jussi's / the team's; English is a working
+  translation.
+
+**Prod precedent:** `steps/AutoRejectionInfo.vue` is a Sweden-only screen for
+unfit cars that recommends Blocket ("Beklagar!" + reasons). The apology wording
+comes from it; it was never built for Finland. Sketched in Figma at `7339:54`.
+
+**Figma:** file `sHQk3FUhEZM7EFbYaAcjxX`, page `Huutokaupat routing (AI
+drafting)` `7311:5`. The decided design is `7341:126`
+"✅ Desktop + mobile — Variant 6, offers notification (IN PROTO)" (notification
+`7341:127`), first in `7309:656`. The other `IN PROTO` frames there (`7340:54`
+v5, `7328:54` and `7333:1385` v4, `7338:1483`) are no longer in the proto;
+rename them before the next sync.
+
+**Two notes that outlive the variants:**
+
+- **Button arrows are prod's `arrow-right` inline** (`viewBox 0 0 20 20`,
+  `w-6 h-6`, `currentColor`) on the funnel's Jatka (`details.html`,
+  `services.html`) and here. The Figma-exported `b20aa3f2…svg` was cropped to
+  its glyph and drew ~40 % larger; do not reintroduce it.
+- **The proto's plate badge on `details.html` is NOT prod's**
+  `ARegistrationNumberBadge` (prod: 8px blue bar + `py-1 px-1.5` at 16px;
+  proto: 6px border, `px-3 py-1.5`, `text-sm`). Not fixed, flagged to Jussi.
+  The `v6` notification uses `buildRegBadge`, which matches prod.
 
 ## Similar cars — `v1` / `v2`
 
