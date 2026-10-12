@@ -55,7 +55,7 @@
  * what it renders unasked:
  *
  *   initiatives: [{
- *     slug:    'delivery',   // the identity; name + spec come from the registry
+ *     slug:    'seller-intent', // the identity; name + spec come from the registry
  *     default: 'v2',         // what this page renders with no param
  *     variants: [ { id: 'control', label: 'Control — current design' }, … ]
  *   }]

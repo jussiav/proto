@@ -88,9 +88,10 @@
      or spec path, and one grep finds every trace of it.
 
      `prodArm` is the arm that matches production today. It is not necessarily
-     what the proto renders by default (the delivery test deliberately defaults
-     to v2), which is exactly why the two are recorded separately: the bar can
-     then tell the reader whether "no selection" means production or not.
+     what the proto renders by default (a page may default to a candidate while
+     it is being demoed), which is exactly why the two are recorded separately:
+     the bar can then tell the reader whether "no selection" means production
+     or not.
 
      Registered here, not per page, for two reasons. An arm param has to be
      remembered the moment it appears in ANY url — otherwise a link to the
@@ -103,12 +104,6 @@
      Add an entry when an initiative is created; remove it when its winning arm
      is promoted. See CLAUDE.md, "Initiatives". */
   var INITIATIVES = [
-    {
-      slug: 'delivery',
-      name: 'Delivery distance A/B test',
-      spec: 'design-specs/delivery-distance.html',
-      prodArm: 'control'
-    },
     {
       slug: 'enhanced-negotiations',
       name: 'Enhanced negotiations',

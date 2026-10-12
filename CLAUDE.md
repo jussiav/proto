@@ -370,7 +370,7 @@ window.protoPage = {
   scenarioParam: 'scenario',        // default
   scenarioExtraParams: ['copy'],    // other params an option may set
   initiatives: [ {
-    slug:    'delivery',   // the identity; name + spec come from the registry
+    slug:    'seller-intent', // the identity; name + spec come from the registry
     default: 'v2',         // what THIS page renders with no param
     variants: [ { id: 'control', label: 'Control — current design' } ]
   } ]
@@ -455,8 +455,8 @@ assuming `/` would break wherever the proto is served under a subpath.
 
 **Scenario vs Variant are separate rows, deliberately.** Scenario = a state of
 the world a real seller could be in. Variant = a design candidate that exists
-only because we are proposing it. `details.html`'s delivery selector is a
-variant, not a scenario.
+only because we are proposing it. `details.html`'s delivery selector was a
+variant, not a scenario, while it was being tested.
 
 ## Initiatives — every variant belongs to one
 
@@ -512,7 +512,7 @@ participant to one arm. A remembered non-default arm is logged to the console on
 load, same escape hatch as test mode; picking `— none —` on the bar forgets it.
 
 **Pages normalise what gets remembered.** A legacy alias or a typo'd arm
-(`?delivery=stepper`, `?enhanced-negotiations=bogus`) would otherwise stick in
+(`?enhanced-negotiations=bogus`) would otherwise stick in
 localStorage and leave the bar's row on `— none —` while the page rendered
 something else. A page maps or clears it with `window.protoVariantSet(name,
 value)` (`null` forgets), and the bar only ever selects a value the initiative
@@ -673,7 +673,6 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 
 | Initiative | Stage | Slug / param | Page default | Prod arm | Pages | Spec |
 |---|---|---|---|---|---|---|
-| Delivery distance A/B test | **In production A/B test** | `delivery` | `control` | `control` | `details.html` | `design-specs/delivery-distance.html` |
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
 | Enhanced negotiations | Live — **changes 1–8 and 17 shipped** (4 + 5 in the 2026-09-24 dump, the rest in 2026-10-07), 9–16 `v1` only | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
@@ -688,14 +687,14 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 
 | Initiative | Outcome | Spec |
 |---|---|---|
+| Delivery distance A/B test | **Variant 2 promoted, October 2026** (VWO `105_combi`): +9 % average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders V2 unasked; registry entry, `?delivery=` and `deliveryRangeNoteCurrent` are gone. All three arms are restorable from the git tag `delivery-distance-arms`. **Re-check against the first prod dump that contains the rollout** | `design-specs/delivery-distance.html` |
 | Review/No review | **Changes 1–3 shipped, September 2026**; change 4 closed as no change; change 5 still with the PM, Marketing-owned. No arms remain — `price.html` and `contact.html` render the shipped design unasked, and the registry entry is gone | `design-specs/review-no-review.html` |
 
-**Two are in a live production A/B test** — Delivery distance (VWO `105_combi`)
-and Seller intent (VWO `104_combi`), both still registered in the 2026-09-07 dump
-— so their arms are being measured against real sellers and neither has a winner
-yet. Seller intent is expected to keep running for at least another week from
-2026-09-07. Their `prodArm` stays `control` and their page default stays
-`control`: that is what the proto renders unasked, which is what a user-test
+**One is in a live production A/B test** — Seller intent (VWO `104_combi`),
+registered since the 2026-09-07 dump — so its arms are being measured against
+real sellers and it has no winner yet. (Delivery distance, VWO `105_combi`, was
+the other until it was decided in October 2026.) Its `prodArm` stays `control`
+and its page default stays `control`: that is what the proto renders unasked, which is what a user-test
 participant must land in, and it is the arm the eventual result gets read
 against. Nothing gets deleted until one is promoted.
 
@@ -705,6 +704,7 @@ to a discarded one dates a comment badly:
 
 | Test | State | Bearing on the proto |
 |---|---|---|
+| `105_combi` delivery distance | **concluded, Variant 2 won** (October 2026) | Promoted in the proto; see Delivery distance under Completed initiatives |
 | `103_combi` hide expected price | **concluded, split** | Promoted for the insights block, discarded for the negotiation modal — see Asking price removal below |
 | `100_combi` verified service history | **discarded** | Constant and component both deleted. Was paused by a hotfix in the 08-31 dump; that is resolved, no owner needed |
 | `93_combi` remove service book upload | **not progressing** — team's call, 2026-09-07 | Still registered with no consumer, so it writes assignments for nobody. Would have collided with Seller file upload; it will not |
@@ -2072,6 +2072,33 @@ has none, since the feature does not exist there.
    promoted, `<month year>`* with a line naming what shipped, and the row above
    moves to a **Completed initiatives** list here. The record survives; the
    switch does not.
+
+**When an A/B test is decided, do all of this in one change** (Delivery distance,
+2026-10-12, is the worked example for a tested initiative; Review/No review is
+the one for a shipped one):
+
+- **Tag first:** `git tag -a <slug>-arms` on the last commit that still has
+  every arm switchable, and push the tag. The losing arms then come back with
+  one checkout instead of an archaeology session. Name the tag on the spec page.
+- **Promote** (stage 3): the winner is the page's only code, and the losing arms'
+  markup, CSS, handlers, copy keys, `initiatives` declaration and registry entry
+  go. A stale `autovex_proto_variant_<slug>` in someone's localStorage is
+  harmless once the slug is unregistered — nothing reads it.
+- **Turn the spec page into the record:** a **Result and decision** section
+  first (the figure, the decision, what is not analysed yet, and the team's
+  explanation **labelled as a hypothesis** until the analysis backs it), the
+  status chip to completed, losing arms kept as static replicas marked
+  *Retired* / *not chosen*, live arm links (`?<slug>=…`) removed, and any
+  deleted copy key shown statically. Result figures DO go on the spec page:
+  the team decided (2026-10-12) that a decided test's figures belong in the
+  record, since the public `jussiav/proto` mirror will be removed after the
+  migration. This does not extend to the fair-offer ratio, OKR targets or the
+  benchmarking figures, which stay out.
+- **Move the row** to Completed initiatives, and mark the VWO test concluded in
+  the experiment table.
+- **Re-check against the next prod dump** that contains the rollout — prod's
+  build of the winner may differ from the proto's arm in copy or detail, and the
+  proto follows prod from then on.
 
 **The bar scrolls sideways.** It carries a dozen controls and a phone is 375px,
 so `#proto-bar` is `overflow-x:auto` with `#proto-bar > *{flex:0 0 auto}` —

@@ -99,16 +99,16 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design change spec · ad creation funnel</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Delivery distance A/B test</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The delivery-distance question in ad creation, tested in three arms: the current design as <b class="text-white">control</b>, a <b class="text-white">minimal-change Variant&nbsp;1</b>, and a <b class="text-white">Variant&nbsp;2</b> that adds steppers and states what the distance does in the auction.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The delivery-distance question in ad creation, tested in three arms: the then-current design as <b class="text-white">control</b>, a <b class="text-white">minimal-change Variant&nbsp;1</b>, and a <b class="text-white">Variant&nbsp;2</b> that adds steppers and states what the distance does in the auction. <b class="text-white">Variant&nbsp;2 won and is being rolled out.</b></p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
-        <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+        <span class="bg-success-100 text-success-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: running as an A/B test in production — awaiting results
+          Status: completed - Variant&nbsp;2 promoted, October 2026
         </span>
-        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Scope: 3 arms — control · V1 · V2</span>
+        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Tested: 3 arms - control · V1 · V2</span>
         <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Data key unchanged: delivery_distance</span>
-        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">August 2026</span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">Spec August 2026 · decided October 2026</span>
       </div>
     </div>
     <!-- Arc — same path as the front page hero. Fill = top of the first content band. -->
@@ -118,6 +118,41 @@
   </header>
 
   <main>
+
+    <!-- Result and decision -->
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Result and decision</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">The test ran in production as VWO <code>105_combi</code>. Variant&nbsp;2 is the winner and is being rolled out to every seller. Everything below this section is kept as the record of what was tested.</p>
+      <div class="grid md:grid-cols-3 gap-5 items-start">
+        <div class="bg-white rounded-lg p-5 border-2 border-success-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Result</p>
+          <p class="font-barlow font-bold text-4xl leading-10 text-success-800">+9&nbsp;%</p>
+          <p class="font-dm text-sm leading-6 text-slate-800 mt-1">Average increase in <b>offer acceptance rate</b> on the decision page, Variant&nbsp;2 against control.</p>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Decision</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1">
+            <li><b>Variant&nbsp;2 ships</b>: no default value, −/+ 50&nbsp;km steppers, and the info line that states what the distance does in the auction.</li>
+            <li>Control and Variant&nbsp;1 are retired.</li>
+            <li>The global label change had already shipped to every arm before the result.</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Not analysed yet</p>
+          <p class="font-dm text-sm leading-6 text-slate-800">The 9&nbsp;% is the average lift. How it breaks down, for example by offer level, has not been analysed.</p>
+        </div>
+      </div>
+      <div class="bg-warning-50 border-2 border-warning-300 rounded-lg p-5 mt-5">
+        <p class="font-dm text-xs font-bold uppercase tracking-widest text-warning-800 mb-3">Why it worked - our hypothesis, not yet a finding</p>
+        <p class="font-dm text-sm leading-6 text-slate-900">Typing a kilometre value makes sellers aware of the distance they are committing to, where control's preselected 200&nbsp;km let them pass the question without noticing it. Sellers who have thought about distance may then favour offers from closer dealerships, and that would show up as more accepted offers. The hypothesis behind the test was that sellers would be better informed about where an offer comes from and how far it is from their postcode. The deeper analysis above is what can confirm or reject this.</p>
+      </div>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">In the prototype</p>
+        <p class="font-dm text-sm leading-6 text-slate-800">The prototype's <a class="text-av-blue underline font-medium" href="../details.html"><i>Autosi tiedot</i> step</a> renders Variant&nbsp;2 for everyone. The Variants switcher and the <code>?delivery=</code> parameter are gone. Control and Variant&nbsp;1 survive on this page as replicas, and in git as the tag <code>delivery-distance-arms</code>: checking it out restores all three switchable arms.</p>
+      </div>
+      </div>
+    </section>
 
     <!-- Test at a glance -->
     <section class="av-band av-band-grey">
@@ -147,18 +182,10 @@
       <div class="bg-warning-50 border-2 border-warning-300 rounded-lg p-5 mt-5">
         <p class="font-dm text-xs font-bold uppercase tracking-widest text-warning-800 mb-3 inline-flex items-center gap-2">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="flex-shrink-0" aria-hidden="true"><path d="M8 1.5 15 14H1L8 1.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M8 6v3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.75" r="0.85" fill="currentColor"/></svg>
-          Global change — outside the test, ships to everyone
+          Global change - outside the test, shipped to everyone
         </p>
         <p class="font-dm text-sm leading-6 text-slate-900"><b>The question label is raised to match the other question labels on the page:</b> <code>text-base font-medium</code> → <code>text-xl font-bold</code>, identical to "Missä autosi sijaitsee?" and "Kesärenkaat". Today this question reads as a minor setting rather than a required question, which is wrong for every seller regardless of which arm they land in. Apply it to <b>control and both variants</b> so it cannot skew the comparison — the arms differ only in the input and the explanation.</p>
       </div>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Try the arms in the prototype</p>
-        <p class="font-dm text-sm leading-6 text-slate-800">Prototype: <a class="text-av-blue underline font-medium" href="https://jussiav.github.io/proto">https://jussiav.github.io/proto</a> → <i>Autosi tiedot</i>. The prototype renders <b>control</b> unasked, like every other initiative — switch arms from the <b>Variants</b> row on the prototype bar at the bottom of the page — the options are grouped under <b>Delivery distance A/B test</b> — or open an arm directly:</p>
-        <p class="font-dm text-sm leading-6 text-slate-800 mt-2">
-          <a class="text-av-blue underline" href="https://jussiav.github.io/proto/details.html?delivery=control">…/details.html?delivery=control</a><br>
-          <a class="text-av-blue underline" href="https://jussiav.github.io/proto/details.html?delivery=v1">…/details.html?delivery=v1</a><br>
-          <a class="text-av-blue underline" href="https://jussiav.github.io/proto/details.html?delivery=v2">…/details.html?delivery=v2</a>
-        </p>
       </div>
       </div>
     </section>
@@ -166,8 +193,8 @@
     <!-- Control -->
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Control — the current design</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Shipped today in <code>EquipmentInfo.vue</code>: a noUiSlider bound to an editable number field, range 50–500 km in 10 km steps, prefilled with <b>200 km</b>. Shown below with the global label fix already applied, since that ships to the control arm too.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Control - the design before the test</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl"><b>Retired.</b> Shipped before the test in <code>EquipmentInfo.vue</code>: a noUiSlider bound to an editable number field, range 50–500 km in 10 km steps, prefilled with <b>200 km</b>. Shown below with the global label fix already applied, since that ships to the control arm too.</p>
       <div class="grid md:grid-cols-2 gap-5">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Control (inert replica)</p>
@@ -198,8 +225,8 @@
     <!-- Variant 1 -->
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 1 — minimal change</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">The cheapest arm: keep the control's field, tip text and layout, and change only what is listed below. The point of this arm is to isolate the effect of removing the default.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 1 - minimal change (not chosen)</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl"><b>Retired.</b> The cheapest arm: keep the control's field, tip text and layout, and change only what is listed below. The point of this arm is to isolate the effect of removing the default.</p>
       <div class="grid md:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">Variant 1 (inert replica)</p>
@@ -230,11 +257,10 @@
     <!-- Variant 2 -->
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 2 — steppers and a stated consequence</h2>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 2 - steppers and a stated consequence (winner)</h2>
       <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Everything in Variant 1, plus two changes: the value can be set by tapping instead of typing, and the one-line tip is replaced by a three-line block that states what the distance does in the auction. Live demo — the copy comes from the app's own <code>translations.js</code>, so the FI/EN toggle in the header switches it.</p>
       <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs">
-        <span class="bg-blue-100 text-blue-800 rounded-full px-3 py-1 font-medium">Recommended arm</span>
-        <span class="bg-slate-200 text-slate-700 rounded-full px-3 py-1 font-medium">?delivery=v2</span>
+        <span class="bg-success-100 text-success-800 rounded-full px-3 py-1 font-medium">Winning arm · promoted</span>
         <span class="bg-slate-200 text-slate-700 rounded-full px-3 py-1 font-medium">No postcode data</span>
         <span class="bg-slate-200 text-slate-700 rounded-full px-3 py-1 font-medium">Largest change of the three arms</span>
       </div>
@@ -277,15 +303,13 @@
             <li>An empty field is not an in-field error. Only the page-level submit check flags it, since the submit button sits far below the fold.</li>
             <li>Stepping or typing clears any page-level error immediately.</li>
           </ul>
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mt-5 mb-2">Copy (FI / EN) — keys <code>details.deliveryRange</code> / <code>deliveryImpact1–3</code> in translations.js</p>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mt-5 mb-2">Copy (FI / EN) — keys <code>details.deliveryRange</code> / <code>deliveryImpactNote</code> in translations.js</p>
           <div class="overflow-x-auto">
             <table class="w-full font-dm text-sm text-left">
               <tbody class="divide-y divide-slate-100 text-slate-800">
                 <tr><td class="py-2 pr-4"><b>Kuinka kauas voit toimittaa auton?</b> (label, all arms)</td><td class="py-2"><b>How far can you deliver the car?</b></td></tr>
                 <tr><td class="py-2 pr-4">50–500 (placeholder, V1 + V2)</td><td class="py-2">50–500</td></tr>
-                <tr><td class="py-2 pr-4"><b>Matkan sisällä:</b> liikkeet voivat tarjota ilman noutoa.</td><td class="py-2"><b>Within your distance:</b> dealers can offer without collection.</td></tr>
-                <tr><td class="py-2 pr-4"><b>Kauempana:</b> liike hakee auton ja huomioi noudon tarjouksessaan.</td><td class="py-2"><b>Further away:</b> the dealer collects the car and factors it into the offer.</td></tr>
-                <tr><td class="py-2 pr-4"><b>Näkyvyys:</b> Autoliikkeet ympäri Suomen näkevät ilmoituksesi.</td><td class="py-2"><b>Visibility:</b> Dealers across Finland see your listing.</td></tr>
+                <tr><td class="py-2 pr-4">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</td><td class="py-2">Within your area, dealers can make an offer without collection. Dealers outside your area include collection in their offer.</td></tr>
               </tbody>
             </table>
           </div>
@@ -414,7 +438,7 @@
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Copy (FI / EN)</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Production strings live in the app's translation files; the keys below are the prototype's <code>details.*</code> namespace. Rows marked <b>all arms</b> are unchanged from what ships today.</p>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-2xl">Production strings live in the app's translation files; the keys below are the prototype's <code>details.*</code> namespace. Rows marked <b>all arms</b> were unchanged from the design before the test. Rows for control and Variant&nbsp;1 only are kept as the record.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
           <thead>
@@ -426,7 +450,7 @@
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRange</code><br><span class="text-xs text-slate-500">label — all arms</span></td><td class="px-5 py-3">Kuinka kauas voit toimittaa auton?</td><td class="px-5 py-3">How far can you deliver the car?</td></tr>
-            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangeNoteCurrent</code><br><span class="text-xs text-slate-500">tip — control + V1</span></td><td class="px-5 py-3">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</td><td class="px-5 py-3">The distance affects how many dealers can make offers. Dealers offering collection can also bid from outside your area.</td></tr>
+            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangeNoteCurrent</code><br><span class="text-xs text-slate-500">tip — control + V1 · retired, key removed from translations.js</span></td><td class="px-5 py-3">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</td><td class="px-5 py-3">The distance affects how many dealers can make offers. Dealers offering collection can also bid from outside your area.</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangePlaceholder</code><br><span class="text-xs text-slate-500">V1 + V2</span></td><td class="px-5 py-3">50–500</td><td class="px-5 py-3">50–500</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpactNote</code><br><span class="text-xs text-slate-500">V2 info line</span></td><td class="px-5 py-3">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</td><td class="px-5 py-3">Within your area, dealers can make an offer without collection. Dealers outside your area include collection in their offer.</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>err.required</code><br><span class="text-xs text-slate-500">submit, V1 + V2</span></td><td class="px-5 py-3">Pakollinen kenttä.</td><td class="px-5 py-3">Required field.</td></tr>

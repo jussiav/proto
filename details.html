@@ -50,25 +50,9 @@
        definition; must follow the config block above, which it merges into. -->
   <script src="tw-tokens.js"></script>
   <style>
-    /* Control-variant range slider (mirrors the production noUiSlider look) */
-    #delivery-control-slider {
-      -webkit-appearance: none; appearance: none;
-      width: 100%; height: 4px; background: transparent; outline: none; cursor: pointer;
-    }
-    #delivery-control-slider::-webkit-slider-thumb {
-      -webkit-appearance: none; appearance: none;
-      width: 24px; height: 24px; border-radius: 50%; background: #2890FF;
-      border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;
-    }
-    #delivery-control-slider::-moz-range-thumb {
-      width: 24px; height: 24px; border-radius: 50%; background: #2890FF;
-      border: 3px solid white; box-shadow: 0 0 0 2px #2890FF, 0 2px 6px rgba(0,0,0,0.2); cursor: pointer;
-    }
-    /* Delivery km fields — hide native number spinners */
-    #delivery-step-km, #delivery-v1-km, #delivery-control-km { -moz-appearance: textfield; appearance: textfield; }
-    #delivery-step-km::-webkit-outer-spin-button, #delivery-step-km::-webkit-inner-spin-button,
-    #delivery-v1-km::-webkit-outer-spin-button, #delivery-v1-km::-webkit-inner-spin-button,
-    #delivery-control-km::-webkit-outer-spin-button, #delivery-control-km::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+    /* Delivery km field — hide native number spinners */
+    #delivery-step-km { -moz-appearance: textfield; appearance: textfield; }
+    #delivery-step-km::-webkit-outer-spin-button, #delivery-step-km::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     /* Custom select arrow */
     .select-wrapper select {
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -137,43 +121,6 @@
   <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
-    /* Delivery-distance arm of the "Delivery distance A/B test" initiative,
-       switched via ?delivery=. Read through protoVariant so it behaves like
-       every other initiative arm — remembered across pages, working in test
-       mode — instead of being URL-only. Top-level because both
-       validateAndContinue and the DOMContentLoaded component code need it. */
-    const DELIVERY_VARIANTS = ['control', 'v1', 'v2'];
-    const DELIVERY_VARIANT = (function () {
-      const arm = window.protoVariant('delivery', 'control');
-      /* Normalise what gets remembered, not just what renders: ?delivery=stepper
-         is a legacy link for v2, and anything unrecognised is junk. Left in
-         storage either would keep the bar's row on "— none —" while the page
-         rendered something else. */
-      if (arm === 'stepper') { window.protoVariantSet('delivery', 'v2'); return 'v2'; }
-      if (!DELIVERY_VARIANTS.includes(arm)) { window.protoVariantSet('delivery', null); return 'control'; }
-      return arm;
-    })();
-
-    /* The delivery selector is a design CANDIDATE, not a state of the world, so
-       it goes on the bar's variant row — and that row is labelled with the
-       initiative that proposes it, so these arms are never a floating
-       "Variant 1/2" with nothing to trace them back to. */
-    window.protoPage = {
-      initiatives: [
-        {
-          slug:    'delivery',        // name + spec live in proto-mode's registry
-          /* Control, so the proto renders production with no param — the same
-             rule every other initiative follows. The arms stay one click away. */
-          default: 'control',
-          variants: [
-            { id: 'control', label: 'Control — current design' },
-            { id: 'v1',      label: 'Variant 1 — no slider, no default' },
-            { id: 'v2',      label: 'Variant 2 — ±50 km steppers' }
-          ]
-        }
-      ]
-    };
-
     const carModels = {
       'Audi':          ['A1','A3','A4','A5','A6','A7','A8','e-tron','Q2','Q3','Q5','Q7','Q8','TT','RS3','RS6','S3','S5','SQ5','etron GT'],
       'BMW':           ['1 Series','2 Series','3 Series','4 Series','5 Series','7 Series','8 Series','X1','X2','X3','X4','X5','X6','X7','iX','iX3','M3','M5','Z4','i4'],
@@ -313,10 +260,8 @@
       // Validate radio groups (vaihteisto, kesarenkaat, kesavanteet, talvirenkaat, talvivanteet, avaimet)
       const radioGroups = [
         { name: 'vaihteisto',   containerId: 'vaihteisto-options',   val: d.vaihteisto },
-        // Every arm is a single km input rather than a choice, so they all take
-        // the standard required-field message.
-        { name: 'toimitus', val: d.deliveryRange,
-          containerId: { control: 'delivery-variant-control', v1: 'delivery-variant-v1', v2: 'delivery-variant-stepper' }[DELIVERY_VARIANT],
+        // A km input rather than a choice, so it takes the standard required-field message.
+        { name: 'toimitus', val: d.deliveryRange, containerId: 'delivery-variant-stepper',
           msgKey: 'err.required' },
         { name: 'kesarenkaat',  containerId: 'kesarenkaat-options',  val: d.kesarenkaat },
         // Rims groups are skipped entirely when that season's tyres are "Ei ole" — the question
@@ -416,11 +361,8 @@
       }
       brandSel.addEventListener('change', updateModels);
 
-      // Toimitusmatka — A/B arms, switched via ?delivery= (see DELIVERY_VARIANT):
-      //   control = current production design (slider + km field, default 200)
-      //   v1      = control minus slider, minus default; range as placeholder
-      //   v2      = ±50 km steppers + fixed impact block
-      const deliveryVariant = DELIVERY_VARIANT;
+      // Toimitusmatka: ±50 km steppers + fixed impact block. No default value, so the
+      // seller has to enter a distance (see design-specs/delivery-distance.html).
       const deliveryStepperWrap  = document.getElementById('delivery-variant-stepper');
       const deliveryStepInput    = document.getElementById('delivery-step-km');
       const deliveryStepMsg      = document.getElementById('delivery-step-msg');
@@ -428,50 +370,22 @@
       // vue-tests/dist/delivery-stepper.js. This page still owns the value; the
       // bridge only forwards clicks in and disabled state out.
       const deliveryStepper      = window.AVDeliveryStepper || null;
-      const deliveryControlWrap  = document.getElementById('delivery-variant-control');
-      const deliveryControlSlider= document.getElementById('delivery-control-slider');
-      const deliveryControlFill  = document.getElementById('delivery-control-fill');
-      const deliveryControlInput = document.getElementById('delivery-control-km');
-      const deliveryV1Wrap       = document.getElementById('delivery-variant-v1');
-      const deliveryV1Input      = document.getElementById('delivery-v1-km');
-      const deliveryV1Msg        = document.getElementById('delivery-v1-msg');
-      const DELIVERY_CONTROL_DEFAULT = 200; // production default (EquipmentInfo.vue)
       let deliveryStepValue = null;
-      let deliveryV1Value = null;
-
-      (function showActiveDeliveryVariant() {
-        const wraps = { control: deliveryControlWrap, v1: deliveryV1Wrap, v2: deliveryStepperWrap };
-        Object.entries(wraps).forEach(([name, el]) => {
-          const active = name === deliveryVariant;
-          el.classList.toggle('hidden', !active);
-          el.classList.toggle('flex', active);
-        });
-      })();
 
       function clampDeliveryKm(v) { v = Math.round(v / 10) * 10; return Math.max(50, Math.min(500, v)); }
 
       // Clear the page-level required error from validateAndContinue, if present
       function clearDeliveryGroupErr() {
         document.getElementById('err-toimitus')?.remove();
-        const wrap = { control: deliveryControlWrap, v1: deliveryV1Wrap, v2: deliveryStepperWrap }[deliveryVariant];
-        wrap.style.outline = '';
-        wrap.style.outlineOffset = '';
-        wrap.style.borderRadius = '';
+        deliveryStepperWrap.style.outline = '';
+        deliveryStepperWrap.style.outlineOffset = '';
+        deliveryStepperWrap.style.borderRadius = '';
       }
 
       function getDeliveryVal() {
-        if (deliveryVariant === 'control') {
-          const n = Number(deliveryControlInput.value);
-          return isNaN(n) || deliveryControlInput.value === '' ? '' : String(n);
-        }
-        if (deliveryVariant === 'v1') {
-          return deliveryV1Value === null ? '' : String(deliveryV1Value);
-        }
-        // v2 — the three arms are exhaustive
         return deliveryStepValue === null ? '' : String(deliveryStepValue);
       }
 
-      // ── Stepper variant handlers (exact concept 8 behavior) ──
       function deliveryStepShowFixed() { deliveryStepMsg.textContent = t('details.deliveryMsgFixed'); deliveryStepMsg.style.display = ''; }
       function deliveryStepHideMsg() { deliveryStepMsg.textContent = ''; deliveryStepMsg.style.display = 'none'; }
       function deliveryStepPaint() {
@@ -510,53 +424,6 @@
         saveDetails();
       });
       deliveryStepPaint();
-
-      // ── Control variant: slider + km field, kept in sync both ways (production behavior) ──
-      function deliveryControlPaintFill() {
-        const min = Number(deliveryControlSlider.min), max = Number(deliveryControlSlider.max);
-        const val = Number(deliveryControlSlider.value);
-        deliveryControlFill.style.width = ((val - min) / (max - min)) * 100 + '%';
-      }
-      deliveryControlSlider.addEventListener('input', () => {
-        deliveryControlInput.value = deliveryControlSlider.value;
-        deliveryControlPaintFill();
-        clearDeliveryGroupErr();
-        saveDetails();
-      });
-      deliveryControlInput.addEventListener('input', () => { clearDeliveryGroupErr(); saveDetails(); });
-      deliveryControlInput.addEventListener('blur', () => {
-        const raw = Number(deliveryControlInput.value);
-        const fixed = clampDeliveryKm(deliveryControlInput.value === '' || isNaN(raw) ? DELIVERY_CONTROL_DEFAULT : raw);
-        deliveryControlInput.value = fixed;
-        deliveryControlSlider.value = fixed;
-        deliveryControlPaintFill();
-        saveDetails();
-      });
-
-      // ── Variant 1: plain km field, no slider, no default ──
-      function deliveryV1HideMsg() { deliveryV1Msg.textContent = ''; deliveryV1Msg.style.display = 'none'; }
-      deliveryV1Input.addEventListener('input', () => {
-        if (deliveryV1Input.value === '') { deliveryV1Value = null; deliveryV1HideMsg(); saveDetails(); return; }
-        const raw = Number(deliveryV1Input.value);
-        deliveryV1Value = isNaN(raw) ? null : raw;
-        deliveryV1HideMsg();
-        clearDeliveryGroupErr();
-        saveDetails();
-      });
-      deliveryV1Input.addEventListener('blur', () => {
-        if (deliveryV1Input.value === '') { deliveryV1Value = null; deliveryV1HideMsg(); saveDetails(); return; }
-        const raw = Number(deliveryV1Input.value);
-        const fixed = clampDeliveryKm(isNaN(raw) ? 50 : raw);
-        if (isNaN(raw) || raw < 50 || raw > 500) {
-          deliveryV1Msg.textContent = t('details.deliveryMsgFixed');
-          deliveryV1Msg.style.display = '';
-        } else deliveryV1HideMsg();
-        deliveryV1Value = fixed;
-        deliveryV1Input.value = fixed;
-        saveDetails();
-      });
-
-      /* Delivery-variant switcher moved to the shared proto bar (proto-bar.js). */
 
       // ── Card display ──
       function updateCard() {
@@ -648,21 +515,10 @@
         if (d.yrityskaytto   !== undefined) document.getElementById('yrityskaytto').checked = d.yrityskaytto;
         if (d.sijainti       !== undefined) document.getElementById('sijainti').value       = d.sijainti;
         const storedKm = d.deliveryRange ? Number(d.deliveryRange) : NaN;
-        if (deliveryVariant === 'control') {
-          // Control keeps production's preselected default when the draft has no value yet
-          const km = isNaN(storedKm) ? DELIVERY_CONTROL_DEFAULT : storedKm;
-          deliveryControlInput.value = km;
-          deliveryControlSlider.value = km;
-          deliveryControlPaintFill();
-        } else if (!isNaN(storedKm)) {
-          if (deliveryVariant === 'v1') {
-            deliveryV1Value = storedKm;
-            deliveryV1Input.value = storedKm;
-          } else if (deliveryVariant === 'v2') {
-            deliveryStepValue = storedKm;
-            deliveryStepInput.value = storedKm;
-            deliveryStepPaint();
-          }
+        if (!isNaN(storedKm)) {
+          deliveryStepValue = storedKm;
+          deliveryStepInput.value = storedKm;
+          deliveryStepPaint();
         }
         if (d.kesarenkaat)   setRadioVal('kesarenkaat',  d.kesarenkaat);
         if (d.kesavanteet)   setRadioVal('kesavanteet',  d.kesavanteet);
@@ -1015,58 +871,9 @@
               class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
           </div>
 
-          <!-- Toimitusmatka — A/B test arms, switched via ?delivery= (control | v1 | v2) -->
+          <!-- Toimitusmatka. Spec and A/B test record: design-specs/delivery-distance.html -->
           <div class="flex flex-col gap-3">
-            <!-- CONTROL: current production design — slider + editable km field, default 200.
-
-                 THE LABEL IS A DELIBERATE DIVERGENCE FROM THE DUMP. prod's
-                 EquipmentInfo.vue renders this question's legend at
-                 `text-base font-medium` while "Missä autosi sijaitsee?" two
-                 fieldsets above it is `text-xl font-bold` — so a required question
-                 reads as a minor setting. The spec's global change raises it to
-                 match, and applies it to control AND both variants so label size
-                 cannot skew the comparison; the arms differ only in the input and
-                 the explanation. It is therefore `text-xl font-bold` in all three
-                 arms here, control included, even though control otherwise
-                 reproduces the dump exactly.
-                 See design-specs/delivery-distance.html, "Global change". -->
-            <div id="delivery-variant-control" class="hidden flex-col gap-3">
-              <label for="delivery-control-km" class="font-dm font-bold text-xl text-slate-900">
-                <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
-              </label>
-              <div class="relative w-full h-4 flex items-center">
-                <div class="absolute w-full h-1 bg-blue-100 rounded-full"></div>
-                <div id="delivery-control-fill" class="absolute h-1 bg-av-blue-500 rounded-full left-0 pointer-events-none"></div>
-                <input id="delivery-control-slider" type="range" min="50" max="500" step="10" value="200" class="relative z-10 w-full" aria-hidden="true" tabindex="-1" />
-              </div>
-              <div class="relative">
-                <input id="delivery-control-km" type="number" inputmode="numeric" min="50" max="500"
-                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 transition-colors" />
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
-              </div>
-              <div class="flex items-start gap-2">
-                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-                <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNoteCurrent">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
-              </div>
-            </div>
-            <!-- VARIANT 1: control minus the slider and minus the default value; range shown as placeholder -->
-            <div id="delivery-variant-v1" class="hidden flex-col gap-3">
-              <label for="delivery-v1-km" class="font-dm font-bold text-xl text-slate-900">
-                <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
-              </label>
-              <div class="relative">
-                <input id="delivery-v1-km" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
-                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors" />
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
-              </div>
-              <p id="delivery-v1-msg" class="av-neutral-msg" style="display:none"></p>
-              <div class="flex items-start gap-2">
-                <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-                <p class="font-dm text-base leading-5 text-slate-700" data-i18n="details.deliveryRangeNoteCurrent">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
-              </div>
-            </div>
-            <!-- VARIANT 2: ±50 km steppers + fixed impact block (default) -->
-            <div id="delivery-variant-stepper" class="hidden flex-col gap-3">
+            <div id="delivery-variant-stepper" class="flex flex-col gap-3">
               <label for="delivery-step-km" class="font-dm font-bold text-xl text-slate-900">
                 <span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
               </label>
@@ -1304,7 +1111,7 @@
 
     </div>
   </div>
-  <!-- Real library components (Vue): delivery-stepper mounts UiButton for the Variant 2 −/+
+  <!-- Real library components (Vue): delivery-stepper mounts UiButton for the delivery −/+
        controls. Must run before DOMContentLoaded so the page's stepper logic finds the bridge.
        Rebuild with `npm run build` in vue-tests/. -->
   <!-- Tailwind Play CDN safelist. The CDN only generates CSS for classes present at first
