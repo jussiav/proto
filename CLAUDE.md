@@ -672,7 +672,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | Live — 2 changes in `v1`; `v2` shows the typed plate + mileage instead of a sentence; `v3` illustrated, no redirect; `v4` no illustration, limit in red, checklist; `v5` = `v4` with a car card + status tag; `v6` = `v5` with the offers notification; copy pending approval | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
-| Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
+| Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 
 **Completed initiatives:**
 
@@ -2365,25 +2365,37 @@ data exists.
   were dropped from the mock pool. Jussi will supply real photos later; do not
   generate any. Plates are blurred by a proto overlay (`plate_box`); production
   must blur server-side.
-- **Card typography is tighter than OProductCard's defaults, on purpose**
-  (Jussi, 2026-10-08): title 18/24 bold on ONE line (ellipsis + `title`
-  attribute only past ~22 characters; "Mercedes-Benz A-sarja" fits),
-  specification 14/20 medium clamped to two lines, 4px title→spec, 10px
-  spec→pills. Set in `.sc-title`/`.sc-spec`/`.sc-pills`, since the content slot
-  is ours. Card height 319px with one-line specs, 339px when one wraps (was
-  361). The mock peers include two long Mercedes-Benz names to keep this
-  honest.
+- **Card typography is much smaller than OProductCard's defaults, on purpose**
+  (Jussi, 2026-10-08, then smaller again 2026-10-09): title **14/20 bold** on
+  ONE line (ellipsis + `title` attribute past ~28 characters), specification
+  **12/16 medium** clamped to two lines, 4px title→spec, 10px spec→pills. Set
+  in `.sc-title`/`.sc-spec`/`.sc-pills`, since the content slot is ours.
+  Probed on a 260px card (210px of text): at 16px "Land Rover Range Rover
+  Sport", "Volkswagen Caddy Maxi Life" and "Mercedes-Benz GLC-sarja Coupé" were
+  cut; at 14px only the last (29 characters) is. Card height with one-line
+  specs: v2 311px, v3 331px (361 → 319 → 311 over three passes).
 - **Figma:** file `sHQk3FUhEZM7EFbYaAcjxX`, page `Similar cars (AI drafting)`
   `7334:5`, wrapper `7335:5`. Local component **`Similar car card` `7335:9`**
   (TEXT props Title / Specification / Year / Mileage / Highest offer, BOOLEAN
   Plate blur; photo swapped via the Photo layer's image fill). Frames:
   `7336:203` v1 table desktop, `7336:329` v1 table mobile (mixed models),
-  `7335:30` v2 cards desktop (two lists), `7335:218` v2 cards mobile.
+  `7335:30` v2 cards desktop (two lists), `7335:218` v2 cards mobile. Cards
+  at 311px, title 14/20, spec 12/16 since 2026-10-09. **v3 is not in Figma.**
   Hand-built editable layers, DM Sans + Barlow, mock photos uploaded as image
   fills (hashes `67e4999c…` Corolla, `977b9648…` EQC, `31c062c5…` Focus).
   Keep in step with the proto by hand; the `✅ … — IN PROTO` names claim it.
-- **Open, escalated, not ours to answer:** whether other sellers' photos may be
-  shown at all, even blurred. Privacy/legal review; v2 depends on it.
+- **Cleared 2026-10-09 by Legal, Marketing and Ops** (Jussi): consumer sellers'
+  own car photos may be shown with the plate blurred, and the ACCEPTED offer
+  may be shown. The privacy question is closed.
+- **`v3` (2026-10-09) = `v2`'s cards with the accepted offer**: section heading
+  `similarCars.titleAccepted` "Vastaavia autoja" (draft; set from
+  `renderSimilarCars`, which swaps the h2's `data-i18n`), card label
+  `acceptedOffer` "Hyväksytty tarjous" (prod's `app.offer_accepted_text_to_seller`),
+  figure from `accepted_offer` via the component's `price: 'accepted'`. The
+  label sits ABOVE the amount (`flex-col`): beside a 20px amount it needs
+  ~218px of the 212 a 260px card has, so it wrapped on some cards. Card 20px
+  taller than v2's. Mock `accepted_offer` equals
+  `highest_offer`; figures are invented either way.
 - **World state:** `?similar=same|mixed|few|none` from the bar's **Similar cars
   data** panel ("mixed" = other models inside each list, NOT several seller
   cars). Several seller cars are **Scenarios** under **Several cars**:

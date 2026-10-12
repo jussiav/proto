@@ -266,10 +266,11 @@
       if (['control', 'v1'].indexOf(arm) === -1) { window.protoVariantSet('seller-edits-before-review', null); return false; }
       return arm === 'v1';
     }());
-    /* "Similar cars" (design-specs/similar-cars.html): v1 table, v2 photo cards. */
+    /* "Similar cars" (design-specs/similar-cars.html): v1 table, v2 photo cards
+       with highest offers, v3 photo cards with accepted offers. */
     var SIMILAR_ARM = (function () {
       var arm = window.protoVariant('similar-cars', 'control');
-      if (['control', 'v1', 'v2'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
+      if (['control', 'v1', 'v2', 'v3'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
       return arm;
     }());
     /* World state, not a variant: what the Analytics query would return.
@@ -1010,8 +1011,13 @@
         if (req && SIMILAR_STATES.indexOf(state) !== -1) groups.push({ car: { make: req.make, model: req.model } });
         groups.forEach(function (g) { g.cars = window.SimilarCars.mock(g.car, SIMILAR_DATA); });
       }
+      var titleKey = SIMILAR_ARM === 'v3' ? 'similarCars.titleAccepted' : 'similarCars.title';
+      var titleEl = section.querySelector('[data-i18n^="similarCars.title"]');
+      titleEl.setAttribute('data-i18n', titleKey);
+      titleEl.textContent = t(titleKey);
       var drawn = groups.length > 0 && window.SimilarCars.render(document.getElementById('similar-cars'), {
-        variant: SIMILAR_ARM === 'v2' ? 'cards' : 'table',
+        variant: SIMILAR_ARM === 'v1' ? 'table' : 'cards',
+        price: SIMILAR_ARM === 'v3' ? 'accepted' : 'highest',
         groups: groups
       });
       section.classList.toggle('hidden', !drawn);
@@ -1726,7 +1732,8 @@
           variants: [
             { id: 'control', label: 'Control — no similar cars block' },
             { id: 'v1',      label: 'Variant 1 — table' },
-            { id: 'v2',      label: 'Variant 2 — photo cards' }
+            { id: 'v2',      label: 'Variant 2 — photo cards' },
+            { id: 'v3',      label: 'Variant 3 — photo cards, accepted offers' }
           ]
         }
       ],

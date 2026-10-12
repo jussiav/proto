@@ -64,17 +64,19 @@ window.TRANSLATIONS = {
 
     /* Similar cars (design-specs/similar-cars.html). Prod strings, verbatim:
        colSpec, colYear, colKm (tenderform.*), highestOffer
-       (seller-listings.b2b.cards.auction_ongoing.highest_offer) and loadMore
-       (tenderform view_more). Everything else is draft, not approved, and
+       (seller-listings.b2b.cards.auction_ongoing.highest_offer), acceptedOffer
+       (app.offer_accepted_text_to_seller) and loadMore (tenderform view_more). Everything else is draft, not approved, and
        the English is a working translation: prod has none for these. */
     similarCars: {
       title:        'Vastaavien autojen tarjouksia',
+      titleAccepted:'Vastaavia autoja',
       years:        'vuosimallit {from}–{to}',
       colCar:       'Auto',
       colSpec:      'Mallitarkennus',
       colYear:      'Vuosimalli',
       colKm:        'Ajokilometrit',
       highestOffer: 'Korkein tarjous',
+      acceptedOffer:'Hyväksytty tarjous',
       loadMore:     'Näytä lisää',
       prev:         'Edelliset',
       next:         'Seuraavat',
@@ -733,12 +735,14 @@ window.TRANSLATIONS = {
 
     similarCars: {
       title:        'Offers on similar cars',
+      titleAccepted:'Similar cars',
       years:        'model years {from}–{to}',
       colCar:       'Car',
       colSpec:      'Model specification',
       colYear:      'Model year',
       colKm:        'Mileage',
       highestOffer: 'Highest offer',
+      acceptedOffer:'Accepted offer',
       loadMore:     'Show more',
       prev:         'Previous',
       next:         'Next',

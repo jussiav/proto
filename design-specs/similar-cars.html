@@ -100,7 +100,7 @@
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
           Status: ideation — data definition with Analytics, copy is draft
         </span>
-        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1 table · v2 photo cards</span>
+        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1 table · v2 photo cards · v3 accepted offers</span>
         <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype param: <code>?similar-cars=</code></span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
@@ -117,9 +117,10 @@
       <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">In short</h2>
       <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>One block, two shapes.</b> Variant 1 is a table, Variant 2 a sideways-scrolling row of photo cards. Both show the same data.</li>
+          <li><b>One block, two shapes, two figures.</b> Variant 1 is a table and Variant 2 a sideways-scrolling row of photo cards, both showing each car's highest offer. Variant 3 is Variant 2's cards showing the offer the seller accepted instead.</li>
           <li><b>Shown only while the seller is forming an expectation</b>: ad in review, auction live, offers waiting for a decision or under negotiation. Hidden once the seller has accepted or rejected.</li>
-          <li><b>The figure is always the auction's highest offer</b>, labelled with the product's existing "Korkein tarjous" — never a sale price.</li>
+          <li><b>The figure is labelled with production's own words</b>: "Korkein tarjous" for the auction's highest offer (Variants 1 and 2), "Hyväksytty tarjous" for the accepted offer (Variant 3).</li>
+          <li><b>Cleared by Legal, Marketing and Ops</b> (October 2026): sellers' own car photos may be shown with the registration plate blurred, and the accepted offer may be shown.</li>
           <li><b>One list per car.</b> A seller with several cars sees a list for each car in review or at auction, each under its own make, model and model-year line. Unfinished drafts and decided cars get no list.</li>
           <li><b>Hidden below 3 cars.</b> One or two cars read as a quote for the seller's own car, not as evidence.</li>
           <li><b>What counts as "similar" is open</b> and is Analytics' question. The block is built to work whether the answer is "same model only" or "comparable models".</li>
@@ -172,7 +173,7 @@
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
           <li>Each list opens with the same seller's-car line as Variant 1, with the arrow buttons beside it.</li>
           <li>One card per car: photo, make and model, specification, year and mileage, and the <b>highest offer at the bottom of the card</b>, label left and amount right in large bold.</li>
-          <li><b>Make and model stay on one line</b> (18px), so long names such as "Mercedes-Benz A-sarja" fit a 260px card; only a longer one ends in an ellipsis. The specification is 14px and at most two lines, so every card in a row keeps one height.</li>
+          <li><b>Make and model stay on one line</b> (14px bold): names up to about 28 characters, such as "Land Rover Range Rover Sport", fit a 260px card; only a longer one ends in an ellipsis. The specification is 12px and at most two lines, so every card in a row keeps one height.</li>
           <li><b>The price stays off the photo.</b> These cards are much narrower than the ones dealers browse, so a price tag on the photo hid too much of it. The bottom of the card is the last thing read and stays level across the row.</li>
           <li><b>The card is the design system's product card, unchanged</b> — the same generic card the business seller's listings and the dealership's task list are built on, used through its own slots. The buyer-side and business-seller listing cards are wrappers around it with their own logic; this block does not use those wrappers, so it adds no case for them to support.</li>
           <li><b>The photo is the front three-quarter shot</b> — the first photo the funnel asks for, which the product treats as the main photo.</li>
@@ -184,6 +185,27 @@
       </div>
       <div class="demo-stage max-w-[768px]"><div id="demo-cards"></div></div>
       <p class="font-dm text-sm text-slate-700 mt-4"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=auction-live&similar-cars=v2">Open in the prototype</a></p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <div class="flex flex-wrap gap-2 font-dm text-xs mb-3">
+        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Where: offers page</span>
+        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: any state below</span>
+      </div>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 3 — photo cards, accepted offers</h2>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes from Variant 2</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
+          <li><b>Each card shows the offer the seller accepted</b>, labelled "Hyväksytty tarjous", instead of the auction's highest offer. So the list holds cars that sold through AutoVex.</li>
+          <li><b>The section heading is "Vastaavia autoja"</b> (similar cars), since the cards no longer list offers in general.</li>
+          <li><b>The label sits above the amount.</b> "Hyväksytty tarjous" beside the amount does not fit a 260px card, so on every card the label takes its own line and the amount stays as large as in Variant 2. The card is 20px taller than in Variant 2.</li>
+          <li>Everything else is Variant 2: card, photo, list headings, arrows, "Näytä lisää", and when the block appears.</li>
+        </ul>
+      </div>
+      <div class="demo-stage max-w-[768px]"><div id="demo-cards-accepted"></div></div>
+      <p class="font-dm text-sm text-slate-700 mt-4"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=auction-live&similar-cars=v3">Open in the prototype</a></p>
       </div>
     </section>
 
@@ -263,7 +285,8 @@
             <tr><td class="px-5 py-3"><code>make</code>, <code>model</code></td><td class="px-5 py-3">If all rows share them, the table states them once</td></tr>
             <tr><td class="px-5 py-3"><code>model_specification</code></td><td class="px-5 py-3">Required — the main way a seller tells cars apart</td></tr>
             <tr><td class="px-5 py-3"><code>year</code>, <code>driven</code></td><td class="px-5 py-3">Model year, km</td></tr>
-            <tr><td class="px-5 py-3"><code>highest_offer</code></td><td class="px-5 py-3">The auction's highest offer in euros. Not the accepted price, not a sale price</td></tr>
+            <tr><td class="px-5 py-3"><code>highest_offer</code></td><td class="px-5 py-3">Variants 1 and 2. The auction's highest offer in euros. Not the accepted price, not a sale price</td></tr>
+            <tr><td class="px-5 py-3"><code>accepted_offer</code></td><td class="px-5 py-3">Variant 3. The offer the seller accepted, in euros. The list then contains only cars whose offer was accepted</td></tr>
             <tr><td class="px-5 py-3"><code>image</code></td><td class="px-5 py-3">Variant 2 only. The front three-quarter photo (the funnel's first photo), <b>plate blurred server-side</b> before it reaches the browser</td></tr>
             <tr><td class="px-5 py-3">auction end date</td><td class="px-5 py-3">Not shown today; needed for sorting and a time window</td></tr>
           </tbody>
@@ -291,7 +314,8 @@
             <li><b>How many first, how many per "Näytä lisää"?</b> The prototype uses 5 and 5.</li>
             <li><b>More details?</b> Fuel, transmission or drive could help a seller judge similarity; each one costs a column on a phone.</li>
             <li><b>Show the seller's own car as a reference row</b> at the top, without a price?</li>
-            <li><b>May we show other sellers' photos at all, even with the plate blurred?</b> Variant 2 depends on the answer. Photos can also show a home, a street or a person, and offers on another seller's car are that seller's information. This needs a privacy and legal review before anything ships; this spec takes no position on it.</li>
+            <li><b>Settled — other sellers' photos and offers:</b> Legal, Marketing and Ops cleared showing sellers' own car photos with the registration plate blurred, and showing the accepted offer (October 2026).</li>
+            <li><b>Highest offer or accepted offer?</b> Variants 2 and 3 compare the two figures on the same card.</li>
             <li>All Finnish copy below marked draft needs approval.</li>
           </ul>
         </div>
@@ -364,6 +388,7 @@
     SimilarCars.render(document.getElementById('demo-table-same'),  { variant: 'table', car: SEED, cars: SimilarCars.mock(SEED, 'same') });
     SimilarCars.render(document.getElementById('demo-table-mixed'), { variant: 'table', car: SEED, cars: SimilarCars.mock(SEED, 'mixed') });
     SimilarCars.render(document.getElementById('demo-cards'),       { variant: 'cards', car: SEED, cars: SimilarCars.mock(SEED, 'same') });
+    SimilarCars.render(document.getElementById('demo-cards-accepted'), { variant: 'cards', price: 'accepted', car: SEED, cars: SimilarCars.mock(SEED, 'same') });
     const OTHER = { make: 'Toyota', model: 'Corolla' };
     SimilarCars.render(document.getElementById('demo-table-multi'), { variant: 'table', groups: [
       { car: SEED,  cars: SimilarCars.mock(SEED, 'same') },
@@ -373,10 +398,10 @@
     /* Generated from translations.js so the table is what the prototype renders. */
     (function buildCopyTable() {
       const rows = [
-        ['title', 'Section heading', 'draft'],
+        ['title', 'Section heading, Variants 1–2', 'draft'], ['titleAccepted', 'Section heading, Variant 3', 'draft'],
         ['years', 'Model-year range beside the seller\'s car', 'draft'], ['colCar', 'First column, mixed models', 'draft'],
         ['colSpec', 'First column, one model', 'prod'], ['colYear', 'Column', 'prod'], ['colKm', 'Column', 'prod'],
-        ['highestOffer', 'Column and card row', 'prod'], ['loadMore', 'Button', 'prod'],
+        ['highestOffer', 'Column and card row, Variants 1–2', 'prod'], ['acceptedOffer', 'Card row, Variant 3', 'prod'], ['loadMore', 'Button', 'prod'],
 ['prev', 'Arrow, screen reader only', 'draft'], ['next', 'Arrow, screen reader only', 'draft']
       ];
       document.getElementById('copy-table').innerHTML = rows.map(r =>

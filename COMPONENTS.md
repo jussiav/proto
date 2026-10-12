@@ -394,6 +394,7 @@ so `design-specs/` pages can mount it.
 | `variant` | `'table'` \| `'cards'` | Default `'table'` |
 | `groups` | Array | `[{ car: { make, model }, cars }]`, one list per seller's car, each opened by a "make model · vuosimallit from–to" line. Groups sharing make + model collapse into the first; groups under 3 cars are dropped |
 | `car` + `cars` | Object + Array | Single-group shorthand. `cars`: `{ make, model, model_specification, year, driven, highest_offer, image, plate_box }`, pre-sorted by the caller |
+| `price` | `'highest'` \| `'accepted'` | Which figure each car shows. `'accepted'` reads `accepted_offer`, labels it "Hyväksytty tarjous" and, on cards, puts the label above the amount. Default `'highest'` |
 | `initial` / `step` | Number | Shown first / added per "Näytä lisää". Default 5 / 5 |
 
 `SimilarCars.mock(car, mode)` returns proto data for the seller's car

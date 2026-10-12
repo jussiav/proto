@@ -10,6 +10,7 @@
  *                 seller's car in the order the host lists them; cars sharing a
  *                 make and model collapse into the first one's list
  *   opts.car + opts.cars  shorthand for a single group
+ *   opts.price    'highest' (default) | 'accepted' - which offer each car shows
  *   opts.initial  shown per group before "Näytä lisää" (default 5)
  *   opts.step     added per press (default 5)
  *
@@ -24,6 +25,7 @@
  * @property {number} year
  * @property {number} driven              km
  * @property {number} highest_offer       EUR, the auction's highest offer - never a sale price
+ * @property {number} [accepted_offer]    EUR, the offer the seller accepted; read when opts.price is 'accepted'
  * @property {string|null} image          first exterior photo, plate already blurred
  * @property {{x:number,y:number,w:number,h:number}|null} plate_box
  *           proto only: where the plate sits in the 16:9 frame, as fractions,
@@ -68,11 +70,12 @@
       '.sc-plate{position:absolute;border-radius:2px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(255,255,255,.2);}',
       '.sc-price-amount{font-size:1.25rem;line-height:1.75rem;}',
       /* The card's content slot is ours, so its rhythm is set here rather
-         than taking OProductCard's default space-y-4: title one line at 18px
-         (ellipsis only past ~22 characters), specification at most two lines,
-         so a row of cards stays one height. */
-      '.sc-title{font-size:1.125rem;line-height:1.5rem;}',
-      '.sc-spec{margin-top:4px;font-size:.875rem;line-height:1.25rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
+         than taking OProductCard's default space-y-4: title one line at 14px
+         (about 28 characters before the ellipsis), specification at most two
+         lines at 12px, so long names fit a 260px card and a row of cards
+         stays one height. */
+      '.sc-title{font-size:.875rem;line-height:1.25rem;}',
+      '.sc-spec{margin-top:4px;font-size:.75rem;line-height:1rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}',
       '.sc-pills{margin-top:10px;}',
       '.sc-arrows{display:none;}',
       '@container (min-width: 520px){.sc-arrows{display:flex;}}'
@@ -117,6 +120,13 @@
   /* UiButton secondary, size sm, iconOnly. */
   var BTN_ICON = 'inline-flex items-center justify-center rounded-lg h-8 w-8 bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-default disabled:hover:bg-blue-100';
 
+  function priceLabel(kind) {
+    return kind === 'accepted' ? tr('acceptedOffer', 'Hyväksytty tarjous') : tr('highestOffer', 'Korkein tarjous');
+  }
+  function priceOf(c, kind) {
+    return kind === 'accepted' && c.accepted_offer != null ? c.accepted_offer : c.highest_offer;
+  }
+
   function loadMore(gi, shown, total) {
     if (shown >= total) return '';
     return '<button type="button" data-sc-more="' + gi + '" class="' + BTN_SECONDARY + '">' + esc(tr('loadMore', 'Näytä lisää')) + '</button>';
@@ -141,7 +151,7 @@
   /* Timer.vue's card shell, so the block reads as one of the offers page's
      own white cards; rows take ComissionList.vue's border-b-gray-300 rule,
      the only consumer-side table prod has. */
-  function buildTableGroup(g, gi, shown) {
+  function buildTableGroup(g, gi, shown, kind) {
     var uni = uniformModel(g.cars);
     var firstCol = uni ? tr('colSpec', 'Mallitarkennus') : tr('colCar', 'Auto');
     var t = subjectText(g);
@@ -154,7 +164,7 @@
         '</td>' +
         '<td class="sc-wide text-left text-black whitespace-nowrap">' + esc(c.year) + '</td>' +
         '<td class="sc-wide text-right text-black whitespace-nowrap">' + esc(km(c.driven)) + '</td>' +
-        '<td class="text-right font-bold text-black whitespace-nowrap">' + esc(eur(c.highest_offer)) + '</td>' +
+        '<td class="text-right font-bold text-black whitespace-nowrap">' + esc(eur(priceOf(c, kind))) + '</td>' +
       '</tr>';
     }).join('');
     return '<div class="flex flex-col gap-4" data-sc-group="' + gi + '">' +
@@ -165,7 +175,7 @@
           '<th scope="col" class="text-left font-bold text-black">' + esc(firstCol) + '</th>' +
           '<th scope="col" class="sc-wide text-left font-bold text-black">' + esc(tr('colYear', 'Vuosimalli')) + '</th>' +
           '<th scope="col" class="sc-wide text-right font-bold text-black">' + esc(tr('colKm', 'Ajokilometrit')) + '</th>' +
-          '<th scope="col" class="text-right font-bold text-black">' + esc(tr('highestOffer', 'Korkein tarjous')) + '</th>' +
+          '<th scope="col" class="text-right font-bold text-black">' + esc(priceLabel(kind)) + '</th>' +
         '</tr></thead>' +
         '<tbody>' + rows + '</tbody>' +
       '</table>' +
@@ -173,9 +183,9 @@
     '</div>';
   }
 
-  function buildTable(groups, shown) {
+  function buildTable(groups, shown, kind) {
     return '<div class="sc sc--table bg-white border border-gray-200 shadow-sm rounded-xl p-4 sm:p-5 flex flex-col gap-8">' +
-      groups.map(function (g, gi) { return buildTableGroup(g, gi, shown[gi]); }).join('') +
+      groups.map(function (g, gi) { return buildTableGroup(g, gi, shown[gi], kind); }).join('') +
     '</div>';
   }
 
@@ -187,7 +197,7 @@
      it is the figure the block exists for. Title and subtitle are the card's props;
      CarCard's year and mileage pills fill #status. The plate blur is
      proto-only; production blurs the image before it is served. */
-  function buildCard(c) {
+  function buildCard(c, kind) {
     var media = c.image
       ? '<img class="sc-photo" src="' + esc(/^(https?:|data:|\/)/.test(c.image) ? c.image : ROOT + c.image) + '" alt="" />' +
         (c.plate_box
@@ -201,21 +211,24 @@
       '<div class="sc-media">' + media + '</div>' +
       '<div class="flex-1 flex flex-col p-6">' +
         '<div class="flex flex-col">' +
-          '<p class="sc-title font-body font-bold leading-snug text-slate-800 text-lg truncate" title="' + esc(c.make + ' ' + c.model) + '">' + esc(c.make + ' ' + c.model) + '</p>' +
-          '<p class="sc-spec font-body font-medium leading-tight text-slate-600 text-sm">' + esc(c.model_specification) + '</p>' +
+          '<p class="sc-title font-body font-bold leading-snug text-slate-800 text-sm truncate" title="' + esc(c.make + ' ' + c.model) + '">' + esc(c.make + ' ' + c.model) + '</p>' +
+          '<p class="sc-spec font-body font-medium leading-tight text-slate-600 text-xs">' + esc(c.model_specification) + '</p>' +
           '<div class="sc-pills flex flex-wrap gap-1.5 items-center">' + pill(c.year) + pill(km(c.driven)) + '</div>' +
         '</div>' +
         '<div class="mt-auto pt-4">' +
-          '<div class="flex justify-between items-baseline gap-2 font-dm">' +
-            '<span class="text-sm font-medium text-slate-600">' + esc(tr('highestOffer', 'Korkein tarjous')) + '</span>' +
-            '<span class="sc-price-amount font-bold text-slate-900 whitespace-nowrap">' + esc(eur(c.highest_offer)) + '</span>' +
+          /* "Hyväksytty tarjous" beside a 20px amount needs ~218px of the
+             card's 212, so that label sits above the amount on every card
+             rather than wrapping on some and not others. */
+          '<div class="' + (kind === 'accepted' ? 'flex flex-col' : 'flex justify-between items-baseline gap-2') + ' font-dm">' +
+            '<span class="text-sm font-medium text-slate-600 whitespace-nowrap">' + esc(priceLabel(kind)) + '</span>' +
+            '<span class="sc-price-amount font-bold text-slate-900 whitespace-nowrap">' + esc(eur(priceOf(c, kind))) + '</span>' +
           '</div>' +
         '</div>' +
       '</div>' +
     '</article>';
   }
 
-  function buildCardsGroup(g, gi, shown) {
+  function buildCardsGroup(g, gi, shown, kind) {
     var more = shown < g.cars.length
       ? '<div class="sc-card flex items-center justify-center rounded-2xl border border-slate-200 bg-white">' + loadMore(gi, shown, g.cars.length) + '</div>'
       : '';
@@ -226,13 +239,13 @@
           '<button type="button" data-sc-next class="' + BTN_ICON + '" aria-label="' + esc(tr('next', 'Seuraavat')) + '">' + ICON_CARET_RIGHT + '</button>' +
         '</div>' +
       '</div>' +
-      '<div class="sc-strip" role="list" tabindex="0">' + g.cars.slice(0, shown).map(buildCard).join('') + more + '</div>' +
+      '<div class="sc-strip" role="list" tabindex="0">' + g.cars.slice(0, shown).map(function (c) { return buildCard(c, kind); }).join('') + more + '</div>' +
     '</div>';
   }
 
-  function buildCards(groups, shown) {
+  function buildCards(groups, shown, kind) {
     return '<div class="sc sc--cards flex flex-col gap-8">' +
-      groups.map(function (g, gi) { return buildCardsGroup(g, gi, shown[gi]); }).join('') +
+      groups.map(function (g, gi) { return buildCardsGroup(g, gi, shown[gi], kind); }).join('') +
     '</div>';
   }
 
@@ -242,7 +255,8 @@
     if (!m.groups.length) { m.el.innerHTML = ''; m.syncs = []; return false; }
     var shown = m.groups.map(function (g, gi) { return Math.min(m.shown[gi], g.cars.length); });
     var scrolls = Array.prototype.map.call(m.el.querySelectorAll('.sc-strip'), function (s) { return s.scrollLeft; });
-    m.el.innerHTML = m.opts.variant === 'cards' ? buildCards(m.groups, shown) : buildTable(m.groups, shown);
+    var kind = m.opts.price === 'accepted' ? 'accepted' : 'highest';
+    m.el.innerHTML = m.opts.variant === 'cards' ? buildCards(m.groups, shown, kind) : buildTable(m.groups, shown, kind);
     wire(m, scrolls);
     return true;
   }
@@ -405,7 +419,7 @@
       var p = PHOTOS[i % PHOTOS.length];
       return {
         make: r[0], model: r[1], model_specification: r[2], year: r[3], driven: r[4],
-        highest_offer: r[5], ended_days_ago: r[6],
+        highest_offer: r[5], accepted_offer: r[5], ended_days_ago: r[6],
         image: p.src, plate_box: p.plate
       };
     });
