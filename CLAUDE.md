@@ -2190,9 +2190,9 @@ comes from it; it was never built for Finland. Sketched in Figma at `7339:54`.
 **Figma:** file `sHQk3FUhEZM7EFbYaAcjxX`, page `Huutokaupat routing (AI
 drafting)` `7311:5`. The decided design is `7341:126`
 "✅ Desktop + mobile — Variant 6, offers notification (IN PROTO)" (notification
-`7341:127`), first in `7309:656`. The other `IN PROTO` frames there (`7340:54`
-v5, `7328:54` and `7333:1385` v4, `7338:1483`) are no longer in the proto;
-rename them before the next sync.
+`7341:127`), first in `7309:656`, and is the only frame there that claims
+`IN PROTO`. `7340:54` / `7338:1483` (v5) and `7328:54` / `7333:1385` (v4) were
+renamed `◻︎ Superseded — … (not in proto)` on 2026-10-12.
 
 **Two notes that outlive the variants:**
 
