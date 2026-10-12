@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+(cd vue-tests && npm ci && npm run build)
+rm -rf _site
+rsync -a --filter="merge deploy-filter.txt" ./ _site/
+echo "Built the site into _site/."

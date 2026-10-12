@@ -1,0 +1,20 @@
+# Never served. "- " excludes, "+ " includes.
+- /_site/
+- .*
+- *.md
+- /access-codes.json
+- /deploy-filter.txt
+- /bin/
+- /usertest/
+- /usertest.cjs
+- /usertest-results/
+- /usertest-failure.png
+- /logs/
+- /docs/
+- /screenshots/
+- /prod-codebase/
+- /Prod-codebase/
++ /vue-tests/
++ /vue-tests/dist/***
+- /vue-tests/*
+- node_modules/

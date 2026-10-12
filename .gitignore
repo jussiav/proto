@@ -12,3 +12,4 @@ usertest-failure.png
 # simulated user tests
 usertest/node_modules/
 usertest/.run/
+_site/

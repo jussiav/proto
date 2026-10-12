@@ -8,6 +8,16 @@ All project context lives in `/docs/`. Read the relevant files before making dec
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
+## Access codes and deploys
+
+- The site is served at https://c2b-proto.autovex.fi/. Every visitor needs an access code.
+- Until the new site is verified, push `main` to both `origin` (`alltvex/c2b-proto`) and `https://github.com/jussiav/proto.git`.
+- To make a code, run `node bin/access-code.mjs add "<label>"`, adding `--from YYYY-MM-DD` and `--until YYYY-MM-DD` when the user gives dates. Commit and push `access-codes.json`. Show the user the code and the link the script prints, and tell them the code is not stored anywhere else.
+- To withdraw a code, run `node bin/access-code.mjs remove "<label>"`, then commit and push. `node bin/access-code.mjs list` shows the labels.
+- Never write a code or a code link into any file or commit.
+- `bin/build` builds the site into `_site/` exactly as the deploy does. Files listed in `deploy-filter.txt` are never served; add new private files there.
+- Every push to `main` deploys. A failed deploy leaves the last good version live; the log is in the repo's Actions tab.
+
 **When to use docs:** Any change that is structural (navigation, layout, flow), communicational (copy, labels, error messages), or design-related (hierarchy, patterns, tone). Pure technical fixes (bug fixes, timestamps, config) don't require docs. When in doubt, read.
 
 ## Prototype Build Rules — MANDATORY

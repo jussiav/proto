@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+cd "$(dirname "$0")/.."
+: "${KVS_ARN:?Set KVS_ARN}" "${BUCKET:?Set BUCKET}" "${DISTRIBUTION_ID:?Set DISTRIBUTION_ID}"
+bin/build
+node bin/sync-access-codes.mjs
+aws s3 sync _site/ "s3://${BUCKET}/c2b-proto/" --delete
+aws cloudfront create-invalidation --distribution-id "$DISTRIBUTION_ID" --paths "/*" > /dev/null
+echo "Deployed to https://c2b-proto.autovex.fi/"
