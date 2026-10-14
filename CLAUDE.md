@@ -682,6 +682,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
+| AutoVex exclusive | **Draft** (2026-10-14) — painted-door test, `v1` optional checkbox, `v2` required choice; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html` | `design-specs/autovex-exclusive.html` |
 
 **Completed initiatives:**
 
@@ -2332,6 +2333,68 @@ data exists.
 - **Copy:** `similarCars.*` in `translations.js`. `colSpec`, `colYear`,
   `colKm`, `highestOffer`, `loadMore` are prod; title, years, colCar, prev/next
   are draft. Prod has no English for any of them.
+
+## AutoVex exclusive — `v1` / `v2` (painted door)
+
+Started 2026-10-14. Measures whether sellers would sell ONLY on AutoVex in
+exchange for "better visibility among buyers". **Painted door:** the tick
+confirms nothing, nothing checks it, buyer-side visibility is not built, and
+the choice shows nowhere else in the product. Storage and the visibility
+mechanism are deliberately out of scope for this test.
+
+- **Where:** `contact.html`, `#exclusive-offer`, between the email field and
+  `#contact-consents`, so logged-in sellers (no consents) still see it. Hidden in
+  control by `html[data-exclusive-arm]`, stamped in `<head>`.
+- **Shape (iteration 2, 2026-10-14):** the whole blue block (blue-50 fill,
+  blue-300 border, `rounded-xl p-5`) IS the checkbox's `<label>`: a light_lime
+  UiBadge tag (now "Suosittelemme"), then a 20px checkbox (`.av-checkbox-lg`, gray-500 2px
+  border, hand-written) beside a Barlow bold `text-xl` label that names condition
+  and reward together, description under it. Iteration 1 had a separate headline
+  plus a white option card inside; Jussi: the white card read as an input field
+  and the headline competed with the label. "Uutta" was swapped for "Lisäetu", later "Suosittelemme",
+  because most sellers are new and newness means nothing to them. Lifted out of
+  the consents on purpose: the failure mode is a block nobody sees. Hover and
+  ticked = blue border via `.exclusive-option`, inset shadow for the 2nd pixel.
+- **State:** `contact.autovexExclusive`, written only in `v1` (control keeps the
+  stored value). Unchecked by default, optional, restored on revisit, so an edit
+  can change it.
+- **Copy:** `contact.exclusive*` in `translations.js`, Claude's draft, Jussi
+  approves; no Marketing round for this test. Label pairs condition + reward
+  ("Myyn vain AutoVexissä ja saan paremman näkyvyyden"); promises visibility,
+  never offers ("…sitä useampi voi tehdä siitä tarjouksen").
+- **`v2` (2026-10-14), Jussi's preferred direction:** a REQUIRED choice,
+  `#exclusive-choice`, same position. Reason: an empty checkbox is not a "no",
+  so `v1` cannot read a non-tick; a required choice gives 100 % coverage. Two
+  real `<input type="radio">` cards in the funnel's radio-card style (Barlow
+  medium, new-question convention), selected state by `:has()` CSS, keyboard
+  works. The "no" option first, the exclusive "yes" + tag second,
+  neither preselected. Missing choice → `err.selectionRequired`
+  ("Valinta vaaditaan.") via `setGroupError`, services.html's treatment.
+  State `contact.autovexVisibility` = `standard` | `exclusive`.
+  **Duration, both arms (2026-10-14, Jussi):** "tarjouskilpailun ajan (noin 36
+  tuntia)". The auction is the period, so it starts with the auction and a
+  seller with ads elsewhere is not asked to take them down before choosing;
+  "tarjousten voimassaolon ajan" was tried and dropped because its start was
+  open to reading as "now". The 36 h is prod's own seller copy ("tyypillisesti
+  36 tuntia", emails "noin 36 tunnin ajan") and NOT prod behaviour: fusion ends
+  the auction 3–4 business days after start, the first offer shortens it to
+  +1/+2 business days. Flagged on the spec. The v2 info line was removed: the
+  radio copy must stand alone. **v2 is a yes/no question** (Jussi, 2026-10-14):
+  "Haluatko autollesi lisänäkyvyyttä?" → "Ei, en halua lisänäkyvyyttä" (desc
+  "Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.") / "Kyllä, myyn vain
+  AutoVexissä" (desc "Autoni on myynnissä vain AutoVexissä tarjouskilpailun
+  ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden
+  autoliikkeille."). Both options first person, the seller's own answer.
+  Stored values unchanged. **v1's description is first person**
+  (Jussi): "Myyn autoa vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia),
+  ja ilmoitukseni saa paremman näkyvyyden autoliikkeille."
+  **Standard option says "Ilmoituksesi näkyy autoliikkeille tavalliseen
+  tapaan."** — never "voit myydä myös muualla", which reads as advice to list
+  elsewhere. **Tag is "Suosittelemme"** (both arms): optional but valuable;
+  "Uutta" and "Lisäetu" were dropped. Not done: the five funnel pages'
+  `case 'contact'` completeness check ignores the choice.
+- **Open (on the spec):** telling sellers afterwards that the promise was a
+  test; checking "noin 36 tuntia" against real durations; option order in v2; an in-view event for v1; a quieter arm.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

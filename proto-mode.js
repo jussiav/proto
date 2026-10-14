@@ -161,6 +161,12 @@
       name: 'Similar cars',
       spec: 'design-specs/similar-cars.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'autovex-exclusive',
+      name: 'AutoVex exclusive',
+      spec: 'design-specs/autovex-exclusive.html',
+      prodArm: 'control'
     }
   ];
 

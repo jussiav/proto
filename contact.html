@@ -96,11 +96,58 @@
     .funnel-col > *             { width: 100%; max-width: 28rem; }
     .funnel-col > .funnel-logo  { width: auto; max-width: none; align-self: flex-start; }
     .funnel-col > .funnel-steps { max-width: 32rem; }
+
+    html:not([data-exclusive-arm="v1"]) #exclusive-offer { display: none; }
+    html:not([data-exclusive-arm="v2"]) #exclusive-choice { display: none; }
+    /* v2's options: the funnel's radio card (services/price .radio-btn), driven by
+       a real radio input so the selected state needs no JS and works by keyboard. */
+    .vis-option:has(input:checked) { border-color: #0B6DFF; box-shadow: inset 0 0 0 1px #0B6DFF; }
+    .vis-option:has(input:focus-visible) { outline: 2px solid #0B6DFF; outline-offset: 2px; }
+    .vis-option:has(input:checked) .radio-dot { background: #0B6DFF; border-color: #0B6DFF; }
+    .vis-option:has(input:checked) .radio-inner { display: block; }
+    /* The proto's selected option is border-2 av-blue; an inset shadow draws the
+       second pixel so the block does not shift when it is ticked. */
+    .exclusive-option:hover { border-color: #0B6DFF; }
+    .exclusive-option:has(input:checked) {
+      border-color: #0B6DFF;
+      box-shadow: inset 0 0 0 1px #0B6DFF;
+    }
+    /* 20px with a field-weight border, so the box reads as a checkbox at the
+       headline's size rather than as a 16px consent tick. */
+    .av-checkbox.av-checkbox-lg { width: 20px; height: 20px; border: 2px solid #6B7280; border-radius: 4px; }
+    .av-checkbox.av-checkbox-lg:checked { border-color: #0B6DFF; }
+    .av-checkbox.av-checkbox-lg:checked::after { left: 5px; top: 1px; width: 6px; height: 11px; }
 </style>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script>
+    /* AutoVex exclusive (design-specs/autovex-exclusive.html) is a painted-door
+       test: better visibility in exchange for selling only on AutoVex, to measure
+       how many sellers would take it. v1 is an optional checkbox, v2 a required
+       choice between two visibility options. Nothing downstream reads the answer.
+       Decided in <head> so neither flashes in control. */
+    var EXCLUSIVE_ARM = (function () {
+      var ARMS = ['control', 'v1', 'v2'];
+      var arm = window.protoVariant('autovex-exclusive', 'control');
+      if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('autovex-exclusive', null); return 'control'; }
+      return arm;
+    }());
+    document.documentElement.dataset.exclusiveArm = EXCLUSIVE_ARM;
+
+    window.protoPage = {
+      initiatives: [
+        {
+          slug:    'autovex-exclusive',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no exclusivity option' },
+            { id: 'v1',      label: 'Variant 1 — optional exclusivity checkbox' },
+            { id: 'v2',      label: 'Variant 2 — required visibility choice' }
+          ]
+        }
+      ]
+    };
   </script>
   <script src="proto-mock.js"></script>
   <script src="funnel-guard.js"></script>
@@ -246,6 +293,29 @@
       return target; // caller passes this to scrollAndPulse
     }
 
+    /* services.html's treatment of an unanswered radio group: outline the
+       options, message below, cleared by the next click inside. */
+    function setGroupError(group, msg) {
+      group.style.outline = '2px solid #ef4444';
+      group.style.outlineOffset = '4px';
+      group.style.borderRadius = '8px';
+      const errId = 'err-' + group.id;
+      if (!document.getElementById(errId)) {
+        const err = document.createElement('p');
+        err.id = errId;
+        err.className = 'av-error-msg';
+        err.textContent = msg;
+        group.parentNode.insertBefore(err, group.nextSibling);
+      }
+      group.addEventListener('change', function () {
+        group.style.outline = '';
+        group.style.outlineOffset = '';
+        group.style.borderRadius = '';
+        document.getElementById(errId)?.remove();
+      }, { once: true });
+      return group;
+    }
+
     function validateContact(e) {
       e.preventDefault();
       const nimi    = document.getElementById('koko-nimi');
@@ -267,6 +337,10 @@
       const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(sposti.value.trim());
       if (!loggedIn && !emailOk) {
         const tgt = setFieldError(sposti, sposti.value.trim() ? t('contact.emailInvalidError') : t('contact.emailEmptyError'));
+        if (!firstTarget) firstTarget = tgt;
+      }
+      if (EXCLUSIVE_ARM === 'v2' && !document.querySelector('input[name="autovex-visibility"]:checked')) {
+        const tgt = setGroupError(document.getElementById('exclusive-choice-options'), t('err.selectionRequired'));
         if (!firstTarget) firstTarget = tgt;
       }
       if (!loggedIn && !ehdot.checked) {
@@ -308,12 +382,19 @@
 
     function saveContact() {
       const s = getStore();
+      const prev = s.contact || {};
       s.contact = {
         kokoNimi:     document.getElementById('koko-nimi').value,
         sahkoposti:   document.getElementById('sahkoposti').value,
         puhelin:      document.getElementById('puhelin').value,
         kayttoehdot:  document.getElementById('kayttoehdot').checked,
         markkinointi: document.getElementById('markkinointi').checked,
+        autovexExclusive: EXCLUSIVE_ARM === 'v1'
+          ? document.getElementById('autovex-exclusive').checked
+          : prev.autovexExclusive,
+        autovexVisibility: EXCLUSIVE_ARM === 'v2'
+          ? (document.querySelector('input[name="autovex-visibility"]:checked') || {}).value || null
+          : prev.autovexVisibility,
       };
       setStore(s);
     }
@@ -325,6 +406,11 @@
       if (d.puhelin      !== undefined) document.getElementById('puhelin').value         = d.puhelin;
       if (d.kayttoehdot  !== undefined) document.getElementById('kayttoehdot').checked   = d.kayttoehdot;
       if (d.markkinointi !== undefined) document.getElementById('markkinointi').checked  = d.markkinointi;
+      if (d.autovexExclusive !== undefined) document.getElementById('autovex-exclusive').checked = d.autovexExclusive;
+      if (d.autovexVisibility) {
+        const opt = document.querySelector('input[name="autovex-visibility"][value="' + d.autovexVisibility + '"]');
+        if (opt) opt.checked = true;
+      }
     }
 
     /* Owned here rather than by data-i18n, so the arm survives a language switch.
@@ -366,8 +452,11 @@
       ['koko-nimi','sahkoposti','puhelin'].forEach(id => {
         document.getElementById(id)?.addEventListener('input', saveContact);
       });
-      ['kayttoehdot','markkinointi'].forEach(id => {
+      ['kayttoehdot','markkinointi','autovex-exclusive'].forEach(id => {
         document.getElementById(id)?.addEventListener('change', saveContact);
+      });
+      document.querySelectorAll('input[name="autovex-visibility"]').forEach(el => {
+        el.addEventListener('change', saveContact);
       });
 
       applySubmitLabel();
@@ -467,6 +556,49 @@
             <input id="sahkoposti" type="text" inputmode="email" autocomplete="email" placeholder="Sähköpostiosoitteesi" data-i18n-placeholder="contact.emailPlaceholder"
               class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-av-blue focus:ring-1 focus:ring-av-blue transition-colors" />
           </div>
+
+          <!-- AutoVex exclusive, v1 only. Outside #contact-consents so logged-in
+               sellers see it too. The whole block is the checkbox's label, so the
+               offer and the tick read as one selection. -->
+          <label id="exclusive-offer" class="exclusive-option w-full flex flex-col gap-3 p-5 rounded-xl border border-blue-300 bg-blue-50 cursor-pointer">
+            <span class="self-start inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
+            <span class="flex items-start gap-3">
+              <input id="autovex-exclusive" type="checkbox" class="av-checkbox av-checkbox-lg mt-1" />
+              <span class="flex flex-col gap-2 min-w-0">
+                <span class="font-barlow font-bold text-xl leading-[26px] text-slate-900" data-i18n="contact.exclusiveLabel">Myyn vain AutoVexissä ja saan paremman näkyvyyden</span>
+                <span class="font-dm text-base leading-6 text-slate-700" data-i18n="contact.exclusiveBody">Myyn autoa vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia), ja ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span>
+              </span>
+            </span>
+          </label>
+
+          <!-- AutoVex exclusive, v2 only: the same offer as a required choice, so
+               every seller who submits has answered it. -->
+          <fieldset id="exclusive-choice" class="w-full flex flex-col gap-4">
+            <legend class="flex items-center gap-1 font-dm font-bold text-xl text-slate-900 mb-4">
+              <span data-i18n="contact.visibilityLegend">Haluatko autollesi lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span>
+            </legend>
+            <div id="exclusive-choice-options" class="flex flex-col gap-3.5">
+              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
+                <input type="radio" name="autovex-visibility" value="standard" class="sr-only" />
+                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
+                <span class="flex flex-col gap-1 min-w-0">
+                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">Ei, en halua lisänäkyvyyttä</span>
+                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
+                </span>
+              </label>
+              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
+                <input type="radio" name="autovex-visibility" value="exclusive" class="sr-only" />
+                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
+                <span class="flex flex-col gap-1 min-w-0">
+                  <span class="flex flex-wrap items-center gap-2">
+                    <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityExclusive">Kyllä, myyn vain AutoVexissä</span>
+                    <span class="inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
+                  </span>
+                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityExclusiveDesc">Autoni on myynnissä vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
 
           <!-- Checkboxes -->
           <div id="contact-consents" class="flex flex-col gap-3.5 w-full">
