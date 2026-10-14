@@ -2385,9 +2385,12 @@ mechanism are deliberately out of scope for this test.
   AutoVexissä" (desc "Autoni on myynnissä vain AutoVexissä tarjouskilpailun
   ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden
   autoliikkeille."). Both options first person, the seller's own answer.
-  Stored values unchanged. **v1's description is first person**
-  (Jussi): "Myyn autoa vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia),
-  ja ilmoitukseni saa paremman näkyvyyden autoliikkeille."
+  Stored values unchanged. **v1's description adds only what its label does not say** (Jussi: no
+  duplicated copy): "Sitoudun tähän vain tarjouskilpailun ajaksi (noin 36
+  tuntia). Sinä aikana useampi autoliike näkee autoni ja voi tehdä siitä
+  tarjouksen." The time limit must attach to the COMMITMENT: "Koskee vain
+  tarjouskilpailun aikaa" was dropped because it read as only the visibility
+  being limited, i.e. a permanent commitment for 36 h of visibility.
   **Standard option says "Ilmoituksesi näkyy autoliikkeille tavalliseen
   tapaan."** — never "voit myydä myös muualla", which reads as advice to list
   elsewhere. **Tag is "Suosittelemme"** (both arms): optional but valuable;

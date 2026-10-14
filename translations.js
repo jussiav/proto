@@ -639,7 +639,7 @@ window.TRANSLATIONS = {
       /* AutoVex exclusive, v1. Draft copy, not approved. */
       exclusiveBadge:     'Suosittelemme',
       exclusiveLabel:     'Myyn vain AutoVexissä ja saan paremman näkyvyyden',
-      exclusiveBody:      'Myyn autoa vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia), ja ilmoitukseni saa paremman näkyvyyden autoliikkeille.',
+      exclusiveBody:      'Sitoudun tähän vain tarjouskilpailun ajaksi (noin 36 tuntia). Sinä aikana useampi autoliike näkee autoni ja voi tehdä siitä tarjouksen.',
       /* v2. Draft copy, not approved. */
       visibilityLegend:        'Haluatko autollesi lisänäkyvyyttä?',
       visibilityStandard:      'Ei, en halua lisänäkyvyyttä',
@@ -1189,7 +1189,7 @@ window.TRANSLATIONS = {
       /* AutoVex exclusive, v1. Working translation of draft copy. */
       exclusiveBadge:    'Recommended',
       exclusiveLabel:    'I\'ll sell only on AutoVex and get better visibility',
-      exclusiveBody:     'I\'ll sell the car only on AutoVex during the auction (about 36 hours), and my listing gets better visibility with dealerships.',
+      exclusiveBody:     'I commit to this only for the auction (about 36 hours). During that time more dealerships see my car and can make an offer on it.',
       visibilityLegend:        'Do you want extra visibility for your car?',
       visibilityStandard:      'No, I don\'t want extra visibility',
       visibilityStandardDesc:  'My listing is shown to dealerships as usual.',
