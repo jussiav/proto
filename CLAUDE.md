@@ -2422,9 +2422,21 @@ our addition (sellers do not mention it; paper-book photos strengthen a listing)
   prod's (5-photo minimum, draft saved per `skip_modal`, the service step's
   questions).
 - **Icon:** `ContextHelp`'s own fallback trigger names `info-circle`, which is
-  not in prod's sprite, so the variant uses `ph-info`. On the spec as a question.
-- **Open (on the spec):** front page instead of/in addition to details; the
-  icon; EV battery report.
+  not in prod's sprite, so the variant uses `ph-info`.
+- **The spec page is a build brief for an AI tool** (2026-10-15, Jussi): a dev
+  or PM hands it to Claude Code to build the VWO test, so it carries only what
+  to build: scope, a preview that RUNS the build snippet, where it goes in
+  prod's DOM, copy, the snippet itself, tracking, a "Do not" list and
+  acceptance criteria. No why, no change log, no open questions, no ideas, and
+  no alternatives, since any of them can steer the build. Prod hooks it relies
+  on: `img.equipment-info-image` (only the C2B details step renders it),
+  `h2[data-testid="page-title"]`'s wrapper as the insertion point (that testid
+  is on every step), URL `/tarjouspyynto` excluding `-b2b`, Finnish only (prod
+  has no English for `equipment_info`). Ids/hooks in the snippet are `av-*`.
+  **Re-generate the snippet when the copy changes**: it inlines `adPrep.*`.
+- **Parked ideas (not on the spec on purpose):** the same panel on the front
+  page for sellers not ready to start; an EV battery report item once
+  documents can be attached.
 
 ### Photo tips on the photos step = prod's `ContextHelp` (2026-10-15)
 

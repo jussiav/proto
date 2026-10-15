@@ -69,9 +69,10 @@
     .av-gloss { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.6; color: #64748B; margin: 0.25rem 0 0; }
     .av-ins { color: #3F6212; background: #ECFCCB; font-weight: 700; border-radius: 2px; padding: 0 2px; }
 
-    /* Prod gives h2 the display family as an element rule (tw-tokens.js in the
-       proto), which this page does not load. */
-    #ad-prep h2 { font-family: Barlow, ui-sans-serif, system-ui, sans-serif; }
+    /* Prod styles h2 as an element (Barlow); this page does not load those
+       rules, so the preview restates the family. */
+    #av-ad-prep h2 { font-family: Barlow, ui-sans-serif, system-ui, sans-serif; }
+    .av-code { background: #0f172a; color: #e2e8f0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.6; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; white-space: pre; margin: 0; }
   </style>
 </head>
 <body class="font-body text-slate-900" style="background:#f5f5f5">
@@ -81,14 +82,14 @@
       <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
            class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
       <div class="flex flex-col gap-4">
-        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; details step</p>
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; details step &middot; VWO front-end test</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Informed ad creation</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Sellers tell us they would have liked to know what the ad asks for before they started, the photos above all. A collapsed help panel on the first step, the same one the photos step uses for its photo tips, lets careful sellers prepare, without slowing down everyone who just starts.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">One collapsed help panel on the ad funnel's details step that tells sellers what the ad will ask for, so they can prepare. Built as a front-end A/B test in VWO.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: first draft &middot; 1 variant &middot; copy is a draft
+          Status: ready to build &middot; copy pending final approval
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
@@ -102,143 +103,250 @@
 
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Why</h2>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Sellers ask for it in the funnel feedback.</b> They would have liked to know before starting which photos the ad needs. Today they find out on the photos step, the third of five, often away from the car.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>The service book is the other thing worth having at hand.</b> Sellers do not mention it, but for a car with a paper service book, photos of the service entries are one of the strongest additions to a listing.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Likely a front-end A/B test first.</b> It adds one panel to one step and stores nothing, so it can run as a front-end test in VWO to measure whether it is worth building properly.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl"><b>It must not become a gate.</b> Most sellers should simply start, so the checklist is collapsed behind one link, and its first sentence says they can start right away.</p>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">What to build</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>A VWO front-end test with two arms.</b> Control: the page as it is. Variant: the panel below is injected. No backend, Vue or stylesheet changes.</li>
+        <li><b>One page, one step:</b> the C2B ad funnel's first step, titled &ldquo;Löysimme autosi tiedot!&rdquo;, or &ldquo;Täytä autosi tiedot&rdquo; when the car's details were not found. Show the panel under both titles.</li>
+        <li><b>One element:</b> a link that expands an inline panel, closed by default. It copies the photo tips (&ldquo;Vinkkimme parhaisiin kuviin&rdquo;) on the photos step: same classes and same animation, with an info icon instead of the camera and its own copy.</li>
+        <li><b>Nothing is stored and nothing else changes.</b> No other step, field, validation or button is touched.</li>
+        <li><b>The build code below is the source of truth.</b> Use it as written; the preview runs exactly that code.</li>
+      </ul>
       </div>
     </section>
 
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
-        <table class="w-full font-dm text-sm text-left">
-          <thead>
-            <tr class="border-b border-slate-200 text-slate-500">
-              <th class="px-4 py-3 font-medium">#</th>
-              <th class="px-4 py-3 font-medium">Change</th>
-              <th class="px-4 py-3 font-medium">Where</th>
-              <th class="px-4 py-3 font-medium">Scenario</th>
-              <th class="px-4 py-3 font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr>
-              <td class="px-4 py-3 font-bold">1</td>
-              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Preparation checklist under the subtitle</a></td>
-              <td class="px-4 py-3">Details step</td>
-              <td class="px-4 py-3 text-slate-600">Every seller, new ad or edit</td>
-              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey" id="c1">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; Preparation checklist under the subtitle</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Details step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
-
-      <div class="grid lg:grid-cols-2 gap-5 items-start">
-        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
-          <ul class="list-disc pl-5 space-y-1">
-            <li><b>A link directly under &ldquo;Tarkista ja täydennä tarkemmat tiedot&hellip;&rdquo;</b>, built exactly like &ldquo;Vinkkimme parhaisiin kuviin&rdquo; on the photos step: the same expandable help component, with the info icon instead of the camera.</li>
-            <li><b>Collapsed by default, every visit.</b> Closed, it costs one line. Nothing else on the step moves.</li>
-            <li><b>Opening it folds out the same grey help panel as the photo tips</b>: a heading, a close &times; in the corner, the content, and a &ldquo;Sulje&rdquo; button at the bottom. Tapping the link again, the &times; or &ldquo;Sulje&rdquo; closes it.</li>
-            <li><b>The heading says they can start right away</b> (&ldquo;Voit aloittaa heti&rdquo;), so the panel reads as optional help rather than a requirement.</li>
-            <li><b>Two items:</b> photos (at least 5, which ones) and service details, which include photographing the entries of a paper service book.</li>
-            <li><b>Its copy is its own.</b> The photo tips are about photos only; this panel covers the whole ad, so the two share the component and not the wording.</li>
-            <li><b>Nothing is stored or checked.</b> The panel does not change any later step.</li>
-          </ul>
-          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../details.html?informed-ad-creation=v1" target="_blank" rel="noopener">See it in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../details.html?informed-ad-creation=control" target="_blank" rel="noopener">see production</a></p>
-        </div>
-
-        <div class="rounded-lg p-5 border border-slate-200 bg-white">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The block, live (tap the link)</p>
-          <div class="max-w-md flex flex-col gap-4">
-            <div>
-              <p class="font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-i18n="details.title">Löysimme autosi tiedot!</p>
-              <p class="font-dm text-base leading-5 text-black mt-2" data-i18n="details.subtitle">Tarkista ja täydennä tarkemmat tiedot, jotta voimme valmistella ilmoituksesi autoliikkeille.</p>
-            </div>
-            <div id="ad-prep" class="space-y-2" data-context-help>
-              <button type="button" data-ch-trigger aria-controls="ad-prep-panel" class="inline-flex justify-center items-center transition cursor-pointer outline-offset-2 text-sm leading-tight relative bg-transparent border-none p-0 h-auto rounded-none shadow-none hover:underline text-blue-600">
-                <span class="inline-flex items-center justify-center"><svg class="fill-current inline-flex pr-1 transform -translate-x-1" width="1.2em" height="1.2em" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg><span data-i18n="adPrep.toggle">Mitä ilmoitukseen tarvitaan?</span></span>
-              </button>
-              <dialog open id="ad-prep-panel" data-ch-panel hidden class="dialog-inline overflow-hidden p-0 m-0 border-0 bg-transparent w-full">
-                <section class="relative grid text-gray-900 !bg-slate-50 border border-slate-200 p-4 space-y-3 rounded-2xl">
-                  <div class="flex items-start justify-between gap-2">
-                    <div class="flex items-start"><div class="min-w-0 flex-1"><h2 class="text-base font-semibold truncate" data-i18n="adPrep.title">Voit aloittaa heti</h2></div></div>
-                    <button type="button" data-ch-close class="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-black/5" aria-label="Sulje" data-i18n-aria="contextHelp.close">✕</button>
-                  </div>
-                  <div><div class="text-sm text-gray-700">
-                    <p class="mb-4" data-i18n="adPrep.lead">Kysymme tiedot vaihe kerrallaan ja tallennamme luonnoksesi matkan varrella. Jos haluat valmistautua, pidä nämä käsillä:</p>
-                    <div class="font-bold" data-i18n="adPrep.photosTitle">Kuvat</div>
-                    <div class="mb-4" data-i18n="adPrep.photosBody">Vähintään 5 kuvaa: auto joka suunnasta ja sisätilat. Puhelimella otetut kuvat riittävät.</div>
-                    <div class="font-bold" data-i18n="adPrep.serviceTitle">Huoltotiedot</div>
-                    <div data-i18n="adPrep.serviceBody">Viimeisimmän huollon ajankohta ja kilometrilukema sekä tiedot merkittävistä korjauksista ja vioista. Jos autollasi on paperinen huoltokirja, ota kuvat myös huoltomerkinnöistä.</div>
-                  </div></div>
-                  <div><div class="flex gap-2 pt-2 justify-end">
-                    <button type="button" data-ch-close class="inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 leading-tight rounded-lg relative border bg-white text-sm px-5 h-10 border-slate-400 hover:bg-gray-100 active:bg-slate-200 text-slate-700 hover:text-slate-800 active:text-slate-600">
-                      <span class="inline-flex items-center justify-center"><span data-i18n="contextHelp.close">Sulje</span><svg class="fill-current inline-flex pl-1 transform translate-x-1" width="1.2em" height="1.2em" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
-                    </button>
-                  </div></div>
-                </section>
-              </dialog>
-            </div>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">Preview</h2>
+      <div class="grid lg:grid-cols-2 gap-5 items-start"><div class="bg-white rounded-lg border border-slate-200 p-5 "><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Runs the build code below on a copy of the step&rsquo;s title area</p><div class="max-w-md">
+            <form class="w-full max-w-md" onsubmit="return false">
+              <div class="flex flex-col gap-6">
+                <div class="flex flex-col gap-2.5">
+                  <h2 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-testid="page-title">Löysimme autosi tiedot!</h2>
+                  <p class="font-dm text-base mb-0">Tarkista ja täydennä tarkemmat tiedot, jotta voimme valmistella ilmoituksesi autoliikkeille.</p>
+                </div>
+                <div class="pt-2 flex justify-center"><img class="equipment-info-image max-w-[17.5rem]" src="../assets/29d3f580-8fc5-4a3c-ba51-074dffa0efaa.png" alt="" /></div>
+              </div>
+            </form>
           </div>
-          <p class="font-dm text-xs text-slate-500 mt-3">Rendered from the same copy as the prototype, so it cannot drift. On the page it sits in the 448px funnel column: one 18px line closed, about 360px open on desktop and 420px at 375px.</p>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all draft except &ldquo;Sulje&rdquo;</p>
-        <div class="space-y-4"><div><p class="font-dm text-xs text-slate-500 mb-1">Link</p><p class="av-copy"><span class="av-ins">Mitä ilmoitukseen tarvitaan?</span></p><p class="av-gloss">What does the ad need?</p></div><div><p class="font-dm text-xs text-slate-500 mb-1">Panel heading</p><p class="av-copy"><span class="av-ins">Voit aloittaa heti</span></p><p class="av-gloss">You can start right away</p></div><div><p class="font-dm text-xs text-slate-500 mb-1">Lead</p><p class="av-copy"><span class="av-ins">Kysymme tiedot vaihe kerrallaan ja tallennamme luonnoksesi matkan varrella. Jos haluat valmistautua, pidä nämä käsillä:</span></p><p class="av-gloss">We ask for everything one step at a time and save your draft as you go. If you'd like to prepare, keep these at hand:</p></div><div><p class="font-dm text-xs text-slate-500 mb-1">Item 1 &mdash; title + text</p><p class="av-copy"><span class="av-ins">Kuvat<br>Vähintään 5 kuvaa: auto joka suunnasta ja sisätilat. Puhelimella otetut kuvat riittävät.</span></p><p class="av-gloss">Photos<br>At least 5: the car from every side, and the interior. Phone photos are fine.</p></div><div><p class="font-dm text-xs text-slate-500 mb-1">Item 2 &mdash; title + text</p><p class="av-copy"><span class="av-ins">Huoltotiedot<br>Viimeisimmän huollon ajankohta ja kilometrilukema sekä tiedot merkittävistä korjauksista ja vioista. Jos autollasi on paperinen huoltokirja, ota kuvat myös huoltomerkinnöistä.</span></p><p class="av-gloss">Service details<br>When the car was last serviced and its mileage at the time, and any significant repairs or faults. If your car has a paper service book, photograph the service entries too.</p></div><div><p class="font-dm text-xs text-slate-500 mb-1">Close button, existing copy</p><p class="av-copy">Sulje</p><p class="av-gloss">Close</p></div></div>
-        <p class="font-dm text-xs text-slate-500 mt-4">The grey lines are English glosses for reading, not copy. The wording is new, but every fact in it is what the funnel already asks or already tells the seller: the 5-photo minimum, the draft being saved, and the last-service and repairs questions.</p>
-      </div>
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>Control sellers see the details step exactly as today.</li>
-          <li>Variant sellers see the link under the subtitle, collapsed, on every visit.</li>
-          <li>It uses the same expandable help component as the photo tips, with the info icon and its own copy.</li>
-          <li>Closing with the &times; or &ldquo;Sulje&rdquo; returns focus to the link.</li>
-          <li>Opening and closing does not change any field, validation or the Jatka button.</li>
-          <li>Opening it is recorded with the arm, so we can read how many sellers open it.</li>
-        </ul>
-        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> sellers ask to know what the ad needs before they start; telling them on the first step, only if they ask, helps the careful ones without slowing down the rest.</p>
-      </div>
+</div><div class="bg-white rounded-lg border border-slate-200 p-5 "><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">States</p><ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
+            <li><b>Closed (default, every visit):</b> only the link shows, one line under the description.</li>
+            <li><b>Open:</b> the panel folds out under the link and the step's content moves down. About 360px tall on desktop, 420px at 375px wide.</li>
+            <li><b>Closing:</b> the link again, the &#10005; or &ldquo;Sulje&rdquo;. &#10005; and &ldquo;Sulje&rdquo; return keyboard focus to the link.</li>
+          </ul>
+          <p class="font-dm text-sm text-slate-600 mt-4">Compare with the photo tips on the live funnel's photos step: the panel must look and behave the same.</p></div></div>
       </div>
     </section>
 
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What to read from it</h2>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>Open rate:</b> how many sellers on the details step open the checklist.</li>
-        <li><b>Did it cost anything?</b> Details-step completion, variant against control. A list of things to gather could make some sellers leave to come back later, and some never do.</li>
-        <li><b>Did it help?</b> Among sellers who opened it: photo count, the share reaching the 5-photo minimum, the share skipping photos, and service-book photos on cars with a paper book.</li>
-        <li><b>Did the request go away?</b> Mentions of &ldquo;I'd have liked to know beforehand&rdquo; in the funnel feedback, before and after.</li>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">Where it goes</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-5">
+        <li><b>URL:</b> <code>autovex.fi/tarjouspyynto</code> and <code>autovex.fi/tarjouspyynto/&lt;draft id&gt;</code>. Exclude <code>/tarjouspyynto-b2b</code>.</li>
+        <li><b>Step:</b> the funnel is a single-page app, so the URL alone does not identify the step. The details step is the only one that renders <code>img.equipment-info-image</code>; inject only while it is in the DOM.</li>
+        <li><b>Insertion point:</b> directly after the element that wraps <code>h2[data-testid="page-title"]</code> and the description, as its next sibling. <code>data-testid="page-title"</code> is on every step; the image check is what limits it to this one.</li>
+        <li><b>Timing:</b> the step mounts after page load and can re-render. Watch the DOM and insert whenever the step is present and the panel is not; never insert twice.</li>
+      </ul><div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl"><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Production DOM of the details step (EquipmentInfo.vue), trimmed</p><pre class="av-code">&lt;form class="w-full max-w-md"&gt;
+  &lt;div class="flex flex-col gap-6"&gt;
+    &lt;div class="flex flex-col gap-2.5"&gt;                &lt;- title wrapper
+      &lt;h2 class="heading-2 font-bold" data-testid="page-title"&gt;Löysimme autosi tiedot!&lt;/h2&gt;
+      &lt;p class="text-base mb-0"&gt;Tarkista ja täydennä tarkemmat tiedot, …&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;!-- insert #av-ad-prep here --&gt;
+    &lt;div class="pt-2 flex justify-center"&gt;
+      &lt;img class="equipment-info-image …" …&gt;           &lt;- marks the details step
+    &lt;/div&gt;
+    …</pre></div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">Copy</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl"><table class="w-full font-dm text-sm text-left"><tbody class="divide-y divide-slate-100"><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Link</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Mitä ilmoitukseen tarvitaan?</span><div class="av-gloss">What does the ad need?</div></td></tr><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Panel heading</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Voit aloittaa heti</span><div class="av-gloss">You can start right away</div></td></tr><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Lead</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Kysymme tiedot vaihe kerrallaan ja tallennamme luonnoksesi matkan varrella. Jos haluat valmistautua, pidä nämä käsillä:</span><div class="av-gloss">We ask for everything one step at a time and save your draft as you go. If you'd like to prepare, keep these at hand:</div></td></tr><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Item 1 title</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Kuvat</span><div class="av-gloss">Photos</div></td></tr><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Item 1 text</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Vähintään 5 kuvaa: auto joka suunnasta ja sisätilat. Puhelimella otetut kuvat riittävät.</span><div class="av-gloss">At least 5: the car from every side, and the interior. Phone photos are fine.</div></td></tr><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Item 2 title</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Huoltotiedot</span><div class="av-gloss">Service details</div></td></tr><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Item 2 text</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Viimeisimmän huollon ajankohta ja kilometrilukema sekä tiedot merkittävistä korjauksista ja vioista. Jos autollasi on paperinen huoltokirja, ota kuvat myös huoltomerkinnöistä.</span><div class="av-gloss">When the car was last serviced and its mileage at the time, and any significant repairs or faults. If your car has a paper service book, photograph the service entries too.</div></td></tr><tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Close button</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Sulje</span><div class="av-gloss">Close</div></td></tr></tbody></table></div><p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">Finnish only, like the rest of this step. The grey lines are English glosses for reading; do not render them. The copy is already in the build code.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="build">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">Build code</h2>
+      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">One snippet for the variant: it adds its CSS, the markup and the behaviour. Every class in the markup is already in the production stylesheet, because the photo tips use them. The icons are inline copies of the production sprite's <code>ph-info</code> and <code>x</code>.</p><pre class="av-code">(function () {
+  var ID = 'av-ad-prep';
+  var DURATION = 300;
+
+  // The photo tips' accordion: max-height + opacity, 300ms ease-in-out.
+  var CSS =
+    '#av-ad-prep-panel{overflow:hidden;max-height:1000px;opacity:1;' +
+    'transition:max-height 300ms ease-in-out,opacity 300ms ease-in-out}' +
+    '#av-ad-prep-panel.av-collapsed{max-height:0;opacity:0}';
+
+  var MARKUP = "&lt;div id=\"av-ad-prep\" class=\"space-y-2\"&gt;\n  &lt;button type=\"button\" id=\"av-ad-prep-trigger\" aria-expanded=\"false\" aria-controls=\"av-ad-prep-panel\" class=\"inline-flex justify-center items-center transition cursor-pointer outline-offset-2 text-sm leading-tight relative bg-transparent border-none p-0 h-auto rounded-none shadow-none hover:underline text-blue-600\"&gt;\n    &lt;span class=\"inline-flex items-center justify-center\"&gt;&lt;svg class=\"fill-current inline-flex pr-1 transform -translate-x-1\" width=\"1.2em\" height=\"1.2em\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"&gt;&lt;path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z\"/&gt;&lt;/svg&gt;Mitä ilmoitukseen tarvitaan?&lt;/span&gt;\n  &lt;/button&gt;\n  &lt;div id=\"av-ad-prep-panel\" hidden&gt;\n    &lt;section class=\"relative grid text-gray-900 !bg-slate-50 border border-slate-200 p-4 space-y-3 rounded-2xl\"&gt;\n      &lt;div class=\"flex items-start justify-between gap-2\"&gt;\n        &lt;div class=\"flex items-start\"&gt;&lt;div class=\"min-w-0 flex-1\"&gt;&lt;h2 class=\"text-base font-semibold truncate\"&gt;Voit aloittaa heti&lt;/h2&gt;&lt;/div&gt;&lt;/div&gt;\n        &lt;button type=\"button\" data-av-close aria-label=\"Sulje\" class=\"ml-2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-black/5\"&gt;✕&lt;/button&gt;\n      &lt;/div&gt;\n      &lt;div class=\"text-sm text-gray-700\"&gt;\n        &lt;p class=\"mb-4\"&gt;Kysymme tiedot vaihe kerrallaan ja tallennamme luonnoksesi matkan varrella. Jos haluat valmistautua, pidä nämä käsillä:&lt;/p&gt;\n        &lt;div class=\"font-bold\"&gt;Kuvat&lt;/div&gt;\n        &lt;div class=\"mb-4\"&gt;Vähintään 5 kuvaa: auto joka suunnasta ja sisätilat. Puhelimella otetut kuvat riittävät.&lt;/div&gt;\n        &lt;div class=\"font-bold\"&gt;Huoltotiedot&lt;/div&gt;\n        &lt;div&gt;Viimeisimmän huollon ajankohta ja kilometrilukema sekä tiedot merkittävistä korjauksista ja vioista. Jos autollasi on paperinen huoltokirja, ota kuvat myös huoltomerkinnöistä.&lt;/div&gt;\n      &lt;/div&gt;\n      &lt;div class=\"flex gap-2 pt-2 justify-end\"&gt;\n        &lt;button type=\"button\" data-av-close class=\"inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 leading-tight rounded-lg relative border bg-white text-sm px-5 h-10 border-slate-400 hover:bg-gray-100 active:bg-slate-200 text-slate-700 hover:text-slate-800 active:text-slate-600\"&gt;\n          &lt;span class=\"inline-flex items-center justify-center\"&gt;Sulje&lt;svg class=\"fill-current inline-flex pl-1 transform translate-x-1\" width=\"1.2em\" height=\"1.2em\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"&gt;&lt;path d=\"M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z\"/&gt;&lt;/svg&gt;&lt;/span&gt;\n        &lt;/button&gt;\n      &lt;/div&gt;\n    &lt;/section&gt;\n  &lt;/div&gt;\n&lt;/div&gt;";
+
+  function mount() {
+    if (document.getElementById(ID)) return;
+    // Only the C2B details step renders this image.
+    if (!document.querySelector('img.equipment-info-image')) return;
+    var title = document.querySelector('h2[data-testid="page-title"]');
+    if (!title || !title.parentElement) return;
+
+    if (!document.getElementById(ID + '-style')) {
+      var style = document.createElement('style');
+      style.id = ID + '-style';
+      style.textContent = CSS;
+      document.head.appendChild(style);
+    }
+    // The title's wrapper holds the title and the description. Inserting after
+    // it puts the panel in the step's own 24px gap.
+    title.parentElement.insertAdjacentHTML('afterend', MARKUP);
+    wire(document.getElementById(ID));
+  }
+
+  function wire(root) {
+    var trigger = root.querySelector('#av-ad-prep-trigger');
+    var panel = root.querySelector('#av-ad-prep-panel');
+    var timer = null;
+
+    function isOpen() { return trigger.getAttribute('aria-expanded') === 'true'; }
+
+    function open() {
+      clearTimeout(timer);
+      panel.hidden = false;
+      panel.classList.add('av-collapsed');
+      void panel.offsetHeight; // paint the collapsed state before animating
+      panel.classList.remove('av-collapsed');
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+
+    function close(returnFocus) {
+      if (!isOpen()) return;
+      panel.classList.add('av-collapsed');
+      trigger.setAttribute('aria-expanded', 'false');
+      timer = setTimeout(function () { panel.hidden = true; }, DURATION);
+      if (returnFocus) trigger.focus();
+    }
+
+    trigger.addEventListener('click', function () { isOpen() ? close(false) : open(); });
+    root.querySelectorAll('[data-av-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () { close(true); });
+    });
+  }
+
+  // The funnel is a single-page app: the step mounts after page load and can
+  // re-render, so mount whenever the step is present and the panel is not.
+  mount();
+  new MutationObserver(mount).observe(document.body, { childList: true, subtree: true });
+}());</pre>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">Tracking</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>Panel opened:</b> VWO click goal on <code>#av-ad-prep-trigger</code>, counted once per visitor. Variant only.</li>
+        <li><b>Details step completed:</b> the visitor reaches the photos step (its title &ldquo;Lisää vielä kuvat&rdquo; shows). Both arms.</li>
+        <li><b>Ad submitted:</b> the funnel's existing submit goal. Both arms.</li>
       </ul>
       </div>
     </section>
 
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>Is the details step early enough?</b> A seller who wants to prepare has already typed their plate and mileage by now. The same block could sit on the front page, under the hero form, for sellers who are not ready to start.</li>
-                <li><b>The icon.</b> The component's own default trigger icon does not exist in the icon set, so this uses the plain info icon. Worth confirming with whoever owns the component.</li>
-        <li><b>Electric cars:</b> a battery health report is worth having at hand too, and it fits once documents can be attached (see Seller file upload).</li>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">Do not</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li>Show it on any other step, on the B2B funnel, or outside the funnel.</li>
+        <li>Open it by default, remember whether it was opened, or store anything.</li>
+        <li>Change the step's title, description or fields.</li>
+        <li>Add classes or styles beyond the snippet's own CSS.</li>
+        <li>Use the photo tips' copy: this panel has its own.</li>
       </ul>
       </div>
     </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-4">Acceptance criteria</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li>Control: the details step is unchanged.</li>
+        <li>Variant: the link sits 24px under the description, under both titles of the step, on desktop and mobile, closed on every visit.</li>
+        <li>The panel matches the photo tips in colour, radius, padding, type and animation.</li>
+        <li>The link reports <code>aria-expanded</code>; &#10005; and &ldquo;Sulje&rdquo; close the panel and return focus to the link.</li>
+        <li>Going to the next step and back shows exactly one panel, closed.</li>
+        <li>No console errors and no horizontal scroll at 360px.</li>
+        <li>The goals above record in VWO.</li>
+      </ul>
+      </div>
+    </section>
+
   </main>
+
+  <script>
+(function () {
+  var ID = 'av-ad-prep';
+  var DURATION = 300;
+
+  // The photo tips' accordion: max-height + opacity, 300ms ease-in-out.
+  var CSS =
+    '#av-ad-prep-panel{overflow:hidden;max-height:1000px;opacity:1;' +
+    'transition:max-height 300ms ease-in-out,opacity 300ms ease-in-out}' +
+    '#av-ad-prep-panel.av-collapsed{max-height:0;opacity:0}';
+
+  var MARKUP = "<div id=\"av-ad-prep\" class=\"space-y-2\">\n  <button type=\"button\" id=\"av-ad-prep-trigger\" aria-expanded=\"false\" aria-controls=\"av-ad-prep-panel\" class=\"inline-flex justify-center items-center transition cursor-pointer outline-offset-2 text-sm leading-tight relative bg-transparent border-none p-0 h-auto rounded-none shadow-none hover:underline text-blue-600\">\n    <span class=\"inline-flex items-center justify-center\"><svg class=\"fill-current inline-flex pr-1 transform -translate-x-1\" width=\"1.2em\" height=\"1.2em\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"><path d=\"M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z\"/></svg>Mitä ilmoitukseen tarvitaan?</span>\n  </button>\n  <div id=\"av-ad-prep-panel\" hidden>\n    <section class=\"relative grid text-gray-900 !bg-slate-50 border border-slate-200 p-4 space-y-3 rounded-2xl\">\n      <div class=\"flex items-start justify-between gap-2\">\n        <div class=\"flex items-start\"><div class=\"min-w-0 flex-1\"><h2 class=\"text-base font-semibold truncate\">Voit aloittaa heti</h2></div></div>\n        <button type=\"button\" data-av-close aria-label=\"Sulje\" class=\"ml-2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-black/5\">✕</button>\n      </div>\n      <div class=\"text-sm text-gray-700\">\n        <p class=\"mb-4\">Kysymme tiedot vaihe kerrallaan ja tallennamme luonnoksesi matkan varrella. Jos haluat valmistautua, pidä nämä käsillä:</p>\n        <div class=\"font-bold\">Kuvat</div>\n        <div class=\"mb-4\">Vähintään 5 kuvaa: auto joka suunnasta ja sisätilat. Puhelimella otetut kuvat riittävät.</div>\n        <div class=\"font-bold\">Huoltotiedot</div>\n        <div>Viimeisimmän huollon ajankohta ja kilometrilukema sekä tiedot merkittävistä korjauksista ja vioista. Jos autollasi on paperinen huoltokirja, ota kuvat myös huoltomerkinnöistä.</div>\n      </div>\n      <div class=\"flex gap-2 pt-2 justify-end\">\n        <button type=\"button\" data-av-close class=\"inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 leading-tight rounded-lg relative border bg-white text-sm px-5 h-10 border-slate-400 hover:bg-gray-100 active:bg-slate-200 text-slate-700 hover:text-slate-800 active:text-slate-600\">\n          <span class=\"inline-flex items-center justify-center\">Sulje<svg class=\"fill-current inline-flex pl-1 transform translate-x-1\" width=\"1.2em\" height=\"1.2em\" viewBox=\"0 0 256 256\" aria-hidden=\"true\"><path d=\"M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z\"/></svg></span>\n        </button>\n      </div>\n    </section>\n  </div>\n</div>";
+
+  function mount() {
+    if (document.getElementById(ID)) return;
+    // Only the C2B details step renders this image.
+    if (!document.querySelector('img.equipment-info-image')) return;
+    var title = document.querySelector('h2[data-testid="page-title"]');
+    if (!title || !title.parentElement) return;
+
+    if (!document.getElementById(ID + '-style')) {
+      var style = document.createElement('style');
+      style.id = ID + '-style';
+      style.textContent = CSS;
+      document.head.appendChild(style);
+    }
+    // The title's wrapper holds the title and the description. Inserting after
+    // it puts the panel in the step's own 24px gap.
+    title.parentElement.insertAdjacentHTML('afterend', MARKUP);
+    wire(document.getElementById(ID));
+  }
+
+  function wire(root) {
+    var trigger = root.querySelector('#av-ad-prep-trigger');
+    var panel = root.querySelector('#av-ad-prep-panel');
+    var timer = null;
+
+    function isOpen() { return trigger.getAttribute('aria-expanded') === 'true'; }
+
+    function open() {
+      clearTimeout(timer);
+      panel.hidden = false;
+      panel.classList.add('av-collapsed');
+      void panel.offsetHeight; // paint the collapsed state before animating
+      panel.classList.remove('av-collapsed');
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+
+    function close(returnFocus) {
+      if (!isOpen()) return;
+      panel.classList.add('av-collapsed');
+      trigger.setAttribute('aria-expanded', 'false');
+      timer = setTimeout(function () { panel.hidden = true; }, DURATION);
+      if (returnFocus) trigger.focus();
+    }
+
+    trigger.addEventListener('click', function () { isOpen() ? close(false) : open(); });
+    root.querySelectorAll('[data-av-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () { close(true); });
+    });
+  }
+
+  // The funnel is a single-page app: the step mounts after page load and can
+  // re-render, so mount whenever the step is present and the panel is not.
+  mount();
+  new MutationObserver(mount).observe(document.body, { childList: true, subtree: true });
+}());
+  </script>
 
   <footer class="bg-av-blue overflow-hidden">
     <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -256,6 +364,5 @@
     </div>
     </div>
   </footer>
-  <script src="../context-help.js"></script>
 </body>
 </html>
