@@ -167,6 +167,12 @@
       name: 'AutoVex exclusive',
       spec: 'design-specs/autovex-exclusive.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'informed-ad-creation',
+      name: 'Informed ad creation',
+      spec: 'design-specs/informed-ad-creation.html',
+      prodArm: 'control'
     }
   ];
 

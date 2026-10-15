@@ -683,6 +683,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 | AutoVex exclusive | **Draft** (2026-10-14) — painted-door test, `v1` optional checkbox, `v2` required choice; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html` | `design-specs/autovex-exclusive.html` |
+| Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 
 **Completed initiatives:**
 
@@ -2398,6 +2399,60 @@ mechanism are deliberately out of scope for this test.
   `case 'contact'` completeness check ignores the choice.
 - **Open (on the spec):** telling sellers afterwards that the promise was a
   test; checking "noin 36 tuntia" against real durations; option order in v2; an in-view event for v1; a quieter arm.
+
+## Informed ad creation — `v1`
+
+Started 2026-10-15 from the Hotjar funnel feedback: sellers would have liked to
+know before starting what the ad asks for, photos above all. The service book is
+our addition (sellers do not mention it; paper-book photos strengthen a listing).
+
+- **Likely ships as a front-end VWO A/B test** (Jussi, 2026-10-15), to measure
+  before devs build it. Keep its scope to what VWO can inject on the details step.
+- **Where:** `details.html`, `#ad-prep`, directly under `details.subtitle`.
+  Hidden in control by `html[data-informed-ad-arm]`, stamped in `<head>`.
+- **Shape:** prod's `ContextHelp`, the same component as the photos step's
+  photo tips (below), with prod's `ph-info` icon instead of `ph-camera`.
+  Trigger "Mitä ilmoitukseen tarvitaan?", heading "Voit aloittaa heti", a lead,
+  then two items: **Kuvat** (5 minimum, which ones) and **Huoltotiedot** (last
+  service, repairs, and the paper service book's entries). Closed it costs one
+  line; open ~360px desktop / ~420px at 375px.
+- **Copy:** `adPrep.*` in `translations.js`, Claude's draft, and deliberately
+  NOT the photo tips' copy (Jussi, 2026-10-15): the tips are photos only, this
+  panel covers the whole ad. Shared component, separate wording. Every fact is
+  prod's (5-photo minimum, draft saved per `skip_modal`, the service step's
+  questions).
+- **Icon:** `ContextHelp`'s own fallback trigger names `info-circle`, which is
+  not in prod's sprite, so the variant uses `ph-info`. On the spec as a question.
+- **Open (on the spec):** front page instead of/in addition to details; the
+  icon; EV battery report.
+
+### Photo tips on the photos step = prod's `ContextHelp` (2026-10-15)
+
+The proto had an invented "Vinkkimme parhaisiin kuviin" bottom-sheet modal with
+eight sections of proto-only copy. Prod (`ImageSections.vue`) renders
+`ContextHelp`: a `UiButton variant="link"` with `ph-camera` (14px, blue-600),
+folding out inline an `OContainer` `default-filled` md (`!bg-slate-50
+border-slate-200 p-4 space-y-3 rounded-2xl`) with a `MContainerHeader` title
+(`images_step.tips.good_photos_get_better_offers`, AHeading md = text-base
+semibold, Barlow via the h2 element rule, `truncate`), a ✕, a `text-sm
+text-gray-700` body (exterior + interior tips, bold title per item), and a
+neutral `UiButton` "Sulje" (`form.generic.close`) with a trailing `x`. 300ms
+max-height + opacity accordion. All of that is now `photos.html`'s control.
+`photos.tips*` holds prod's copy only (EN is a working translation, prod has
+none); the old keys and the modal are gone.
+
+**`context-help.js` is the shared driver**, markup lives in each page so
+`data-i18n` reaches it: `[data-context-help]` with `[data-ch-trigger]`,
+`[data-ch-panel]` (a `<dialog open hidden>`, prod's inline dialog) and any
+`[data-ch-close]`. The accordion CSS is injected by the script, not utilities.
+Closing via ✕/Sulje returns focus to the trigger (proto addition, invisible).
+
+**The subtitle is prod's too** (2026-10-15): `images_step.description`, "Lisää
+vielä kuvat auton eri puolilta, sisätiloista, renkaista ja huoltokirjasta." The
+proto's own line ("Viisi selkeää, puhelimella otettua kuvaa riittää hyvin.") read
+better, but changing it is out of scope (Jussi). **Kept as a deliberate
+divergence:** the proto's skip-photos placement; prod's "Lisään kuvat
+myöhemmin" link row under the tips is not reproduced.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

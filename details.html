@@ -113,10 +113,38 @@
     .funnel-col > *             { width: 100%; max-width: 28rem; }
     .funnel-col > .funnel-logo  { width: auto; max-width: none; align-self: flex-start; }
     .funnel-col > .funnel-steps { max-width: 32rem; }
+
+    /* Informed ad creation: v1 only, hidden outright in control so it never paints. */
+    html:not([data-informed-ad-arm="v1"]) #ad-prep { display: none; }
 </style>
   <script src="translations.js"></script>
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
+  <script>
+    /* Informed ad creation (design-specs/informed-ad-creation.html): v1 adds a
+       collapsed "what the ad needs" checklist under the subtitle, for sellers
+       who want to prepare before they start. Stamped in <head> so control
+       never paints it. */
+    (function () {
+      var ARMS = ['control', 'v1'];
+      var arm = window.protoVariant('informed-ad-creation', 'control');
+      if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('informed-ad-creation', null); arm = 'control'; }
+      document.documentElement.dataset.informedAdArm = arm;
+    }());
+
+    window.protoPage = {
+      initiatives: [
+        {
+          slug:    'informed-ad-creation',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no preparation checklist' },
+            { id: 'v1',      label: 'Variant 1 — expandable checklist under the subtitle' }
+          ]
+        }
+      ]
+    };
+  </script>
   <script src="proto-mock.js"></script>
   <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
@@ -673,6 +701,33 @@
         <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="details.title">Löysimme autosi tiedot!</h1>
         <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="details.subtitle">Tarkista ja täydennä tarkemmat tiedot, jotta voimme valmistella ilmoituksesi autoliikkeille.</p>
 
+        <!-- Informed ad creation, v1 only: prod's ContextHelp shell, as on the photos step -->
+        <div id="ad-prep" class="space-y-2" data-context-help>
+          <button type="button" data-ch-trigger aria-controls="ad-prep-panel" class="inline-flex justify-center items-center transition cursor-pointer outline-offset-2 text-sm leading-tight relative bg-transparent border-none p-0 h-auto rounded-none shadow-none hover:underline text-blue-600">
+            <span class="inline-flex items-center justify-center"><svg class="fill-current inline-flex pr-1 transform -translate-x-1" width="1.2em" height="1.2em" viewBox="0 0 256 256" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg><span data-i18n="adPrep.toggle">Mitä ilmoitukseen tarvitaan?</span></span>
+          </button>
+          <dialog open id="ad-prep-panel" data-ch-panel hidden class="dialog-inline overflow-hidden p-0 m-0 border-0 bg-transparent w-full">
+            <section class="relative grid text-gray-900 !bg-slate-50 border border-slate-200 p-4 space-y-3 rounded-2xl">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-start"><div class="min-w-0 flex-1"><h2 class="text-base font-semibold truncate" data-i18n="adPrep.title">Voit aloittaa heti</h2></div></div>
+                <button type="button" data-ch-close class="ml-2 inline-flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 hover:bg-black/5" aria-label="Sulje" data-i18n-aria="contextHelp.close">✕</button>
+              </div>
+              <div><div class="text-sm text-gray-700">
+        <p class="mb-4" data-i18n="adPrep.lead">Kysymme tiedot vaihe kerrallaan ja tallennamme luonnoksesi matkan varrella. Jos haluat valmistautua, pidä nämä käsillä:</p>
+                <div class="font-bold" data-i18n="adPrep.photosTitle">Kuvat</div>
+                <div class="mb-4" data-i18n="adPrep.photosBody">Vähintään 5 kuvaa: auto joka suunnasta ja sisätilat. Puhelimella otetut kuvat riittävät.</div>
+                <div class="font-bold" data-i18n="adPrep.serviceTitle">Huoltotiedot</div>
+                <div data-i18n="adPrep.serviceBody">Viimeisimmän huollon ajankohta ja kilometrilukema sekä tiedot merkittävistä korjauksista ja vioista. Jos autollasi on paperinen huoltokirja, ota kuvat myös huoltomerkinnöistä.</div>
+              </div></div>
+              <div><div class="flex gap-2 pt-2 justify-end">
+                <button type="button" data-ch-close class="inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 leading-tight rounded-lg relative border bg-white text-sm px-5 h-10 border-slate-400 hover:bg-gray-100 active:bg-slate-200 text-slate-700 hover:text-slate-800 active:text-slate-600">
+                  <span class="inline-flex items-center justify-center"><span data-i18n="contextHelp.close">Sulje</span><svg class="fill-current inline-flex pl-1 transform translate-x-1" width="1.2em" height="1.2em" viewBox="0 0 256 256" aria-hidden="true"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></svg></span>
+                </button>
+              </div></div>
+            </section>
+          </dialog>
+        </div>
+
         <!-- Car illustration -->
         <div class="w-[280px] max-w-full self-center">
           <img src="assets/29d3f580-8fc5-4a3c-ba51-074dffa0efaa.png" class="w-full h-auto block" alt="Auto" />
@@ -1120,6 +1175,7 @@
        Keep in sync with the variants the mounted components can produce. -->
   <div class="hidden bg-slate-200 hover:bg-slate-200 active:bg-slate-200 !text-slate-300 pointer-events-none cursor-not-allowed bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 active:text-blue-700" aria-hidden="true"></div>
   <script src="vue-tests/dist/delivery-stepper.js"></script>
+  <script src="context-help.js"></script>
   <script src="layout.js"></script>
   <script src="proto-bar.js"></script>
 </body>

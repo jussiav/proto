@@ -428,6 +428,25 @@ window.TRANSLATIONS = {
       drivetrainAll:     'Neliveto',
     },
 
+    /* ── "Informed ad creation" initiative (v1 arm on the details step) ──
+       Draft copy, pending approval. The facts are prod's: the 5-photo minimum,
+       the draft being saved (images_step.skip_modal) and the service-step
+       questions (service_info). Shown in the photos step's ContextHelp shell. */
+    adPrep: {
+      toggle:       'Mitä ilmoitukseen tarvitaan?',
+      title:        'Voit aloittaa heti',
+      lead:         'Kysymme tiedot vaihe kerrallaan ja tallennamme luonnoksesi matkan varrella. Jos haluat valmistautua, pidä nämä käsillä:',
+      photosTitle:  'Kuvat',
+      photosBody:   'Vähintään 5 kuvaa: auto joka suunnasta ja sisätilat. Puhelimella otetut kuvat riittävät.',
+      serviceTitle: 'Huoltotiedot',
+      serviceBody:  'Viimeisimmän huollon ajankohta ja kilometrilukema sekä tiedot merkittävistä korjauksista ja vioista. Jos autollasi on paperinen huoltokirja, ota kuvat myös huoltomerkinnöistä.',
+    },
+
+    /* prod's form.generic.close, the ContextHelp footer button. */
+    contextHelp: {
+      close: 'Sulje',
+    },
+
     /* ── Service page ── */
     service: {
       title:              'Huollot',
@@ -480,7 +499,8 @@ window.TRANSLATIONS = {
     /* ── Photos page ── */
     photos: {
       title:                'Lisää vielä kuvat',
-      subtitle:             'Viisi selkeää, puhelimella otettua kuvaa riittää hyvin.',
+      /* prod's images_step.description */
+      subtitle:             'Lisää vielä kuvat auton eri puolilta, sisätiloista, renkaista ja huoltokirjasta.',
       exterior:             'Ulkopuoli',
       interior:             'Sisätilat',
       serviceBook:          'Huoltokirja',
@@ -494,29 +514,19 @@ window.TRANSLATIONS = {
       scratches:            'Naarmut tai kolhut',
       scratchesHint:        'Lisää kuvat, jos autossa on vaurioita.',
       windshield:           'Tuulilasi',
+      /* prod's images_step tip_title + tips.* (ContextHelp on the photos step). */
       tipsTitle:            'Vinkkimme parhaisiin kuviin',
-      tipsRequiredTitle:    'Pakolliset kuvat',
+      tipsHeading:          'Hyvillä kuvilla saat enemmän tarjouksia!',
       tipsExteriorTitle:    'Ulkopuoli',
-      tipsExteriorBody:     'Ota vähintään neljä kuvaa: etuosa, takaosa ja molemmat sivut. Kuvaa päivänvalossa ulkona tai kirkkaassa valaistuksessa. Vältä varjoja ja heijastuksia. Auto kannattaa pestä ennen kuvaamista – siisteys näkyy ja vaikuttaa tarjouksiin.',
-      tipsInteriorTitle:    'Sisätilat',
-      tipsInteriorBody:     'Kuvaa kojelauta, etupenkit ja takapenkit. Jos tavaratila on tilavuudeltaan merkittävä, ota kuva myös siitä. Hyvät sisäkuvat kertovat välittömästi auton siisteyden tasosta ja yleisestä kunnosta.',
-      tipsOptionalTitle:    'Lisäkuvat – valinnaisia, mutta kannattavia',
-      tipsOptionalBody:     'Autoliikkeet tekevät tarjouksia nopeammin ja rohkeammin, kun autosta on kattava dokumentaatio. Mitä avoimempi olet, sitä vähemmän on epäselvyyksiä – ja sitä korkeammalle tarjoukset tyypillisesti nousevat.',
-      tipsServiceBookTitle: 'Huoltokirja',
-      tipsServiceBookBody:  'Huoltokirja on ostajille yksi tärkeimmistä luottamussignaaleista. Kuva siitä osoittaa säännöllisen huoltohistorian ja voi selvästi nostaa tarjousten tasoa.',
-      tipsTyresTitle:       'Renkaat',
-      tipsTyresBody:        'Kuva renkaista auttaa ostajia arvioimaan jäljellä olevan kulutuspinnan. Erityisen hyödyllinen, jos renkaat ovat hyvässä kunnossa – se on myyntiargumentti, jota kannattaa hyödyntää.',
-      tipsScratchesTitle:   'Naarmut tai kolhut',
-      tipsScratchesBody:    'Avoin dokumentointi vioista rakentaa luottamusta ja poistaa epäselvyydet heti. Ostaja tietää mitä odottaa, ja kaupanteko sujuu nopeammin ilman ikäviä yllätyksiä.',
-      tipsWindshieldTitle:  'Tuulilasin vauriot',
-      tipsWindshieldBody:   'Kuvaa vaurio läheltä niin, että sen laajuus näkyy selkeästi. Tämä auttaa autoliikkeitä arvioimaan korjaustarpeen etukäteen ja tekemään tarkemman tarjouksen.',
+      tipsExteriorBody:     'Ota kuvat autosta joka suunnasta. Muista näyttää myös naarmut, kolhut ja renkaiden urasyvyys. Autoa ei tarvitse pestä.',
+      tipsInteriorTitle:    'Sisäpuoli',
+      tipsInteriorBody:     'Kuvaa kojelauta sekä etu- ja takapenkit. Ota kuva myös keskikonsolista. Näytä auton yleiskunto sekä mahdolliset kulumat tai vauriot.',
       skipTitle:            'Ohitetaanko kuvat?',
       skipBody:             'Ilmoituksesi lähetetään ilman kuvia. Voit palata lisäämään kuvat myöhemmin – hyvät kuvat parantavat tarjouksia merkittävästi.',
       skipBtn:              'Ohita kuvat',
       skipConfirm:          'Jatka ilman kuvia',
       optionalTitle:        'Valinnaiset lisäkuvat',
       optionalBody:         'Näillä lisäät ostajan luottamusta ja voit parantaa tarjouksia.',
-      tipsDismiss:          'Selvä, kiitos!',
     },
 
     /* ── "Seller file upload" initiative (v1 arm on the photos step) ──
@@ -1038,6 +1048,21 @@ window.TRANSLATIONS = {
       drivetrainAll:     'All-wheel drive',
     },
 
+    adPrep: {
+      toggle:       'What does the ad need?',
+      title:        'You can start right away',
+      lead:         'We ask for everything one step at a time and save your draft as you go. If you\'d like to prepare, keep these at hand:',
+      photosTitle:  'Photos',
+      photosBody:   'At least 5: the car from every side, and the interior. Phone photos are fine.',
+      serviceTitle: 'Service details',
+      serviceBody:  'When the car was last serviced and its mileage at the time, and any significant repairs or faults. If your car has a paper service book, photograph the service entries too.',
+    },
+
+    /* prod's form.generic.close, the ContextHelp footer button. */
+    contextHelp: {
+      close: 'Close',
+    },
+
     service: {
       title:              'Service history',
       historyLabel:       'Service history',
@@ -1088,7 +1113,7 @@ window.TRANSLATIONS = {
 
     photos: {
       title:                'Add your photos',
-      subtitle:             'Five clear photos taken with your phone is plenty.',
+      subtitle:             'Add photos of the car from different sides, the interior, the tyres and the service book.',
       exterior:             'Exterior',
       interior:             'Interior',
       serviceBook:          'Service book',
@@ -1097,29 +1122,19 @@ window.TRANSLATIONS = {
       scratches:            'Scratches or dents',
       scratchesHint:        'Add photos if the car has any damage.',
       windshield:           'Windshield',
+      /* Working translation: prod has no English for images_step tips. */
       tipsTitle:            'Our tips for the best photos',
-      tipsRequiredTitle:    'Required photos',
+      tipsHeading:          'Good photos get you more offers!',
       tipsExteriorTitle:    'Exterior',
-      tipsExteriorBody:     'Take at least four photos: front, rear and both sides. Shoot in daylight outdoors or in bright lighting. Avoid shadows and reflections. It\'s worth washing the car first – cleanliness shows and affects offers.',
+      tipsExteriorBody:     'Photograph the car from every direction. Remember to show scratches, dents and the tyre tread depth too. No need to wash the car.',
       tipsInteriorTitle:    'Interior',
-      tipsInteriorBody:     'Photograph the dashboard, front seats and rear seats. If the boot is notably spacious, include a photo of that too. Good interior photos immediately convey the car\'s cleanliness and general condition.',
-      tipsOptionalTitle:    'Extra photos – optional but worthwhile',
-      tipsOptionalBody:     'Dealerships make offers faster and more confidently when there is comprehensive documentation. The more transparent you are, the fewer uncertainties – and the higher offers typically go.',
-      tipsServiceBookTitle: 'Service book',
-      tipsServiceBookBody:  'The service book is one of the most important trust signals for buyers. A photo of it demonstrates regular service history and can significantly raise the level of offers.',
-      tipsTyresTitle:       'Tyres',
-      tipsTyresBody:        'A photo of the tyres helps buyers assess the remaining tread depth. Especially useful if the tyres are in good condition – it\'s a selling point worth highlighting.',
-      tipsScratchesTitle:   'Scratches or dents',
-      tipsScratchesBody:    'Open documentation of damage builds trust and eliminates uncertainties immediately. The buyer knows what to expect, and the deal goes through faster without unpleasant surprises.',
-      tipsWindshieldTitle:  'Windshield damage',
-      tipsWindshieldBody:   'Photograph the damage up close so the extent is clearly visible. This helps dealerships assess the repair need in advance and make a more accurate offer.',
+      tipsInteriorBody:     'Photograph the dashboard and the front and back seats. Take a photo of the centre console too. Show the car\'s general condition and any wear or damage.',
       skipTitle:            'Skip photos?',
       skipBody:             'Your listing will be submitted without photos. You can come back to add photos later – good photos significantly improve offers.',
       skipBtn:              'Skip photos',
       skipConfirm:          'Continue without photos',
       optionalTitle:        'Optional additional photos',
       optionalBody:         'These increase buyer confidence and can improve offers.',
-      tipsDismiss:          'Got it, thanks!',
     },
 
     files: {
