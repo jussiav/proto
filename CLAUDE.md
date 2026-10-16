@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-10-07)
+## Reference Source Locations (updated 2026-10-16)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-07-25320dd885e6/` (previous: `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-15-37e1d26ca1cc/` (previous: `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -301,11 +301,11 @@ These rules apply to all new pages and components in this prototype, without exc
     | Components serving this role | **three**, and **two are deprecated** — `elements/Button.vue` (15 consumers) and `ui/UiButton.vue` (68) both point at `atoms/AButton.vue` (11) — files using each, outside stories and tests, 2026-10-07 dump |
     | Consequence of the ratio | the migration has barely started, so a token change has to land in **both** `UiButton` and `AButton` until one is gone |
     | Same name, two hues | `intent="success"` is lime on the button and **`text-green-600`** in `UiIcon.vue` / `ASpriteIcon.vue`. The button is the outlier — this turned out to be the strongest argument in the whole proposal |
-    | Seller side | three accepts, **two colours** (2026-10-07 dump): the card is `UiButton variant="primary"` with **no intent** (blue); the accept confirmation step and the in-thread accept are both `AButton variant="primary" intent="success"` (lime) — `AButton`'s only two `success` consumers. Nothing passes `Button color="green-600"` any more |
+    | Seller side | three accepts, **one colour** since the 2026-10-15 dump: card, confirmation and in-thread are all `AButton variant="primary" intent="success"`, green-400 + black. Before: card blue (`UiButton`, no intent), the other two lime |
     | Dealership side | three accepts, all `UiButton variant="primary" intent="success"` — `DealerAcceptCounterOfferAction`, `DeliveryAgreedActions`, `PastDeliveryDateConfirmModal` |
     | All of them sit on **white** | Reveal's panel, the CallSeller card, and — for the dealer accept — the seller's own `bg-white` speech bubble |
     | Variants with **zero** consumers | `default`, `secondary`, `ghost`, `link` of `success`. Every consumer is `primary`, so today the fill is always opaque and the page background cannot affect a label |
-    | Untouched by the change | `UiBadge` `lime`/`light_lime`, `OProductCard`, `OContainer`, `ReservePriceNotice`, `B2BReserveStatusBadge` — none reads a button's `intent`. **`UiTab`'s success was added to the change on 2026-10-09** (Jussi): `green-700` label and underline, `green-800` pressed; no live consumer |
+    | Untouched by the change | `UiBadge` `lime`/`light_lime`, `OProductCard`, `OContainer`, `ReservePriceNotice`, `B2BReserveStatusBadge` — none reads a button's `intent`. **The tab's success was added to the change on 2026-10-09** (Jussi): `green-700` label and underline, `green-800` pressed; no live consumer. It shipped in the new **`ATab`** atom (`app/components/atoms/ATab/ATab.vue`); `UiTab.vue` is deprecated and was deleted in the 2026-10-15 dump |
 
     **And the check that cost me the argument, kept here because it is the one
     most likely to repeat:** I led with "lime fails AA in 7 of 14 states". With
@@ -674,7 +674,6 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Initiative | Stage | Slug / param | Page default | Prod arm | Pages | Spec |
 |---|---|---|---|---|---|---|
 | Seller file upload | Live | `seller-file-upload` | `control` | `control` | `photos.html` | `design-specs/seller-file-upload.html` |
-| Enhanced negotiations | Live — **changes 1–8 and 17 shipped** (4 + 5 in the 2026-09-24 dump, the rest in 2026-10-07), 9–16 `v1` only | `enhanced-negotiations` | `control` | `control` | `decision.html` | `design-specs/enhanced-negotiations.html` |
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
@@ -690,6 +689,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Initiative | Outcome | Spec |
 |---|---|---|
 | Delivery distance A/B test | **Variant 2 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders V2 unasked; registry entry, `?delivery=` and `deliveryRangeNoteCurrent` are gone. All three arms are restorable from the git tag `delivery-distance-arms`. **Re-check against the first prod dump that contains the rollout** | `design-specs/delivery-distance.html` |
+| Enhanced negotiations | **All 18 changes shipped, October 2026** (1–8 and 17 by the 2026-10-07 dump, 9–16 and 18 in the 2026-10-15 dump, from PRs 2526 and 2543). No arms remain — `decision.html` and the email tool render the shipped design unasked, and the registry entry is gone. The `v1`-only message placeholder was dropped, not shipped | `design-specs/enhanced-negotiations.html` |
 | Review/No review | **Changes 1–3 shipped, September 2026**; change 4 closed as no change; change 5 still with the PM, Marketing-owned. No arms remain — `price.html` and `contact.html` render the shipped design unasked, and the registry entry is gone | `design-specs/review-no-review.html` |
 
 **One is in a live production A/B test** — Seller intent (VWO `104_combi`),
@@ -719,7 +719,29 @@ now unconditional.** A discarded test's number makes a true statement read as
 provisional, and the next person greps for a flag that no longer exists. Describe
 what prod does; mention the test only where an arm is still live.
 
-**Enhanced negotiations** makes the negotiation's own mechanics legible in the
+**ENHANCED NEGOTIATIONS IS COMPLETED (2026-10-16).** Everything below is the
+record; the proto has no `v1` arm any more. The 2026-10-15 dump carries the rest
+of the spec (changes 9–16 and 18, PRs 2526 and 2543), and `decision.html`'s
+default view was matched to it:
+
+| Part | Shipped, and now the proto's default |
+|---|---|
+| Waiting modal, round 1 | one paragraph, the hero's sentence: "Liikkeet vastaavat arkisin klo 10–16 (viim. 24 h kuluessa). Voit hyväksyä nykyisen tarjouksen myös neuvottelun aikana." (`negotiation_round_one.text`) |
+| Reject-banner form's waiting branch (unreachable) | prod kept the old "Useimmiten saat vastauksen saman päivän aikana (arkisin kello 10–16 välillä)." alone, support email gone |
+| Reject confirmation, no negotiation | support sentence deleted; footer row `sm:gap-2` (was `sm:gap-0`) |
+| Hero | two new post-auction statuses, `negotiation_counter_offer_sent` and `negotiation_dealer_replied`, after `negotiation_stopped` in prod's precedence; both reuse the price tiers' warm-up and banner. `postAuctionStatus` carries them, `heroCopy` picks the replied body by the seller's rounds used. Informed decision's `DECISION_OPEN` lists both so its blocks still render during a live negotiation |
+| Closed hero | "…voimassa olevan tarjouksen." (change 18) |
+| Card | accept `AButton` primary success, negotiate `AButton` secondary, both with no font weight (400); red status line and count; no info icons; status order is prod's `getOfferStatus` (expiry before final/negotiation unless a counter offer is pending) |
+| Success colour | `ABTN_SUCCESS` is green-400 + black everywhere (card, in-thread, confirmation) |
+| Auto-close | `auto_close_negotiation_reply` |
+| Emails | the two dealer-replied emails, negotiation-closed AND the delayed-negotiation email (`89_combi` treatment only) link to the decision page; final-offer keeps the list |
+| Dropped | the message placeholder "Jos haluat, perustele tässä vastatarjouksesi." (never specced, prod has none) |
+
+`AButton` sets no font weight, so every proto surface transcribing it is 400:
+the card's two buttons, the modal footers, the in-thread accept, the front
+page's two turquoise CTAs (`LandingPageForm`) and the nav CTA (`MMenuCTA`).
+
+**Enhanced negotiations** made the negotiation's own mechanics legible in the
 modal, where today none of them are. Almost half of all offers reach a
 negotiation and the usual reason one fails is the seller asking too much — and
 every fact that would tell them what is reasonable exists but is off-screen when
@@ -1054,11 +1076,8 @@ them, so they look the same in both arms. What prod does:
 | copy | `counter_offer.send_button` "Lähetä vastatarjous (:rounds_left jäljellä)", `amount_required` "Pakollinen tieto" (now the `amount.required` message), `message_no_contact_info` beside the label via `TextArea`'s new `labelNote` (`ml-2 inline-block text-xs text-slate-500`). The blue last-round block and the three tips are gone |
 | footer | every `OfferActions` button is `AButton` `lg`: send and Tee vastatarjous primary, Hylkää tarjous `default` + `destructive` (outlined red), accept step `primary` + `success` (**still lime**), survey submit `primary` + `destructive` (red fill), Sulje `default` + `neutral`. Below `sm` the QuickNegotiate footer and the paired reject confirmation stack, primary on top |
 
-**Still `v1` only:** change 9 (waiting states keep prod's reply-time and
-support-email lines; the reject confirmation keeps "Asiakaspalvelumme auttaa
-myös mielellään tarvittaessa."), 10 (auto-close message), 11 (email link
-target), 12–16 (card, colours, green accept, hero) and the message
-placeholder, which Jussi keeps in `v1` though it was never specced.
+**Everything else shipped in the 2026-10-15 dump** — see the completion block
+at the top of this section.
 
 **PR 2526 (preview tested 2026-10-09) builds changes 10, 12, 13 and 16**; all
 four matched `v1`. Two decisions came out of the test, both Jussi's:
@@ -1067,8 +1086,8 @@ four matched `v1`. Two decisions came out of the test, both Jussi's:
   beyond the spec: "Liikkeet vastaavat arkisin klo 10–16 (viim. 24 h kuluessa).
   Voit hyväksyä nykyisen tarjouksen myös neuvottelun aikana." The proto and spec
   now carry it. It is knowingly inexact across weekends (the dealership's 24 h
-  is business time), and the team keeps it for now. The modal's waiting line
-  stays without it (as the PR has it): hero only.
+  is business time), and the team keeps it for now. On 2026-10-15, after PR
+  2543 built it, the modal's waiting line got it too.
 - **The help lines under the card's two buttons stay as they are**, even though
   on the last round "…vaikka tekisit vastatarjouksen" sits beside a hero saying
   no more counter offers can be made. Both lines (under accept and under the
@@ -1241,7 +1260,7 @@ linked from nowhere and loads no `tw-tokens.js`.
 - **Lime does not leave the product.** `UiBadge`'s `lime`/`light_lime`,
   `OProductCard`, `OContainer`, `ReservePriceNotice` and
   `B2BReserveStatusBadge` are untouched — none reads a button's `intent`.
-  Whether status lime should follow is a separate decision. `UiTab`'s success
+  Whether status lime should follow is a separate decision. The tab's success
   joined the change on 2026-10-09, matched to the button's text greens.
 
 **Section 4 opens with a two-box impact strip, and that is the point of the
@@ -1291,11 +1310,16 @@ is the one that makes it safe:
   **The page was rewritten the same day as a dev brief** (Jussi: "answers he
   can take action on that carry a UX decision"): decisions first, the seller's
   three accepts before/after, the five variants lime vs green measured, the
-  tab (`UiTab.vue` lines 93/100/147 → `green-700`/`green-800`, underline
+  tab (then `UiTab.vue` lines 93/100/147, shipped as `ATab.vue` 79/86/133 → `green-700`/`green-800`, underline
   measured at 3:1), and a file checklist incl. `AButton.spec.ts` 74–75 and the
   card's `UiButton` → `AButton` swap. The lime+black option, the green-950
   ladder, the three-set scorecard and the dealership migration notes are gone
   (git history has them); the reasoning above stays here.
+
+  **Shipped in the 2026-10-15 dump, and the page now says so** (2026-10-16):
+  status chip, Before/Shipped labels, `ATab.vue` in place of `UiTab.vue`, and
+  the checklist turned into a "What shipped" list. One leftover recorded there:
+  `C2BOfferCard.spec.js` still stubs `UiButton`, which the card no longer uses.
 
   **Goal, in Jussi's words: no blue accept button on the consumer side once
   Enhanced negotiations is done.** `C2BOfferCard.vue` draws one accept with
@@ -4250,7 +4274,10 @@ the `fair` field, the `idShow` gate (put `buildInsights` back to `APR_V1` alone
 for both the grid and the chart's top rule), `if (ID_V1) { EN_V1 = true; }`,
 this initiative's keys in `decision-i18n.js`, and the spec page.
 
-### It SUBSUMES Enhanced negotiations, one-way
+### It used to SUBSUME Enhanced negotiations — gone with that initiative
+
+**Removed 2026-10-16:** Enhanced negotiations is completed, so its changes are
+the default view and the forcing line went with the arm. History:
 
 `if (ID_V1) { EN_V1 = true; }` in `decision.html`, immediately under the
 `ID_V1` declaration, and that is the whole mechanism. Two reasons:

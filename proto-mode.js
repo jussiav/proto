@@ -72,7 +72,7 @@
   window.protoDev = mode === 'dev';
 
   /* ── Initiative arms ──────────────────────────────────────────────────────
-     protoVariant('enhanced-negotiations', 'control') → the arm this page should
+     protoVariant('seller-intent', 'control') → the arm this page should
      render. Same precedence as the mode above: an explicit param wins and is
      remembered, otherwise the remembered arm, otherwise the page's default.
 
@@ -104,12 +104,6 @@
      Add an entry when an initiative is created; remove it when its winning arm
      is promoted. See CLAUDE.md, "Initiatives". */
   var INITIATIVES = [
-    {
-      slug: 'enhanced-negotiations',
-      name: 'Enhanced negotiations',
-      spec: 'design-specs/enhanced-negotiations.html',
-      prodArm: 'control'
-    },
     {
       slug: 'seller-file-upload',
       name: 'Seller file upload',

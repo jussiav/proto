@@ -351,16 +351,11 @@
         '<p>Jos olet tyytyväinen lopputulokseen, käythän hyväksymässä tarjouksen pian. Tarjous on voimassa 24 tuntia päättymishetkestä.</p>' +
         '<p>Mikäli hinta vielä mietityttää, voit tehdä autoliikkeelle vastatarjouksen. Alkuperäinen tarjous pysyy silti voimassa.</p>' +
         '{{BUTTON}}',
-      cta: btn('Tutustu tarjoukseen tästä', 'offers.html', "route('user.offers')")
+      cta: btn('Tutustu tarjoukseen tästä', 'decision.html?scenario=seen-offers', "route('user.offers.decision', $tenderRequest)")
     },
 
     {
       id: 'negotiation-dealer-replied-round-1',
-      initiative: {
-        slug: 'enhanced-negotiations',
-        spec: 'design-specs/enhanced-negotiations.html',
-        why: 'The button lands on the offers LIST, from where the seller has to find the car and work out that the dealer\'s reply is behind a secondary button. The initiative lands it on the decision page for that car instead.'
-      },
       rendered: true,
       group: 'Counter-offer',
       state: 'Dealer answered the seller\'s first counter-offer',
@@ -376,19 +371,11 @@
         '<p>Voit nyt hyväksyä autoliikkeen tarjouksen tai tehdä uuden vastatarjouksen profiilissasi.</p>' +
         '<p>Tarjous on voimassa 24 tuntia.</p>' +
         '{{BUTTON}}',
-      cta: btn('Katso tarjous', 'offers.html', "route('user.offers')"),
-      v1: {
-        cta: btn('Katso tarjous', 'decision.html?scenario=dealer-replied', "route('user.offers.decision', $tenderRequest)")
-      }
+      cta: btn('Katso tarjous', 'decision.html?scenario=dealer-replied', "route('user.offers.decision', $tenderRequest)")
     },
 
     {
       id: 'negotiation-dealer-replied-round-2',
-      initiative: {
-        slug: 'enhanced-negotiations',
-        spec: 'design-specs/enhanced-negotiations.html',
-        why: 'The button lands on the offers LIST, from where the seller has to find the car and work out that the dealer\'s reply is behind a secondary button. The initiative lands it on the decision page for that car instead.'
-      },
       rendered: true,
       group: 'Counter-offer',
       state: 'Dealer answered the second counter-offer — no more counters allowed',
@@ -404,10 +391,7 @@
         '<p>Sinulla on 24 tuntia aikaa hyväksyä tarjous. Vastatarjouksia ei voi tehdä enempää.</p>' +
         '{{BUTTON}}' +
         '<p>Toivottavasti pääsette kauppoihin!</p>',
-      cta: btn('Katso tarjous', 'offers.html', "route('user.offers')"),
-      v1: {
-        cta: btn('Katso tarjous', 'decision.html?scenario=dealer-replied', "route('user.offers.decision', $tenderRequest)")
-      }
+      cta: btn('Katso tarjous', 'decision.html?scenario=dealer-replied', "route('user.offers.decision', $tenderRequest)")
     },
 
     {
@@ -431,11 +415,6 @@
 
     {
       id: 'negotiation-closed',
-      initiative: {
-        slug: 'enhanced-negotiations',
-        spec: 'design-specs/enhanced-negotiations.html',
-        why: 'The button lands on the offers LIST, from where the seller has to find the car and work out that the dealer\'s reply is behind a secondary button. The initiative lands it on the decision page for that car instead.'
-      },
       rendered: true,
       group: 'Counter-offer',
       state: 'Negotiation closed, an offer is waiting for the seller',
@@ -450,10 +429,7 @@
         '<p>Neuvottelu on päättynyt.</p>' +
         '<p>Tarjous odottaa hyväksyntääsi.</p>' +
         '{{BUTTON}}',
-      cta: btn('Katso tarjous', 'offers.html', "route('user.offers')"),
-      v1: {
-        cta: btn('Katso tarjous', 'decision.html?scenario=negotiation-stopped', "route('user.offers.decision', $tenderRequest)")
-      }
+      cta: btn('Katso tarjous', 'decision.html?scenario=negotiation-stopped', "route('user.offers.decision', $tenderRequest)")
     },
 
     {

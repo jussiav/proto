@@ -116,7 +116,7 @@
     .B-primary-rest  { background: var(--blue-600); color: var(--white); }
     .B-primary-hover { background: var(--blue-700); color: var(--white); }
 
-    /* Tabs: UiTab geometry (md), colour per tile. */
+    /* Tabs: ATab geometry (md), colour per tile. */
     .tab { display: inline-flex; flex-direction: column; align-items: flex-start; background: transparent;
            border: 0; padding: 0; font-family: "DM Sans", sans-serif; font-size: 16px; line-height: 1.5; cursor: default; }
     .tab .ul { display: block; height: 3px; width: 100%; margin-top: 4px; border-radius: 999px; background: transparent; }
@@ -160,6 +160,8 @@
     .sidelab.new { color: var(--green-800); }
 
     .footnote { font-size: 13px; color: var(--slate-500); max-width: 76ch; }
+    .chip-shipped { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+                    color: var(--green-900); background: var(--green-200); border-radius: 999px; padding: 2px 9px; margin-right: 6px; }
   </style>
 </head>
 <body>
@@ -168,13 +170,14 @@
   <h1>Success colour: lime to green</h1>
   <p class="lede">
     The <code>success</code> colour on the current button component and on the
-    tab component moves from lime to the brand green. This page has the
+    tab component moved from lime to the brand green. This page records the
     decisions, the exact classes, and every state drawn with its contrast
     measured.
   </p>
   <p class="sub">
-    For the dev building Enhanced negotiations change 15. Decided by UX,
-    9 October 2026. Read against the production code of 7 October 2026.
+    <span class="chip-shipped">Shipped · October 2026</span>
+    Enhanced negotiations change 15. Decided by UX on 9 October 2026, in
+    production in the code of 15 October 2026.
   </p>
 
   <div class="card accent">
@@ -182,18 +185,18 @@
     <ul class="decisions">
       <li><span class="q">Q12</span><div><strong>Repaint all five button variants</strong> — <code>default</code>, <code>primary</code>, <code>secondary</code>, <code>ghost</code> and <code>link</code> — in <code>AButton.vue</code>. Each uses brand green steps and passes WCAG 2.0 AA in every state. Classes in <a href="#buttons">section 2</a>.</div></li>
       <li><span class="q">Q12</span><div><strong>The primary label is black.</strong> Confirmed. The label is 14–16px, so it needs 4.5:1. White and the dark green steps both fail on a green bright enough to read as the main action; black on green-400 is 12:1.</div></li>
-      <li><span class="q">Q11</span><div><strong>Repaint the tab too.</strong> <code>UiTab.vue</code>'s <code>success</code> colours move to the same green steps as the button. Classes and states in <a href="#tabs">section 3</a>.</div></li>
+      <li><span class="q">Q11</span><div><strong>Repaint the tab too.</strong> The tab's <code>success</code> colours use the same green steps as the button. The tab is now the <code>ATab</code> atom; <code>UiTab.vue</code> is deprecated and was removed in the same release. Classes and states in <a href="#tabs">section 3</a>.</div></li>
       <li><span class="q none">Scope</span><div><strong><code>UiButton.vue</code> is not changed.</strong> The dealership's three accept buttons run on it and stay lime until that team moves them to <code>AButton</code>. That was agreed with them on 17 September.</div></li>
-      <li><span class="q none">Seller</span><div><strong>All three seller accept buttons end up green.</strong> Two already use <code>AButton</code> and change with the colour. The offer card's accept moves from <code>UiButton</code> to <code>AButton</code>. See <a href="#seller">section 1</a>.</div></li>
+      <li><span class="q none">Seller</span><div><strong>All three seller accept buttons are green.</strong> The confirmation and the in-thread accept changed with the colour; the offer card's accept moved from <code>UiButton</code> to <code>AButton</code>. See <a href="#seller">section 1</a>.</div></li>
     </ul>
   </div>
 
   <h2 id="seller">1 — What the seller sees</h2>
-  <p class="sub">The three accept buttons on the decision page, today and after the change.</p>
+  <p class="sub">The three accept buttons on the decision page, before and after the change.</p>
 
   <div class="compare">
     <div class="col">
-      <div class="colname">Today</div>
+      <div class="colname">Before</div>
       <div class="colnote">Two colours for one act: blue on the card, lime in the modal.</div>
       <div class="stage">
         <div class="lab">Offer card</div>
@@ -211,7 +214,7 @@
       </div>
     </div>
     <div class="col new">
-      <div class="colname">After</div>
+      <div class="colname">Shipped</div>
       <div class="colnote">One component, one green.</div>
       <div class="stage">
         <div class="lab">Offer card</div>
@@ -232,15 +235,15 @@
 
   <h2 id="buttons">2 — Buttons: <code>AButton.vue</code></h2>
   <p class="sub">
-    Replace the five <code>success</code> rows in
-    <code>app/components/atoms/AButton/AButton.vue</code> (lines 150–154 today).
+    The five <code>success</code> rows in
+    <code>app/components/atoms/AButton/AButton.vue</code>.
     Rows marked <strong>*</strong> are not a straight lime-to-green swap; the
     notes under the table say what differs and why.
   </p>
 
   <div class="tablewrap">
     <table>
-      <thead><tr><th>Variant</th><th>Today (lime)</th><th>New (green)</th></tr></thead>
+      <thead><tr><th>Variant</th><th>Before (lime)</th><th>Shipped (green)</th></tr></thead>
       <tbody>
         <tr><td><code>default</code> *</td><td><code>border-lime-400 hover:bg-lime-50 active:bg-lime-50 text-lime-700 active:text-lime-600</code></td><td class="new"><code>border-green-400 hover:bg-green-50 active:bg-green-50 text-green-700 active:text-green-700</code></td></tr>
         <tr><td><code>primary</code> *</td><td><code>bg-lime-400 hover:bg-lime-500 active:bg-lime-600 text-lime-900 active:text-lime-950</code></td><td class="new"><code>bg-green-400 hover:bg-green-500 active:bg-green-600 text-black active:text-black</code></td></tr>
@@ -256,24 +259,26 @@
     <li><strong>default, ghost, link:</strong> the pressed label stays <code>green-700</code>. The lighter <code>green-600</code> fails on white and on green-50.</li>
   </ul>
 
-  <p class="footnote">Every state below is drawn from the classes above at the <code>md</code> size (14px label) and measured. Today's lime is shown for comparison; seven of its states fail. All fourteen green states pass.</p>
+  <p class="footnote">Every state below is drawn from the classes above at the <code>md</code> size (14px label) and measured. The lime it replaced is shown for comparison; seven of its states failed. All fourteen green states pass.</p>
   <div id="variants"></div>
 
-  <h2 id="tabs">3 — Tabs: <code>UiTab.vue</code></h2>
+  <h2 id="tabs">3 — Tabs: <code>ATab.vue</code></h2>
   <p class="sub">
     Same green steps as the button's text: <code>green-700</code> for the
-    label, <code>green-800</code> while pressed. No screen uses a success tab
-    today (the photo gallery's tabs are <code>primary</code>), so this changes
-    Storybook only until one does.
+    label, <code>green-800</code> while pressed. The tab is the
+    <code>ATab</code> atom (<code>app/components/atoms/ATab/ATab.vue</code>),
+    which replaced the deprecated <code>UiTab.vue</code>. No screen uses a
+    success tab yet (the photo gallery's tabs are <code>primary</code>), so it
+    shows in Storybook only.
   </p>
 
   <div class="tablewrap">
     <table>
-      <thead><tr><th>Where in <code>UiTab.vue</code></th><th>Today (lime)</th><th>New (green)</th></tr></thead>
+      <thead><tr><th>Where in <code>ATab.vue</code></th><th>Before (lime, UiTab.vue)</th><th>Shipped (green)</th></tr></thead>
       <tbody>
-        <tr><td>Line 93 · intent <code>success</code></td><td><code>text-slate-500 hover:text-lime-700 active:text-lime-800</code></td><td class="new"><code>text-slate-500 hover:text-green-700 active:text-green-800</code></td></tr>
-        <tr><td>Line 100 · selected + success</td><td><code>text-lime-700</code></td><td class="new"><code>text-green-700</code></td></tr>
-        <tr><td>Line 147 · underline, success</td><td><code>bg-lime-700</code></td><td class="new"><code>bg-green-700</code></td></tr>
+        <tr><td>Line 79 · intent <code>success</code></td><td><code>text-slate-500 hover:text-lime-700 active:text-lime-800</code></td><td class="new"><code>text-slate-500 hover:text-green-700 active:text-green-800</code></td></tr>
+        <tr><td>Line 86 · selected + success</td><td><code>text-lime-700</code></td><td class="new"><code>text-green-700</code></td></tr>
+        <tr><td>Line 133 · underline, success</td><td><code>bg-lime-700</code></td><td class="new"><code>bg-green-700</code></td></tr>
       </tbody>
     </table>
   </div>
@@ -281,22 +286,22 @@
   <div id="tab-states"></div>
   <p class="footnote">Labels are measured at 4.5:1. The selected underline is not text, so it is measured against 3:1.</p>
 
-  <h2 id="checklist">4 — Checklist</h2>
+  <h2 id="checklist">4 — What shipped</h2>
   <ol>
-    <li><code>app/components/atoms/AButton/AButton.vue</code>: replace the five <code>success</code> rows with the classes in section 2.</li>
-    <li><code>app/components/atoms/AButton/AButton.spec.ts</code>: lines 74–75 expect <code>border-lime-400</code> and <code>bg-lime-400</code>; change them to <code>border-green-400</code> and <code>bg-green-400</code>.</li>
-    <li><code>js/components/ui/UiTab.vue</code>: lines 93, 100 and 147 as in section 3.</li>
-    <li><code>js/pages/offers/components/decision/C2BOfferCard.vue</code>: the accept button moves from <code>UiButton variant="primary" size="lg"</code> to <code>AButton variant="primary" intent="success" size="lg"</code>, keeping its label and click handler. It is one button with three labels, so this covers "Hyväksy korkein tarjous", "Hyväksy alhaisempi tarjous" and the final-offer accept.</li>
-    <li><code>js/pages/offers/components/decision/__tests__/C2BOfferCard.spec.js</code>: it stubs <code>UiButton</code>; stub <code>AButton</code> instead.</li>
-    <li>Check the <code>AButton</code> and <code>UiTab</code> stories: the success examples should render green.</li>
+    <li><code>app/components/atoms/AButton/AButton.vue</code>: the five <code>success</code> rows, as in section 2.</li>
+    <li><code>app/components/atoms/AButton/AButton.spec.ts</code>: asserts the green classes for all five variants.</li>
+    <li><code>app/components/atoms/ATab/ATab.vue</code>: new atom with the green success colours, replacing the deprecated <code>UiTab.vue</code>.</li>
+    <li><code>js/pages/offers/components/decision/C2BOfferCard.vue</code>: the accept button moved from <code>UiButton variant="primary" size="lg"</code> to <code>AButton variant="primary" intent="success" size="lg"</code>, keeping its label and click handler. It is one button with three labels, so this covered "Hyväksy korkein tarjous", "Hyväksy alhaisempi tarjous" and the final-offer accept.</li>
+    <li><code>js/pages/offers/components/decision/__tests__/C2BOfferCard.spec.js</code> still stubs <code>UiButton</code>, which the card no longer uses. Harmless; worth tidying when the file is next touched.</li>
+    <li>The <code>AButton</code> and <code>ATab</code> stories render the success examples green.</li>
   </ol>
 
-  <h3>Do not change</h3>
+  <h3>Not changed</h3>
   <ul>
     <li><code>js/components/ui/UiButton.vue</code>. The dealership's accept buttons stay lime until they move to <code>AButton</code>.</li>
-    <li><code>js/pages/offers/components/decision/B2BOfferCard.vue</code>. The B2B seller's card accept stays blue for now; it will move to the green button later, outside this initiative. Its accept confirmation is shared with the consumer side, so that step does turn green.</li>
+    <li><code>js/pages/offers/components/decision/B2BOfferCard.vue</code>. The B2B seller's card accept is still blue; it will move to the green button later, outside this initiative. Its accept confirmation is shared with the consumer side, so that step does turn green.</li>
     <li>Lime used as a status colour, not an action: <code>UiBadge</code>'s <code>lime</code> and <code>light_lime</code>, <code>OProductCard</code>, <code>OContainer</code>, <code>ReservePriceNotice</code>, <code>B2BReserveStatusBadge</code>.</li>
-    <li>The success icons in <code>UiIcon.vue</code> and <code>ASpriteIcon.vue</code>. They are already <code>green-600</code>, which is one reason the button moves to green.</li>
+    <li>The success icons in <code>UiIcon.vue</code> and <code>ASpriteIcon.vue</code>. They are already <code>green-600</code>, which is one reason the button moved to green.</li>
   </ul>
 
 </div>
@@ -386,8 +391,8 @@
         return tile(cls, LABEL[v.key], st, 'btn');
       });
     }
-    row.appendChild(side('Today', false, cells('lime', 'L')));
-    row.appendChild(side('New', true, cells('green', 'G')));
+    row.appendChild(side('Before', false, cells('lime', 'L')));
+    row.appendChild(side('Shipped', true, cells('green', 'G')));
     host.appendChild(row);
   });
 
@@ -398,7 +403,7 @@
     ['selected', '%-700 + %-700 underline']
   ];
   var tabHost = document.getElementById('tab-states');
-  [['Today', false, 'T-L', 'lime'], ['New', true, 'T-G', 'green']].forEach(function (s) {
+  [['Before', false, 'T-L', 'lime'], ['Shipped', true, 'T-G', 'green']].forEach(function (s) {
     tabHost.appendChild(side(s[0], s[1], TAB_STATES.map(function (st) {
       return tile(s[2] + '-' + st[0], 'Ulkopuoli', [st[0], st[1].replace(/%/g, s[3])], 'tab');
     })));
