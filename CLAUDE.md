@@ -689,7 +689,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 
 | Initiative | Outcome | Spec |
 |---|---|---|
-| Delivery distance A/B test | **Variant 2 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders V2 unasked; registry entry, `?delivery=` and `deliveryRangeNoteCurrent` are gone. All three arms are restorable from the git tag `delivery-distance-arms`. **Re-check against the first prod dump that contains the rollout** | `design-specs/delivery-distance.html` |
+| Delivery distance A/B test | **Variant 1 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders V1 unasked: plain km field, no default, `50–500` placeholder, the old `deliveryRangeNoteCurrent` tip. Registry entry and `?delivery=` are gone. **V2 was recorded as the winner on 2026-10-12 by mistake and corrected 2026-10-16**, so the −/+ stepper and `deliveryImpactNote` survive only on the spec page's retired V2 demo. All three arms are restorable from the git tag `delivery-distance-arms`. **Re-check against the first prod dump that contains the rollout** | `design-specs/delivery-distance.html` |
 | Enhanced negotiations | **All 18 changes shipped, October 2026** (1–8 and 17 by the 2026-10-07 dump, 9–16 and 18 in the 2026-10-15 dump, from PRs 2526 and 2543). No arms remain — `decision.html` and the email tool render the shipped design unasked, and the registry entry is gone. The `v1`-only message placeholder was dropped, not shipped | `design-specs/enhanced-negotiations.html` |
 | Review/No review | **Changes 1–3 shipped, September 2026**; change 4 closed as no change; change 5 still with the PM, Marketing-owned. No arms remain — `price.html` and `contact.html` render the shipped design unasked, and the registry entry is gone | `design-specs/review-no-review.html` |
 
@@ -707,7 +707,7 @@ to a discarded one dates a comment badly:
 
 | Test | State | Bearing on the proto |
 |---|---|---|
-| `105_combi` delivery distance | **concluded, Variant 2 won** (October 2026) | Promoted in the proto; see Delivery distance under Completed initiatives |
+| `105_combi` delivery distance | **concluded, Variant 1 won** (October 2026) | Promoted in the proto; see Delivery distance under Completed initiatives |
 | `103_combi` hide expected price | **concluded, split** | Promoted for the insights block, discarded for the negotiation modal — see Asking price removal below |
 | `100_combi` verified service history | **discarded** | Constant and component both deleted. Was paused by a hotfix in the 08-31 dump; that is resolved, no owner needed |
 | `93_combi` remove service book upload | **not progressing** — team's call, 2026-09-07 | Still registered with no consumer, so it writes assignments for nobody. Would have collided with Seller file upload; it will not |

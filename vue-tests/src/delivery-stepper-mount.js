@@ -1,11 +1,10 @@
 /**
- * Delivery-distance stepper (details.html, Variant 2) — the −/+ controls are the real
+ * Delivery-distance stepper (retired Variant 2) — the −/+ controls are the real
  * library button, not vanilla HTML: UiButton with variant="secondary" and the production
  * minus/plus icons.
  *
- * Mounts into [data-av-stepper="minus"] / [data-av-stepper="plus"] — used by both
- * details.html (the prototype funnel) and design-specs/delivery-distance.html (the spec's
- * live demo), so the doc and the prototype show the identical component.
+ * Mounts into [data-av-stepper="minus"] / [data-av-stepper="plus"] — used only by
+ * design-specs/delivery-distance.html, the spec's demo of the arm that was not chosen.
  *
  * Exposes a small bridge on window so the host page's stepper logic stays the single source
  * of truth for the value:
