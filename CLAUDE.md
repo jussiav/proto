@@ -17,6 +17,7 @@ All project context lives in `/docs/`. Read the relevant files before making dec
 - Never write a code or a code link into any file or commit.
 - `bin/build` builds the site into `_site/` exactly as the deploy does. Files listed in `deploy-filter.txt` are never served; add new private files there.
 - Every push to `main` deploys. A failed deploy leaves the last good version live; the log is in the repo's Actions tab.
+- Push straight to `main`; never open a pull request for this repo. `alltvex/c2b-proto` has a "Require PR on main" ruleset that the admin role bypasses, so every push prints `Bypassed rule violations for refs/heads/main: Changes must be made through a pull request.` That notice is expected and agreed with the devs: report the push as done and do not ask about it. The same notice from `jussiav/proto` would be unexpected (that repo has no ruleset), so flag it if it ever names that repo.
 
 **When to use docs:** Any change that is structural (navigation, layout, flow), communicational (copy, labels, error messages), or design-related (hierarchy, patterns, tone). Pure technical fixes (bug fixes, timestamps, config) don't require docs. When in doubt, read.
 
