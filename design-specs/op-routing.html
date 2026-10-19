@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OP routing · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="../translations.js"></script>
+  <script src="../i18n.js"></script>
+  <style>
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }
+    .av-arc-flip { transform: rotate(180deg); }
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); }
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    code { overflow-wrap: anywhere; }
+    .av-copy  { font-family: "DM Sans", sans-serif; font-size: 0.9375rem; line-height: 1.65; color: #1e293b; margin: 0; }
+    .av-gloss { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.6; color: #64748B; margin: 0.25rem 0 0; }
+    .av-ins { color: #3F6212; background: #ECFCCB; font-weight: 700; border-radius: 2px; padding: 0 2px; }
+
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; success page</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">OP routing</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A pilot: while a seller waits for the review call or for offers, AutoVex suggests insurance for their next car from OP. One component, one button out to OP's insurance page, and no change to the selling flow.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: draft &middot; 1 placement &middot; copy and offer unconfirmed
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What this pilot is</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>A seller selling their car will soon need insurance for the next one.</b> We suggest OP's car insurance at a moment when the seller has nothing left to do in AutoVex, and send them to OP's own page to get a quote.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>It must not cost the selling flow anything.</b> The suggestion appears only where no action is asked of the seller, sits below everything AutoVex says on the page, and never replaces or delays a step.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl"><b>One placement first.</b> The success page after submitting, for sellers who have verified their email. Other placements follow once the concept is right.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Shared with Huutokaupat routing</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3">Both initiatives are AutoVex suggesting a partner's service. The implementation differs (Huutokaupat routing is a full screen because the seller cannot continue with us; here they can), but the principles are the same:</p>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>AutoVex speaks.</b> The suggestion is introduced as ours (&ldquo;suosittelemme&rdquo;, we recommend), in AutoVex's type and colours, and follows from what the page has just told the seller. It is a suggestion, not an advertisement: no frame, no banner.</li>
+        <li><b>The partner-branded button is the exit.</b> The partner's mark and colour on the button, with an arrow, tell the seller they are leaving AutoVex. No separate &ldquo;you are leaving&rdquo; line. How loud the button is follows its role: Huutokaupat's is a filled, full-width button because routing is the only way forward there; OP's is outlined because it is a side suggestion.</li>
+        <li><b>Branding stays on the button.</b> Nothing else on the block is the partner's.</li>
+        <li><b>It never deters the seller from what they still do with AutoVex.</b> It appears only where nothing is asked of them, and below everything AutoVex says.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">Change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Scenario</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-bold">1</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">OP insurance suggestion</a></td>
+              <td class="px-4 py-3">Success page</td>
+              <td class="px-4 py-3 text-slate-600">Email verified: in review, or published</td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c1">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; OP insurance suggestion</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Success page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Email verified: in review, or published</span></div>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>A short suggestion at the bottom of the left column</b>, after everything the page already shows. No frame, no rule, no image: text in the page's own style, so it reads as AutoVex speaking rather than as an ad.</li>
+            <li><b>Shown only when the seller has verified their email</b> and the ad is either in review or published. Not shown while verification is pending (that is the seller's task), and not on a rejected ad or one missing photos.</li>
+            <li><b>It opens with AutoVex's own suggestion</b> as body copy, in the page subtext's style (16px DM Sans): &ldquo;Tutustu sillä aikaa suosittelemaamme tarjoukseen&rdquo; (meanwhile, take a look at an offer we recommend). Both states it appears in end with the notice &ldquo;Ota rennosti ja tarkkaile sähköpostiasi!&rdquo; (relax and keep an eye on your email), so it continues that thought: there is nothing to do but wait, and this is something useful to do meanwhile.</li>
+            <li><b>All copy in the block is centred</b>, like the page's own headline section.</li>
+            <li><b>The offer is the heading</b>, in the same style and size as the page's headline (Barlow bold, 24px): &ldquo;Uudelle autollesi vakuutus −50 %&rdquo; (insurance for your new car, −50 %). One sentence, so the discount stays part of it. OP is named only on the button, which is where the seller meets OP.</li>
+            <li><b>The terms line sits under the button</b>, small and grey, as the footnote to the click: &ldquo;Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.&rdquo; (applies to the first insurance period of new comprehensive insurance).</li>
+            <li><b>The block keeps one shape without a border</b>: the full-width button is exactly as wide as the notice card above, and the centred copy sits on the same axis as the page's headline.</li>
+            <li><b>One full-width outlined button</b>, 48px tall: white, a 2px border in OP's orange, OP's round logo, &ldquo;Tutustu OP:ssa&rdquo; (explore at OP) and an orange arrow. The logo in the button is the only OP branding, and it is what says the click leaves AutoVex. It opens OP's car insurance page in a new tab.</li>
+            <li><b>Nothing else changes.</b> The success page's content, the steps and the car card are untouched.</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v1" target="_blank" rel="noopener">See it in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v1" target="_blank" rel="noopener">see it published</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=control" target="_blank" rel="noopener">see production</a></p>
+        </div>
+
+        <div class="rounded-lg p-5 border border-slate-200 bg-white">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The block, live</p>
+          <div class="max-w-md flex flex-col gap-4">
+            <div class="flex flex-col items-center gap-2.5 pb-1 text-center">
+              <p class="font-dm text-base leading-5 text-black" data-i18n="opRouting.title">Tutustu sillä aikaa suosittelemaamme tarjoukseen</p>
+              <p class="font-barlow font-bold text-2xl leading-[26px] text-slate-900"><span data-i18n="opRouting.offer">Uudelle autollesi vakuutus</span>&nbsp;<span data-i18n="opRouting.discount">−50&nbsp;%</span></p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <a href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
+                 target="_blank" rel="noopener"
+                 class="w-full h-12 px-5 bg-white border-2 border-[#EE5A00] rounded-lg flex items-center justify-center gap-2.5 no-underline text-slate-900 hover:bg-orange-50 transition-colors"
+                 ><img src="../assets/op-logo.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span class="font-dm font-medium text-base" data-i18n="opRouting.cta">Tutustu OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0 text-[#EE5A00]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+              <p class="text-center font-dm text-sm leading-5 text-slate-600" data-i18n="opRouting.terms">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</p>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Rendered from the same copy as the prototype. On the page it sits in the 448px left column: 152px tall on desktop, 218px at 375px.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all new, all draft</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Intro (body copy)</p><p class="av-copy"><span class="av-ins">Tutustu sillä aikaa suosittelemaamme tarjoukseen</span></p><p class="av-gloss">Meanwhile, take a look at an offer we recommend</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Heading</p><p class="av-copy"><span class="av-ins">Uudelle autollesi vakuutus −50 %</span></p><p class="av-gloss">Insurance for your new car, −50 %</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Terms line</p><p class="av-copy"><span class="av-ins">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</span></p><p class="av-gloss">Applies to the first insurance period of new comprehensive insurance.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Button</p><p class="av-copy"><span class="av-ins">Tutustu OP:ssa</span></p><p class="av-gloss">Explore at OP</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Button, for screen readers only</p><p class="av-copy"><span class="av-ins">(avautuu uuteen välilehteen)</span></p><p class="av-gloss">(opens in a new tab)</p></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">The grey lines are English glosses for reading, not copy. The heading follows on from the page's notice; the offer line speaks to the next car, not to the sale, since the seller already knows they are selling. The terms line keeps the offer line from promising more than the offer gives. OP's page also ties the discount to moving the customer's insurances to OP; that condition is left to OP's page until OP confirms what we can say.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Control sellers see the success page exactly as today.</li>
+          <li>Variant sellers see the block only when their email is verified and the ad is in review or published, in every review-call timing.</li>
+          <li>The block never shows while email verification is pending, on a rejected ad, or when the publish was refused for missing photos.</li>
+          <li>The button opens OP's car insurance page in a new tab; the success page stays open.</li>
+          <li>Clicks on the button are recorded with the arm and the page state, so leads can be matched to what OP reports.</li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> right after submitting, a verified seller's task is done and they are thinking about changing cars, which makes this the most relevant moment with the least risk to the sale.</p>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Later placements</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-3">Not built. The component is meant to move to these with its context adapted:</p>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Email during the auction.</b> The same proposition as a text block and the branded button, in the email that tells the seller their ad is published and the auction can begin.</li>
+        <li><b>Offers page and decision page</b>, while the auction is still running and the seller is waiting.</li>
+        <li><b>Profile</b>, as a permanent spot after the pilot.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With OP</p>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
+        <li><b>Which offer can we communicate, and how?</b> The &ldquo;−50 %&rdquo; offer and its terms line are drafts until OP confirms the wording and conditions.</li>
+        <li><b>Are campaign codes supported</b>, for example an AutoVex-specific code in OP's purchase flow?</li>
+        <li><b>How are leads attributed to AutoVex</b>, and what counts as a qualified lead? This decides what the button's link carries.</li>
+        <li><b>The logo and the button's colour</b> need OP's approval; they are taken from OP's public site for this draft.</li>
+        <li><b>The target page.</b> OP's car insurance page for now; a direct link to the calculator, or a landing page of OP's, may convert better.</li>
+      </ul>
+      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Legal</p>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>What, if anything, the link may carry to OP.</b> Today it carries nothing about the seller. Any identifier or car data passed for attribution needs a legal basis and may need consent.</li>
+        <li><b>Does the suggestion need a marketing label?</b> It is designed to read as AutoVex's own suggestion, not an ad. Consumer law requires marketing to be recognisable as marketing and to show on whose behalf it is made; whether OP's name and logo on the button are enough, or a label such as &ldquo;Mainos&rdquo; or &ldquo;Yhteistyössä OP&rdquo; is needed, is for Legal.</li>
+      </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">OP routing</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>

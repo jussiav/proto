@@ -96,6 +96,17 @@ window.TRANSLATIONS = {
       disclaimer: 'AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.',
     },
 
+    /* OP routing, v1 only. Claude's draft, not approved; the offer and its
+       terms are unconfirmed with OP. */
+    opRouting: {
+      title:  'Tutustu sillä aikaa suosittelemaamme tarjoukseen',
+      discount: '\u221250\u00a0%',
+      offer:  'Uudelle autollesi vakuutus',
+      terms:  'Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.',
+      cta:    'Tutustu OP:ssa',
+      newTab: '(avautuu uuteen välilehteen)',
+    },
+
     howItWorks: {
       title:      'Näin löydämme autollesi ostajan',
       subtitle:   'Fiksuin tapa myydä auto on antaa AutoVexin kilpailuttaa autoliikkeet puolestasi.',
@@ -772,6 +783,15 @@ window.TRANSLATIONS = {
       cta:        'To Huutokaupat.com',
       back:       'Back to front page',
       disclaimer: 'AutoVex works together with Huutokaupat.com as separate services.',
+    },
+
+    opRouting: {
+      title:  'Meanwhile, take a look at an offer we recommend',
+      discount: '\u221250\u00a0%',
+      offer:  'Insurance for your new car',
+      terms:  'Applies to the first insurance period of new comprehensive insurance.',
+      cta:    'Explore at OP',
+      newTab: '(opens in a new tab)',
     },
 
     faq: {

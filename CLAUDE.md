@@ -684,6 +684,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 | AutoVex exclusive | **Draft** (2026-10-14) — painted-door test, `v1` optional checkbox, `v2` required choice; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
+| OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
 
 **Completed initiatives:**
 
@@ -2490,6 +2491,118 @@ proto's own line ("Viisi selkeää, puhelimella otettua kuvaa riittää hyvin.")
 better, but changing it is out of scope (Jussi). **Kept as a deliberate
 divergence:** the proto's skip-photos placement; prod's "Lisään kuvat
 myöhemmin" link row under the tips is not reproduced.
+
+## OP routing — `v1`
+
+Started 2026-10-16. A pilot: suggest OP car insurance for the seller's next
+car while they wait, one button out to OP. Any business case
+and deal terms stay out of this repo.
+
+- **Partner routing is a family with Huutokaupat routing** (Jussi): both are
+  AutoVex suggesting a third-party service without deterring the seller from
+  what they still do with us. Shared principles, not shared implementation:
+  AutoVex voice, no frame or banner, the partner-branded button is the only
+  exit signal (no "you are leaving" line, no "palvelun tarjoaa" line), no
+  partner branding off the button. Name further partner initiatives `<partner>-routing`.
+- **Where:** `success.html`, `#op-routing`, last in the LEFT column. The right
+  column was considered (conceptually closer) and rejected: it is sticky at
+  `100vh − 4rem` with its own scroll, so the block would push the car card out
+  of view.
+- **When:** `opRoutingShown(id)` from `renderForcedScenario`, so the organic
+  path and `?scenario=` agree. Only `in-review-verified` (all call timings) and
+  `published`. Never while email verification is pending (that is the task),
+  never on rejected or photos-missing.
+- **Shape (second pass, 2026-10-16):** the first pass (hairline, a 40px OP
+  logo beside the heading, a filled `#EE5A00` full-width button) read as a
+  banner that wanted a "Mainos" tag (Jussi). Now plain page text: no frame,
+  rule or image, a DM Sans `text-lg` bold heading carrying the offer
+  ("Uudelle autollesi vakuutus OP:lta -50 %", NBSPs so "-50 %" never wraps
+  alone) and a `text-sm` slate-600 terms line. The ONLY OP branding is the
+  button: white, `border-2 border-[#EE5A00]` (op.fi's own "Laske hinta"
+  fill), OP's round logo (`assets/op-logo.svg`, copied from op.fi's inline
+  SVG), "Tutustu OP:ssa", orange `arrow-right`, `h-12`, content width at every
+  size. Outlined because the logo is orange (a filled orange button hides it)
+  and because a side suggestion should be quieter than the page's own 56px
+  actions. Huutokaupat's is filled and full width because routing is its only
+  way forward: same principle, loudness follows the role. Target: op.fi's
+  car-insurance page, new tab.
+- **Third pass (2026-10-16): more AutoVex.** Jussi: the block needs a reason
+  to be on the page. A lead line, `opRouting.lead` "Sillä välin suosittelemme"
+  (`text-sm` bold `text-blue-800`, 7.9:1), continues the notice above it, "Ota
+  rennosti ja tarkkaile sähköpostiasi!", which both states show: nothing to do
+  but wait, so here is something meanwhile. Heading up to `text-xl` 20/28, the
+  notice title's own size, so the two read as sibling AutoVex messages; it
+  stays below the page's 24px `h1`. Not "Tutustu sillä aikaa…": the button
+  already says "Tutustu". 140px desktop / 188px at 375px.
+- **Fourth pass (2026-10-16), Jussi's calls:** lead is now "Tutustu sillä
+  aikaa suosittelemaamme tarjoukseen" (accepted knowing the button also says
+  "Tutustu"); the block is centred like the page's headline section; the
+  heading matches the page `h1` exactly (Barlow bold `text-2xl` 24/26,
+  slate-900), so the page carries two messages of equal weight. 150px desktop
+  / 216px at 375px (lead and heading two lines each on a phone).
+- **Fifth pass (2026-10-16):** the small blue lead was a pattern used nowhere
+  else (Jussi). It became the HEADING ("Tutustu sillä aikaa
+  suosittelemaamme tarjoukseen", page-`h1` style), and the offer dropped to a
+  supporting line, `opRouting.offer`, DM Sans `text-lg` bold slate-800, then
+  the terms line. Same shape as the page's own headline + subtext. Keys:
+  `title`, `offer`, `terms`, `cta`, `newTab`. 180px desktop / 250px at 375px.
+- **Sixth pass (2026-10-16):** a bold heading over a bold sales line read as
+  its own typography (Jussi). Only the heading stays centred (it carries the
+  page's centred line); below it everything is left-aligned. "−50 %"
+  (`opRouting.discount`, U+2212 + NBSP) leads at `text-5xl` (40px on prod's
+  scale; the spec page has no `tw-tokens.js`, so it writes `text-[40px]`)
+  Barlow bold, with the offer at body size (`text-base` slate-900, no "-50 %"
+  in it now) and the terms line beside it. The row and a now FULL-WIDTH
+  outlined button match the notice card's width exactly (132–580px at 1440),
+  so the block reads as one rectangle without a border. 206px desktop / 256px
+  at 375px.
+- **Seventh pass (2026-10-16):** "−50 %" moved to the RIGHT of the text
+  (text column `flex-1`, discount flush with the card's right edge). Same
+  heights.
+- **Figma:** file `sHQk3FUhEZM7EFbYaAcjxX`, page `OP routing (AI drafting)`
+  `7349:5`. `Components — OP routing` `7349:6` holds the local components:
+  `OP routing suggestion` `7349:7` (TEXT props Heading / Offer / Terms /
+  Discount / CTA), `Next step row` `7349:21`, `Status badge / In review`
+  `7349:28`, `Reg plate badge` `7349:32`, `Car card / Row` `7349:36`, `Car card
+  / Stacked` `7349:64`, `Illustration / In review` `7350:17` (the prod SVG,
+  uploaded as editable vectors). **Every pushed iteration is kept** (Jussi):
+  each is its own horizontal wrapper (Desktop 1440 · Mobile 375 · Notes)
+  stacked below the last; the current one is named `✅ … (IN PROTO)` and a
+  replaced one is renamed `◻︎ Superseded — … (not in proto)`, never deleted.
+  Iteration 1 = `7350:18` (desktop `7350:21`, mobile `7350:301`).
+- **Eighth pass (2026-10-16):** the split row read oddly (Jussi). Back to one
+  sentence, "Uudelle autollesi vakuutus OP:lta −50 %", DM Sans Medium
+  `text-xl` 20/28 slate-900 with only the `opRouting.discount` span bold, an
+  NBSP before it so it never wraps alone. Left-aligned under the centred
+  heading. Terms line moved BELOW the button (`gap-2`), as the click's
+  footnote. 192px desktop / 266px at 375px.
+- **Ninth pass (2026-10-16):** ALL copy in the block centred (offer and terms
+  too). Pushed to Figma as **Iteration 2** `7351:514` (desktop `7351:517`,
+  mobile `7351:555`), built on a new component `OP routing suggestion /
+  Iteration 2` `7351:501`; Iteration 1 renamed `◻︎ Superseded — …`. Gotcha:
+  binding a TEXT component property drops mixed styling, so the bold
+  "−50 %" range has to be applied AFTER `addComponentProperty`.
+- **Tenth pass (2026-10-16), Jussi's swap:** the offer is now the HEADING
+  (`h2`, Barlow bold 24/26, page-`h1` style, all bold so no span emphasis) and
+  "Tutustu sillä aikaa suosittelemaamme tarjoukseen" is body copy above it in
+  the page subtext's style (DM Sans 16/20 black), `gap-2.5` like the page's
+  own headline + subtext. Still centred, button + terms unchanged. Keys keep
+  their names (`title` = the intro now). 152px desktop / 218px at 375px.
+- **Eleventh pass (2026-10-16):** heading shortened to "Uudelle autollesi
+  vakuutus −50 %" (`opRouting.offer` drops "OP:lta"; EN "Insurance for your
+  new car"). OP is now named only on the button. Two lines on a phone. Pushed
+  as Figma **Iteration 3** `7352:996` (desktop `7352:999`, mobile `7352:1037`),
+  component `OP routing suggestion / Iteration 3` `7352:983`; Iteration 2
+  renamed Superseded.
+- **The -50 % is narrower than it reads:** op.fi's offer is kasko only, first
+  insurance period, when insurances are moved to OP. The terms line names the
+  first two (Jussi's wording, written "uusien kaskovakuutusten" rather than
+  "Kasko-vakuutuksien": a compound, lowercase); the move-to-OP condition is
+  left to OP's page until OP confirms. OP confirms offer, codes, attribution
+  and qualifying lead; Legal confirms what the link may carry and whether a
+  marketing label is needed.
+- **Copy:** `opRouting.*`, Claude's draft. Later placements (auction email
+  `ad-published`, offers/decision while waiting, profile) are spec-only.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

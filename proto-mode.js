@@ -167,6 +167,12 @@
       name: 'Informed ad creation',
       spec: 'design-specs/informed-ad-creation.html',
       prodArm: 'control'
+    },
+    {
+      slug: 'op-routing',
+      name: 'OP routing',
+      spec: 'design-specs/op-routing.html',
+      prodArm: 'control'
     }
   ];
 

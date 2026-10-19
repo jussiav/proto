@@ -166,6 +166,30 @@
           </div>
         </div>
 
+        <!-- OP routing, v1: AutoVex's suggestion to use a partner service, shown
+             only where the seller has nothing left to do (see opRoutingShown).
+             Plain page text in AutoVex's own voice, so it does not read as an ad.
+             The heading continues the notice above it (relax and wait), which is
+             the block's reason to be on this page. Below it, the row and the
+             full-width button share the notice card's width, so the block reads
+             as one shape without a border;
+             the only OP branding is the logo inside an outlined button, which is
+             what says the click leaves AutoVex. The logo is orange, so the button
+             is white: a filled orange button would hide it. -->
+        <div id="op-routing" class="hidden w-full flex-col gap-4 mt-2">
+          <div class="flex flex-col items-center gap-2.5 pb-1 text-center">
+            <p class="font-dm text-base leading-5 text-black" data-i18n="opRouting.title">Tutustu sillä aikaa suosittelemaamme tarjoukseen</p>
+            <h2 class="font-barlow font-bold text-2xl leading-[26px] text-slate-900"><span data-i18n="opRouting.offer">Uudelle autollesi vakuutus</span>&nbsp;<span data-i18n="opRouting.discount">−50&nbsp;%</span></h2>
+          </div>
+          <div class="flex flex-col gap-2">
+            <a id="op-routing-cta" href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
+               target="_blank" rel="noopener"
+               class="w-full h-12 px-5 bg-white border-2 border-[#EE5A00] rounded-lg flex items-center justify-center gap-2.5 no-underline text-slate-900 hover:bg-orange-50 transition-colors"
+               ><img src="assets/op-logo.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span class="font-dm font-medium text-base" data-i18n="opRouting.cta">Tutustu OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0 text-[#EE5A00]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+            <p class="text-center font-dm text-sm leading-5 text-slate-600" data-i18n="opRouting.terms">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</p>
+          </div>
+        </div>
+
       </div>
 
       <!-- ── Right column (cream) ── -->
@@ -260,6 +284,25 @@
     }());
     var ESP_V1 = ESP_ARM === 'v1';
 
+    /* OP routing: shown only in the two states that ask nothing of the seller.
+       An unverified seller's task is verifying the email, and a rejected or
+       photo-short draft has to be fixed first. */
+    var OPR_V1 = (function () {
+      var arm = window.protoVariant ? window.protoVariant('op-routing', 'control') : 'control';
+      if (arm !== 'control' && arm !== 'v1') {
+        if (window.protoVariantSet) window.protoVariantSet('op-routing', null);
+        return false;
+      }
+      return arm === 'v1';
+    }());
+    var OP_ROUTING_STATES = ['in-review-verified', 'published'];
+    function opRoutingShown(id) {
+      var el = document.getElementById('op-routing');
+      var on = OPR_V1 && OP_ROUTING_STATES.indexOf(id) !== -1;
+      el.classList.toggle('hidden', !on);
+      el.classList.toggle('flex', on);
+    }
+
     function photosComplete(s) {
       const ph = s.photos || {};
       const total = Object.values(ph).reduce((n, a) => n + (a ? a.length : 0), 0);
@@ -296,6 +339,14 @@
           variants: [
             { id: 'control', label: 'Control — current design' },
             { id: 'v1',      label: 'Variant 1 — edit while waiting for review' }
+          ]
+        },
+        {
+          slug:    'op-routing',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no insurance suggestion' },
+            { id: 'v1',      label: 'Variant 1 — OP insurance suggestion (draft)' }
           ]
         }
       ],
@@ -605,6 +656,7 @@
       renderSteps(def.steps);
       setNotice(def.notice || null);
       setActionCard(def.actionCard || null);
+      opRoutingShown(id);
 
       emailCard.style.display = def.emailCard ? 'flex' : 'none';
       if (def.emailCard) {
