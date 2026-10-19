@@ -2286,6 +2286,10 @@ which matches the copy's "alle 280 000 km". The funnel's first step and
   `#142C10` with `assets/huutokaupat-logo-white.svg` and prod's `arrow-right`
   (accessible name `huutokaupat.cta`, sr-only), the back link, and the
   disclaimer in `text-xs`. **No automatic redirect, no countdown.**
+- The button's target (2026-10-19, from Huutokaupat.com):
+  `https://huutokaupat.com/sivu/myy-autosi?utm_source=autovex&utm_medium=referral&utm_campaign=kuhu-leadit`,
+  same tab. The UTM parameters are their attribution, so keep the query string
+  exactly as given. It replaced `kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa`.
 - Back/logo close the sheet, clear `#huutokaupat` and focus the mileage field;
   a bfcache `pageshow` closes a sheet left open. Nothing is written to the store.
 - `index.html?huutokaupat-routing=v6#huutokaupat` opens the sheet on load.

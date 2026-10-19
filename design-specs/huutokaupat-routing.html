@@ -254,7 +254,7 @@
           <li><b>A full-screen white view</b> replaces the page, in the same shell as production&rsquo;s &ldquo;Haetaan autosi perustiedot&rdquo; <span class="text-slate-500">(Fetching your car's basic details)</span> loading screen: AutoVex logo at the top, the content in one left-aligned column, centred on the screen. The same layout at every width.</li>
           <li><b>First, the offers page&rsquo;s red draft notification</b>, the one a seller sees there when their ad is rejected: 2px red border, a bold title and grey text, without its own button. Top left, the registration number as typed. Top right, <b>the mileage as typed in a red tag</b> with a prohibit icon, so a seller who mistyped (800 000 for 80 000) sees the figure that stopped them. Then &ldquo;Pahoittelut!&rdquo; and the limit sentence.</li>
           <li><b>The title</b> &ldquo;Suosittelemme Huutokaupat.comia&rdquo; and <b>a three-item checklist</b> of what Huutokaupat.com offers. Plain grey checks, not AutoVex blue, and the second item names Huutokaupat.com, so the list cannot be read as AutoVex&rsquo;s own offer.</li>
-          <li><b>Huutokaupat.com&rsquo;s own button</b>: full width, 56px tall, in their dark green (#142C10) with their white logo and an arrow, so it reads as leaving AutoVex. It opens Huutokaupat.com in the same tab. <b>No automatic redirect</b>: the seller always chooses.</li>
+          <li><b>Huutokaupat.com&rsquo;s own button</b>: full width, 56px tall, in their dark green (#142C10) with their white logo and an arrow, so it reads as leaving AutoVex. It opens Huutokaupat.com&rsquo;s &ldquo;Myy autosi&rdquo; page in the same tab, with AutoVex&rsquo;s campaign parameters (utm_source, utm_medium, utm_campaign) so the visit is attributed to us. <b>No automatic redirect</b>: the seller always chooses.</li>
           <li><b>&ldquo;Takaisin etusivulle&rdquo;</b> <span class="text-slate-500">(Back to the front page)</span>, centred under the button, closes the screen. The logo does the same.</li>
           <li><b>A small disclaimer</b> at the bottom says the two services are separate.</li>
           <li><b>Nothing is saved</b>: no listing is started, and the registration number and mileage are not passed on.</li>
@@ -346,7 +346,7 @@
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
           <li>The screen covers the whole viewport on a white background, logo at the top, content centred, at every width from 360px up.</li>
           <li>The notification shows the registration number and the mileage exactly as the seller typed them, the mileage with thousands separated and &ldquo;km&rdquo; after it, never wrapping across lines.</li>
-          <li>The button opens <code>https://kamppis.huutokaupat.com/yksityishenkilon-autohuutokauppa</code> in the same tab. Nothing opens automatically.</li>
+          <li>The button opens <code>https://huutokaupat.com/sivu/myy-autosi?utm_source=autovex&amp;utm_medium=referral&amp;utm_campaign=kuhu-leadit</code> in the same tab, with the query string exactly as given: it is how Huutokaupat.com attributes the visit to AutoVex. Nothing opens automatically.</li>
           <li>&ldquo;Takaisin etusivulle&rdquo; and the logo close the screen and leave the seller on the front page with the form as they filled it, focus in the mileage field.</li>
           <li>Coming back from Huutokaupat.com with the browser's back button shows the front page, not this screen.</li>
           <li>Screen readers meet it as a dialog with the title focused when it opens.</li>
@@ -382,8 +382,7 @@
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>How does Huutokaupat.com know the visit came from us?</b> The link has no tracking parameter yet. Whatever they need, a campaign parameter or a referral code, has to be agreed and added to the link.</li>
-        <li><b>Do we measure it ourselves?</b> An analytics event when the screen opens, when the seller presses the button, and when they go back, would show how many leave and how many return.</li>
+                <li><b>Do we measure it ourselves?</b> An analytics event when the screen opens, when the seller presses the button, and when they go back, would show how many leave and how many return.</li>
         <li><b>Should the registration number and mileage go with the seller?</b> It would save them typing it again. It also means sharing data with another company, so it needs a privacy decision first.</li>
         <li><b>Should the funnel's first step and the price estimate page route the same way?</b> Both stop high mileage with the same error today.</li>
         <li><b>Naming another company in the product</b> needs legal and brand sign-off before production.</li>
