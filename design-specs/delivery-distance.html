@@ -99,7 +99,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design change spec · ad creation funnel</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Delivery distance A/B test</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The delivery-distance question in ad creation, tested in three arms: the then-current design as <b class="text-white">control</b>, a <b class="text-white">minimal-change Variant&nbsp;1</b>, and a <b class="text-white">Variant&nbsp;2</b> that adds steppers and states what the distance does in the auction. <b class="text-white">Variant&nbsp;1 won and is being rolled out.</b></p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">The delivery-distance question in ad creation, tested in three arms: the then-current design as <b class="text-white">control</b>, a <b class="text-white">minimal-change Variant&nbsp;1</b>, and a <b class="text-white">Variant&nbsp;2</b> that adds steppers and states what the distance does in the auction. <b class="text-white">Variant&nbsp;1 won and ships with Variant&nbsp;2's info line and a reworded question. The initiative is closed.</b></p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-success-100 text-success-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
@@ -134,8 +134,9 @@
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Decision</p>
           <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1">
-            <li><b>Variant&nbsp;1 ships</b>: no slider, no default value, the range as the placeholder, and the existing one-line tip.</li>
-            <li>Control and Variant&nbsp;2 are retired, so the −/+ buttons and the fuller info line do not ship.</li>
+            <li><b>Variant&nbsp;1 ships</b>: no slider, no default value, the range as the placeholder.</li>
+            <li><b>Two copy changes ship with it</b>: the question gains <i>tarvittaessa</i>, and the tip is replaced by Variant&nbsp;2's info line. See <a class="text-av-blue underline" href="#ships">What ships</a>.</li>
+            <li>Control and Variant&nbsp;2 are retired, so the −/+ buttons do not ship.</li>
             <li>The global label change had already shipped to every arm before the result.</li>
           </ul>
         </div>
@@ -144,13 +145,36 @@
           <p class="font-dm text-sm leading-6 text-slate-800">The 9&nbsp;% is the average relative lift. How it breaks down, for example by offer level, has not been analysed.</p>
         </div>
       </div>
+      <div id="ships" class="grid md:grid-cols-2 gap-5 items-start mt-5">
+        <div class="bg-white rounded-lg p-5 border-2 border-success-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">What ships (inert replica)</p>
+          <label class="font-dm font-bold text-base leading-5 text-slate-900 block mb-3">Kuinka kauas voit tarvittaessa toimittaa auton? <span class="text-red-500 font-medium">*</span></label>
+          <div class="relative">
+            <span class="block w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base text-slate-300 leading-[3.5rem]">50–500</span>
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
+          </div>
+          <div class="flex items-start gap-2 mt-3">
+            <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
+            <p class="font-dm text-base leading-5 text-black">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">What ships - exhaustive</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>Variant&nbsp;1's field:</b> no slider, no default value, <code>50–500</code> as the placeholder, values rounded to 10&nbsp;km and corrected into 50–500 on blur, and empty caught at submit.</li>
+            <li><b>Question:</b> <i>Kuinka kauas voit <b>tarvittaessa</b> toimittaa auton?</i> <span class="text-slate-500">(How far can you deliver the car if needed?)</span>.</li>
+            <li><b>Info line:</b> Variant&nbsp;2's line replaces the old tip. <i>Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</i> <span class="text-slate-500">(Within your area, dealers can make an offer without collection. Dealers outside your area include collection in their offer.)</span></li>
+            <li><b>Not shipped:</b> the −/+ buttons and the old tip.</li>
+          </ul>
+        </div>
+      </div>
       <div class="bg-warning-50 border-2 border-warning-300 rounded-lg p-5 mt-5">
         <p class="font-dm text-xs font-bold uppercase tracking-widest text-warning-800 mb-3">Why it worked - our hypothesis, not yet a finding</p>
         <p class="font-dm text-sm leading-6 text-slate-900">Typing a kilometre value makes sellers aware of the distance they are committing to, where control's preselected 200&nbsp;km let them pass the question without noticing it. Sellers who have thought about distance may then favour offers from closer dealerships, and that would show up as more accepted offers. The hypothesis behind the test was that sellers would be better informed about where an offer comes from and how far it is from their postcode. The deeper analysis above is what can confirm or reject this.</p>
       </div>
       <div class="bg-white rounded-lg p-5 border border-slate-200 mt-5">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">In the prototype</p>
-        <p class="font-dm text-sm leading-6 text-slate-800">The prototype's <a class="text-av-blue underline font-medium" href="../details.html"><i>Autosi tiedot</i> step</a> renders Variant&nbsp;1 for everyone. The Variants switcher and the <code>?delivery=</code> parameter are gone. Control and Variant&nbsp;2 survive on this page, and in git as the tag <code>delivery-distance-arms</code>: checking it out restores all three switchable arms.</p>
+        <p class="font-dm text-sm leading-6 text-slate-800">The prototype's <a class="text-av-blue underline font-medium" href="../details.html"><i>Autosi tiedot</i> step</a> renders Variant&nbsp;1 for everyone. The Variants switcher and the <code>?delivery=</code> parameter are gone. The shipped copy is what it shows. Control and both variants survive on this page as tested, and in git as the tag <code>delivery-distance-arms</code>: checking it out restores all three switchable arms.</p>
       </div>
       </div>
     </section>
@@ -234,7 +258,7 @@
       </div>
       <div class="grid md:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <label for="v1-num" class="font-dm font-bold text-base leading-5 text-slate-900 block mb-3"><span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span></label>
+          <label for="v1-num" class="font-dm font-bold text-base leading-5 text-slate-900 block mb-3"><span>Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span></label>
           <div class="relative">
             <input id="v1-num" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
               class="spec-num-input w-full h-14 border border-slate-400 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors" />
@@ -243,7 +267,7 @@
           <p id="v1-msg" class="av-neutral-msg" style="display:none"></p>
           <div class="flex items-start gap-2 mt-3">
             <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
-            <p class="font-dm text-sm leading-5 text-slate-700" data-i18n="details.deliveryRangeNoteCurrent">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
+            <p class="font-dm text-sm leading-5 text-slate-700">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</p>
           </div>
           <div class="bg-slate-900 text-blue-200 rounded-md px-4 py-2.5 font-mono text-sm mt-3" id="v1-out">details.deliveryRange: <b class="text-white">null</b></div>
         </div>
@@ -274,7 +298,7 @@
       <div class="grid md:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg p-5 border border-slate-200">
           <div class="flex flex-col gap-3">
-            <label class="font-dm font-bold text-base leading-5 text-slate-900"><span data-i18n="details.deliveryRange">Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span></label>
+            <label class="font-dm font-bold text-base leading-5 text-slate-900"><span>Kuinka kauas voit toimittaa auton?</span> <span class="text-red-500 font-medium">*</span></label>
             <div class="flex items-stretch gap-2">
               <!-- Real library component: UiButton secondary + production minus icon,
                    rendered by ../vue-tests/dist/delivery-stepper.js -->
@@ -456,10 +480,11 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRange</code><br><span class="text-xs text-slate-500">label — all arms</span></td><td class="px-5 py-3">Kuinka kauas voit toimittaa auton?</td><td class="px-5 py-3">How far can you deliver the car?</td></tr>
-            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangeNoteCurrent</code><br><span class="text-xs text-slate-500">tip — control + V1 · ships with V1</span></td><td class="px-5 py-3">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</td><td class="px-5 py-3">The distance affects how many dealers can make offers. Dealers offering collection can also bid from outside your area.</td></tr>
+            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRange</code><br><span class="text-xs text-slate-500">label — ships</span></td><td class="px-5 py-3">Kuinka kauas voit tarvittaessa toimittaa auton?</td><td class="px-5 py-3">How far can you deliver the car if needed?</td></tr>
+            <tr><td class="px-5 py-3"><code>deliveryRange</code><br><span class="text-xs text-slate-500">label — all arms, as tested · retired</span></td><td class="px-5 py-3">Kuinka kauas voit toimittaa auton?</td><td class="px-5 py-3">How far can you deliver the car?</td></tr>
+            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangeNoteCurrent</code><br><span class="text-xs text-slate-500">tip — control + V1 · retired, key removed from translations.js</span></td><td class="px-5 py-3">Etäisyys vaikuttaa siihen, kuinka moni autoliike voi tehdä tarjouksia. Noutoa tarjoavat liikkeet voivat tarjota myös alueen ulkopuolelta.</td><td class="px-5 py-3">The distance affects how many dealers can make offers. Dealers offering collection can also bid from outside your area.</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryRangePlaceholder</code><br><span class="text-xs text-slate-500">V1 + V2</span></td><td class="px-5 py-3">50–500</td><td class="px-5 py-3">50–500</td></tr>
-            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpactNote</code><br><span class="text-xs text-slate-500">V2 info line · retired</span></td><td class="px-5 py-3">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</td><td class="px-5 py-3">Within your area, dealers can make an offer without collection. Dealers outside your area include collection in their offer.</td></tr>
+            <tr class="bg-blue-50"><td class="px-5 py-3"><code>deliveryImpactNote</code><br><span class="text-xs text-slate-500">V2 info line · ships with V1</span></td><td class="px-5 py-3">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</td><td class="px-5 py-3">Within your area, dealers can make an offer without collection. Dealers outside your area include collection in their offer.</td></tr>
             <tr class="bg-blue-50"><td class="px-5 py-3"><code>err.required</code><br><span class="text-xs text-slate-500">submit, V1 + V2</span></td><td class="px-5 py-3">Pakollinen kenttä.</td><td class="px-5 py-3">Required field.</td></tr>
             <tr><td class="px-5 py-3"><code>deliveryMsgFixed</code><br><span class="text-xs text-slate-500">control, V1 and V2, on auto-correct</span></td><td class="px-5 py-3">Arvo korjattiin välille 50–500 km.</td><td class="px-5 py-3">Value adjusted to the 50–500 km range.</td></tr>
           </tbody>
