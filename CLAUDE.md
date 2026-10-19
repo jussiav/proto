@@ -2669,6 +2669,15 @@ and deal terms stay out of this repo.
   yields two results: clicks on "Katso AutoVex-etusi" = interest in a perk at
   all; clicks to OP from the modal = conversion on this offer. The spec's
   acceptance criteria ask for the two as separate events.
+- **`v2` (2026-10-19, later):** button "Näytä AutoVex-edut" (was "Katso
+  AutoVex-etusi"). The modal gets prod's header, `NegotiationGuidance`'s title
+  row transcribed (`mb-4 lg:-mt-6`, h2 `text-xl leading-[27px] font-bold
+  pr-12 sm:pr-16`): "Käyttämättömät AutoVex-edut" (`opRouting2.modalTitle`),
+  plural so it suggests perks vary over time and between sellers (not true in
+  this test). It is the dialog's `aria-labelledby`; the coupon heading became
+  an h3. That replaced the body's `pt-12 sm:pt-16` hack: the title's right
+  padding now keeps the ×. The "AutoVex-etu" tag is gone; the EXPIRY is the
+  lime tag, alone, top-right (FOMO: still valid, will run out).
 - **The -50 % is narrower than it reads:** op.fi's offer is kasko only, first
   insurance period, when insurances are moved to OP. The terms line names the
   first two (Jussi's wording, written "uusien kaskovakuutusten" rather than

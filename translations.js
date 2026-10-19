@@ -111,8 +111,8 @@ window.TRANSLATIONS = {
        until OP confirms the campaign. */
     opRouting2: {
       status:     'Sinulla on 1 käyttämätön etu:',
-      reveal:     'Katso AutoVex-etusi',
-      tag:        'AutoVex-etu',
+      reveal:     'Näytä AutoVex-edut',
+      modalTitle: 'Käyttämättömät AutoVex-edut',
       expiry:     'Voimassa 31.12.2026 asti',
       offer:      'Uudelle autollesi vakuutus',
       discount:   '\u221250\u00a0%',
@@ -819,8 +819,8 @@ window.TRANSLATIONS = {
 
     opRouting2: {
       status:     'You have 1 unused perk:',
-      reveal:     'See your AutoVex perk',
-      tag:        'AutoVex perk',
+      reveal:     'Show AutoVex perks',
+      modalTitle: 'Unused AutoVex perks',
       expiry:     'Valid until 31 Dec 2026',
       offer:      'Insurance for your new car',
       discount:   '\u221250\u00a0%',
