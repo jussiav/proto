@@ -2411,10 +2411,30 @@ mechanism are deliberately out of scope for this test.
   +1/+2 business days. Flagged on the spec. The v2 info line was removed: the
   radio copy must stand alone. **v2 is a yes/no question** (Jussi, 2026-10-14):
   "Haluatko autollesi lisänäkyvyyttä?" → "Kyllä, myyn vain AutoVexissä"
-  first, then "En halua lisänäkyvyyttä" ("Ei," dropped 2026-10-19; desc
+  first, then "En halua ilmaista lisänäkyvyyttä" ("Ei," dropped 2026-10-19; desc
   "Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan."). Yes option (desc "Autoni on myynnissä vain AutoVexissä tarjouskilpailun
   ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden
   autoliikkeille."). Both options first person, the seller's own answer.
+  **v2 is the team's chosen direction (2026-10-19)**: a required choice gives
+  every seller's answer. Rewritten several times the same day; now: question
+  "Haluatko autollesi ilmaista lisänäkyvyyttä?" (value, incl. "free", BEFORE
+  any commitment), yes "Kyllä, sitoudun odottamaan AutoVexin tarjoukset", desc
+  "En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää).
+  Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia." The rule is "I won't sell before
+  deciding" (any channel: listing, private sale, trade-in), aimed at the
+  "already sold" reject reason. Rejected on the way: "myyn vain" (reads as a
+  sale commitment), "haen tarjouksia" / "ilmoitan" / "pidän myynnissä"
+  (vague, don't rule out selling), anything with "muualle" (suggests selling
+  elsewhere), a ban on asking dealerships (few can promise it), "lupaus" (too
+  easy to break). Dealership behaviour is deliberately not explained (Jussi:
+  keep it light). The "Suosittelemme" tag sits INSIDE the yes card at the right end
+  of the label's first line (`flex items-start justify-between`, tag
+  `flex-shrink-0`); the label wraps beside it. The corner overlap (as v1) was
+  tried and rejected by Jussi for v2. Terms stay the question's own
+  (lisänäkyvyys). Period = submit → offers decided, "noin 5 arkipäivää" as the
+  team's starting figure, tested in a follow-up A/B. Team monitors CS
+  calls about the commitment and iterates on them. Starting at submit means a
+  seller already listed elsewhere must delist to answer yes truthfully.
   Stored values unchanged. **v1's description adds only what its label does not say** (Jussi: no
   duplicated copy): "Sitoudun tähän vain tarjouskilpailun ajaksi (noin 36
   tuntia). Sinä aikana useampi autoliike näkee autoni ja voi tehdä siitä

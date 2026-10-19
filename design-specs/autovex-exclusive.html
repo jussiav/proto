@@ -234,10 +234,10 @@
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
           <ul class="list-disc pl-5 space-y-1">
-            <li><b>A required yes-or-no question in the same place</b>, between the email field and the consent checkboxes, with the funnel's group-legend heading and a red asterisk: &ldquo;Haluatko autollesi lisänäkyvyyttä?&rdquo; (do you want extra visibility for your car?).</li>
-            <li><b>Two option cards</b>, the funnel's own radio cards: <b>yes, on the condition</b> first with the green &ldquo;recommended&rdquo; tag, <b>no</b> second. Each has a short description, and no explanation sits below them. Neither is preselected.</li>
-            <li><b>Both answers are in the seller's own voice.</b> The yes option names the condition, &ldquo;Kyllä, myyn vain AutoVexissä&rdquo; (yes, I'll sell only on AutoVex), since the question already names the reward; the no option is simply &ldquo;En halua lisänäkyvyyttä&rdquo; (I don't want extra visibility). Both descriptions are first person too.</li>
-            <li><b>The time limit is in the yes description</b>: &ldquo;tarjouskilpailun ajan (noin 36 tuntia)&rdquo;, during the auction. It starts with the auction, so a seller with ads elsewhere is not asked to take them down before choosing.</li>
+            <li><b>A required yes-or-no question in the same place</b>, between the email field and the consent checkboxes, with the funnel's group-legend heading and a red asterisk: &ldquo;Haluatko autollesi ilmaista lisänäkyvyyttä?&rdquo; (do you want free extra visibility for your car?). The value, free included, comes before any commitment is asked.</li>
+            <li><b>Two option cards</b>, the funnel's own radio cards: <b>yes, on the condition</b> first with the green &ldquo;recommended&rdquo; tag at the right end of the label's first line, inside the card (the label wraps beside it), <b>no</b> second. Each has a short description, and no explanation sits below them. Neither is preselected.</li>
+            <li><b>Both answers are active and in the seller's own voice.</b> The yes option is a positive commitment: &ldquo;Kyllä, sitoudun odottamaan AutoVexin tarjoukset&rdquo; (yes, I commit to waiting for AutoVex's offers). It does not mention selling elsewhere, and it does not ask the seller to commit to a sale. The no option is simply &ldquo;En halua ilmaista lisänäkyvyyttä&rdquo; (I don't want free extra visibility).</li>
+            <li><b>The yes description states the rule, the period and the reason.</b> &ldquo;En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää)&rdquo; (I won't sell the car before I've decided on the offers, about 5 business days) rules out any earlier sale, including a private sale or a trade-in, which is what turns into an &ldquo;I already sold the car&rdquo; rejection after the auction. The period runs from submitting the ad to the offers being accepted, rejected or expiring. &ldquo;Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia&rdquo; (this way my listing gets extra visibility, which can raise the offers) links the ask to the reward, and names what the visibility may lead to with a hedged &ldquo;voi&rdquo; (can), without explaining how dealerships behave. Asking dealerships for offers is deliberately not ruled out.</li>
             <li><b>The standard option does not mention selling elsewhere</b>, so it cannot read as advice to list the car on other sites.</li>
             <li><b>Submitting without a choice is blocked</b> with the funnel's own &ldquo;selection required&rdquo; error on the options.</li>
             <li><b>Shown to every seller</b>, logged in or not, and the earlier choice is restored when they come back to edit.</li>
@@ -249,24 +249,24 @@
         <div class="rounded-lg p-5 border border-slate-200 bg-white">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The question, live (pick one)</p>
           <div class="max-w-md flex flex-col gap-4">
-            <p class="font-dm font-bold text-xl leading-7 text-slate-900"><span data-i18n="contact.visibilityLegend">Haluatko autollesi lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span></p>
+            <p class="font-dm font-bold text-xl leading-7 text-slate-900"><span data-i18n="contact.visibilityLegend">Haluatko autollesi ilmaista lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span></p>
             <div class="flex flex-col gap-3.5">
               <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
                 <input type="radio" name="spec-visibility" class="sr-only" />
                 <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
                 <span class="flex flex-col gap-1 min-w-0">
-                  <span class="flex flex-wrap items-center gap-2">
-                    <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityExclusive">Kyllä, myyn vain AutoVexissä</span>
-                    <span class="inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
+                  <span class="flex items-start justify-between gap-3">
+                    <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityExclusive">Kyllä, sitoudun odottamaan AutoVexin tarjoukset</span>
+                    <span class="flex-shrink-0 inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
                   </span>
-                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityExclusiveDesc">Autoni on myynnissä vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span>
+                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityExclusiveDesc">En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia.</span>
                 </span>
               </label>
               <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
                 <input type="radio" name="spec-visibility" class="sr-only" />
                 <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
                 <span class="flex flex-col gap-1 min-w-0">
-                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">En halua lisänäkyvyyttä</span>
+                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">En halua ilmaista lisänäkyvyyttä</span>
                   <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
                 </span>
               </label>
@@ -279,9 +279,9 @@
       <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all draft except the error</p>
         <div class="space-y-4">
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Question</p><p class="av-copy"><span class="av-ins">Haluatko autollesi lisänäkyvyyttä?</span></p><p class="av-gloss">Do you want extra visibility for your car?</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 1 (tag: Suosittelemme)</p><p class="av-copy"><span class="av-ins">Kyllä, myyn vain AutoVexissä</span></p><p class="av-gloss">Yes, I'll sell only on AutoVex</p><p class="av-copy mt-2"><span class="av-ins">Autoni on myynnissä vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span></p><p class="av-gloss">My car is for sale only on AutoVex during the auction (about 36 hours). My listing gets better visibility with dealerships.</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 2</p><p class="av-copy"><span class="av-ins">En halua lisänäkyvyyttä</span></p><p class="av-gloss">No, I don't want extra visibility</p><p class="av-copy mt-2"><span class="av-ins">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span></p><p class="av-gloss">My listing is shown to dealerships as usual.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Question</p><p class="av-copy"><span class="av-ins">Haluatko autollesi ilmaista lisänäkyvyyttä?</span></p><p class="av-gloss">Do you want free extra visibility for your car?</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 1 (tag: Suosittelemme)</p><p class="av-copy"><span class="av-ins">Kyllä, sitoudun odottamaan AutoVexin tarjoukset</span></p><p class="av-gloss">Yes, I commit to waiting for AutoVex's offers</p><p class="av-copy mt-2"><span class="av-ins">En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia.</span></p><p class="av-gloss">I won't sell the car before I've decided on the offers (about 5 business days). This way my listing gets extra visibility, which can raise the offers.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 2</p><p class="av-copy"><span class="av-ins">En halua ilmaista lisänäkyvyyttä</span></p><p class="av-gloss">No, I don't want free extra visibility</p><p class="av-copy mt-2"><span class="av-ins">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span></p><p class="av-gloss">My listing is shown to dealerships as usual.</p></div>
           <div><p class="font-dm text-xs text-slate-500 mb-1">Error, existing funnel copy</p><p class="av-copy">Valinta vaaditaan.</p><p class="av-gloss">A selection is required.</p></div>
         </div>
         <p class="font-dm text-xs text-slate-500 mt-4">The error is the funnel's existing message for an unanswered choice.</p>
@@ -379,7 +379,9 @@
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
         <li><b>The promise is not kept in this test.</b> Sellers who tick it are told their listing gets more prominence, and it does not. Do we tell them afterwards, for example on the success page or in a later email, or leave it as is for the test's length?</li>
-        <li><b>Variants 1 and 2 say about 36 hours, variant 3 about 5 business days.</b> They describe different periods (the auction only, against the auction plus the offers' validity), so both are correct for their wording. The funnel and emails elsewhere tell sellers the auction typically lasts 36 hours.</li>
+        <li><b>The stated period is a starting point, decided by the team.</b> Variant 2 says about 5 business days, from submitting the ad until the offers are decided. It does not count any wait before the auction starts (a review call, or email verification). The team will test the period's effect on the yes rate in a follow-up A/B test, after this one. Variant 1 still says about 36 hours, the auction only.</li>
+        <li><b>Seller questions are monitored.</b> Customer service calls and contacts about the commitment will be followed during the test, and the copy iterated on what they show.</li>
+        <li><b>Variant 2's period starts at submit.</b> A seller who already has the car listed elsewhere would have to take that listing down to answer yes truthfully. That is intended, but it may lower the yes rate compared with an auction-only commitment.</li>
         <li><b>&ldquo;Noin 36 tuntia&rdquo; is what sellers are told today, not what the auction does.</b> The same figure appears in the funnel and emails, but the auction is scheduled to end three to four business days after it starts, and the first offer brings that forward to one or two business days. Worth checking against real auction durations before the test runs.</li>
         <li><b>Option order in variant 2.</b> The exclusive option is first, and the first option tends to be picked more. Randomising the order per seller would remove that bias from the result.</li>
         <li><b>Was variant 1 seen?</b> Its opt-in rate only means something among sellers who scrolled to it. Recording when it comes into view would separate &ldquo;not interested&rdquo; from &ldquo;never saw it&rdquo;. Variant 2 does not need this.</li>
