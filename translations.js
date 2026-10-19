@@ -680,15 +680,8 @@ window.TRANSLATIONS = {
       emailPlaceholder:   'Sähköpostiosoitteesi',
       termsLabel:         'Hyväksyn AutoVexin <a href="#" class="text-av-blue underline hover:text-av-blue-dark">käyttöehdot</a> <span class="text-red-500">*</span>',
       marketingLabel:     'Haluan vastaanottaa mielenkiintoista sisältöä ja vinkkejä auton myyntiin sähköpostitse.',
-      /* AutoVex exclusive, v1. Draft copy, not approved. */
+      /* AutoVex exclusive, v2. Draft copy, not approved. */
       exclusiveBadge:     'Suosittelemme',
-      exclusiveLabel:     'Myyn vain AutoVexissä ja saan paremman näkyvyyden',
-      exclusiveBody:      'Sitoudun tähän vain tarjouskilpailun ajaksi (noin 36 tuntia). Sinä aikana useampi autoliike näkee autoni ja voi tehdä siitä tarjouksen.',
-      exclusiveSectionTitleV3: 'Valinnainen lisänäkyvyys',
-      exclusiveSectionBodyV3:  'Useampi autoliike näkee ilmoituksesi ja voi tehdä autostasi tarjouksen.',
-      exclusiveLabelV3:   'Myyn vain AutoVexissä',
-      exclusiveBodyV3:    'En ilmoita autoani myyntiin enkä myy sitä muualla tarjouskilpailun ja tarjousten voimassaolon aikana (noin 5 arkipäivää).',
-      /* v2. Draft copy, not approved. */
       visibilityLegend:        'Haluatko autollesi ilmaista lisänäkyvyyttä?',
       visibilityStandard:      'En halua ilmaista lisänäkyvyyttä',
       visibilityStandardDesc:  'Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.',
@@ -1269,14 +1262,8 @@ window.TRANSLATIONS = {
       emailPlaceholder:  'Your email address',
       termsLabel:        'I accept AutoVex\'s <a href="#" class="text-av-blue underline hover:text-av-blue-dark">terms of service</a> <span class="text-red-500">*</span>',
       marketingLabel:    'I\'d like to receive interesting content and tips on selling my car by email.',
-      /* AutoVex exclusive, v1. Working translation of draft copy. */
+      /* AutoVex exclusive, v2. Working translation of draft copy. */
       exclusiveBadge:    'Recommended',
-      exclusiveLabel:    'I\'ll sell only on AutoVex and get better visibility',
-      exclusiveBody:     'I commit to this only for the auction (about 36 hours). During that time more dealerships see my car and can make an offer on it.',
-      exclusiveSectionTitleV3: 'Optional extra visibility',
-      exclusiveSectionBodyV3:  'More dealerships see your listing and can make an offer on your car.',
-      exclusiveLabelV3:  'I\'ll sell only on AutoVex',
-      exclusiveBodyV3:   'I won\'t list or sell my car elsewhere during the auction and while the offers are valid (about 5 business days).',
       visibilityLegend:        'Do you want free extra visibility for your car?',
       visibilityStandard:      'I don\'t want free extra visibility',
       visibilityStandardDesc:  'My listing is shown to dealerships as usual.',

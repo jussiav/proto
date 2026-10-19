@@ -736,7 +736,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
-| AutoVex exclusive | **Draft** (2026-10-14) — painted-door test, `v1` optional checkbox, `v2` required choice, `v3` optional-section heading + checkbox, wider commitment until the offers expire; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` (v2 follow-up) | `design-specs/autovex-exclusive.html` |
+| AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
 
@@ -2419,148 +2419,51 @@ data exists.
   `colKm`, `highestOffer`, `loadMore` are prod; title, years, colCar, prev/next
   are draft. Prod has no English for any of them.
 
-## AutoVex exclusive — `v1` / `v2` / `v3` (painted door)
+## AutoVex exclusive — `v2` (painted door)
 
-Started 2026-10-14. Measures whether sellers would sell ONLY on AutoVex in
-exchange for "better visibility among buyers". **Painted door:** the tick
-confirms nothing, nothing checks it, buyer-side visibility is not built, and
-the choice shows nowhere else in the product. Storage and the visibility
-mechanism are deliberately out of scope for this test.
+Started 2026-10-14. A painted-door test: does a seller hold off selling or
+listing the car elsewhere until the AutoVex auction ends, in exchange for free
+extra visibility? Nothing checks the answer and buyer-side visibility is not
+built. **`v2` is the chosen direction (2026-10-19); `v1` and `v3` were
+concluded no-go and deleted from the proto and the spec** with every
+exploration that led to `v2` (git history before 2026-10-19 has them). The arm
+id stays `v2` so existing links keep resolving; a remembered `v1`/`v3` is
+cleared on load.
 
-- **Where:** `contact.html`, `#exclusive-offer`, between the email field and
-  `#contact-consents`, so logged-in sellers (no consents) still see it. Hidden in
-  control by `html[data-exclusive-arm]`, stamped in `<head>`.
-- **Shape (iteration 2, 2026-10-14):** the whole blue block (blue-50 fill,
-  blue-300 border, `rounded-xl p-5`) IS the checkbox's `<label>`: a light_lime
-  UiBadge tag (now "Suosittelemme"), then a 20px checkbox (`.av-checkbox-lg`, gray-500 2px
-  border, hand-written) beside a Barlow bold `text-xl` label that names condition
-  and reward together, description under it. Iteration 1 had a separate headline
-  plus a white option card inside; Jussi: the white card read as an input field
-  and the headline competed with the label. "Uutta" was swapped for "Lisäetu", later "Suosittelemme",
-  because most sellers are new and newness means nothing to them. Lifted out of
-  the consents on purpose: the failure mode is a block nobody sees. Hover and
-  ticked = blue border via `.exclusive-option`, inset shadow for the 2nd pixel.
-  **The tag sits on the block's top-right corner** (2026-10-19, Jussi):
-  `absolute -top-3 -right-3` on a `relative` label, `shadow-sm`, so it
-  overlaps the edge and reads as an add-on, not content.
-- **State:** `contact.autovexExclusive`, written only in `v1` (control keeps the
-  stored value). Unchecked by default, optional, restored on revisit, so an edit
-  can change it.
-- **Copy:** `contact.exclusive*` in `translations.js`, Claude's draft, Jussi
-  approves; no Marketing round for this test. Label pairs condition + reward
-  ("Myyn vain AutoVexissä ja saan paremman näkyvyyden"); promises visibility,
-  never offers ("…sitä useampi voi tehdä siitä tarjouksen").
-- **`v2` (2026-10-14), Jussi's preferred direction:** a REQUIRED choice,
-  `#exclusive-choice`, same position. Reason: an empty checkbox is not a "no",
-  so `v1` cannot read a non-tick; a required choice gives 100 % coverage. Two
-  real `<input type="radio">` cards in the funnel's radio-card style (Barlow
-  medium, new-question convention), selected state by `:has()` CSS, keyboard
-  works. The exclusive "yes" + tag FIRST (Jussi, 2026-10-19), "no" second,
-  neither preselected. Missing choice → `err.selectionRequired`
-  ("Valinta vaaditaan.") via `setGroupError`, services.html's treatment.
-  State `contact.autovexVisibility` = `standard` | `exclusive`.
-  **Duration, both arms (2026-10-14, Jussi):** "tarjouskilpailun ajan (noin 36
-  tuntia)". The auction is the period, so it starts with the auction and a
-  seller with ads elsewhere is not asked to take them down before choosing;
-  "tarjousten voimassaolon ajan" was tried and dropped because its start was
-  open to reading as "now". The 36 h is prod's own seller copy ("tyypillisesti
-  36 tuntia", emails "noin 36 tunnin ajan") and NOT prod behaviour: fusion ends
-  the auction 3–4 business days after start, the first offer shortens it to
-  +1/+2 business days. Flagged on the spec. The v2 info line was removed: the
-  radio copy must stand alone. **v2 is a yes/no question** (Jussi, 2026-10-14):
-  "Haluatko autollesi lisänäkyvyyttä?" → "Kyllä, myyn vain AutoVexissä"
-  first, then "En halua ilmaista lisänäkyvyyttä" ("Ei," dropped 2026-10-19; desc
-  "Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan."). Yes option (desc "Autoni on myynnissä vain AutoVexissä tarjouskilpailun
-  ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden
-  autoliikkeille."). Both options first person, the seller's own answer.
-  **v2 is the team's chosen direction (2026-10-19)**: a required choice gives
-  every seller's answer. Rewritten several times the same day; now: question
-  "Haluatko autollesi ilmaista lisänäkyvyyttä?" (value, incl. "free", BEFORE
-  any commitment). **Yes option from Jussi's design (2026-10-19, latest):**
-  label "Kyllä, haluan ilmaista lisänäkyvyyttä" (mirrors the no option), desc
-  "Vastineeksi sitoudun siihen, etten myy autoani enkä ilmoita sitä myyntiin
-  muualla ennen AutoVexin tarjouskilpailun päättymistä (noin 5 arkipäivää).
-  Lisänäkyvyys voi nostaa tarjouksia." (Label was briefly "Kyllä,
-  lisänäkyvyys voi nostaa tarjouksia"; the benefit moved to the desc.)
-  ("enkä", not "tai", after "etten".) The period is now submit → AUCTION END,
-  not → offers decided; "muualla" is back by Jussi's choice, which resolves
-  the "I won't list it" ambiguity at the cost of the guideline against naming
-  elsewhere. Earlier label/desc: "Kyllä, sitoudun odottamaan AutoVexin
-  tarjoukset" + "En myy autoa enkä ilmoita sitä myyntiin ennen kuin olen
-  päättänyt tarjouksista…". The rule targets the "already sold" reject reason. Rejected on the way: "myyn vain" (reads as a
-  sale commitment), "haen tarjouksia" / "ilmoitan" / "pidän myynnissä"
-  (vague, don't rule out selling), anything with "muualle" (suggests selling
-  elsewhere), a ban on asking dealerships (few can promise it), "lupaus" (too
-  easy to break). Dealership behaviour is deliberately not explained (Jussi:
-  keep it light). The "Suosittelemme" tag sits INSIDE the yes card at the right end
-  of the label's first line (`flex items-start justify-between`, tag
-  `flex-shrink-0`); the label wraps beside it. The corner overlap (as v1) was
-  tried and rejected by Jussi for v2.
-  **v2 follow-up on the decision page (2026-10-19, spec section 4):** yes-sellers
-  (`AE_YES` = v2 arm + the contact step's saved answer, or `?exclusive=yes|no`,
-  also a bar field) are thanked INSIDE the existing copy, no new element
-  (Jussi: an extra info line under the button was rejected). Warm-up, prod's
-  offers-waiting card only (`base === WARMUP_AUCTION_ENDED`): heading "Kiitos,
-  että odotit tarjouskilpailun loppuun!", body "Ilmoituksesi sai
+- **Contact step** (`contact.html`, `#exclusive-choice`): a required yes/no
+  between the email field and `#contact-consents`, so logged-in sellers see it
+  too. Group-legend heading "Haluatko autollesi ilmaista lisänäkyvyyttä?" with
+  a red asterisk. Two real radio cards (funnel radio-card style, Barlow medium,
+  selected state by `.vis-option:has()` CSS), neither preselected:
+  - yes, first: "Kyllä, haluan ilmaista lisänäkyvyyttä" with the lime
+    "Suosittelemme" tag inside the card at the right end of the label's first
+    line (`flex items-start justify-between`, tag `flex-shrink-0`); desc
+    "Vastineeksi sitoudun siihen, etten myy autoani enkä ilmoita sitä myyntiin
+    muualla ennen AutoVexin tarjouskilpailun päättymistä (noin 5 arkipäivää).
+    Lisänäkyvyys voi nostaa tarjouksia."
+  - no: "En halua ilmaista lisänäkyvyyttä" / "Ilmoitukseni näkyy
+    autoliikkeille tavalliseen tapaan."
+  Missing choice → `err.selectionRequired` via `setGroupError`. State
+  `contact.autovexVisibility` = `exclusive` | `standard`, restored on revisit.
+  Copy `contact.visibility*` + `contact.exclusiveBadge`, Claude's draft, Jussi
+  approves; English is a working translation.
+- **Decision page** (`decision.html`, `AE_YES` = arm `v2` + saved answer, or
+  `?exclusive=yes|no`, also a bar field): yes-sellers are thanked inside the
+  existing copy, no new element. Warm-up, prod's offers-waiting card only:
+  "Kiitos, että odotit tarjouskilpailun loppuun!" / "Ilmoituksesi sai
   lisänäkyvyyttä ja tavoitti satojen autoliikkeiden verkoston." Hero, only
-  while it is `HERO_OFFERS_PENDING`: the body is led by "Ilmoituksesi sai
-  lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun." ("– kiitos!"
-  dropped by Jussi); any
-  negotiation / final-offer / closed hero replaces it and the thanks goes with
-  it, which is intended. Tone: thank, never remind (docs/copy_guidelines.md).
-  Known: "sai lisänäkyvyyttä" is untrue during the painted door; accepted.
-  EN glosses in `decision-i18n.js` (the hero body is one text node, so its key
-  is the whole combined sentence). Terms stay the question's own
-  (lisänäkyvyys). Period = submit → offers decided, "noin 5 arkipäivää" as the
-  team's starting figure, tested in a follow-up A/B. Team monitors CS
-  calls about the commitment and iterates on them. Starting at submit means a
-  seller already listed elsewhere must delist to answer yes truthfully.
-  Stored values unchanged. **v1's description adds only what its label does not say** (Jussi: no
-  duplicated copy): "Sitoudun tähän vain tarjouskilpailun ajaksi (noin 36
-  tuntia). Sinä aikana useampi autoliike näkee autoni ja voi tehdä siitä
-  tarjouksen." The time limit must attach to the COMMITMENT: "Koskee vain
-  tarjouskilpailun aikaa" was dropped because it read as only the visibility
-  being limited, i.e. a permanent commitment for 36 h of visibility.
-  **Standard option says "Ilmoituksesi näkyy autoliikkeille tavalliseen
-  tapaan."** — never "voit myydä myös muualla", which reads as advice to list
-  elsewhere. **Tag is "Suosittelemme"** (both arms): optional but valuable;
-  "Uutta" and "Lisäetu" were dropped. Not done: the five funnel pages'
-  `case 'contact'` completeness check ignores the choice.
-- **`v3` (2026-10-19), from a team member's draft:** `v1`'s block, label and
-  tag, only the description differs (`contact.exclusiveBodyV3`, swapped in by
-  `applyExclusiveArmCopy`): "En ilmoita autoani myyntiin enkä myy sitä muualla
-  tarjouskilpailun ja tarjousten voimassaolon aikana (noin 5 arkipäivää). Sinä
-  aikana useampi autoliike näkee autoni ja voi tehdä siitä tarjouksen." Wider
-  (no listing either) and longer (until the offers expire). 5 business days =
-  fusion's 3–4 business-day auction + the 24 h decision window, the honest upper
-  end. Taken from the draft: those two ideas only. Rejected (Jussi): "päätös on
-  yhä sinun, ei myyntipakkoa" (true of the whole service, not this option), the
-  promise of more offers, "ilmaista", and the draft's invented visual style.
-  Stored as `contact.autovexExclusive`, like `v1`. **Then (2026-10-19,
-  same day):** the blue "Valinnainen lisänäkyvyys" tag was tried and replaced
-  by the photos step's optional-section heading (`#exclusive-header` above the
-  block, `photos.optionalTitle`'s classes: Barlow bold `text-xl leading-[23px]`
-  + DM Sans 16/20 line). Proto-only pattern, prod has no such separator.
-  Heading "Valinnainen lisänäkyvyys", line "Useampi autoliike näkee
-  ilmoituksesi ja voi tehdä autostasi tarjouksen." (benefit moved up), label
-  just "Myyn vain AutoVexissä" (the section carries the value), description scope + period
-  only. No tag in v3. Keys `exclusiveSectionTitleV3` / `exclusiveSectionBodyV3`
-  / `exclusiveLabelV3` / `exclusiveBodyV3`. `#exclusive-group` wraps header +
-  block (gap-4) so a hidden arm leaves no empty flex gap. v1/v2 untouched. **Then the tick was
-  demoted** (Jussi): inside the same blue block, v3's checkbox is the contact
-  step's standard consent checkbox (16px `.av-checkbox`, DM Sans medium 16/20
-  label, gap 10px) with the description at 14/20, via `html[data-exclusive-arm="v3"]`
-  CSS on `#exclusive-row` / `#autovex-exclusive` / `#exclusive-label` /
-  `#exclusive-body`. "valinnainen", never "vapaaehtoinen", for this option.
-- **Spec page restructured for the team review (2026-10-19):** status "for team
-  review · variant 2 proposed"; a Summary section first (proposal, why a
-  required question, what it shows, decided so far, to settle); sections 2 and
-  4 (proposed) come first, 1 and 3 under "Explored, not proposed" — numbers and
-  anchors unchanged. Open questions pruned to five: undelivered visibility,
-  36 h vs 5 business days in one funnel, period starts at submit, option order,
-  a legal read.
-- **Open (on the spec):** telling sellers afterwards that the promise was a
-  test; checking "noin 36 tuntia" against real durations; option order in v2; an in-view event for v1; a quieter arm.
+  while it is `HERO_OFFERS_PENDING`: the body leads with "Ilmoituksesi sai
+  lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun." Any other hero
+  replaces it, which is intended. EN glosses in `decision-i18n.js`.
+- **Period:** submit → auction end, "noin 5 arkipäivää" as the starting
+  figure, tested in a follow-up A/B. Customer-service contacts about the
+  commitment are followed and the copy iterated on them.
+- **Spec page** is variant 2 only: summary, change log (1 contact step,
+  2 decision page), what to read, open questions (undelivered visibility, 36 h
+  vs 5 business days, period starts at submit, both decision-page touches or
+  one, option order, legal read).
+- **Not done:** the five funnel pages' `case 'contact'` completeness check
+  ignores the choice.
 
 ## Informed ad creation — `v1`
 

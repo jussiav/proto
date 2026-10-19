@@ -737,11 +737,11 @@
        step asked a required yes/no; a seller who answered yes is thanked here,
        on the warm-up and under the hero, while the decision is open. The answer
        is world state: the funnel's saved one, or `?exclusive=yes|no` from the
-       bar. The copy assumes the seller kept to it (docs/copy_guidelines.md) and
+       bar. The copy assumes the seller kept to it (CLAUDE.md copy guidelines) and
        is baked into the card's and the hero's own copy, so it goes away with
        them when a negotiation or final offer replaces the hero. */
     var AE_ARM = (function () {
-      var ARMS = ['control', 'v1', 'v2', 'v3'];
+      var ARMS = ['control', 'v2'];
       var arm = window.protoVariant('autovex-exclusive', 'control');
       if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('autovex-exclusive', null); return 'control'; }
       return arm;
