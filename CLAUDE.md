@@ -2476,13 +2476,16 @@ mechanism are deliberately out of scope for this test.
   **v2 is the team's chosen direction (2026-10-19)**: a required choice gives
   every seller's answer. Rewritten several times the same day; now: question
   "Haluatko autollesi ilmaista lisänäkyvyyttä?" (value, incl. "free", BEFORE
-  any commitment), yes "Kyllä, sitoudun odottamaan AutoVexin tarjoukset", desc
-  "En myy autoa enkä ilmoita sitä myyntiin ennen kuin olen päättänyt
-  tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä
-  voi nostaa tarjouksia." ("enkä", not Jussi's "tai": a second negated verb
-  takes -kä.) The rule is "I won't sell or list it before deciding" (any
-  channel: private sale, trade-in, other listings), aimed at the "already
-  sold" reject reason. Rejected on the way: "myyn vain" (reads as a
+  any commitment). **Yes option from Jussi's design (2026-10-19, latest):**
+  label "Kyllä, lisänäkyvyys voi nostaa tarjouksia" (the reward), desc
+  "Vastineeksi sitoudun siihen, etten myy autoani enkä ilmoita sitä myyntiin
+  muualla ennen AutoVexin tarjouskilpailun päättymistä (noin 5 arkipäivää)."
+  ("enkä", not "tai", after "etten".) The period is now submit → AUCTION END,
+  not → offers decided; "muualla" is back by Jussi's choice, which resolves
+  the "I won't list it" ambiguity at the cost of the guideline against naming
+  elsewhere. Earlier label/desc: "Kyllä, sitoudun odottamaan AutoVexin
+  tarjoukset" + "En myy autoa enkä ilmoita sitä myyntiin ennen kuin olen
+  päättänyt tarjouksista…". The rule targets the "already sold" reject reason. Rejected on the way: "myyn vain" (reads as a
   sale commitment), "haen tarjouksia" / "ilmoitan" / "pidän myynnissä"
   (vague, don't rule out selling), anything with "muualle" (suggests selling
   elsewhere), a ban on asking dealerships (few can promise it), "lupaus" (too
