@@ -98,7 +98,7 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: painted-door test &middot; 2 variants &middot; copy is a draft
+          Status: painted-door test &middot; 3 variants &middot; copy is a draft
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
@@ -149,6 +149,13 @@
               <td class="px-4 py-3 text-slate-600">Every seller, new ad or edit</td>
               <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
             </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">3</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c3">Variant 3: optional section, wider commitment until the offers expire</a></td>
+              <td class="px-4 py-3">Contact step</td>
+              <td class="px-4 py-3 text-slate-600">Every seller, new ad or edit</td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -164,7 +171,7 @@
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
           <ul class="list-disc pl-5 space-y-1">
-            <li><b>A new block between the email field and the consent checkboxes</b>: light-blue fill, blue border, a green &ldquo;recommended&rdquo; tag.</li>
+            <li><b>A new block between the email field and the consent checkboxes</b>: light-blue fill, blue border, and a green &ldquo;recommended&rdquo; tag on its top-right corner, overlapping the edge so it reads as added to the block rather than part of its content.</li>
             <li><b>The whole block is one checkbox.</b> Its label is the headline, and it names the condition and the reward together. The description sits under it. Clicking anywhere on the block ticks it.</li>
             <li><b>The checkbox is 20px with a field-weight border</b>, larger than the consent ticks below it, so it reads as a checkbox at the headline's size. Hover and ticked: blue border, as every selected option in the funnel.</li>
             <li><b>Unchecked by default.</b> Not required: submitting without it works exactly as today.</li>
@@ -178,8 +185,8 @@
         <div class="rounded-lg p-5 border border-slate-200 bg-white">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The block, live (tick it)</p>
           <div class="max-w-md">
-            <label class="exclusive-option w-full flex flex-col gap-3 p-5 rounded-xl border border-blue-300 bg-blue-50 cursor-pointer">
-              <span class="self-start inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
+            <label class="exclusive-option relative w-full flex flex-col gap-3 p-5 rounded-xl border border-blue-300 bg-blue-50 cursor-pointer">
+              <span class="absolute -top-3 -right-3 inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none shadow-sm" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
               <span class="flex items-start gap-3">
                 <input type="checkbox" class="av-checkbox av-checkbox-lg mt-1" />
                 <span class="flex flex-col gap-2 min-w-0">
@@ -228,8 +235,8 @@
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
           <ul class="list-disc pl-5 space-y-1">
             <li><b>A required yes-or-no question in the same place</b>, between the email field and the consent checkboxes, with the funnel's group-legend heading and a red asterisk: &ldquo;Haluatko autollesi lisänäkyvyyttä?&rdquo; (do you want extra visibility for your car?).</li>
-            <li><b>Two option cards</b>, the funnel's own radio cards: <b>no</b> first, <b>yes, on the condition</b> second with the green &ldquo;recommended&rdquo; tag. Each has a short description, and no explanation sits below them. Neither is preselected.</li>
-            <li><b>The answers are Kyllä / Ei, in the seller's own voice.</b> The yes option names the condition, &ldquo;Kyllä, myyn vain AutoVexissä&rdquo; (yes, I'll sell only on AutoVex), since the question already names the reward. Both descriptions are first person too.</li>
+            <li><b>Two option cards</b>, the funnel's own radio cards: <b>yes, on the condition</b> first with the green &ldquo;recommended&rdquo; tag, <b>no</b> second. Each has a short description, and no explanation sits below them. Neither is preselected.</li>
+            <li><b>Both answers are in the seller's own voice.</b> The yes option names the condition, &ldquo;Kyllä, myyn vain AutoVexissä&rdquo; (yes, I'll sell only on AutoVex), since the question already names the reward; the no option is simply &ldquo;En halua lisänäkyvyyttä&rdquo; (I don't want extra visibility). Both descriptions are first person too.</li>
             <li><b>The time limit is in the yes description</b>: &ldquo;tarjouskilpailun ajan (noin 36 tuntia)&rdquo;, during the auction. It starts with the auction, so a seller with ads elsewhere is not asked to take them down before choosing.</li>
             <li><b>The standard option does not mention selling elsewhere</b>, so it cannot read as advice to list the car on other sites.</li>
             <li><b>Submitting without a choice is blocked</b> with the funnel's own &ldquo;selection required&rdquo; error on the options.</li>
@@ -242,16 +249,8 @@
         <div class="rounded-lg p-5 border border-slate-200 bg-white">
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The question, live (pick one)</p>
           <div class="max-w-md flex flex-col gap-4">
-            <p class="flex items-center gap-1 font-dm font-bold text-xl leading-7 text-slate-900"><span data-i18n="contact.visibilityLegend">Haluatko autollesi lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span></p>
+            <p class="font-dm font-bold text-xl leading-7 text-slate-900"><span data-i18n="contact.visibilityLegend">Haluatko autollesi lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span></p>
             <div class="flex flex-col gap-3.5">
-              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
-                <input type="radio" name="spec-visibility" class="sr-only" />
-                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
-                <span class="flex flex-col gap-1 min-w-0">
-                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">Ei, en halua lisänäkyvyyttä</span>
-                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
-                </span>
-              </label>
               <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
                 <input type="radio" name="spec-visibility" class="sr-only" />
                 <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
@@ -261,6 +260,14 @@
                     <span class="inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
                   </span>
                   <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityExclusiveDesc">Autoni on myynnissä vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span>
+                </span>
+              </label>
+              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
+                <input type="radio" name="spec-visibility" class="sr-only" />
+                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
+                <span class="flex flex-col gap-1 min-w-0">
+                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">En halua lisänäkyvyyttä</span>
+                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
                 </span>
               </label>
             </div>
@@ -273,8 +280,8 @@
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all draft except the error</p>
         <div class="space-y-4">
           <div><p class="font-dm text-xs text-slate-500 mb-1">Question</p><p class="av-copy"><span class="av-ins">Haluatko autollesi lisänäkyvyyttä?</span></p><p class="av-gloss">Do you want extra visibility for your car?</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 1</p><p class="av-copy"><span class="av-ins">Ei, en halua lisänäkyvyyttä</span></p><p class="av-gloss">No, I don't want extra visibility</p><p class="av-copy mt-2"><span class="av-ins">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span></p><p class="av-gloss">My listing is shown to dealerships as usual.</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 2 (tag: Suosittelemme)</p><p class="av-copy"><span class="av-ins">Kyllä, myyn vain AutoVexissä</span></p><p class="av-gloss">Yes, I'll sell only on AutoVex</p><p class="av-copy mt-2"><span class="av-ins">Autoni on myynnissä vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span></p><p class="av-gloss">My car is for sale only on AutoVex during the auction (about 36 hours). My listing gets better visibility with dealerships.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 1 (tag: Suosittelemme)</p><p class="av-copy"><span class="av-ins">Kyllä, myyn vain AutoVexissä</span></p><p class="av-gloss">Yes, I'll sell only on AutoVex</p><p class="av-copy mt-2"><span class="av-ins">Autoni on myynnissä vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span></p><p class="av-gloss">My car is for sale only on AutoVex during the auction (about 36 hours). My listing gets better visibility with dealerships.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 2</p><p class="av-copy"><span class="av-ins">En halua lisänäkyvyyttä</span></p><p class="av-gloss">No, I don't want extra visibility</p><p class="av-copy mt-2"><span class="av-ins">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span></p><p class="av-gloss">My listing is shown to dealerships as usual.</p></div>
           <div><p class="font-dm text-xs text-slate-500 mb-1">Error, existing funnel copy</p><p class="av-copy">Valinta vaaditaan.</p><p class="av-gloss">A selection is required.</p></div>
         </div>
         <p class="font-dm text-xs text-slate-500 mt-4">The error is the funnel's existing message for an unanswered choice.</p>
@@ -295,11 +302,72 @@
       </div>
     </section>
 
+    <section class="av-band av-band-grey" id="c3">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">3 &mdash; Variant 3: optional section, wider commitment until the offers expire</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes, compared with variant 1</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Same blue block, standard checkbox.</b> The block keeps variant 1's light-blue fill and blue border, but the checkbox and its label are the contact step's own consent checkbox (16px box, 16px medium label), with the description in 14px under it. The section heading above carries the value, so the tick does not need to.</li>
+            <li><b>No tag. A section heading above the block instead</b>, the same shape as the photos step's optional section (&ldquo;Valinnaiset lisäkuvat&rdquo;): a 20px bold heading, &ldquo;Valinnainen lisänäkyvyys&rdquo; (optional extra visibility), and one line on the benefit. It separates the optional offer from the required contact fields above it, and names it as optional rather than recommending it.</li>
+            <li><b>Each line says one thing.</b> The heading names the option, its line gives the benefit, the checkbox label is the condition alone (&ldquo;Myyn vain AutoVexissä&rdquo;, I'll sell only on AutoVex), and the description gives the commitment's scope and period. The section above carries the value, so the label does not repeat it.</li>
+            <li><b>A wider commitment.</b> The seller neither lists the car for sale nor sells it elsewhere, where variant 1 names selling only.</li>
+            <li><b>A longer, more honest period.</b> The commitment runs through the auction and while the offers are valid, about 5 business days, where variant 1 says the auction only, about 36 hours.</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../contact.html?autovex-exclusive=v3" target="_blank" rel="noopener">See it in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../contact.html?autovex-exclusive=control" target="_blank" rel="noopener">see production</a></p>
+        </div>
+
+        <div class="rounded-lg p-5 border border-slate-200 bg-white">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The section, live (tick it)</p>
+          <div class="max-w-md flex flex-col gap-4">
+            <div class="flex flex-col gap-1">
+              <p class="font-barlow font-bold text-slate-900 text-xl leading-[23px]" data-i18n="contact.exclusiveSectionTitleV3">Valinnainen lisänäkyvyys</p>
+              <p class="font-dm text-base leading-5 text-black" data-i18n="contact.exclusiveSectionBodyV3">Useampi autoliike näkee ilmoituksesi ja voi tehdä autostasi tarjouksen.</p>
+            </div>
+            <label class="exclusive-option relative w-full flex flex-col gap-3 p-5 rounded-xl border border-blue-300 bg-blue-50 cursor-pointer">
+              <span class="flex items-start gap-2.5">
+                <input type="checkbox" class="av-checkbox mt-0.5" />
+                <span class="flex flex-col gap-1 min-w-0">
+                  <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n="contact.exclusiveLabelV3">Myyn vain AutoVexissä</span>
+                  <span class="font-dm text-sm leading-5 text-slate-700" data-i18n="contact.exclusiveBodyV3">En ilmoita autoani myyntiin enkä myy sitä muualla tarjouskilpailun ja tarjousten voimassaolon aikana (noin 5 arkipäivää).</span>
+                </span>
+              </span>
+            </label>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Rendered from the same copy as the prototype, so it cannot drift.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all new, all draft</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Section heading</p><p class="av-copy"><span class="av-ins">Valinnainen lisänäkyvyys</span></p><p class="av-gloss">Optional extra visibility</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Section line</p><p class="av-copy"><span class="av-ins">Useampi autoliike näkee ilmoituksesi ja voi tehdä autostasi tarjouksen.</span></p><p class="av-gloss">More dealerships see your listing and can make an offer on your car.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Checkbox label (the headline)</p><p class="av-copy"><span class="av-ins">Myyn vain AutoVexissä</span></p><p class="av-gloss">I'll sell only on AutoVex</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Description</p><p class="av-copy"><span class="av-ins">En ilmoita autoani myyntiin enkä myy sitä muualla tarjouskilpailun ja tarjousten voimassaolon aikana (noin 5 arkipäivää).</span></p><p class="av-gloss">I won't list or sell my car elsewhere during the auction and while the offers are valid (about 5 business days).</p></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4"><b>Where &ldquo;about 5 business days&rdquo; comes from:</b> an auction is scheduled to end three to four business days after it starts, sooner once the first offer arrives, and the seller then has 24 hours to decide. Five business days is the honest upper end, which is the right figure for a commitment. A final offer or a negotiation can extend it.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>As variant 1, with the section heading, label and description above and no tag.</li>
+          <li>The choice is recorded with the arm, so variant 1 and variant 3 opt-in rates can be compared.</li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> the real feature would need sellers not to list the car elsewhere, for as long as the offers stand; this tests interest in that ask rather than in a lighter one.</p>
+      </div>
+      </div>
+    </section>
+
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What to read from it</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>Opt-in rate:</b> in variant 1, ticked out of sellers who submitted the step; in variant 2, &ldquo;more visible&rdquo; out of all answers.</li>
+        <li><b>Opt-in rate:</b> in variants 1 and 3, ticked out of sellers who submitted the step; in variant 2, the exclusive answer out of all answers. Variant 1 against variant 3 shows what the wider, longer commitment costs in opt-ins.</li>
         <li><b>Did the block cost anything?</b> Contact-step completion, variant against control. A commitment offer next to the submit button could make some sellers hesitate.</li>
         <li><b>Who opts in:</b> split by review segment and by the seller-intent answer where one exists, to see whether committed sellers are also the ones ready to sell.</li>
       </ul>
@@ -311,8 +379,9 @@
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
         <li><b>The promise is not kept in this test.</b> Sellers who tick it are told their listing gets more prominence, and it does not. Do we tell them afterwards, for example on the success page or in a later email, or leave it as is for the test's length?</li>
+        <li><b>Variants 1 and 2 say about 36 hours, variant 3 about 5 business days.</b> They describe different periods (the auction only, against the auction plus the offers' validity), so both are correct for their wording. The funnel and emails elsewhere tell sellers the auction typically lasts 36 hours.</li>
         <li><b>&ldquo;Noin 36 tuntia&rdquo; is what sellers are told today, not what the auction does.</b> The same figure appears in the funnel and emails, but the auction is scheduled to end three to four business days after it starts, and the first offer brings that forward to one or two business days. Worth checking against real auction durations before the test runs.</li>
-        <li><b>Option order in variant 2.</b> Standard first, then the exclusive option. Order alone moves answers; randomising it per seller would remove that bias from the result.</li>
+        <li><b>Option order in variant 2.</b> The exclusive option is first, and the first option tends to be picked more. Randomising the order per seller would remove that bias from the result.</li>
         <li><b>Was variant 1 seen?</b> Its opt-in rate only means something among sellers who scrolled to it. Recording when it comes into view would separate &ldquo;not interested&rdquo; from &ldquo;never saw it&rdquo;. Variant 2 does not need this.</li>
         <li><b>One variant or two?</b> A quieter version (option card only, no block) would show how much of the opt-in rate is the presentation.</li>
       </ul>

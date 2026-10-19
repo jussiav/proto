@@ -97,7 +97,19 @@
     .funnel-col > .funnel-logo  { width: auto; max-width: none; align-self: flex-start; }
     .funnel-col > .funnel-steps { max-width: 32rem; }
 
-    html:not([data-exclusive-arm="v1"]) #exclusive-offer { display: none; }
+    html:not([data-exclusive-arm="v1"]):not([data-exclusive-arm="v3"]) #exclusive-group { display: none; }
+    html:not([data-exclusive-arm="v3"]) #exclusive-header { display: none; }
+    html[data-exclusive-arm="v3"] #exclusive-tag { display: none; }
+    /* v3's section heading carries the value, so its tick is the contact step's
+       standard consent checkbox (16px .av-checkbox, DM Sans medium 16/20 label,
+       gap-2.5) inside v1's blue block. Overrides v1's enlarged checkbox. */
+    html[data-exclusive-arm="v3"] #exclusive-row { gap: 10px; }
+    html[data-exclusive-arm="v3"] #autovex-exclusive { width: 16px; height: 16px; margin-top: 2px; border: 1px solid #94a3b8; border-radius: 2px; }
+    html[data-exclusive-arm="v3"] #autovex-exclusive:checked { border-color: #0B6DFF; }
+    html[data-exclusive-arm="v3"] #autovex-exclusive:checked::after { left: 4px; top: 1px; width: 5px; height: 9px; }
+    html[data-exclusive-arm="v3"] #exclusive-label { font-family: "DM Sans", sans-serif; font-weight: 500; font-size: 1rem; line-height: 1.25rem; }
+    html[data-exclusive-arm="v3"] #exclusive-body { font-size: 0.875rem; line-height: 1.25rem; }
+    html[data-exclusive-arm="v3"] #exclusive-text { gap: 4px; }
     html:not([data-exclusive-arm="v2"]) #exclusive-choice { display: none; }
     /* v2's options: the funnel's radio card (services/price .radio-btn), driven by
        a real radio input so the selected state needs no JS and works by keyboard. */
@@ -125,10 +137,11 @@
     /* AutoVex exclusive (design-specs/autovex-exclusive.html) is a painted-door
        test: better visibility in exchange for selling only on AutoVex, to measure
        how many sellers would take it. v1 is an optional checkbox, v2 a required
-       choice between two visibility options. Nothing downstream reads the answer.
-       Decided in <head> so neither flashes in control. */
+       choice between two visibility options, v3 is v1 with a wider commitment
+       (no listing elsewhere either) lasting until the offers expire. Nothing
+       downstream reads the answer. Decided in <head> so none flashes in control. */
     var EXCLUSIVE_ARM = (function () {
-      var ARMS = ['control', 'v1', 'v2'];
+      var ARMS = ['control', 'v1', 'v2', 'v3'];
       var arm = window.protoVariant('autovex-exclusive', 'control');
       if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('autovex-exclusive', null); return 'control'; }
       return arm;
@@ -143,7 +156,8 @@
           variants: [
             { id: 'control', label: 'Control — no exclusivity option' },
             { id: 'v1',      label: 'Variant 1 — optional exclusivity checkbox' },
-            { id: 'v2',      label: 'Variant 2 — required visibility choice' }
+            { id: 'v2',      label: 'Variant 2 — required visibility choice' },
+            { id: 'v3',      label: 'Variant 3 — checkbox, no listing elsewhere until offers expire' }
           ]
         }
       ]
@@ -389,7 +403,7 @@
         puhelin:      document.getElementById('puhelin').value,
         kayttoehdot:  document.getElementById('kayttoehdot').checked,
         markkinointi: document.getElementById('markkinointi').checked,
-        autovexExclusive: EXCLUSIVE_ARM === 'v1'
+        autovexExclusive: (EXCLUSIVE_ARM === 'v1' || EXCLUSIVE_ARM === 'v3')
           ? document.getElementById('autovex-exclusive').checked
           : prev.autovexExclusive,
         autovexVisibility: EXCLUSIVE_ARM === 'v2'
@@ -444,7 +458,18 @@
       document.getElementById('contact-consents').style.display = 'none';
     }
 
+    function applyExclusiveArmCopy() {
+      if (EXCLUSIVE_ARM !== 'v3') return;
+      [['exclusive-label', 'contact.exclusiveLabelV3'],
+       ['exclusive-body', 'contact.exclusiveBodyV3']].forEach(([id, key]) => {
+        const el = document.getElementById(id);
+        el.setAttribute('data-i18n', key);
+        el.textContent = t(key);
+      });
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
+      applyExclusiveArmCopy();
       loadContact();
       applyLoggedInProfile();
       initStepNav('contact');
@@ -560,32 +585,32 @@
           <!-- AutoVex exclusive, v1 only. Outside #contact-consents so logged-in
                sellers see it too. The whole block is the checkbox's label, so the
                offer and the tick read as one selection. -->
-          <label id="exclusive-offer" class="exclusive-option w-full flex flex-col gap-3 p-5 rounded-xl border border-blue-300 bg-blue-50 cursor-pointer">
-            <span class="self-start inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
-            <span class="flex items-start gap-3">
+          <!-- v3 swaps the tag for the photos step's optional-section heading and
+               reuses the block with its own label and description keys. -->
+          <div id="exclusive-group" class="w-full flex flex-col gap-4">
+          <div id="exclusive-header" class="flex flex-col gap-1">
+            <h2 class="font-barlow font-bold text-slate-900 text-xl leading-[23px]" data-i18n="contact.exclusiveSectionTitleV3">Valinnainen lisänäkyvyys</h2>
+            <p class="font-dm text-base leading-5 text-black" data-i18n="contact.exclusiveSectionBodyV3">Useampi autoliike näkee ilmoituksesi ja voi tehdä autostasi tarjouksen.</p>
+          </div>
+          <label id="exclusive-offer" class="exclusive-option relative w-full flex flex-col gap-3 p-5 rounded-xl border border-blue-300 bg-blue-50 cursor-pointer">
+            <span id="exclusive-tag" class="absolute -top-3 -right-3 inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none shadow-sm" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
+            <span id="exclusive-row" class="flex items-start gap-3">
               <input id="autovex-exclusive" type="checkbox" class="av-checkbox av-checkbox-lg mt-1" />
-              <span class="flex flex-col gap-2 min-w-0">
-                <span class="font-barlow font-bold text-xl leading-[26px] text-slate-900" data-i18n="contact.exclusiveLabel">Myyn vain AutoVexissä ja saan paremman näkyvyyden</span>
-                <span class="font-dm text-base leading-6 text-slate-700" data-i18n="contact.exclusiveBody">Sitoudun tähän vain tarjouskilpailun ajaksi (noin 36 tuntia). Sinä aikana useampi autoliike näkee autoni ja voi tehdä siitä tarjouksen.</span>
+              <span id="exclusive-text" class="flex flex-col gap-2 min-w-0">
+                <span id="exclusive-label" class="font-barlow font-bold text-xl leading-[26px] text-slate-900" data-i18n="contact.exclusiveLabel">Myyn vain AutoVexissä ja saan paremman näkyvyyden</span>
+                <span class="font-dm text-base leading-6 text-slate-700" id="exclusive-body" data-i18n="contact.exclusiveBody">Sitoudun tähän vain tarjouskilpailun ajaksi (noin 36 tuntia). Sinä aikana useampi autoliike näkee autoni ja voi tehdä siitä tarjouksen.</span>
               </span>
             </span>
           </label>
+          </div>
 
           <!-- AutoVex exclusive, v2 only: the same offer as a required choice, so
                every seller who submits has answered it. -->
           <fieldset id="exclusive-choice" class="w-full flex flex-col gap-4">
-            <legend class="flex items-center gap-1 font-dm font-bold text-xl text-slate-900 mb-4">
+            <legend class="font-dm font-bold text-xl text-slate-900 mb-4">
               <span data-i18n="contact.visibilityLegend">Haluatko autollesi lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span>
             </legend>
             <div id="exclusive-choice-options" class="flex flex-col gap-3.5">
-              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
-                <input type="radio" name="autovex-visibility" value="standard" class="sr-only" />
-                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
-                <span class="flex flex-col gap-1 min-w-0">
-                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">Ei, en halua lisänäkyvyyttä</span>
-                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
-                </span>
-              </label>
               <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
                 <input type="radio" name="autovex-visibility" value="exclusive" class="sr-only" />
                 <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
@@ -595,6 +620,14 @@
                     <span class="inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
                   </span>
                   <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityExclusiveDesc">Autoni on myynnissä vain AutoVexissä tarjouskilpailun ajan (noin 36 tuntia). Ilmoitukseni saa paremman näkyvyyden autoliikkeille.</span>
+                </span>
+              </label>
+              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
+                <input type="radio" name="autovex-visibility" value="standard" class="sr-only" />
+                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
+                <span class="flex flex-col gap-1 min-w-0">
+                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">En halua lisänäkyvyyttä</span>
+                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
                 </span>
               </label>
             </div>
