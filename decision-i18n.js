@@ -70,6 +70,12 @@ window.DECISION_I18N = {
     'Ymmärrän, jatka':                     'Understood, continue',
     /* v4's warm-up keeps every word of prod's card and adds only this line,
        so its keys are prod's plus one. */
+    'Kiitos, että odotit tarjouskilpailun loppuun!':
+      'Thanks for waiting until the auction ended!',
+    'Ilmoituksesi sai lisänäkyvyyttä ja tavoitti satojen autoliikkeiden verkoston.':
+      'Your listing got extra visibility and reached a network of hundreds of dealerships.',
+    'Ilmoituksesi sai lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun. Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.':
+      'Your listing got extra visibility because you waited until the auction ended. Accept the offer and the dealership will contact you.',
     'Muistathan, että Nettiauton hintaa ei kannata verrata saamaasi tarjoukseen. Pyyntihinta ei ole sama asia kuin saamasi tarjous.':
       'Remember that a Nettiauto price is not worth comparing to the offer you received. An asking price is not the same thing as the offer you received.',
     'Tarjouskilpailu on päättynyt':         'The auction has ended',

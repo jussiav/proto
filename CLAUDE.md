@@ -682,7 +682,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
-| AutoVex exclusive | **Draft** (2026-10-14) — painted-door test, `v1` optional checkbox, `v2` required choice, `v3` optional-section heading + checkbox, wider commitment until the offers expire; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html` | `design-specs/autovex-exclusive.html` |
+| AutoVex exclusive | **Draft** (2026-10-14) — painted-door test, `v1` optional checkbox, `v2` required choice, `v3` optional-section heading + checkbox, wider commitment until the offers expire; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` (v2 follow-up) | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
 
@@ -2430,7 +2430,22 @@ mechanism are deliberately out of scope for this test.
   keep it light). The "Suosittelemme" tag sits INSIDE the yes card at the right end
   of the label's first line (`flex items-start justify-between`, tag
   `flex-shrink-0`); the label wraps beside it. The corner overlap (as v1) was
-  tried and rejected by Jussi for v2. Terms stay the question's own
+  tried and rejected by Jussi for v2.
+  **v2 follow-up on the decision page (2026-10-19, spec section 4):** yes-sellers
+  (`AE_YES` = v2 arm + the contact step's saved answer, or `?exclusive=yes|no`,
+  also a bar field) are thanked INSIDE the existing copy, no new element
+  (Jussi: an extra info line under the button was rejected). Warm-up, prod's
+  offers-waiting card only (`base === WARMUP_AUCTION_ENDED`): heading "Kiitos,
+  että odotit tarjouskilpailun loppuun!", body "Ilmoituksesi sai
+  lisänäkyvyyttä ja tavoitti satojen autoliikkeiden verkoston." Hero, only
+  while it is `HERO_OFFERS_PENDING`: the body is led by "Ilmoituksesi sai
+  lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun." ("– kiitos!"
+  dropped by Jussi); any
+  negotiation / final-offer / closed hero replaces it and the thanks goes with
+  it, which is intended. Tone: thank, never remind (docs/copy_guidelines.md).
+  Known: "sai lisänäkyvyyttä" is untrue during the painted door; accepted.
+  EN glosses in `decision-i18n.js` (the hero body is one text node, so its key
+  is the whole combined sentence). Terms stay the question's own
   (lisänäkyvyys). Period = submit → offers decided, "noin 5 arkipäivää" as the
   team's starting figure, tested in a follow-up A/B. Team monitors CS
   calls about the commitment and iterates on them. Starting at submit means a

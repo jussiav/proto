@@ -733,6 +733,33 @@
        offer on the front end, so the real page reads its own flag too and this
        is the contract rather than a simplification. */
     var OV_FAIR = _params.get('fair') === '0' ? false : null;
+    /* AUTOVEX EXCLUSIVE (design-specs/autovex-exclusive.html). In v2 the contact
+       step asked a required yes/no; a seller who answered yes is thanked here,
+       on the warm-up and under the hero, while the decision is open. The answer
+       is world state: the funnel's saved one, or `?exclusive=yes|no` from the
+       bar. The copy assumes the seller kept to it (docs/copy_guidelines.md) and
+       is baked into the card's and the hero's own copy, so it goes away with
+       them when a negotiation or final offer replaces the hero. */
+    var AE_ARM = (function () {
+      var ARMS = ['control', 'v1', 'v2', 'v3'];
+      var arm = window.protoVariant('autovex-exclusive', 'control');
+      if (ARMS.indexOf(arm) === -1) { window.protoVariantSet('autovex-exclusive', null); return 'control'; }
+      return arm;
+    }());
+    var AE_YES = AE_ARM === 'v2' && (function () {
+      var asked = _params.get('exclusive');
+      if (asked === 'yes') return true;
+      if (asked === 'no') return false;
+      try {
+        var store = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
+        return (store.contact || {}).autovexVisibility === 'exclusive';
+      } catch (e) { return false; }
+    }());
+    var AE_WARMUP = {
+      heading: 'Kiitos, että odotit tarjouskilpailun loppuun!',
+      message: 'Ilmoituksesi sai lisänäkyvyyttä ja tavoitti satojen autoliikkeiden verkoston.'
+    };
+    var AE_HERO_LEAD = 'Ilmoituksesi sai lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun.';
     /* HOW MANY DEALERSHIPS BID — the world state, not how many cards show.
        Production returns ONE `tender_offers` row per bidding dealership and
        builds both numbers from that same collection
@@ -1638,6 +1665,7 @@
         '</div>' +
       '</div>';
     }
+
 
     // Ribbon: mirrors OfferCardRibbon.vue exactly
     var RIBBON = {
@@ -2783,6 +2811,11 @@
           if (armWc.cta)     wc.cta     = armWc.cta;
           if (armWc.note)    wc.note    = armWc.note;
         }
+        /* Only prod's offers-waiting card (the four price tiers share it). */
+        if (AE_YES && !armWc && base === WARMUP_AUCTION_ENDED) {
+          wc.heading = AE_WARMUP.heading;
+          wc.message = AE_WARMUP.message;
+        }
 
         document.getElementById('warmup-heading').textContent = wc.heading;
         document.getElementById('warmup-message').textContent = wc.message;
@@ -2876,6 +2909,11 @@
       // Hero as direct grid child
       var heroEl = document.createElement('div');
       heroEl.className = 'mb-auto' + (selected.length === 0 || selected.length === 2 ? ' md:col-span-2' : '');
+      /* Only while the hero is prod's offers-waiting one; a negotiation, final
+         offer or closed hero replaces it, and the thanks goes with it. */
+      if (AE_YES && hc === HERO_OFFERS_PENDING) {
+        hc = { title: hc.title, desc: AE_HERO_LEAD + ' ' + hc.desc };
+      }
       heroEl.innerHTML = buildHero(hc, carPhoto);
       grid.appendChild(heroEl);
 
@@ -4071,6 +4109,14 @@
             { id: 'v4',      label: 'Variant 4 — side by side: your offer against a listing price' },
             { id: 'v5',      label: 'Variant 5 — ready for dev: auction result block only' }
           ]
+        },
+        {
+          slug:    'autovex-exclusive',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no exclusivity reminder' },
+            { id: 'v2',      label: 'Variant 2 — thanks yes-sellers in the warm-up and hero copy' }
+          ]
         }
       ],
       panelLabel: 'Auction settings',
@@ -4089,7 +4135,10 @@
         /* Not a price, but it belongs with them: it is the one other fact about
            the auction result that changes what the page renders. `0` turns the
            fair offer off; anything else leaves the scenario's own value. */
-        { key: 'fair',    label: 'Fair offer',    placeholder: '0 = not fair', width: '110px' }
+        { key: 'fair',    label: 'Fair offer',    placeholder: '0 = not fair', width: '110px' },
+        /* AutoVex exclusive v2: the seller's contact-step answer. Empty falls
+           back to the answer saved in the funnel. */
+        { key: 'exclusive', label: 'Exclusive answer', placeholder: 'yes / no', width: '110px' }
       ],
       actionsLabel: 'Dealer response',
       actions: [
