@@ -2477,10 +2477,12 @@ mechanism are deliberately out of scope for this test.
   every seller's answer. Rewritten several times the same day; now: question
   "Haluatko autollesi ilmaista lisänäkyvyyttä?" (value, incl. "free", BEFORE
   any commitment), yes "Kyllä, sitoudun odottamaan AutoVexin tarjoukset", desc
-  "En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää).
-  Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia." The rule is "I won't sell before
-  deciding" (any channel: listing, private sale, trade-in), aimed at the
-  "already sold" reject reason. Rejected on the way: "myyn vain" (reads as a
+  "En myy autoa enkä ilmoita sitä myyntiin ennen kuin olen päättänyt
+  tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä
+  voi nostaa tarjouksia." ("enkä", not Jussi's "tai": a second negated verb
+  takes -kä.) The rule is "I won't sell or list it before deciding" (any
+  channel: private sale, trade-in, other listings), aimed at the "already
+  sold" reject reason. Rejected on the way: "myyn vain" (reads as a
   sale commitment), "haen tarjouksia" / "ilmoitan" / "pidän myynnissä"
   (vague, don't rule out selling), anything with "muualle" (suggests selling
   elsewhere), a ban on asking dealerships (few can promise it), "lupaus" (too
