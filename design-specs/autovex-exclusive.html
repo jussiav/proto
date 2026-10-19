@@ -93,12 +93,12 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; contact step</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">AutoVex exclusive</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Would sellers agree to sell their car only on AutoVex in exchange for better visibility among buyers? A painted-door test on the contact step: we offer the deal, count who takes it, and build nothing behind it yet.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Would sellers wait for AutoVex's offers before selling their car, in exchange for free extra visibility? A painted-door test: a required yes-or-no question on the contact step, and a thank-you on the decision page for those who said yes. Nothing is built behind it yet.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: painted-door test &middot; 3 variants &middot; copy is a draft
+          Status: for team review &middot; variant 2 proposed &middot; copy is a draft
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
@@ -112,11 +112,41 @@
 
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What this test is</h2>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>It measures interest, nothing else.</b> Every seller on the contact step sees an offer: sell only on AutoVex, and your listing gets better visibility among buyers. The share who tick it tells us whether exclusivity is worth building.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Nothing sits behind the door in this test.</b> Ticking the box does not confirm exclusivity, nothing checks it, and the extra visibility is not built on the buyer side. The selection is not shown anywhere else in the product.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>The failure mode is an offer nobody sees.</b> An unseen offer would read as no interest, and the test would answer the wrong question.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl"><b>Two variants, two kinds of signal.</b> Variant 1 is an optional checkbox: a tick is a clear yes, but an empty box can mean no, didn't notice, or didn't care. Variant 2 asks it as a required yes-or-no question, so every seller who submits has seen it and answered it. Both variants limit exclusivity to the auction, with its typical length, so it never reads as a permanent commitment.</p>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Summary for the review</h2>
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The proposal</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Contact step (<a class="text-av-blue underline" href="#c2">section 2</a>):</b> every seller answers a required question, &ldquo;Haluatko autollesi ilmaista lisänäkyvyyttä?&rdquo; (do you want free extra visibility for your car?). Yes means not selling the car before deciding on AutoVex's offers, about 5 business days.</li>
+            <li><b>Decision page (<a class="text-av-blue underline" href="#c4">section 4</a>):</b> sellers who said yes are thanked for waiting, inside the warm-up card's and the hero's own copy. No reminder, no new element.</li>
+            <li><b>A painted door.</b> The answer is recorded and nothing checks it. The extra visibility is not built on the buyer side in this test.</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../contact.html?autovex-exclusive=v2" target="_blank" rel="noopener">Contact step</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=new-offers&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">warm-up</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">decision page</a></p>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Why a required question</p>
+          <p class="mb-3">An optional checkbox (<a class="text-av-blue underline" href="#c1">variant 1</a>) gives a clear yes, but an empty box can mean no, didn't notice, or didn't care. A required yes-or-no gets an answer from every seller who submits, so the yes rate is a real share.</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3 mt-4">What it is meant to show</p>
+          <p>How many sellers would wait for AutoVex's offers, and whether those who say yes are less likely to reject the offers because they already sold the car.</p>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Decided so far</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>The period</b> runs from submitting the ad until the offers are decided, stated as about 5 business days. Its effect on the yes rate is tested in a follow-up A/B test.</li>
+            <li><b>The ask is not a sale commitment.</b> It rules out selling the car before deciding, through any channel. Asking dealerships for offers is not ruled out.</li>
+            <li><b>The decision page thanks, never reminds.</b> No commitment or promise words after the ask.</li>
+            <li><b>Customer service contacts</b> about the commitment are followed during the test, and the copy iterated on them.</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">To settle in this review</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Do we keep both decision-page touches, the warm-up and the hero, or one?</li>
+            <li>Is the test control against variant 2 only?</li>
+            <li>The open questions at the end of this page.</li>
+          </ul>
+        </div>
+      </div>
       </div>
     </section>
 
@@ -140,28 +170,28 @@
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Variant 1: optional exclusivity checkbox</a></td>
               <td class="px-4 py-3">Contact step</td>
               <td class="px-4 py-3 text-slate-600">Every seller, new ad or edit</td>
-              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+              <td class="px-4 py-3"><span class="bg-slate-100 text-slate-600 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Explored &middot; not proposed</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">2</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">Variant 2: required visibility choice</a></td>
               <td class="px-4 py-3">Contact step</td>
               <td class="px-4 py-3 text-slate-600">Every seller, new ad or edit</td>
-              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Proposed</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">3</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c3">Variant 3: optional section, wider commitment until the offers expire</a></td>
               <td class="px-4 py-3">Contact step</td>
               <td class="px-4 py-3 text-slate-600">Every seller, new ad or edit</td>
-              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+              <td class="px-4 py-3"><span class="bg-slate-100 text-slate-600 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Explored &middot; not proposed</span></td>
             </tr>
             <tr>
               <td class="px-4 py-3 font-bold">4</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c4">Variant 2 follow-up: thanks on the warm-up and the decision page</a></td>
               <td class="px-4 py-3">Decision page</td>
               <td class="px-4 py-3 text-slate-600">Variant 2, seller answered yes, decision open</td>
-              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Proposed</span></td>
             </tr>
           </tbody>
         </table>
@@ -169,10 +199,135 @@
       </div>
     </section>
 
+    <section class="av-band av-band-grey" id="c2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 &mdash; Variant 2: required visibility choice</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Proposed &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>A required yes-or-no question in the same place</b>, between the email field and the consent checkboxes, with the funnel's group-legend heading and a red asterisk: &ldquo;Haluatko autollesi ilmaista lisänäkyvyyttä?&rdquo; (do you want free extra visibility for your car?). The value, free included, comes before any commitment is asked.</li>
+            <li><b>Two option cards</b>, the funnel's own radio cards: <b>yes, on the condition</b> first with the green &ldquo;recommended&rdquo; tag at the right end of the label's first line, inside the card (the label wraps beside it), <b>no</b> second. Each has a short description, and no explanation sits below them. Neither is preselected.</li>
+            <li><b>Both answers are active and in the seller's own voice.</b> The yes option is a positive commitment: &ldquo;Kyllä, sitoudun odottamaan AutoVexin tarjoukset&rdquo; (yes, I commit to waiting for AutoVex's offers). It does not mention selling elsewhere, and it does not ask the seller to commit to a sale. The no option is simply &ldquo;En halua ilmaista lisänäkyvyyttä&rdquo; (I don't want free extra visibility).</li>
+            <li><b>The yes description states the rule, the period and the reason.</b> &ldquo;En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää)&rdquo; (I won't sell the car before I've decided on the offers, about 5 business days) rules out any earlier sale, including a private sale or a trade-in, which is what turns into an &ldquo;I already sold the car&rdquo; rejection after the auction. The period runs from submitting the ad to the offers being accepted, rejected or expiring. &ldquo;Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia&rdquo; (this way my listing gets extra visibility, which can raise the offers) links the ask to the reward, and names what the visibility may lead to with a hedged &ldquo;voi&rdquo; (can), without explaining how dealerships behave. Asking dealerships for offers is deliberately not ruled out.</li>
+            <li><b>The standard option does not mention selling elsewhere</b>, so it cannot read as advice to list the car on other sites.</li>
+            <li><b>Submitting without a choice is blocked</b> with the funnel's own &ldquo;selection required&rdquo; error on the options.</li>
+            <li><b>Shown to every seller</b>, logged in or not, and the earlier choice is restored when they come back to edit.</li>
+            <li><b>Shown nowhere else</b>, as in variant 1.</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../contact.html?autovex-exclusive=v2" target="_blank" rel="noopener">See it in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../contact.html?autovex-exclusive=control" target="_blank" rel="noopener">see production</a></p>
+        </div>
+
+        <div class="rounded-lg p-5 border border-slate-200 bg-white">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The question, live (pick one)</p>
+          <div class="max-w-md flex flex-col gap-4">
+            <p class="font-dm font-bold text-xl leading-7 text-slate-900"><span data-i18n="contact.visibilityLegend">Haluatko autollesi ilmaista lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span></p>
+            <div class="flex flex-col gap-3.5">
+              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
+                <input type="radio" name="spec-visibility" class="sr-only" />
+                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
+                <span class="flex flex-col gap-1 min-w-0">
+                  <span class="flex items-start justify-between gap-3">
+                    <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityExclusive">Kyllä, sitoudun odottamaan AutoVexin tarjoukset</span>
+                    <span class="flex-shrink-0 inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
+                  </span>
+                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityExclusiveDesc">En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia.</span>
+                </span>
+              </label>
+              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
+                <input type="radio" name="spec-visibility" class="sr-only" />
+                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
+                <span class="flex flex-col gap-1 min-w-0">
+                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">En halua ilmaista lisänäkyvyyttä</span>
+                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
+                </span>
+              </label>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Rendered from the same copy as the prototype, in the 448px funnel column.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all draft except the error</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Question</p><p class="av-copy"><span class="av-ins">Haluatko autollesi ilmaista lisänäkyvyyttä?</span></p><p class="av-gloss">Do you want free extra visibility for your car?</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 1 (tag: Suosittelemme)</p><p class="av-copy"><span class="av-ins">Kyllä, sitoudun odottamaan AutoVexin tarjoukset</span></p><p class="av-gloss">Yes, I commit to waiting for AutoVex's offers</p><p class="av-copy mt-2"><span class="av-ins">En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia.</span></p><p class="av-gloss">I won't sell the car before I've decided on the offers (about 5 business days). This way my listing gets extra visibility, which can raise the offers.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 2</p><p class="av-copy"><span class="av-ins">En halua ilmaista lisänäkyvyyttä</span></p><p class="av-gloss">I don't want free extra visibility</p><p class="av-copy mt-2"><span class="av-ins">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span></p><p class="av-gloss">My listing is shown to dealerships as usual.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Error, existing funnel copy</p><p class="av-copy">Valinta vaaditaan.</p><p class="av-gloss">A selection is required.</p></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">The error is the funnel's existing message for an unanswered choice.</p>
+      </div>
+
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Variant sellers see the question above the consent checkboxes, logged in or not, with neither option selected on first visit.</li>
+          <li>Submitting without a choice shows &ldquo;Valinta vaaditaan.&rdquo; on the options and scrolls to them; picking one clears it.</li>
+          <li>Returning to the contact step shows the seller's last choice, and it can be changed.</li>
+          <li>The choice is recorded per ad with the arm.</li>
+          <li>Nothing else in the product changes based on the choice.</li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> a required question gives every submitting seller's answer, where an empty checkbox cannot separate &ldquo;no&rdquo; from &ldquo;didn't see it&rdquo;.</p>
+      </div>
+      </div>
+    </section>
+
+
+    <section class="av-band av-band-grey" id="c4">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">4 &mdash; Variant 2 follow-up: thanks on the warm-up and the decision page</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Proposed &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Variant 2, seller answered yes, decision open</span></div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>Who sees it:</b> only sellers who answered yes in variant 2, and only while the page shows the offers-waiting card and hero. No new element: the thanks is part of the existing copy.</li>
+          <li><b>Warm-up card:</b> its heading and body change; image, badge and button stay. Seen once, before the offers are revealed.</li>
+          <li><b>Decision page hero:</b> the heading stays (&ldquo;Nyt on aikasi toimia!&rdquo;) and a sentence leads its body. It stays for as long as the hero does: once a negotiation, a final offer or a closed negotiation replaces the hero with its own message, the thanks goes with it.</li>
+          <li><b>The tone assumes the best.</b> The copy thanks the seller for waiting until the auction ended, which is what they agreed to. It never reminds them of a promise or asks them to keep it: no &ldquo;commitment&rdquo; or &ldquo;promise&rdquo; words at this point. A thank-you does the reminding without any negative feeling towards AutoVex at the moment the seller decides.</li>
+          <li><b>Scoping:</b> both places are proposed; whether to keep both is decided when the test is scoped.</li>
+        </ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=new-offers&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">Warm-up in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">decision page</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;autovex-exclusive=v2&amp;exclusive=no" target="_blank" rel="noopener">answered no</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">hero replaced</a> <span class="text-slate-500">&mdash; the answer is also read from the contact step when you walk the funnel.</span></p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; draft</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Warm-up card, heading</p><p class="av-copy"><span class="av-del">Hyvä tarjouskilpailu takana!</span></p><p class="av-gloss">Good auction behind you!</p><p class="av-copy mt-2"><span class="av-ins">Kiitos, että odotit tarjouskilpailun loppuun!</span></p><p class="av-gloss">Thanks for waiting until the auction ended!</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Warm-up card, body</p><p class="av-copy"><span class="av-del">Autosi kävi läpi koko tarjouskilpailun</span> ja tavoitti satojen autoliikkeiden verkoston.</p><p class="av-gloss">Your car went through the whole auction and reached a network of hundreds of dealerships.</p><p class="av-copy mt-2"><span class="av-ins">Ilmoituksesi sai lisänäkyvyyttä</span> ja tavoitti satojen autoliikkeiden verkoston.</p><p class="av-gloss">Your listing got extra visibility and reached a network of hundreds of dealerships.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Decision page hero, body (heading unchanged)</p><p class="av-copy"><span class="av-ins">Ilmoituksesi sai lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun.</span> Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.</p><p class="av-gloss">Your listing got extra visibility because you waited until the auction ended. Accept the offer and the dealership will contact you.</p></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">Unchanged text is production's. The warm-up and the hero say the same two things in a different order, so a seller who sees both on their first visit does not read the same sentence twice. Neither mentions the earlier choice (&ldquo;you chose&rdquo;): a seller will not remember a question from days ago, and the thanks carries the condition.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>The warm-up heading and body change only for variant-2 yes-sellers with offers waiting; every other seller sees today's card.</li>
+          <li>The hero's body leads with the thanks only for variant-2 yes-sellers, and only while the hero is the offers-waiting one; any other hero is unchanged.</li>
+          <li>Rejections are recorded with the seller's variant-2 answer, so the &ldquo;I already sold the car&rdquo; rate can be compared between yes and no.</li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> the commitment exists to stop the car being sold before the seller decides on the offers; thanking at the decision moment closes that loop without pressure.</p>
+      </div>
+      </div>
+    </section>
+
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Explored, not proposed</h2>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl">Two earlier variants, kept as the record of what was tried. Neither is proposed for the test: both are optional checkboxes, so a seller who leaves the box empty tells us nothing.</p>
+      </div>
+    </section>
+
     <section class="av-band av-band-grey" id="c1">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; Variant 1: optional exclusivity checkbox</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-100 text-slate-600 font-bold rounded-full px-3 py-1">Explored &middot; not proposed</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
 
       <div class="grid lg:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
@@ -232,87 +387,11 @@
       </div>
     </section>
 
-    <section class="av-band av-band-grey" id="c2">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 &mdash; Variant 2: required visibility choice</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
-
-      <div class="grid lg:grid-cols-2 gap-5 items-start">
-        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
-          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
-          <ul class="list-disc pl-5 space-y-1">
-            <li><b>A required yes-or-no question in the same place</b>, between the email field and the consent checkboxes, with the funnel's group-legend heading and a red asterisk: &ldquo;Haluatko autollesi ilmaista lisänäkyvyyttä?&rdquo; (do you want free extra visibility for your car?). The value, free included, comes before any commitment is asked.</li>
-            <li><b>Two option cards</b>, the funnel's own radio cards: <b>yes, on the condition</b> first with the green &ldquo;recommended&rdquo; tag at the right end of the label's first line, inside the card (the label wraps beside it), <b>no</b> second. Each has a short description, and no explanation sits below them. Neither is preselected.</li>
-            <li><b>Both answers are active and in the seller's own voice.</b> The yes option is a positive commitment: &ldquo;Kyllä, sitoudun odottamaan AutoVexin tarjoukset&rdquo; (yes, I commit to waiting for AutoVex's offers). It does not mention selling elsewhere, and it does not ask the seller to commit to a sale. The no option is simply &ldquo;En halua ilmaista lisänäkyvyyttä&rdquo; (I don't want free extra visibility).</li>
-            <li><b>The yes description states the rule, the period and the reason.</b> &ldquo;En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää)&rdquo; (I won't sell the car before I've decided on the offers, about 5 business days) rules out any earlier sale, including a private sale or a trade-in, which is what turns into an &ldquo;I already sold the car&rdquo; rejection after the auction. The period runs from submitting the ad to the offers being accepted, rejected or expiring. &ldquo;Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia&rdquo; (this way my listing gets extra visibility, which can raise the offers) links the ask to the reward, and names what the visibility may lead to with a hedged &ldquo;voi&rdquo; (can), without explaining how dealerships behave. Asking dealerships for offers is deliberately not ruled out.</li>
-            <li><b>The standard option does not mention selling elsewhere</b>, so it cannot read as advice to list the car on other sites.</li>
-            <li><b>Submitting without a choice is blocked</b> with the funnel's own &ldquo;selection required&rdquo; error on the options.</li>
-            <li><b>Shown to every seller</b>, logged in or not, and the earlier choice is restored when they come back to edit.</li>
-            <li><b>Shown nowhere else</b>, as in variant 1.</li>
-          </ul>
-          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../contact.html?autovex-exclusive=v2" target="_blank" rel="noopener">See it in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../contact.html?autovex-exclusive=control" target="_blank" rel="noopener">see production</a></p>
-        </div>
-
-        <div class="rounded-lg p-5 border border-slate-200 bg-white">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The question, live (pick one)</p>
-          <div class="max-w-md flex flex-col gap-4">
-            <p class="font-dm font-bold text-xl leading-7 text-slate-900"><span data-i18n="contact.visibilityLegend">Haluatko autollesi ilmaista lisänäkyvyyttä?</span> <span class="text-red-500 font-medium">*</span></p>
-            <div class="flex flex-col gap-3.5">
-              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
-                <input type="radio" name="spec-visibility" class="sr-only" />
-                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
-                <span class="flex flex-col gap-1 min-w-0">
-                  <span class="flex items-start justify-between gap-3">
-                    <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityExclusive">Kyllä, sitoudun odottamaan AutoVexin tarjoukset</span>
-                    <span class="flex-shrink-0 inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="contact.exclusiveBadge">Suosittelemme</span>
-                  </span>
-                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityExclusiveDesc">En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia.</span>
-                </span>
-              </label>
-              <label class="vis-option flex items-start gap-2 w-full border border-gray-500 rounded-lg bg-white p-4 cursor-pointer">
-                <input type="radio" name="spec-visibility" class="sr-only" />
-                <span class="radio-dot mt-1 w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center"><span class="radio-inner hidden w-2 h-2 rounded-full bg-white"></span></span>
-                <span class="flex flex-col gap-1 min-w-0">
-                  <span class="font-barlow font-medium text-base text-black" data-i18n="contact.visibilityStandard">En halua ilmaista lisänäkyvyyttä</span>
-                  <span class="font-barlow text-sm text-black" data-i18n="contact.visibilityStandardDesc">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span>
-                </span>
-              </label>
-            </div>
-          </div>
-          <p class="font-dm text-xs text-slate-500 mt-3">Rendered from the same copy as the prototype. in the 448px funnel column.</p>
-        </div>
-      </div>
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all draft except the error</p>
-        <div class="space-y-4">
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Question</p><p class="av-copy"><span class="av-ins">Haluatko autollesi ilmaista lisänäkyvyyttä?</span></p><p class="av-gloss">Do you want free extra visibility for your car?</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 1 (tag: Suosittelemme)</p><p class="av-copy"><span class="av-ins">Kyllä, sitoudun odottamaan AutoVexin tarjoukset</span></p><p class="av-gloss">Yes, I commit to waiting for AutoVex's offers</p><p class="av-copy mt-2"><span class="av-ins">En myy autoa ennen kuin olen päättänyt tarjouksista (noin 5 arkipäivää). Näin ilmoitukseni saa lisänäkyvyyttä, mikä voi nostaa tarjouksia.</span></p><p class="av-gloss">I won't sell the car before I've decided on the offers (about 5 business days). This way my listing gets extra visibility, which can raise the offers.</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Option 2</p><p class="av-copy"><span class="av-ins">En halua ilmaista lisänäkyvyyttä</span></p><p class="av-gloss">No, I don't want free extra visibility</p><p class="av-copy mt-2"><span class="av-ins">Ilmoitukseni näkyy autoliikkeille tavalliseen tapaan.</span></p><p class="av-gloss">My listing is shown to dealerships as usual.</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Error, existing funnel copy</p><p class="av-copy">Valinta vaaditaan.</p><p class="av-gloss">A selection is required.</p></div>
-        </div>
-        <p class="font-dm text-xs text-slate-500 mt-4">The error is the funnel's existing message for an unanswered choice.</p>
-      </div>
-
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>Variant sellers see the question above the consent checkboxes, logged in or not, with neither option selected on first visit.</li>
-          <li>Submitting without a choice shows &ldquo;Valinta vaaditaan.&rdquo; on the options and scrolls to them; picking one clears it.</li>
-          <li>Returning to the contact step shows the seller's last choice, and it can be changed.</li>
-          <li>The choice is recorded per ad with the arm.</li>
-          <li>Nothing else in the product changes based on the choice.</li>
-        </ul>
-        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> a required question gives every submitting seller's answer, where an empty checkbox cannot separate &ldquo;no&rdquo; from &ldquo;didn't see it&rdquo;.</p>
-      </div>
-      </div>
-    </section>
 
     <section class="av-band av-band-grey" id="c3">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">3 &mdash; Variant 3: optional section, wider commitment until the offers expire</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-100 text-slate-600 font-bold rounded-full px-3 py-1">Explored &middot; not proposed</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Contact step</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Every seller, new ad or edit</span></div>
 
       <div class="grid lg:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
@@ -370,52 +449,15 @@
       </div>
     </section>
 
-    <section class="av-band av-band-grey" id="c4">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">4 &mdash; Variant 2 follow-up: thanks on the warm-up and the decision page</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Variant 2, seller answered yes, decision open</span></div>
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li><b>Who sees it:</b> only sellers who answered yes in variant 2, and only while the page shows the offers-waiting card and hero. No new element: the thanks is part of the existing copy.</li>
-          <li><b>Warm-up card:</b> its heading and body change; image, badge and button stay. Seen once, before the offers are revealed.</li>
-          <li><b>Decision page hero:</b> the heading stays (&ldquo;Nyt on aikasi toimia!&rdquo;) and a sentence leads its body. It stays for as long as the hero does: once a negotiation, a final offer or a closed negotiation replaces the hero with its own message, the thanks goes with it.</li>
-          <li><b>The tone assumes the best.</b> The copy thanks the seller for waiting until the auction ended, which is what they agreed to. It never reminds them of a promise or asks them to keep it: no &ldquo;commitment&rdquo; or &ldquo;promise&rdquo; words at this point. A thank-you does the reminding without any negative feeling towards AutoVex at the moment the seller decides.</li>
-          <li><b>Scoping:</b> both places are proposed; whether to keep both is decided when the test is scoped.</li>
-        </ul>
-        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=new-offers&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">Warm-up in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">decision page</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;autovex-exclusive=v2&amp;exclusive=no" target="_blank" rel="noopener">answered no</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=dealer-replied&amp;autovex-exclusive=v2&amp;exclusive=yes" target="_blank" rel="noopener">hero replaced</a> <span class="text-slate-500">&mdash; the answer is also read from the contact step when you walk the funnel.</span></p>
-      </div>
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; draft</p>
-        <div class="space-y-4">
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Warm-up card, heading</p><p class="av-copy"><span class="av-del">Hyvä tarjouskilpailu takana!</span></p><p class="av-gloss">Good auction behind you!</p><p class="av-copy mt-2"><span class="av-ins">Kiitos, että odotit tarjouskilpailun loppuun!</span></p><p class="av-gloss">Thanks for waiting until the auction ended!</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Warm-up card, body</p><p class="av-copy"><span class="av-del">Autosi kävi läpi koko tarjouskilpailun</span> ja tavoitti satojen autoliikkeiden verkoston.</p><p class="av-gloss">Your car went through the whole auction and reached a network of hundreds of dealerships.</p><p class="av-copy mt-2"><span class="av-ins">Ilmoituksesi sai lisänäkyvyyttä</span> ja tavoitti satojen autoliikkeiden verkoston.</p><p class="av-gloss">Your listing got extra visibility and reached a network of hundreds of dealerships.</p></div>
-          <div><p class="font-dm text-xs text-slate-500 mb-1">Decision page hero, body (heading unchanged)</p><p class="av-copy"><span class="av-ins">Ilmoituksesi sai lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun.</span> Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.</p><p class="av-gloss">Your listing got extra visibility because you waited until the auction ended. Accept the offer and the dealership will contact you.</p></div>
-        </div>
-        <p class="font-dm text-xs text-slate-500 mt-4">Unchanged text is production's. The warm-up and the hero say the same two things in a different order, so a seller who sees both on their first visit does not read the same sentence twice. Neither mentions the earlier choice (&ldquo;you chose&rdquo;): a seller will not remember a question from days ago, and the thanks carries the condition.</p>
-      </div>
-
-      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
-        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>The warm-up heading and body change only for variant-2 yes-sellers with offers waiting; every other seller sees today's card.</li>
-          <li>The hero's body leads with the thanks only for variant-2 yes-sellers, and only while the hero is the offers-waiting one; any other hero is unchanged.</li>
-          <li>Rejections are recorded with the seller's variant-2 answer, so the &ldquo;I already sold the car&rdquo; rate can be compared between yes and no.</li>
-        </ul>
-        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> the commitment exists to stop the car being sold before the seller decides on the offers; thanking at the decision moment closes that loop without pressure.</p>
-      </div>
-      </div>
-    </section>
 
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What to read from it</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>Opt-in rate:</b> in variants 1 and 3, ticked out of sellers who submitted the step; in variant 2, the exclusive answer out of all answers. Variant 1 against variant 3 shows what the wider, longer commitment costs in opt-ins.</li>
-        <li><b>Did the block cost anything?</b> Contact-step completion, variant against control. A commitment offer next to the submit button could make some sellers hesitate.</li>
-        <li><b>Who opts in:</b> split by review segment and by the seller-intent answer where one exists, to see whether committed sellers are also the ones ready to sell.</li>
+        <li><b>Yes rate:</b> sellers answering yes, out of all who submitted the contact step in variant 2.</li>
+        <li><b>Did the question cost anything?</b> Contact-step completion, variant 2 against control. A required question before the submit button could make some sellers hesitate or drop off.</li>
+        <li><b>&ldquo;I already sold the car&rdquo; rejections:</b> their share among yes-sellers, no-sellers and control. This is the outcome the commitment is meant to move.</li>
+        <li><b>Who says yes:</b> split by review segment and by the seller-intent answer where one exists, to see whether committed sellers are also the ones ready to sell.</li>
       </ul>
       </div>
     </section>
@@ -424,15 +466,11 @@
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>The promise is not kept in this test.</b> Sellers who tick it are told their listing gets more prominence, and it does not. Do we tell them afterwards, for example on the success page or in a later email, or leave it as is for the test's length?</li>
-        <li><b>The stated period is a starting point, decided by the team.</b> Variant 2 says about 5 business days, from submitting the ad until the offers are decided. It does not count any wait before the auction starts (a review call, or email verification). The team will test the period's effect on the yes rate in a follow-up A/B test, after this one. Variant 1 still says about 36 hours, the auction only.</li>
-        <li><b>&ldquo;Ilmoituksesi sai lisänäkyvyyttä&rdquo; is not true during this test.</b> The visibility is not built in the painted-door test, so the follow-up states an effect that did not happen. Accepted for the test's length; the honest fallback is the thanks alone (&ldquo;Kiitos, että odotit tarjouskilpailun loppuun!&rdquo;).</li>
-        <li><b>Seller questions are monitored.</b> Customer service calls and contacts about the commitment will be followed during the test, and the copy iterated on what they show.</li>
-        <li><b>Variant 2's period starts at submit.</b> A seller who already has the car listed elsewhere would have to take that listing down to answer yes truthfully. That is intended, but it may lower the yes rate compared with an auction-only commitment.</li>
-        <li><b>&ldquo;Noin 36 tuntia&rdquo; is what sellers are told today, not what the auction does.</b> The same figure appears in the funnel and emails, but the auction is scheduled to end three to four business days after it starts, and the first offer brings that forward to one or two business days. Worth checking against real auction durations before the test runs.</li>
-        <li><b>Option order in variant 2.</b> The exclusive option is first, and the first option tends to be picked more. Randomising the order per seller would remove that bias from the result.</li>
-        <li><b>Was variant 1 seen?</b> Its opt-in rate only means something among sellers who scrolled to it. Recording when it comes into view would separate &ldquo;not interested&rdquo; from &ldquo;never saw it&rdquo;. Variant 2 does not need this.</li>
-        <li><b>One variant or two?</b> A quieter version (option card only, no block) would show how much of the opt-in rate is the presentation.</li>
+        <li><b>The visibility is promised and not delivered.</b> The contact step offers it, and the decision page says &ldquo;Ilmoituksesi sai lisänäkyvyyttä&rdquo; (your listing got extra visibility), which is not true during the test. Do we accept that for the test's length, tell sellers afterwards, or keep only the thanks on the decision page?</li>
+        <li><b>Two durations in one funnel.</b> The funnel and emails tell sellers an auction typically lasts 36 hours; this question says about 5 business days until the offers are decided. Both are right for what they describe, but a seller may compare them. (The 36 hours is also shorter than the auction's real schedule of three to four business days, shortened by the first offer.)</li>
+        <li><b>The period starts at submit.</b> A seller who already has the car listed elsewhere would have to take that listing down to answer yes truthfully. Intended, but it may lower the yes rate.</li>
+        <li><b>Option order.</b> The yes option is first, and the first option tends to be picked more. Randomising the order per seller would remove that bias.</li>
+        <li><b>Legal.</b> The wording asks a consumer to commit to something, even without enforcement. Does it need a legal read before going live?</li>
       </ul>
       </div>
     </section>

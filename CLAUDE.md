@@ -2545,6 +2545,13 @@ mechanism are deliberately out of scope for this test.
   label, gap 10px) with the description at 14/20, via `html[data-exclusive-arm="v3"]`
   CSS on `#exclusive-row` / `#autovex-exclusive` / `#exclusive-label` /
   `#exclusive-body`. "valinnainen", never "vapaaehtoinen", for this option.
+- **Spec page restructured for the team review (2026-10-19):** status "for team
+  review · variant 2 proposed"; a Summary section first (proposal, why a
+  required question, what it shows, decided so far, to settle); sections 2 and
+  4 (proposed) come first, 1 and 3 under "Explored, not proposed" — numbers and
+  anchors unchanged. Open questions pruned to five: undelivered visibility,
+  36 h vs 5 business days in one funnel, period starts at submit, option order,
+  a legal read.
 - **Open (on the spec):** telling sellers afterwards that the promise was a
   test; checking "noin 36 tuntia" against real durations; option order in v2; an in-view event for v1; a quieter arm.
 
