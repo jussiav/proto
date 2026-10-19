@@ -315,6 +315,60 @@ These rules apply to all new pages and components in this prototype, without exc
     Contrast settled the LABEL, never the hue. The skill's check 6 is this
     lesson generalised.
 
+## Copy guidelines — seller-facing Finnish
+
+Read before writing or changing any copy. Moved here from the untracked
+`docs/copy_guidelines.md` (2026-10-19) so the team shares one copy.
+
+**Tone.** Calm, clear, supportive. Warm without being effusive: write what a
+Finnish person would actually say out loud. Explain value before asking for
+action.
+
+**Avoid**
+- Pushy, urgent, sales-like tone.
+- Anything that can create a negative feeling towards AutoVex at a critical
+  moment (the decision page, a negotiation, a rejection).
+- Words of obligation or control in anything that follows an ask: sitoumus,
+  lupaus, muista, velvoite, "sinun pitää". Never remind a seller of a promise
+  or check up on it. The ask itself may name the commitment plainly
+  ("sitoudun…"); everything after it assumes the best.
+- Over-formal or over-grateful phrasing. "Kiitos, että annoit autoliikkeille
+  mahdollisuuden tehdä tarjous autostasi" is more than any Finn would say.
+  Keep thanks short: "Kiitos, että odotit tarjouskilpailun loppuun."
+- Referring back to a choice the seller made days ago as if they remember it
+  ("Valitsit…"). If a past choice matters, say what it led to.
+- Naming a benefit without its condition when the benefit depended on one.
+- Promising outcomes the product cannot guarantee. Hedge with "voi"
+  ("…mikä voi nostaa tarjouksia"), never "saat enemmän tarjouksia".
+- Mentioning selling elsewhere, even to rule it out ("muualle" plants the idea).
+- Synonyms for the same thing within one flow. Pick one term and keep it:
+  lisänäkyvyys, not lisänäkyvyys in one line and "parempi näkyvyys" in the next.
+
+**Use**
+- Tarjouskilpailu, Myyjä, Autoliike.
+- Valinnainen for optional, not vapaaehtoinen.
+- Active, first-person answer options in the seller's own voice
+  ("Kyllä, sitoudun odottamaan AutoVexin tarjoukset"), not passive states.
+
+**Assume the best.** When the seller was asked to do something earlier, later
+copy assumes they did it and thanks them, rather than reminding them or
+requiring it. "Kiitos, että odotit tarjouskilpailun loppuun", not "Muistathan,
+että sitouduit…". The thanks does the reminding.
+
+**Value before the ask.** State the value before asking for any commitment. In
+a question with options, the question carries the value ("Haluatko autollesi
+ilmaista lisänäkyvyyttä?") and the answer carries the condition.
+
+**One job per line.** Each line says one thing: a heading names, its line
+explains the benefit, a label states the condition, a description gives scope
+and period. Do not repeat in the description what the label already says.
+
+**Writing it.** Write the Finnish first and check it reads naturally to a
+Finnish speaker; an English gloss is a reading aid, not the copy. Correct
+Finnish grammar over a requested literal wording, and say when you did
+("…, mikä voi nostaa tarjouksia" rather than "…ja voi nostaa tarjouksia",
+which makes the listing the subject).
+
 ## Proto Modes — dev vs test
 
 `proto-mode.js` (loaded in `<head>` on every page) decides whether the
@@ -5963,7 +6017,7 @@ Always read `design-library/components.md` before any UI work. Use `design-libra
 - **[Business Goals](docs/business_goals.md)** — What success looks like, tradeoffs, failure modes.
 - **[User Pain Points](docs/user_pain_points.md)** — Known friction in the funnel and post-auction.
 - **[UX Principles](docs/ux_principles.md)** — Design principles. Always apply.
-- **[Copy Guidelines](docs/copy_guidelines.md)** — Tone, vocabulary, Finnish product terms.
+- **Copy guidelines** — now in this file, section "Copy guidelines — seller-facing Finnish".
 - **[Anti-Patterns](docs/anti_patterns.md)** — Patterns to avoid, even if they improve short-term metrics.
 - **[Decision Playbooks](docs/decision_playbooks.md)** — How to handle specific user scenarios.
 - **[Opportunity Areas](docs/opportunity_areas.md)** — Prioritized areas for improvement.
