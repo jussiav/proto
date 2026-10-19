@@ -85,7 +85,7 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: draft &middot; 1 placement &middot; copy and offer unconfirmed
+          Status: draft &middot; 1 placement, 2 variants &middot; copy and offer unconfirmed
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
@@ -136,7 +136,14 @@
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr>
               <td class="px-4 py-3 font-bold">1</td>
-              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">OP insurance suggestion</a></td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Variant 1: OP insurance suggestion</a></td>
+              <td class="px-4 py-3">Success page</td>
+              <td class="px-4 py-3 text-slate-600">Email verified: in review, or published</td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">2</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">Variant 2: OP perk behind a reveal</a></td>
               <td class="px-4 py-3">Success page</td>
               <td class="px-4 py-3 text-slate-600">Email verified: in review, or published</td>
               <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
@@ -149,7 +156,7 @@
 
     <section class="av-band av-band-grey" id="c1">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; OP insurance suggestion</h2>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; Variant 1: OP insurance suggestion</h2>
       <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Success page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Email verified: in review, or published</span></div>
 
       <div class="grid lg:grid-cols-2 gap-5 items-start">
@@ -210,6 +217,113 @@
           <li>Clicks on the button are recorded with the arm and the page state, so leads can be matched to what OP reports.</li>
         </ul>
         <p class="mt-4 text-xs text-slate-500"><b>Why:</b> right after submitting, a verified seller's task is done and they are thinking about changing cars, which makes this the most relevant moment with the least risk to the sale.</p>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 &mdash; Variant 2: OP perk behind a reveal</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Success page &middot; modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Email verified: in review, or published</span></div>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>The same offer, framed as a time-limited AutoVex perk</b> rather than a suggestion: the seller should feel they would miss something, not that they are being advised. Same place and same states as variant 1.</li>
+            <li><b>On the page, one line and one button</b>, in the pattern the decision page uses when a dealership has replied. The line: &ldquo;Sinulla on 1 käyttämätön etu:&rdquo; (you have 1 unused perk:) in Barlow bold 20px, centred. Under it, &ldquo;Katso AutoVex-etusi&rdquo; (see your AutoVex perk), full width, the product's own secondary button (light blue, 56px) with a pulsing red &ldquo;1&rdquo; on its corner, as on the decision page's reply button. Nothing on the page names OP or the offer: the page asks only whether the seller is interested in a perk at all.</li>
+            <li><b>The button opens the coupon in a modal</b>, the product's usual modal at 512px wide. Closes with the ×, Esc or a click outside; focus returns to the button.</li>
+            <li><b>The coupon:</b> dashed edge; top row with the green tag &ldquo;AutoVex-etu&rdquo; (AutoVex perk) on the left and &ldquo;Voimassa 31.12.2026 asti&rdquo; (valid until 31 Dec 2026) with an hourglass on the right (under the tag on a narrow phone); OP's logo beside the heading &ldquo;Uudelle autollesi vakuutus −50 %&rdquo;; the code &ldquo;AUTOVEX50&rdquo; with the product's existing copy button.</li>
+            <li><b>The full terms, because the seller asked to see them</b>: what the perk covers, for how long, the condition of moving insurances to OP, and where to enter the code.</li>
+            <li><b>The exit is the OP button</b>: outlined in OP's orange with OP's logo, &ldquo;Laske hinta OP:ssa&rdquo; (calculate the price at OP), opening OP's car insurance page in a new tab. Calculating a price commits the seller to nothing.</li>
+            <li><b>A partnership line closes the coupon</b>, worded like Huutokaupat routing's: &ldquo;AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.&rdquo;</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v2" target="_blank" rel="noopener">See it in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v2" target="_blank" rel="noopener">see it published</a></p>
+        </div>
+
+        <div class="flex flex-col gap-5">
+          <div class="rounded-lg p-5 border border-slate-200 bg-white">
+            <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">On the page</p>
+            <div class="max-w-md">
+              <p class="mb-4 px-4 text-center font-barlow font-bold text-xl leading-snug text-black" data-i18n="opRouting2.status">Sinulla on 1 käyttämätön etu:</p>
+              <div class="relative">
+                <button type="button" class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base leading-tight bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 active:text-blue-700 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.25)] border-none cursor-pointer"><span data-i18n="opRouting2.reveal">Katso AutoVex-etusi</span></button>
+                <div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 rounded-full text-xs animate-pulse bg-red-500 text-white">1</div>
+              </div>
+            </div>
+          </div>
+          <div class="rounded-lg p-5 border border-slate-200 bg-white">
+            <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">In the modal</p>
+            <div class="max-w-md">
+            <div class="flex flex-col gap-4 p-5 bg-white border-2 border-dashed border-slate-300 rounded-xl text-start">
+              <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+                <span class="whitespace-nowrap inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="opRouting2.tag">AutoVex-etu</span>
+                <span class="whitespace-nowrap inline-flex items-center gap-1.5 font-dm text-sm leading-5 text-slate-600"><svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M10.0625 1.09375H3.9375C3.64742 1.09375 3.36922 1.20898 3.1641 1.4141C2.95898 1.61922 2.84375 1.89742 2.84375 2.1875V4.15625C2.84417 4.32597 2.88389 4.4933 2.95979 4.6451C3.0357 4.79691 3.14572 4.92908 3.28125 5.03125L5.90625 7L3.28125 8.96875C3.14572 9.07092 3.0357 9.20309 2.95979 9.3549C2.88389 9.5067 2.84417 9.67403 2.84375 9.84375V11.8125C2.84375 12.1026 2.95898 12.3808 3.1641 12.5859C3.36922 12.791 3.64742 12.9062 3.9375 12.9062H10.0625C10.3526 12.9062 10.6308 12.791 10.8359 12.5859C11.041 12.3808 11.1562 12.1026 11.1562 11.8125V9.86344C11.1561 9.69401 11.1168 9.52691 11.0415 9.37514C10.9662 9.22337 10.8569 9.09104 10.722 8.98844L8.08828 7L10.722 5.00937C10.8569 4.90678 10.9662 4.77444 11.0415 4.62267C11.1168 4.47091 11.1561 4.3038 11.1562 4.13437V2.1875C11.1563 1.89742 11.041 1.61922 10.8359 1.4141C10.6308 1.20898 10.3526 1.09375 10.0625 1.09375ZM9.84375 2.40625V3.28125H4.15625V2.40625H9.84375ZM7 6.17969L4.88523 4.59375H9.09617L7 6.17969ZM9.84375 11.5938H4.15625V9.95312L7 7.82031L9.84375 9.97117V11.5938Z"/></svg><span data-i18n="opRouting2.expiry">Voimassa 31.12.2026 asti</span></span>
+              </div>
+              <div class="flex items-center gap-3">
+                <img src="../assets/op-logo.svg" class="w-10 h-10 flex-shrink-0" alt="OP" />
+                <p class="font-barlow font-bold text-2xl leading-[26px] text-slate-900"><span data-i18n="opRouting2.offer">Uudelle autollesi vakuutus</span>&nbsp;<span data-i18n="opRouting2.discount">−50&nbsp;%</span></p>
+              </div>
+              <div class="flex items-center gap-2 font-dm">
+                <span class="text-sm leading-5 text-slate-600" data-i18n="opRouting2.codeLabel">Etukoodi:</span>
+                <span class="px-2 py-1 rounded border border-slate-200 bg-slate-100 text-base leading-6 font-bold tracking-wider text-slate-900" data-i18n="opRouting2.code">AUTOVEX50</span>
+                <button type="button" data-copy="AUTOVEX50"
+                        class="p-1 rounded text-slate-700 bg-transparent border-none hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer"
+                        aria-label="Kopioi koodi" data-i18n-aria="opRouting2.copy"><svg class="op-copy-icon w-[18px] h-[18px] shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,28H88A12,12,0,0,0,76,40V76H40A12,12,0,0,0,28,88V216a12,12,0,0,0,12,12H168a12,12,0,0,0,12-12V180h36a12,12,0,0,0,12-12V40A12,12,0,0,0,216,28ZM156,204H52V100H156Zm48-48H180V88a12,12,0,0,0-12-12H100V52H204Z"/></svg><svg class="op-check-icon hidden w-[18px] h-[18px] shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 0.25C8.07164 0.25 6.18657 0.821828 4.58319 1.89317C2.97982 2.96451 1.73013 4.48726 0.992179 6.26884C0.254225 8.05042 0.061142 10.0108 0.437348 11.9021C0.813554 13.7934 1.74215 15.5307 3.10571 16.8943C4.46928 18.2579 6.20656 19.1865 8.09787 19.5627C9.98919 19.9389 11.9496 19.7458 13.7312 19.0078C15.5127 18.2699 17.0355 17.0202 18.1068 15.4168C19.1782 13.8134 19.75 11.9284 19.75 10C19.7473 7.41498 18.7192 4.93661 16.8913 3.10872C15.0634 1.28084 12.585 0.25273 10 0.25ZM14.2806 8.28063L9.03063 13.5306C8.96097 13.6004 8.87826 13.6557 8.78721 13.6934C8.69616 13.7312 8.59857 13.7506 8.5 13.7506C8.40144 13.7506 8.30385 13.7312 8.2128 13.6934C8.12175 13.6557 8.03903 13.6004 7.96938 13.5306L5.71938 11.2806C5.57865 11.1399 5.49959 10.949 5.49959 10.75C5.49959 10.551 5.57865 10.3601 5.71938 10.2194C5.86011 10.0786 6.05098 9.99958 6.25 9.99958C6.44903 9.99958 6.6399 10.0786 6.78063 10.2194L8.5 11.9397L13.2194 7.21937C13.2891 7.14969 13.3718 7.09442 13.4628 7.0567C13.5539 7.01899 13.6515 6.99958 13.75 6.99958C13.8486 6.99958 13.9461 7.01899 14.0372 7.0567C14.1282 7.09442 14.2109 7.14969 14.2806 7.21937C14.3503 7.28906 14.4056 7.37178 14.4433 7.46283C14.481 7.55387 14.5004 7.65145 14.5004 7.75C14.5004 7.84855 14.481 7.94613 14.4433 8.03717C14.4056 8.12822 14.3503 8.21094 14.2806 8.28063Z"/></svg></button>
+                
+              </div>
+              <div class="flex flex-col gap-2 font-dm text-sm leading-5 text-slate-700">
+                <p class="font-bold text-slate-900" data-i18n="opRouting2.termsTitle">Edun ehdot</p>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li data-i18n="opRouting2.terms1">Etu koskee henkilöauton uutta kaskovakuutusta.</li>
+                  <li data-i18n="opRouting2.terms2">Saat kaskovakuutuksen ensimmäisen vakuutuskauden (vuoden) puoleen hintaan.</li>
+                  <li data-i18n="opRouting2.terms3">Edun saat, kun keskität vakuutuksesi OP:n Pohjola Vakuutukseen.</li>
+                  <li data-i18n="opRouting2.terms4">Syötä etukoodi, kun otat vakuutuksen OP:n verkkopalvelussa.</li>
+                </ul>
+              </div>
+              <a href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
+                 target="_blank" rel="noopener"
+                 class="w-full h-12 px-5 bg-white border-2 border-[#EE5A00] rounded-lg flex items-center justify-center gap-2.5 no-underline text-slate-900 hover:bg-orange-50 transition-colors"
+                 ><img src="../assets/op-logo.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span class="font-dm font-medium text-base" data-i18n="opRouting2.cta">Laske hinta OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0 text-[#EE5A00]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+              <p class="m-0 font-dm text-xs leading-4 text-slate-600" data-i18n="opRouting2.disclaimer">AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.</p>
+            </div>
+            </div>
+            <p class="font-dm text-xs text-slate-500 mt-3">Rendered from the same copy as the prototype.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; all new, all draft</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Line on the page</p><p class="av-copy"><span class="av-ins">Sinulla on 1 käyttämätön etu:</span></p><p class="av-gloss">You have 1 unused perk:</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Button on the page</p><p class="av-copy"><span class="av-ins">Katso AutoVex-etusi</span></p><p class="av-gloss">See your AutoVex perk</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Tag</p><p class="av-copy"><span class="av-ins">AutoVex-etu</span></p><p class="av-gloss">AutoVex perk</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Expiry</p><p class="av-copy"><span class="av-ins">Voimassa 31.12.2026 asti</span></p><p class="av-gloss">Valid until 31 Dec 2026</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Heading</p><p class="av-copy"><span class="av-ins">Uudelle autollesi vakuutus −50 %</span></p><p class="av-gloss">Insurance for your new car, −50 %</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Code</p><p class="av-copy"><span class="av-ins">Etukoodi: AUTOVEX50</span></p><p class="av-gloss">Perk code: AUTOVEX50</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Copy button, for screen readers</p><p class="av-copy"><span class="av-ins">Kopioi koodi</span></p><p class="av-gloss">Copy code</p><p class="av-copy mt-2">Kopioitu leikepöydälle</p><p class="av-gloss">Copied to clipboard (existing product copy)</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Terms</p><p class="av-copy"><span class="av-ins">Edun ehdot</span></p><p class="av-gloss">Terms of the perk</p>
+            <p class="av-copy mt-2"><span class="av-ins">Etu koskee henkilöauton uutta kaskovakuutusta.</span></p><p class="av-gloss">The perk applies to new comprehensive insurance for a passenger car.</p>
+            <p class="av-copy mt-2"><span class="av-ins">Saat kaskovakuutuksen ensimmäisen vakuutuskauden (vuoden) puoleen hintaan.</span></p><p class="av-gloss">You get the first insurance period (one year) of comprehensive insurance at half price.</p>
+            <p class="av-copy mt-2"><span class="av-ins">Edun saat, kun keskität vakuutuksesi OP:n Pohjola Vakuutukseen.</span></p><p class="av-gloss">You get the perk when you move your insurances to OP's Pohjola Insurance.</p>
+            <p class="av-copy mt-2"><span class="av-ins">Syötä etukoodi, kun otat vakuutuksen OP:n verkkopalvelussa.</span></p><p class="av-gloss">Enter the perk code when you take out the insurance in OP's online service.</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Button in the modal</p><p class="av-copy"><span class="av-ins">Laske hinta OP:ssa</span></p><p class="av-gloss">Calculate the price at OP</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Partnership line</p><p class="av-copy"><span class="av-ins">AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.</span></p><p class="av-gloss">AutoVex works together with OP as separate services.</p></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">The terms restate what OP's car insurance page says about its current campaign (half price on a new comprehensive insurance for a year, when insurances are moved to OP's Pohjola Insurance). The code AUTOVEX50, the expiry and the code step are placeholders until OP confirms the campaign.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Shown in the same states as variant 1, and never together with it.</li>
+          <li>The page shows only the reveal button; the coupon opens in a modal that closes with ×, Esc or a click outside, returning focus to the button.</li>
+          <li>The expiry and terms match the campaign OP confirms; after the expiry, the button is not shown.</li>
+          <li>The copy button copies the code and confirms it, visually and to screen readers.</li>
+          <li>Opening the coupon and clicking through to OP are recorded as two separate events, with the arm and the page state: the first measures interest in a perk at all, the second conversion on the OP offer.</li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> the page names no partner and no offer, so the A/B test gives two results instead of one: whether sellers notice and want a perk (clicks on the button), and whether the OP offer converts once seen (clicks to OP from the modal). The modal shows the full terms only to sellers who asked.</p>
       </div>
       </div>
     </section>

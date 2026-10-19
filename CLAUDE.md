@@ -684,7 +684,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 | AutoVex exclusive | **Draft** (2026-10-14) — painted-door test, `v1` optional checkbox, `v2` required choice; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
-| OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
+| OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
 
 **Completed initiatives:**
 
@@ -2594,6 +2594,81 @@ and deal terms stay out of this repo.
   as Figma **Iteration 3** `7352:996` (desktop `7352:999`, mobile `7352:1037`),
   component `OP routing suggestion / Iteration 3` `7352:983`; Iteration 2
   renamed Superseded.
+- **`v2` (2026-10-19): the offer as a perk, not a suggestion.** Jussi's
+  hypothesis: fear of missing out moves more sellers than a recommendation.
+  `#op-routing-v2`, same place and states as v1, never both
+  (`opRoutingShown` toggles by arm). A dashed-edge block (`border-2
+  border-dashed border-slate-300 rounded-xl p-5`, the coupon cue; precedent is
+  the proto's dashed "unknown term" chips) with: lime tag "AutoVex-etu" left +
+  hourglass "Voimassa 31.12.2026 asti" right (the expiry is real, end of
+  2026); OP logo beside the Barlow 24 heading "Uudelle autollesi vakuutus
+  −50 %" + terms line; "Etukoodi: AUTOVEX50" in a grey chip (placeholder until
+  OP confirms codes); outlined OP button "Katso tarjous OP:ssa" straight to
+  OP, new tab. Not "Lunasta"/claim: the button promises details, any decision
+  happens at OP. No details sheet in between (Jussi: minimum info, then OP).
+  No "more perks coming" line, which would be a promise. Copy `opRouting2.*`,
+  draft. 266px desktop / 310px at 375px. Not in Figma, not pushed to GitHub.
+- **`v2` second pass (2026-10-19):** the lime "AutoVex-etu" tag did not carry
+  the AutoVex link (Jussi). Replaced by a centred header ABOVE the coupon:
+  Phosphor `lock-simple-open` in `text-av-blue` (not in prod's sprite) +
+  "Etu AutoVex-käyttäjänä", DM Sans bold 16. Expiry moved under the code.
+  Copy button beside the code = prod's `SellerCard.vue` pattern verbatim
+  (`p-1 rounded hover:bg-slate-200 focus:ring-2`, `copy-bold` 18px → `check`
+  for 1500 ms), plus an `aria-live` "Kopioitu leikepöydälle" (prod's
+  `app.link_url_copied`) and an `execCommand('copy')` fallback. **The in-app
+  browser pane blocks BOTH clipboard paths**, so the swap cannot be seen
+  there; verified with a stubbed `navigator.clipboard`. 292px desktop /
+  318px at 375px.
+- **`v2` third pass (2026-10-19), Jussi's calls:** the header above the
+  coupon did not work; the lime "AutoVex-etu" tag is back INSIDE the coupon,
+  top-left, expiry top-right (`flex-wrap`, so on a ~375px phone the expiry
+  drops under the tag). **The coupon is now behind a reveal**: the page shows
+  only `#op-routing-v2-reveal`, a full-width 64px dashed button "Katso
+  AutoVex-etusi" + chevron (the folded coupon). It opens `#op-routing-v2-modal`,
+  prod's `Reveal.vue` shell transcribed (overlay, `max-w-lg` as containerClass
+  instead of the default 896px, × top-right, Esc / overlay click close, focus
+  to × on open and back to the trigger on close, body scroll locked). Below
+  `lg` the body takes `pt-12 sm:pt-16` so the × never sits on the coupon
+  (Reveal reserves that space only from `lg`). Hypothesis (Jussi): once the
+  seller shows interest, fuller terms do not scare them off, so the modal
+  carries four terms lines restating op.fi's campaign (new kasko, first year
+  half price, insurances moved to Pohjola Vakuutus, enter the code) plus
+  Huutokaupat's partnership line pattern "AutoVex toimii yhteistyössä OP:n
+  kanssa erillisinä palveluina." The modal's OP button is "Laske hinta
+  OP:ssa" (with the OP logo), committing to nothing. Copy `opRouting2.*`
+  rewritten; the short `terms` and `header` keys are gone.
+- **`v2` fourth pass (2026-10-19):** the dashed reveal button did not read as
+  AutoVex (Jussi). It is now the decision card's "Näytä vastaus" button,
+  transcribed: `AButton` secondary `lg` (blue-100 / blue-800, `h-14`, weight
+  400) in a `relative` wrapper with the pulsing red count
+  (`-top-1 -right-1 w-6 h-6 rounded-full text-xs animate-pulse bg-red-500`,
+  "1"). No chevron. The count reuses the "something new for you" signal the
+  seller meets on the decision page.
+- **`v2` fifth pass (2026-10-19), revised the same day:** the red seal line
+  (the CARD's dealer-replied status) was the wrong pattern. Jussi: match the
+  decision page's HERO for a reply ("Autoliike vastasi" + "Avaa neuvottelu ja
+  katso liikkeen tarjous…"), smaller. So above the button: "Sait AutoVex-edun"
+  (`opRouting2.status`, Barlow bold `text-xl leading-snug text-black mb-2`)
+  and "Avaa etu ja katso tarjous. Se on voimassa vuoden 2026 loppuun."
+  (`opRouting2.statusBody`, `text-base text-gray-600`), centred, `mb-4`. Same
+  shape as the hero: past-tense event, then what to do; the expiry rides in
+  the body so the FOMO is visible before the click.
+- **`v2` in Figma (2026-10-19):** wrapper `✅ Variant 2 — AutoVex perk behind
+  a reveal, coupon in a modal (IN PROTO)` `7357:1465`, below Iteration 3
+  (which stays ✅ as v1, a live arm). Desktop page `7357:1468`, desktop modal
+  state `7357:2047`, mobile page `7357:1506`, mobile modal state `7357:2121`,
+  notes. Components `OP routing v2 / Reveal` `7356:1465` and `OP routing v2 /
+  Coupon` `7356:1474`. The terms bullets, like the earlier bold "−50 %", had
+  to be re-applied (`setRangeListOptions`) after `addComponentProperty`.
+  Jussi iterates on v2 in Figma from here, so **read the Figma frames before
+  changing v2 in the proto**: they may be ahead.
+- **`v2` from Jussi's Figma edit (2026-10-19):** the body line is gone and the
+  title is "Sinulla on 1 käyttämätön etu:" (`opRouting2.status`; `statusBody`
+  deleted), Barlow bold 20, centred, 16px above the button. **Why, and it
+  shapes the tracking:** the page names neither OP nor the offer, so the A/B
+  yields two results: clicks on "Katso AutoVex-etusi" = interest in a perk at
+  all; clicks to OP from the modal = conversion on this offer. The spec's
+  acceptance criteria ask for the two as separate events.
 - **The -50 % is narrower than it reads:** op.fi's offer is kasko only, first
   insurance period, when insurances are moved to OP. The terms line names the
   first two (Jussi's wording, written "uusien kaskovakuutusten" rather than

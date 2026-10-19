@@ -190,6 +190,25 @@
           </div>
         </div>
 
+        <!-- OP routing, v2: the offer as a time-limited AutoVex perk, folded
+             behind one reveal. The page shows only one button, the decision
+             card's own "Näytä vastaus" (AButton secondary lg + its pulsing red
+             count) under one line in the decision page's dealer-reply hero
+             style. The page names neither OP nor the offer, so clicks on the
+             button measure interest in a perk and clicks in the modal measure
+             the OP offer; the coupon opens in prod's Reveal
+             shell, where the terms can be complete because the seller has
+             already shown interest. -->
+        <div id="op-routing-v2" class="hidden w-full flex-col mt-2">
+          <h2 class="mb-4 px-4 text-center font-barlow font-bold text-xl leading-snug text-black" data-i18n="opRouting2.status">Sinulla on 1 käyttämätön etu:</h2>
+          <div class="relative">
+            <button type="button" id="op-routing-v2-reveal" aria-haspopup="dialog" aria-controls="op-routing-v2-modal"
+                    class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base leading-tight bg-blue-100 hover:bg-blue-200 active:bg-blue-300 text-blue-800 active:text-blue-700 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.25)] border-none cursor-pointer"
+                    ><span data-i18n="opRouting2.reveal">Katso AutoVex-etusi</span></button>
+            <div class="absolute flex items-center justify-center -top-1 -right-1 w-6 h-6 rounded-full text-xs animate-pulse bg-red-500 text-white">1</div>
+          </div>
+        </div>
+
       </div>
 
       <!-- ── Right column (cream) ── -->
@@ -287,21 +306,81 @@
     /* OP routing: shown only in the two states that ask nothing of the seller.
        An unverified seller's task is verifying the email, and a rejected or
        photo-short draft has to be fixed first. */
-    var OPR_V1 = (function () {
+    var OPR_ARM = (function () {
       var arm = window.protoVariant ? window.protoVariant('op-routing', 'control') : 'control';
-      if (arm !== 'control' && arm !== 'v1') {
+      if (['control', 'v1', 'v2'].indexOf(arm) === -1) {
         if (window.protoVariantSet) window.protoVariantSet('op-routing', null);
-        return false;
+        return 'control';
       }
-      return arm === 'v1';
+      return arm;
     }());
     var OP_ROUTING_STATES = ['in-review-verified', 'published'];
     function opRoutingShown(id) {
-      var el = document.getElementById('op-routing');
-      var on = OPR_V1 && OP_ROUTING_STATES.indexOf(id) !== -1;
-      el.classList.toggle('hidden', !on);
-      el.classList.toggle('flex', on);
+      var inState = OP_ROUTING_STATES.indexOf(id) !== -1;
+      [['op-routing', 'v1'], ['op-routing-v2', 'v2']].forEach(function (pair) {
+        var on = inState && OPR_ARM === pair[1];
+        var el = document.getElementById(pair[0]);
+        el.classList.toggle('hidden', !on);
+        el.classList.toggle('flex', on);
+      });
     }
+
+    (function () {
+      var timer;
+      /* Falls back to execCommand where the Clipboard API is refused (an
+         embedded preview, or a page served over plain http). */
+      function writeText(text) {
+        if (navigator.clipboard) return navigator.clipboard.writeText(text).catch(function () { return legacyCopy(text); });
+        return legacyCopy(text);
+      }
+      function legacyCopy(text) {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;opacity:0';
+        document.body.appendChild(ta); ta.select();
+        var ok = document.execCommand('copy');
+        ta.remove();
+        return ok ? Promise.resolve() : Promise.reject();
+      }
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('#op-routing-v2-copy');
+        if (!btn) return;
+        writeText(btn.dataset.copy).then(function () {
+          btn.querySelector('.op-copy-icon').classList.add('hidden');
+          btn.querySelector('.op-check-icon').classList.remove('hidden');
+          document.getElementById('op-routing-v2-copied').textContent = t('opRouting2.copied');
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            btn.querySelector('.op-copy-icon').classList.remove('hidden');
+            btn.querySelector('.op-check-icon').classList.add('hidden');
+            document.getElementById('op-routing-v2-copied').textContent = '';
+          }, 1500);
+        }).catch(function () {});
+      });
+    }());
+
+    (function () {
+      var lastTrigger = null;
+      function modal() { return document.getElementById('op-routing-v2-modal'); }
+      function open(trigger) {
+        lastTrigger = trigger;
+        modal().classList.remove('hidden'); modal().classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('op-routing-v2-close').focus();
+      }
+      function close() {
+        modal().classList.add('hidden'); modal().classList.remove('flex');
+        document.body.style.overflow = '';
+        if (lastTrigger) lastTrigger.focus();
+      }
+      document.addEventListener('click', function (e) {
+        var reveal = e.target.closest('#op-routing-v2-reveal');
+        if (reveal) { open(reveal); return; }
+        if (e.target.closest('#op-routing-v2-close') || e.target === modal()) close();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal().classList.contains('hidden')) close();
+      });
+    }());
 
     function photosComplete(s) {
       const ph = s.photos || {};
@@ -346,7 +425,8 @@
           default: 'control',
           variants: [
             { id: 'control', label: 'Control — no insurance suggestion' },
-            { id: 'v1',      label: 'Variant 1 — OP insurance suggestion (draft)' }
+            { id: 'v1',      label: 'Variant 1 — OP insurance suggestion (draft)' },
+            { id: 'v2',      label: 'Variant 2 — OP perk with code and expiry (draft)' }
           ]
         }
       ],
@@ -1008,6 +1088,57 @@
     .funnel-col > .funnel-logo  { width: auto; max-width: none; align-self: flex-start; }
     .funnel-col > .funnel-steps { max-width: 32rem; }
 </style>
+
+
+  <!-- OP routing, v2 coupon. Prod's Reveal shell (overlay, container, body
+       padding and close button transcribed from Reveal.vue) with a narrower
+       containerClass, since a coupon at Reveal's default 896px would sprawl.
+       Below lg the body gets the close button's height as top padding (Reveal
+       only reserves it from lg), so the × never sits on the coupon.
+       The copy button is prod's SellerCard.vue pattern. Code, expiry and the
+       terms are placeholders until OP confirms the campaign. -->
+  <div id="op-routing-v2-modal" class="hidden fixed inset-0 z-50 justify-center overflow-y-auto overflow-x-hidden px-4 py-8 cursor-default"
+       style="background:rgba(30,41,59,0.5)" role="dialog" aria-modal="true" aria-labelledby="op-routing-v2-title">
+    <div class="mx-auto w-full max-w-lg">
+      <div class="bg-white relative rounded-lg">
+        <div class="p-4 pt-12 sm:pt-16 lg:p-6 lg:pt-12">
+          <div class="flex flex-col gap-4 p-5 bg-white border-2 border-dashed border-slate-300 rounded-xl text-start">
+            <div class="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+              <span class="whitespace-nowrap inline-flex items-center px-2 py-1 rounded border border-lime-400 bg-lime-50 text-lime-700 font-dm text-xs font-medium leading-none" data-i18n="opRouting2.tag">AutoVex-etu</span>
+              <span class="whitespace-nowrap inline-flex items-center gap-1.5 font-dm text-sm leading-5 text-slate-600"><svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M10.0625 1.09375H3.9375C3.64742 1.09375 3.36922 1.20898 3.1641 1.4141C2.95898 1.61922 2.84375 1.89742 2.84375 2.1875V4.15625C2.84417 4.32597 2.88389 4.4933 2.95979 4.6451C3.0357 4.79691 3.14572 4.92908 3.28125 5.03125L5.90625 7L3.28125 8.96875C3.14572 9.07092 3.0357 9.20309 2.95979 9.3549C2.88389 9.5067 2.84417 9.67403 2.84375 9.84375V11.8125C2.84375 12.1026 2.95898 12.3808 3.1641 12.5859C3.36922 12.791 3.64742 12.9062 3.9375 12.9062H10.0625C10.3526 12.9062 10.6308 12.791 10.8359 12.5859C11.041 12.3808 11.1562 12.1026 11.1562 11.8125V9.86344C11.1561 9.69401 11.1168 9.52691 11.0415 9.37514C10.9662 9.22337 10.8569 9.09104 10.722 8.98844L8.08828 7L10.722 5.00937C10.8569 4.90678 10.9662 4.77444 11.0415 4.62267C11.1168 4.47091 11.1561 4.3038 11.1562 4.13437V2.1875C11.1563 1.89742 11.041 1.61922 10.8359 1.4141C10.6308 1.20898 10.3526 1.09375 10.0625 1.09375ZM9.84375 2.40625V3.28125H4.15625V2.40625H9.84375ZM7 6.17969L4.88523 4.59375H9.09617L7 6.17969ZM9.84375 11.5938H4.15625V9.95312L7 7.82031L9.84375 9.97117V11.5938Z"/></svg><span data-i18n="opRouting2.expiry">Voimassa 31.12.2026 asti</span></span>
+            </div>
+            <div class="flex items-center gap-3">
+              <img src="assets/op-logo.svg" class="w-10 h-10 flex-shrink-0" alt="OP" />
+              <h2 id="op-routing-v2-title" class="font-barlow font-bold text-2xl leading-[26px] text-slate-900"><span data-i18n="opRouting2.offer">Uudelle autollesi vakuutus</span>&nbsp;<span data-i18n="opRouting2.discount">−50&nbsp;%</span></h2>
+            </div>
+            <div class="flex items-center gap-2 font-dm">
+              <span class="text-sm leading-5 text-slate-600" data-i18n="opRouting2.codeLabel">Etukoodi:</span>
+              <span class="px-2 py-1 rounded border border-slate-200 bg-slate-100 text-base leading-6 font-bold tracking-wider text-slate-900" data-i18n="opRouting2.code">AUTOVEX50</span>
+              <button type="button" id="op-routing-v2-copy" data-copy="AUTOVEX50"
+                      class="p-1 rounded text-slate-700 bg-transparent border-none hover:bg-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400 cursor-pointer"
+                      aria-label="Kopioi koodi" data-i18n-aria="opRouting2.copy"><svg class="op-copy-icon w-[18px] h-[18px] shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M216,28H88A12,12,0,0,0,76,40V76H40A12,12,0,0,0,28,88V216a12,12,0,0,0,12,12H168a12,12,0,0,0,12-12V180h36a12,12,0,0,0,12-12V40A12,12,0,0,0,216,28ZM156,204H52V100H156Zm48-48H180V88a12,12,0,0,0-12-12H100V52H204Z"/></svg><svg class="op-check-icon hidden w-[18px] h-[18px] shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 0.25C8.07164 0.25 6.18657 0.821828 4.58319 1.89317C2.97982 2.96451 1.73013 4.48726 0.992179 6.26884C0.254225 8.05042 0.061142 10.0108 0.437348 11.9021C0.813554 13.7934 1.74215 15.5307 3.10571 16.8943C4.46928 18.2579 6.20656 19.1865 8.09787 19.5627C9.98919 19.9389 11.9496 19.7458 13.7312 19.0078C15.5127 18.2699 17.0355 17.0202 18.1068 15.4168C19.1782 13.8134 19.75 11.9284 19.75 10C19.7473 7.41498 18.7192 4.93661 16.8913 3.10872C15.0634 1.28084 12.585 0.25273 10 0.25ZM14.2806 8.28063L9.03063 13.5306C8.96097 13.6004 8.87826 13.6557 8.78721 13.6934C8.69616 13.7312 8.59857 13.7506 8.5 13.7506C8.40144 13.7506 8.30385 13.7312 8.2128 13.6934C8.12175 13.6557 8.03903 13.6004 7.96938 13.5306L5.71938 11.2806C5.57865 11.1399 5.49959 10.949 5.49959 10.75C5.49959 10.551 5.57865 10.3601 5.71938 10.2194C5.86011 10.0786 6.05098 9.99958 6.25 9.99958C6.44903 9.99958 6.6399 10.0786 6.78063 10.2194L8.5 11.9397L13.2194 7.21937C13.2891 7.14969 13.3718 7.09442 13.4628 7.0567C13.5539 7.01899 13.6515 6.99958 13.75 6.99958C13.8486 6.99958 13.9461 7.01899 14.0372 7.0567C14.1282 7.09442 14.2109 7.14969 14.2806 7.21937C14.3503 7.28906 14.4056 7.37178 14.4433 7.46283C14.481 7.55387 14.5004 7.65145 14.5004 7.75C14.5004 7.84855 14.481 7.94613 14.4433 8.03717C14.4056 8.12822 14.3503 8.21094 14.2806 8.28063Z"/></svg></button>
+              <span id="op-routing-v2-copied" class="sr-only" aria-live="polite"></span>
+            </div>
+            <div class="flex flex-col gap-2 font-dm text-sm leading-5 text-slate-700">
+              <p class="font-bold text-slate-900" data-i18n="opRouting2.termsTitle">Edun ehdot</p>
+              <ul class="list-disc pl-5 space-y-1">
+                <li data-i18n="opRouting2.terms1">Etu koskee henkilöauton uutta kaskovakuutusta.</li>
+                <li data-i18n="opRouting2.terms2">Saat kaskovakuutuksen ensimmäisen vakuutuskauden (vuoden) puoleen hintaan.</li>
+                <li data-i18n="opRouting2.terms3">Edun saat, kun keskität vakuutuksesi OP:n Pohjola Vakuutukseen.</li>
+                <li data-i18n="opRouting2.terms4">Syötä etukoodi, kun otat vakuutuksen OP:n verkkopalvelussa.</li>
+              </ul>
+            </div>
+            <a id="op-routing-v2-cta" href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
+               target="_blank" rel="noopener"
+               class="w-full h-12 px-5 bg-white border-2 border-[#EE5A00] rounded-lg flex items-center justify-center gap-2.5 no-underline text-slate-900 hover:bg-orange-50 transition-colors"
+               ><img src="assets/op-logo.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span class="font-dm font-medium text-base" data-i18n="opRouting2.cta">Laske hinta OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0 text-[#EE5A00]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+            <p class="m-0 font-dm text-xs leading-4 text-slate-600" data-i18n="opRouting2.disclaimer">AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.</p>
+          </div>
+        </div>
+        <button type="button" id="op-routing-v2-close" class="absolute -top-0.5 -right-0.5 p-4 h-12 w-12 sm:h-16 sm:w-16 flex items-center justify-center text-2xl sm:text-4xl leading-none text-black bg-transparent border-none cursor-pointer hover:text-slate-600" aria-label="Sulje" data-i18n-aria="opRouting2.close">&times;</button>
+      </div>
+    </div>
+  </div>
 
   <!-- OS-style email notification toast -->
   <div id="email-toast" style="

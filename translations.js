@@ -107,6 +107,29 @@ window.TRANSLATIONS = {
       newTab: '(avautuu uuteen välilehteen)',
     },
 
+    /* OP routing, v2 only. Claude's draft; the code and expiry are placeholders
+       until OP confirms the campaign. */
+    opRouting2: {
+      status:     'Sinulla on 1 käyttämätön etu:',
+      reveal:     'Katso AutoVex-etusi',
+      tag:        'AutoVex-etu',
+      expiry:     'Voimassa 31.12.2026 asti',
+      offer:      'Uudelle autollesi vakuutus',
+      discount:   '\u221250\u00a0%',
+      codeLabel:  'Etukoodi:',
+      code:       'AUTOVEX50',
+      copy:       'Kopioi koodi',
+      copied:     'Kopioitu leikepöydälle',
+      termsTitle: 'Edun ehdot',
+      terms1:     'Etu koskee henkilöauton uutta kaskovakuutusta.',
+      terms2:     'Saat kaskovakuutuksen ensimmäisen vakuutuskauden (vuoden) puoleen hintaan.',
+      terms3:     'Edun saat, kun keskität vakuutuksesi OP:n Pohjola Vakuutukseen.',
+      terms4:     'Syötä etukoodi, kun otat vakuutuksen OP:n verkkopalvelussa.',
+      cta:        'Laske hinta OP:ssa',
+      disclaimer: 'AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.',
+      close:      'Sulje',
+    },
+
     howItWorks: {
       title:      'Näin löydämme autollesi ostajan',
       subtitle:   'Fiksuin tapa myydä auto on antaa AutoVexin kilpailuttaa autoliikkeet puolestasi.',
@@ -792,6 +815,27 @@ window.TRANSLATIONS = {
       terms:  'Applies to the first insurance period of new comprehensive insurance.',
       cta:    'Explore at OP',
       newTab: '(opens in a new tab)',
+    },
+
+    opRouting2: {
+      status:     'You have 1 unused perk:',
+      reveal:     'See your AutoVex perk',
+      tag:        'AutoVex perk',
+      expiry:     'Valid until 31 Dec 2026',
+      offer:      'Insurance for your new car',
+      discount:   '\u221250\u00a0%',
+      codeLabel:  'Perk code:',
+      code:       'AUTOVEX50',
+      copy:       'Copy code',
+      copied:     'Copied to clipboard',
+      termsTitle: 'Terms of the perk',
+      terms1:     'The perk applies to new comprehensive insurance for a passenger car.',
+      terms2:     'You get the first insurance period (one year) of comprehensive insurance at half price.',
+      terms3:     'You get the perk when you move your insurances to OP\'s Pohjola Insurance.',
+      terms4:     'Enter the perk code when you take out the insurance in OP\'s online service.',
+      cta:        'Calculate the price at OP',
+      disclaimer: 'AutoVex works together with OP as separate services.',
+      close:      'Close',
     },
 
     faq: {
