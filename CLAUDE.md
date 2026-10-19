@@ -2477,9 +2477,11 @@ mechanism are deliberately out of scope for this test.
   every seller's answer. Rewritten several times the same day; now: question
   "Haluatko autollesi ilmaista lisänäkyvyyttä?" (value, incl. "free", BEFORE
   any commitment). **Yes option from Jussi's design (2026-10-19, latest):**
-  label "Kyllä, lisänäkyvyys voi nostaa tarjouksia" (the reward), desc
+  label "Kyllä, haluan ilmaista lisänäkyvyyttä" (mirrors the no option), desc
   "Vastineeksi sitoudun siihen, etten myy autoani enkä ilmoita sitä myyntiin
-  muualla ennen AutoVexin tarjouskilpailun päättymistä (noin 5 arkipäivää)."
+  muualla ennen AutoVexin tarjouskilpailun päättymistä (noin 5 arkipäivää).
+  Lisänäkyvyys voi nostaa tarjouksia." (Label was briefly "Kyllä,
+  lisänäkyvyys voi nostaa tarjouksia"; the benefit moved to the desc.)
   ("enkä", not "tai", after "etten".) The period is now submit → AUCTION END,
   not → offers decided; "muualla" is back by Jussi's choice, which resolves
   the "I won't list it" ambiguity at the cost of the guideline against naming
