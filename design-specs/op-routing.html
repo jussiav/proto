@@ -238,7 +238,7 @@
             <li><b>The exit is the OP button</b>: the product's own large button (56px, 16px label in regular weight, like every other button on the page) filled in OP's orange, with a white &ldquo;Laske hinta OP:ssa&rdquo; (calculate the price at OP) and a white arrow, opening OP's car insurance page in a new tab. No logo in it: the logo already sits beside the heading. Calculating a price commits the seller to nothing.</li>
             <li><b>A partnership line closes the coupon</b>, worded like Huutokaupat routing's: &ldquo;AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.&rdquo;</li>
           </ul>
-          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v2" target="_blank" rel="noopener">See it in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v2" target="_blank" rel="noopener">see it published</a></p>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v2" target="_blank" rel="noopener">See it in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v2" target="_blank" rel="noopener">see it published</a> &middot; <a class="text-av-blue underline font-medium" href="#ticket-v2">dev ticket</a></p>
         </div>
 
         <div class="flex flex-col gap-5">
@@ -326,6 +326,117 @@
           <li>Opening the coupon and clicking through to OP are recorded as two separate events, with the arm and the page state: the first measures interest in a perk at all, the second conversion on the OP offer.</li>
         </ul>
         <p class="mt-4 text-xs text-slate-500"><b>Why:</b> the page names no partner and no offer, so the A/B test gives two results instead of one: whether sellers notice and want a perk (clicks on the button), and whether the OP offer converts once seen (clicks to OP from the modal). The modal shows the full terms only to sellers who asked.</p>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="ticket-v2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Dev ticket &mdash; Variant 2</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; blocked on OP and Legal</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Success page &middot; modal</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Email verified: in review, or published</span></div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-5">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Summary</p>
+        <p>Add an AutoVex perk to the success page. The page shows one line and one button; the button opens a modal with OP's car-insurance offer, a code to copy and a link to OP. Runs as an A/B test arm against control (no change to the page). The page itself names neither OP nor the offer, so the test answers two questions separately: do sellers want a perk at all (opens), and does this offer convert (clicks to OP).</p>
+        <p class="mt-3"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v2" target="_blank" rel="noopener">Prototype, in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v2" target="_blank" rel="noopener">prototype, published</a> &middot; <a class="text-av-blue underline font-medium" href="#c2">design and copy above</a></p>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">When it shows</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Success page only</b>, desktop and mobile.</li>
+            <li><b>Shown</b> when the seller's email is verified AND the ad is <b>in review</b> (every review-call timing) or <b>published</b> without review.</li>
+            <li><b>Not shown</b> while the email is unverified (in review or queued for publishing), on a rejected ad (any reason), or when publishing was refused for missing photos. In those states the seller has something to do.</li>
+            <li><b>Not shown after the expiry date</b> (end of 31.12.2026), whatever the arm.</li>
+            <li>Nowhere else: no other page, email or state.</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">On the page</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Position:</b> the bottom of the left column, after the notice card &ldquo;Ota rennosti ja tarkkaile sähköpostiasi!&rdquo; (relax and keep an eye on your email), 32px below it, as wide as that card.</li>
+            <li><b>Line:</b> &ldquo;Sinulla on 1 käyttämätön etu:&rdquo;, Barlow bold 20px / 27.5px, black, centred. 16px below it, the button.</li>
+            <li><b>Button:</b> the product's secondary large button, full width: blue-100 fill, blue-800 label, 16px regular, 56px tall. Label &ldquo;Näytä AutoVex-edut&rdquo;.</li>
+            <li><b>Count:</b> a red &ldquo;1&rdquo; on the button's top-right corner, exactly as on the reply button of the decision page's offer card (24px red-500 circle, white 12px, pulsing, offset 4px out).</li>
+            <li>Clicking the button opens the modal. Nothing else on the page changes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800 max-w-3xl mt-5">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The modal</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>The product's standard modal</b> (same overlay, panel, padding and × as the negotiation modal), with the panel capped at <b>512px</b> instead of the default 896px.</li>
+          <li><b>Header:</b> the negotiation modal's title row, &ldquo;Käyttämättömät AutoVex-edut&rdquo;, Barlow bold 20px / 27px, slate-900, with right padding so the × never covers it. It is the dialog's accessible name.</li>
+          <li><b>Closing:</b> ×, Esc or a click on the overlay. Focus moves into the modal on open and back to the page button on close; the page does not scroll while it is open.</li>
+          <li><b>The coupon</b> under the header: white, 2px dashed slate-300 border, 12px radius, 20px padding, 16px between parts:
+            <ol class="list-decimal pl-5 mt-1 space-y-1">
+              <li><b>Expiry tag</b>, alone in the top-right corner: the product's lime tag (lime-50 fill, lime-400 border, lime-700 12px medium) with an hourglass, &ldquo;Voimassa 31.12.2026 asti&rdquo;.</li>
+              <li><b>OP's round logo</b> (40px) beside the heading &ldquo;Uudelle autollesi vakuutus −50 %&rdquo;, Barlow bold 24px / 26px, slate-900. Non-breaking spaces keep &ldquo;−50 %&rdquo; together.</li>
+              <li><b>Code row:</b> &ldquo;Etukoodi:&rdquo; (14px slate-600), the code in a chip (16px bold, slightly spaced, slate-100 fill, slate-200 border), and the <b>existing icon-only copy button from the seller contact card</b>: copy icon, swaps to a check for 1.5 s after copying, accessible name &ldquo;Kopioi koodi&rdquo;, and &ldquo;Kopioitu leikepöydälle&rdquo; announced to screen readers. Fall back to a legacy copy where the clipboard API is refused.</li>
+              <li><b>Terms:</b> &ldquo;Edun ehdot&rdquo; (14px bold slate-900) and four bullet lines (14px slate-700).</li>
+              <li><b>OP button:</b> the product's large button (56px, 16px regular label, full width) filled in OP's orange <b>#EE5A00</b>, white &ldquo;Laske hinta OP:ssa&rdquo; and a white arrow, no logo. Opens OP's car-insurance page in a new tab (no opener); screen readers hear that it opens a new tab.</li>
+              <li><b>Partnership line</b> (12px slate-600).</li>
+            </ol>
+          </li>
+          <li><b>Target URL:</b> <code>https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle</code> until OP gives an attributed link.</li>
+        </ul>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto mt-5 max-w-3xl">
+        <table class="w-full font-dm text-sm text-left">
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-4 py-3 font-medium w-1/3">Where</th><th class="px-4 py-3 font-medium">Finnish copy (grey: English gloss, not copy)</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800"><tr><td class="px-4 py-3 text-slate-600 align-top">Page, line above the button</td><td class="px-4 py-3 align-top"><p class="av-copy">Sinulla on 1 käyttämätön etu:</p><p class="av-gloss">You have 1 unused perk:</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Page, button</td><td class="px-4 py-3 align-top"><p class="av-copy">Näytä AutoVex-edut</p><p class="av-gloss">Show AutoVex perks</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Modal header</td><td class="px-4 py-3 align-top"><p class="av-copy">Käyttämättömät AutoVex-edut</p><p class="av-gloss">Unused AutoVex perks</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Coupon, expiry tag</td><td class="px-4 py-3 align-top"><p class="av-copy">Voimassa 31.12.2026 asti</p><p class="av-gloss">Valid until 31 Dec 2026</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Coupon, heading</td><td class="px-4 py-3 align-top"><p class="av-copy">Uudelle autollesi vakuutus −50 %</p><p class="av-gloss">Insurance for your new car, −50 %</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Coupon, code label</td><td class="px-4 py-3 align-top"><p class="av-copy">Etukoodi:</p><p class="av-gloss">Perk code:</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Coupon, code</td><td class="px-4 py-3 align-top"><p class="av-copy">AUTOVEX50</p><p class="av-gloss">(the code)</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Copy button, for screen readers</td><td class="px-4 py-3 align-top"><p class="av-copy">Kopioi koodi</p><p class="av-gloss">Copy code</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Copy button, announced after copying (existing product copy)</td><td class="px-4 py-3 align-top"><p class="av-copy">Kopioitu leikepöydälle</p><p class="av-gloss">Copied to clipboard</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Coupon, terms title</td><td class="px-4 py-3 align-top"><p class="av-copy">Edun ehdot</p><p class="av-gloss">Terms of the perk</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Terms, line 1</td><td class="px-4 py-3 align-top"><p class="av-copy">Etu koskee henkilöauton uutta kaskovakuutusta.</p><p class="av-gloss">The perk applies to new comprehensive insurance for a passenger car.</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Terms, line 2</td><td class="px-4 py-3 align-top"><p class="av-copy">Saat kaskovakuutuksen ensimmäisen vakuutuskauden (vuoden) puoleen hintaan.</p><p class="av-gloss">You get the first insurance period (one year) of comprehensive insurance at half price.</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Terms, line 3</td><td class="px-4 py-3 align-top"><p class="av-copy">Edun saat, kun keskität vakuutuksesi OP:n Pohjola Vakuutukseen.</p><p class="av-gloss">You get the perk when you move your insurances to OP's Pohjola Insurance.</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Terms, line 4</td><td class="px-4 py-3 align-top"><p class="av-copy">Syötä etukoodi, kun otat vakuutuksen OP:n verkkopalvelussa.</p><p class="av-gloss">Enter the perk code when you take out the insurance in OP's online service.</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">OP button</td><td class="px-4 py-3 align-top"><p class="av-copy">Laske hinta OP:ssa</p><p class="av-gloss">Calculate the price at OP</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">OP button, for screen readers</td><td class="px-4 py-3 align-top"><p class="av-copy">(avautuu uuteen välilehteen)</p><p class="av-gloss">(opens in a new tab)</p></td></tr><tr><td class="px-4 py-3 text-slate-600 align-top">Coupon, last line</td><td class="px-4 py-3 align-top"><p class="av-copy">AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.</p><p class="av-gloss">AutoVex works together with OP as separate services.</p></td></tr></tbody>
+        </table>
+      </div>
+      <p class="font-dm text-xs text-slate-500 mt-2 max-w-3xl">All copy is a draft except &ldquo;Kopioitu leikepöydälle&rdquo;, which the product already uses. English is a working translation; the test runs in Finnish.</p>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start mt-5">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Tracking</p>
+          <p class="mb-2">Each event carries the arm and the page state (in review or published). Names are suggestions; use the team's convention.</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Eligible view</b>: the success page shown in an eligible state, in <b>both</b> arms. The denominator for everything below.</li>
+            <li><b>Perk opened</b>: click on &ldquo;Näytä AutoVex-edut&rdquo;. Answers &ldquo;do sellers want a perk&rdquo;.</li>
+            <li><b>Code copied</b>: click on the copy button.</li>
+            <li><b>OP clicked</b>: click on &ldquo;Laske hinta OP:ssa&rdquo;. Answers &ldquo;does this offer convert&rdquo;.</li>
+            <li><b>Funnel guard:</b> the selling flow's own outcomes (review call, offers accepted) compared by arm, so a perk that distracts would show.</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Control: the success page is unchanged in every state.</li>
+            <li>Variant: the line and button appear only in the eligible states, never with variant 1, and not after the expiry date.</li>
+            <li>The modal opens from the button and closes with ×, Esc and an overlay click, returning focus to the button.</li>
+            <li>The header fits beside the × at 360px wide; the coupon has no horizontal scroll at 360px.</li>
+            <li>The copy button puts the exact code on the clipboard, shows the check for 1.5 s and announces it.</li>
+            <li>The OP button opens the target in a new tab; the success page stays open behind it.</li>
+            <li>All four events fire once per action with the arm and page state.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start mt-5">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Do not</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li>Name OP, the offer or the discount on the page itself; they belong in the modal.</li>
+            <li>Open the modal automatically or remember that it was opened.</li>
+            <li>Put OP's logo in the button, or change the page's other content.</li>
+            <li>Pass any seller or car data to OP in the link.</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Blocking before release</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>OP:</b> the code (does their purchase flow take one, and is it AUTOVEX50), the expiry date, the terms wording, and an attributed link or parameter for lead counting.</li>
+            <li><b>Legal:</b> whether the partnership line is enough disclosure, and what the link may carry.</li>
+            <li><b>Contrast:</b> white 16px on #EE5A00 is 3.4:1, below AA for normal text. Agree a darker orange with OP or accept it knowingly.</li>
+            <li><b>Test setup:</b> confirm the arms (assumed: control against variant 2; whether variant 1 runs as well is open) and the split.</li>
+          </ul>
+        </div>
       </div>
       </div>
     </section>

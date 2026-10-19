@@ -2808,6 +2808,13 @@ and deal terms stay out of this repo.
   white 16px on `#EE5A00` is 3.4:1, below AA for normal text (OP's own site
   uses the same pairing); recorded on the spec's open questions. v1's
   outlined button is unchanged. Figma coupon `7356:1474` matches.
+- **`v2` dev ticket (2026-10-19)** is on the spec, `#ticket-v2`, after
+  section 2: summary, when it shows, on the page, the modal, copy table (FI +
+  EN gloss), tracking (eligible view in both arms as denominator; perk
+  opened; code copied; OP clicked; funnel guard), acceptance criteria, do-not,
+  and what blocks release (OP: code, expiry, terms, attributed link; Legal;
+  contrast; arms). Test setup is ASSUMED control vs v2; whether v1 also runs
+  is open. Product terms only, no file or component names.
 - **The -50 % is narrower than it reads:** op.fi's offer is kasko only, first
   insurance period, when insurances are moved to OP. The terms line names the
   first two (Jussi's wording, written "uusien kaskovakuutusten" rather than
