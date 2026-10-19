@@ -235,7 +235,7 @@
             <li><b>The button opens the coupon in a modal</b>, the product's usual modal at 512px wide, with the product's usual modal header: &ldquo;Käyttämättömät AutoVex-edut&rdquo; (unused AutoVex perks). Plural on purpose: it suggests the perks vary over time and between sellers, which in this test they do not yet. Closes with the ×, Esc or a click outside; focus returns to the button.</li>
             <li><b>The coupon:</b> dashed edge; the expiry as a green tag in the top-right corner, &ldquo;Voimassa 31.12.2026 asti&rdquo; (valid until 31 Dec 2026) with an hourglass, saying the perk is still valid and will run out; OP's logo beside the heading &ldquo;Uudelle autollesi vakuutus −50 %&rdquo;; the code &ldquo;AUTOVEX50&rdquo; with the product's existing copy button.</li>
             <li><b>The full terms, because the seller asked to see them</b>: what the perk covers, for how long, the condition of moving insurances to OP, and where to enter the code.</li>
-            <li><b>The exit is the OP button</b>: outlined in OP's orange with OP's logo, &ldquo;Laske hinta OP:ssa&rdquo; (calculate the price at OP), opening OP's car insurance page in a new tab. Calculating a price commits the seller to nothing.</li>
+            <li><b>The exit is the OP button</b>: the product's own large button (56px, 16px label in regular weight, like every other button on the page) filled in OP's orange, with a white &ldquo;Laske hinta OP:ssa&rdquo; (calculate the price at OP) and a white arrow, opening OP's car insurance page in a new tab. No logo in it: the logo already sits beside the heading. Calculating a price commits the seller to nothing.</li>
             <li><b>A partnership line closes the coupon</b>, worded like Huutokaupat routing's: &ldquo;AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.&rdquo;</li>
           </ul>
           <p class="mt-4"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v2" target="_blank" rel="noopener">See it in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v2" target="_blank" rel="noopener">see it published</a></p>
@@ -285,8 +285,8 @@
               </div>
               <a href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
                  target="_blank" rel="noopener"
-                 class="w-full h-12 px-5 bg-white border-2 border-[#EE5A00] rounded-lg flex items-center justify-center gap-2.5 no-underline text-slate-900 hover:bg-orange-50 transition-colors"
-                 ><img src="../assets/op-logo.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span class="font-dm font-medium text-base" data-i18n="opRouting2.cta">Laske hinta OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0 text-[#EE5A00]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+                 class="w-full inline-flex justify-center items-center gap-2 transition rounded-lg px-8 h-14 text-base leading-tight bg-[#EE5A00] text-white no-underline shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:opacity-[0.94]"
+                 ><span data-i18n="opRouting2.cta">Laske hinta OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
               <p class="m-0 font-dm text-xs leading-4 text-slate-600" data-i18n="opRouting2.disclaimer">AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.</p>
             </div>
             </div>
@@ -351,6 +351,7 @@
         <li><b>Are campaign codes supported</b>, for example an AutoVex-specific code in OP's purchase flow?</li>
         <li><b>How are leads attributed to AutoVex</b>, and what counts as a qualified lead? This decides what the button's link carries.</li>
         <li><b>The logo and the button's colour</b> need OP's approval; they are taken from OP's public site for this draft.</li>
+        <li><b>Contrast of the orange button in variant 2.</b> White 16px text on OP's orange is 3.4:1, below the 4.5:1 accessibility minimum for normal text (OP's own site uses the same pairing). Options: a darker orange agreed with OP, or a larger label.</li>
         <li><b>The target page.</b> OP's car insurance page for now; a direct link to the calculator, or a landing page of OP's, may convert better.</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Legal</p>

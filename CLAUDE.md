@@ -2678,6 +2678,14 @@ and deal terms stay out of this repo.
   an h3. That replaced the body's `pt-12 sm:pt-16` hack: the title's right
   padding now keeps the ×. The "AutoVex-etu" tag is gone; the EXPIRY is the
   lime tag, alone, top-right (FOMO: still valid, will run out).
+- **`v2` modal button (2026-10-19):** the OP exit button is FILLED now
+  (`bg-[#EE5A00]`, white label and arrow, Huutokaupat's inset shadow, hover
+  opacity), no logo (it sits beside the heading). It is AButton `lg` verbatim
+  (`px-8 h-14 rounded-lg text-base leading-tight`, no weight = 400) in OP's
+  orange: Jussi's call, the 20px bold label read as foreign. **Known cost:**
+  white 16px on `#EE5A00` is 3.4:1, below AA for normal text (OP's own site
+  uses the same pairing); recorded on the spec's open questions. v1's
+  outlined button is unchanged. Figma coupon `7356:1474` matches.
 - **The -50 % is narrower than it reads:** op.fi's offer is kasko only, first
   insurance period, when insurances are moved to OP. The terms line names the
   first two (Jussi's wording, written "uusien kaskovakuutusten" rather than

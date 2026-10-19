@@ -1093,6 +1093,8 @@
   <!-- OP routing, v2 coupon. Prod's Reveal shell (overlay, container, body
        padding and close button transcribed from Reveal.vue) with a narrower
        containerClass, since a coupon at Reveal's default 896px would sprawl.
+       The OP button is AButton lg (no font weight, so 400) filled in OP's
+       orange.
        The header is NegotiationGuidance's title row (mb-4 lg:-mt-6, pr-12
        sm:pr-16 so the × never covers it).
        The copy button is prod's SellerCard.vue pattern. Code, expiry and the
@@ -1132,8 +1134,8 @@
             </div>
             <a id="op-routing-v2-cta" href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
                target="_blank" rel="noopener"
-               class="w-full h-12 px-5 bg-white border-2 border-[#EE5A00] rounded-lg flex items-center justify-center gap-2.5 no-underline text-slate-900 hover:bg-orange-50 transition-colors"
-               ><img src="assets/op-logo.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span class="font-dm font-medium text-base" data-i18n="opRouting2.cta">Laske hinta OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0 text-[#EE5A00]" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+               class="w-full inline-flex justify-center items-center gap-2 transition rounded-lg px-8 h-14 text-base leading-tight bg-[#EE5A00] text-white no-underline shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:opacity-[0.94]"
+               ><span data-i18n="opRouting2.cta">Laske hinta OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
             <p class="m-0 font-dm text-xs leading-4 text-slate-600" data-i18n="opRouting2.disclaimer">AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.</p>
           </div>
         </div>
