@@ -387,6 +387,20 @@
     if (asked && BUILDERS[asked]) window.PROTO_MOCK.seed(asked);
   }
 
+  /* Pages from the funnel's end onwards always have a car. The seller cannot
+     reach them without submitting one, so an empty store there is not a state
+     anyone can be in — it only happened when a shared link was opened on a
+     fresh browser. Seed it exactly as the bar's Seed car does (defaults for
+     variants already on included); the URL exceptions below then apply on
+     top. Runs in test mode too. The funnel steps and the front page are left
+     alone: an empty store is real there. */
+  var CAR_PAGES = ['success.html', 'offers.html', 'decision.html', 'dac7.html'];
+  var page = window.location.pathname.split('/').pop() || 'index.html';
+  if (CAR_PAGES.indexOf(page) !== -1 && !readFunnel().hero) {
+    BUILDERS['draft-complete']();
+    applySeedDefaults();
+  }
+
   /* "Seller edits before review": ?booked=1 / ?booked=0 pins whether an advisor
      has booked the ad for its review call (store.reviewBooked), so a link
      reproduces the exact state. Applied after the auto-seed, which rewrites the

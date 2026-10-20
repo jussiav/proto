@@ -274,7 +274,7 @@
       return arm;
     }());
     /* World state, not a variant: what the Analytics query would return.
-       Set from the bar's "Similar cars data" panel. */
+       Set from the Market data section of the bar's Events popover. */
     var SIMILAR_DATA = (function () {
       var v = _offersParams.get('similar');
       return ['same', 'mixed', 'few', 'none'].indexOf(v) !== -1 ? v : 'same';

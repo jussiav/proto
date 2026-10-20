@@ -369,7 +369,7 @@ Finnish grammar over a requested literal wording, and say when you did
 ("…, mikä voi nostaa tarjouksia" rather than "…ja voi nostaa tarjouksia",
 which makes the listing the subject).
 
-## Proto bar rework — BUILT 2026-10-20, all four batches
+## Proto bar rework — BUILT 2026-10-20, all four batches, pushed
 
 Agreed with Jussi over several rounds; build in the batches below, one commit
 each, and tick them here as they land. **Restore point: git tag
@@ -3466,6 +3466,18 @@ Solves two things the bar could not reach on its own:
 Reset = `empty` plus every remembered variant forgotten, and it always returns to
 `index.html` — clearing in
 place would leave you on a mid-funnel or offers page with nothing to render.
+
+**Pages after the funnel always have a car** (2026-10-20). `success.html`,
+`offers.html`, `decision.html` and `dac7.html` seed the car at load when the
+store has none, exactly as the Seed car button does (variant defaults
+included), before the URL exceptions apply; test mode included. A seller cannot
+reach those pages without a submitted car, so an empty store there was never a
+real state, only a shared link opened on a fresh browser. The front page and
+the funnel steps are left alone, because an empty store is real there.
+`CAR_PAGES` in `proto-mock.js` is the list. Consequence worth knowing: a link
+with only `autovex-exclusive=v2` shows the yes-seller's thanks on a fresh
+browser (the seed answers yes when v2 is on); add `exclusive=no` for the other
+case.
 
 **Seed car is one button plus exceptions** (2026-10-20, replacing the two
 mileage seeds). The button writes `draft-complete`: a submitted,
