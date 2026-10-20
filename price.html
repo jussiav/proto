@@ -415,6 +415,13 @@
       if (forced === 'asking-price')   return false;
       if (forced === 'price-estimate') return true;
 
+      /* Seed car's Review row (or ?review=): a forced outcome beats every rule
+         below, because which cars are reviewed is decided elsewhere and the
+         proto only needs the result. */
+      var forcedOutcome = window.PROTO_MOCK && window.PROTO_MOCK.forcedReview();
+      if (forcedOutcome === 'review')    return true;
+      if (forcedOutcome === 'no-review') return false;
+
       /* A re-edited rejection skips the segment check. EvaluateDraftForReview
          runs its rejection rules first: an ad-quality (missing photos)
          rejection is never reviewed again, any other rejection always is. */

@@ -407,7 +407,7 @@ produce (today: Review / No review). Seller answers are NOT carried.
 **Batches:**
 - [x] 1 — Variants popover (one select per initiative, "Mixed" gone, All to
   production) + Reset renamed and clearing variants
-- [ ] 2 — Seed car exceptions + answers that switch variants on; "Exclusive
+- [x] 2 — Seed car exceptions + answers that switch variants on; "Exclusive
   answer" leaves Auction settings
 - [ ] 3 — Events: Auction settings renamed, Advisor booking, Similar cars data
   and upload errors moved in as sections
@@ -2494,7 +2494,7 @@ cleared on load.
   Copy `contact.visibility*` + `contact.exclusiveBadge`, Claude's draft, Jussi
   approves; English is a working translation.
 - **Decision page** (`decision.html`, `AE_YES` = arm `v2` + saved answer, or
-  `?exclusive=yes|no`, also a bar field): yes-sellers are thanked inside the
+  `?exclusive=yes|no`, or Seed car's AutoVex exclusive row): yes-sellers are thanked inside the
   existing copy, no new element. Warm-up, prod's offers-waiting card only:
   "Kiitos, että odotit tarjouskilpailun loppuun!" / "Ilmoituksesi sai
   lisänäkyvyyttä ja tavoitti satojen autoliikkeiden verkoston." Hero, only
@@ -3136,8 +3136,8 @@ seller with a draft, whatever the review outcome, so seeding the no-review car a
 verifying the email leaves the front page claiming the ad is under review while
 `success.html` correctly says published. It is a **prototype-only state**: prod has
 one existing-draft hero ("Laitetaan :model liikkeelle!") and drops the draft once
-it is published, so there is nothing here to match. Recorded because the bar's
-`268 000 km (No review)` seed now reaches it in one click, and it reads as a bug in
+it is published, so there is nothing here to match. Recorded because Seed car's
+Review = No review row now reaches it in one click, and it reads as a bug in
 that seed rather than as the pre-existing gap it is. **Parked deliberately:** what
 the front page should say to a returning seller whose ad published without a
 review is a design question, not a fidelity fix, and it belongs to a later
@@ -3450,24 +3450,35 @@ Reset = `empty` plus every remembered variant forgotten, and it always returns t
 `index.html` — clearing in
 place would leave you on a mid-funnel or offers page with nothing to render.
 
-**Seed car offers two, through the same popover the page's own tooling uses**
-(`makePopover` in `proto-bar.js`, shared so the two controls open and read
-identically). Both are a submitted, email-unverified draft with every funnel field
-filled; they differ only in mileage, which is the thing that decides the review
-outcome:
+**Seed car is one button plus exceptions** (2026-10-20, replacing the two
+mileage seeds). The button writes `draft-complete`: a submitted,
+email-unverified draft with every funnel field filled, which can enter the
+auction. Below it, `PROTO_MOCK.EXCEPTIONS` (in `proto-mock.js`) renders one row
+each, in funnel order:
 
-| Option | State | Mileage | Funnel | Success |
-|---|---|---|---|---|
-| 148 000 km (Review) | `draft-complete` | inside the band | optional estimate | in review |
-| 268 000 km (No review) | `draft-complete-no-review` | over 240 000 | required asking price | queued → published |
+| Row | Param | Values | Writes |
+|---|---|---|---|
+| Review | `review` | — from the car / yes / no | forced outcome in `autovex_proto_review` (survives a new draft, cleared by Reset) + `store.reviewable`; no review also sets an asking price (12 000 if none) |
+| Photos | `photos` | complete / missing | all scenario photos, or two exterior ones (below the minimum → publish refused) |
+| Price | `price` | number | `priceExpectation`, plus `askingPrice` when not reviewed; label follows Review |
+| AutoVex exclusive | `exclusive` | — / yes / no | `contact.autovexVisibility`; yes or no switches `autovex-exclusive` v2 on, — switches it off |
+| Logged in | `loggedin` | no / yes | `store.loggedIn` |
 
-Both write `store.reviewable` explicitly rather than leaving it to default: the
-price step writes it on submit and a seeded draft is past that step, so the two
-states differ by exactly the flag the outcome turns on. `draft-complete-no-review`
-is **seed-only** — deliberately not in `PROTO_MOCK.states`, so it stays out of the
-front page's scenario menu where it would render identically, and `detect()`
-reports it as `draft-complete`. `SEED_OPTIONS` is what the bar reads; the bar
-falls back to a single plain button if it is absent.
+**Rules that make it work:** a row on an empty prototype seeds the car first;
+a change reloads with the row's param in the URL, so the address bar reproduces
+the state for a shared link; the params are applied at load in TEST mode too
+(after the auto-seed and `?booked=`), which is how a moderator link forces an
+outcome; a row that needs a car is skipped when there is none. `price.html`'s
+`isReviewable` honours the forced outcome before its mileage/age rule, so the
+proto never models the real review criteria. **Answer rows:** an initiative in
+`proto-mode.js`'s registry declares `answers: [{ param, arm }]`; proto-mode
+switches the arm on when the param arrives without the arm's own param (it runs
+before contact.html reads its arm in `<head>`), and Seed car's row sets the arm
+in the URL. Seeding applies `seedDefault` when that arm is already on (AutoVex
+exclusive → yes) and re-applies a forced review. The Seed car button drops the
+exception params from the URL so the car is fresh. The button reads
+`Seed car (N)` when exceptions differ from the seeded default. Car details
+Found / Partial / Not found is a known prod condition still to add.
 
 **Seed car's photos are the same assets `photos.html`'s own "Photos filled"
 scenario uses** (`SCENARIO_PHOTOS` in `proto-mock.js`, mirroring

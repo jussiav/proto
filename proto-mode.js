@@ -156,11 +156,16 @@
       spec: 'design-specs/similar-cars.html',
       prodArm: 'control'
     },
+    /* `answers`: a seller answer that only exists inside an arm. A URL param
+       carrying the answer switches that arm on (below), and Seed car's row for
+       it does the same — answering is what a tester means, not "turn on v2,
+       then go and answer". */
     {
       slug: 'autovex-exclusive',
       name: 'AutoVex exclusive',
       spec: 'design-specs/autovex-exclusive.html',
-      prodArm: 'control'
+      prodArm: 'control',
+      answers: [ { param: 'exclusive', arm: 'v2' } ]
     },
     {
       slug: 'informed-ad-creation',
@@ -189,6 +194,17 @@
     var asked = params.get(ini.slug);
     if (!asked) return;
     try { localStorage.setItem(VARIANT_KEY_PREFIX + ini.slug, asked); } catch (e) {}
+  });
+
+  /* An answer param with no arm param of its own switches the arm that asks
+     it on. Runs here, before any page reads its arm: contact.html decides its
+     arm in <head> before proto-mock.js (which writes the answer itself) loads. */
+  INITIATIVES.forEach(function (ini) {
+    if (params.get(ini.slug)) return;
+    (ini.answers || []).forEach(function (a) {
+      if (!params.get(a.param)) return;
+      try { localStorage.setItem(VARIANT_KEY_PREFIX + ini.slug, a.arm); } catch (e) {}
+    });
   });
 
   var stuckArms = [];

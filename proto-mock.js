@@ -141,27 +141,6 @@
       s.reviewable = true;
       write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
     },
-    /* The same submitted draft on the other side of the review decision. A
-       seed-only state: it is NOT in LABELS, so it stays out of the front page's
-       scenario menu, where it would render identically to draft-complete — that
-       page's hero does not branch on the review outcome, only the funnel and the
-       success screen do. detect() reports it as draft-complete for the same
-       reason.
-
-       268 000 km clears price.html's 240 000 km band (isReviewable), so the
-       funnel asks this seller for an asking price instead of an estimate and
-       success.html lands them on queued → published rather than in review. The
-       car is otherwise identical, so the two seeds isolate the outcome. */
-    'draft-complete-no-review': function () {
-      var s = clone(CAR);
-      s.hero.km = '268 000';
-      s.detailsLeft = true;
-      s.photosVisited = true;
-      s.priceVisited = true;
-      s.successVisited = true;
-      s.reviewable = false;
-      write(FUNNEL_KEY, s); write(OFFERS_KEY, null); write(DECISION_KEY, null);
-    },
     'in-review': function () {                  // "underReview" -> success.html
       var s = clone(CAR);
       s.detailsLeft = true; s.photosVisited = true; s.priceVisited = true;
@@ -238,6 +217,125 @@
     endedBidders:    25
   };
 
+  /* ── Seed car exceptions ────────────────────────────────────────────────
+     The seeded car is a submitted draft that can enter the auction. These are
+     the few things a tester needs to vary on it, in funnel order. Each one is a
+     row in the bar's Seed car popover AND a URL param, applied at load in test
+     mode too, so a shared link reproduces the state.
+
+     Review is a forced OUTCOME, not a mileage: which cars are review-called
+     will depend on more than mileage, and the proto only needs to know the
+     result. It lives under its own key rather than in the funnel store so a
+     forced outcome survives a participant starting a new draft; the seeded
+     store's `reviewable` is kept in step so the pages after the funnel agree.
+
+     An entry with `initiative` is an answer that only exists inside an arm;
+     the registry in proto-mode.js says which (`answers`), and choosing a value
+     switches that arm on. */
+  var REVIEW_KEY = 'autovex_proto_review';     // 'review' | 'no-review'
+  var NO_REVIEW_PRICE = '12000';
+
+  function readFunnel() {
+    try { return JSON.parse(localStorage.getItem(FUNNEL_KEY) || '{}') || {}; } catch (e) { return {}; }
+  }
+  function forcedReview() {
+    try { return localStorage.getItem(REVIEW_KEY); } catch (e) { return null; }
+  }
+  function photosComplete(s) {
+    var ph = s.photos || {};
+    var total = Object.keys(ph).reduce(function (n, k) { return n + (ph[k] ? ph[k].length : 0); }, 0);
+    return total >= 5 && !!(ph.ulkopuoli && ph.ulkopuoli.length) && !!(ph.sisatilat && ph.sisatilat.length);
+  }
+
+  var EXCEPTIONS = [
+    { key: 'review', param: 'review', label: 'Review',
+      options: [ { id: '', label: '— from the car' }, { id: 'yes', label: 'Review' }, { id: 'no', label: 'No review' } ],
+      get: function () {
+        var f = forcedReview();
+        return f === 'review' ? 'yes' : f === 'no-review' ? 'no' : '';
+      },
+      set: function (s, v) {
+        try {
+          if (v) localStorage.setItem(REVIEW_KEY, v === 'yes' ? 'review' : 'no-review');
+          else localStorage.removeItem(REVIEW_KEY);
+        } catch (e) {}
+        if (!s.hero || !v) return;
+        s.reviewable = v === 'yes';
+        /* The price question follows the outcome: an unreviewed ad needs an
+           asking price, a reviewed one keeps only the optional estimate. */
+        if (v === 'no') {
+          s.priceExpectation = s.priceExpectation || NO_REVIEW_PRICE;
+          s.askingPrice = s.priceExpectation;
+        } else {
+          delete s.askingPrice;
+        }
+      } },
+    { key: 'photos', param: 'photos', label: 'Photos', needsCar: true,
+      options: [ { id: 'complete', label: 'Complete' }, { id: 'missing', label: 'Missing — publish refused' } ],
+      get: function (s) { return photosComplete(s) ? 'complete' : 'missing'; },
+      set: function (s, v) {
+        s.photosVisited = true;
+        /* Missing = two exterior photos, below the five-photo minimum, which is
+           what lands the seller on the publish step's refusal. */
+        s.photos = v === 'missing' ? { ulkopuoli: SCENARIO_PHOTOS.ulkopuoli.slice(0, 2) } : clone(SCENARIO_PHOTOS);
+      } },
+    { key: 'price', param: 'price', type: 'number', needsCar: true,
+      label: function (s) { return s.reviewable === false ? 'Asking price €' : 'Price estimate € (optional)'; },
+      get: function (s) { return String(s.priceExpectation || '').replace(/\D/g, ''); },
+      set: function (s, v) {
+        v = String(v || '').replace(/\D/g, '');
+        if (!v && s.reviewable === false) v = NO_REVIEW_PRICE;   // required without review
+        if (v) {
+          s.priceExpectation = v;
+          if (s.reviewable === false) s.askingPrice = v; else delete s.askingPrice;
+        } else {
+          delete s.priceExpectation; delete s.askingPrice;
+        }
+      } },
+    { key: 'exclusive', param: 'exclusive', label: 'AutoVex exclusive', initiative: 'autovex-exclusive', needsCar: true,
+      seedDefault: 'yes',
+      options: [ { id: '', label: '— (variant off)' }, { id: 'yes', label: 'Yes' }, { id: 'no', label: 'No' } ],
+      get: function (s) {
+        var v = (s.contact || {}).autovexVisibility;
+        return v === 'exclusive' ? 'yes' : v === 'standard' ? 'no' : '';
+      },
+      set: function (s, v) {
+        s.contact = s.contact || {};
+        if (v) s.contact.autovexVisibility = v === 'yes' ? 'exclusive' : 'standard';
+        else delete s.contact.autovexVisibility;
+      } },
+    { key: 'loggedin', param: 'loggedin', label: 'Logged in', needsCar: true,
+      options: [ { id: 'no', label: 'No — email not verified' }, { id: 'yes', label: 'Yes — email verified' } ],
+      get: function (s) { return s.loggedIn ? 'yes' : 'no'; },
+      set: function (s, v) { if (v === 'yes') s.loggedIn = true; else delete s.loggedIn; } }
+  ];
+
+  function findException(key) {
+    for (var i = 0; i < EXCEPTIONS.length; i++) if (EXCEPTIONS[i].key === key) return EXCEPTIONS[i];
+    return null;
+  }
+
+  /* The arm that asks an initiative-bound answer, from proto-mode.js's registry. */
+  function answerArm(ex) {
+    var reg = ex.initiative && window.protoInitiative && window.protoInitiative(ex.initiative);
+    var ans = reg && (reg.answers || []).filter(function (a) { return a.param === ex.param; })[0];
+    return ans ? ans.arm : null;
+  }
+
+  /* After seeding: an answer whose arm is already on gets its default, so a
+     tester who picked the arm first does not have to answer as well; and a
+     forced review outcome is applied to the fresh store. */
+  function applySeedDefaults() {
+    var s = readFunnel();
+    EXCEPTIONS.forEach(function (ex) {
+      if (ex.key === 'review') { var r = ex.get(s); if (r) ex.set(s, r); return; }
+      if (!ex.seedDefault || !ex.initiative || !window.protoVariant) return;
+      var arm = answerArm(ex);
+      if (arm && window.protoVariantStored && window.protoVariantStored(ex.initiative) === arm) ex.set(s, ex.seedDefault);
+    });
+    write(FUNNEL_KEY, s);
+  }
+
   window.PROTO_MOCK = {
     states: LABELS,
     detect: detect,
@@ -245,24 +343,27 @@
        states rather than a separate mechanism is what stops the bar's scenario
        selection and the actual store from disagreeing. */
     SEED_STATE: 'draft-complete',
-    /* What the bar's Seed car popover offers, in order. Two submitted drafts
-       differing only in mileage, which is what decides the review outcome — so a
-       tester can walk both halves of Review/No review without touching the
-       funnel. Labels name the mileage first because that is the visible cause
-       and the outcome is the consequence. */
-    SEED_OPTIONS: [
-      { state: 'draft-complete',
-        label: '148 000 km (Review)',
-        title: 'Submitted draft inside the review band — funnel asks for an estimate, success lands in review' },
-      { state: 'draft-complete-no-review',
-        label: '268 000 km (No review)',
-        title: 'Submitted draft outside the review band — funnel asks for an asking price, success queues then publishes' }
-    ],
+    EXCEPTIONS: EXCEPTIONS,
+    readFunnel: readFunnel,
+    forcedReview: forcedReview,
+    answerArm: answerArm,
+    /* Set one exception from the bar. Seeds the car first when there is none,
+       so any row works straight after Reset. */
+    setException: function (key, value) {
+      var ex = findException(key);
+      if (!ex) return false;
+      var s = readFunnel();
+      if (!s.hero) { BUILDERS['draft-complete'](); applySeedDefaults(); s = readFunnel(); }
+      ex.set(s, value);
+      write(FUNNEL_KEY, s);
+      return true;
+    },
     CLEAR_STATE: 'empty',
     seed: function (name) {
       var b = BUILDERS[name];
       if (!b) return false;
       b();
+      if (name === 'draft-complete') applySeedDefaults();
       return true;
     },
     /* Seed = every funnel field filled, submitted, email not yet verified. This
@@ -270,8 +371,11 @@
        car-details merge: a merge left the store and the bar's scenario menu
        disagreeing, which produced combinations the front page could not
        sensibly continue from. */
-    car: function () { BUILDERS['draft-complete'](); },
-    clear: function () { BUILDERS['empty'](); }
+    car: function () { BUILDERS['draft-complete'](); applySeedDefaults(); },
+    clear: function () {
+      BUILDERS['empty']();
+      try { localStorage.removeItem(REVIEW_KEY); } catch (e) {}
+    }
   };
 
   /* Auto-seed: a page opts in with data-proto-mock on <html> or <body>, and the
@@ -295,4 +399,21 @@
     if (bookedParam === '1') fs.reviewBooked = true; else delete fs.reviewBooked;
     write(FUNNEL_KEY, fs);
   }
+
+  /* Seed car exceptions from the URL — after the auto-seed and ?booked=, so a
+     link always wins over what the store held. Runs in test mode too: that is
+     how a moderator's link forces an outcome. An answer row's arm is switched on
+     by proto-mode.js, which loads first. A row that needs a car is skipped when
+     there is none (a participant who has not started yet). */
+  var urlParams = new URLSearchParams(window.location.search);
+  var es = null;
+  EXCEPTIONS.forEach(function (ex) {
+    if (!urlParams.has(ex.param)) return;
+    var v = urlParams.get(ex.param);
+    if (ex.options && !ex.options.some(function (o) { return o.id === v; })) return;
+    es = es || readFunnel();
+    if (ex.needsCar && !es.hero) return;
+    ex.set(es, v);
+  });
+  if (es) write(FUNNEL_KEY, es);
 }());

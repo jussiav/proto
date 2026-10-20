@@ -819,39 +819,109 @@
         window.location.href = window.location.pathname + (q ? '?' + q : '');
       }
 
-      /* Seed car offers a choice, through the same popover the page's own tooling
-         uses. Both seeds fill every funnel field on a submitted, unverified
-         draft; they differ only in mileage, which is what decides whether the
-         seller is review-called — so the two options are the two halves of
-         Review/No review, reachable in one click each rather than by walking the
-         funnel twice with different numbers.
+      /* Seed car: one click for a submitted draft that can enter the auction,
+         then the few exceptions a tester varies on it, in funnel order
+         (PROTO_MOCK.EXCEPTIONS). Changing a row writes the store, seeding the
+         car first if there is none, and reloads with the row's URL param set,
+         so the address bar reproduces the state for a shared link. An answer
+         that only exists inside an arm switches that arm on; its empty option
+         switches it off. */
+      var exceptions = window.PROTO_MOCK.EXCEPTIONS || [];
+      var fs0 = window.PROTO_MOCK.readFunnel ? window.PROTO_MOCK.readFunnel() : {};
+      var hasCar = !!fs0.hero;
+      var NEUTRAL = { review: '', photos: 'complete', exclusive: '', loggedin: 'no' };
+      var setRows = exceptions.filter(function (ex) {
+        return ex.type !== 'number' && (hasCar || !ex.needsCar) && ex.key in NEUTRAL && ex.get(fs0) !== NEUTRAL[ex.key];
+      });
+      var seedPop = makePopover(
+        'Seed car' + (setRows.length ? ' (' + setRows.length + ')' : ''),
+        setRows.length
+          ? 'Seed car — exceptions set: ' + setRows.map(function (ex) {
+              var v = ex.get(fs0);
+              var o = (ex.options || []).filter(function (op) { return op.id === v; })[0];
+              return ex.label + ' = ' + (o ? o.label : v);
+            }).join(', ')
+          : 'Fill every funnel field with one click, then vary the exceptions'
+      );
+      if (setRows.length) seedPop.button.className = 'pb-on';
 
-         Falls back to a plain button if PROTO_MOCK declares no options, so an
-         older mock file still works. */
-      var seedOptions = window.PROTO_MOCK.SEED_OPTIONS;
-      if (seedOptions && seedOptions.length) {
-        var seedPop = makePopover('Seed car', 'Fill every funnel field — pick the review outcome');
-        popoverSection(seedPop.panel, 'Submitted draft, email not verified',
-          seedOptions.map(function (o) {
-            return {
-              label: o.label,
-              title: o.title,
-              /* Close before seeding: seeding navigates, and a panel left open
-                 over a page that is about to reload reads as a hung click. */
-              run: function () { seedPop.setOpen(false); applyMockState(o.state); }
-            };
-          }));
-        bar.appendChild(seedPop.wrap);
-      } else {
-        var seedBtn = document.createElement('button');
-        seedBtn.type = 'button';
-        seedBtn.textContent = 'Seed car';
-        seedBtn.title = 'Fill every funnel field — submitted, email not yet verified';
-        seedBtn.addEventListener('click', function () {
-          applyMockState(window.PROTO_MOCK.SEED_STATE);
-        });
-        bar.appendChild(seedBtn);
+      popoverSection(seedPop.panel, 'Submitted draft, can enter the auction', [{
+        label: 'Seed car',
+        title: 'Every funnel field filled, submitted, email not yet verified',
+        /* A fresh car: the exception params come off the URL too, or they
+           would re-apply on the reload. A forced review outcome is stored on
+           its own and stays until it is changed or Reset. */
+        run: function () {
+          seedPop.setOpen(false);
+          window.PROTO_MOCK.seed(window.PROTO_MOCK.SEED_STATE);
+          var drop = {};
+          exceptions.forEach(function (ex) { drop[ex.param] = null; });
+          if (mockDrivenPage) drop[scParam] = null;
+          window.location.href = withParams(drop);
+        }
+      }]);
+
+      function exceptionUrl(ex, value) {
+        var changes = {};
+        changes[ex.param] = value === '' || value === null ? null : value;
+        var arm = window.PROTO_MOCK.answerArm && window.PROTO_MOCK.answerArm(ex);
+        if (arm) {
+          changes[ex.initiative] = value ? arm : null;
+          if (!value && window.protoVariantSet) window.protoVariantSet(ex.initiative, null);
+          else if (window.protoVariantSet) window.protoVariantSet(ex.initiative, arm);
+        }
+        if (mockDrivenPage) changes[scParam] = null;   // the front page's scenario would re-seed over it
+        return withParams(changes);
       }
+
+      var exSec = document.createElement('div');
+      var exHead = document.createElement('h4');
+      exHead.textContent = 'Exceptions';
+      exSec.appendChild(exHead);
+      var exStack = document.createElement('div');
+      exStack.className = 'pb-stack';
+      exceptions.forEach(function (ex) {
+        var field = document.createElement('label');
+        field.className = 'pb-field';
+        var cap = document.createElement('span');
+        var label = typeof ex.label === 'function' ? ex.label(fs0) : ex.label;
+        var reg = ex.initiative && window.protoInitiative && window.protoInitiative(ex.initiative);
+        var arm = window.PROTO_MOCK.answerArm && window.PROTO_MOCK.answerArm(ex);
+        cap.textContent = label + (reg && arm ? ' · ' + (reg.name === label ? '' : reg.name + ' ') + arm : '');
+        if (reg && arm) cap.title = 'Choosing an answer switches ' + reg.name + ' ' + arm + ' on';
+        field.appendChild(cap);
+        var current = hasCar || !ex.needsCar ? ex.get(fs0) : '';
+        var control;
+        if (ex.type === 'number') {
+          control = document.createElement('input');
+          control.type = 'text';
+          control.inputMode = 'numeric';
+          control.className = 'pb-input';
+          control.style.width = '100%';
+          control.placeholder = '12000';
+          control.value = current || '';
+          control.addEventListener('keydown', function (e) { if (e.key === 'Enter') control.blur(); });
+        } else {
+          control = document.createElement('select');
+          control.style.maxWidth = 'none';
+          ex.options.forEach(function (o) {
+            var opt = document.createElement('option');
+            opt.value = o.id; opt.textContent = o.label;
+            control.appendChild(opt);
+          });
+          control.value = current;
+        }
+        control.addEventListener('change', function () {
+          var v = control.value.trim();
+          window.PROTO_MOCK.setException(ex.key, v);
+          window.location.href = exceptionUrl(ex, v);
+        });
+        field.appendChild(control);
+        exStack.appendChild(field);
+      });
+      exSec.appendChild(exStack);
+      seedPop.panel.appendChild(exSec);
+      bar.appendChild(seedPop.wrap);
 
       /* Reset takes you back to the true initial state: no ad started, every
          variant off, and on the front page, wherever you happened to be. Clearing in place would

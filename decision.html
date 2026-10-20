@@ -736,10 +736,11 @@
     /* AUTOVEX EXCLUSIVE (design-specs/autovex-exclusive.html). In v2 the contact
        step asked a required yes/no; a seller who answered yes is thanked here,
        on the warm-up and under the hero, while the decision is open. The answer
-       is world state: the funnel's saved one, or `?exclusive=yes|no` from the
-       bar. The copy assumes the seller kept to it (CLAUDE.md copy guidelines) and
-       is baked into the card's and the hero's own copy, so it goes away with
-       them when a negotiation or final offer replaces the hero. */
+       is world state: the funnel's saved one, set by the seller or by Seed
+       car's AutoVex exclusive row, or `?exclusive=yes|no` in the URL. The
+       copy assumes the seller kept to it (CLAUDE.md copy guidelines) and is
+       baked into the card's and the hero's own copy, so it goes away with them
+       when a negotiation or final offer replaces the hero. */
     var AE_ARM = (function () {
       var ARMS = ['control', 'v2'];
       var arm = window.protoVariant('autovex-exclusive', 'control');
@@ -4135,10 +4136,7 @@
         /* Not a price, but it belongs with them: it is the one other fact about
            the auction result that changes what the page renders. `0` turns the
            fair offer off; anything else leaves the scenario's own value. */
-        { key: 'fair',    label: 'Fair offer',    placeholder: '0 = not fair', width: '110px' },
-        /* AutoVex exclusive v2: the seller's contact-step answer. Empty falls
-           back to the answer saved in the funnel. */
-        { key: 'exclusive', label: 'Exclusive answer', placeholder: 'yes / no', width: '110px' }
+        { key: 'fair',    label: 'Fair offer',    placeholder: '0 = not fair', width: '110px' }
       ],
       actionsLabel: 'Dealer response',
       actions: [
