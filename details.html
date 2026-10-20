@@ -206,7 +206,7 @@
             // Rims only count when that season's tyres exist — hidden question isn't required.
             const kesaRimsOk  = d.kesarenkaat===NO_TYRES  || !!d.kesavanteet;
             const talviRimsOk = d.talvirenkaat===NO_TYRES || !!d.talvivanteet;
-            return !!(d.merkki&&d.malli&&d.mallitarkennus&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&kesaRimsOk&&d.talvirenkaat&&talviRimsOk&&d.avaimet); }
+            return !!(d.merkki&&d.malli&&d.vuosimalli&&d.polttoaine&&d.vetotapa&&d.vaihteisto&&d.sijainti&&d.kesarenkaat&&kesaRimsOk&&d.talvirenkaat&&talviRimsOk&&d.avaimet); }
           case 'services': { const sv=s.services||{}; const rg=Array.isArray(sv.radioGroups)?sv.radioGroups:[]; const lasi4ok=rg[3]==='Ehjä'?true:rg[4]!=null; const bookTypeOk=rg[0]==='Ei huoltokirjaa'?true:rg[1]!=null; return rg.length>=5&&rg[0]!=null&&bookTypeOk&&rg[2]!=null&&rg[3]!=null&&lasi4ok&&!!(sv.korjaukset&&sv.korjaukset.trim()); }
           case 'photos':   { const ph=s.photos||{}; const total=Object.values(ph).reduce((n,a)=>n+(a?a.length:0),0); return total>=5&&!!(ph.ulkopuoli&&ph.ulkopuoli.length)&&!!(ph.sisatilat&&ph.sisatilat.length); }
           case 'price':    return !!s.priceVisited;
@@ -277,16 +277,15 @@
       const fieldList = [
         { id: 'merkki',         val: d.merkki },
         ...(d.merkki ? [{ id: 'malli', val: d.malli }] : []),
-        { id: 'mallitarkennus', val: d.mallitarkennus },
         { id: 'vuosimalli',     val: d.vuosimalli },
         { id: 'polttoaine',     val: d.polttoaine },
-        { id: 'vetotapa',       val: d.vetotapa },
         { id: 'sijainti',       val: d.sijainti },
       ];
       const missing = fieldList.filter(f => !f.val).map(f => f.id);
 
       // Validate radio groups (vaihteisto, kesarenkaat, kesavanteet, talvirenkaat, talvivanteet, avaimet)
       const radioGroups = [
+        { name: 'vetotapa',     containerId: 'vetotapa-options',     val: d.vetotapa },
         { name: 'vaihteisto',   containerId: 'vaihteisto-options',   val: d.vaihteisto },
         // A km input rather than a choice, so it takes the standard required-field message.
         { name: 'toimitus', val: d.deliveryRange, containerId: 'delivery-field',
@@ -306,7 +305,7 @@
       if (!missing.length && !missingRadio.length) { setStore({...getStore(), detailsLeft: true}); window.location = 'services.html'; return; }
 
       // Ensure the editable fields panel is open (needed for merkki/malli/vetotapa errors)
-      if (missing.length) {
+      if (missing.length || missingRadio.some(g => g.name === 'vetotapa' || g.name === 'vaihteisto')) {
         const panel = document.getElementById('car-edit-fields');
         if (panel.style.display !== 'flex') {
           panel.style.display = 'flex';
@@ -439,13 +438,15 @@
         const trim   = document.getElementById('mallitarkennus').value;
         const year   = document.getElementById('vuosimalli').value;
         const fuel   = document.getElementById('polttoaine').value;
-        const drive  = document.getElementById('vetotapa').value;
+        const drive  = getRadioVal('vetotapa');
+        const gear   = getRadioVal('vaihteisto');
         const title  = [merkki, malli].filter(Boolean).join(' ');
         if (title) document.getElementById('card-merkki').textContent = title;
-        if (trim)  document.getElementById('card-mallitarkennus').textContent = trim;
+        document.getElementById('card-mallitarkennus').textContent = trim;
         if (year)  document.getElementById('card-vuosimalli').textContent = year;
         if (fuel)  document.getElementById('card-polttoaine').textContent = fuel;
         if (drive) document.getElementById('card-vetotapa').textContent = drive;
+        if (gear)  document.getElementById('card-vaihteisto').textContent = gear;
       }
 
       // ── Save / Load ──
@@ -483,7 +484,7 @@
           mallitarkennus: document.getElementById('mallitarkennus').value,
           vuosimalli:     document.getElementById('vuosimalli').value,
           polttoaine:     document.getElementById('polttoaine').value,
-          vetotapa:       document.getElementById('vetotapa').value,
+          vetotapa:       getRadioVal('vetotapa'),
           vaihteisto:     getRadioVal('vaihteisto'),
           yrityskaytto:   document.getElementById('yrityskaytto').checked,
           sijainti:       document.getElementById('sijainti').value,
@@ -501,24 +502,32 @@
 
       function loadDetails() {
         const d = getStore().details || {};
-        if (d.merkki) {
-          brandSel.value = d.merkki;
+        /* A new draft from the front page (?plate=) is a fresh lookup, as prod
+           creates a new draft; otherwise only a step never filled is. */
+        const firstVisit = params.has('plate') || (!d.merkki && d.vuosimalli === undefined);
+        if (firstVisit) {
+          /* What the GT-X lookup returned. The proto has no lookup: every plate
+             gets the same car, cut down to what a partial or failed lookup
+             would leave (Seed car's Car details row, ?lookup=). */
+          const lookup = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
+          brandSel.value = lookup.merkki || '';
+          updateModels();
+          modelSel.value = lookup.malli || '';
+          document.getElementById('mallitarkennus').value = lookup.mallitarkennus || '';
+          document.getElementById('vuosimalli').value     = lookup.vuosimalli || '';
+          document.getElementById('polttoaine').value     = lookup.polttoaine || '';
+          setRadioVal('vetotapa',   lookup.vetotapa);
+          setRadioVal('vaihteisto', lookup.vaihteisto);
+        } else {
+          brandSel.value = d.merkki || '';
           updateModels();
           if (d.malli) modelSel.value = d.malli;
-        } else {
-          // First visit — seed form fields to match the card's displayed placeholder values
-          brandSel.value = 'Mercedes-Benz';
-          updateModels();
-          modelSel.value = 'C-Class';
-          document.getElementById('mallitarkennus').value = '1,33 Dual VVT-i Stop & Start Linea Sol Multidrive S';
-          document.getElementById('vuosimalli').value     = '2011';
-          // polttoaine / vetotapa already carry their defaults via the HTML `selected` attribute
+          if (d.mallitarkennus !== undefined) document.getElementById('mallitarkennus').value = d.mallitarkennus;
+          if (d.vuosimalli     !== undefined) document.getElementById('vuosimalli').value     = d.vuosimalli;
+          if (d.polttoaine     !== undefined) document.getElementById('polttoaine').value     = d.polttoaine;
+          setRadioVal('vetotapa',   d.vetotapa);
+          setRadioVal('vaihteisto', d.vaihteisto);
         }
-        if (d.mallitarkennus !== undefined) document.getElementById('mallitarkennus').value = d.mallitarkennus;
-        if (d.vuosimalli     !== undefined) document.getElementById('vuosimalli').value     = d.vuosimalli;
-        if (d.polttoaine     !== undefined) document.getElementById('polttoaine').value     = d.polttoaine;
-        if (d.vetotapa       !== undefined) document.getElementById('vetotapa').value       = d.vetotapa;
-        setRadioVal('vaihteisto', d.vaihteisto || 'Automaatti');
         if (d.yrityskaytto   !== undefined) document.getElementById('yrityskaytto').checked = d.yrityskaytto;
         if (d.sijainti       !== undefined) document.getElementById('sijainti').value       = d.sijainti;
         const storedKm = d.deliveryRange ? Number(d.deliveryRange) : NaN;
@@ -538,18 +547,48 @@
           if (vc) vc.textContent = varusteluEl.value.length + '/1500';
         }
         updateCard();
-        // On first visit, persist the seeded defaults so validation reads them from the store
-        if (!d.merkki) saveDetails();
+        // On first visit, persist the looked-up values so validation reads them from the store
+        if (firstVisit) saveDetails();
+        applyLookupLayout();
       }
 
+      /* Prod's has_vehicle_info: every vehicle field filled, model
+         specification included (TenderRequestDraftResource). With it the step
+         shows the summary card and its Muokkaa; without it — a partial or
+         failed lookup — the form is open and the title asks the seller to fill
+         the details in. Decided at load, as prod reads it from the saved draft,
+         so filling the form does not switch the layout mid-step. */
+      function applyLookupLayout() {
+        const d = getStore().details || {};
+        const hasVehicleInfo = !!(d.merkki && d.malli && d.vuosimalli && d.polttoaine &&
+          d.vaihteisto && d.vetotapa && d.mallitarkennus);
+        const titleKey = hasVehicleInfo ? 'details.title' : 'details.titleNotFound';
+        const titleEl = document.getElementById('details-title');
+        titleEl.setAttribute('data-i18n', titleKey);
+        titleEl.textContent = t(titleKey);
+        document.getElementById('car-card').style.display = hasVehicleInfo ? '' : 'none';
+        if (!hasVehicleInfo) {
+          document.getElementById('car-edit-fields').style.display = 'flex';
+          document.getElementById('muokkaa-btn').style.display = 'none';
+        }
+      }
+
+      // Prod's year field: 1970 up to next year, placeholder two years back.
+      (function () {
+        const y = new Date().getFullYear();
+        const yearEl = document.getElementById('vuosimalli');
+        yearEl.max = y + 1;
+        yearEl.placeholder = y - 2;
+      })();
+
       // Wire save to every field
-      ['merkki','malli','mallitarkennus','vuosimalli','polttoaine','vetotapa','sijainti'].forEach(id => {
+      ['merkki','malli','mallitarkennus','vuosimalli','polttoaine','sijainti'].forEach(id => {
         const el = document.getElementById(id);
         if (el) { el.addEventListener('change', saveDetails); el.addEventListener('input', saveDetails); }
       });
       document.getElementById('yrityskaytto')?.addEventListener('change', saveDetails);
       // Wire radio groups (toimitus saves via its own component handlers above)
-      ['vaihteisto','kesarenkaat','kesavanteet','talvirenkaat','talvivanteet','avaimet'].forEach(name => {
+      ['vetotapa','vaihteisto','kesarenkaat','kesavanteet','talvirenkaat','talvivanteet','avaimet'].forEach(name => {
         document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.addEventListener('change', saveDetails));
       });
       // Rims are only asked when that season's tyres exist (mirrors EquipmentInfo.vue:188/:222)
@@ -676,7 +715,7 @@
         </nav>
 
         <!-- Headline + subtext -->
-        <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="details.title">Löysimme autosi tiedot!</h1>
+        <h1 id="details-title" class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="details.title">Löysimme autosi tiedot!</h1>
         <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="details.subtitle">Tarkista ja täydennä tarkemmat tiedot, jotta voimme valmistella ilmoituksesi autoliikkeille.</p>
 
         <!-- Informed ad creation, v1 only: prod's ContextHelp shell, as on the photos step -->
@@ -724,8 +763,9 @@
           </div>
         </div>
 
-        <!-- Car details card -->
-        <div class="w-full border border-gray-500 rounded-lg p-4 flex flex-col gap-3">
+        <!-- Car details card: prod's RetrievedVehicleInfoPreview, shown only when
+             the lookup returned every vehicle field (has_vehicle_info) -->
+        <div id="car-card" class="w-full border border-gray-500 rounded-lg p-4 flex flex-col gap-3">
           <div class="flex items-start justify-between gap-4">
             <span id="card-merkki" class="font-dm font-bold text-xl leading-[23px] text-black flex-1">Mercedes-Benz</span>
             <button id="muokkaa-btn" onclick="document.getElementById('car-edit-fields').style.display='flex'; this.style.display='none';"
@@ -743,7 +783,7 @@
             </div>
             <div class="flex items-center gap-2">
               <img src="assets/d1278e5c-5667-46f9-a935-e49638ca4cf3.svg" class="w-4 h-4 flex-shrink-0" alt="" />
-              <span class="font-dm text-base leading-5 text-slate-900">Automaatti</span>
+              <span id="card-vaihteisto" class="font-dm text-base leading-5 text-slate-900">Automaatti</span>
             </div>
             <div class="flex items-center gap-2">
               <img src="assets/f4f1a8af-036d-4af1-adce-65c9b78d2482.svg" class="w-4 h-4 flex-shrink-0" alt="" />
@@ -774,7 +814,7 @@
                   <option>Hyundai</option>
                   <option>Kia</option>
                   <option>Mazda</option>
-                  <option selected>Mercedes-Benz</option>
+                  <option>Mercedes-Benz</option>
                   <option>Mitsubishi</option>
                   <option>Nissan</option>
                   <option>Opel</option>
@@ -804,25 +844,26 @@
               </div>
             </div>
 
-            <!-- Mallitarkennus -->
-            <div class="flex flex-col gap-2">
-              <label for="mallitarkennus" class="font-dm font-medium text-base leading-5 text-slate-900">
-                <span data-i18n="details.trim">Mallitarkennus</span> <span class="text-red-500 font-medium">*</span>
-              </label>
-              <input id="mallitarkennus" name="mallitarkennus" type="text" value="1,33 Dual VVT-i Stop &amp; Start Linea Sol Multidrive S" required
-                class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
-            </div>
-
             <!-- Vuosimalli -->
             <div class="flex flex-col gap-2">
               <label for="vuosimalli" class="font-dm font-medium text-base leading-5 text-slate-900">
                 <span data-i18n="details.year">Vuosimalli</span> <span class="text-red-500 font-medium">*</span>
               </label>
-              <input id="vuosimalli" name="vuosimalli" type="number" min="1980" max="2025" value="2011" required
+              <input id="vuosimalli" name="vuosimalli" type="number" min="1970" required
                 class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
             </div>
 
-            <!-- Polttoaine -->
+            <!-- Mallitarkennus: optional in prod (no `required` on its Input) -->
+            <div class="flex flex-col gap-2">
+              <label for="mallitarkennus" class="font-dm font-medium text-base leading-5 text-slate-900">
+                <span data-i18n="details.trim">Mallitarkennus</span>
+              </label>
+              <input id="mallitarkennus" name="mallitarkennus" type="text" placeholder="Esim. 2.0 TSI Highline" data-i18n-placeholder="details.trimPlaceholder"
+                class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
+            </div>
+
+            <!-- Polttoaine: prod's tender.fuel_types. Values stay Finnish so the
+                 store does not change language with the page. -->
             <div class="flex flex-col gap-2">
               <label for="polttoaine" class="font-dm font-medium text-base leading-5 text-slate-900">
                 <span data-i18n="details.fuel">Polttoaine</span> <span class="text-red-500 font-medium">*</span>
@@ -831,35 +872,34 @@
                 <select id="polttoaine" name="polttoaine" required
                   class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
                   <option value="" data-i18n="details.fuelPlaceholder">Valitse polttoaine</option>
-                  <option selected data-i18n="details.fuelPetrol">Bensiini</option>
-                  <option data-i18n="details.fuelDiesel">Diesel</option>
-                  <option data-i18n="details.fuelElectric">Sähkö</option>
-                  <option data-i18n="details.fuelHybridPetrol">Hybridi (bensiini)</option>
-                  <option data-i18n="details.fuelHybridDiesel">Hybridi (diesel)</option>
-                  <option data-i18n="details.fuelPluginPetrol">Ladattava hybridi (bensiini)</option>
-                  <option data-i18n="details.fuelPluginDiesel">Ladattava hybridi (diesel)</option>
-                  <option data-i18n="details.fuelGas">Kaasu</option>
-                  <option data-i18n="details.fuelHydrogen">Vety</option>
-                  <option data-i18n="details.fuelEthanol">Etanoli</option>
+                  <option value="Bensiini" data-i18n="details.fuelPetrol">Bensiini</option>
+                  <option value="Diesel" data-i18n="details.fuelDiesel">Diesel</option>
+                  <option value="Hybridi" data-i18n="details.fuelHybrid">Hybridi</option>
+                  <option value="Sähkö" data-i18n="details.fuelElectric">Sähkö</option>
+                  <option value="Kaasu" data-i18n="details.fuelGas">Kaasu</option>
+                  <option value="E85/bensiini" data-i18n="details.fuelE85">E85/bensiini</option>
                 </select>
               </div>
             </div>
 
-            <!-- Vetotapa -->
+            <!-- Vetotapa: prod's Chips over tender.drive_types, same cards as Vaihteisto -->
             <div class="flex flex-col gap-2">
-              <label for="vetotapa" class="font-dm font-medium text-base leading-5 text-slate-900">
+              <label class="font-dm font-medium text-base leading-5 text-slate-900">
                 <span data-i18n="details.drivetrain">Vetotapa</span> <span class="text-red-500 font-medium">*</span>
               </label>
-              <div class="select-wrapper relative w-full">
-                <select id="vetotapa" name="vetotapa" required
-                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 appearance-none cursor-pointer transition-colors">
-                  <option value="" data-i18n="details.drivetrainPlaceholder">Valitse vetotapa</option>
-                  <option selected data-i18n="details.drivetrainFront">Etuveto</option>
-                  <option data-i18n="details.drivetrainRear">Takaveto</option>
-                  <option data-i18n="details.drivetrainAll">Neliveto</option>
-                  <option>AWD</option>
-                  <option>4x4</option>
-                </select>
+              <div id="vetotapa-options" class="flex flex-col gap-2">
+                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                  <input type="radio" name="vetotapa" value="Etuveto" class="w-4 h-4 accent-av-blue cursor-pointer" />
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="details.drivetrainFront">Etuveto</span>
+                </label>
+                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                  <input type="radio" name="vetotapa" value="Takaveto" class="w-4 h-4 accent-av-blue cursor-pointer" />
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="details.drivetrainRear">Takaveto</span>
+                </label>
+                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                  <input type="radio" name="vetotapa" value="Neliveto" class="w-4 h-4 accent-av-blue cursor-pointer" />
+                  <span class="font-barlow font-semibold text-base text-black" data-i18n="details.drivetrainAll">Neliveto</span>
+                </label>
               </div>
             </div>
 

@@ -418,7 +418,8 @@
        whole journey with these variants pinned: `fresh=1` clears the last
        participant's data first (proto-mode.js), then `mode=test`, every
        variant in force, and only the outcomes a participant cannot produce
-       themselves (today: a forced Review / No review). Seller answers are not
+       themselves (a forced Review / No review, and the car-details lookup
+       result). Seller answers are not
        carried; the participant gives those. For a link to one specific view,
        copy the browser address instead. */
     var modePop = makePopover(
@@ -443,6 +444,8 @@
     linkParams.set('mode', 'test');
     linkArms.forEach(function (x) { linkParams.set(x.reg.slug, x.arm); });
     if (forced) linkParams.set('review', forced === 'review' ? 'yes' : 'no');
+    var forcedLk = window.PROTO_MOCK && window.PROTO_MOCK.forcedLookup && window.PROTO_MOCK.forcedLookup();
+    if (forcedLk) linkParams.set('lookup', forcedLk);
     var testLink = ROOT + 'index.html?' + linkParams.toString();
 
     var tSec = document.createElement('div');
@@ -456,6 +459,7 @@
       'Variants: ' + (linkArms.length
         ? linkArms.map(function (x) { return x.reg.name + ' ' + x.arm; }).join(', ')
         : 'none — production'),
+      'Car details: ' + (forcedLk === 'partial' ? 'lookup returns partial details' : forcedLk === 'not-found' ? 'lookup finds nothing' : 'lookup finds everything'),
       'Review: ' + (forced === 'review' ? 'forced to review' : forced === 'no-review' ? 'forced to no review' : 'from the car the participant enters')
     ].forEach(function (line) {
       var d = document.createElement('div'); d.textContent = line; tInfo.appendChild(d);
@@ -862,7 +866,7 @@
       var exceptions = window.PROTO_MOCK.EXCEPTIONS || [];
       var fs0 = window.PROTO_MOCK.readFunnel ? window.PROTO_MOCK.readFunnel() : {};
       var hasCar = !!fs0.hero;
-      var NEUTRAL = { review: '', photos: 'complete', exclusive: '', loggedin: 'no' };
+      var NEUTRAL = { details: '', review: '', photos: 'complete', exclusive: '', loggedin: 'no' };
       var setRows = exceptions.filter(function (ex) {
         return ex.type !== 'number' && (hasCar || !ex.needsCar) && ex.key in NEUTRAL && ex.get(fs0) !== NEUTRAL[ex.key];
       });

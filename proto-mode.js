@@ -197,7 +197,7 @@
      front page mid-test does not wipe the participant's progress. */
   if (params.get('fresh') === '1') {
     try {
-      ['autovex_funnel', 'autovex_offers', 'autovex_decision', 'autovex_proto_review'].forEach(function (k) {
+      ['autovex_funnel', 'autovex_offers', 'autovex_decision', 'autovex_proto_review', 'autovex_proto_lookup'].forEach(function (k) {
         localStorage.removeItem(k);
       });
       INITIATIVES.forEach(function (ini) { localStorage.removeItem(VARIANT_KEY_PREFIX + ini.slug); });

@@ -233,6 +233,7 @@
      the registry in proto-mode.js says which (`answers`), and choosing a value
      switches that arm on. */
   var REVIEW_KEY = 'autovex_proto_review';     // 'review' | 'no-review'
+  var LOOKUP_KEY = 'autovex_proto_lookup';     // 'partial' | 'not-found'; absent = found
   var NO_REVIEW_PRICE = '12000';
 
   function readFunnel() {
@@ -247,7 +248,46 @@
     return total >= 5 && !!(ph.ulkopuoli && ph.ulkopuoli.length) && !!(ph.sisatilat && ph.sisatilat.length);
   }
 
+  /* The GT-X lookup's result, as the details step's first visit receives it.
+     The proto has no lookup: every plate returns the canonical car, cut down
+     to what a partial or failed lookup leaves. VEHICLE_FIELDS are the seven
+     prod's has_vehicle_info requires (TenderRequestDraftResource). */
+  var VEHICLE_FIELDS = ['merkki', 'malli', 'mallitarkennus', 'vuosimalli', 'polttoaine', 'vetotapa', 'vaihteisto'];
+  var PARTIAL_FIELDS = ['merkki', 'malli', 'vuosimalli', 'polttoaine'];
+  function forcedLookup() {
+    try { return localStorage.getItem(LOOKUP_KEY); } catch (e) { return null; }
+  }
+  function lookupFor(outcome) {
+    var out = {};
+    VEHICLE_FIELDS.forEach(function (k) {
+      var keep = !outcome || (outcome === 'partial' && PARTIAL_FIELDS.indexOf(k) !== -1);
+      out[k] = keep ? CAR.details[k] : '';
+    });
+    return out;
+  }
+
   var EXCEPTIONS = [
+    { key: 'details', param: 'lookup', label: 'Car details',
+      options: [ { id: '', label: 'Found — lookup returned everything' },
+                 { id: 'partial', label: 'Partial — some fields missing' },
+                 { id: 'not-found', label: 'Not found — seller fills them in' } ],
+      /* On a car, what its details actually are (prod decides the layout from
+         the saved draft); before one, the outcome the next lookup returns. */
+      get: function (s) {
+        if (!s.hero || !s.details) return forcedLookup() || '';
+        var d = s.details;
+        var filled = VEHICLE_FIELDS.filter(function (k) { return !!d[k]; }).length;
+        return filled === VEHICLE_FIELDS.length ? '' : filled ? 'partial' : 'not-found';
+      },
+      set: function (s, v) {
+        try {
+          if (v) localStorage.setItem(LOOKUP_KEY, v); else localStorage.removeItem(LOOKUP_KEY);
+        } catch (e) {}
+        if (!s.hero) return;
+        var vals = lookupFor(v);
+        s.details = s.details || {};
+        VEHICLE_FIELDS.forEach(function (k) { s.details[k] = vals[k]; });
+      } },
     { key: 'review', param: 'review', label: 'Review',
       options: [ { id: '', label: '— from the car' }, { id: 'yes', label: 'Review' }, { id: 'no', label: 'No review' } ],
       get: function () {
@@ -344,6 +384,8 @@
        selection and the actual store from disagreeing. */
     SEED_STATE: 'draft-complete',
     EXCEPTIONS: EXCEPTIONS,
+    lookupResult: function () { return lookupFor(forcedLookup()); },
+    forcedLookup: forcedLookup,
     readFunnel: readFunnel,
     forcedReview: forcedReview,
     answerArm: answerArm,
@@ -363,7 +405,11 @@
       var b = BUILDERS[name];
       if (!b) return false;
       b();
-      if (name === 'draft-complete') applySeedDefaults();
+      if (name === 'draft-complete') {
+        /* A seeded car is a complete one, so the lookup outcome resets too. */
+        try { localStorage.removeItem(LOOKUP_KEY); } catch (e) {}
+        applySeedDefaults();
+      }
       return true;
     },
     /* Seed = every funnel field filled, submitted, email not yet verified. This
@@ -374,7 +420,7 @@
     car: function () { BUILDERS['draft-complete'](); applySeedDefaults(); },
     clear: function () {
       BUILDERS['empty']();
-      try { localStorage.removeItem(REVIEW_KEY); } catch (e) {}
+      try { localStorage.removeItem(REVIEW_KEY); localStorage.removeItem(LOOKUP_KEY); } catch (e) {}
     }
   };
 

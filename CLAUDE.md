@@ -395,8 +395,8 @@ button any more.
 outcome override, not mileage; the proto never models the real criteria) ·
 Photos (Complete / Missing) · Price question (follows Review, amount) ·
 AutoVex exclusive (— / Yes / No; picking Yes or No turns v2 on, other
-variants untouched) · Logged in (No / Yes). Car details Found / Partial / Not
-found is a known prod condition, **built later**. Each exception is one entry
+variants untouched) · Logged in (No / Yes). Car details (Found / Partial /
+Not found) was added first in the list on 2026-10-20. Each exception is one entry
 in a list in `proto-mock.js` with a URL param, applied at load in test mode
 too. A variant-only answer names its initiative + arm and switches it on.
 
@@ -3487,6 +3487,7 @@ each, in funnel order:
 
 | Row | Param | Values | Writes |
 |---|---|---|---|
+| Car details | `lookup` | found (empty) / partial / not-found | the GT-X lookup outcome in `autovex_proto_lookup` (used by the details step's next fresh lookup, cleared by Seed car, Reset and `fresh=1`); on an existing car, the seven vehicle fields are rewritten to that outcome and every other answer is kept |
 | Review | `review` | — from the car / yes / no | forced outcome in `autovex_proto_review` (survives a new draft, cleared by Reset) + `store.reviewable`; no review also sets an asking price (12 000 if none) |
 | Photos | `photos` | complete / missing | all scenario photos, or two exterior ones (below the minimum → publish refused) |
 | Price | `price` | number | `priceExpectation`, plus `askingPrice` when not reviewed; label follows Review |
@@ -3506,8 +3507,37 @@ before contact.html reads its arm in `<head>`), and Seed car's row sets the arm
 in the URL. Seeding applies `seedDefault` when that arm is already on (AutoVex
 exclusive → yes) and re-applies a forced review. The Seed car button drops the
 exception params from the URL so the car is fresh. The button reads
-`Seed car (N)` when exceptions differ from the seeded default. Car details
-Found / Partial / Not found is a known prod condition still to add.
+`Seed car (N)` when exceptions differ from the seeded default. The test link
+carries a forced Car details outcome as well as a forced review.
+
+**The details step's three lookup states** (2026-10-20, from prod's
+`EquipmentInfo.vue`). Prod has ONE switch, `has_vehicle_info`: true when all
+seven vehicle fields are non-null (make, model, year, fuel, transmission,
+drive, model specification — `TenderRequestDraftResource`). True → title
+"Löysimme autosi tiedot!" and the summary card (`RetrievedVehicleInfoPreview`)
+with **Muokkaa**; false → title "Täytä autosi tiedot"
+(`equipment_info.title_not_found`) and the form (`RetrievedVehicleInfoForm`)
+open, prefilled with whatever the lookup returned. **Partial and not found
+differ only in that prefill**; the description, image, plate row and the rest
+of the step are the same in all three. `details.html`'s `applyLookupLayout()`
+applies the rule at load, as prod reads it from the saved draft, so filling the
+form does not switch the layout mid-step. The lookup is
+`PROTO_MOCK.lookupResult()`: the canonical car (VW Amarok, the same as Seed car;
+it used to be a Mercedes placeholder), cut to make + model + year + fuel for
+partial and to nothing for not found. A fresh lookup is the first visit, or any
+`?plate=` entry from the front page. The Figma frames' notes ("show this only
+if GTX is not found") describe a difference prod does not have; the proto
+follows prod.
+
+**The form was aligned to prod with it:** field order make, model, year, model
+specification, fuel, drive, transmission; **model specification is optional**
+(no `required` on prod's Input, so `isComplete('details')` on all five funnel
+steps and the step's validation dropped it); fuel is prod's six
+(`tender.fuel_types`: Bensiini, Diesel, Hybridi, Sähkö, Kaasu, E85/bensiini)
+and drive is prod's three as chips, like transmission. Option values stay
+Finnish so the store does not change language with the page. Year placeholder
+is two years back and the maximum next year, as prod's. The summary card now
+shows the transmission from the data too.
 
 **Seed car's photos are the same assets `photos.html`'s own "Photos filled"
 scenario uses** (`SCENARIO_PHOTOS` in `proto-mock.js`, mirroring
@@ -5200,6 +5230,7 @@ carried a hardcoded `XYZ-789 / Toyota Corolla 2019` while `BASE` on the same
 page already read the funnel store, so one account could list two cars;
 `decision.html`'s `BASE` hardcoded a third. Both now read the funnel car
 (`DRAFT_CAR` and `_funnelCar`). The plate lookup still returns one fixed car
+(since 2026-10-20 the canonical Amarok, cut down by Seed car's Car details row)
 whatever plate is typed — accepted, deliberately, rather than shipping a
 catalogue of placeholder makes into the proto.
 
