@@ -405,7 +405,7 @@ too. A variant-only answer names its initiative + arm and switches it on.
 produce (today: Review / No review). Seller answers are NOT carried.
 
 **Batches:**
-- [ ] 1 — Variants popover (one select per initiative, "Mixed" gone, All to
+- [x] 1 — Variants popover (one select per initiative, "Mixed" gone, All to
   production) + Reset renamed and clearing variants
 - [ ] 2 — Seed car exceptions + answers that switch variants on; "Exclusive
   answer" leaves Auction settings
@@ -590,19 +590,18 @@ matches production; `default` is what a page renders unasked. Every live
 initiative currently defaults to its `prodArm`, so with no selection the whole
 proto renders production — which is the state a user-test participant must land
 in. The distinction is kept because an initiative may need to default to a
-candidate while it is being demoed, and the bar's first option then tells the
-truth either way: `— none — production behaviour` when every default on the page
-IS the production arm, `— none — page defaults` when it is not.
+candidate while it is being demoed; choosing a page's default in the Variants
+popover forgets the arm, so "nothing remembered" stays the page-default state.
 
-**One variant at a time.** Selecting an arm clears every other registered
-initiative, remembered arms included; the first option clears them all. So no
-selection = every page renders what it renders unasked, which is what a user-test
-participant must land in, and one click returns to it. Arms of initiatives this
-page does not show are listed disabled under **Active on other pages** — they
-change what the participant sees elsewhere and would otherwise be invisible.
-Combinations stay reachable by hand-writing the params; the row then reads
-`Mixed — N initiatives off default` rather than naming one arm and implying the
-rest are off.
+**Several variants at once, one per initiative** (2026-10-20, replacing "one
+variant at a time"). The **Variants ▾** popover has one select per initiative on
+this page, then **In force on other pages** (each switchable back to production
+from anywhere), then **All to production**. Changing one initiative leaves the
+others alone; the button reads `Variants (N on)` with the arms in its tooltip.
+"Mixed" is gone: it existed only because one select could not show a
+combination. URLs did not change — each `?<slug>=<arm>` still pins that one
+initiative — and **Reset** now forgets every remembered arm, so it always lands
+on production.
 
 **Arms are sticky, via `window.protoVariant(name, fallback)`** in
 `proto-mode.js`. An initiative usually spans several funnel steps, and funnel
@@ -708,8 +707,7 @@ nothing.** `elsewhere` in `proto-bar.js` used to be computed inside the branch
 that runs only when a page declares an initiative, so a page with none rendered
 a disabled `none on this page` while a remembered arm was pinned for the whole
 prototype — the exact invisibility that group exists to prevent. It is hoisted
-above the branch; the disabled placeholder now appears only when there is
-nothing on this page AND nothing in force elsewhere, and the row's `— none —`
+above the branch, and (since 2026-10-20) the popover's **All to production**
 clears every remembered arm from any page. Found because this spec page's own
 change-4 link carried `&review-no-review=v1` for an email that had no override:
 the link silently pinned the arm for `price`, `contact` and `help` while the
@@ -3447,8 +3445,9 @@ Solves two things the bar could not reach on its own:
   walked the funnel. The bar has built-in **Seed car** and **Reset data** on
   every page.
 
-**Seed car and Reset prototype are named states, not a separate mechanism.**
-Reset prototype = `empty`, and it always returns to `index.html` — clearing in
+**Seed car and Reset are named states, not a separate mechanism.**
+Reset = `empty` plus every remembered variant forgotten, and it always returns to
+`index.html` — clearing in
 place would leave you on a mid-funnel or offers page with nothing to render.
 
 **Seed car offers two, through the same popover the page's own tooling uses**

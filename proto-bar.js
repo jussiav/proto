@@ -43,13 +43,12 @@
  * Variant   = which design candidate (exists only because we are proposing it).
  * Keeping them on separate rows keeps that distinction visible.
  *
- * ── One Variants row, grouped by initiative ────────────────────────────────
- * Every variant exists because some initiative proposes it, so the Variants
- * select groups its options under the initiative's name — the same shape the
- * Scenario row already uses for grouped states. One row scales as initiatives
- * accumulate, where a row per initiative would push the bar off the screen; and
- * grouping keeps each arm traceable, which a flat "Variant 1 / Variant 2 / …"
- * list from several initiatives could never be.
+ * ── Variants: one select per initiative ───────────────────────────────────
+ * Each initiative remembers its own arm (proto-mode.js), so several can be in
+ * force at once. The Variants popover lists this page's initiatives, each with
+ * its own select, then any initiative in force on another page (switchable back
+ * to production from here), then "All to production". Changing one initiative
+ * leaves the others alone; choosing the page's default forgets the arm.
  *
  * A page declares only what is ITS business — which initiative, which arms, and
  * what it renders unasked:
@@ -62,15 +61,6 @@
  *
  * The name, the spec path and which arm equals production live once, in
  * proto-mode.js's INITIATIVES registry. See CLAUDE.md, "Initiatives".
- *
- * ── One variant at a time ──────────────────────────────────────────────────
- * Selecting an arm clears every OTHER initiative, remembered arms included, and
- * the default option clears them all: no selection means every page renders what
- * it renders unasked, which is production wherever the page's default is the
- * registry's prodArm. That is what a user-test participant must land in, and it
- * is the state the bar returns to in one click. Combinations remain reachable by
- * hand-writing the params; the row then says so rather than picking one arm and
- * implying the rest are off.
  *
  * When an arm is promoted to the default, delete the losing arms AND the page's
  * declaration; the option group disappears and the spec page is marked
@@ -176,6 +166,9 @@
       '#proto-bar .pb-panel .pb-stack button{width:100%;text-align:left;}',
       '#proto-bar .pb-field{display:flex;flex-direction:column;gap:2px;}',
       '#proto-bar .pb-field > span{color:#6b6b70;font-size:10px;}',
+      /* Fields stacked in a popover (Variants, Seed car) span the panel: the
+         bar-wide label rule would otherwise centre their captions. */
+      '#proto-bar .pb-stack .pb-field{align-items:stretch;}',
       'body.proto-bar-on{padding-bottom:' + BAR_H + 'px;}',
 
       /* ── Narrow screens ──────────────────────────────────────────────────
@@ -484,7 +477,10 @@
     scWrap.appendChild(scSel);
     bar.appendChild(scWrap);
 
-    /* ── Variants — one row for the page, grouped by initiative ──────────── */
+    /* ── Variants — one select per initiative, in one popover ───────────────
+       Each initiative remembers its own arm (proto-mode.js), so several can be
+       in force at once; the popover shows that rather than hiding it behind a
+       single select. Changing one initiative leaves every other one alone. */
     var pageInitiatives = (cfg.initiatives || []).map(function (ini) {
       var reg = (window.protoInitiative && window.protoInitiative(ini.slug)) || null;
       if (!reg && window.console && console.warn) {
@@ -517,19 +513,9 @@
       return ini.deflt;
     }
 
-    /* The row is always here, disabled when the page proposes nothing — same as
-       the Scenario row. A row that vanishes makes "no variants on this page" look
-       identical to "the bar is missing something". */
-    var vWrap = document.createElement('label');
-    vWrap.appendChild(document.createTextNode('Variants'));
-
-    /* Arms in force on initiatives this page does not show — a hand-written URL,
-       or an arm picked on another page. Computed BEFORE the branch below, because
-       a page that proposes nothing of its own is exactly where a remembered arm
-       is most invisible: the row used to read "none on this page" while another
-       initiative was still pinned for the whole prototype. Listed disabled, with
-       a working "— none —" above it, so the state can at least be cleared from
-       any page. */
+    /* Arms in force on initiatives this page does not show — picked on another
+       page, or by a link. Listed so they are never invisible, and each can be
+       switched back to production from here. */
     var elsewhere = (window.protoInitiatives || []).filter(function (reg) {
       var shown = pageInitiatives.some(function (ini) { return ini.slug === reg.slug; });
       if (shown) return false;
@@ -538,102 +524,117 @@
       return arm && String(arm) !== String(reg.prodArm || '');
     });
 
-    if (!pageInitiatives.length && !elsewhere.length) {
-      var emptySel = document.createElement('select');
-      emptySel.disabled = true;
-      var emptyOpt = document.createElement('option');
-      emptyOpt.textContent = 'none on this page';
-      emptySel.appendChild(emptyOpt);
-      vWrap.appendChild(emptySel);
-      bar.appendChild(vWrap);
-    } else {
-      var vSel = document.createElement('select');
-      var armOptions = [];   // { ini, arm }, indexed by option value
+    var onHere = pageInitiatives.filter(function (ini) { return activeArm(ini) !== ini.deflt; });
+    var onCount = onHere.length + elsewhere.length;
 
-      /* With nothing selected each initiative renders its own default. That is
-         production only when every default IS the production arm, which is the
-         rule today but not a guarantee — an initiative may default to a candidate
-         while it is being demoed — so the label states which it is rather than
-         promising production everywhere. */
-      var allProd = pageInitiatives.every(function (ini) {
-        return !ini.deflt || !ini.prodArm || ini.deflt === String(ini.prodArm);
-      });
-      var noneOpt = document.createElement('option');
-      noneOpt.value = '';
-      noneOpt.textContent = allProd ? '— none — production behaviour' : '— none — page defaults';
-      vSel.appendChild(noneOpt);
-
-      pageInitiatives.forEach(function (ini) {
-        var group = document.createElement('optgroup');
-        group.label = ini.name;
-        if (ini.spec) group.title = ini.name + ' — spec: ' + ini.spec;
-        ini.arms.forEach(function (arm) {
-          var o = document.createElement('option');
-          o.value = String(armOptions.length);
-          o.textContent = arm.label || arm.id;
-          armOptions.push({ ini: ini, arm: arm });
-          group.appendChild(o);
-        });
-        vSel.appendChild(group);
-      });
-
-      /* Picking anything in this row clears them, including from a page that
-         shows no initiative of its own. */
-      if (elsewhere.length) {
-        var elseGroup = document.createElement('optgroup');
-        elseGroup.label = 'Active on other pages';
-        elsewhere.forEach(function (reg) {
-          var arm = params.get(reg.slug) || window.protoVariantStored(reg.slug);
-          var o = document.createElement('option');
-          o.disabled = true;
-          o.textContent = reg.name + ': ' + arm;
-          elseGroup.appendChild(o);
-        });
-        vSel.appendChild(elseGroup);
-      }
-
-      /* One select cannot show two arms at once, and it cannot show an arm that
-         belongs to another page at all. Either way it says what is going on
-         rather than sitting on "none" while something is live, or naming one arm
-         and implying the rest are off. */
-      var offDefault = pageInitiatives.filter(function (ini) { return activeArm(ini) !== ini.deflt; });
-      var offTotal = offDefault.length + elsewhere.length;
-      if (offTotal > 1 || (offTotal === 1 && !offDefault.length)) {
-        var mixed = document.createElement('option');
-        mixed.value = 'mixed';
-        mixed.textContent = offTotal > 1
-          ? 'Mixed — ' + offTotal + ' initiatives off default'
-          : 'Off default on another page — ' + elsewhere[0].name;
-        vSel.insertBefore(mixed, noneOpt.nextSibling);
-        vSel.value = 'mixed';
-      } else if (offDefault.length === 1) {
-        var live = activeArm(offDefault[0]);
-        armOptions.forEach(function (opt, i) {
-          if (opt.ini === offDefault[0] && String(opt.arm.id) === live) vSel.value = String(i);
-        });
+    /* Setting an initiative back to what the page renders unasked forgets it,
+       so "nothing selected" stays the production state and the URL stays clean. */
+    function setArm(slug, arm, deflt) {
+      var changes = {};
+      if (arm === null || arm === deflt) {
+        changes[slug] = null;
+        if (window.protoVariantSet) window.protoVariantSet(slug, null);
       } else {
-        vSel.value = '';
+        changes[slug] = arm;
       }
-
-      vSel.addEventListener('change', function () {
-        if (vSel.value === 'mixed') return;   // not a state you can navigate INTO
-        var chosen = vSel.value === '' ? null : armOptions[Number(vSel.value)];
-        var changes = {};
-        /* Every registered initiative, not just this page's: an arm picked three
-           steps ago is still in force, and "one variant at a time" has to mean
-           the whole prototype, not the current page. Clearing the param is not
-           enough — arms are remembered — so each one is forgotten too. */
-        (window.protoInitiatives || []).forEach(function (reg) {
-          var keep = chosen && chosen.ini.slug === reg.slug;
-          changes[reg.slug] = keep ? String(chosen.arm.id) : null;
-          if (!keep && window.protoVariantSet) window.protoVariantSet(reg.slug, null);
-        });
-        window.location.href = withParams(changes);
-      });
-
-      vWrap.appendChild(vSel);
-      bar.appendChild(vWrap);
+      window.location.href = withParams(changes);
     }
+
+    var vPop = makePopover(
+      'Variants' + (onCount ? ' (' + onCount + ' on)' : ''),
+      onCount
+        ? 'Variants in force: ' + onHere.map(function (ini) { return ini.name + ' ' + activeArm(ini); })
+            .concat(elsewhere.map(function (reg) {
+              return reg.name + ' ' + (params.get(reg.slug) || window.protoVariantStored(reg.slug));
+            })).join(', ')
+        : 'Design candidates — nothing selected renders production'
+    );
+    if (onCount) vPop.button.className = 'pb-on';
+
+    function variantRow(name, title, options, current, onChange) {
+      var field = document.createElement('label');
+      field.className = 'pb-field';
+      var cap = document.createElement('span');
+      cap.textContent = name;
+      if (title) cap.title = title;
+      field.appendChild(cap);
+      var sel = document.createElement('select');
+      sel.style.maxWidth = 'none';
+      options.forEach(function (o) {
+        var opt = document.createElement('option');
+        opt.value = o.value; opt.textContent = o.label;
+        sel.appendChild(opt);
+      });
+      sel.value = current;
+      sel.addEventListener('change', function () { onChange(sel.value); });
+      field.appendChild(sel);
+      return field;
+    }
+
+    if (pageInitiatives.length) {
+      var hereSec = document.createElement('div');
+      var hereHead = document.createElement('h4');
+      hereHead.textContent = 'On this page';
+      hereSec.appendChild(hereHead);
+      var hereStack = document.createElement('div');
+      hereStack.className = 'pb-stack';
+      pageInitiatives.forEach(function (ini) {
+        hereStack.appendChild(variantRow(
+          ini.name,
+          ini.spec ? 'Spec: ' + ini.spec : '',
+          ini.arms.map(function (a) { return { value: String(a.id), label: a.label || a.id }; }),
+          activeArm(ini),
+          function (v) { setArm(ini.slug, v, ini.deflt); }
+        ));
+      });
+      hereSec.appendChild(hereStack);
+      vPop.panel.appendChild(hereSec);
+    }
+
+    if (elsewhere.length) {
+      var elseSec = document.createElement('div');
+      var elseHead = document.createElement('h4');
+      elseHead.textContent = 'In force on other pages';
+      elseSec.appendChild(elseHead);
+      var elseStack = document.createElement('div');
+      elseStack.className = 'pb-stack';
+      elsewhere.forEach(function (reg) {
+        var arm = String(params.get(reg.slug) || window.protoVariantStored(reg.slug));
+        elseStack.appendChild(variantRow(
+          reg.name,
+          reg.spec ? 'Spec: ' + reg.spec : '',
+          [{ value: arm, label: arm }, { value: '', label: 'Off — production' }],
+          arm,
+          function (v) { setArm(reg.slug, v || null, ''); }
+        ));
+      });
+      elseSec.appendChild(elseStack);
+      vPop.panel.appendChild(elseSec);
+    }
+
+    if (!pageInitiatives.length && !elsewhere.length) {
+      var noneP = document.createElement('div');
+      noneP.textContent = 'No variants on this page.';
+      noneP.style.color = '#8a8a90';
+      vPop.panel.appendChild(noneP);
+    }
+
+    if (onCount) {
+      popoverSection(vPop.panel, 'Reset variants', [{
+        label: 'All to production',
+        title: 'Turn every variant off, on every page',
+        run: function () {
+          var changes = {};
+          (window.protoInitiatives || []).forEach(function (reg) {
+            changes[reg.slug] = null;
+            if (window.protoVariantSet) window.protoVariantSet(reg.slug, null);
+          });
+          window.location.href = withParams(changes);
+        }
+      }]);
+    }
+
+    bar.appendChild(vPop.wrap);
 
     /* ── One popover for everything page-specific ────────────────────────────
        fields = URL overrides the page reads at load (decision.html's offer
@@ -852,15 +853,18 @@
         bar.appendChild(seedBtn);
       }
 
-      /* Reset takes you back to the true initial state: no ad started, and on
-         the front page, wherever you happened to be. Clearing in place would
+      /* Reset takes you back to the true initial state: no ad started, every
+         variant off, and on the front page, wherever you happened to be. Clearing in place would
          leave you on a mid-funnel or offers page with nothing to render. */
       var clearBtn = document.createElement('button');
       clearBtn.type = 'button';
-      clearBtn.textContent = 'Reset prototype';
-      clearBtn.title = 'Clear all car details and return to the front page, no ad started';
+      clearBtn.textContent = 'Reset';
+      clearBtn.title = 'Clear all car details, turn every variant off and return to the front page, no ad started';
       clearBtn.addEventListener('click', function () {
         window.PROTO_MOCK.clear();
+        (window.protoInitiatives || []).forEach(function (reg) {
+          if (window.protoVariantSet) window.protoVariantSet(reg.slug, null);
+        });
         window.location.href = ROOT + 'index.html';
       });
       bar.appendChild(clearBtn);
