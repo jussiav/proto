@@ -923,7 +923,9 @@
         cap.textContent = label + (reg && arm ? ' · ' + (reg.name === label ? '' : reg.name + ' ') + arm : '');
         if (reg && arm) cap.title = 'Choosing an answer switches ' + reg.name + ' ' + arm + ' on';
         field.appendChild(cap);
-        var current = hasCar || !ex.needsCar ? ex.get(fs0) : '';
+        /* No car yet: show what a seed would give (each list's first option),
+           since choosing any value seeds the car first. */
+        var current = hasCar || !ex.needsCar ? ex.get(fs0) : (ex.options ? ex.options[0].id : '');
         var control;
         if (ex.type === 'number') {
           control = document.createElement('input');
