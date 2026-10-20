@@ -390,7 +390,7 @@
   /* "Seller edits before review": ?booked=1 / ?booked=0 pins whether an advisor
      has booked the ad for its review call (store.reviewBooked), so a link
      reproduces the exact state. Applied after the auto-seed, which rewrites the
-     store. The bar's Advisor booking control writes the same param back into
+     store. The Review section of the bar's Events popover writes the same param back into
      the address. */
   var bookedParam = new URLSearchParams(window.location.search).get('booked');
   if (bookedParam === '1' || bookedParam === '0') {

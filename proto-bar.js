@@ -24,20 +24,17 @@
  *     initiatives: [ { slug, default, variants: [ { id, label } ] } ],
  *     fields:    [ { key, label, placeholder, width, keepEmpty } ],  // URL overrides
  *     actions:   [ { label, title, run } ],                          // state mutations
- *     panelLabel: 'Auction settings',   // names the button they collapse into
- *     fieldsLabel: 'Prices €', actionsLabel: 'Negotiation',   // headings inside it
+ *     fieldsLabel: 'Auction — dealerships', actionsLabel: 'Dealer response',
  *   };
  *
- * ── fields and actions live in ONE popover, not on the bar ──────────────────
- * Both used to render inline, so decision.html alone put three text inputs, an
- * Apply and three buttons on the strip — more controls than the rest of the bar
- * put together, and each one only meaningful on that page. They now collapse
- * into a single button named by panelLabel, so page-specific tooling costs one
- * slot however much of it a page declares.
- *
- * Collapsing hides state, so the button says when an override is in force: it
+ * ── The bar's fixed slots ──────────────────────────────────────────────────
+ * Prototype · Mode · Scenario · Variants · Seed car · Events · Reset · Go to.
+ * No page adds a button of its own: its fields and actions become sections of
+ * the Events popover, headed by fieldsLabel / actionsLabel. Events = what
+ * happened to the ad since the seller submitted it (AutoVex review, the
+ * auction, dealer responses, market data, system events); Seed car = what the
+ * seller entered. A closed popover says when something is set: the button
  * takes the dark chip styling and a count, with the values in its tooltip.
- * Otherwise a hand-written ?asking= would be invisible behind a closed panel.
  *
  * Scenario = which state of the world (a real seller could be in it).
  * Variant   = which design candidate (exists only because we are proposing it).
@@ -636,167 +633,137 @@
 
     bar.appendChild(vPop.wrap);
 
-    /* ── One popover for everything page-specific ────────────────────────────
-       fields = URL overrides the page reads at load (decision.html's offer
-       amounts), applied together on Enter or via Apply; an empty value clears
-       the param unless the field declares keepEmpty (decision needs "second="
-       present-but-empty to mean "force a single offer").
-       actions = things that mutate simulated state rather than navigate, e.g.
-       "Simulate dealer reply".
+    /* ── Events — what happened to the ad since the seller submitted it ─────
+       One popover on every page, in a fixed slot after Seed car. Sections, in
+       the order things happen: Review (AutoVex, built in below), then the
+       page's own fields and actions under its fieldsLabel / actionsLabel
+       (decision: Auction + Dealer response; offers: Market data; photos:
+       System). A page with none still gets the button, so the bar's slots do
+       not move between pages.
 
-       They share one button because they are one thought — "set this page's
-       situation up" — and because inline they crowded out the rows that are on
-       every page. */
+       fields = URL overrides the page reads at load, applied together on Enter
+       or via Apply; an empty value clears the param unless the field declares
+       keepEmpty (decision needs "second=" present-but-empty to mean "force a
+       single offer"). actions = things that mutate simulated state rather than
+       navigate. */
     var hasFields  = !!(cfg.fields && cfg.fields.length);
     var hasActions = !!(cfg.actions && cfg.actions.length);
+    var activeFields = hasFields ? cfg.fields.filter(function (f) { return params.has(f.key); }) : [];
 
-    if (hasFields || hasActions) {
-      /* Which overrides are actually set, named in the tooltip so a closed panel
-         cannot hide them. keepEmpty fields count when present-but-empty — that
-         IS their meaning. */
-      var activeFields = hasFields ? cfg.fields.filter(function (f) { return params.has(f.key); }) : [];
-      var panelName = cfg.panelLabel || 'Page tools';
-      var toolsPop = makePopover(
-        panelName + (activeFields.length ? ' (' + activeFields.length + ')' : ''),
-        activeFields.length
-          ? panelName + ' — in force: ' + activeFields.map(function (f) {
-              var v = params.get(f.key);
-              return (f.label || f.key) + ' = ' + (v === '' ? '(empty)' : v);
-            }).join(', ')
-          : (cfg.panelTitle || (panelName + ' — set this page up'))
-      );
-      var tools   = toolsPop.wrap;
-      var panel   = toolsPop.panel;
-      var setPanelOpen = toolsPop.setOpen;
-      if (activeFields.length) toolsPop.button.className = 'pb-on';
-
-      if (hasFields) {
-        var fSec = document.createElement('div');
-        var fHead = document.createElement('h4');
-        fHead.textContent = cfg.fieldsLabel || 'Overrides';
-        fSec.appendChild(fHead);
-        var fRow = document.createElement('div');
-        fRow.className = 'pb-row';
-        var inputs = [];
-        cfg.fields.forEach(function (f) {
-          /* Real labels rather than the bar's cryptic placeholders — the panel
-             has the room the strip never had. */
-          var field = document.createElement('label');
-          field.className = 'pb-field';
-          var cap = document.createElement('span');
-          cap.textContent = f.label || f.key;
-          field.appendChild(cap);
-          var inp = document.createElement('input');
-          inp.type = 'text';
-          inp.className = 'pb-input';
-          inp.placeholder = f.placeholder || f.key;
-          inp.value = params.get(f.key) || '';
-          if (f.width) inp.style.width = f.width;
-          inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFields(); });
-          inputs.push({ f: f, el: inp });
-          field.appendChild(inp);
-          fRow.appendChild(field);
-        });
-        function applyFields() {
-          var changes = {};
-          inputs.forEach(function (i) {
-            var v = i.el.value.trim();
-            changes[i.f.key] = v ? v : (i.f.keepEmpty ? '' : null);
-          });
-          window.location.href = withParams(changes);
-        }
-        fSec.appendChild(fRow);
-        var applyRow = document.createElement('div');
-        applyRow.className = 'pb-apply';
-        var applyBtn = document.createElement('button');
-        applyBtn.type = 'button';
-        applyBtn.textContent = 'Apply';
-        applyBtn.title = 'Reload with these values in the URL';
-        applyBtn.addEventListener('click', applyFields);
-        applyRow.appendChild(applyBtn);
-        fSec.appendChild(applyRow);
-        panel.appendChild(fSec);
-      }
-
-      if (hasActions) {
-        var aSec = document.createElement('div');
-        var aHead = document.createElement('h4');
-        aHead.textContent = cfg.actionsLabel || 'Actions';
-        aSec.appendChild(aHead);
-        var aStack = document.createElement('div');
-        aStack.className = 'pb-stack';
-        cfg.actions.forEach(function (a) {
-          var b = document.createElement('button');
-          b.type = 'button';
-          b.textContent = a.label;
-          if (a.title) b.title = a.title;
-          /* An action mutates state and re-renders in place, so the panel would
-             otherwise stay open over the result it just produced. */
-          b.addEventListener('click', function () { setPanelOpen(false); a.run(); });
-          aStack.appendChild(b);
-        });
-        aSec.appendChild(aStack);
-        panel.appendChild(aSec);
-      }
-
-      bar.appendChild(tools);
-    }
-
-    /* "Seller edits before review" v1: whether an advisor has booked the ad for
-       its review call. It is world state that the funnel, the success page
-       and the offers page all read (store.reviewBooked), so it lives here, on
-       every one of those pages, rather than in each page's own tools. On a
+    /* Review — AutoVex: whether an advisor has booked the ad for its review
+       call ("Seller edits before review" v1). World state the funnel, the
+       success page and the offers page all read (store.reviewBooked). On a
        funnel step the change takes effect at the seller's next Jatka, so the
-       page is not reloaded there; the success and offers pages reload to show
-       or hide their edit button. */
+       page is not reloaded there; success and offers reload to show or hide
+       their edit button. */
     var BOOKING_PAGES = ['details.html', 'services.html', 'photos.html', 'price.html', 'contact.html', 'success.html', 'offers.html'];
     var BOOKING_RELOADS = ['success.html', 'offers.html'];
-    if (BOOKING_PAGES.indexOf(file) !== -1 && window.protoVariant &&
-        window.protoVariant('seller-edits-before-review', 'control') === 'v1') {
-      var readFunnel = function () { try { return JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) { return {}; } };
-      var writeFunnel = function (s) { try { localStorage.setItem('autovex_funnel', JSON.stringify(s)); } catch (e) {} };
-      var bookingPop = makePopover('Advisor booking', 'Whether an advisor has booked this ad for its review call');
-      var bSec = document.createElement('div');
-      var bHead = document.createElement('h4');
-      bHead.textContent = 'Seller edits before review';
-      bSec.appendChild(bHead);
-      var bStack = document.createElement('div');
-      bStack.className = 'pb-stack';
-      var bookBtn = document.createElement('button');
-      bookBtn.type = 'button';
-      bookBtn.textContent = 'Advisor books the ad';
-      bookBtn.title = 'An edit in progress ends at the seller\'s next Jatka';
-      var clearBtn = document.createElement('button');
-      clearBtn.type = 'button';
-      clearBtn.textContent = 'Clear the booking';
-      var syncBooking = function () {
-        var booked = !!readFunnel().reviewBooked;
-        bookingPop.button.textContent = 'Advisor booking: ' + (booked ? 'booked' : 'none') + ' \u25BE';
-        bookingPop.button.className = booked ? 'pb-on' : '';
-        bookBtn.disabled = booked;
-        clearBtn.disabled = !booked;
-      };
-      var setBooking = function (booked) {
-        var s = readFunnel();
-        if (booked) s.reviewBooked = true; else delete s.reviewBooked;
-        writeFunnel(s);
-        bookingPop.setOpen(false);
+    var hasBooking = BOOKING_PAGES.indexOf(file) !== -1 && window.protoVariant &&
+        window.protoVariant('seller-edits-before-review', 'control') === 'v1';
+    var readFunnelStore = function () { try { return JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) { return {}; } };
+    var booked = hasBooking && !!readFunnelStore().reviewBooked;
+
+    var eventsOn = activeFields.length + (booked ? 1 : 0);
+    var eventsPop = makePopover(
+      'Events' + (eventsOn ? ' (' + eventsOn + ')' : ''),
+      eventsOn
+        ? 'Events in force: ' + activeFields.map(function (f) {
+            var v = params.get(f.key);
+            return (f.label || f.key) + ' = ' + (v === '' ? '(empty)' : v);
+          }).concat(booked ? ['Advisor has booked the ad'] : []).join(', ')
+        : 'What happened to the ad since it was submitted'
+    );
+    if (eventsOn) eventsPop.button.className = 'pb-on';
+    var setPanelOpen = eventsPop.setOpen;
+    var panel = eventsPop.panel;
+
+    if (hasBooking) {
+      var bookBtn, clearBookBtn;
+      var setBooking = function (on) {
+        var s = readFunnelStore();
+        if (on) s.reviewBooked = true; else delete s.reviewBooked;
+        try { localStorage.setItem('autovex_funnel', JSON.stringify(s)); } catch (e) {}
+        setPanelOpen(false);
         /* The address carries the state too (proto-mock.js reads ?booked=), so
            the current URL can be sent as it is. */
-        var url = withParams({ booked: booked ? '1' : '0' });
+        var url = withParams({ booked: on ? '1' : '0' });
         if (BOOKING_RELOADS.indexOf(file) !== -1) { window.location.href = url; return; }
         history.replaceState(null, '', url);
-        syncBooking();
+        bookBtn.disabled = on;
+        clearBookBtn.disabled = !on;
       };
-      bookBtn.addEventListener('click', function () { setBooking(true); });
-      clearBtn.addEventListener('click', function () { setBooking(false); });
-      bStack.appendChild(bookBtn);
-      bStack.appendChild(clearBtn);
-      bSec.appendChild(bStack);
-      bookingPop.panel.appendChild(bSec);
-      syncBooking();
-      bar.appendChild(bookingPop.wrap);
+      var revSec = popoverSection(panel, 'Review — AutoVex', [
+        { label: 'Advisor books the ad', title: 'An edit in progress ends at the seller\'s next Jatka',
+          run: function () { setBooking(true); } },
+        { label: 'Clear the booking', run: function () { setBooking(false); } }
+      ]);
+      var revBtns = revSec.querySelectorAll('button');
+      bookBtn = revBtns[0]; clearBookBtn = revBtns[1];
+      bookBtn.disabled = booked;
+      clearBookBtn.disabled = !booked;
     }
+
+    if (hasFields) {
+      var fSec = document.createElement('div');
+      var fHead = document.createElement('h4');
+      fHead.textContent = cfg.fieldsLabel || 'Overrides';
+      fSec.appendChild(fHead);
+      var fRow = document.createElement('div');
+      fRow.className = 'pb-row';
+      var inputs = [];
+      cfg.fields.forEach(function (f) {
+        var field = document.createElement('label');
+        field.className = 'pb-field';
+        var cap = document.createElement('span');
+        cap.textContent = f.label || f.key;
+        field.appendChild(cap);
+        var inp = document.createElement('input');
+        inp.type = 'text';
+        inp.className = 'pb-input';
+        inp.placeholder = f.placeholder || f.key;
+        inp.value = params.get(f.key) || '';
+        if (f.width) inp.style.width = f.width;
+        inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') applyFields(); });
+        inputs.push({ f: f, el: inp });
+        field.appendChild(inp);
+        fRow.appendChild(field);
+      });
+      function applyFields() {
+        var changes = {};
+        inputs.forEach(function (i) {
+          var v = i.el.value.trim();
+          changes[i.f.key] = v ? v : (i.f.keepEmpty ? '' : null);
+        });
+        window.location.href = withParams(changes);
+      }
+      fSec.appendChild(fRow);
+      var applyRow = document.createElement('div');
+      applyRow.className = 'pb-apply';
+      var applyBtn = document.createElement('button');
+      applyBtn.type = 'button';
+      applyBtn.textContent = 'Apply';
+      applyBtn.title = 'Reload with these values in the URL';
+      applyBtn.addEventListener('click', applyFields);
+      applyRow.appendChild(applyBtn);
+      fSec.appendChild(applyRow);
+      panel.appendChild(fSec);
+    }
+
+    if (hasActions) {
+      /* An action mutates state and re-renders in place, so the panel would
+         otherwise stay open over the result it just produced. */
+      popoverSection(panel, cfg.actionsLabel || 'Actions', cfg.actions.map(function (a) {
+        return { label: a.label, title: a.title, run: function () { setPanelOpen(false); a.run(); } };
+      }));
+    }
+
+    if (!hasBooking && !hasFields && !hasActions) {
+      var noEvents = document.createElement('div');
+      noEvents.textContent = 'No events on this page.';
+      noEvents.style.color = '#8a8a90';
+      panel.appendChild(noEvents);
+    }
+    var eventsWrap = eventsPop.wrap;
 
     /* Built-in data actions. Available everywhere PROTO_MOCK is loaded, because
        "show me this page with a car in it" and "give me a clean slate" are
@@ -923,6 +890,8 @@
       seedPop.panel.appendChild(exSec);
       bar.appendChild(seedPop.wrap);
 
+      bar.appendChild(eventsWrap);
+
       /* Reset takes you back to the true initial state: no ad started, every
          variant off, and on the front page, wherever you happened to be. Clearing in place would
          leave you on a mid-funnel or offers page with nothing to render. */
@@ -939,6 +908,8 @@
       });
       bar.appendChild(clearBtn);
     }
+
+    if (!eventsWrap.parentNode) bar.appendChild(eventsWrap);   // pages without PROTO_MOCK
 
     bar.appendChild(Object.assign(document.createElement('span'), { className: 'pb-spacer' }));
 

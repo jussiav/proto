@@ -163,7 +163,7 @@
     return;
   }
 
-  /* The prototype bar's "Advisor booking" control sets store.reviewBooked. */
+  /* The prototype bar's Events popover (Review section) sets store.reviewBooked. */
 
   /* The lock applies in test mode only. It reproduces what a seller meets, and
      a participant runs with ?mode=test; in dev mode the prototype bar's Go to

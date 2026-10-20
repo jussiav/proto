@@ -1320,9 +1320,7 @@
          corrupt PDF has to be crafted, and the prototype has no network to lose.
          Each action raises the real banner through the real code path, so the
          copy and the layout are reviewable without rigging a file. */
-      panelLabel:   'Upload errors',
-      panelTitle:   'Raise a document upload error, as a failed upload would',
-      actionsLabel: 'Simulate',
+      actionsLabel: 'System — upload errors',
       actions: [
         { label: 'Corrupt or wrong format', title: 'What a file whose bytes are not a PDF produces',
           run: function () { window.simulateFileError('type'); } },

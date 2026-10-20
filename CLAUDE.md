@@ -409,7 +409,7 @@ produce (today: Review / No review). Seller answers are NOT carried.
   production) + Reset renamed and clearing variants
 - [x] 2 — Seed car exceptions + answers that switch variants on; "Exclusive
   answer" leaves Auction settings
-- [ ] 3 — Events: Auction settings renamed, Advisor booking, Similar cars data
+- [x] 3 — Events: Auction settings renamed, Advisor booking, Similar cars data
   and upload errors moved in as sections
 - [ ] 4 — Mode popover with Copy test link
 
@@ -452,10 +452,10 @@ success, dac7), the delivery-variant switcher on details, and the footer's
 "Prototype instructions" link. `photos.html` also lost its `<footer>` — it was
 the only funnel page with one, and it existed solely to host that drawer.
 
-Shows: a `Prototype` identity chip, **Mode**, **Scenario**, **Variants** (one
-row for the whole page, options grouped under the initiative that proposes them),
-the page's own tooling popover if it declares any, **Seed car** / **Reset
-prototype**, and **Go to**. No page name, no collapse control — the bar stays
+Shows, in fixed slots on every page (2026-10-20): a `Prototype` identity chip,
+**Mode**, **Scenario**, **Variants** (one select per initiative), **Seed car**
+(what the seller entered), **Events** (what happened since: AutoVex review,
+auction, dealer responses, market data, system), **Reset**, and **Go to**. No page name, no collapse control — the bar stays
 visible. The Mode row is thin value while there are only two modes; it earns its
 place once there are more.
 
@@ -480,17 +480,23 @@ window.protoPage = {
 };
 ```
 
-**Page-specific tooling is ONE popover, not a row each.** A page's `fields` and
-`actions` collapse behind a single button named by `panelLabel`, so whatever a
-page declares costs one slot on the strip:
+**Page-specific tooling lives in the Events popover, not in a button of its
+own** (2026-10-20; it was a per-page button named by `panelLabel`, "Auction
+settings" on decision). A page's `fields` and `actions` become sections of
+Events, headed by their labels; the built-in **Review — AutoVex** section (the
+advisor booking, formerly its own "Advisor booking" button) comes first:
 
 ```js
 window.protoPage = {
-  panelLabel:  'Auction settings',   // the button; `panelTitle` is its tooltip
-  fieldsLabel: 'Prices €',      fields:  [ { key, label, placeholder, width, keepEmpty } ],
-  actionsLabel: 'Negotiation',  actions: [ { label, title, run } ]
+  fieldsLabel: 'Auction — dealerships',  fields:  [ { key, label, placeholder, width, keepEmpty } ],
+  actionsLabel: 'Dealer response',       actions: [ { label, title, run } ]
 };
 ```
+
+Current sections: decision **Auction — dealerships** + **Dealer response**,
+offers **Market data — similar cars**, photos **System — upload errors**. Older
+notes in this file that say "Auction settings", "Similar cars data", "Upload
+errors" or "Advisor booking" mean these sections.
 
 `fields` are URL params the page reads at load (decision.html's offer prices),
 applied together on Enter or via Apply. `keepEmpty` keeps a present-but-empty

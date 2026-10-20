@@ -4082,7 +4082,7 @@
     }
 
     /* Consumed by proto-bar.js. Everything beyond the scenario list lives behind
-       the bar's single **Auction settings** button: the three price overrides
+       the bar's **Events** popover: the three price overrides
        (persisted in the URL, read at load) and the three negotiation actions
        (mutate simulated state, then re-render). Inline they were seven controls
        on a strip shared with every page's own rows — see proto-bar.js.
@@ -4120,9 +4120,8 @@
           ]
         }
       ],
-      panelLabel: 'Auction settings',
-      panelTitle: 'Auction prices and simulated dealer responses',
-      fieldsLabel: 'Prices €',
+      /* Shown as sections of the bar's Events popover. */
+      fieldsLabel: 'Auction — dealerships',
       fields: [
         { key: 'asking',  label: 'Asking price €',  placeholder: 'asking' },
         { key: 'highest', label: 'Highest offer €', placeholder: 'highest' },

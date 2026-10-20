@@ -252,7 +252,7 @@
     // (tenderform.review.content.would_contact_* in vue-i18n-locales.generated.js)
     var REVIEW_COPY_VARIANT = _offersParams.get('copy') === 'default' ? null : _offersParams.get('copy');
     /* World state, not a variant: an advisor has booked the draft for its review
-       call. Set from the prototype bar's "Advisor booking" control, which the
+       call. Set from the Review section of the prototype bar's Events popover, which the
        funnel and the success page share (store.reviewBooked). prod has no
        seller-facing sign of it; it only matters to v1 below. */
     var REVIEW_BOOKED = (function () {
@@ -1737,9 +1737,9 @@
           ]
         }
       ],
-      panelLabel:   'Similar cars data',
-      panelTitle:   'What the similar-cars query returns (world state, applies to both variants)',
-      actionsLabel: 'Query result',
+      /* A section of the bar's Events popover: what the similar-cars query
+         returns (world state, applies to every variant). */
+      actionsLabel: 'Market data — similar cars',
       actions: [
         { label: 'Same model only',          key: 'same' },
         { label: 'Mixed models in each list', key: 'mixed' },
