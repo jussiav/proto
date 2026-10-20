@@ -53,6 +53,15 @@
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
+  <script>
+    /* Price guess: the arm decides only whether the teaser section renders.
+       Stamped before body parsing, so control never paints it. */
+    (function () {
+      var arm = window.protoVariant('price-guess', 'control');
+      if (arm !== 'control' && arm !== 'v1') { window.protoVariantSet('price-guess', null); arm = 'control'; }
+      document.documentElement.setAttribute('data-price-guess-arm', arm);
+    })();
+  </script>
   <style>
     /* EU stars inside the FIN badge */
     .eu-stars { width: 20px; height: 20px; }
@@ -128,6 +137,103 @@
     .faq-body > div { overflow: hidden; }
     .faq-item.open .faq-body { grid-template-rows: 1fr; }
 
+    /* Price guess teaser (initiative price-guess, v1 only). Hand-written:
+       the reels and the wiggle are this section's own. */
+    #price-guess-teaser { display: none; }
+    html[data-price-guess-arm="v1"] #price-guess-teaser { display: block; }
+    .pgt {
+      background:
+        radial-gradient(circle at 85% 15%, rgba(11,109,255,.55), transparent 45%),
+        radial-gradient(circle at 8% 95%, rgba(0,240,220,.16), transparent 40%),
+        #08234D;
+    }
+    .pgt-tag {
+      display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+      padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.12); color: #fff;
+      font: 700 12px/16px "DM Sans", sans-serif; letter-spacing: .14em; text-transform: uppercase;
+    }
+    .pgt-cta {
+      display: inline-flex; align-items: center; justify-content: center; gap: 12px; align-self: flex-start;
+      height: 64px; padding: 0 32px; border-radius: 16px;
+      background: #00F0DC; color: #000; font: 700 22px/1 Barlow, sans-serif;
+      box-shadow: 0 6px 0 rgba(0,0,0,.4), 0 18px 40px rgba(0,240,220,.25);
+      transition: translate .15s, box-shadow .15s, background-color .15s;
+      animation: pgt-wiggle 4.5s ease-in-out 1.5s infinite;
+    }
+    .pgt-cta:hover { background: #00E4D1; translate: 0 -2px; }
+    .pgt-cta:active { translate: 0 4px; box-shadow: 0 2px 0 rgba(0,0,0,.4); }
+    .pgt-cta:focus-visible { outline: 3px solid #FAEADA; outline-offset: 3px; }
+    .pgt-cta svg { transition: transform .5s; }
+    .pgt-cta:hover svg { transform: rotate(360deg); }
+    @keyframes pgt-wiggle {
+      0%, 84%, 100% { rotate: 0deg; }
+      87% { rotate: -3deg; } 90% { rotate: 3deg; } 93% { rotate: -2deg; } 96% { rotate: 1deg; }
+    }
+    .pgt-machine {
+      position: relative; display: block; width: 100%; max-width: 380px;
+      padding: 40px 18px 20px; border-radius: 28px;
+      background: linear-gradient(180deg, #0F47BE 0%, #11285A 45%);
+      box-shadow: 0 0 0 5px rgba(255,255,255,.08), 0 26px 50px rgba(0,0,0,.35);
+      transition: rotate .3s;
+    }
+    .pgt-machine:hover { rotate: 2deg; }
+    .pgt-sign {
+      position: absolute; top: -20px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+      padding: 11px 20px; border-radius: 14px; background: #00F0DC; color: #08234D;
+      font: 700 16px/1 Barlow, sans-serif; letter-spacing: .08em; text-transform: uppercase;
+      box-shadow: 0 5px 0 rgba(8,35,77,.35), 0 0 22px rgba(0,240,220,.5);
+    }
+    .pgt-window { padding: 12px; border-radius: 18px; background: #08234D; box-shadow: inset 0 0 0 2px rgba(0,240,220,.25); }
+    .pgt-bulbs { display: flex; justify-content: space-between; padding: 0 4px; }
+    .pgt-bulbs:first-child { margin-bottom: 10px; }
+    .pgt-bulbs:last-child { margin-top: 10px; }
+    .pgt-bulbs i {
+      width: 7px; height: 7px; border-radius: 50%; background: #00F0DC; box-shadow: 0 0 6px 1px rgba(0,240,220,.8);
+      animation: pgt-blink 1.2s steps(1, end) infinite;
+    }
+    .pgt-bulbs i:nth-child(even) { background: #FAEADA; box-shadow: 0 0 6px 1px rgba(245,171,132,.9); animation-delay: -.6s; }
+    @keyframes pgt-blink { 50% { opacity: .25; box-shadow: none; } }
+    .pgt-reels { display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .pgt-reel {
+      --cell: 64px; width: 48px; height: var(--cell); overflow: hidden; border-radius: 9px;
+      background: linear-gradient(#CBD5E1, #fff 24%, #fff 76%, #CBD5E1);
+      box-shadow: inset 0 3px 6px rgba(8,35,77,.3), inset 0 -3px 6px rgba(8,35,77,.3);
+    }
+    .pgt-reel > div { animation: pgt-roll 9s linear infinite; }
+    .pgt-reel.is-2 > div { animation-duration: 6.5s; }
+    .pgt-reel.is-3 > div { animation-duration: 4.2s; }
+    .pgt-reel.is-4 > div { animation-duration: 2.6s; }
+    .pgt-reel span {
+      display: block; height: var(--cell); line-height: var(--cell); text-align: center;
+      font: 700 42px Barlow, sans-serif; color: #08234D;
+    }
+    @keyframes pgt-roll { to { transform: translateY(calc(var(--cell) * -10)); } }
+    .pgt-euro { margin-left: 4px; font: 700 38px/1 Barlow, sans-serif; color: #00F0DC; }
+    .pgt-lever { position: absolute; right: -30px; top: 50%; width: 34px; height: 120px; transform: translateY(-50%); }
+    .pgt-lever::before {
+      content: ""; position: absolute; left: 0; bottom: 0; width: 22px; height: 46px;
+      border-radius: 0 12px 12px 0; background: #0F47BE;
+    }
+    .pgt-lever::after {
+      content: ""; position: absolute; left: 10px; bottom: 22px; width: 7px; height: 78px; border-radius: 4px;
+      background: linear-gradient(90deg, #94A3B8, #F1F5F9, #94A3B8);
+    }
+    .pgt-lever i {
+      position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; z-index: 1;
+      background: radial-gradient(circle at 35% 30%, #fff 0 14%, #00F0DC 16%);
+      box-shadow: inset 0 -4px 0 rgba(8,35,77,.25);
+    }
+    .pgt-coin {
+      position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #FAEADA 0 30%, #F5AB84 75%);
+      box-shadow: inset 0 -4px 0 rgba(8,35,77,.18); color: #08234D; font-family: Barlow, sans-serif; font-weight: 700;
+      animation: pgt-float 7s ease-in-out infinite; pointer-events: none;
+    }
+    @keyframes pgt-float { 50% { translate: 0 -14px; rotate: 12deg; } }
+    @media (prefers-reduced-motion: reduce) {
+      .pgt-cta, .pgt-reel > div, .pgt-bulbs i, .pgt-coin { animation: none !important; }
+    }
+
   </style>
 </head>
 <body class="font-dm bg-white text-slate-900">
@@ -152,6 +258,14 @@
           variants: [
             { id: 'control', label: 'Control — 280 000 km error on the form' },
             { id: 'v6',      label: 'Variant 6 — route 280 000 km and over to Huutokaupat.com' }
+          ]
+        },
+        {
+          slug:    'price-guess',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no price guess section' },
+            { id: 'v1',      label: 'Variant 1 — price guess section, links to price-guess.html' }
           ]
         }
       ]
@@ -599,6 +713,36 @@
     <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;" class="inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg hover:bg-[#0A59EB] transition-colors" data-i18n="nav.startAuction">
       Aloita kilpailutus
     </a>
+  </section>
+
+  <!-- ── Price guess teaser (initiative price-guess, v1 only) ── -->
+  <section id="price-guess-teaser" class="pgt relative overflow-hidden px-10 py-20 max-md:px-5 max-md:py-16" aria-labelledby="pgt-title">
+    <span class="pgt-coin max-md:hidden" style="width:56px;height:56px;font-size:26px;left:47%;top:12%;" aria-hidden="true">€</span>
+    <span class="pgt-coin" style="width:38px;height:38px;font-size:18px;right:5%;bottom:12%;animation-delay:-3s;" aria-hidden="true">€</span>
+    <div class="relative flex items-center gap-16 w-full max-w-[1100px] mx-auto max-md:flex-col max-md:gap-14">
+      <div class="flex-1 flex flex-col gap-5">
+        <span class="pgt-tag"><span class="text-av-turquoise" aria-hidden="true">✦</span><span data-i18n="priceGuessTeaser.tag">Hinta-arvaus</span></span>
+        <h2 id="pgt-title" class="m-0 font-barlow font-bold text-white text-4xl leading-[40px] md:text-5xl md:leading-[52px]" data-i18n="priceGuessTeaser.title">Haluatko vain arvauksen autosi hinnasta?</h2>
+        <p class="m-0 font-dm text-xl leading-7 text-blue-200" data-i18n="priceGuessTeaser.body">Kaksi kenttää, yksi vipu ja hinta, joka on puhdas arvaus.</p>
+        <a href="price-guess.html" class="pgt-cta mt-3 max-sm:self-stretch">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.4" fill="currentColor" stroke="none"/></svg>
+          <span data-i18n="priceGuessTeaser.cta">Arvaa autoni hinta</span>
+        </a>
+      </div>
+      <div class="flex-1 flex justify-center pt-5 max-md:w-full max-md:pr-8">
+        <!-- The machine is a second way in. Hidden from assistive tech: the
+             button beside it carries the name. -->
+        <a href="price-guess.html" class="pgt-machine" tabindex="-1" aria-hidden="true">
+          <span class="pgt-sign">★ <span data-i18n="priceGuess.sign">Hinta-arvaus</span> ★</span>
+          <div class="pgt-window">
+            <div class="pgt-bulbs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <div class="pgt-reels"><div class="pgt-reel is-1"><div><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></div></div><span class="w-1.5" aria-hidden="true"></span><div class="pgt-reel is-2"><div><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></div></div><div class="pgt-reel is-3"><div><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></div></div><div class="pgt-reel is-4"><div><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>0</span></div></div><span class="pgt-euro">€</span></div>
+            <div class="pgt-bulbs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          </div>
+          <span class="pgt-lever"><i></i></span>
+        </a>
+      </div>
+    </div>
   </section>
 
   <!-- ── Reviews (Arvosteluja) ── -->

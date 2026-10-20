@@ -650,6 +650,17 @@
     (function () {
       var params = new URLSearchParams(window.location.search);
       if (!params.has('plate')) return;
+      /* Price guess (price-guess.html) has already shown the looked-up car,
+         so it skips the screen. Its params go on `load`, after the plate and
+         mileage badges have read them. */
+      if (params.get('from') === 'price-guess') {
+        window.addEventListener('load', function () {
+          ['plate', 'km', 'from'].forEach(function (k) { params.delete(k); });
+          var q = params.toString();
+          history.replaceState(null, '', window.location.pathname + (q ? '?' + q : '') + window.location.hash);
+        });
+        return;
+      }
       var screen = document.getElementById('vehicle-info-loading');
       screen.classList.remove('hidden');
       screen.classList.add('flex');

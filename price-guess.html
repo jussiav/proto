@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hinta-arvaus – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':     '#0B6DFF',
+            'av-blue-dark':'#0050C8',
+            'av-blue-500': '#2890FF',
+            'av-dark':     '#08234D',
+            'av-turquoise':'#00F0DC',
+            'av-sky':      '#DAF0F5',
+            'av-peach':    '#F5AB84',
+            'av-cream':    '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="tw-tokens.js"></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
+  <script src="proto-mock.js"></script>
+  <style>
+    /* The machine is built partly from JS (reel strips, receipt values), and the
+       Play CDN only generates utilities present at first paint, so everything
+       the machine draws is hand-written here. Colours are the page's tokens. */
+    :root { --pg-cell: 84px; --pg-reel-w: 62px; }
+    @media (max-width: 619px) { :root { --pg-cell: 64px; --pg-reel-w: 48px; } }
+
+    .pg-hero { background: linear-gradient(to bottom, #0B6DFF 26%, #0050C8 60%); }
+
+    /* Floating decor */
+    .pg-float { position: absolute; pointer-events: none; animation: pg-float 7s ease-in-out infinite; }
+    @keyframes pg-float {
+      0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+      50%      { transform: translateY(-16px) rotate(calc(var(--r, 0deg) + 10deg)); }
+    }
+    .pg-coin {
+      display: flex; align-items: center; justify-content: center;
+      width: 64px; height: 64px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #FAEADA 0 30%, #F5AB84 75%);
+      box-shadow: inset 0 -5px 0 rgba(8,35,77,.18), 0 14px 30px rgba(8,35,77,.25);
+      font: 700 30px/1 Barlow, sans-serif; color: #08234D;
+    }
+    .pg-coin.is-small { width: 40px; height: 40px; font-size: 19px; }
+    .pg-die {
+      position: relative; width: 52px; height: 52px; border-radius: 14px; background: #fff;
+      box-shadow: inset 0 -4px 0 #D7EDFF, 0 14px 30px rgba(8,35,77,.25);
+    }
+    .pg-die i { position: absolute; width: 9px; height: 9px; border-radius: 50%; background: #08234D; }
+    .pg-spark { color: #00F0DC; font-size: 26px; line-height: 1; text-shadow: 0 0 12px rgba(0,240,220,.7); }
+
+    /* The machine */
+    .pg-machine {
+      position: relative; width: 100%; max-width: 460px; margin: 0 auto;
+      display: flex; flex-direction: column; gap: 16px;
+      padding: 48px 20px 26px;
+      background: linear-gradient(180deg, #0F47BE 0%, #08234D 40%);
+      border-radius: 32px;
+      box-shadow: 0 0 0 6px rgba(255,255,255,.1), 0 30px 60px rgba(8,35,77,.5);
+      z-index: 2;
+    }
+    .pg-machine.is-shaking { animation: pg-shake .45s ease-in-out; }
+    @keyframes pg-shake {
+      20% { transform: translateX(-8px) rotate(-1deg); }
+      40% { transform: translateX(7px) rotate(1deg); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(3px); }
+    }
+    .pg-sign {
+      position: absolute; top: -26px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 10px; white-space: nowrap;
+      padding: 14px 24px; border-radius: 16px;
+      background: #00F0DC; color: #08234D;
+      font: 700 20px/1 Barlow, sans-serif; letter-spacing: .08em; text-transform: uppercase;
+      box-shadow: 0 6px 0 rgba(8,35,77,.35), 0 0 28px rgba(0,240,220,.55);
+    }
+    .pg-star { color: #0B6DFF; animation: pg-twinkle 1.6s ease-in-out infinite; }
+    .pg-star + span + .pg-star { animation-delay: -.8s; }
+    @keyframes pg-twinkle { 50% { transform: scale(.6) rotate(45deg); opacity: .5; } }
+
+    .pg-screen { background: #11285A; border-radius: 20px; padding: 16px; }
+    .pg-fields { display: flex; flex-direction: column; gap: 8px; }
+    .pg-err { margin: 2px 4px 0; font: 400 14px/20px "DM Sans", sans-serif; color: #FCA5A5; }
+
+    .pg-car { animation: pg-in .45s ease both; }
+    .pg-car-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .pg-kicker { font: 700 12px/16px "DM Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #00F0DC; }
+    .pg-link { background: none; border: 0; padding: 0; cursor: pointer; font: 500 14px/20px "DM Sans", sans-serif; color: #B9E0FF; text-decoration: underline; }
+    .pg-link:hover { color: #fff; }
+    .pg-car-name { margin: 10px 0 0; font: 700 26px/30px Barlow, sans-serif; color: #fff; }
+    .pg-car-meta { margin: 4px 0 0; font: 500 16px/22px "DM Sans", sans-serif; color: #B9E0FF; }
+    @keyframes pg-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    .pg-lead { margin: 0; text-align: center; font: 500 18px/24px "DM Sans", sans-serif; color: #fff; animation: pg-in .4s ease both; }
+
+    .pg-window {
+      position: relative; padding: 12px 14px; border-radius: 20px; background: #11285A;
+      box-shadow: inset 0 0 0 2px rgba(0,240,220,.25);
+    }
+    .pg-machine[data-phase="won"] .pg-window { animation: pg-glow 1.2s ease-in-out 3; }
+    @keyframes pg-glow { 50% { box-shadow: inset 0 0 0 2px #00F0DC, 0 0 36px rgba(0,240,220,.6); } }
+    .pg-bulbs { display: flex; justify-content: space-between; padding: 0 4px; }
+    .pg-bulbs.is-top { margin-bottom: 12px; }
+    .pg-bulbs.is-bottom { margin-top: 12px; }
+    .pg-bulb {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #00F0DC; box-shadow: 0 0 6px 1px rgba(0,240,220,.8);
+      animation: pg-blink 1.2s steps(1, end) infinite;
+    }
+    .pg-bulb:nth-child(even) { background: #FAEADA; box-shadow: 0 0 6px 1px rgba(245,171,132,.9); animation-delay: -.6s; }
+    @keyframes pg-blink { 50% { opacity: .25; box-shadow: none; } }
+    .pg-machine[data-phase="spinning"] .pg-bulb { animation-duration: .3s; }
+    .pg-machine[data-phase="won"] .pg-bulb { animation-duration: .5s; }
+
+    .pg-reels { position: relative; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .pg-reel {
+      position: relative; overflow: hidden;
+      width: var(--pg-reel-w); height: var(--pg-cell); border-radius: 10px;
+      background: linear-gradient(#CBD5E1, #fff 24%, #fff 76%, #CBD5E1);
+      box-shadow: inset 0 3px 6px rgba(8,35,77,.3), inset 0 -3px 6px rgba(8,35,77,.3);
+    }
+    .pg-strip { will-change: transform; }
+    .pg-strip span {
+      display: block; height: var(--pg-cell); line-height: var(--pg-cell); text-align: center;
+      font: 700 calc(var(--pg-cell) * .66) Barlow, sans-serif; color: #08234D;
+      font-variant-numeric: tabular-nums;
+    }
+    .pg-strip.is-blur { filter: blur(1.4px); }
+    .pg-reel.is-landed { animation: pg-land .28s ease-out; }
+    @keyframes pg-land { 40% { transform: translateY(3px); } }
+    .pg-gap { width: 6px; flex: none; }
+    .pg-euro { margin-left: 6px; font: 700 calc(var(--pg-cell) * .6)/1 Barlow, sans-serif; color: #00F0DC; }
+    .pg-payline { width: 0; height: 0; border-top: 9px solid transparent; border-bottom: 9px solid transparent; flex: none; }
+    .pg-payline.is-left  { border-left: 11px solid #F5AB84; margin-right: 2px; }
+    .pg-payline.is-right { border-right: 11px solid #F5AB84; margin-left: 2px; }
+
+    .pg-jackpot {
+      position: absolute; left: -18px; top: -12px; z-index: 3;
+      padding: 9px 16px; border-radius: 999px;
+      background: #F5AB84; color: #08234D;
+      font: 700 22px/1 Barlow, sans-serif;
+      box-shadow: 0 8px 18px rgba(8,35,77,.35);
+      transform: rotate(-9deg) scale(0);
+    }
+    .pg-machine[data-phase="won"] .pg-jackpot { animation: pg-pop .55s cubic-bezier(.2,1.6,.4,1) .1s forwards; }
+    @keyframes pg-pop { to { transform: rotate(-9deg) scale(1); } }
+
+    .pg-status { margin: 0; min-height: 24px; text-align: center; font: 500 16px/24px "DM Sans", sans-serif; color: #B9E0FF; }
+    .pg-note { margin: -6px 0 0; text-align: center; font: 400 14px/20px "DM Sans", sans-serif; color: #B9E0FF; }
+    .pg-respin-note { margin: 0; text-align: center; font: 700 16px/22px "DM Sans", sans-serif; color: #FAEADA; animation: pg-in .4s ease both; }
+
+    .pg-pull {
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; height: 64px; border: 0; border-radius: 16px; cursor: pointer;
+      background: #00F0DC; color: #000;
+      font: 700 24px/1 Barlow, sans-serif;
+      box-shadow: 0 6px 0 rgba(0,0,0,.4), 0 16px 34px rgba(0,240,220,.25);
+      transition: translate .12s, box-shadow .12s, background-color .15s;
+    }
+    .pg-pull:hover { background: #00E4D1; }
+    .pg-pull:active { translate: 0 4px; box-shadow: 0 2px 0 rgba(0,0,0,.4); }
+    .pg-pull:focus-visible, .pg-respin:focus-visible { outline: 3px solid #FAEADA; outline-offset: 3px; }
+    .pg-pull[disabled] { cursor: progress; translate: 0 4px; box-shadow: 0 2px 0 rgba(0,0,0,.4); }
+    .pg-respin {
+      align-items: center; justify-content: center; gap: 10px; align-self: center;
+      height: 52px; padding: 0 24px; border-radius: 14px; cursor: pointer;
+      background: transparent; border: 2px solid #00F0DC; color: #fff;
+      font: 700 18px/1 Barlow, sans-serif;
+      transition: background-color .15s;
+    }
+    .pg-respin:hover { background: rgba(0,240,220,.12); }
+    .pg-respin svg { transition: transform .5s; }
+    .pg-respin:hover svg { transform: rotate(360deg); }
+
+    /* Phases: input → spinning → won */
+    .pg-car, .pg-lead, .pg-note, .pg-respin-note, .pg-respin, .pg-jackpot { display: none; }
+    .pg-machine[data-phase="spinning"] .pg-fields,
+    .pg-machine[data-phase="won"] .pg-fields { display: none; }
+    .pg-machine[data-phase="spinning"] .pg-car,
+    .pg-machine[data-phase="won"] .pg-car { display: block; }
+    .pg-machine[data-phase="won"] .pg-lead,
+    .pg-machine[data-phase="won"] .pg-note,
+    .pg-machine[data-phase="won"] .pg-jackpot { display: block; }
+    .pg-machine[data-phase="won"].is-respun .pg-respin-note { display: block; }
+    .pg-machine[data-phase="won"] .pg-pull { display: none; }
+    .pg-machine[data-phase="won"] .pg-respin { display: inline-flex; }
+    .pg-machine[data-phase="input"] .pg-status,
+    .pg-machine[data-phase="won"] .pg-status { display: none; }
+    .pg-machine[data-phase="spinning"] .pg-change { visibility: hidden; }
+
+    /* The lever: a mouse affordance only, the button below does the same */
+    .pg-lever { position: absolute; right: -40px; top: 50%; width: 44px; height: 160px; transform: translateY(-50%); cursor: pointer; display: none; }
+    @media (min-width: 620px) { .pg-lever { display: block; } }
+    .pg-lever-base {
+      position: absolute; left: 0; bottom: 0; width: 28px; height: 60px;
+      border-radius: 0 14px 14px 0; background: #0F47BE;
+      box-shadow: inset -4px 0 0 rgba(8,35,77,.35);
+    }
+    .pg-lever-arm { position: absolute; left: 7px; bottom: 30px; width: 34px; height: 128px; transform-origin: 50% 100%; }
+    .pg-lever-stick {
+      position: absolute; left: 13px; bottom: 0; width: 8px; height: 106px; border-radius: 4px;
+      background: linear-gradient(90deg, #94A3B8, #F1F5F9, #94A3B8);
+    }
+    .pg-lever-knob {
+      position: absolute; left: 0; top: 0; width: 34px; height: 34px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff 0 14%, #00F0DC 16%);
+      box-shadow: inset 0 -5px 0 rgba(8,35,77,.25), 0 6px 12px rgba(8,35,77,.35);
+    }
+    .pg-lever:hover .pg-lever-arm { transform: rotate(6deg); transition: transform .2s; }
+    .pg-lever.is-pulled .pg-lever-arm { animation: pg-pull .7s ease-in-out; }
+    @keyframes pg-pull { 45% { transform: scaleY(-.8); } }
+
+    /* The receipt prints from a slot under the machine */
+    .pg-slot {
+      position: absolute; left: 50%; bottom: -5px; transform: translateX(-50%);
+      width: 64%; height: 10px; border-radius: 6px; background: #020617;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,.6);
+    }
+    .pg-receipt-clip { display: none; justify-content: center; overflow: hidden; margin-top: -4px; padding-bottom: 14px; position: relative; z-index: 1; }
+    .pg-receipt-clip.is-on { display: flex; }
+    .pg-receipt {
+      position: relative; width: 300px; max-width: calc(100vw - 72px);
+      padding: 22px 20px 26px; background: #fff; color: #334155;
+      font: 400 14px/20px "DM Sans", sans-serif; font-variant-numeric: tabular-nums;
+      box-shadow: 0 18px 30px rgba(8,35,77,.3);
+      transform: translateY(-105%);
+    }
+    .pg-receipt::after {
+      content: ""; position: absolute; left: 0; right: 0; bottom: -8px; height: 8px;
+      background: radial-gradient(circle at 6px 0, #fff 6px, transparent 6.5px) 0 0 / 12px 8px repeat-x;
+    }
+    .pg-receipt.is-printed { animation: pg-print 1.3s steps(14, end) forwards; }
+    .pg-receipt.is-static { transform: none; }
+    @keyframes pg-print { to { transform: translateY(0); } }
+    .pg-r-title { margin: 0; text-align: center; font: 700 18px/22px Barlow, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #0F172A; }
+    .pg-r-sub { margin: 4px 0 0; text-align: center; font-size: 13px; line-height: 18px; color: #64748B; }
+    .pg-r-rule { margin: 14px 0; border: 0; border-top: 2px dashed #CBD5E1; }
+    .pg-r-row { display: flex; align-items: baseline; gap: 6px; margin: 0 0 6px; }
+    .pg-r-row dt { margin: 0; }
+    .pg-r-row .pg-r-dots { flex: 1; border-bottom: 2px dotted #CBD5E1; transform: translateY(-4px); }
+    .pg-r-row dd { margin: 0; font-weight: 700; color: #0F172A; }
+    .pg-r-row.is-zero dd { color: #EF4444; }
+    .pg-r-total { display: flex; justify-content: space-between; align-items: baseline; font: 700 22px/28px Barlow, sans-serif; color: #0F172A; }
+    .pg-stamp {
+      position: absolute; right: 18px; top: 46%;
+      padding: 4px 10px; border: 3px solid #EF4444; border-radius: 6px;
+      color: #EF4444; font: 700 20px/1.1 Barlow, sans-serif; letter-spacing: .06em; text-transform: uppercase;
+      transform: rotate(-14deg); opacity: 0;
+    }
+    .pg-receipt.is-printed .pg-stamp { animation: pg-stamp .35s ease-in 1.5s forwards; }
+    .pg-receipt.is-static .pg-stamp { opacity: .9; }
+    @keyframes pg-stamp {
+      from { transform: rotate(-14deg) scale(2.4); opacity: 0; }
+      to   { transform: rotate(-14deg) scale(1); opacity: .9; }
+    }
+
+    .pg-real.is-in > div { animation: pg-in .6s ease both; }
+    .pg-confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pg-float, .pg-star, .pg-bulb, .pg-machine[data-phase="won"] .pg-window { animation: none !important; }
+      .pg-receipt.is-printed { animation-duration: .01s; }
+      .pg-receipt.is-printed .pg-stamp { animation-delay: 0s; animation-duration: .01s; }
+    }
+  </style>
+</head>
+<body class="font-dm bg-white text-slate-900">
+
+  <div id="site-nav" data-menu="marketing"></div>
+  <script src="site-nav.js"></script>
+  <script>
+    window.protoPage = {
+      scenarios: [
+        { id: 'result', label: 'Result — the guess has landed' }
+      ]
+    };
+  </script>
+
+  <main>
+
+    <!-- ── Hero: the machine ── -->
+    <section class="pg-hero relative overflow-hidden flex flex-col items-center">
+
+      <div class="pg-float max-md:hidden" style="left:6%; top:12%; --r:-14deg;" aria-hidden="true"><div class="pg-coin">€</div></div>
+      <div class="pg-float max-md:hidden" style="right:8%; top:16%; --r:12deg; animation-delay:-2s;" aria-hidden="true">
+        <div class="pg-die"><i style="left:9px; top:9px"></i><i style="right:9px; top:9px"></i><i style="left:21.5px; top:21.5px"></i><i style="left:9px; bottom:9px"></i><i style="right:9px; bottom:9px"></i></div>
+      </div>
+      <div class="pg-float max-md:hidden" style="right:15%; top:58%; --r:20deg; animation-delay:-4s;" aria-hidden="true"><div class="pg-coin is-small">€</div></div>
+      <div class="pg-float" style="right:6%; top:6%; animation-delay:-1s;" aria-hidden="true"><span class="pg-spark">✦</span></div>
+      <div class="pg-float max-md:hidden" style="left:18%; top:40%; animation-delay:-3s;" aria-hidden="true"><span class="pg-spark">✦</span></div>
+      <div class="pg-float max-md:hidden" style="left:11%; top:70%; --r:-20deg; animation-delay:-5s;" aria-hidden="true"><div class="pg-coin is-small">€</div></div>
+
+      <!-- Couch guy waits for his guess, facing the machine (desktop only) -->
+      <img src="assets/29dce3a9-3ee1-4d06-9f6b-159711d06702.png" alt="" aria-hidden="true"
+           class="hidden xl:block absolute bottom-16 w-[250px] pointer-events-none" style="left:max(2%, calc(50% - 640px));" />
+
+      <div class="relative flex flex-col items-center gap-14 w-full max-w-[1366px] px-10 pt-12 pb-10 max-md:px-5 max-md:pt-10 max-md:gap-12">
+
+        <div class="flex flex-col items-center gap-5 text-center max-w-[760px]">
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 text-white font-dm font-bold text-xs uppercase tracking-[.14em]">
+            <span class="text-av-turquoise" aria-hidden="true">✦</span><span data-i18n="priceGuess.tag">Hinta-arvaus</span>
+          </span>
+          <h1 class="font-barlow font-bold text-white text-4xl leading-10 md:text-6xl md:leading-tight m-0" data-i18n="priceGuess.title">Arvataan autosi hinta!</h1>
+          <p class="font-dm font-medium text-slate-200 text-xl leading-6 m-0" data-i18n="priceGuess.subtitle">Syötä rekisterinumero ja kilometrit, vedä vivusta ja katso, mitä onni tuo tullessaan.</p>
+        </div>
+
+        <div class="w-full flex flex-col items-center">
+          <form id="pg-form" class="pg-machine" data-phase="input" novalidate>
+            <div class="pg-sign" aria-hidden="true"><span class="pg-star">★</span><span data-i18n="priceGuess.sign">Hinta-arvaus</span><span class="pg-star">★</span></div>
+
+            <!-- Screen: the two fields, then the car they found -->
+            <div class="pg-screen">
+              <div class="pg-fields">
+                <div>
+                  <!-- The front page's plate field -->
+                  <div id="pg-plate-wrap" class="flex w-full h-14 rounded-lg overflow-hidden bg-white">
+                    <div class="flex flex-col items-center justify-center gap-[3px] w-9 flex-shrink-0 bg-av-blue border-2 border-slate-50 border-r-0 rounded-l-lg py-1.5">
+                      <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <g transform="translate(10,10)">
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(0) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(30) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(60) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(90) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(120) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(150) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(180) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(210) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(240) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(270) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(300) translate(0,-4.5) scale(0.55)"/>
+                          <polygon points="0,-3.5 0.4,-1 1,-1 0.6,-0.4 0.8,1.8 0,-1.4 -0.8,1.8 -0.6,-0.4 -1,-1 -0.4,-1" fill="#FFD700" transform="rotate(330) translate(0,-4.5) scale(0.55)"/>
+                        </g>
+                      </svg>
+                      <span class="font-barlow font-bold text-white text-[9px] tracking-wide">FIN</span>
+                    </div>
+                    <input id="pg-plate" type="text" autocomplete="off" placeholder="ABC-123"
+                           data-i18n-placeholder="hero.platePlaceholder" data-i18n-aria="priceGuess.plateLabel" aria-label="Rekisterinumero"
+                           aria-describedby="pg-plate-error"
+                           class="flex-1 bg-transparent border-none outline-none font-barlow font-bold text-slate-500 text-base text-center px-3 uppercase focus:text-av-dark" />
+                    <div class="w-9 flex-shrink-0" aria-hidden="true"></div>
+                  </div>
+                  <p id="pg-plate-error" class="pg-err hidden" data-i18n="hero.plateError">Tarkista rekisterinumero. Esim. ABC-123.</p>
+                </div>
+                <div>
+                  <!-- The front page's mileage field -->
+                  <div id="pg-km-wrap" class="flex items-center justify-between w-full h-14 bg-white border border-white rounded-lg px-4 gap-2">
+                    <img src="assets/22acf63e-2552-4a20-ac4a-b7c9b8ca23c7.svg" class="w-6 h-6 flex-shrink-0" alt="" />
+                    <input id="pg-km" type="text" inputmode="numeric" autocomplete="off" maxlength="9" placeholder="AJOKILOMETRIT"
+                           data-i18n-placeholder="hero.mileagePlaceholder" data-i18n-aria="priceGuess.kmLabel" aria-label="Ajokilometrit"
+                           aria-describedby="pg-km-error"
+                           class="flex-1 min-w-0 border-none outline-none bg-transparent font-barlow font-bold text-slate-500 text-base text-center focus:text-av-dark" />
+                    <span class="font-dm font-medium text-base text-gray-700 flex-shrink-0">km</span>
+                  </div>
+                  <p id="pg-km-error" class="pg-err hidden"></p>
+                </div>
+              </div>
+
+              <div class="pg-car">
+                <div class="pg-car-top">
+                  <span class="pg-kicker" data-i18n="priceGuess.inDraw">Arvonnassa mukana</span>
+                  <button type="button" id="pg-change" class="pg-link pg-change" data-i18n="priceGuess.changeCar">Vaihda autoa</button>
+                </div>
+                <div id="pg-car-badge" class="inline-flex"></div>
+                <p id="pg-car-name" class="pg-car-name"></p>
+                <p id="pg-car-meta" class="pg-car-meta"></p>
+              </div>
+            </div>
+
+            <p class="pg-lead" data-i18n="priceGuess.resultLead">Autosi hinta on arvauksemme mukaan</p>
+
+            <div class="pg-window">
+              <div class="pg-jackpot" aria-hidden="true" data-i18n="priceGuess.jackpot">Jättipotti!</div>
+              <div class="pg-bulbs is-top" aria-hidden="true"><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i></div>
+              <div id="pg-reels" class="pg-reels" role="img" aria-label="Hinta-arvauksen rullat">
+                <span class="pg-payline is-left" aria-hidden="true"></span>
+                <div class="pg-reel"><div class="pg-strip"><span>?</span></div></div>
+                <span class="pg-gap" aria-hidden="true"></span>
+                <div class="pg-reel"><div class="pg-strip"><span>?</span></div></div>
+                <div class="pg-reel"><div class="pg-strip"><span>?</span></div></div>
+                <div class="pg-reel"><div class="pg-strip"><span>?</span></div></div>
+                <span class="pg-euro" aria-hidden="true">€</span>
+                <span class="pg-payline is-right" aria-hidden="true"></span>
+              </div>
+              <div class="pg-bulbs is-bottom" aria-hidden="true"><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i><i class="pg-bulb"></i></div>
+            </div>
+
+            <p id="pg-status" class="pg-status" aria-hidden="true"></p>
+            <p class="pg-note" data-i18n="priceGuess.resultNote">*Täysin arvaus. Ei sido ketään mihinkään.</p>
+            <p class="pg-respin-note" data-i18n="priceGuess.respinNote">Eri hinta kuin äsken? Arvauksia ne vain ovat.</p>
+
+            <button type="submit" id="pg-pull" class="pg-pull"><span id="pg-pull-label">Vedä vivusta!</span></button>
+            <button type="button" id="pg-respin" class="pg-respin">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.4" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.4" fill="currentColor" stroke="none"/></svg>
+              <span data-i18n="priceGuess.respin">Arvaa uudestaan</span>
+            </button>
+
+            <div id="pg-lever" class="pg-lever" aria-hidden="true">
+              <div class="pg-lever-base"></div>
+              <div class="pg-lever-arm"><div class="pg-lever-stick"></div><div class="pg-lever-knob"></div></div>
+            </div>
+            <div class="pg-slot" aria-hidden="true"></div>
+          </form>
+
+          <div id="pg-receipt-clip" class="pg-receipt-clip">
+            <div id="pg-receipt" class="pg-receipt">
+              <p class="pg-r-title" data-i18n="priceGuess.receiptTitle">Arvauskuitti</p>
+              <p id="pg-r-car" class="pg-r-sub"></p>
+              <p id="pg-r-date" class="pg-r-sub"></p>
+              <hr class="pg-r-rule" />
+              <dl class="m-0">
+                <div class="pg-r-row"><dt data-i18n="priceGuess.receiptCrystal">Kristallipallo</dt><span class="pg-r-dots"></span><dd>✓</dd></div>
+                <div class="pg-r-row"><dt data-i18n="priceGuess.receiptNeighbour">Naapurin mielipide</dt><span class="pg-r-dots"></span><dd>✓</dd></div>
+                <div class="pg-r-row"><dt data-i18n="priceGuess.receiptDice">Noppa</dt><span class="pg-r-dots"></span><dd>✓</dd></div>
+                <div class="pg-r-row is-zero"><dt data-i18n="priceGuess.receiptOffers">Autoliikkeiden tarjoukset</dt><span class="pg-r-dots"></span><dd>0</dd></div>
+              </dl>
+              <hr class="pg-r-rule" />
+              <div class="pg-r-total"><span data-i18n="priceGuess.receiptGuess">Arvaus</span><span id="pg-r-price"></span></div>
+              <div class="pg-stamp" aria-hidden="true" data-i18n="priceGuess.stamp">Vain arvaus</div>
+            </div>
+          </div>
+          <p id="pg-live" class="sr-only" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <!-- Wave -->
+      <svg width="100%" height="42" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" aria-hidden="true" style="display:block">
+        <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="white"/>
+      </svg>
+    </section>
+
+    <!-- ── And now, for real: the way into the funnel ── -->
+    <section id="pg-real" class="pg-real hidden bg-white" aria-labelledby="pg-real-title">
+      <div class="flex items-center gap-12 w-full max-w-[1366px] mx-auto px-10 pt-14 pb-20 max-md:px-5 max-md:pt-10 max-md:pb-14 max-lg:flex-col">
+
+        <div class="flex-1 flex flex-col gap-6 max-w-[620px]">
+          <p class="m-0 flex items-center gap-3 font-dm font-bold text-sm uppercase tracking-[.14em] text-av-blue">
+            <span class="w-8 h-0.5 bg-av-blue" aria-hidden="true"></span><span data-i18n="priceGuess.realKicker">Ja sitten tosissaan</span>
+          </p>
+          <h2 id="pg-real-title" class="m-0 font-barlow font-bold text-slate-900 text-4xl leading-[38px] lg:text-5xl lg:leading-[52px]" data-i18n="priceGuess.realTitle">Haluatko tietää autosi oikean arvon?</h2>
+          <p class="m-0 font-dm text-lg leading-7 text-slate-600" data-i18n="priceGuess.realBody">Arvaus on arvaus. Oikean hinnan kertovat autoliikkeet, kun ne kilpailevat autostasi tarjouskilpailussa.</p>
+
+          <ul class="m-0 p-0 list-none flex flex-col gap-3 font-dm text-base leading-6 text-slate-800">
+            <li class="flex items-start gap-3"><svg class="w-6 h-6 flex-shrink-0 text-av-blue" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="priceGuess.real1">Sadat autoliikkeet ympäri Suomen näkevät autosi</span></li>
+            <li class="flex items-start gap-3"><svg class="w-6 h-6 flex-shrink-0 text-av-blue" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="priceGuess.real2">Tarjous on oikea hinta, jonka autoliike on valmis maksamaan</span></li>
+            <li class="flex items-start gap-3"><svg class="w-6 h-6 flex-shrink-0 text-av-blue" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="priceGuess.real3">Päätät itse, hyväksytkö tarjouksen</span></li>
+          </ul>
+
+          <!-- The front page's progress card: the car comes along -->
+          <div class="bg-white border border-slate-300 rounded-lg p-4 flex flex-col gap-3 max-w-[400px]">
+            <div id="pg-real-badge" class="inline-flex"></div>
+            <p id="pg-real-name" class="m-0 font-dm font-bold text-slate-900 text-xl leading-6"></p>
+            <div class="flex items-center gap-2">
+              <img src="assets/0fa6d12d-3af3-4995-bbcb-4f2aff63f3d7.svg" class="w-5 h-5 flex-shrink-0" alt="" />
+              <span id="pg-real-km" class="font-dm text-slate-600 text-base"></span>
+            </div>
+            <p class="m-0 flex items-center gap-2 font-dm text-sm text-slate-700">
+              <img src="assets/icon-check-circle-green.svg" class="w-5 h-5 flex-shrink-0" alt="" /><span data-i18n="priceGuess.carReady">Autosi tiedot ovat jo valmiina</span>
+            </p>
+          </div>
+
+          <div class="flex flex-col items-start gap-3">
+            <!-- The front page's hero CTA -->
+            <a id="pg-go" href="details.html"
+               class="flex items-center justify-center gap-2 h-14 px-8 bg-av-turquoise text-black font-dm text-base rounded-lg shadow-2xl hover:bg-[#00E4D1] transition-colors max-sm:w-full">
+              <span data-i18n="nav.startAuction">Aloita kilpailutus</span>
+              <img src="assets/679c64f9-3060-4fbd-85b7-d40eff72d139.svg" class="w-6 h-6" alt="" />
+            </a>
+            <p class="m-0 font-dm text-xs leading-4 text-slate-500" data-i18n="priceGuess.finePrint">Hinta-arvaus on leikkimielinen eikä perustu autosi tietoihin.</p>
+          </div>
+        </div>
+
+        <div class="flex-1 flex justify-center max-lg:order-first">
+          <img src="assets/excellent_auction.png" alt="" class="w-full max-w-[440px] max-lg:max-w-[260px] h-auto" />
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="layout.js"></script>
+  <script src="vehicle-card.js"></script>
+  <script>
+    (function () {
+      var STORE_KEY = 'autovex_funnel';
+      var MAX_MILEAGE = 280000;
+      var VEHICLE_FIELDS = ['merkki', 'malli', 'mallitarkennus', 'vuosimalli', 'polttoaine', 'vetotapa', 'vaihteisto'];
+      var SPIN_MESSAGES = ['spin1', 'spin2', 'spin3', 'spin4', 'spin5'];
+      var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+      var form    = document.getElementById('pg-form');
+      var plateIn = document.getElementById('pg-plate');
+      var kmIn    = document.getElementById('pg-km');
+      var pullBtn = document.getElementById('pg-pull');
+      var lever   = document.getElementById('pg-lever');
+      var reelsEl = document.getElementById('pg-reels');
+      var reels   = [].slice.call(form.querySelectorAll('.pg-reel'));
+      var status  = document.getElementById('pg-status');
+      var live    = document.getElementById('pg-live');
+      var clip    = document.getElementById('pg-receipt-clip');
+      var receipt = document.getElementById('pg-receipt');
+      var real    = document.getElementById('pg-real');
+
+      var state = { phase: 'input', plate: '', km: '', car: {}, price: null, spins: 0, msgTimer: null, userScrolled: false };
+
+      function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
+      function setStore(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {} }
+      function rand(n) { return Math.floor(Math.random() * n); }
+      function group(digits) { return String(digits).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+      function priceText(p) { return group(p) + ' €'; }
+      function carName() { return [state.car.merkki, state.car.malli].filter(Boolean).join(' '); }
+      function carMeta() { return [state.car.vuosimalli, group(state.km) + ' km'].filter(Boolean).join(' · '); }
+
+      /* Same plate rules as the front page's hero form. */
+      var PLATE_RE = /^(?:[A-ZÅÄÖ]{2,3}-[1-9][0-9]{0,2}|ÅL[N]?-[1-9][0-9]{0,4}|CD-[0-9]{4}|C-[0-9]{5})$/;
+      function normalizePlate(raw) {
+        var clean   = raw.replace(/[^A-Za-zÅÄÖåäö0-9]/g, '').toUpperCase();
+        var letters = (clean.match(/^[A-ZÅÄÖ]*/) || [''])[0].slice(0, 3);
+        var digits  = clean.slice(letters.length).replace(/[^0-9]/g, '');
+        if (letters === 'C')  { digits = digits.slice(0, 5); return digits.length ? 'C-'  + digits : 'C'; }
+        if (letters === 'CD') { digits = digits.slice(0, 4); return digits.length ? 'CD-' + digits : 'CD'; }
+        digits = digits.replace(/^0+/, '').slice(0, /^ÅLN?$/.test(letters) ? 5 : 3);
+        return digits.length ? letters + '-' + digits : letters;
+      }
+      plateIn.addEventListener('input', function () {
+        var pos = plateIn.selectionStart, before = plateIn.value, after = normalizePlate(before);
+        if (after !== before) {
+          plateIn.value = after;
+          var shift = after.length - before.length;
+          plateIn.setSelectionRange(pos + shift, pos + shift);
+        }
+        showError('plate', null);
+      });
+      kmIn.addEventListener('input', function () {
+        var digits = kmIn.value.replace(/\D/g, '');
+        if (kmIn.value !== digits) kmIn.value = digits;
+        showError('km', null);
+      });
+
+      function showError(which, key) {
+        var p = document.getElementById('pg-' + which + '-error');
+        var input = which === 'plate' ? plateIn : kmIn;
+        if (key) { p.textContent = t(key); p.classList.remove('hidden'); input.setAttribute('aria-invalid', 'true'); }
+        else { p.classList.add('hidden'); input.removeAttribute('aria-invalid'); }
+      }
+      function shake() {
+        form.classList.remove('is-shaking'); void form.offsetWidth; form.classList.add('is-shaking');
+      }
+
+      function setPhase(p) {
+        state.phase = p;
+        form.setAttribute('data-phase', p);
+        pullBtn.disabled = p === 'spinning';
+        syncLabels();
+      }
+      function syncLabels() {
+        document.getElementById('pg-pull-label').textContent = t(state.phase === 'spinning' ? 'priceGuess.spinning' : 'priceGuess.pull');
+        reelsEl.setAttribute('aria-label', state.phase === 'won'
+          ? t('priceGuess.resultLead') + ' ' + priceText(state.price)
+          : t('priceGuess.reels'));
+      }
+
+      function renderCar() {
+        var badge = window.buildRegBadge ? window.buildRegBadge(state.plate) : state.plate;
+        document.getElementById('pg-car-badge').innerHTML = badge;
+        document.getElementById('pg-real-badge').innerHTML = badge;
+        var name = carName();
+        ['pg-car-name', 'pg-real-name'].forEach(function (id) {
+          var el = document.getElementById(id);
+          el.textContent = name;
+          el.classList.toggle('hidden', !name);
+        });
+        document.getElementById('pg-car-meta').textContent = carMeta();
+        document.getElementById('pg-real-km').textContent = group(state.km) + ' km';
+      }
+
+      function setReels(price) {
+        String(price).split('').forEach(function (d, i) {
+          reels[i].firstElementChild.innerHTML = '<span>' + d + '</span>';
+          reels[i].setAttribute('data-val', d);
+        });
+      }
+      function clearReels() {
+        reels.forEach(function (r) { r.firstElementChild.innerHTML = '<span>?</span>'; r.removeAttribute('data-val'); });
+      }
+
+      /* Cheap on purpose: always under 7 000 € and ending in 90, like a
+         bargain sticker. Never the same twice in a row, so "Arvaa uudestaan"
+         shows the guess for what it is. */
+      function newPrice() {
+        var p;
+        do { p = (2 + rand(5)) * 1000 + rand(10) * 100 + 90; } while (p === state.price);
+        return p;
+      }
+
+      function spinReels(price) {
+        var digits = String(price).split('');
+        var base = REDUCED ? 250 : 1700;
+        var step = REDUCED ? 120 : 520;
+        return Promise.all(reels.map(function (reel, i) {
+          var strip = reel.firstElementChild;
+          var seq = [reel.getAttribute('data-val') || '?'];
+          var n = REDUCED ? 2 : 14 + i * 5;
+          for (var k = 0; k < n; k++) seq.push(String(rand(10)));
+          seq.push(digits[i]);
+          /* Two spares after the target: the easing overshoots past it and
+             settles back, as a real reel does. */
+          seq.push(String(rand(10)), String(rand(10)));
+          strip.innerHTML = seq.map(function (d) { return '<span>' + d + '</span>'; }).join('');
+          var dist = (seq.length - 3) * reel.clientHeight;
+          var duration = base + i * step;
+          if (!REDUCED) {
+            strip.classList.add('is-blur');
+            setTimeout(function () { strip.classList.remove('is-blur'); }, duration * 0.72);
+          }
+          var anim = strip.animate(
+            [{ transform: 'translateY(0px)' }, { transform: 'translateY(' + (-dist) + 'px)' }],
+            { duration: duration, easing: 'cubic-bezier(.15,.75,.25,1.04)', fill: 'forwards' }
+          );
+          return anim.finished.then(function () {
+            strip.innerHTML = '<span>' + digits[i] + '</span>';
+            anim.cancel();
+            reel.setAttribute('data-val', digits[i]);
+            reel.classList.remove('is-landed'); void reel.offsetWidth; reel.classList.add('is-landed');
+          });
+        }));
+      }
+
+      function startMessages(total) {
+        var i = 0;
+        status.textContent = t('priceGuess.' + SPIN_MESSAGES[0]);
+        clearInterval(state.msgTimer);
+        state.msgTimer = setInterval(function () {
+          i = Math.min(i + 1, SPIN_MESSAGES.length - 1);
+          status.textContent = t('priceGuess.' + SPIN_MESSAGES[i]);
+        }, total / SPIN_MESSAGES.length);
+      }
+
+      function pullLever() {
+        lever.classList.remove('is-pulled'); void lever.offsetWidth; lever.classList.add('is-pulled');
+      }
+
+      function spin() {
+        if (state.phase === 'spinning') return;
+        clip.classList.remove('is-on');
+        receipt.classList.remove('is-printed', 'is-static');
+        setPhase('spinning');
+        pullLever();
+        state.userScrolled = false;
+        var target = newPrice();
+        startMessages(REDUCED ? 600 : 1700 + 3 * 520);
+        spinReels(target).then(function () {
+          state.price = target;
+          state.spins += 1;
+          win(true);
+        });
+      }
+
+      function fillReceipt() {
+        var name = [carName(), state.car.vuosimalli].filter(Boolean).join(' ');
+        document.getElementById('pg-r-car').textContent = [name, state.plate].filter(Boolean).join(' · ');
+        document.getElementById('pg-r-date').textContent = new Date().toLocaleString(getLang() === 'en' ? 'en-GB' : 'fi-FI', {
+          day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        document.getElementById('pg-r-price').textContent = priceText(state.price);
+      }
+
+      function win(animated) {
+        clearInterval(state.msgTimer);
+        status.textContent = '';
+        form.classList.toggle('is-respun', state.spins > 1);
+        setPhase('won');
+        live.textContent = t('priceGuess.resultLead') + ' ' + priceText(state.price) + '. ' + t('priceGuess.resultNote');
+        fillReceipt();
+        if (!animated) {
+          clip.classList.add('is-on');
+          receipt.classList.add('is-static');
+          revealReal(false);
+          return;
+        }
+        confetti(reelsEl);
+        setTimeout(function () {
+          clip.classList.add('is-on');
+          receipt.classList.add('is-printed');
+        }, REDUCED ? 0 : 700);
+        var firstReveal = real.classList.contains('hidden');
+        setTimeout(function () { revealReal(firstReveal); }, REDUCED ? 0 : 2100);
+      }
+
+      /* "Ja sitten tosissaan": shown once there is a guess to compare with.
+         The first time, it scrolls into view unless the seller has already
+         scrolled away during the spin. */
+      function revealReal(scroll) {
+        if (real.classList.contains('hidden')) {
+          real.classList.remove('hidden');
+          real.classList.add('is-in');
+        }
+        if (!scroll || state.userScrolled) return;
+        var title = document.getElementById('pg-real-title');
+        var top = title.getBoundingClientRect().top;
+        if (top < window.innerHeight * 0.8) return;
+        window.scrollTo({ top: window.scrollY + top - window.innerHeight * 0.3, behavior: REDUCED ? 'auto' : 'smooth' });
+      }
+      window.addEventListener('wheel', function () { state.userScrolled = true; }, { passive: true });
+      window.addEventListener('touchmove', function () { state.userScrolled = true; }, { passive: true });
+
+      function confetti(originEl) {
+        if (REDUCED) return;
+        var c = document.createElement('canvas');
+        c.className = 'pg-confetti';
+        c.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(c);
+        var dpr = Math.min(2, window.devicePixelRatio || 1);
+        var W = window.innerWidth, H = window.innerHeight;
+        c.width = W * dpr; c.height = H * dpr;
+        var ctx = c.getContext('2d');
+        ctx.scale(dpr, dpr);
+        var r = originEl.getBoundingClientRect();
+        var ox = r.left + r.width / 2, oy = r.top + r.height / 2;
+        var colors = ['#0B6DFF', '#00F0DC', '#F5AB84', '#FAEADA', '#FFFFFF', '#50B2FF'];
+        var parts = [];
+        for (var i = 0; i < 170; i++) {
+          parts.push({
+            x: ox + (Math.random() - 0.5) * r.width * 0.7, y: oy,
+            vx: (Math.random() - 0.5) * 15, vy: -(6 + Math.random() * 13),
+            w: 6 + Math.random() * 6, h: 8 + Math.random() * 10,
+            rot: Math.random() * 6.28, vr: (Math.random() - 0.5) * 0.3,
+            color: colors[i % colors.length], euro: i % 9 === 0
+          });
+        }
+        var start = performance.now();
+        (function frame(now) {
+          ctx.clearRect(0, 0, W, H);
+          var alive = false;
+          parts.forEach(function (p) {
+            p.vy += 0.36; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+            if (p.y < H + 40) alive = true;
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate(p.rot);
+            if (p.euro) {
+              ctx.fillStyle = '#F5AB84';
+              ctx.font = '700 22px Barlow, sans-serif';
+              ctx.fillText('€', -6, 8);
+            } else {
+              ctx.fillStyle = p.color;
+              ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+            }
+            ctx.restore();
+          });
+          if (alive && now - start < 3600) requestAnimationFrame(frame);
+          else c.remove();
+        })(start);
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (state.phase === 'won') { spin(); return; }
+        if (state.phase !== 'input') return;
+        var plate = normalizePlate(plateIn.value.trim());
+        var km = kmIn.value.replace(/\D/g, '');
+        if (!PLATE_RE.test(plate)) { showError('plate', 'hero.plateError'); shake(); plateIn.focus(); return; }
+        if (!km) { showError('km', 'hero.mileageError'); shake(); kmIn.focus(); return; }
+        if (Number(km) > MAX_MILEAGE) { showError('km', 'hero.mileageMaxError'); shake(); kmIn.focus(); return; }
+        plateIn.value = plate;
+        state.plate = plate;
+        state.km = km;
+        state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
+        renderCar();
+        spin();
+      });
+      document.getElementById('pg-respin').addEventListener('click', spin);
+      lever.addEventListener('click', function () {
+        if (state.phase === 'won') spin();
+        else if (state.phase === 'input') form.requestSubmit();
+      });
+      document.getElementById('pg-change').addEventListener('click', function () {
+        clip.classList.remove('is-on');
+        real.classList.add('hidden');
+        real.classList.remove('is-in');
+        form.classList.remove('is-respun');
+        state.price = null;
+        state.spins = 0;
+        clearReels();
+        setPhase('input');
+        plateIn.focus();
+      });
+
+      /* Into the funnel with the car already found: a new draft, as the front
+         page's form starts one, so the previous draft's answers do not carry
+         over. The seller's own contact and login do. `from=price-guess` tells
+         the equipment step to skip its loading screen. */
+      document.getElementById('pg-go').addEventListener('click', function (e) {
+        if (!state.plate) return;
+        e.preventDefault();
+        var prev = getStore();
+        var s = { hero: { plate: state.plate, km: group(state.km) }, details: {} };
+        if (prev.loggedIn) s.loggedIn = prev.loggedIn;
+        if (prev.contact) s.contact = prev.contact;
+        VEHICLE_FIELDS.forEach(function (k) { s.details[k] = state.car[k] || ''; });
+        setStore(s);
+        window.location.href = 'details.html?' + new URLSearchParams({ plate: state.plate, km: group(state.km), from: 'price-guess' });
+      });
+
+      document.addEventListener('av:langchange', function () {
+        syncLabels();
+        if (state.phase === 'won') fillReceipt();
+      });
+
+      /* Start: the seller's own car, if the prototype has one. */
+      var hero = getStore().hero || {};
+      if (hero.plate) plateIn.value = hero.plate;
+      if (hero.km) kmIn.value = String(hero.km).replace(/\D/g, '');
+
+      var params = new URLSearchParams(window.location.search);
+      if (params.get('scenario') === 'result') {
+        state.plate = normalizePlate(hero.plate || 'LRX-345');
+        state.km = String(hero.km || '148000').replace(/\D/g, '');
+        state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
+        state.price = 4990;
+        state.spins = 1;
+        plateIn.value = state.plate;
+        kmIn.value = state.km;
+        renderCar();
+        setReels(state.price);
+        win(false);
+      } else {
+        setPhase('input');
+      }
+    })();
+  </script>
+
+  <script src="proto-bar.js"></script>
+</body>
+</html>

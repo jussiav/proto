@@ -178,6 +178,14 @@
       name: 'OP routing',
       spec: 'design-specs/op-routing.html',
       prodArm: 'control'
+    },
+    /* No spec page: an ideation piece. The arm only gates the front page's
+       section; price-guess.html itself renders the same in every arm. */
+    {
+      slug: 'price-guess',
+      name: 'Price guess',
+      spec: null,
+      prodArm: 'control'
     }
   ];
 

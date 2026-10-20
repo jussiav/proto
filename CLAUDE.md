@@ -802,6 +802,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
+| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html` | none |
 
 **Completed initiatives:**
 
@@ -2815,6 +2816,41 @@ and deal terms stay out of this repo.
   marketing label is needed.
 - **Copy:** `opRouting.*`, Claude's draft. Later placements (auction email
   `ad-published`, offers/decision while waiting, profile) are spec-only.
+
+## Price guess — `v1` (ideation)
+
+Started 2026-10-20. Not meant to be taken too seriously or integrated into the
+funnel: a playful take on the price estimators other sites offer, whose numbers
+are cheap. The guess is a lottery; the real price comes from the auction.
+
+- **Front page** (`index.html`, `#price-guess-teaser`, after How it works):
+  shown only in `v1`, stamped in `<head>` as `html[data-price-guess-arm]`.
+  Navy band, idle-rolling mini slot machine, a wiggling turquoise button
+  "Arvaa autoni hinta". Copy `priceGuessTeaser.*`.
+- **`price-guess.html`** renders the same in every arm (the arm gates the
+  front-page section only), so the registry entry has `spec: null`. Flow:
+  plate + mileage (front page's fields and validation) → "Vedä vivusta!" or
+  the lever → the fields become the car (plate badge, make + model, year · km,
+  from `PROTO_MOCK.lookupResult()`) above four reels that spin ~3.3 s with
+  rotating jokes ending "Pyöristetään reilusti alaspäin…" → "Jättipotti!",
+  confetti, a printed **Arvauskuitti** (crystal ball ✓, neighbour ✓, dice ✓,
+  dealership offers **0**, stamped "Vain arvaus") → the "Ja sitten tosissaan"
+  section: "Haluatko tietää autosi oikean arvon?", three checks, the car card,
+  prod's "Aloita kilpailutus", fine print saying the guess is not based on the
+  car. "Arvaa uudestaan" gives a different number every time and says so.
+- **The price** is random, 2 090–6 990 €, always ending in 90. It is not
+  based on any car data and must not be.
+- **Handoff:** the CTA starts a new draft (store replaced; `contact` and
+  `loggedIn` kept), writes the looked-up vehicle fields, and opens
+  `details.html?plate=&km=&from=price-guess`. `from=price-guess` skips the
+  equipment step's 5 s loading screen (the car was already shown) and the
+  params are dropped on `load`, after the plate and km badges have read them.
+- `?scenario=result` lands straight on the result (4 990 €, receipt and the
+  real section, no animation). Reduced motion: short spin, no confetti or
+  floating decor.
+- Copy `priceGuess.*`, Claude's draft, English a working translation. Visual
+  style is new by request, built from the page tokens (navy, blue scale,
+  turquoise, peach, cream) and prod's two fonts.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 
