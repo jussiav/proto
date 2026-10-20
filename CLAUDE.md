@@ -369,6 +369,54 @@ Finnish grammar over a requested literal wording, and say when you did
 ("…, mikä voi nostaa tarjouksia" rather than "…ja voi nostaa tarjouksia",
 which makes the listing the subject).
 
+## Proto bar rework — IN PROGRESS (started 2026-10-20)
+
+Agreed with Jussi over several rounds; build in the batches below, one commit
+each, and tick them here as they land. **Restore point: git tag
+`proto-bar-before-rework`** (local, on 9b01a49) — `git checkout
+proto-bar-before-rework -- proto-bar.js proto-mock.js proto-mode.js <pages>`
+brings the old bar back without losing unrelated work. Commits are local until
+Jussi says push.
+
+**Target bar:** `Prototype · Mode ▾ · Scenario ▾ · Variants ▾ · Seed car ▾ ·
+Events ▾ · Reset · Go to ▾`. One question per control; no page adds its own
+button any more.
+
+| Control | Answers | Holds |
+|---|---|---|
+| Mode | who is viewing, how to share | Dev / Test + Copy test link |
+| Scenario | a pre-built situation | unchanged; must keep writing the SAME stored values the other menus control, never a competing mechanism |
+| Variants | which design candidates | one select per initiative, several at once |
+| Seed car | what the seller entered | the one-click seed + exceptions |
+| Events | what happened since | AutoVex review, auction, dealer response, market data, system |
+| Reset | start over | also forgets every remembered variant and forced outcome |
+
+**Seed car exceptions, in funnel order:** Review (Review / No review — an
+outcome override, not mileage; the proto never models the real criteria) ·
+Photos (Complete / Missing) · Price question (follows Review, amount) ·
+AutoVex exclusive (— / Yes / No; picking Yes or No turns v2 on, other
+variants untouched) · Logged in (No / Yes). Car details Found / Partial / Not
+found is a known prod condition, **built later**. Each exception is one entry
+in a list in `proto-mock.js` with a URL param, applied at load in test mode
+too. A variant-only answer names its initiative + arm and switches it on.
+
+**Copy test link** (inside Mode): always starts at the front page,
+`mode=test` + every variant in force + only outcomes the participant cannot
+produce (today: Review / No review). Seller answers are NOT carried.
+
+**Batches:**
+- [ ] 1 — Variants popover (one select per initiative, "Mixed" gone, All to
+  production) + Reset renamed and clearing variants
+- [ ] 2 — Seed car exceptions + answers that switch variants on; "Exclusive
+  answer" leaves Auction settings
+- [ ] 3 — Events: Auction settings renamed, Advisor booking, Similar cars data
+  and upload errors moved in as sections
+- [ ] 4 — Mode popover with Copy test link
+
+Regression risk accepted by Jussi: team members open single deep links, so
+existing URLs only need to keep resolving (param names, arm ids, scenario ids
+unchanged).
+
 ## Proto Modes — dev vs test
 
 `proto-mode.js` (loaded in `<head>` on every page) decides whether the
@@ -2464,6 +2512,17 @@ cleared on load.
   one, option order, legal read).
 - **Not done:** the five funnel pages' `case 'contact'` completeness check
   ignores the choice.
+- **Figma:** file `sHQk3FUhEZM7EFbYaAcjxX`, page `AutoVex exclusive (AI
+  drafting)` `7363:5`. Components frame `7363:6`: `Visibility option`
+  `7363:26` (State=default/selected; props Label, Description, Show tag) and
+  `Visibility question` `7363:27` (legend + yes/no). Iteration 1 = wrapper
+  `7363:48` "✅ Variant 2 — … (IN PROTO)": desktop contact step `7363:51`
+  (nothing selected), mobile `7363:203` (yes selected), decision column
+  `7363:299` (warm-up, hero desktop + mobile), notes. Contact screens are
+  clones of the funnel page's `4570:18700` / `4570:18802` with the submit set
+  to prod's "Lähetä ilmoitus"; the mobile clone keeps that page's older title
+  "Miten voimme tavoittaa sinut?". Keep every pushed iteration; rename a
+  replaced one `◻︎ Superseded — … (not in proto)`.
 
 ## Informed ad creation — `v1`
 
