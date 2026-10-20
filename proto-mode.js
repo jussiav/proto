@@ -190,6 +190,23 @@
     return null;
   };
 
+  /* ?fresh=1 — the start of a test link (Mode → Copy test link). A test
+     machine is reused between participants, so the link first clears the last
+     one's draft, remembered arms and forced outcome; the link's own params then
+     apply as usual. Dropped from the address straight away, so a reload of the
+     front page mid-test does not wipe the participant's progress. */
+  if (params.get('fresh') === '1') {
+    try {
+      ['autovex_funnel', 'autovex_offers', 'autovex_decision', 'autovex_proto_review'].forEach(function (k) {
+        localStorage.removeItem(k);
+      });
+      INITIATIVES.forEach(function (ini) { localStorage.removeItem(VARIANT_KEY_PREFIX + ini.slug); });
+    } catch (e) {}
+    params.delete('fresh');
+    var freshQ = params.toString();
+    try { history.replaceState(null, '', window.location.pathname + (freshQ ? '?' + freshQ : '') + window.location.hash); } catch (e) {}
+  }
+
   INITIATIVES.forEach(function (ini) {
     var asked = params.get(ini.slug);
     if (!asked) return;

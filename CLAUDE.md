@@ -369,7 +369,7 @@ Finnish grammar over a requested literal wording, and say when you did
 ("…, mikä voi nostaa tarjouksia" rather than "…ja voi nostaa tarjouksia",
 which makes the listing the subject).
 
-## Proto bar rework — IN PROGRESS (started 2026-10-20)
+## Proto bar rework — BUILT 2026-10-20, all four batches
 
 Agreed with Jussi over several rounds; build in the batches below, one commit
 each, and tick them here as they land. **Restore point: git tag
@@ -411,7 +411,7 @@ produce (today: Review / No review). Seller answers are NOT carried.
   answer" leaves Auction settings
 - [x] 3 — Events: Auction settings renamed, Advisor booking, Similar cars data
   and upload errors moved in as sections
-- [ ] 4 — Mode popover with Copy test link
+- [x] 4 — Mode popover with Copy test link
 
 Regression risk accepted by Jussi: team members open single deep links, so
 existing URLs only need to keep resolving (param names, arm ids, scenario ids
@@ -437,6 +437,17 @@ everywhere — including links opened in a new tab, which is exactly when dev
 chrome must not reappear. The cost is that test mode outlives the study, so
 while it is active the console logs the exit instruction: invisible to a
 participant, findable by whoever picks the machine up next.
+
+**Mode ▾ is a popover** (2026-10-20): Dev / Test, plus **Copy test link** for a
+user-test participant. The link is `index.html?fresh=1&mode=test` + every
+variant in force + only the outcomes a participant cannot produce themselves
+(today a forced `review=yes|no`); seller answers are never carried. The popover
+lists what the link includes and shows it in a field to select by hand where
+the clipboard is blocked. **`?fresh=1`** (proto-mode.js) clears the funnel,
+offers and decision stores, every remembered arm and the forced review before
+the link's own params apply, then drops itself from the address, so a reused
+test machine starts clean and a reload mid-test does not wipe progress. For a
+link to one specific view, copy the browser address as before.
 
 Exposes `window.protoMode` (`'dev' | 'test'`), `window.protoDev` (boolean) and
 `window.protoVariant(name, fallback)` — see **Initiatives** below.

@@ -415,5 +415,5 @@
     if (ex.needsCar && !es.hero) return;
     ex.set(es, v);
   });
-  if (es) write(FUNNEL_KEY, es);
+  if (es && es.hero) write(FUNNEL_KEY, es);   // no car: leave an empty prototype empty
 }());

@@ -413,21 +413,87 @@
        Toggling to the value it already has costs nothing. */
     window.addEventListener('resize', syncBarLayout);
 
-    /* Mode */
-    var modeWrap = document.createElement('label');
-    modeWrap.appendChild(document.createTextNode('Mode'));
-    var modeSel = document.createElement('select');
-    [['dev', 'Dev — tooling visible'], ['test', 'Test — tooling hidden']].forEach(function (m) {
-      var o = document.createElement('option');
-      o.value = m[0]; o.textContent = m[1];
-      modeSel.appendChild(o);
+    /* Mode — who is viewing, and the link to hand a user-test participant.
+       The test link starts at the front page so the participant walks the
+       whole journey with these variants pinned: `fresh=1` clears the last
+       participant's data first (proto-mode.js), then `mode=test`, every
+       variant in force, and only the outcomes a participant cannot produce
+       themselves (today: a forced Review / No review). Seller answers are not
+       carried; the participant gives those. For a link to one specific view,
+       copy the browser address instead. */
+    var modePop = makePopover(
+      'Mode: ' + (window.protoMode === 'test' ? 'Test' : 'Dev'),
+      'Dev or test mode, and the link for a user-test participant'
+    );
+    popoverSection(modePop.panel, 'Mode', [
+      { label: (window.protoMode === 'dev' ? '✓ ' : '') + 'Dev — tooling visible',
+        run: function () { window.location.href = withParam('mode', 'dev'); } },
+      { label: (window.protoMode === 'test' ? '✓ ' : '') + 'Test — tooling hidden, sticks across pages',
+        title: 'Exit with ?mode=dev in any URL',
+        run: function () { window.location.href = withParam('mode', 'test'); } }
+    ]);
+
+    var linkArms = (window.protoInitiatives || []).map(function (reg) {
+      var arm = params.get(reg.slug) || (window.protoVariantStored && window.protoVariantStored(reg.slug));
+      return arm && String(arm) !== String(reg.prodArm || '') ? { reg: reg, arm: String(arm) } : null;
+    }).filter(Boolean);
+    var forced = window.PROTO_MOCK && window.PROTO_MOCK.forcedReview && window.PROTO_MOCK.forcedReview();
+    var linkParams = new URLSearchParams();
+    linkParams.set('fresh', '1');
+    linkParams.set('mode', 'test');
+    linkArms.forEach(function (x) { linkParams.set(x.reg.slug, x.arm); });
+    if (forced) linkParams.set('review', forced === 'review' ? 'yes' : 'no');
+    var testLink = ROOT + 'index.html?' + linkParams.toString();
+
+    var tSec = document.createElement('div');
+    var tHead = document.createElement('h4');
+    tHead.textContent = 'Test link';
+    tSec.appendChild(tHead);
+    var tInfo = document.createElement('div');
+    tInfo.style.cssText = 'display:flex;flex-direction:column;gap:3px;margin-bottom:6px;color:#3c3c43;';
+    [
+      'Starts at the front page, with a fresh prototype.',
+      'Variants: ' + (linkArms.length
+        ? linkArms.map(function (x) { return x.reg.name + ' ' + x.arm; }).join(', ')
+        : 'none — production'),
+      'Review: ' + (forced === 'review' ? 'forced to review' : forced === 'no-review' ? 'forced to no review' : 'from the car the participant enters')
+    ].forEach(function (line) {
+      var d = document.createElement('div'); d.textContent = line; tInfo.appendChild(d);
     });
-    modeSel.value = window.protoMode;
-    modeSel.addEventListener('change', function () {
-      window.location.href = withParam('mode', modeSel.value);
+    tSec.appendChild(tInfo);
+    var tInput = document.createElement('input');
+    tInput.type = 'text';
+    tInput.readOnly = true;
+    tInput.className = 'pb-input';
+    tInput.style.width = '100%';
+    tInput.value = testLink;
+    tInput.addEventListener('focus', function () { tInput.select(); });
+    tSec.appendChild(tInput);
+    var tStack = document.createElement('div');
+    tStack.className = 'pb-stack';
+    tStack.style.marginTop = '6px';
+    var copyBtn = document.createElement('button');
+    copyBtn.type = 'button';
+    copyBtn.textContent = 'Copy test link';
+    copyBtn.addEventListener('click', function () {
+      function done(ok) {
+        copyBtn.textContent = ok ? 'Copied' : 'Copy failed — select the link above';
+        setTimeout(function () { copyBtn.textContent = 'Copy test link'; }, 1800);
+      }
+      function fallback() {
+        tInput.focus(); tInput.select();
+        var ok = false;
+        try { ok = document.execCommand('copy'); } catch (e) {}
+        done(ok);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(testLink).then(function () { done(true); }, fallback);
+      } else fallback();
     });
-    modeWrap.appendChild(modeSel);
-    bar.appendChild(modeWrap);
+    tStack.appendChild(copyBtn);
+    tSec.appendChild(tStack);
+    modePop.panel.appendChild(tSec);
+    bar.appendChild(modePop.wrap);
 
     /* Language — ONLY on a page that registered a dictionary with proto-i18n.
        It is proto chrome here, not product UI: production's decision page has no
