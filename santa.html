@@ -170,6 +170,24 @@
     .xm-blank[aria-invalid="true"] { border-bottom-color: var(--xm-red); background: rgba(254,202,202,.45); }
     .xm-blank-plate { width: 4.6em; text-transform: uppercase; }
     .xm-blank-km, .xm-blank-wish { width: 3.8em; }
+    .xm-blank-email { width: 100%; max-width: 13em; text-align: left; }
+    .xm-consent {
+      display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; padding: 10px 12px; border-radius: 8px; cursor: pointer;
+      background: rgba(255,253,248,.94); box-shadow: inset 0 0 0 1px #E2E8F0;
+      font: 500 15px/21px "DM Sans", sans-serif; color: #334155;
+    }
+    .xm-req { color: var(--xm-red); }
+    .xm-check {
+      appearance: none; -webkit-appearance: none; position: relative; flex-shrink: 0;
+      width: 18px; height: 18px; margin: 1px 0 0; border: 1.5px solid #64748B; border-radius: 3px; background: #fff; cursor: pointer;
+    }
+    .xm-check:checked { background: #0B6DFF; border-color: #0B6DFF; }
+    .xm-check:checked::after {
+      content: ""; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
+      border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+    }
+    .xm-check:focus-visible { outline: 2px solid #0B6DFF; outline-offset: 2px; }
+    .xm-check[aria-invalid="true"] { border-color: var(--xm-red); box-shadow: 0 0 0 3px rgba(220,38,38,.2); }
     .xm-error { margin: 14px 0 0 !important; font: 500 15px/20px "DM Sans", sans-serif; color: var(--xm-red-dark); }
     .xm-paper.is-shaking { animation: xm-shake .45s ease-in-out; }
     @keyframes xm-shake { 20% { transform: rotate(-1deg) translateX(-8px); } 40% { transform: rotate(-1deg) translateX(7px); } 60% { transform: rotate(-1deg) translateX(-5px); } 80% { transform: rotate(-1deg) translateX(3px); } }
@@ -460,7 +478,15 @@
             <p id="xm-line2" class="xm-line"></p>
             <p class="xm-line" data-i18n="priceSanta.line3">Olen ollut kiltti ja pitänyt autostani hyvää huolta.</p>
             <p class="xm-sign-off" data-i18n="priceSanta.closing">Terveisin,</p>
-            <p class="xm-signature" data-i18n="priceSanta.signature">Autoilija</p>
+            <!-- The sender signs with their email; it and the marketing
+                 consent are required to send. -->
+            <p class="xm-signature"><input id="xm-email" type="email" inputmode="email" autocomplete="email" class="xm-blank xm-blank-email"
+                 placeholder="sähköpostiosoitteesi" data-i18n-placeholder="priceSanta.emailPlaceholder"
+                 aria-label="Sähköposti" data-i18n-aria="contact.emailLabel" /></p>
+            <label class="xm-consent">
+              <input id="xm-consent" type="checkbox" class="xm-check" aria-describedby="xm-error" />
+              <span><span data-i18n="contact.marketingLabel">Haluan vastaanottaa mielenkiintoista sisältöä ja vinkkejä auton myyntiin sähköpostitse.</span> <span class="xm-req" aria-hidden="true">*</span></span>
+            </label>
             <p id="xm-error" class="xm-error hidden" role="alert"></p>
           </form>
           <div class="xm-actions" data-show="letter">
@@ -644,7 +670,7 @@
       var errEl  = document.getElementById('xm-error');
       var loaderIcon = document.getElementById('xm-loader-icon');
 
-      var state = { phase: 'letter', plate: '', km: '', wish: null, car: {}, price: null, asks: 0, fetchedFor: null, msgTimer: null };
+      var state = { phase: 'letter', plate: '', km: '', wish: null, email: '', car: {}, price: null, asks: 0, fetchedFor: null, msgTimer: null };
 
       function T(k) { return t('priceSanta.' + k); }
       function fill(str, map) { return str.replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : m; }); }
@@ -700,6 +726,11 @@
       var inKm    = blank('xm-blank-km', 'kmLabel', { placeholder: '…', inputmode: 'numeric', maxlength: '9' });
       var inWish  = blank('xm-blank-wish', 'wishLabel', { placeholder: '…', inputmode: 'numeric', maxlength: '9' });
       var BLANKS = { plate: inPlate, km: inKm, wish: inWish };
+      var inEmail = document.getElementById('xm-email');
+      var inConsent = document.getElementById('xm-consent');
+      var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      inEmail.addEventListener('input', function () { clearError(); });
+      inConsent.addEventListener('change', function () { clearError(); });
 
       function sentence(el, tpl) {
         el.textContent = '';
@@ -739,7 +770,7 @@
 
       function clearError() {
         errEl.classList.add('hidden');
-        [inPlate, inKm, inWish].forEach(function (el) { el.removeAttribute('aria-invalid'); });
+        [inPlate, inKm, inWish, inEmail, inConsent].forEach(function (el) { el.removeAttribute('aria-invalid'); });
       }
       function showError(input, key) {
         errEl.textContent = t(key);
@@ -817,6 +848,11 @@
         if (!km) { showError(inKm, 'hero.mileageError'); return; }
         if (Number(km) > MAX_MILEAGE) { showError(inKm, 'hero.mileageMaxError'); return; }
         if (withWish && !Number(wish)) { showError(inWish, 'priceSanta.wishError'); return; }
+        var email = inEmail.value.trim();
+        if (!email) { showError(inEmail, 'contact.emailEmptyError'); return; }
+        if (!EMAIL_RE.test(email)) { showError(inEmail, 'contact.emailInvalidError'); return; }
+        if (!inConsent.checked) { showError(inConsent, 'priceSanta.consentError'); return; }
+        state.email = email;
 
         inPlate.value = plate;
         state.plate = plate;
@@ -933,7 +969,8 @@
         var prev = getStore();
         var s = { hero: { plate: state.plate, km: group(state.km) }, details: {} };
         if (prev.loggedIn) s.loggedIn = prev.loggedIn;
-        if (prev.contact) s.contact = prev.contact;
+        /* The letter's email and marketing consent prefill the contact step. */
+        s.contact = Object.assign({}, prev.contact || {}, state.email ? { sahkoposti: state.email, markkinointi: true } : {});
         VEHICLE_FIELDS.forEach(function (k) { s.details[k] = state.car[k] || ''; });
         setStore(s);
         window.location.href = 'details.html?' + new URLSearchParams({ plate: state.plate, km: group(state.km), from: 'price-guess' });
@@ -955,6 +992,8 @@
       var hero = getStore().hero || {};
       if (hero.plate) inPlate.value = normalizePlate(hero.plate);
       if (hero.km && digits(hero.km)) inKm.value = group(digits(hero.km));
+      var storedEmail = (getStore().contact || {}).sahkoposti;
+      if (storedEmail) inEmail.value = storedEmail;
 
       var scenario = new URLSearchParams(window.location.search).get('scenario');
       if (scenario === 'reply' || scenario === 'reply-nowish') {
@@ -967,6 +1006,9 @@
         inPlate.value = state.plate;
         inKm.value = group(state.km);
         if (state.wish) inWish.value = group(state.wish);
+        state.email = inEmail.value || 'matti.meikalainen@example.fi';
+        inEmail.value = state.email;
+        inConsent.checked = true;
         document.getElementById('xm-line2').classList.toggle('is-skipped', !state.wish);
         renderCar();
         showReply(false);

@@ -2943,6 +2943,15 @@ give a real price.
   Joulupukille" needs the wish; the secondary "Kysy Pukilta ilman toivetta"
   strikes the wish line through and sends without it. Plate and mileage use
   the front page's rules and errors.
+- **The letter is signed with an email, and marketing consent is required**
+  (Jussi, 2026-10-21: the campaign collects addresses for marketing). Under
+  "Terveisin," the signature is an email blank, then prod's own marketing
+  checkbox copy (`contact.marketingLabel`) with a required asterisk; both
+  paths need both (`contact.emailEmptyError` / `emailInvalidError`,
+  `priceSanta.consentError`). The funnel handoff writes the address and
+  `markkinointi: true` into the contact step. **Open for Legal before any
+  launch:** consent made a condition of getting the estimate may not count
+  as freely given under GDPR; the proto builds what was asked.
 - **Sending → workshop → reply**, ~12 s on the first letter: the letter is
   postmarked, folds, becomes an envelope with a wax seal and flies off while a
   sleigh crosses the sky (2.4 s); "Korvatunturin pajalla" fetches the car
@@ -2955,7 +2964,9 @@ give a real price.
   arvio ovat kaksi eri lukua, eikä kumpikaan niistä ole tarjous." (wish only),
   the constant core ("Arvio on kuitenkin vain tyhjä luku. Oikean hinnan kertoo
   vasta autoliikkeiden välinen kilpailu."), the AutoVex advice, signature and a
-  P.S. on condition. The estimate is v2's: ±7.5 % of the mock 12 000 €, to the
+  P.S. that the estimate rests on the plate and mileage alone, while
+  dealerships make offers on the listing the seller writes (equipment,
+  service history, condition, photos). The estimate is v2's: ±7.5 % of the mock 12 000 €, to the
   euro, never repeated. "Kysy Pukilta uudestaan" re-writes only (new figure,
   P.P.S. "Eri luku kuin äsken?"); "Kirjoita uusi kirje" goes back, and the
   fetch is skipped while the plate and mileage stay the same.
