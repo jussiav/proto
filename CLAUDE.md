@@ -2874,8 +2874,10 @@ are cheap. The guess is a lottery; the real price comes from the auction.
   control.
 - **v2 estimates near the GT-X estimate (2026-10-21, Jussi).** The machine
   is only worth playing if it is close: every v2 spin lands inside ±7.5 %
-  (`SPREAD`) of a mock GT-X estimate, rounded to 100 €, never the same
-  figure twice in a row, and the range is never shown. The brief said
+  (`SPREAD`) of a mock GT-X estimate, to the euro (not rounded, Jussi: a
+  figure that changes down to the last digit shows it is different every
+  time), never the same figure twice in a row, and the range is never
+  shown. The brief said
   "within 5–10 %"; 7.5 % is one constant to tune. The mock estimate is
   12 000 € (`GTX_ESTIMATE`), decision.html's own `price_estimation`
   fallback, so the result sits beside the decision page's 11 500 € offer;
@@ -2894,8 +2896,8 @@ are cheap. The guess is a lottery; the real price comes from the auction.
   keeps it. Respins skip both; "Vaihda autoa" fetches again. The machine
   never says where the data comes from. Five reels for v2 (`buildReels`),
   narrower on a phone with the paylines hidden; measured to fit at 375 and
-  360px. With the figures now real, `spin5` became "Pyöristetään
-  satasiin…" and the fine print "…on suuntaa antava eikä huomioi auton
+  360px. With the figures now real, `spin5` became "Lasketaan euron
+  tarkkuudella…" and the fine print "…on suuntaa antava eikä huomioi auton
   kuntoa.", since "not based on your car's details" stopped being true.
 - **Nav item (v1 and v2, 2026-10-21):** `site-nav.js` adds the machine's
   sign as the last item of the marketing menu (index, help, price-guess;

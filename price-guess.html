@@ -634,8 +634,9 @@
       var state = { phase: 'input', plate: '', km: '', car: {}, price: null, spins: 0, msgTimer: null, userScrolled: false, fetched: false };
 
       /* v2 estimates around the car's GT-X estimate rather than at random:
-         every spin lands somewhere inside ±SPREAD of it, rounded to 100 €,
-         and never on the same figure twice in a row. The range is never
+         every spin lands somewhere inside ±SPREAD of it, to the euro so the
+         figure visibly changes each time, and never on the same figure twice
+         in a row. The range is never
          shown. 12 000 € is decision.html's own price_estimation fallback, so
          the two pages agree on the car; the proto has no real lookup. */
       var GTX_ESTIMATE = 12000;
@@ -751,7 +752,7 @@
       function newPrice() {
         var p;
         if (ARM === 'v2') {
-          do { p = Math.round(GTX_ESTIMATE * (1 + (Math.random() * 2 - 1) * SPREAD) / 100) * 100; } while (p === state.price);
+          do { p = Math.round(GTX_ESTIMATE * (1 + (Math.random() * 2 - 1) * SPREAD)); } while (p === state.price);
           return p;
         }
         do { p = (2 + rand(5)) * 1000 + rand(10) * 100 + 90; } while (p === state.price);
@@ -1006,7 +1007,7 @@
         state.plate = normalizePlate(hero.plate || 'LRX-345');
         state.km = String(hero.km || '148000').replace(/\D/g, '');
         state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
-        state.price = ARM === 'v2' ? 12100 : 4990;
+        state.price = ARM === 'v2' ? 12137 : 4990;
         state.spins = 1;
         state.fetched = true;
         if (ARM === 'v2') form.classList.add('is-found');
