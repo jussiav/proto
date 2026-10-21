@@ -58,8 +58,15 @@
        Stamped before body parsing, so control never paints it. */
     (function () {
       var arm = window.protoVariant('price-guess', 'control');
-      if (arm !== 'control' && arm !== 'v1' && arm !== 'v2') { window.protoVariantSet('price-guess', null); arm = 'control'; }
+      if (arm !== 'control' && arm !== 'v1' && arm !== 'v2' && arm !== 'v3') { window.protoVariantSet('price-guess', null); arm = 'control'; }
       document.documentElement.setAttribute('data-price-guess-arm', arm);
+      /* v3's teaser addresses its envelope by hand, in the campaign's font */
+      if (arm === 'v3') {
+        var font = document.createElement('link');
+        font.rel = 'stylesheet';
+        font.href = 'https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap';
+        document.head.appendChild(font);
+      }
     })();
   </script>
   <style>
@@ -142,6 +149,56 @@
     #price-guess-teaser { display: none; }
     html[data-price-guess-arm="v1"] #price-guess-teaser,
     html[data-price-guess-arm="v2"] #price-guess-teaser { display: block; }
+
+    /* v3: the Christmas campaign's teaser, "Kirje Joulupukille" */
+    #price-santa-teaser { display: none; }
+    html[data-price-guess-arm="v3"] #price-santa-teaser { display: block; }
+    .xmt {
+      background:
+        radial-gradient(2px 2px at 12% 20%, rgba(255,255,255,.9) 50%, transparent 52%),
+        radial-gradient(1.5px 1.5px at 30% 70%, rgba(255,255,255,.7) 50%, transparent 52%),
+        radial-gradient(2px 2px at 48% 35%, rgba(255,255,255,.8) 50%, transparent 52%),
+        radial-gradient(1.5px 1.5px at 66% 82%, rgba(255,255,255,.7) 50%, transparent 52%),
+        radial-gradient(2px 2px at 84% 28%, rgba(255,255,255,.9) 50%, transparent 52%),
+        radial-gradient(ellipse at 80% 10%, rgba(80,178,255,.25), transparent 55%),
+        linear-gradient(180deg, #08234D 0%, #134195 100%);
+      background-size: 360px 260px, 360px 260px, 360px 260px, 360px 260px, 360px 260px, auto, auto;
+    }
+    .xmt-cta {
+      display: inline-flex; align-items: center; justify-content: center; gap: 12px; align-self: flex-start;
+      height: 64px; padding: 0 30px; border-radius: 16px; background: #DC2626; color: #fff;
+      font: 700 22px/1 Barlow, sans-serif; box-shadow: 0 6px 0 #7F1D1D, 0 18px 40px rgba(220,38,38,.35);
+      transition: translate .15s, box-shadow .15s, background-color .15s;
+    }
+    .xmt-cta:hover { background: #B91C1C; translate: 0 -2px; }
+    .xmt-cta:active { translate: 0 4px; box-shadow: 0 2px 0 #7F1D1D; }
+    .xmt-cta:focus-visible { outline: 3px solid #FAEADA; outline-offset: 3px; }
+    .xmt-env {
+      position: relative; width: 340px; max-width: 100%; aspect-ratio: 16 / 10; border-radius: 10px;
+      background: #FAEADA; box-shadow: 0 26px 50px rgba(0,0,0,.35);
+      animation: xmt-float 6s ease-in-out infinite; rotate: -5deg;
+    }
+    .xmt-env::before {
+      content: ""; position: absolute; inset: 0; border-radius: 10px 10px 0 0;
+      background: #F5AB84; clip-path: polygon(0 0, 100% 0, 50% 56%);
+    }
+    @keyframes xmt-float { 50% { translate: 0 -12px; rotate: -3deg; } }
+    .xmt-seal {
+      position: absolute; left: 50%; top: 48%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #EF4444, #991B1B); color: #FEE2E2;
+      display: grid; place-items: center; font: 700 14px/1 Barlow, sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,.3);
+    }
+    .xmt-stamp {
+      position: absolute; top: 12px; right: 12px; width: 48px; height: 58px; padding: 4px;
+      background: radial-gradient(circle at 4px 4px, transparent 3px, #fff 3.5px) -4px -4px / 8px 8px; rotate: 6deg;
+    }
+    .xmt-stamp > div { height: 100%; background: #DC2626; display: grid; place-items: center; }
+    .xmt-to { position: absolute; left: 22px; bottom: 16px; color: #08234D; font: 700 28px/1.05 Caveat, cursive; }
+    .xmt-to span { display: block; }
+    .xmt-to span + span { font-size: 22px; }
+    .xmt-spark { position: absolute; color: #FBBF24; animation: xmt-tw 2.4s ease-in-out infinite; pointer-events: none; }
+    @keyframes xmt-tw { 50% { opacity: .3; transform: scale(.7) rotate(30deg); } }
+    @media (prefers-reduced-motion: reduce) { .xmt-env, .xmt-spark { animation: none !important; } }
     .pgt {
       background:
         radial-gradient(circle at 85% 15%, rgba(11,109,255,.55), transparent 45%),
@@ -267,7 +324,8 @@
           variants: [
             { id: 'control', label: 'Control — no price guess section' },
             { id: 'v1',      label: 'Variant 1 — price guess section, links to price-guess.html' },
-            { id: 'v2',      label: 'Variant 2 — Arviokone: the same section as an estimate machine' }
+            { id: 'v2',      label: 'Variant 2 — Arviokone: the same section as an estimate machine' },
+            { id: 'v3',      label: 'Variant 3 — Kirje Joulupukille: Christmas campaign, links to santa.html' }
           ]
         }
       ]
@@ -758,6 +816,30 @@
       });
     })();
   </script>
+
+  <!-- ── Price guess v3: Christmas campaign teaser ── -->
+  <section id="price-santa-teaser" class="xmt relative overflow-hidden px-10 py-20 max-md:px-5 max-md:py-16" aria-labelledby="xmt-title">
+    <span class="xmt-spark" style="left:44%; top:18%;" aria-hidden="true">✦</span>
+    <span class="xmt-spark" style="right:6%; bottom:14%; animation-delay:-1.2s;" aria-hidden="true">✦</span>
+    <div class="relative flex items-center gap-16 w-full max-w-[1100px] mx-auto max-md:flex-col max-md:gap-12">
+      <div class="flex-1 flex flex-col gap-5">
+        <span class="pgt-tag"><span aria-hidden="true">❄</span><span data-i18n="priceSantaTeaser.tag">Kirje Joulupukille</span></span>
+        <h2 id="xmt-title" class="m-0 font-barlow font-bold text-white text-4xl leading-[40px] md:text-5xl md:leading-[52px]" data-i18n="priceSantaTeaser.title">Paljonko toivot autostasi tänä jouluna?</h2>
+        <p class="m-0 font-dm text-xl leading-7 text-blue-200" data-i18n="priceSantaTeaser.body">Kirjoita hintatoiveesi Joulupukille, niin Pukki vastaa saman tien.</p>
+        <a href="santa.html" class="xmt-cta mt-3 max-sm:self-stretch">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+          <span data-i18n="priceSantaTeaser.cta">Kirjoita Pukille</span>
+        </a>
+      </div>
+      <div class="flex-1 flex justify-center max-md:w-full">
+        <a href="santa.html" class="xmt-env block" tabindex="-1" aria-hidden="true">
+          <div class="xmt-stamp"><div><svg width="20" height="22" viewBox="0 0 26 28" fill="#fff"><path d="M13 1 L19 9 H16 L22 16 H18 L24 23 H2 L8 16 H4 L10 9 H7 Z"/></svg></div></div>
+          <div class="xmt-seal">AV</div>
+          <div class="xmt-to"><span data-i18n="priceSantaTeaser.envelopeTo">Joulupukille</span><span data-i18n="priceSantaTeaser.envelopeAddr">Korvatunturi</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
 
   <!-- ── Reviews (Arvosteluja) ── -->
   <section class="flex flex-col items-center py-16 md:py-28 px-5 md:px-10 gap-5" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">

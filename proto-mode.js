@@ -179,8 +179,9 @@
       spec: 'design-specs/op-routing.html',
       prodArm: 'control'
     },
-    /* No spec page: an ideation piece. The arm only gates the front page's
-       section; price-guess.html itself renders the same in every arm. */
+    /* No spec page: an ideation piece. v1 and v2 are price-guess.html,
+       v3 (the Christmas campaign) is santa.html; each page forwards to the
+       other when the arm belongs there. */
     {
       slug: 'price-guess',
       name: 'Price guess',

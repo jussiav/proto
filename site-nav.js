@@ -66,16 +66,22 @@
      remembered, so the item shows there too. */
   var pgArm = window.protoVariantStored ? window.protoVariantStored('price-guess') : null;
   var onPriceGuess = path.indexOf('price-guess') !== -1;
+  var onSanta = path.indexOf('santa') !== -1;
   if (!pgArm && onPriceGuess) pgArm = 'v1';
-  if (showMenu && (pgArm === 'v1' || pgArm === 'v2')) {
-    var pgKey = pgArm === 'v2' ? 'priceEstimate.sign' : 'priceGuess.sign';
-    var pgLabel = pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';
+  if ((!pgArm || pgArm === 'control') && onSanta) pgArm = 'v3';
+  if (showMenu && (pgArm === 'v1' || pgArm === 'v2' || pgArm === 'v3')) {
+    /* v3 is the Christmas campaign: its own page, a red sign, snowflakes. */
+    var xmas = pgArm === 'v3';
+    var pgKey = xmas ? 'priceSanta.navLabel' : pgArm === 'v2' ? 'priceEstimate.sign' : 'priceGuess.sign';
+    var pgLabel = xmas ? 'Kirje Pukille' : pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';
+    var pgGlyph = xmas ? '❄' : '★';
     MENU_HTML +=
       '<li class="flex flex-col items-center justify-center w-full lg:w-auto h-auto lg:h-full lg:pr-2">' +
-        '<a href="price-guess.html" class="nav-pg" title="' + pgLabel + '"' + (onPriceGuess ? ' aria-current="page"' : '') + '>' +
-          '<span class="nav-pg-star" aria-hidden="true">★</span>' +
+        '<a href="' + (xmas ? 'santa.html' : 'price-guess.html') + '" class="nav-pg' + (xmas ? ' is-xmas' : '') + '" title="' + pgLabel + '"' +
+          ((xmas ? onSanta : onPriceGuess) ? ' aria-current="page"' : '') + '>' +
+          '<span class="nav-pg-star" aria-hidden="true">' + pgGlyph + '</span>' +
           '<span class="nav-pg-label" data-i18n="' + pgKey + '">' + pgLabel + '</span>' +
-          '<span class="nav-pg-star" aria-hidden="true">★</span>' +
+          '<span class="nav-pg-star" aria-hidden="true">' + pgGlyph + '</span>' +
         '</a>' +
       '</li>';
     /* Hand-written: the sign is the landing page's own (.pg-sign), scaled to
@@ -97,6 +103,10 @@
       '.nav-pg-star:last-child{display:none;animation-delay:-.8s}' +
       '@media (min-width:1280px){.nav-pg{padding:8px 12px;font-size:12px}.nav-pg-label{position:static;width:auto;height:auto;overflow:visible;clip:auto}.nav-pg-star{display:none}}' +
       '@media (min-width:1360px){.nav-pg{padding:9px 14px;font-size:14px;letter-spacing:.08em}.nav-pg-star,.nav-pg-star:last-child{display:inline-block}}' +
+      '.nav-pg.is-xmas{background:#DC2626;color:#fff;box-shadow:0 4px 0 #7F1D1D,0 0 18px rgba(220,38,38,.55)}' +
+      '.nav-pg.is-xmas:hover{box-shadow:0 6px 0 #7F1D1D,0 0 26px rgba(220,38,38,.75)}' +
+      '.nav-pg.is-xmas[aria-current="page"]{box-shadow:0 0 0 2px #fff,0 4px 0 2px #7F1D1D,0 0 18px rgba(220,38,38,.55)}' +
+      '.nav-pg.is-xmas .nav-pg-star{color:#fff}' +
       '@keyframes nav-pg-twinkle{50%{transform:scale(.6) rotate(45deg);opacity:.5}}' +
       '@media (prefers-reduced-motion:reduce){.nav-pg-star{animation:none}}';
     document.head.appendChild(pgCss);

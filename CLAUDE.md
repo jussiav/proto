@@ -802,7 +802,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
-| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html` | none |
+| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html` | none |
 
 **Completed initiatives:**
 
@@ -2923,6 +2923,56 @@ are cheap. The guess is a lottery; the real price comes from the auction.
   1360px. No overflow at 1200/1280/1366/1440; at 1024 the nav already
   overflowed ~100px without it (pre-existing) and the pill adds ~40px.
   Below `lg` there is no menu in the proto, so no item.
+
+### Price guess `v3` — "Kirje Joulupukille" (2026-10-21)
+
+v2's idea as a Christmas marketing campaign. As children wish for presents,
+sellers wish for a price; Santa answers with an estimate, and his answer always
+ends the same way: an estimate is an empty number, only dealerships competing
+give a real price.
+
+- **Its own page, `santa.html`.** The whole landing is different (no machine),
+  so it is not an arm inside `price-guess.html`: `price-guess.html` forwards a
+  `v3` to `santa.html`, and `santa.html` forwards `v1`/`v2` back. `santa.html`
+  defaults to `v3` and its bar lists all three arms.
+- **The form is the letter.** Lined paper, a red margin, a "Joulu" stamp, and
+  the blanks are real inputs inside the sentences ("Autoni rekisterinumero on
+  [__], ja sillä on ajettu [__] km. Tänä jouluna toivoisin saavani autostani
+  [__] €."), in the campaign's handwriting font **Caveat** (the two letters
+  only; everything else is Barlow / DM Sans). Primary "Lähetä kirje
+  Joulupukille" needs the wish; the secondary "Kysy Pukilta ilman toivetta"
+  strikes the wish line through and sends without it. Plate and mileage use
+  the front page's rules and errors.
+- **Sending → workshop → reply**, ~12 s on the first letter: the letter is
+  postmarked, folds, becomes an envelope with a wax seal and flies off while a
+  sleigh crosses the sky (2.4 s); "Korvatunturin pajalla" fetches the car
+  (5 s, car hidden, `fetch1`–`fetch5`), shows the car-found beat (1.5 s,
+  prod's "Löysimme autosi tiedot!"), then Santa writes (3.5 s,
+  `write1`–`write5`). A steps strip (Kirjoita kirje · Pukki vastaa · Pyydä
+  oikeat tarjoukset) tracks it.
+- **Santa's reply** is a candy-striped letter: the wish (or "Et kirjoittanut
+  toivetta…"), the estimate in Barlow with an "EI TARJOUS" stamp, "Toive ja
+  arvio ovat kaksi eri lukua, eikä kumpikaan niistä ole tarjous." (wish only),
+  the constant core ("Arvio on kuitenkin vain tyhjä luku. Oikean hinnan kertoo
+  vasta autoliikkeiden välinen kilpailu."), the AutoVex advice, signature and a
+  P.S. on condition. The estimate is v2's: ±7.5 % of the mock 12 000 €, to the
+  euro, never repeated. "Kysy Pukilta uudestaan" re-writes only (new figure,
+  P.P.S. "Eri luku kuin äsken?"); "Kirjoita uusi kirje" goes back, and the
+  fetch is skipped while the plate and mileage stay the same.
+- **The way out** is AutoVex's turquoise "Aloita kilpailutus" under the reply
+  and again in the USP section that appears with it (three candy-striped
+  cards: hundreds of dealerships, free for sellers, you decide; 80 000+ and
+  4,7/5 from the front page's stats). Same funnel handoff as v2.
+- **Elsewhere in v3:** the front page shows `#price-santa-teaser` (night sky,
+  a floating envelope addressed "Joulupukille / Korvatunturi", red "Kirjoita
+  Pukille") instead of the slot machine; the nav sign turns red with
+  snowflakes, reads "Kirje Pukille" and links to `santa.html`.
+- `?scenario=reply` / `reply-nowish` land on the reply (12 137 €). Countdown
+  to Christmas Eve in the hero tag. Reduced motion: no snow, flights or
+  spinners; the simulated waits stay.
+- Copy `priceSanta.*` / `priceSantaTeaser.*`, Claude's draft, English a
+  working translation. Seasonal colours (Tailwind red, green, amber) and
+  emoji in the USP cards are campaign choices, not tokens.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

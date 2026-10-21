@@ -49,6 +49,12 @@
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
+  <script>
+    /* v3 (the Christmas campaign) is its own page. */
+    if (window.protoVariant('price-guess', 'v1') === 'v3') {
+      window.location.replace('santa.html' + window.location.search + window.location.hash);
+    }
+  </script>
   <style>
     /* The machine is built partly from JS (reel strips, receipt values), and the
        Play CDN only generates utilities present at first paint, so everything
@@ -421,7 +427,8 @@
           default: 'v1',
           variants: [
             { id: 'v1', label: 'Variant 1 — price guess (lottery)' },
-            { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' }
+            { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' },
+            { id: 'v3', label: 'Variant 3 — Kirje Joulupukille (Christmas, santa.html)' }
           ]
         }
       ]

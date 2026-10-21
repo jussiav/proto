@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kirje Joulupukille – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Caveat is this campaign's handwriting, for the two letters only;
+       everything else stays on prod's Barlow and DM Sans. -->
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':     '#0B6DFF',
+            'av-blue-dark':'#0050C8',
+            'av-blue-500': '#2890FF',
+            'av-dark':     '#08234D',
+            'av-turquoise':'#00F0DC',
+            'av-sky':      '#DAF0F5',
+            'av-peach':    '#F5AB84',
+            'av-cream':    '#FAEADA',
+          },
+          fontFamily: {
+            barlow: ['Barlow', 'sans-serif'],
+            dm:     ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="tw-tokens.js"></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
+  <script src="proto-mock.js"></script>
+  <script>
+    /* This page is the price-guess initiative's v3. Picking v1 or v2 on the
+       bar (or arriving with them remembered) belongs to price-guess.html. */
+    (function () {
+      var arm = window.protoVariant('price-guess', 'v3');
+      if (arm === 'v1' || arm === 'v2') {
+        window.location.replace('price-guess.html' + window.location.search + window.location.hash);
+      }
+    })();
+  </script>
+  <style>
+    /* Everything the campaign draws is hand-written: most of it is built or
+       switched by the page script, and the Play CDN only generates utilities
+       present at first paint. Colours are the page tokens plus Tailwind's
+       red, green and amber for the season. */
+    :root {
+      --xm-navy: #08234D; --xm-ink: #0F47BE; --xm-paper: #FFFDF8;
+      --xm-red: #DC2626; --xm-red-dark: #B91C1C; --xm-red-deep: #7F1D1D;
+      --xm-green: #15803D; --xm-gold: #FBBF24;
+    }
+    .xm-hand { font-family: Caveat, cursive; }
+
+    /* Night sky */
+    .xm-hero {
+      position: relative; overflow: hidden; color: #fff;
+      background:
+        radial-gradient(ellipse at 82% 8%, rgba(80,178,255,.22), transparent 55%),
+        linear-gradient(180deg, #08234D 0%, #11285A 40%, #134195 78%, #0F47BE 100%);
+    }
+    .xm-stars {
+      position: absolute; inset: 0; pointer-events: none; opacity: .75;
+      background-image:
+        radial-gradient(1.5px 1.5px at 8% 12%, #fff 50%, transparent 52%),
+        radial-gradient(1px 1px at 22% 30%, #fff 50%, transparent 52%),
+        radial-gradient(1.5px 1.5px at 37% 8%, #fff 50%, transparent 52%),
+        radial-gradient(1px 1px at 51% 22%, #fff 50%, transparent 52%),
+        radial-gradient(2px 2px at 66% 14%, #FAEADA 50%, transparent 52%),
+        radial-gradient(1px 1px at 79% 34%, #fff 50%, transparent 52%),
+        radial-gradient(1.5px 1.5px at 92% 20%, #fff 50%, transparent 52%);
+      background-size: 520px 340px;
+    }
+    .xm-twinkle { position: absolute; color: var(--xm-gold); font-size: 16px; animation: xm-twinkle 2.4s ease-in-out infinite; pointer-events: none; }
+    @keyframes xm-twinkle { 50% { opacity: .3; transform: scale(.7) rotate(30deg); } }
+    .xm-moon {
+      position: absolute; top: 96px; right: 8%; width: 76px; height: 76px; border-radius: 50%;
+      box-shadow: inset -20px 10px 0 0 #FAEADA, 0 0 60px rgba(250,234,218,.18);
+      transform: rotate(-18deg); pointer-events: none;
+    }
+    .xm-snow { position: absolute; inset: 0; pointer-events: none; }
+    .xm-snow i {
+      position: absolute; top: -12px; border-radius: 50%; background: #fff;
+      animation: xm-fall linear infinite;
+    }
+    @keyframes xm-fall { to { transform: translate3d(var(--dx, 20px), 1400px, 0); } }
+    .xm-sleigh { position: absolute; top: 15%; left: 0; width: 200px; opacity: 0; pointer-events: none; z-index: 1; }
+    .xm-sleigh.is-flying { animation: xm-sleigh 5.5s ease-in-out forwards; }
+    @keyframes xm-sleigh {
+      0%   { transform: translate(-240px, 70px); opacity: 0; }
+      10%  { opacity: .95; }
+      50%  { transform: translate(48vw, -6px); }
+      90%  { opacity: .95; }
+      100% { transform: translate(105vw, -70px); opacity: 0; }
+    }
+    .xm-hills { display: block; width: 100%; height: auto; margin-top: -2px; }
+
+    /* Steps */
+    .xm-steps { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .xm-step {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px 6px 6px; border-radius: 999px;
+      background: rgba(255,255,255,.1); color: #B9E0FF; font: 600 14px/1 "DM Sans", sans-serif;
+    }
+    .xm-step b {
+      display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(255,255,255,.16); color: #fff; font: 700 12px/1 "DM Sans", sans-serif;
+    }
+    .xm-step.is-active { background: #fff; color: var(--xm-navy); }
+    .xm-step.is-active b { background: var(--xm-red); }
+    .xm-step.is-done b { background: #00F0DC; color: var(--xm-navy); }
+    @media (max-width: 619px) { .xm-step:not(.is-active) span { display: none; } .xm-step:not(.is-active) { padding-right: 6px; } }
+
+    /* The stage: one block per phase */
+    #xm-stage { position: relative; width: 100%; max-width: 600px; margin: 0 auto; scroll-margin-top: 96px; }
+    #xm-stage [data-show] { display: none; }
+    #xm-stage[data-phase="letter"] [data-show~="letter"],
+    #xm-stage[data-phase="sending"] [data-show~="sending"],
+    #xm-stage[data-phase="fetching"] [data-show~="fetching"],
+    #xm-stage[data-phase="found"] [data-show~="found"],
+    #xm-stage[data-phase="writing"] [data-show~="writing"],
+    #xm-stage[data-phase="reply"] [data-show~="reply"] { display: block; }
+
+    /* The seller's letter */
+    .xm-paper {
+      position: relative; margin: 0 auto; color: var(--xm-navy);
+      padding: 34px 40px 30px 66px; border-radius: 6px;
+      background-color: var(--xm-paper);
+      background-image:
+        linear-gradient(90deg, transparent 46px, #FECACA 46px, #FECACA 48px, transparent 48px),
+        repeating-linear-gradient(180deg, transparent 0, transparent 39px, #D7EDFF 39px, #D7EDFF 40px);
+      background-position: 0 0, 0 30px;
+      box-shadow: 0 30px 60px rgba(2,6,23,.45);
+      transform: rotate(-1deg);
+      font: 500 26px/40px Caveat, cursive;
+      text-align: left;
+    }
+    .xm-paper p { margin: 0; }
+    .xm-greeting { font-weight: 700; font-size: 32px; padding-right: 84px; }
+    .xm-line.is-skipped { text-decoration: line-through; text-decoration-color: var(--xm-red); text-decoration-thickness: 2px; opacity: .5; }
+    .xm-sign-off { margin-top: 8px !important; }
+    .xm-signature { font-weight: 700; font-size: 32px; color: var(--xm-ink); }
+    .xm-blank {
+      font: 700 28px/1 Caveat, cursive; color: var(--xm-ink); background: transparent;
+      border: 0; border-bottom: 2px dashed #50B2FF; border-radius: 4px 4px 0 0;
+      padding: 0 4px; margin: 0 2px; text-align: center; outline: none; vertical-align: baseline;
+    }
+    .xm-blank:focus { border-bottom-color: var(--xm-ink); background: rgba(215,237,255,.6); }
+    .xm-blank::placeholder { color: #94A3B8; }
+    .xm-blank[aria-invalid="true"] { border-bottom-color: var(--xm-red); background: rgba(254,202,202,.45); }
+    .xm-blank-plate { width: 4.6em; text-transform: uppercase; }
+    .xm-blank-km, .xm-blank-wish { width: 3.8em; }
+    .xm-error { margin: 14px 0 0 !important; font: 500 15px/20px "DM Sans", sans-serif; color: var(--xm-red-dark); }
+    .xm-paper.is-shaking { animation: xm-shake .45s ease-in-out; }
+    @keyframes xm-shake { 20% { transform: rotate(-1deg) translateX(-8px); } 40% { transform: rotate(-1deg) translateX(7px); } 60% { transform: rotate(-1deg) translateX(-5px); } 80% { transform: rotate(-1deg) translateX(3px); } }
+    .xm-paper.is-folding { transform-origin: 50% 0; animation: xm-fold .55s ease-in forwards; }
+    @keyframes xm-fold { to { transform: perspective(900px) rotateX(78deg) scaleY(.4); opacity: 0; } }
+    @media (max-width: 619px) {
+      .xm-paper { padding: 26px 18px 24px 40px; font-size: 22px; line-height: 36px;
+        background-image:
+          linear-gradient(90deg, transparent 26px, #FECACA 26px, #FECACA 28px, transparent 28px),
+          repeating-linear-gradient(180deg, transparent 0, transparent 35px, #D7EDFF 35px, #D7EDFF 36px);
+        background-position: 0 0, 0 26px; }
+      .xm-greeting, .xm-signature { font-size: 28px; }
+      .xm-blank { font-size: 24px; }
+    }
+
+    /* Postage stamp, scalloped by a hole pattern, and the postmark it gets */
+    .xm-stamp {
+      position: absolute; top: 14px; right: 16px; width: 64px; height: 78px; padding: 6px;
+      background: radial-gradient(circle at 4px 4px, transparent 3px, #fff 3.5px) -4px -4px / 8px 8px;
+      transform: rotate(5deg); filter: drop-shadow(0 2px 3px rgba(2,6,23,.25));
+    }
+    .xm-stamp-in {
+      height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+      background: var(--xm-red); color: #fff; font: 700 10px/1 Barlow, sans-serif; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .xm-postmark {
+      position: absolute; top: 34px; right: 46px; width: 76px; height: 76px; border-radius: 50%;
+      border: 3px double rgba(127,29,29,.75); color: rgba(127,29,29,.8);
+      display: grid; place-items: center; text-align: center;
+      font: 700 9px/1.2 Barlow, sans-serif; letter-spacing: .08em; text-transform: uppercase;
+      transform: rotate(-16deg) scale(2); opacity: 0; pointer-events: none;
+    }
+    .xm-paper.is-posted .xm-postmark { animation: xm-thump .3s ease-in forwards; }
+    @keyframes xm-thump { to { transform: rotate(-16deg) scale(1); opacity: 1; } }
+
+    /* Letter actions */
+    .xm-actions { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 30px; }
+    .xm-send {
+      display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+      height: 60px; padding: 0 30px; border: 0; border-radius: 16px; cursor: pointer;
+      background: var(--xm-red); color: #fff; font: 700 21px/1 Barlow, sans-serif;
+      box-shadow: 0 6px 0 var(--xm-red-deep), 0 18px 40px rgba(220,38,38,.35);
+      transition: translate .12s, box-shadow .12s, background-color .15s;
+    }
+    .xm-send:hover { background: var(--xm-red-dark); }
+    .xm-send:active { translate: 0 4px; box-shadow: 0 2px 0 var(--xm-red-deep); }
+    .xm-link {
+      background: none; border: 0; padding: 4px; cursor: pointer; color: #fff;
+      font: 500 16px/22px "DM Sans", sans-serif; text-decoration: underline; text-underline-offset: 4px;
+    }
+    .xm-link:hover { color: #B9E0FF; }
+    .xm-send:focus-visible, .xm-link:focus-visible, .xm-ghost:focus-visible, .xm-cta:focus-visible { outline: 3px solid #FAEADA; outline-offset: 3px; }
+    @media (max-width: 619px) { .xm-send { width: 100%; font-size: 19px; padding: 0 16px; } }
+
+    /* Envelope */
+    .xm-envelope {
+      position: relative; width: 320px; height: 200px; margin: 30px auto 0; border-radius: 8px;
+      background: #FAEADA; box-shadow: 0 24px 48px rgba(2,6,23,.45);
+    }
+    .xm-envelope::before {
+      content: ""; position: absolute; inset: 0; border-radius: 8px 8px 0 0;
+      background: #F5AB84; clip-path: polygon(0 0, 100% 0, 50% 56%);
+    }
+    .xm-envelope-to { position: absolute; left: 26px; bottom: 18px; color: var(--xm-navy); font: 700 26px/1.1 Caveat, cursive; }
+    .xm-envelope-to span { display: block; }
+    .xm-envelope-to span + span { font-size: 20px; font-weight: 500; }
+    .xm-seal {
+      position: absolute; left: 50%; top: 48%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #EF4444, #991B1B); color: #FEE2E2;
+      display: grid; place-items: center; font: 700 14px/1 Barlow, sans-serif; box-shadow: 0 2px 4px rgba(0,0,0,.3);
+    }
+    .xm-envelope .xm-stamp { top: 12px; right: 12px; width: 44px; height: 54px; padding: 4px; }
+    .xm-envelope.is-in { animation: xm-env-in .35s ease-out both; }
+    @keyframes xm-env-in { from { transform: scale(.7) rotate(-4deg); opacity: 0; } }
+    .xm-envelope.is-flying { animation: xm-env-fly .9s cubic-bezier(.5,0,.75,0) forwards; }
+    @keyframes xm-env-fly { to { transform: translate(55vw, -75vh) rotate(-28deg) scale(.15); opacity: 0; } }
+    /* Over the folding letter, which still holds the stage's height */
+    .xm-sending-wrap { position: absolute; left: 0; right: 0; top: 40px; z-index: 3; }
+    .xm-sending { margin: 18px 0 0; text-align: center; color: #B9E0FF; font: 500 16px/24px "DM Sans", sans-serif; }
+
+    /* The workshop: fetch, found, write */
+    .xm-workshop {
+      max-width: 520px; margin: 0 auto; padding: 28px 28px 24px; border-radius: 24px; text-align: center;
+      background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.04));
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 30px 60px rgba(2,6,23,.4);
+    }
+    .xm-loader { position: relative; width: 76px; height: 76px; margin: 0 auto 14px; display: grid; place-items: center; }
+    .xm-loader::before {
+      content: ""; position: absolute; inset: 0; border-radius: 50%;
+      border: 4px solid rgba(255,255,255,.14); border-top-color: var(--xm-gold);
+      animation: xm-spin 1s linear infinite;
+    }
+    .xm-loader-icon { font-size: 30px; line-height: 1; color: #fff; animation: xm-spin 6s linear infinite; }
+    #xm-stage[data-phase="found"] .xm-loader::before { animation: none; border-color: var(--xm-gold); }
+    #xm-stage[data-phase="found"] .xm-loader-icon { animation: xm-pop .45s cubic-bezier(.2,1.6,.4,1) both; color: var(--xm-gold); }
+    #xm-stage[data-phase="writing"] .xm-loader-icon { animation: xm-quill .9s ease-in-out infinite; }
+    @keyframes xm-spin { to { transform: rotate(360deg); } }
+    @keyframes xm-pop { from { transform: scale(.4); opacity: 0; } }
+    @keyframes xm-quill { 0%, 100% { transform: translate(-6px, 2px) rotate(-8deg); } 50% { transform: translate(6px, -2px) rotate(8deg); } }
+    .xm-workshop-title { margin: 0 0 4px; font: 700 22px/28px Barlow, sans-serif; color: #fff; }
+    .xm-status { margin: 0; min-height: 24px; font: 500 16px/24px "DM Sans", sans-serif; color: #B9E0FF; }
+    #xm-stage[data-phase="found"] .xm-status { color: var(--xm-gold); font-weight: 700; animation: xm-pop .35s ease both; }
+    .xm-dots { display: flex; justify-content: center; gap: 8px; margin: 14px 0 18px; }
+    .xm-dots i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.2); }
+    #xm-stage[data-phase="fetching"] .xm-dots i:nth-child(1),
+    #xm-stage[data-phase="found"] .xm-dots i:nth-child(-n+2),
+    #xm-stage[data-phase="writing"] .xm-dots i { background: var(--xm-gold); }
+    .xm-car {
+      padding: 16px; border-radius: 16px; text-align: left;
+      background: rgba(8,35,77,.55); transition: box-shadow .3s;
+    }
+    #xm-stage[data-phase="found"] .xm-car { box-shadow: inset 0 0 0 2px var(--xm-gold), 0 0 28px rgba(251,191,36,.35); }
+    .xm-car-top { display: flex; align-items: center; gap: 6px; height: 20px; margin-bottom: 12px;
+      font: 700 12px/16px "DM Sans", sans-serif; letter-spacing: .12em; text-transform: uppercase; color: #00F0DC; white-space: nowrap; }
+    .xm-car-fetching, .xm-car-found { display: none; align-items: center; gap: 6px; }
+    #xm-stage[data-phase="fetching"] .xm-car-fetching { display: inline-flex; }
+    #xm-stage[data-phase="found"] .xm-car-found,
+    #xm-stage[data-phase="writing"] .xm-car-found { display: inline-flex; }
+    #xm-stage[data-phase="found"] .xm-car-found { animation: xm-pop .5s cubic-bezier(.2,1.6,.4,1) both; }
+    .xm-spinner { width: 12px; height: 12px; border-radius: 50%; border: 2px solid rgba(0,240,220,.3); border-top-color: #00F0DC; animation: xm-spin .8s linear infinite; }
+    #xm-car-badge { display: flex; min-height: 30px; }
+    .xm-car-name { margin: 10px 0 0; font: 700 24px/30px Barlow, sans-serif; color: #fff; animation: xm-pop .45s ease both; }
+    .xm-car-meta { margin: 4px 0 0; font: 500 16px/22px "DM Sans", sans-serif; color: #B9E0FF; }
+    #xm-stage[data-phase="fetching"] .xm-car-name,
+    #xm-stage[data-phase="fetching"] .xm-car-meta { display: none; }
+    .xm-skel { display: none; }
+    #xm-stage[data-phase="fetching"] .xm-skel { display: block; }
+    .xm-skel i {
+      display: block; border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.24) 50%, rgba(255,255,255,.08) 100%) 0 0 / 200% 100%;
+      animation: xm-shimmer 1.2s linear infinite;
+    }
+    .xm-skel i:first-child { width: 70%; height: 26px; margin-top: 12px; }
+    .xm-skel i + i { width: 45%; height: 18px; margin-top: 10px; }
+    @keyframes xm-shimmer { to { background-position: -200% 0; } }
+
+    /* Santa's reply */
+    .xm-reply {
+      position: relative; margin: 0 auto; color: var(--xm-navy); border-radius: 6px;
+      padding: 34px 40px 30px; background: var(--xm-paper);
+      box-shadow: 0 30px 60px rgba(2,6,23,.45); transform: rotate(.8deg);
+      font: 500 24px/34px Caveat, cursive; text-align: left;
+    }
+    .xm-reply::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 12px; border-radius: 6px 6px 0 0;
+      background: repeating-linear-gradient(-45deg, var(--xm-red) 0 12px, #fff 12px 24px);
+    }
+    .xm-reply.is-in { transform-origin: 50% 0; animation: xm-unfold .75s cubic-bezier(.2,.9,.3,1.15) both; }
+    @keyframes xm-unfold { from { transform: perspective(900px) rotateX(-80deg); opacity: 0; } to { transform: rotate(.8deg); opacity: 1; } }
+    .xm-reply p { margin: 0 0 10px; }
+    .xm-reply-place { text-align: right; font-size: 20px; color: #475569; padding-right: 56px; }
+    .xm-reply-greeting { font-weight: 700; font-size: 34px; line-height: 40px; color: var(--xm-red-dark); }
+    .xm-holly { position: absolute; top: 18px; right: 18px; width: 54px; height: 44px; }
+    .xm-amount-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 18px; margin: 4px 0 14px; }
+    .xm-amount { font: 700 52px/1 Barlow, sans-serif; color: var(--xm-navy); font-variant-numeric: tabular-nums; }
+    .xm-nooffer {
+      display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%;
+      border: 3px double var(--xm-red); color: var(--xm-red); text-align: center;
+      font: 700 13px/1.1 Barlow, sans-serif; letter-spacing: .06em; text-transform: uppercase;
+      transform: rotate(-14deg); opacity: .9;
+    }
+    .xm-reply.is-in .xm-nooffer { animation: xm-stampin .35s ease-in .9s both; }
+    @keyframes xm-stampin { from { transform: rotate(-14deg) scale(2.2); opacity: 0; } }
+    .xm-strong { font-weight: 700; color: var(--xm-red-dark); }
+    .xm-sign { margin-top: 6px !important; font: 700 40px/1 Caveat, cursive; color: var(--xm-red-dark); }
+    .xm-ps { font-size: 21px; line-height: 28px; color: #334155; }
+    .xm-reply-actions { margin-top: 30px; }
+    .xm-reply-actions .xm-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .xm-cta {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 56px; padding: 0 32px;
+      border-radius: 8px; background: #00F0DC; color: #000; font: 400 16px/1 "DM Sans", sans-serif;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); transition: background-color .15s;
+    }
+    .xm-cta:hover { background: #00E4D1; }
+    .xm-ghost {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 56px; padding: 0 22px;
+      border-radius: 8px; border: 2px solid rgba(255,255,255,.7); background: transparent; color: #fff; cursor: pointer;
+      font: 500 16px/1 "DM Sans", sans-serif;
+    }
+    .xm-ghost:hover { background: rgba(255,255,255,.1); }
+    .xm-cta-note { margin: 10px 0 0; text-align: center; color: #B9E0FF; font: 400 13px/18px "DM Sans", sans-serif; }
+    .xm-reply-actions .xm-link { display: block; margin: 12px auto 0; }
+    @media (max-width: 619px) {
+      .xm-reply { padding: 30px 20px 24px; font-size: 21px; line-height: 30px; }
+      .xm-amount { font-size: 44px; }
+      .xm-nooffer { width: 80px; height: 80px; font-size: 11px; }
+      .xm-reply-actions .xm-row > * { width: 100%; }
+    }
+
+    /* The real thing */
+    .xm-real.is-in > div { animation: xm-pop .6s ease both; }
+    .xm-usp {
+      position: relative; padding: 22px 20px 20px; border-radius: 16px; background: #fff;
+      border: 1px solid #E2E8F0; box-shadow: 0 10px 30px rgba(8,35,77,.08); overflow: hidden;
+    }
+    .xm-usp::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px;
+      background: repeating-linear-gradient(-45deg, var(--xm-red) 0 8px, #fff 8px 16px);
+    }
+    .xm-confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .xm-snow i, .xm-twinkle, .xm-sleigh, .xm-loader::before, .xm-loader-icon, .xm-spinner, .xm-skel i { animation: none !important; }
+      .xm-paper.is-folding, .xm-envelope.is-flying, .xm-envelope.is-in, .xm-reply.is-in, .xm-reply.is-in .xm-nooffer { animation-duration: .01s !important; animation-delay: 0s !important; }
+    }
+  </style>
+</head>
+<body class="font-dm bg-white text-slate-900">
+
+  <div id="site-nav" data-menu="marketing"></div>
+  <script src="site-nav.js"></script>
+  <script>
+    window.protoPage = {
+      scenarios: [
+        { id: 'reply',        label: 'Santa’s reply — with a price wish' },
+        { id: 'reply-nowish', label: 'Santa’s reply — asked without a wish' }
+      ],
+      initiatives: [
+        {
+          slug:    'price-guess',
+          default: 'v3',
+          variants: [
+            { id: 'v1', label: 'Variant 1 — price guess (lottery)' },
+            { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' },
+            { id: 'v3', label: 'Variant 3 — Kirje Joulupukille (Christmas)' }
+          ]
+        }
+      ]
+    };
+  </script>
+
+  <main>
+    <section class="xm-hero">
+      <div class="xm-stars" aria-hidden="true"></div>
+      <div class="xm-moon" aria-hidden="true"></div>
+      <span class="xm-twinkle" style="left:14%; top:120px;" aria-hidden="true">✦</span>
+      <span class="xm-twinkle" style="left:76%; top:230px; animation-delay:-1s;" aria-hidden="true">✦</span>
+      <span class="xm-twinkle max-md:hidden" style="left:6%; top:420px; animation-delay:-1.8s;" aria-hidden="true">✦</span>
+      <div id="xm-snow" class="xm-snow" aria-hidden="true"></div>
+      <svg id="xm-sleigh" class="xm-sleigh" viewBox="0 0 220 70" aria-hidden="true">
+        <g transform="translate(220 0) scale(-1 1)" fill="none" stroke="#FAEADA" stroke-width="2" stroke-linecap="round">
+          <g id="xm-deer">
+            <ellipse cx="18" cy="38" rx="11" ry="5" fill="#FAEADA" stroke="none"/>
+            <path d="M27 35 L32 27"/>
+            <ellipse cx="34" cy="26" rx="4" ry="2.6" fill="#FAEADA" stroke="none"/>
+            <path d="M32 24 L29 16 M29.8 19 L26 17 M33.5 24 L35.5 16 M35 19 L38.5 17" stroke-width="1.5"/>
+            <path d="M11 42 L7 51 M15 42 L16 51 M22 42 L19 51 M26 41 L30 50"/>
+          </g>
+          <use href="#xm-deer" x="38"/>
+          <use href="#xm-deer" x="76"/>
+          <path d="M112 30 L128 36" stroke-width="1" opacity=".7"/>
+          <path d="M128 30 h44 q10 0 10 -12 v-6 h5 v8 q0 18 -16 18 h-41 q-6 0 -6 -8 z" fill="#FAEADA" stroke="none"/>
+          <path d="M122 54 h58 q8 0 10 -8"/>
+          <path d="M136 50 v-4 M168 50 v-4"/>
+          <circle cx="142" cy="22" r="7" fill="#FAEADA" stroke="none"/>
+          <circle cx="160" cy="11" r="5" fill="#FAEADA" stroke="none"/>
+          <path d="M154 30 q0 -14 6 -14 q6 0 6 14 z" fill="#FAEADA" stroke="none"/>
+        </g>
+      </svg>
+
+      <div class="relative flex flex-col items-center gap-10 w-full max-w-[1366px] mx-auto px-10 pt-12 pb-6 max-md:px-5 max-md:pt-10 max-md:gap-8" style="z-index:2;">
+        <div class="flex flex-col items-center gap-5 text-center max-w-[780px]">
+          <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 text-white font-dm font-bold text-xs uppercase tracking-[.14em]">
+            <span aria-hidden="true">❄</span><span data-i18n="priceSanta.tag">Kirje Joulupukille</span><span class="opacity-50" aria-hidden="true">·</span><span id="xm-countdown"></span>
+          </span>
+          <h1 class="font-barlow font-bold text-white text-4xl leading-10 md:text-6xl md:leading-tight m-0" data-i18n="priceSanta.title">Paljonko toivot autostasi tänä jouluna?</h1>
+          <p class="font-dm font-medium text-slate-200 text-xl leading-7 m-0" data-i18n="priceSanta.subtitle">Kirjoita hintatoiveesi Joulupukille. Pukki vastaa arviolla ja kertoo, mistä oikea hinta löytyy.</p>
+        </div>
+
+        <ol class="xm-steps" aria-label="Vaiheet">
+          <li id="xm-step-1" class="xm-step is-active"><b>1</b><span data-i18n="priceSanta.step1">Kirjoita kirje</span></li>
+          <li id="xm-step-2" class="xm-step"><b>2</b><span data-i18n="priceSanta.step2">Pukki vastaa</span></li>
+          <li id="xm-step-3" class="xm-step"><b>3</b><span data-i18n="priceSanta.step3">Pyydä oikeat tarjoukset</span></li>
+        </ol>
+
+        <div id="xm-stage" data-phase="letter">
+
+          <!-- 1. The seller's letter: the form is the letter -->
+          <form id="xm-letter" class="xm-paper" data-show="letter sending" novalidate>
+            <div class="xm-stamp" aria-hidden="true"><div class="xm-stamp-in">
+              <svg width="26" height="28" viewBox="0 0 26 28" fill="#fff"><path d="M13 1 L19 9 H16 L22 16 H18 L24 23 H2 L8 16 H4 L10 9 H7 Z"/><rect x="11" y="23" width="4" height="4"/></svg>
+              <span data-i18n="priceSanta.stamp">Joulu</span><span class="xm-year"></span>
+            </div></div>
+            <div class="xm-postmark" aria-hidden="true">Korva-<br>tunturi<br>✉ <span class="xm-year"></span></div>
+            <p class="xm-greeting" data-i18n="priceSanta.greeting">Hyvä Joulupukki!</p>
+            <p id="xm-line1" class="xm-line"></p>
+            <p id="xm-line2" class="xm-line"></p>
+            <p class="xm-line" data-i18n="priceSanta.line3">Olen ollut kiltti ja pitänyt autostani hyvää huolta.</p>
+            <p class="xm-sign-off" data-i18n="priceSanta.closing">Terveisin,</p>
+            <p class="xm-signature" data-i18n="priceSanta.signature">Autoilija</p>
+            <p id="xm-error" class="xm-error hidden" role="alert"></p>
+          </form>
+          <div class="xm-actions" data-show="letter">
+            <div class="flex flex-col items-center gap-3.5 w-full">
+              <button type="submit" form="xm-letter" class="xm-send">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                <span data-i18n="priceSanta.send">Lähetä kirje Joulupukille</span>
+              </button>
+              <button type="button" id="xm-nowish" class="xm-link" data-i18n="priceSanta.sendNoWish">Kysy Pukilta ilman toivetta</button>
+            </div>
+          </div>
+
+          <!-- Sending: the letter folds into an envelope and flies to Korvatunturi -->
+          <div class="xm-sending-wrap" data-show="sending">
+            <div id="xm-envelope" class="xm-envelope" aria-hidden="true">
+              <div class="xm-stamp"><div class="xm-stamp-in"><svg width="18" height="20" viewBox="0 0 26 28" fill="#fff"><path d="M13 1 L19 9 H16 L22 16 H18 L24 23 H2 L8 16 H4 L10 9 H7 Z"/></svg></div></div>
+              <div class="xm-seal">AV</div>
+              <div class="xm-envelope-to"><span data-i18n="priceSanta.envelopeTo">Joulupukille</span><span data-i18n="priceSanta.envelopeAddr">Korvatunturi</span></div>
+            </div>
+            <p class="xm-sending" data-i18n="priceSanta.sending">Kirje lähtee Korvatunturille…</p>
+          </div>
+
+          <!-- 2. The workshop: fetch the car, find it, write the reply -->
+          <div class="xm-workshop" data-show="fetching found writing">
+            <div class="xm-loader" aria-hidden="true"><span id="xm-loader-icon" class="xm-loader-icon">❄</span></div>
+            <p class="xm-workshop-title" data-i18n="priceSanta.workshopTitle">Korvatunturin pajalla</p>
+            <p id="xm-status" class="xm-status" aria-hidden="true"></p>
+            <div class="xm-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+            <div class="xm-car">
+              <div class="xm-car-top">
+                <span class="xm-car-fetching"><span class="xm-spinner" aria-hidden="true"></span><span data-i18n="priceSanta.carFetching">Haetaan autosi tietoja</span></span>
+                <span class="xm-car-found"><svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg><span data-i18n="priceSanta.carFound">Auto löytyi</span></span>
+              </div>
+              <div id="xm-car-badge"></div>
+              <div class="xm-skel" aria-hidden="true"><i></i><i></i></div>
+              <p id="xm-car-name" class="xm-car-name"></p>
+              <p id="xm-car-meta" class="xm-car-meta"></p>
+            </div>
+          </div>
+
+          <!-- 3. Santa's reply -->
+          <article id="xm-reply" class="xm-reply" data-show="reply" aria-labelledby="xm-reply-greeting">
+            <svg class="xm-holly" viewBox="0 0 54 44" aria-hidden="true">
+              <path d="M27 22 C18 10 6 14 2 8 C8 22 4 26 10 32 C16 26 22 30 27 22 Z" fill="#15803D"/>
+              <path d="M27 22 C36 10 48 14 52 8 C46 22 50 26 44 32 C38 26 32 30 27 22 Z" fill="#166534"/>
+              <circle cx="24" cy="25" r="5" fill="#DC2626"/><circle cx="31" cy="27" r="5" fill="#B91C1C"/><circle cx="27" cy="20" r="5" fill="#EF4444"/>
+            </svg>
+            <p id="xm-reply-place" class="xm-reply-place"></p>
+            <p id="xm-reply-greeting" class="xm-reply-greeting" data-i18n="priceSanta.replyGreeting">Hohhoo!</p>
+            <p id="xm-reply-thanks"></p>
+            <p id="xm-reply-lead"></p>
+            <div class="xm-amount-row">
+              <span id="xm-amount" class="xm-amount"></span>
+              <span class="xm-nooffer" data-i18n="priceSanta.replyStamp">Ei tarjous</span>
+            </div>
+            <p id="xm-reply-compare"></p>
+            <p class="xm-strong" data-i18n="priceSanta.replyCore">Arvio on kuitenkin vain tyhjä luku. Oikean hinnan kertoo vasta autoliikkeiden välinen kilpailu.</p>
+            <p data-i18n="priceSanta.replyAdvice">Laita autosi AutoVexiin, niin sadat autoliikkeet ympäri Suomen kilpailevat siitä tarjouksilla. Sitten päätät itse, hyväksytkö tarjouksen.</p>
+            <p data-i18n="priceSanta.replyWishes">Hyvää joulua!</p>
+            <p class="xm-sign" data-i18n="priceSanta.replySign">Joulupukki</p>
+            <p class="xm-ps" data-i18n="priceSanta.replyPs">P.S. Tontut eivät nähneet autosi kuntoa. Autoliikkeet näkevät sen kuvista.</p>
+            <p id="xm-reply-pps" class="xm-ps hidden" data-i18n="priceSanta.replyPps">P.P.S. Eri luku kuin äsken? Arviot ovat sellaisia.</p>
+          </article>
+          <div class="xm-reply-actions" data-show="reply">
+            <div class="xm-row">
+              <a id="xm-go" href="details.html" class="xm-cta">
+                <span data-i18n="nav.startAuction">Aloita kilpailutus</span>
+                <img src="assets/679c64f9-3060-4fbd-85b7-d40eff72d139.svg" class="w-6 h-6" alt="" />
+              </a>
+              <button type="button" id="xm-again" class="xm-ghost">
+                <span aria-hidden="true">✉</span><span data-i18n="priceSanta.askAgain">Kysy Pukilta uudestaan</span>
+              </button>
+            </div>
+            <p class="xm-cta-note" data-i18n="priceSanta.ctaNote">Autosi tiedot siirtyvät mukana.</p>
+            <button type="button" id="xm-new" class="xm-link" data-i18n="priceSanta.newLetter">Kirjoita uusi kirje</button>
+          </div>
+        </div>
+
+        <p id="xm-live" class="sr-only" aria-live="polite"></p>
+      </div>
+
+      <!-- Snowy hills with a few pines -->
+      <svg class="xm-hills" viewBox="0 0 1440 170" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 110 C220 60 420 120 640 92 C860 64 1060 118 1260 84 C1340 70 1400 76 1440 82 V170 H0 Z" fill="#D7EDFF"/>
+        <g fill="#08234D" opacity=".85">
+          <path d="M150 96 l14 -40 l14 40 z M158 70 l6 -18 l6 18 z"/>
+          <path d="M1180 92 l12 -34 l12 34 z M1187 70 l5 -15 l5 15 z"/>
+          <path d="M1215 98 l9 -26 l9 26 z"/>
+        </g>
+        <path d="M0 140 C260 104 520 150 760 126 C1000 102 1220 146 1440 120 V170 H0 Z" fill="#fff"/>
+      </svg>
+    </section>
+
+    <!-- The real thing: what an estimate is not -->
+    <section id="xm-real" class="xm-real hidden bg-white" aria-labelledby="xm-real-title">
+      <div class="w-full max-w-[1100px] mx-auto px-10 pt-6 pb-20 max-md:px-5 max-md:pb-14 flex flex-col gap-10">
+        <div class="flex flex-col items-center text-center gap-4 max-w-[720px] mx-auto">
+          <p class="m-0 flex items-center gap-3 font-dm font-bold text-sm uppercase tracking-[.14em] text-av-blue">
+            <span class="w-8 h-0.5 bg-av-blue" aria-hidden="true"></span><span data-i18n="priceSanta.realKicker">Toiveesta oikeaan tarjoukseen</span><span class="w-8 h-0.5 bg-av-blue" aria-hidden="true"></span>
+          </p>
+          <h2 id="xm-real-title" class="m-0 font-barlow font-bold text-slate-900 text-4xl leading-[38px] lg:text-5xl lg:leading-[52px]" data-i18n="priceSanta.realTitle">Haluatko oikean tarjouksen autostasi?</h2>
+          <p class="m-0 font-dm text-lg leading-7 text-slate-600" data-i18n="priceSanta.realBody">Arvion antaa kuka tahansa, Joulupukkikin. Oikean hinnan kertovat autoliikkeet, kun ne kilpailevat autostasi tarjouskilpailussa.</p>
+        </div>
+
+        <ul class="m-0 p-0 list-none grid grid-cols-3 gap-5 max-md:grid-cols-1">
+          <li class="xm-usp flex items-start gap-3">
+            <span class="text-2xl leading-none" aria-hidden="true">🎁</span>
+            <span class="font-dm text-base leading-6 text-slate-800" data-i18n="priceSanta.usp1">Sadat autoliikkeet ympäri Suomen kilpailevat autostasi</span>
+          </li>
+          <li class="xm-usp flex items-start gap-3">
+            <span class="text-2xl leading-none" aria-hidden="true">🎄</span>
+            <span class="font-dm text-base leading-6 text-slate-800" data-i18n="priceSanta.usp2">Palvelu on myyjälle ilmainen</span>
+          </li>
+          <li class="xm-usp flex items-start gap-3">
+            <span class="text-2xl leading-none" aria-hidden="true">⭐</span>
+            <span class="font-dm text-base leading-6 text-slate-800" data-i18n="priceSanta.usp3">Päätät itse, hyväksytkö tarjouksen</span>
+          </li>
+        </ul>
+
+        <div class="flex flex-wrap justify-center gap-10 max-md:gap-6">
+          <div class="flex items-start gap-2.5">
+            <img src="assets/stats-car-icon.svg" class="w-8 h-8 flex-shrink-0 mt-0.5" alt="" />
+            <div class="flex flex-col gap-0.5">
+              <span class="font-dm font-bold text-2xl text-gray-900 leading-7">80 000+</span>
+              <span class="font-dm text-base text-slate-600 leading-5" data-i18n="stats.carsSold">Myytyä autoa</span>
+            </div>
+          </div>
+          <div class="flex items-start gap-2.5">
+            <img src="assets/stats-star-icon.svg" class="w-8 h-8 flex-shrink-0 mt-0.5" alt="" />
+            <div class="flex flex-col gap-0.5">
+              <span class="font-dm font-bold text-2xl text-gray-900 leading-7">4,7/5</span>
+              <span class="font-dm text-base text-slate-600 leading-5" data-i18n="stats.rating">Asiakkaiden arvosana</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-3">
+          <a id="xm-go-2" href="details.html"
+             class="flex items-center justify-center gap-2 h-14 px-8 bg-av-turquoise text-black font-dm text-base rounded-lg shadow-2xl hover:bg-[#00E4D1] transition-colors max-sm:w-full">
+            <span data-i18n="nav.startAuction">Aloita kilpailutus</span>
+            <img src="assets/679c64f9-3060-4fbd-85b7-d40eff72d139.svg" class="w-6 h-6" alt="" />
+          </a>
+          <p class="m-0 font-dm text-xs leading-4 text-slate-500 text-center" data-i18n="priceSanta.finePrint">Joulupukin hinta-arvio on suuntaa antava eikä huomioi auton kuntoa.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="layout.js"></script>
+  <script src="vehicle-card.js"></script>
+  <script>
+    (function () {
+      var STORE_KEY = 'autovex_funnel';
+      var MAX_MILEAGE = 280000;
+      var VEHICLE_FIELDS = ['merkki', 'malli', 'mallitarkennus', 'vuosimalli', 'polttoaine', 'vetotapa', 'vaihteisto'];
+      var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+      /* Same estimate as v2's machine: inside ±SPREAD of a mock GT-X
+         estimate, to the euro, never the same figure twice in a row, the
+         range never shown. 12 000 € is decision.html's own price_estimation
+         fallback. Each "ask again" is an event for us, which is the point. */
+      var GTX_ESTIMATE = 12000;
+      var SPREAD = 0.075;
+      /* Simulated waits, so reduced motion keeps them: the car stays hidden
+         for FETCH_MS, then a FOUND_MS "found" beat, then Santa writes. */
+      var FETCH_MS = 5000;
+      var FOUND_MS = 1500;
+      var WRITE_MS = 3500;
+      var FETCH = ['fetch1', 'fetch2', 'fetch3', 'fetch4', 'fetch5'];
+      var WRITE = ['write1', 'write2', 'write3', 'write4', 'write5'];
+
+      var stage  = document.getElementById('xm-stage');
+      var letter = document.getElementById('xm-letter');
+      var env    = document.getElementById('xm-envelope');
+      var status = document.getElementById('xm-status');
+      var live   = document.getElementById('xm-live');
+      var reply  = document.getElementById('xm-reply');
+      var real   = document.getElementById('xm-real');
+      var sleigh = document.getElementById('xm-sleigh');
+      var errEl  = document.getElementById('xm-error');
+      var loaderIcon = document.getElementById('xm-loader-icon');
+
+      var state = { phase: 'letter', plate: '', km: '', wish: null, car: {}, price: null, asks: 0, fetchedFor: null, msgTimer: null };
+
+      function T(k) { return t('priceSanta.' + k); }
+      function fill(str, map) { return str.replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : m; }); }
+      function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
+      function setStore(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {} }
+      function digits(v) { return String(v || '').replace(/\D/g, ''); }
+      function group(d) { return String(d).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+      function euros(n) { return group(n) + ' €'; }
+      function carName() { return [state.car.merkki, state.car.malli].filter(Boolean).join(' '); }
+      function later(ms, fn) { return setTimeout(fn, ms); }
+
+      /* Year on the stamps, days to Christmas Eve in the tag */
+      var now = new Date();
+      [].forEach.call(document.querySelectorAll('.xm-year'), function (el) { el.textContent = now.getFullYear(); });
+      function renderCountdown() {
+        var y = now.getFullYear();
+        var eve = new Date(y, 11, 24);
+        if (now > new Date(y, 11, 26)) eve = new Date(y + 1, 11, 24);
+        var days = Math.round((eve - new Date(y, now.getMonth(), now.getDate())) / 86400000);
+        document.getElementById('xm-countdown').textContent = days <= 0 ? T('countdownToday') : fill(T('countdown'), { n: days });
+      }
+
+      /* Snowfall */
+      (function () {
+        if (REDUCED) return;
+        var box = document.getElementById('xm-snow');
+        var html = '';
+        for (var i = 0; i < 46; i++) {
+          var size = 2 + Math.random() * 4;
+          html += '<i style="left:' + (Math.random() * 100).toFixed(1) + '%;width:' + size.toFixed(1) + 'px;height:' + size.toFixed(1) +
+            'px;opacity:' + (.35 + Math.random() * .55).toFixed(2) + ';--dx:' + (Math.round(Math.random() * 80) - 40) +
+            'px;animation-duration:' + (9 + Math.random() * 10).toFixed(1) + 's;animation-delay:-' + (Math.random() * 18).toFixed(1) + 's"></i>';
+        }
+        box.innerHTML = html;
+      })();
+      function flySleigh() {
+        if (REDUCED) return;
+        sleigh.classList.remove('is-flying'); void sleigh.getBoundingClientRect(); sleigh.classList.add('is-flying');
+      }
+
+      /* The letter's blanks: real inputs placed inside the sentences, so the
+         form reads as a letter. Rebuilt per language, values kept. */
+      function blank(cls, labelKey, attrs) {
+        var el = document.createElement('input');
+        el.type = 'text';
+        el.autocomplete = 'off';
+        el.className = 'xm-blank ' + cls;
+        el.setAttribute('data-label', labelKey);
+        Object.keys(attrs || {}).forEach(function (k) { el.setAttribute(k, attrs[k]); });
+        return el;
+      }
+      var inPlate = blank('xm-blank-plate', 'plateLabel', { placeholder: 'ABC-123', maxlength: '8' });
+      var inKm    = blank('xm-blank-km', 'kmLabel', { placeholder: '…', inputmode: 'numeric', maxlength: '9' });
+      var inWish  = blank('xm-blank-wish', 'wishLabel', { placeholder: '…', inputmode: 'numeric', maxlength: '9' });
+      var BLANKS = { plate: inPlate, km: inKm, wish: inWish };
+
+      function sentence(el, tpl) {
+        el.textContent = '';
+        tpl.split(/(\{\w+\})/).forEach(function (part) {
+          var m = part.match(/^\{(\w+)\}$/);
+          if (m && BLANKS[m[1]]) el.appendChild(BLANKS[m[1]]);
+          else if (part) el.appendChild(document.createTextNode(part));
+        });
+      }
+      function renderLetter() {
+        sentence(document.getElementById('xm-line1'), T('line1'));
+        sentence(document.getElementById('xm-line2'), T('line2'));
+        [inPlate, inKm, inWish].forEach(function (el) { el.setAttribute('aria-label', T(el.getAttribute('data-label'))); });
+      }
+
+      /* Same plate rules as the front page's hero form */
+      var PLATE_RE = /^(?:[A-ZÅÄÖ]{2,3}-[1-9][0-9]{0,2}|ÅL[N]?-[1-9][0-9]{0,4}|CD-[0-9]{4}|C-[0-9]{5})$/;
+      function normalizePlate(raw) {
+        var clean   = raw.replace(/[^A-Za-zÅÄÖåäö0-9]/g, '').toUpperCase();
+        var letters = (clean.match(/^[A-ZÅÄÖ]*/) || [''])[0].slice(0, 3);
+        var nums    = clean.slice(letters.length).replace(/[^0-9]/g, '');
+        if (letters === 'C')  { nums = nums.slice(0, 5); return nums.length ? 'C-'  + nums : 'C'; }
+        if (letters === 'CD') { nums = nums.slice(0, 4); return nums.length ? 'CD-' + nums : 'CD'; }
+        nums = nums.replace(/^0+/, '').slice(0, /^ÅLN?$/.test(letters) ? 5 : 3);
+        return nums.length ? letters + '-' + nums : letters;
+      }
+      inPlate.addEventListener('input', function () {
+        var pos = inPlate.selectionStart, before = inPlate.value, after = normalizePlate(before);
+        if (after !== before) { inPlate.value = after; var sh = after.length - before.length; inPlate.setSelectionRange(pos + sh, pos + sh); }
+        clearError();
+      });
+      [inKm, inWish].forEach(function (el) {
+        el.addEventListener('focus', function () { el.value = digits(el.value); });
+        el.addEventListener('blur', function () { if (digits(el.value)) el.value = group(digits(el.value)); });
+        el.addEventListener('input', function () { clearError(); });
+      });
+
+      function clearError() {
+        errEl.classList.add('hidden');
+        [inPlate, inKm, inWish].forEach(function (el) { el.removeAttribute('aria-invalid'); });
+      }
+      function showError(input, key) {
+        errEl.textContent = t(key);
+        errEl.classList.remove('hidden');
+        input.setAttribute('aria-invalid', 'true');
+        input.focus();
+        letter.classList.remove('is-shaking'); void letter.offsetWidth; letter.classList.add('is-shaking');
+      }
+
+      /* Phases and the steps above the stage */
+      function setPhase(p) {
+        state.phase = p;
+        stage.setAttribute('data-phase', p);
+        var step = p === 'letter' ? 1 : p === 'reply' ? 3 : 2;
+        [1, 2, 3].forEach(function (n) {
+          var el = document.getElementById('xm-step-' + n);
+          el.classList.toggle('is-active', n === step);
+          el.classList.toggle('is-done', n < step);
+          el.querySelector('b').textContent = n < step ? '✓' : n;
+        });
+        loaderIcon.textContent = p === 'found' ? '✓' : p === 'writing' ? '✎' : '❄';
+      }
+      function startMessages(total, list) {
+        var i = 0;
+        clearInterval(state.msgTimer);
+        status.textContent = T(list[0]);
+        state.msgTimer = setInterval(function () {
+          i = Math.min(i + 1, list.length - 1);
+          status.textContent = T(list[i]);
+        }, total / list.length);
+      }
+      function scrollToStage() {
+        var top = stage.getBoundingClientRect().top;
+        if (top < 90 || top > window.innerHeight * 0.4) {
+          window.scrollTo({ top: window.scrollY + top - 110, behavior: REDUCED ? 'auto' : 'smooth' });
+        }
+      }
+
+      function newPrice() {
+        var p;
+        do { p = Math.round(GTX_ESTIMATE * (1 + (Math.random() * 2 - 1) * SPREAD)); } while (p === state.price);
+        return p;
+      }
+
+      function renderCar() {
+        var badge = window.buildRegBadge ? window.buildRegBadge(state.plate) : state.plate;
+        document.getElementById('xm-car-badge').innerHTML = badge;
+        document.getElementById('xm-car-name').textContent = carName();
+        document.getElementById('xm-car-meta').textContent = [state.car.vuosimalli, group(state.km) + ' km'].filter(Boolean).join(' · ');
+      }
+
+      function renderReply() {
+        document.getElementById('xm-reply-place').textContent = fill(T('replyPlace'), {
+          date: now.toLocaleDateString(getLang() === 'en' ? 'en-GB' : 'fi-FI')
+        });
+        var thanks = document.getElementById('xm-reply-thanks');
+        thanks.textContent = state.wish ? fill(T('replyThanksWish'), { wish: euros(state.wish) }) : T('replyThanksNoWish');
+        var car = [carName(), state.car.vuosimalli ? '(' + state.car.vuosimalli + ')' : ''].filter(Boolean).join(' ') || state.plate;
+        document.getElementById('xm-reply-lead').textContent = fill(T('replyLead'), { car: car });
+        document.getElementById('xm-amount').textContent = euros(state.price);
+        var compare = document.getElementById('xm-reply-compare');
+        compare.textContent = state.wish ? T('replyCompare') : '';
+        compare.classList.toggle('hidden', !state.wish);
+        document.getElementById('xm-reply-pps').classList.toggle('hidden', state.asks < 2);
+      }
+
+      /* Sending: validate, fold, envelope, sleigh, then the workshop */
+      function send(withWish) {
+        if (state.phase !== 'letter') return;
+        clearError();
+        var plate = normalizePlate(inPlate.value.trim());
+        var km = digits(inKm.value);
+        var wish = digits(inWish.value);
+        if (!PLATE_RE.test(plate)) { showError(inPlate, 'hero.plateError'); return; }
+        if (!km) { showError(inKm, 'hero.mileageError'); return; }
+        if (Number(km) > MAX_MILEAGE) { showError(inKm, 'hero.mileageMaxError'); return; }
+        if (withWish && !Number(wish)) { showError(inWish, 'priceSanta.wishError'); return; }
+
+        inPlate.value = plate;
+        state.plate = plate;
+        state.km = km;
+        state.wish = withWish ? Number(wish) : null;
+        state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
+        var line2 = document.getElementById('xm-line2');
+        line2.classList.toggle('is-skipped', !withWish);
+        if (!withWish) inWish.value = '';
+
+        setPhase('sending');
+        scrollToStage();
+        live.textContent = T('sending');
+        letter.classList.add('is-posted');
+        later(REDUCED ? 0 : 450, function () { letter.classList.add('is-folding'); });
+        later(REDUCED ? 0 : 900, function () { env.classList.add('is-in'); });
+        later(REDUCED ? 50 : 1500, function () { env.classList.add('is-flying'); flySleigh(); });
+        later(REDUCED ? 100 : 2400, function () {
+          letter.classList.remove('is-posted', 'is-folding');
+          env.classList.remove('is-in', 'is-flying');
+          workshop();
+        });
+      }
+
+      function workshop() {
+        renderCar();
+        var key = state.plate + '|' + state.km;
+        if (state.fetchedFor === key) { write(); return; }
+        setPhase('fetching');
+        startMessages(FETCH_MS, FETCH);
+        later(FETCH_MS, function () {
+          clearInterval(state.msgTimer);
+          state.fetchedFor = key;
+          setPhase('found');
+          status.textContent = t('details.title');
+          live.textContent = t('details.title') + ' ' + carName();
+          later(FOUND_MS, write);
+        });
+      }
+
+      function write() {
+        setPhase('writing');
+        startMessages(WRITE_MS, WRITE);
+        later(WRITE_MS, function () { showReply(true); });
+      }
+
+      function showReply(animated) {
+        clearInterval(state.msgTimer);
+        state.price = animated ? newPrice() : state.price;
+        state.asks += 1;
+        renderReply();
+        setPhase('reply');
+        reply.classList.remove('is-in');
+        if (animated) { void reply.offsetWidth; reply.classList.add('is-in'); confetti(reply); }
+        live.textContent = T('replyGreeting') + ' ' + document.getElementById('xm-reply-lead').textContent + ' ' + euros(state.price) + '. ' + T('replyCore');
+        if (real.classList.contains('hidden')) { real.classList.remove('hidden'); real.classList.add('is-in'); }
+      }
+
+      function confetti(originEl) {
+        if (REDUCED) return;
+        var c = document.createElement('canvas');
+        c.className = 'xm-confetti';
+        c.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(c);
+        var dpr = Math.min(2, window.devicePixelRatio || 1), W = window.innerWidth, H = window.innerHeight;
+        c.width = W * dpr; c.height = H * dpr;
+        var ctx = c.getContext('2d');
+        ctx.scale(dpr, dpr);
+        var r = originEl.getBoundingClientRect();
+        var ox = r.left + r.width / 2, oy = Math.max(40, r.top + 60);
+        var glyphs = ['❄', '★', '✦'], colors = ['#FBBF24', '#FFFFFF', '#00F0DC', '#EF4444', '#B9E0FF'];
+        var parts = [];
+        for (var i = 0; i < 120; i++) {
+          parts.push({ x: ox + (Math.random() - .5) * r.width * .8, y: oy, vx: (Math.random() - .5) * 13, vy: -(5 + Math.random() * 11),
+            rot: Math.random() * 6.28, vr: (Math.random() - .5) * .2, g: glyphs[i % 3], c: colors[i % colors.length], s: 12 + Math.random() * 12 });
+        }
+        var start = performance.now();
+        (function frame(now2) {
+          ctx.clearRect(0, 0, W, H);
+          var alive = false;
+          parts.forEach(function (p) {
+            p.vy += .3; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+            if (p.y < H + 30) alive = true;
+            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+            ctx.fillStyle = p.c; ctx.font = '700 ' + p.s + 'px "DM Sans", sans-serif'; ctx.fillText(p.g, -p.s / 3, p.s / 3);
+            ctx.restore();
+          });
+          if (alive && now2 - start < 3600) requestAnimationFrame(frame); else c.remove();
+        })(start);
+      }
+
+      letter.addEventListener('submit', function (e) { e.preventDefault(); send(true); });
+      document.getElementById('xm-nowish').addEventListener('click', function () { send(false); });
+      document.getElementById('xm-again').addEventListener('click', function () {
+        if (state.phase !== 'reply') return;
+        scrollToStage();
+        write();
+      });
+      document.getElementById('xm-new').addEventListener('click', function () {
+        document.getElementById('xm-line2').classList.remove('is-skipped');
+        state.asks = 0;
+        state.price = null;
+        setPhase('letter');
+        scrollToStage();
+        inWish.focus();
+      });
+
+      /* Into the funnel with the car already found, exactly as v2 does: a
+         new draft (contact and login kept), the looked-up vehicle fields,
+         and from=price-guess so the equipment step skips its loading screen. */
+      function goToFunnel(e) {
+        if (!state.plate) return;
+        e.preventDefault();
+        var prev = getStore();
+        var s = { hero: { plate: state.plate, km: group(state.km) }, details: {} };
+        if (prev.loggedIn) s.loggedIn = prev.loggedIn;
+        if (prev.contact) s.contact = prev.contact;
+        VEHICLE_FIELDS.forEach(function (k) { s.details[k] = state.car[k] || ''; });
+        setStore(s);
+        window.location.href = 'details.html?' + new URLSearchParams({ plate: state.plate, km: group(state.km), from: 'price-guess' });
+      }
+      document.getElementById('xm-go').addEventListener('click', goToFunnel);
+      document.getElementById('xm-go-2').addEventListener('click', goToFunnel);
+
+      document.addEventListener('av:langchange', function () {
+        document.title = T('tag') + ' – AutoVex';
+        renderLetter();
+        renderCountdown();
+        if (state.phase === 'reply') renderReply();
+      });
+
+      /* Start: the seller's own car, if the prototype has one */
+      renderLetter();
+      renderCountdown();
+      document.title = T('tag') + ' – AutoVex';
+      var hero = getStore().hero || {};
+      if (hero.plate) inPlate.value = normalizePlate(hero.plate);
+      if (hero.km && digits(hero.km)) inKm.value = group(digits(hero.km));
+
+      var scenario = new URLSearchParams(window.location.search).get('scenario');
+      if (scenario === 'reply' || scenario === 'reply-nowish') {
+        state.plate = normalizePlate(hero.plate || 'LRX-345');
+        state.km = digits(hero.km || '148000');
+        state.wish = scenario === 'reply' ? 14000 : null;
+        state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
+        state.fetchedFor = state.plate + '|' + state.km;
+        state.price = 12137;
+        inPlate.value = state.plate;
+        inKm.value = group(state.km);
+        if (state.wish) inWish.value = group(state.wish);
+        document.getElementById('xm-line2').classList.toggle('is-skipped', !state.wish);
+        renderCar();
+        showReply(false);
+      } else {
+        setPhase('letter');
+      }
+    })();
+  </script>
+
+  <script src="proto-bar.js"></script>
+</body>
+</html>
