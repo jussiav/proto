@@ -2881,17 +2881,22 @@ are cheap. The guess is a lottery; the real price comes from the auction.
   fallback, so the result sits beside the decision page's 11 500 € offer;
   it does not move with the typed mileage. Each spin is an event for us,
   which is the point of letting the seller keep pulling.
-- **v2's first spin per car is the fetch** (`FETCH_MS`, 4 s, then the usual
-  ~3.8 s landing): reels at constant speed, a shimmer where the car's name
-  and year go, the button reads "Haetaan tietoja…", and `fetch1`–`fetch5`
-  rotate (the first is prod's loading title). The car appears, then the
-  reels land. Respins skip the fetch; "Vaihda autoa" fetches again. The
-  machine never says where the data comes from. Five reels for v2
-  (`buildReels`), narrower on a phone with the paylines hidden; measured
-  to fit at 375 and 360px. With the figures now real, `spin5` became
-  "Pyöristetään satasiin…" and the fine print "…on suuntaa antava eikä
-  huomioi auton kuntoa.", since "not based on your car's details" stopped
-  being true.
+- **v2's first spin per car is fetch, found, then price** (revised the same
+  day, Jussi: the car must not appear before 5 s, and finding it has to be
+  its own event). `fetching` (`FETCH_MS`, 5 s): the reels wait on "?" with a
+  slow pulse, the details shimmer, the kicker reads "Haetaan autosi
+  tietoja" with a spinner, the button "Haetaan tietoja…", and `fetch1`–
+  `fetch5` are only about fetching (the first is prod's loading title).
+  `found` (`FOUND_MS`, 1.5 s): the details panel glows, the kicker becomes
+  "✓ Auto löytyi", the car appears and the status reads prod's "Löysimme
+  autosi tiedot!" (`details.title`). Only then `spinning`, with the price
+  jokes `spin1`–`spin5`, ~3.8 s. The wait is simulated, so reduced motion
+  keeps it. Respins skip both; "Vaihda autoa" fetches again. The machine
+  never says where the data comes from. Five reels for v2 (`buildReels`),
+  narrower on a phone with the paylines hidden; measured to fit at 375 and
+  360px. With the figures now real, `spin5` became "Pyöristetään
+  satasiin…" and the fine print "…on suuntaa antava eikä huomioi auton
+  kuntoa.", since "not based on your car's details" stopped being true.
 - **Nav item (v1 and v2, 2026-10-21):** `site-nav.js` adds the machine's
   sign as the last item of the marketing menu (index, help, price-guess;
   never app pages), labelled per arm ("Hinta-arvaus" / "Arviokone") so it

@@ -218,12 +218,37 @@
     .pg-machine[data-phase="won"] .pg-status { display: none; }
     .pg-machine[data-phase="spinning"] .pg-change { visibility: hidden; }
 
-    /* v2's first spin per car: the machine fetches the car while the reels
-       run, so the details panel shimmers until they arrive. */
-    .pg-machine[data-phase="fetching"] .pg-fields { display: none; }
-    .pg-machine[data-phase="fetching"] .pg-car { display: block; }
-    .pg-machine[data-phase="fetching"] .pg-bulb { animation-duration: .3s; }
-    .pg-machine[data-phase="fetching"] .pg-change { visibility: hidden; }
+    /* v2's first spin per car: first the car is fetched (the details panel
+       shimmers, the reels wait on "?"), then a "found" beat, and only then
+       the price spin. */
+    .pg-machine[data-phase="fetching"] .pg-fields,
+    .pg-machine[data-phase="found"] .pg-fields { display: none; }
+    .pg-machine[data-phase="fetching"] .pg-car,
+    .pg-machine[data-phase="found"] .pg-car { display: block; }
+    .pg-machine[data-phase="fetching"] .pg-change,
+    .pg-machine[data-phase="found"] .pg-change { visibility: hidden; }
+    .pg-machine[data-phase="found"] .pg-bulb { animation-duration: .25s; }
+    .pg-machine[data-phase="fetching"] .pg-reel .pg-strip span { animation: pg-wait 1.1s ease-in-out infinite; }
+    .pg-machine[data-phase="fetching"] .pg-reel:nth-of-type(2) .pg-strip span { animation-delay: .15s; }
+    .pg-machine[data-phase="fetching"] .pg-reel:nth-of-type(3) .pg-strip span { animation-delay: .3s; }
+    .pg-machine[data-phase="fetching"] .pg-reel:nth-of-type(4) .pg-strip span { animation-delay: .45s; }
+    .pg-machine[data-phase="fetching"] .pg-reel:nth-of-type(5) .pg-strip span { animation-delay: .6s; }
+    @keyframes pg-wait { 50% { opacity: .3; } }
+    .pg-screen { transition: box-shadow .3s; }
+    .pg-machine[data-phase="found"] .pg-screen { box-shadow: inset 0 0 0 2px #00F0DC, 0 0 28px rgba(0,240,220,.45); }
+    .pg-machine[data-phase="found"] .pg-status { color: #00F0DC; font-weight: 700; animation: pg-in .35s ease both; }
+    .pg-kicker-fetching, .pg-kicker-found { display: none; align-items: center; gap: 6px; }
+    .pg-machine[data-phase="fetching"] .pg-kicker-default { display: none; }
+    .pg-machine[data-phase="fetching"] .pg-kicker-fetching { display: inline-flex; }
+    .pg-machine.is-found .pg-kicker-default { display: none; }
+    .pg-machine.is-found .pg-kicker-found { display: inline-flex; animation: pg-found .5s cubic-bezier(.2,1.6,.4,1) both; }
+    @keyframes pg-found { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+    .pg-spinner {
+      width: 12px; height: 12px; border-radius: 50%; flex: none;
+      border: 2px solid rgba(0,240,220,.3); border-top-color: #00F0DC;
+      animation: pg-spin .8s linear infinite;
+    }
+    @keyframes pg-spin { to { transform: rotate(360deg); } }
     .pg-machine[data-phase="fetching"] .pg-car-name,
     .pg-machine[data-phase="fetching"] .pg-car-meta { display: none; }
     .pg-machine[data-arm="v2"] .pg-car-name,
@@ -320,7 +345,8 @@
     .pg-confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
 
     @media (prefers-reduced-motion: reduce) {
-      .pg-float, .pg-star, .pg-bulb, .pg-car-skel i, .pg-machine[data-phase="won"] .pg-window { animation: none !important; }
+      .pg-float, .pg-star, .pg-bulb, .pg-car-skel i, .pg-machine[data-phase="won"] .pg-window,
+      .pg-machine[data-phase="fetching"] .pg-reel .pg-strip span { animation: none !important; }
       .pg-receipt.is-printed { animation-duration: .01s; }
       .pg-receipt.is-printed .pg-stamp { animation-delay: 0s; animation-duration: .01s; }
     }
@@ -429,7 +455,11 @@
 
               <div class="pg-car">
                 <div class="pg-car-top">
-                  <span class="pg-kicker" data-i18n="priceGuess.inDraw">Arvonnassa mukana</span>
+                  <span class="pg-kicker">
+                    <span class="pg-kicker-default" data-i18n="priceGuess.inDraw">Arvonnassa mukana</span>
+                    <span class="pg-kicker-fetching"><span class="pg-spinner" aria-hidden="true"></span><span data-i18n="priceEstimate.kickerFetching">Haetaan autosi tietoja</span></span>
+                    <span class="pg-kicker-found"><svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg><span data-i18n="priceEstimate.kickerFound">Auto löytyi</span></span>
+                  </span>
                   <button type="button" id="pg-change" class="pg-link pg-change" data-i18n="priceGuess.changeCar">Vaihda autoa</button>
                 </div>
                 <div id="pg-car-badge" class="inline-flex"></div>
@@ -611,8 +641,11 @@
       var GTX_ESTIMATE = 12000;
       var SPREAD = 0.075;
       /* The first spin per car also stands in for fetching the car and its
-         estimate, like the funnel's "Haetaan autosi perustiedot" screen. */
-      var FETCH_MS = REDUCED ? 800 : 4000;
+         estimate, like the funnel's "Haetaan autosi perustiedot" screen: the
+         car stays hidden for FETCH_MS, then FOUND_MS of "found" before the
+         price spin starts. A simulated wait, so reduced motion keeps it. */
+      var FETCH_MS = 5000;
+      var FOUND_MS = 1500;
       var FETCH_MESSAGES = ['fetch1', 'fetch2', 'fetch3', 'fetch4', 'fetch5'];
       var REEL_BASE = REDUCED ? 250 : 1700;
       var REEL_STEP = REDUCED ? 120 : 520;
@@ -665,11 +698,11 @@
       function setPhase(p) {
         state.phase = p;
         form.setAttribute('data-phase', p);
-        pullBtn.disabled = p === 'spinning' || p === 'fetching';
+        pullBtn.disabled = p === 'spinning' || p === 'fetching' || p === 'found';
         syncLabels();
       }
       function syncLabels() {
-        var label = state.phase === 'fetching' ? 'fetching' : state.phase === 'spinning' ? 'spinning' : 'pull';
+        var label = state.phase === 'fetching' ? 'fetching' : (state.phase === 'spinning' || state.phase === 'found') ? 'spinning' : 'pull';
         document.getElementById('pg-pull-label').textContent = t(K(label));
         reelsEl.setAttribute('aria-label', state.phase === 'won'
           ? t(K('resultLead')) + ' ' + priceText(state.price)
@@ -725,27 +758,6 @@
         return p;
       }
 
-      /* Constant-speed reels while the car is fetched; spinReels takes over
-         from a random digit, so the hand-over is not visible at speed. */
-      var fetchAnims = [];
-      function startFetchLoop() {
-        reels.forEach(function (reel, i) {
-          var strip = reel.firstElementChild;
-          strip.innerHTML = '01234567890'.split('').map(function (d) { return '<span>' + d + '</span>'; }).join('');
-          if (REDUCED) return;
-          strip.classList.add('is-blur');
-          fetchAnims.push(strip.animate(
-            [{ transform: 'translateY(0px)' }, { transform: 'translateY(' + (-10 * reel.clientHeight) + 'px)' }],
-            { duration: 420 + i * 70, iterations: Infinity }
-          ));
-        });
-      }
-      function stopFetchLoop() {
-        fetchAnims.forEach(function (a) { a.cancel(); });
-        fetchAnims = [];
-        reels.forEach(function (reel) { reel.setAttribute('data-val', String(rand(10))); });
-      }
-
       function spinReels(price) {
         var digits = String(price).split('');
         var base = REEL_BASE;
@@ -796,7 +808,7 @@
       }
 
       function spin() {
-        if (state.phase === 'spinning' || state.phase === 'fetching') return;
+        if (state.phase !== 'input' && state.phase !== 'won') return;
         clip.classList.remove('is-on');
         receipt.classList.remove('is-printed', 'is-static');
         pullLever();
@@ -814,12 +826,15 @@
         }
         if (ARM === 'v2' && !state.fetched) {
           setPhase('fetching');
-          startFetchLoop();
           startMessages(FETCH_MS, FETCH_MESSAGES);
           setTimeout(function () {
-            stopFetchLoop();
+            clearInterval(state.msgTimer);
             state.fetched = true;
-            land();
+            form.classList.add('is-found');
+            setPhase('found');
+            status.textContent = t('details.title');
+            live.textContent = t('details.title') + ' ' + carName();
+            setTimeout(land, FOUND_MS);
           }, FETCH_MS);
           return;
         }
@@ -952,6 +967,7 @@
         state.price = null;
         state.spins = 0;
         state.fetched = false;
+        form.classList.remove('is-found');
         clearReels();
         setPhase('input');
         plateIn.focus();
@@ -993,6 +1009,7 @@
         state.price = ARM === 'v2' ? 12100 : 4990;
         state.spins = 1;
         state.fetched = true;
+        if (ARM === 'v2') form.classList.add('is-found');
         plateIn.value = state.plate;
         kmIn.value = state.km;
         renderCar();
