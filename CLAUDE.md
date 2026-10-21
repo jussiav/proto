@@ -2872,6 +2872,35 @@ are cheap. The guess is a lottery; the real price comes from the auction.
   "meiltä." standing alone. The landing page defaults to `v1` (it has no
   control); picking `v1` there forgets the arm, so the front page then shows
   control.
+- **v2 estimates near the GT-X estimate (2026-10-21, Jussi).** The machine
+  is only worth playing if it is close: every v2 spin lands inside ±7.5 %
+  (`SPREAD`) of a mock GT-X estimate, rounded to 100 €, never the same
+  figure twice in a row, and the range is never shown. The brief said
+  "within 5–10 %"; 7.5 % is one constant to tune. The mock estimate is
+  12 000 € (`GTX_ESTIMATE`), decision.html's own `price_estimation`
+  fallback, so the result sits beside the decision page's 11 500 € offer;
+  it does not move with the typed mileage. Each spin is an event for us,
+  which is the point of letting the seller keep pulling.
+- **v2's first spin per car is the fetch** (`FETCH_MS`, 4 s, then the usual
+  ~3.8 s landing): reels at constant speed, a shimmer where the car's name
+  and year go, the button reads "Haetaan tietoja…", and `fetch1`–`fetch5`
+  rotate (the first is prod's loading title). The car appears, then the
+  reels land. Respins skip the fetch; "Vaihda autoa" fetches again. The
+  machine never says where the data comes from. Five reels for v2
+  (`buildReels`), narrower on a phone with the paylines hidden; measured
+  to fit at 375 and 360px. With the figures now real, `spin5` became
+  "Pyöristetään satasiin…" and the fine print "…on suuntaa antava eikä
+  huomioi auton kuntoa.", since "not based on your car's details" stopped
+  being true.
+- **Nav item (v1 and v2, 2026-10-21):** `site-nav.js` adds the machine's
+  sign as the last item of the marketing menu (index, help, price-guess;
+  never app pages), labelled per arm ("Hinta-arvaus" / "Arviokone") so it
+  matches the page. Hand-written CSS, three tiers because the menu has
+  ~135px to spare at 1280px: a one-star pill below 1280px (label sr-only and
+  in `title`), the label alone 1280–1359px, the full starred sign from
+  1360px. No overflow at 1200/1280/1366/1440; at 1024 the nav already
+  overflowed ~100px without it (pre-existing) and the pill adds ~40px.
+  Below `lg` there is no menu in the proto, so no item.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

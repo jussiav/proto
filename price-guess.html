@@ -218,6 +218,35 @@
     .pg-machine[data-phase="won"] .pg-status { display: none; }
     .pg-machine[data-phase="spinning"] .pg-change { visibility: hidden; }
 
+    /* v2's first spin per car: the machine fetches the car while the reels
+       run, so the details panel shimmers until they arrive. */
+    .pg-machine[data-phase="fetching"] .pg-fields { display: none; }
+    .pg-machine[data-phase="fetching"] .pg-car { display: block; }
+    .pg-machine[data-phase="fetching"] .pg-bulb { animation-duration: .3s; }
+    .pg-machine[data-phase="fetching"] .pg-change { visibility: hidden; }
+    .pg-machine[data-phase="fetching"] .pg-car-name,
+    .pg-machine[data-phase="fetching"] .pg-car-meta { display: none; }
+    .pg-machine[data-arm="v2"] .pg-car-name,
+    .pg-machine[data-arm="v2"] .pg-car-meta { animation: pg-in .45s ease both; }
+    .pg-car-skel { display: none; }
+    .pg-machine[data-phase="fetching"] .pg-car-skel { display: block; }
+    .pg-car-skel i {
+      display: block; border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.24) 50%, rgba(255,255,255,.08) 100%) 0 0 / 200% 100%;
+      animation: pg-shimmer 1.2s linear infinite;
+    }
+    .pg-car-skel i:first-child { width: 70%; height: 26px; margin-top: 12px; }
+    .pg-car-skel i + i { width: 45%; height: 18px; margin-top: 10px; }
+    @keyframes pg-shimmer { to { background-position: -200% 0; } }
+
+    /* v2's estimates pass 10 000 €, so it runs five reels; narrower ones fit
+       the same window, and on a phone the paylines give way. */
+    .pg-reels.is-5 { --pg-reel-w: 54px; }
+    @media (max-width: 619px) {
+      .pg-reels.is-5 { --pg-reel-w: 40px; --pg-cell: 56px; gap: 4px; }
+      .pg-reels.is-5 .pg-payline { display: none; }
+    }
+
     /* The lever: a mouse affordance only, the button below does the same */
     .pg-lever { position: absolute; right: -40px; top: 50%; width: 44px; height: 160px; transform: translateY(-50%); cursor: pointer; display: none; }
     @media (min-width: 620px) { .pg-lever { display: block; } }
@@ -291,7 +320,7 @@
     .pg-confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 60; }
 
     @media (prefers-reduced-motion: reduce) {
-      .pg-float, .pg-star, .pg-bulb, .pg-machine[data-phase="won"] .pg-window { animation: none !important; }
+      .pg-float, .pg-star, .pg-bulb, .pg-car-skel i, .pg-machine[data-phase="won"] .pg-window { animation: none !important; }
       .pg-receipt.is-printed { animation-duration: .01s; }
       .pg-receipt.is-printed .pg-stamp { animation-delay: 0s; animation-duration: .01s; }
     }
@@ -404,6 +433,7 @@
                   <button type="button" id="pg-change" class="pg-link pg-change" data-i18n="priceGuess.changeCar">Vaihda autoa</button>
                 </div>
                 <div id="pg-car-badge" class="inline-flex"></div>
+                <div class="pg-car-skel" aria-hidden="true"><i></i><i></i></div>
                 <p id="pg-car-name" class="pg-car-name"></p>
                 <p id="pg-car-meta" class="pg-car-meta"></p>
               </div>
@@ -571,7 +601,22 @@
       var receipt = document.getElementById('pg-receipt');
       var real    = document.getElementById('pg-real');
 
-      var state = { phase: 'input', plate: '', km: '', car: {}, price: null, spins: 0, msgTimer: null, userScrolled: false };
+      var state = { phase: 'input', plate: '', km: '', car: {}, price: null, spins: 0, msgTimer: null, userScrolled: false, fetched: false };
+
+      /* v2 estimates around the car's GT-X estimate rather than at random:
+         every spin lands somewhere inside ±SPREAD of it, rounded to 100 €,
+         and never on the same figure twice in a row. The range is never
+         shown. 12 000 € is decision.html's own price_estimation fallback, so
+         the two pages agree on the car; the proto has no real lookup. */
+      var GTX_ESTIMATE = 12000;
+      var SPREAD = 0.075;
+      /* The first spin per car also stands in for fetching the car and its
+         estimate, like the funnel's "Haetaan autosi perustiedot" screen. */
+      var FETCH_MS = REDUCED ? 800 : 4000;
+      var FETCH_MESSAGES = ['fetch1', 'fetch2', 'fetch3', 'fetch4', 'fetch5'];
+      var REEL_BASE = REDUCED ? 250 : 1700;
+      var REEL_STEP = REDUCED ? 120 : 520;
+      form.setAttribute('data-arm', ARM);
 
       function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
       function setStore(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {} }
@@ -620,11 +665,12 @@
       function setPhase(p) {
         state.phase = p;
         form.setAttribute('data-phase', p);
-        pullBtn.disabled = p === 'spinning';
+        pullBtn.disabled = p === 'spinning' || p === 'fetching';
         syncLabels();
       }
       function syncLabels() {
-        document.getElementById('pg-pull-label').textContent = t(K(state.phase === 'spinning' ? 'spinning' : 'pull'));
+        var label = state.phase === 'fetching' ? 'fetching' : state.phase === 'spinning' ? 'spinning' : 'pull';
+        document.getElementById('pg-pull-label').textContent = t(K(label));
         reelsEl.setAttribute('aria-label', state.phase === 'won'
           ? t(K('resultLead')) + ' ' + priceText(state.price)
           : t(K('reels')));
@@ -653,20 +699,58 @@
       function clearReels() {
         reels.forEach(function (r) { r.firstElementChild.innerHTML = '<span>?</span>'; r.removeAttribute('data-val'); });
       }
+      /* One reel per digit, with the thousands gap before the last three. */
+      function buildReels(n) {
+        var html = '<span class="pg-payline is-left" aria-hidden="true"></span>';
+        for (var i = 0; i < n; i++) {
+          if (i > 0 && n - i === 3) html += '<span class="pg-gap" aria-hidden="true"></span>';
+          html += '<div class="pg-reel"><div class="pg-strip"><span>?</span></div></div>';
+        }
+        html += '<span class="pg-euro" aria-hidden="true">€</span><span class="pg-payline is-right" aria-hidden="true"></span>';
+        reelsEl.innerHTML = html;
+        reelsEl.classList.toggle('is-5', n === 5);
+        reels = [].slice.call(reelsEl.querySelectorAll('.pg-reel'));
+      }
 
       /* Cheap on purpose: always under 7 000 € and ending in 90, like a
          bargain sticker. Never the same twice in a row, so "Arvaa uudestaan"
          shows the guess for what it is. */
       function newPrice() {
         var p;
+        if (ARM === 'v2') {
+          do { p = Math.round(GTX_ESTIMATE * (1 + (Math.random() * 2 - 1) * SPREAD) / 100) * 100; } while (p === state.price);
+          return p;
+        }
         do { p = (2 + rand(5)) * 1000 + rand(10) * 100 + 90; } while (p === state.price);
         return p;
       }
 
+      /* Constant-speed reels while the car is fetched; spinReels takes over
+         from a random digit, so the hand-over is not visible at speed. */
+      var fetchAnims = [];
+      function startFetchLoop() {
+        reels.forEach(function (reel, i) {
+          var strip = reel.firstElementChild;
+          strip.innerHTML = '01234567890'.split('').map(function (d) { return '<span>' + d + '</span>'; }).join('');
+          if (REDUCED) return;
+          strip.classList.add('is-blur');
+          fetchAnims.push(strip.animate(
+            [{ transform: 'translateY(0px)' }, { transform: 'translateY(' + (-10 * reel.clientHeight) + 'px)' }],
+            { duration: 420 + i * 70, iterations: Infinity }
+          ));
+        });
+      }
+      function stopFetchLoop() {
+        fetchAnims.forEach(function (a) { a.cancel(); });
+        fetchAnims = [];
+        reels.forEach(function (reel) { reel.setAttribute('data-val', String(rand(10))); });
+      }
+
       function spinReels(price) {
         var digits = String(price).split('');
-        var base = REDUCED ? 250 : 1700;
-        var step = REDUCED ? 120 : 520;
+        var base = REEL_BASE;
+        var step = REEL_STEP;
+        if (digits.length !== reels.length) buildReels(digits.length);
         return Promise.all(reels.map(function (reel, i) {
           var strip = reel.firstElementChild;
           var seq = [reel.getAttribute('data-val') || '?'];
@@ -696,14 +780,15 @@
         }));
       }
 
-      function startMessages(total) {
+      function startMessages(total, list) {
         var i = 0;
-        status.textContent = t(K(SPIN_MESSAGES[0]));
+        list = list || SPIN_MESSAGES;
+        status.textContent = t(K(list[0]));
         clearInterval(state.msgTimer);
         state.msgTimer = setInterval(function () {
-          i = Math.min(i + 1, SPIN_MESSAGES.length - 1);
-          status.textContent = t(K(SPIN_MESSAGES[i]));
-        }, total / SPIN_MESSAGES.length);
+          i = Math.min(i + 1, list.length - 1);
+          status.textContent = t(K(list[i]));
+        }, total / list.length);
       }
 
       function pullLever() {
@@ -711,19 +796,34 @@
       }
 
       function spin() {
-        if (state.phase === 'spinning') return;
+        if (state.phase === 'spinning' || state.phase === 'fetching') return;
         clip.classList.remove('is-on');
         receipt.classList.remove('is-printed', 'is-static');
-        setPhase('spinning');
         pullLever();
         state.userScrolled = false;
         var target = newPrice();
-        startMessages(REDUCED ? 600 : 1700 + 3 * 520);
-        spinReels(target).then(function () {
-          state.price = target;
-          state.spins += 1;
-          win(true);
-        });
+        function land() {
+          setPhase('spinning');
+          if (String(target).length !== reels.length) buildReels(String(target).length);
+          startMessages(REEL_BASE + (reels.length - 1) * REEL_STEP);
+          spinReels(target).then(function () {
+            state.price = target;
+            state.spins += 1;
+            win(true);
+          });
+        }
+        if (ARM === 'v2' && !state.fetched) {
+          setPhase('fetching');
+          startFetchLoop();
+          startMessages(FETCH_MS, FETCH_MESSAGES);
+          setTimeout(function () {
+            stopFetchLoop();
+            state.fetched = true;
+            land();
+          }, FETCH_MS);
+          return;
+        }
+        land();
       }
 
       function fillReceipt() {
@@ -851,6 +951,7 @@
         form.classList.remove('is-respun');
         state.price = null;
         state.spins = 0;
+        state.fetched = false;
         clearReels();
         setPhase('input');
         plateIn.focus();
@@ -882,16 +983,20 @@
       if (hero.plate) plateIn.value = hero.plate;
       if (hero.km) kmIn.value = String(hero.km).replace(/\D/g, '');
 
+      if (ARM === 'v2') buildReels(5);
+
       var params = new URLSearchParams(window.location.search);
       if (params.get('scenario') === 'result') {
         state.plate = normalizePlate(hero.plate || 'LRX-345');
         state.km = String(hero.km || '148000').replace(/\D/g, '');
         state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
-        state.price = 4990;
+        state.price = ARM === 'v2' ? 12100 : 4990;
         state.spins = 1;
+        state.fetched = true;
         plateIn.value = state.plate;
         kmIn.value = state.km;
         renderCar();
+        if (String(state.price).length !== reels.length) buildReels(String(state.price).length);
         setReels(state.price);
         win(false);
       } else {
