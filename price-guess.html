@@ -218,6 +218,51 @@
     .pg-machine[data-phase="won"] .pg-status { display: none; }
     .pg-machine[data-phase="spinning"] .pg-change { visibility: hidden; }
 
+    /* v2 keeps one machine height through every phase, so spinning again
+       never moves the page: what used to come and go now holds its space.
+       The fields and the car share one cell, the status line and the result
+       line another (.pg-narrate), both notes stay reserved (.pg-after), and
+       the two buttons share a cell (.pg-actions). The wrappers are added by
+       the page script in v2 only. */
+    .pg-machine[data-arm="v2"] .pg-screen { display: grid; }
+    .pg-machine[data-arm="v2"] .pg-screen > * { grid-area: 1 / 1; }
+    .pg-machine[data-arm="v2"][data-phase] .pg-fields { display: flex; }
+    .pg-machine[data-arm="v2"][data-phase] .pg-car { display: block; }
+    .pg-machine[data-arm="v2"]:not([data-phase="input"]) .pg-fields,
+    .pg-machine[data-arm="v2"][data-phase="input"] .pg-car { visibility: hidden; }
+    .pg-machine[data-arm="v2"] .pg-car-top { height: 20px; }
+    .pg-machine[data-arm="v2"] #pg-car-badge { display: flex; min-height: 30px; align-items: flex-start; }
+    /* The car panel is 128px (top row 20 + 12, badge 30, name and year 66,
+       or the shimmer in their place); the two fields alone are 120px. */
+    .pg-machine[data-arm="v2"] .pg-fields { min-height: 128px; }
+    .pg-machine[data-arm="v2"] .pg-kicker { white-space: nowrap; }
+    .pg-machine[data-arm="v2"][data-phase="fetching"] .pg-change { display: none; }
+    .pg-narrate, .pg-after, .pg-actions { display: grid; }
+    .pg-narrate > *, .pg-actions > * { grid-area: 1 / 1; }
+    .pg-narrate { height: 24px; align-items: center; }
+    @media (max-width: 619px) { .pg-narrate { height: 48px; } }
+    .pg-after { gap: 6px; }
+    .pg-actions { align-items: center; justify-items: center; }
+    .pg-actions > .pg-pull { justify-self: stretch; }
+    .pg-machine[data-arm="v2"][data-phase] .pg-lead,
+    .pg-machine[data-arm="v2"][data-phase] .pg-status,
+    .pg-machine[data-arm="v2"][data-phase] .pg-note,
+    .pg-machine[data-arm="v2"][data-phase] .pg-respin-note { display: block; visibility: hidden; }
+    .pg-machine[data-arm="v2"] .pg-lead,
+    .pg-machine[data-arm="v2"] .pg-respin-note { animation: none; }
+    .pg-machine[data-arm="v2"][data-phase="won"] .pg-lead,
+    .pg-machine[data-arm="v2"][data-phase="won"] .pg-note,
+    .pg-machine[data-arm="v2"][data-phase="won"].is-respun .pg-respin-note,
+    .pg-machine[data-arm="v2"][data-phase="fetching"] .pg-status,
+    .pg-machine[data-arm="v2"][data-phase="found"] .pg-status,
+    .pg-machine[data-arm="v2"][data-phase="spinning"] .pg-status { visibility: visible; }
+    .pg-machine[data-arm="v2"][data-phase="won"] .pg-lead,
+    .pg-machine[data-arm="v2"][data-phase="won"].is-respun .pg-respin-note { animation: pg-in .4s ease both; }
+    .pg-machine[data-arm="v2"][data-phase] .pg-pull { display: flex; }
+    .pg-machine[data-arm="v2"][data-phase] .pg-respin { display: inline-flex; visibility: hidden; }
+    .pg-machine[data-arm="v2"][data-phase="won"] .pg-pull { visibility: hidden; }
+    .pg-machine[data-arm="v2"][data-phase="won"] .pg-respin { visibility: visible; }
+
     /* v2's first spin per car: first the car is fetched (the details panel
        shimmers, the reels wait on "?"), then a "found" beat, and only then
        the price spin. */
@@ -316,6 +361,15 @@
     .pg-receipt.is-printed { animation: pg-print 1.3s steps(14, end) forwards; }
     .pg-receipt.is-static { transform: none; }
     @keyframes pg-print { to { transform: translateY(0); } }
+    /* v2: a new spin tears the last receipt off; it tugs down, then flies
+       up and away over the machine, so the clip stops clipping for it. */
+    .pg-receipt-clip.is-tearing { overflow: visible; z-index: 3; }
+    .pg-receipt.is-torn { transform-origin: 50% 0; animation: pg-tear .75s ease-in forwards; }
+    @keyframes pg-tear {
+      0%   { transform: translate(0, 0) rotate(0); opacity: 1; }
+      20%  { transform: translate(-4px, 12px) rotate(-4deg); opacity: 1; }
+      100% { transform: translate(360px, -460px) rotate(38deg); opacity: 0; }
+    }
     .pg-r-title { margin: 0; text-align: center; font: 700 18px/22px Barlow, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: #0F172A; }
     .pg-r-sub { margin: 4px 0 0; text-align: center; font-size: 13px; line-height: 18px; color: #64748B; }
     .pg-r-rule { margin: 14px 0; border: 0; border-top: 2px dashed #CBD5E1; }
@@ -347,7 +401,7 @@
     @media (prefers-reduced-motion: reduce) {
       .pg-float, .pg-star, .pg-bulb, .pg-car-skel i, .pg-machine[data-phase="won"] .pg-window,
       .pg-machine[data-phase="fetching"] .pg-reel .pg-strip span { animation: none !important; }
-      .pg-receipt.is-printed { animation-duration: .01s; }
+      .pg-receipt.is-printed, .pg-receipt.is-torn { animation-duration: .01s; }
       .pg-receipt.is-printed .pg-stamp { animation-delay: 0s; animation-duration: .01s; }
     }
   </style>
@@ -808,10 +862,28 @@
         lever.classList.remove('is-pulled'); void lever.offsetWidth; lever.classList.add('is-pulled');
       }
 
+      /* v2: the printed receipt is torn off and flies away; the clip keeps
+         its height, so the page below does not move, and win() prints the
+         next one into the same space. */
+      function tearReceipt() {
+        var printed = receipt.classList.contains('is-printed') || receipt.classList.contains('is-static');
+        if (!clip.classList.contains('is-on') || !printed) return;
+        clip.classList.add('is-tearing');
+        receipt.classList.add('is-torn');
+        setTimeout(function () {
+          clip.classList.remove('is-tearing');
+          receipt.classList.remove('is-torn', 'is-printed', 'is-static');
+        }, REDUCED ? 20 : 760);
+      }
+
       function spin() {
         if (state.phase !== 'input' && state.phase !== 'won') return;
-        clip.classList.remove('is-on');
-        receipt.classList.remove('is-printed', 'is-static');
+        if (ARM === 'v2') {
+          tearReceipt();
+        } else {
+          clip.classList.remove('is-on');
+          receipt.classList.remove('is-printed', 'is-static');
+        }
         pullLever();
         state.userScrolled = false;
         var target = newPrice();
@@ -962,6 +1034,7 @@
       });
       document.getElementById('pg-change').addEventListener('click', function () {
         clip.classList.remove('is-on');
+        receipt.classList.remove('is-printed', 'is-static', 'is-torn');
         real.classList.add('hidden');
         real.classList.remove('is-in');
         form.classList.remove('is-respun');
@@ -1000,7 +1073,18 @@
       if (hero.plate) plateIn.value = hero.plate;
       if (hero.km) kmIn.value = String(hero.km).replace(/\D/g, '');
 
-      if (ARM === 'v2') buildReels(5);
+      if (ARM === 'v2') {
+        buildReels(5);
+        var wrapIn = function (cls, els) {
+          var box = document.createElement('div');
+          box.className = cls;
+          els[0].parentNode.insertBefore(box, els[0]);
+          els.forEach(function (el) { box.appendChild(el); });
+        };
+        wrapIn('pg-narrate', [form.querySelector('.pg-lead'), status]);
+        wrapIn('pg-after', [form.querySelector('.pg-note'), form.querySelector('.pg-respin-note')]);
+        wrapIn('pg-actions', [pullBtn, document.getElementById('pg-respin')]);
+      }
 
       var params = new URLSearchParams(window.location.search);
       if (params.get('scenario') === 'result') {

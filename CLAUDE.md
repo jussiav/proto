@@ -2899,6 +2899,21 @@ are cheap. The guess is a lottery; the real price comes from the auction.
   360px. With the figures now real, `spin5` became "Lasketaan euron
   tarkkuudella…" and the fine print "…on suuntaa antava eikä huomioi auton
   kuntoa.", since "not based on your car's details" stopped being true.
+- **v2 keeps one height and tears the receipt off (2026-10-21, Jussi).**
+  Spinning again used to resize the machine (fields vs car, the result line,
+  notes, two different buttons) and move the page. In v2 nothing comes or
+  goes any more: the fields and the car share one grid cell (fields
+  `min-height` 128px, the badge 30px reserved, the top row one line), the
+  status line and "Autosi hinta-arvio on" share `.pg-narrate` above the
+  reels (24px, 48px on a phone), both notes stay reserved in `.pg-after`,
+  and the two buttons share `.pg-actions`; visibility switches, display
+  does not. Measured constant through input → fetching → found → spinning →
+  won → re-spun → "Vaihda autoa": 576px at 1024, 614px at 375. The wrappers
+  are added by the page script in v2 only. A re-spin tears the printed
+  receipt off (`tearReceipt`: a tug down, then it flies up and right over
+  the machine and fades); its clip keeps its height, so the page below
+  does not move either, and the next receipt prints into the same space
+  when the spin lands. v1 still hides and reprints.
 - **Nav item (v1 and v2, 2026-10-21):** `site-nav.js` adds the machine's
   sign as the last item of the marketing menu (index, help, price-guess;
   never app pages), labelled per arm ("Hinta-arvaus" / "Arviokone") so it
