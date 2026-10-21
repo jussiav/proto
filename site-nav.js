@@ -60,6 +60,48 @@
            '</li>';
   }).join('');
 
+  /* Price guess (initiative price-guess), v1 and v2 only: the landing page
+     joins the menu as its own machine sign. The label follows the arm, so it
+     matches the sign on the page. price-guess.html renders v1 when no arm is
+     remembered, so the item shows there too. */
+  var pgArm = window.protoVariantStored ? window.protoVariantStored('price-guess') : null;
+  var onPriceGuess = path.indexOf('price-guess') !== -1;
+  if (!pgArm && onPriceGuess) pgArm = 'v1';
+  if (showMenu && (pgArm === 'v1' || pgArm === 'v2')) {
+    var pgKey = pgArm === 'v2' ? 'priceEstimate.sign' : 'priceGuess.sign';
+    var pgLabel = pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';
+    MENU_HTML +=
+      '<li class="flex flex-col items-center justify-center w-full lg:w-auto h-auto lg:h-full lg:pr-2">' +
+        '<a href="price-guess.html" class="nav-pg" title="' + pgLabel + '"' + (onPriceGuess ? ' aria-current="page"' : '') + '>' +
+          '<span class="nav-pg-star" aria-hidden="true">★</span>' +
+          '<span class="nav-pg-label" data-i18n="' + pgKey + '">' + pgLabel + '</span>' +
+          '<span class="nav-pg-star" aria-hidden="true">★</span>' +
+        '</a>' +
+      '</li>';
+    /* Hand-written: the sign is the landing page's own (.pg-sign), scaled to
+       the nav, and its twinkle is a keyframe utilities cannot express. The
+       menu has ~135px to spare at 1280px and less below, so the sign grows
+       with the viewport: one star below 1280px (the label stays for screen
+       readers and in the title), the label without stars to 1359px, the full
+       starred sign from 1360px. */
+    var pgCss = document.createElement('style');
+    pgCss.textContent =
+      '.nav-pg{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;padding:8px 10px;border-radius:12px;' +
+        'background:#00F0DC;color:#08234D;font:700 14px/1 Barlow,sans-serif;letter-spacing:.06em;text-transform:uppercase;' +
+        'box-shadow:0 4px 0 rgba(8,35,77,.35),0 0 18px rgba(0,240,220,.55);transition:translate .15s,rotate .2s,box-shadow .15s}' +
+      '.nav-pg:hover{translate:0 -2px;rotate:-2deg;box-shadow:0 6px 0 rgba(8,35,77,.35),0 0 26px rgba(0,240,220,.75)}' +
+      '.nav-pg:focus-visible{outline:3px solid #FAEADA;outline-offset:3px}' +
+      '.nav-pg[aria-current="page"]{box-shadow:0 0 0 2px #fff,0 4px 0 2px rgba(8,35,77,.35),0 0 18px rgba(0,240,220,.55)}' +
+      '.nav-pg-label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}' +
+      '.nav-pg-star{display:inline-block;color:#0B6DFF;animation:nav-pg-twinkle 1.6s ease-in-out infinite}' +
+      '.nav-pg-star:last-child{display:none;animation-delay:-.8s}' +
+      '@media (min-width:1280px){.nav-pg{padding:8px 12px;font-size:12px}.nav-pg-label{position:static;width:auto;height:auto;overflow:visible;clip:auto}.nav-pg-star{display:none}}' +
+      '@media (min-width:1360px){.nav-pg{padding:9px 14px;font-size:14px;letter-spacing:.08em}.nav-pg-star,.nav-pg-star:last-child{display:inline-block}}' +
+      '@keyframes nav-pg-twinkle{50%{transform:scale(.6) rotate(45deg);opacity:.5}}' +
+      '@media (prefers-reduced-motion:reduce){.nav-pg-star{animation:none}}';
+    document.head.appendChild(pgCss);
+  }
+
   var NAV_HTML =
     /* Spacer — prod renders this as a sibling before the fixed header so page
        content starts below the nav. bg matches the nav for the blue variant. */
