@@ -370,12 +370,43 @@
     }
     .xm-ghost:hover { background: rgba(255,255,255,.1); }
     .xm-cta-note { margin: 10px 0 0; text-align: center; color: #B9E0FF; font: 400 13px/18px "DM Sans", sans-serif; }
-    .xm-reply-actions .xm-link { display: block; margin: 12px auto 0; }
+
+    /* The call-back slip at the foot of Santa's letter */
+    .xm-call {
+      position: relative; margin-top: 26px; padding: 20px 20px 18px; border-radius: 10px;
+      border: 2px dashed #94A3B8; background: #fff;
+    }
+    .xm-call-scissors { position: absolute; top: -15px; left: 18px; padding: 0 6px; background: var(--xm-paper); color: #64748B; font-size: 20px; line-height: 26px; }
+    .xm-reply .xm-call p { margin: 0; }
+    .xm-call-title { font: 700 20px/26px Barlow, sans-serif; color: var(--xm-navy); }
+    .xm-reply .xm-call-body { margin-top: 4px; font: 400 15px/22px "DM Sans", sans-serif; color: #334155; }
+    .xm-call-row { display: flex; align-items: flex-end; gap: 12px; margin-top: 12px; }
+    .xm-blank-phone { flex: 1 1 auto; min-width: 0; height: 44px; text-align: left; }
+    .xm-call-btn {
+      flex-shrink: 0; height: 44px; padding: 0 20px; border: 0; border-radius: 8px; cursor: pointer;
+      background: #0B6DFF; color: #fff; font: 400 16px/1 "DM Sans", sans-serif; transition: background-color .15s;
+    }
+    .xm-call-btn:hover { background: #0A5BD6; }
+    .xm-call-btn:focus-visible, .xm-call-change:focus-visible { outline: 2px solid #0B6DFF; outline-offset: 2px; }
+    .xm-reply .xm-call-error { margin-top: 10px; font: 500 15px/20px "DM Sans", sans-serif; color: var(--xm-red-dark); }
+    .xm-call.is-done { border-style: solid; border-color: #22C55E; background: #F0FDF4; }
+    .xm-call.is-done .xm-call-scissors { display: none; }
+    .xm-call-done { display: flex; align-items: flex-start; gap: 12px; }
+    .xm-call-done.hidden { display: none; }
+    .xm-call-check { flex-shrink: 0; color: #15803D; }
+    .xm-call.is-done .xm-call-title, .xm-call.is-done .xm-call-body { color: #14532D; }
+    .xm-call-done.is-in { animation: xm-pop .4s ease both; }
+    .xm-call-change {
+      margin-top: 8px; padding: 0; border: 0; background: none; cursor: pointer; color: #14532D;
+      font: 500 14px/20px "DM Sans", sans-serif; text-decoration: underline; text-underline-offset: 3px;
+    }
     @media (max-width: 619px) {
       .xm-reply { padding: 30px 20px 24px; font-size: 21px; line-height: 30px; }
       .xm-amount { font-size: 44px; }
       .xm-nooffer { width: 80px; height: 80px; font-size: 11px; }
       .xm-reply-actions .xm-row > * { width: 100%; }
+      .xm-call { padding: 18px 14px 16px; }
+      .xm-call-row { flex-direction: column; align-items: stretch; }
     }
 
     /* The real thing */
@@ -392,7 +423,7 @@
 
     @media (prefers-reduced-motion: reduce) {
       .xm-snow i, .xm-twinkle, .xm-sleigh, .xm-loader::before, .xm-loader-icon, .xm-spinner, .xm-skel i { animation: none !important; }
-      .xm-paper.is-folding, .xm-envelope.is-flying, .xm-envelope.is-in, .xm-reply.is-in, .xm-reply.is-in .xm-nooffer { animation-duration: .01s !important; animation-delay: 0s !important; }
+      .xm-paper.is-folding, .xm-envelope.is-flying, .xm-envelope.is-in, .xm-reply.is-in, .xm-reply.is-in .xm-nooffer, .xm-call-done.is-in { animation-duration: .01s !important; animation-delay: 0s !important; }
     }
   </style>
 </head>
@@ -404,7 +435,8 @@
     window.protoPage = {
       scenarios: [
         { id: 'reply',        label: 'Santa’s reply — with a price wish' },
-        { id: 'reply-nowish', label: 'Santa’s reply — asked without a wish' }
+        { id: 'reply-nowish', label: 'Santa’s reply — asked without a wish' },
+        { id: 'reply-call',   label: 'Santa’s reply — expert call requested' }
       ],
       initiatives: [
         {
@@ -549,6 +581,31 @@
             <p class="xm-sign" data-i18n="priceSanta.replySign">Joulupukki</p>
             <p class="xm-ps" data-i18n="priceSanta.replyPs">P.S. Tontut eivät nähneet autosi kuntoa. Autoliikkeet näkevät sen kuvista.</p>
             <p id="xm-reply-pps" class="xm-ps hidden" data-i18n="priceSanta.replyPps">P.P.S. Eri luku kuin äsken? Arviot ovat sellaisia.</p>
+
+            <!-- A slip at the foot of the letter: the seller leaves a number
+                 and an AutoVex expert calls about the estimate. -->
+            <div id="xm-call" class="xm-call">
+              <span class="xm-call-scissors" aria-hidden="true">✂</span>
+              <form id="xm-call-form" novalidate>
+                <p class="xm-call-title" id="xm-call-title" data-i18n="priceSanta.callTitle">Haluatko tarkemman arvion?</p>
+                <p class="xm-call-body" data-i18n="priceSanta.callBody">AutoVexin asiantuntijat käyvät autosi tiedot ja hinnan kanssasi läpi puhelimessa. Jätä numerosi, niin he soittavat sinulle.</p>
+                <div class="xm-call-row">
+                  <input id="xm-phone" type="tel" inputmode="tel" autocomplete="tel" class="xm-blank xm-blank-phone" maxlength="20"
+                         placeholder="puhelinnumerosi" data-i18n-placeholder="priceSanta.phonePlaceholder"
+                         aria-label="Puhelinnumero" data-i18n-aria="contact.phoneLabel" aria-describedby="xm-call-error" />
+                  <button type="submit" class="xm-call-btn" data-i18n="priceSanta.callBtn">Pyydä soittoa</button>
+                </div>
+                <p id="xm-call-error" class="xm-call-error hidden" role="alert"></p>
+              </form>
+              <div id="xm-call-done" class="xm-call-done hidden">
+                <svg class="xm-call-check" width="28" height="28" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm45.66,85.66-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35a8,8,0,0,1,11.32,11.32Z"/></svg>
+                <div>
+                  <p class="xm-call-title" data-i18n="priceSanta.callDoneTitle">Kiitos!</p>
+                  <p id="xm-call-done-body" class="xm-call-body"></p>
+                  <button type="button" id="xm-call-change" class="xm-call-change" data-i18n="priceSanta.callChange">Muuta numeroa</button>
+                </div>
+              </div>
+            </div>
           </article>
           <div class="xm-reply-actions" data-show="reply">
             <div class="xm-row">
@@ -556,12 +613,11 @@
                 <span data-i18n="nav.startAuction">Aloita kilpailutus</span>
                 <img src="assets/679c64f9-3060-4fbd-85b7-d40eff72d139.svg" class="w-6 h-6" alt="" />
               </a>
-              <button type="button" id="xm-again" class="xm-ghost">
-                <span aria-hidden="true">✉</span><span data-i18n="priceSanta.askAgain">Kysy Pukilta uudestaan</span>
+              <button type="button" id="xm-new" class="xm-ghost">
+                <span aria-hidden="true">✉</span><span data-i18n="priceSanta.newLetter">Kirjoita uusi kirje</span>
               </button>
             </div>
             <p class="xm-cta-note" data-i18n="priceSanta.ctaNote">Autosi tiedot siirtyvät mukana.</p>
-            <button type="button" id="xm-new" class="xm-link" data-i18n="priceSanta.newLetter">Kirjoita uusi kirje</button>
           </div>
         </div>
 
@@ -670,7 +726,7 @@
       var errEl  = document.getElementById('xm-error');
       var loaderIcon = document.getElementById('xm-loader-icon');
 
-      var state = { phase: 'letter', plate: '', km: '', wish: null, email: '', car: {}, price: null, asks: 0, fetchedFor: null, msgTimer: null };
+      var state = { phase: 'letter', plate: '', km: '', wish: null, email: '', phone: '', car: {}, price: null, asks: 0, fetchedFor: null, msgTimer: null };
 
       function T(k) { return t('priceSanta.' + k); }
       function fill(str, map) { return str.replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : m; }); }
@@ -881,6 +937,7 @@
         renderCar();
         var key = state.plate + '|' + state.km;
         if (state.fetchedFor === key) { write(); return; }
+        state.asks = 0;
         setPhase('fetching');
         startMessages(FETCH_MS, FETCH);
         later(FETCH_MS, function () {
@@ -946,18 +1003,56 @@
 
       letter.addEventListener('submit', function (e) { e.preventDefault(); send(true); });
       document.getElementById('xm-nowish').addEventListener('click', function () { send(false); });
-      document.getElementById('xm-again').addEventListener('click', function () {
-        if (state.phase !== 'reply') return;
-        scrollToStage();
-        write();
-      });
+      /* A new letter keeps the last figure and the reply count, so a letter
+         about the same car never gets the same number and earns the P.P.S. */
       document.getElementById('xm-new').addEventListener('click', function () {
         document.getElementById('xm-line2').classList.remove('is-skipped');
-        state.asks = 0;
-        state.price = null;
         setPhase('letter');
         scrollToStage();
         inWish.focus();
+      });
+
+      /* The call-back slip. One request per visit: once sent it stays
+         confirmed on every later reply, with a way to correct the number. */
+      var callBox  = document.getElementById('xm-call');
+      var callForm = document.getElementById('xm-call-form');
+      var callDone = document.getElementById('xm-call-done');
+      var callErr  = document.getElementById('xm-call-error');
+      var inPhone  = document.getElementById('xm-phone');
+      var PHONE_RE = /^(?:\+358|0)\d{5,11}$/;
+      function renderCall(animated) {
+        var done = !!state.phone;
+        callBox.classList.toggle('is-done', done);
+        callForm.classList.toggle('hidden', done);
+        callDone.classList.toggle('hidden', !done);
+        if (done) document.getElementById('xm-call-done-body').textContent = fill(T('callDoneBody'), { phone: state.phone });
+        callDone.classList.remove('is-in');
+        if (done && animated) { void callDone.offsetWidth; callDone.classList.add('is-in'); }
+      }
+      function clearCallError() { callErr.classList.add('hidden'); inPhone.removeAttribute('aria-invalid'); }
+      inPhone.addEventListener('input', clearCallError);
+      callForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearCallError();
+        var raw = inPhone.value.trim();
+        var phone = raw.replace(/[\s()-]/g, '');
+        var key = !raw ? 'contact.phoneError' : !PHONE_RE.test(phone) ? 'priceSanta.phoneInvalidError' : null;
+        if (key) {
+          callErr.textContent = t(key);
+          callErr.classList.remove('hidden');
+          inPhone.setAttribute('aria-invalid', 'true');
+          inPhone.focus();
+          return;
+        }
+        state.phone = raw;
+        renderCall(true);
+        live.textContent = T('callDoneTitle') + ' ' + document.getElementById('xm-call-done-body').textContent;
+      });
+      document.getElementById('xm-call-change').addEventListener('click', function () {
+        inPhone.value = state.phone;
+        state.phone = '';
+        renderCall(false);
+        inPhone.focus();
       });
 
       /* Into the funnel with the car already found, exactly as v2 does: a
@@ -971,6 +1066,7 @@
         if (prev.loggedIn) s.loggedIn = prev.loggedIn;
         /* The letter's email and marketing consent prefill the contact step. */
         s.contact = Object.assign({}, prev.contact || {}, state.email ? { sahkoposti: state.email, markkinointi: true } : {});
+        if (state.phone) s.contact.puhelin = state.phone;
         VEHICLE_FIELDS.forEach(function (k) { s.details[k] = state.car[k] || ''; });
         setStore(s);
         window.location.href = 'details.html?' + new URLSearchParams({ plate: state.plate, km: group(state.km), from: 'price-guess' });
@@ -983,6 +1079,7 @@
         renderLetter();
         renderCountdown();
         if (state.phase === 'reply') renderReply();
+        renderCall(false);
       });
 
       /* Start: the seller's own car, if the prototype has one */
@@ -996,10 +1093,10 @@
       if (storedEmail) inEmail.value = storedEmail;
 
       var scenario = new URLSearchParams(window.location.search).get('scenario');
-      if (scenario === 'reply' || scenario === 'reply-nowish') {
+      if (scenario === 'reply' || scenario === 'reply-nowish' || scenario === 'reply-call') {
         state.plate = normalizePlate(hero.plate || 'LRX-345');
         state.km = digits(hero.km || '148000');
-        state.wish = scenario === 'reply' ? 14000 : null;
+        state.wish = scenario === 'reply-nowish' ? null : 14000;
         state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
         state.fetchedFor = state.plate + '|' + state.km;
         state.price = 12137;
@@ -1009,6 +1106,8 @@
         state.email = inEmail.value || 'matti.meikalainen@example.fi';
         inEmail.value = state.email;
         inConsent.checked = true;
+        if (scenario === 'reply-call') state.phone = (getStore().contact || {}).puhelin || '040 123 4567';
+        renderCall(false);
         document.getElementById('xm-line2').classList.toggle('is-skipped', !state.wish);
         renderCar();
         showReply(false);

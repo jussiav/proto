@@ -2967,18 +2967,33 @@ give a real price.
   P.S. that the estimate rests on the plate and mileage alone, while
   dealerships make offers on the listing the seller writes (equipment,
   service history, condition, photos). The estimate is v2's: ±7.5 % of the mock 12 000 €, to the
-  euro, never repeated. "Kysy Pukilta uudestaan" re-writes only (new figure,
-  P.P.S. "Eri luku kuin äsken?"); "Kirjoita uusi kirje" goes back, and the
-  fetch is skipped while the plate and mileage stay the same.
+  euro, never repeated.
+- **Two actions under the reply, not three** (Jussi, 2026-10-21): the
+  turquoise "Aloita kilpailutus" and an outlined "Kirjoita uusi kirje".
+  "Kysy Pukilta uudestaan" is gone. A new letter about the same plate and
+  mileage skips the fetch, gets a different figure and the P.P.S. "Eri luku
+  kuin äsken?"; a different car fetches again and drops the P.P.S.
+- **A call-back slip inside the letter** (Jussi, 2026-10-21), under the P.S.:
+  a dashed "cut here" slip, "Haluatko tarkemman arvion?", a phone blank and a
+  blue "Pyydä soittoa". Empty uses `contact.phoneError`; an invalid number
+  uses prod's `validation.phone` wording ("Tarkista puhelinnumero. Esimerkki:
+  0401234567"). Sent, the slip turns green: "Kiitos! AutoVexin asiantuntijat
+  ottavat sinuun pian yhteyttä numeroon [number] ja käyvät arvion kanssasi
+  läpi." with "Muuta numeroa". One request per visit; it stays confirmed on
+  later replies. The number goes into the funnel's contact step as
+  `puhelin`. **Before launch:** the slip promises a call, so Ops has to
+  confirm who calls these leads and how soon.
 - **The way out** is AutoVex's turquoise "Aloita kilpailutus" under the reply
   and again in the USP section that appears with it (three candy-striped
   cards: hundreds of dealerships, free for sellers, you decide; 80 000+ and
-  4,7/5 from the front page's stats). Same funnel handoff as v2.
+  4,7/5 from the front page's stats). Same funnel handoff as v2, plus the
+  call-back number when one was left.
 - **Elsewhere in v3:** the front page shows `#price-santa-teaser` (night sky,
   a floating envelope addressed "Joulupukille / Korvatunturi", red "Kirjoita
   Pukille") instead of the slot machine; the nav sign turns red with
   snowflakes, reads "Kirje Pukille" and links to `santa.html`.
-- `?scenario=reply` / `reply-nowish` land on the reply (12 137 €). Countdown
+- `?scenario=reply` / `reply-nowish` / `reply-call` (call already requested)
+  land on the reply (12 137 €). Countdown
   to Christmas Eve in the hero tag. Reduced motion: no snow, flights or
   spinners; the simulated waits stay.
 - Copy `priceSanta.*` / `priceSantaTeaser.*`, Claude's draft, English a
