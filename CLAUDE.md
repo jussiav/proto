@@ -802,7 +802,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
-| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html` | none |
+| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html` | none |
 
 **Completed initiatives:**
 
@@ -2851,6 +2851,27 @@ are cheap. The guess is a lottery; the real price comes from the auction.
 - Copy `priceGuess.*`, Claude's draft, English a working translation. Visual
   style is new by request, built from the page tokens (navy, blue scale,
   turquoise, peach, cream) and prod's two fonts.
+- **`v2` "Arviokone" (2026-10-21), v1 kept as-is.** The team's concern: v1 is
+  about guessing, which does not read as anything of value to a seller who
+  came for an estimate. v2 keeps the design and gives the estimate, while
+  the copy says any service can produce one ("Hinta-arvion saa mistä vain.
+  Myös meiltä."), the spin jokes mimic how estimates are made (looked at
+  through a screen, averaged, condition forgotten, rounded down), the receipt
+  reads "Auton kunto: ei tarkastettu" and "Autoliikkeiden tarjoukset: 0" and
+  is stamped "Ei tarjous", and the turn is "Haluatko oikean tarjouksen
+  autostasi?". Front page: "Etsitkö vain hinta-arviota autostasi?",
+  "Tarvitset vain rekisterinumeron ja ajokilometrit.", button
+  "Arviokoneeseen", tag and machine sign "Arviokone".
+- **How v2 is built:** `priceEstimate.*` / `priceEstimateTeaser.*` hold only
+  the keys that differ; each page rewrites its `data-i18n` keys before
+  `i18n.js` runs (`K()` in `price-guess.html`, an inline script after the
+  section on `index.html`), so v1 copy never paints in v2. Three receipt rows
+  are renamed (`RENAMED`), row 3's value becomes copy, and the stamp moves to
+  the estimate line so it does not cover "ei tarkastettu". `\u2011` and
+  `\u00a0` in the v2 headings stop "hinta-" breaking from "arvio" and stop
+  "meiltä." standing alone. The landing page defaults to `v1` (it has no
+  control); picking `v1` there forgets the arm, so the front page then shows
+  control.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

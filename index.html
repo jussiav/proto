@@ -58,7 +58,7 @@
        Stamped before body parsing, so control never paints it. */
     (function () {
       var arm = window.protoVariant('price-guess', 'control');
-      if (arm !== 'control' && arm !== 'v1') { window.protoVariantSet('price-guess', null); arm = 'control'; }
+      if (arm !== 'control' && arm !== 'v1' && arm !== 'v2') { window.protoVariantSet('price-guess', null); arm = 'control'; }
       document.documentElement.setAttribute('data-price-guess-arm', arm);
     })();
   </script>
@@ -137,10 +137,11 @@
     .faq-body > div { overflow: hidden; }
     .faq-item.open .faq-body { grid-template-rows: 1fr; }
 
-    /* Price guess teaser (initiative price-guess, v1 only). Hand-written:
+    /* Price guess teaser (initiative price-guess, v1 and v2). Hand-written:
        the reels and the wiggle are this section's own. */
     #price-guess-teaser { display: none; }
-    html[data-price-guess-arm="v1"] #price-guess-teaser { display: block; }
+    html[data-price-guess-arm="v1"] #price-guess-teaser,
+    html[data-price-guess-arm="v2"] #price-guess-teaser { display: block; }
     .pgt {
       background:
         radial-gradient(circle at 85% 15%, rgba(11,109,255,.55), transparent 45%),
@@ -265,7 +266,8 @@
           default: 'control',
           variants: [
             { id: 'control', label: 'Control — no price guess section' },
-            { id: 'v1',      label: 'Variant 1 — price guess section, links to price-guess.html' }
+            { id: 'v1',      label: 'Variant 1 — price guess section, links to price-guess.html' },
+            { id: 'v2',      label: 'Variant 2 — Arviokone: the same section as an estimate machine' }
           ]
         }
       ]
@@ -715,7 +717,7 @@
     </a>
   </section>
 
-  <!-- ── Price guess teaser (initiative price-guess, v1 only) ── -->
+  <!-- ── Price guess teaser (initiative price-guess, v1 and v2) ── -->
   <section id="price-guess-teaser" class="pgt relative overflow-hidden px-10 py-20 max-md:px-5 max-md:py-16" aria-labelledby="pgt-title">
     <span class="pgt-coin max-md:hidden" style="width:56px;height:56px;font-size:26px;left:47%;top:12%;" aria-hidden="true">€</span>
     <span class="pgt-coin" style="width:38px;height:38px;font-size:18px;right:5%;bottom:12%;animation-delay:-3s;" aria-hidden="true">€</span>
@@ -744,6 +746,18 @@
       </div>
     </div>
   </section>
+  <script>
+    /* v2 ("Arviokone") swaps the section's copy keys before i18n.js applies
+       them on DOMContentLoaded, so v1's copy never paints in v2. */
+    (function () {
+      if (document.documentElement.getAttribute('data-price-guess-arm') !== 'v2') return;
+      [].forEach.call(document.querySelectorAll('#price-guess-teaser [data-i18n]'), function (el) {
+        el.setAttribute('data-i18n', el.getAttribute('data-i18n')
+          .replace(/^priceGuessTeaser\./, 'priceEstimateTeaser.')
+          .replace(/^priceGuess\./, 'priceEstimate.'));
+      });
+    })();
+  </script>
 
   <!-- ── Reviews (Arvosteluja) ── -->
   <section class="flex flex-col items-center py-16 md:py-28 px-5 md:px-10 gap-5" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">

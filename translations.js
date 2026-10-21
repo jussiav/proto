@@ -179,6 +179,50 @@ window.TRANSLATIONS = {
       finePrint:        'Hinta-arvaus on leikkimielinen eikä perustu autosi tietoihin.',
     },
 
+    /* Price guess v2, "Arviokone": the same page as an estimate machine.
+       Only keys that differ from priceGuess(Teaser); the page swaps them in
+       by arm. \u2011 (non-breaking hyphen) and \u00a0 stop a heading from
+       breaking "hinta-" from "arvio" or leaving one word alone on a line.
+       Claude's draft, not approved. */
+    priceEstimateTeaser: {
+      tag:   'Arviokone',
+      title: 'Etsitkö vain hinta\u2011arviota autostasi?',
+      body:  'Tarvitset vain rekisterinumeron ja ajokilometrit.',
+      cta:   'Arviokoneeseen',
+    },
+
+    priceEstimate: {
+      tag:                   'Arviokone',
+      title:                 'Hinta\u2011arvion saa mistä vain. Myös\u00a0meiltä.',
+      subtitle:              'Syötä rekisterinumero ja ajokilometrit, niin Arviokone antaa autollesi hinta\u2011arvion.',
+      sign:                  'Arviokone',
+      pull:                  'Käynnistä Arviokone',
+      spinning:              'Arvioidaan…',
+      inDraw:                'Arvioitava auto',
+      spin1:                 'Katsotaan autoa ruudun läpi…',
+      spin2:                 'Etsitään vastaavia autoja…',
+      spin3:                 'Lasketaan keskiarvo…',
+      spin4:                 'Unohdetaan auton kunto…',
+      spin5:                 'Pyöristetään reilusti alaspäin…',
+      jackpot:               'Arvio valmis!',
+      resultLead:            'Autosi hinta\u2011arvio on',
+      resultNote:            '*Pelkkä arvio. Kukaan ei ole tarjonnut tätä summaa.',
+      respin:                'Arvioi uudestaan',
+      respinNote:            'Eri hinta kuin äsken? Arvioita ne vain ovat.',
+      reels:                 'Arviokoneen rullat',
+      receiptTitle:          'Hinta-arvio',
+      receiptPlate:          'Rekisterinumero',
+      receiptKm:             'Ajokilometrit',
+      receiptCondition:      'Auton kunto',
+      receiptConditionValue: 'ei tarkastettu',
+      receiptGuess:          'Arvio',
+      stamp:                 'Ei tarjous',
+      realKicker:            'Arviosta oikeaan tarjoukseen',
+      realTitle:             'Haluatko oikean tarjouksen autostasi?',
+      realBody:              'Hinta-arvion antaa kuka tahansa, mutta arvio ei ole tarjous. AutoVexissä autoliikkeet kilpailevat autostasi tarjouksilla.',
+      finePrint:             'Arviokoneen hinta-arvio on leikkimielinen eikä perustu autosi tietoihin.',
+    },
+
     howItWorks: {
       title:      'Näin löydämme autollesi ostajan',
       subtitle:   'Fiksuin tapa myydä auto on antaa AutoVexin kilpailuttaa autoliikkeet puolestasi.',
@@ -924,6 +968,45 @@ window.TRANSLATIONS = {
       real3:            'You decide whether to accept an offer',
       carReady:         'Your car\'s details are already filled in',
       finePrint:        'The price guess is just for fun and is not based on your car\'s details.',
+    },
+
+    priceEstimateTeaser: {
+      tag:   'Estimate machine',
+      title: 'Just looking for a price estimate for your car?',
+      body:  'All you need is the registration number and mileage.',
+      cta:   'To the estimate machine',
+    },
+
+    priceEstimate: {
+      tag:                   'Estimate machine',
+      title:                 'You can get a price estimate anywhere. Here\u00a0too.',
+      subtitle:              'Enter the registration number and mileage, and the estimate machine gives your car a price estimate.',
+      sign:                  'Estimate machine',
+      pull:                  'Start the estimate machine',
+      spinning:              'Estimating…',
+      inDraw:                'Car being estimated',
+      spin1:                 'Looking at the car through a screen…',
+      spin2:                 'Finding similar cars…',
+      spin3:                 'Calculating an average…',
+      spin4:                 'Forgetting the car\'s condition…',
+      spin5:                 'Rounding generously down…',
+      jackpot:               'Estimate ready!',
+      resultLead:            'Your car\'s price estimate is',
+      resultNote:            '*Just an estimate. Nobody has offered this amount.',
+      respin:                'Estimate again',
+      respinNote:            'A different price than before? They are only estimates.',
+      reels:                 'Estimate machine reels',
+      receiptTitle:          'Price estimate',
+      receiptPlate:          'Registration number',
+      receiptKm:             'Mileage',
+      receiptCondition:      'Car\'s condition',
+      receiptConditionValue: 'not checked',
+      receiptGuess:          'Estimate',
+      stamp:                 'Not an offer',
+      realKicker:            'From an estimate to a real offer',
+      realTitle:             'Want a real offer for your car?',
+      realBody:              'Anyone can give you a price estimate, but an estimate is not an offer. On AutoVex, dealerships compete for your car with offers.',
+      finePrint:             'The estimate machine\'s price estimate is just for fun and is not based on your car\'s details.',
     },
 
     faq: {

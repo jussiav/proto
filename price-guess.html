@@ -277,6 +277,9 @@
       color: #EF4444; font: 700 20px/1.1 Barlow, sans-serif; letter-spacing: .06em; text-transform: uppercase;
       transform: rotate(-14deg); opacity: 0;
     }
+    /* v2's third row carries the point ("Auton kunto: ei tarkastettu"), so
+       its stamp sits on the estimate line, between label and amount. */
+    .pg-receipt.is-v2 .pg-stamp { top: auto; left: 0; right: 28px; bottom: 28px; width: max-content; margin: 0 auto; }
     .pg-receipt.is-printed .pg-stamp { animation: pg-stamp .35s ease-in 1.5s forwards; }
     .pg-receipt.is-static .pg-stamp { opacity: .9; }
     @keyframes pg-stamp {
@@ -302,6 +305,16 @@
     window.protoPage = {
       scenarios: [
         { id: 'result', label: 'Result — the guess has landed' }
+      ],
+      initiatives: [
+        {
+          slug:    'price-guess',
+          default: 'v1',
+          variants: [
+            { id: 'v1', label: 'Variant 1 — price guess (lottery)' },
+            { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' }
+          ]
+        }
       ]
     };
   </script>
@@ -440,7 +453,7 @@
               <dl class="m-0">
                 <div class="pg-r-row"><dt data-i18n="priceGuess.receiptCrystal">Kristallipallo</dt><span class="pg-r-dots"></span><dd>✓</dd></div>
                 <div class="pg-r-row"><dt data-i18n="priceGuess.receiptNeighbour">Naapurin mielipide</dt><span class="pg-r-dots"></span><dd>✓</dd></div>
-                <div class="pg-r-row"><dt data-i18n="priceGuess.receiptDice">Noppa</dt><span class="pg-r-dots"></span><dd>✓</dd></div>
+                <div id="pg-r-row3" class="pg-r-row"><dt data-i18n="priceGuess.receiptDice">Noppa</dt><span class="pg-r-dots"></span><dd>✓</dd></div>
                 <div class="pg-r-row is-zero"><dt data-i18n="priceGuess.receiptOffers">Autoliikkeiden tarjoukset</dt><span class="pg-r-dots"></span><dd>0</dd></div>
               </dl>
               <hr class="pg-r-rule" />
@@ -516,6 +529,33 @@
       var MAX_MILEAGE = 280000;
       var VEHICLE_FIELDS = ['merkki', 'malli', 'mallitarkennus', 'vuosimalli', 'polttoaine', 'vetotapa', 'vaihteisto'];
       var SPIN_MESSAGES = ['spin1', 'spin2', 'spin3', 'spin4', 'spin5'];
+
+      /* v2 ("Arviokone") is the same page with different copy. Its strings
+         live in priceEstimate(Teaser); a key it does not override keeps v1's.
+         The swap runs before i18n.js applies translations on
+         DOMContentLoaded, so v1's copy never paints in v2. */
+      var ARM = window.protoVariant('price-guess', 'v1') === 'v2' ? 'v2' : 'v1';
+      var RENAMED = { receiptCrystal: 'receiptPlate', receiptNeighbour: 'receiptKm', receiptDice: 'receiptCondition' };
+      function K(name) {
+        if (ARM !== 'v2') return 'priceGuess.' + name;
+        var v2 = RENAMED[name] || name;
+        var fi = (window.TRANSLATIONS && window.TRANSLATIONS.fi.priceEstimate) || {};
+        return fi[v2] != null ? 'priceEstimate.' + v2 : 'priceGuess.' + name;
+      }
+      if (ARM === 'v2') {
+        [].forEach.call(document.querySelectorAll('[data-i18n^="priceGuess."], [data-i18n-aria^="priceGuess."]'), function (el) {
+          ['data-i18n', 'data-i18n-aria'].forEach(function (attr) {
+            var key = el.getAttribute(attr);
+            if (key && key.indexOf('priceGuess.') === 0) el.setAttribute(attr, K(key.slice(11)));
+          });
+        });
+        var row3 = document.querySelector('#pg-r-row3 dd');
+        row3.setAttribute('data-i18n', 'priceEstimate.receiptConditionValue');
+        row3.parentNode.classList.add('is-zero');
+        document.getElementById('pg-receipt').classList.add('is-v2');
+        document.title = t('priceEstimate.tag') + ' – AutoVex';
+      }
+
       var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
       var form    = document.getElementById('pg-form');
@@ -584,10 +624,10 @@
         syncLabels();
       }
       function syncLabels() {
-        document.getElementById('pg-pull-label').textContent = t(state.phase === 'spinning' ? 'priceGuess.spinning' : 'priceGuess.pull');
+        document.getElementById('pg-pull-label').textContent = t(K(state.phase === 'spinning' ? 'spinning' : 'pull'));
         reelsEl.setAttribute('aria-label', state.phase === 'won'
-          ? t('priceGuess.resultLead') + ' ' + priceText(state.price)
-          : t('priceGuess.reels'));
+          ? t(K('resultLead')) + ' ' + priceText(state.price)
+          : t(K('reels')));
       }
 
       function renderCar() {
@@ -658,11 +698,11 @@
 
       function startMessages(total) {
         var i = 0;
-        status.textContent = t('priceGuess.' + SPIN_MESSAGES[0]);
+        status.textContent = t(K(SPIN_MESSAGES[0]));
         clearInterval(state.msgTimer);
         state.msgTimer = setInterval(function () {
           i = Math.min(i + 1, SPIN_MESSAGES.length - 1);
-          status.textContent = t('priceGuess.' + SPIN_MESSAGES[i]);
+          status.textContent = t(K(SPIN_MESSAGES[i]));
         }, total / SPIN_MESSAGES.length);
       }
 
@@ -700,7 +740,7 @@
         status.textContent = '';
         form.classList.toggle('is-respun', state.spins > 1);
         setPhase('won');
-        live.textContent = t('priceGuess.resultLead') + ' ' + priceText(state.price) + '. ' + t('priceGuess.resultNote');
+        live.textContent = t(K('resultLead')) + ' ' + priceText(state.price) + '. ' + t(K('resultNote'));
         fillReceipt();
         if (!animated) {
           clip.classList.add('is-on');
