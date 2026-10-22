@@ -190,27 +190,6 @@
           </div>
         </div>
 
-        <!-- OP routing, v3: v1's content and direct link to OP, in v2's coupon
-             frame (dashed border), with OP's logo beside the heading and v2's
-             filled orange button. Tests whether a coupon frame and a louder exit
-             read stronger without reading as an ad. -->
-        <div id="op-routing-v3" class="hidden w-full flex-col gap-4 mt-2 p-5 bg-white border-2 border-dashed border-slate-300 rounded-xl">
-          <div class="flex flex-col items-center gap-2.5 pb-1 text-center">
-            <p class="font-dm text-base leading-5 text-black" data-i18n="opRouting.title">Tutustu sillä aikaa suosittelemaamme tarjoukseen</p>
-            <div class="flex items-center justify-center gap-3">
-              <img src="assets/op-logo.svg" class="w-10 h-10 flex-shrink-0" alt="OP" />
-              <h2 class="font-barlow font-bold text-2xl leading-[26px] text-slate-900 text-left"><span data-i18n="opRouting.offer">Uudelle autollesi vakuutus</span>&nbsp;<span data-i18n="opRouting.discount">−50&nbsp;%</span></h2>
-            </div>
-          </div>
-          <div class="flex flex-col gap-2">
-            <a id="op-routing-v3-cta" href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
-               target="_blank" rel="noopener"
-               class="w-full inline-flex justify-center items-center gap-2 transition rounded-lg px-8 h-14 text-base leading-tight bg-[#EE5A00] text-white no-underline shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:opacity-[0.94]"
-               ><span data-i18n="opRouting.ctaV3">Laske vakuutustarjous OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
-            <p class="text-center font-dm text-sm leading-5 text-slate-600" data-i18n="opRouting.terms">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</p>
-          </div>
-        </div>
-
         <!-- OP routing, v2: the offer as a time-limited AutoVex perk, folded
              behind one reveal. The page shows only one button, the decision
              card's own "Näytä vastaus" (AButton secondary lg + its pulsing red
@@ -248,6 +227,28 @@
             </div>
             <div class="hj-scale"><span>Ei kovin helppoa</span><span>Hyvin helppoa</span></div>
             <div class="hj-actions"><button type="button" disabled>Seuraava</button></div>
+          </div>
+        </div>
+
+        <!-- OP routing, v3: v1's content and direct link to OP, in v2's coupon
+             frame (dashed border), with OP's logo beside the heading and v2's
+             filled orange button. Tests whether a coupon frame and a louder exit
+             read stronger without reading as an ad. Placed after Hotjar's
+             survey, so in review the rating comes first. -->
+        <div id="op-routing-v3" class="hidden w-full flex-col gap-4 mt-2 p-5 bg-white border-2 border-dashed border-slate-300 rounded-xl">
+          <div class="flex flex-col items-center gap-2.5 pb-1 text-center">
+            <p class="font-dm text-base leading-5 text-black" data-i18n="opRouting.title">Tutustu sillä aikaa suosittelemaamme tarjoukseen</p>
+            <div class="flex items-center justify-center gap-3">
+              <img src="assets/op-logo.svg" class="w-10 h-10 flex-shrink-0" alt="OP" />
+              <h2 class="font-barlow font-bold text-2xl leading-[26px] text-slate-900 text-left"><span data-i18n="opRouting.offer">Uudelle autollesi vakuutus</span>&nbsp;<span data-i18n="opRouting.discount">−50&nbsp;%</span></h2>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <a id="op-routing-v3-cta" href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
+               target="_blank" rel="noopener"
+               class="w-full inline-flex justify-center items-center gap-2 transition rounded-lg px-8 h-14 text-base leading-tight bg-[#EE5A00] text-white no-underline shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:opacity-[0.94]"
+               ><span data-i18n="opRouting.ctaV3">Laske vakuutustarjous OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+            <p class="text-center font-dm text-sm leading-5 text-slate-600" data-i18n="opRouting.terms">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</p>
           </div>
         </div>
 

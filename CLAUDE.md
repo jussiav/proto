@@ -2853,7 +2853,8 @@ and deal terms stay out of this repo.
   filled orange AButton `lg` with no logo. Label `opRouting.ctaV3` "Laske
   vakuutustarjous OP:ssa" (Jussi's wording, 2026-10-22: "OP:ssa" says the
   click leaves for an external service; EN "Calculate an insurance quote at OP").
-  `#op-routing-v3` in `success.html`, wired through `OPR_ARM` and
+  `#op-routing-v3` in `success.html`, placed AFTER Hotjar's survey (Jussi,
+  2026-10-22; v1/v2 sit above it), wired through `OPR_ARM` and
   `opRoutingShown`. 218px desktop / 270px at 375px. It knowingly breaks two
   of the partner-routing principles (a frame; OP's mark off the button), which
   is what it tests. Shares `v2`'s 3.4:1 contrast question. Spec section `#c3`.
