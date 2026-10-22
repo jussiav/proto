@@ -974,43 +974,47 @@
             </div>
           </div>
 
-          <!-- Kesärenkaat -->
+          <!-- Kesärenkaat. Both tyre groups are prod's OChips/MChip: cards 14px apart (MChip's
+               mb-3.5), a 3:1 object-contain photo figure on the background EquipmentInfo.vue
+               passes per season, and per-season descriptions (tender.*_tire_condition_descriptions,
+               which differ for "bad"). The six photos are byte-identical copies of prod's. -->
+
           <div class="flex flex-col gap-2">
             <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.summerTyres">Kesärenkaat</span> <span class="text-red-500 font-medium">*</span></p>
-            <div id="kesarenkaat-options" class="flex flex-col gap-2">
+            <div id="kesarenkaat-options" class="flex flex-col gap-3.5">
               <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
-                <div class="w-full h-[100px] rounded-md overflow-hidden bg-av-cream">
-                  <img src="assets/tire-summer-good.png" class="w-full h-full object-cover object-center" alt="" />
-                </div>
+                <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-av-cream">
+                  <img src="assets/summer-tire-great.png" class="max-w-full max-h-[100px] object-contain" alt="" />
+                </figure>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="kesarenkaat" value="Hyvät" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
                     <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreGood">Hyvät</p>
-                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreGoodDesc">Renkaissa voi olla kulumaa, mutta kulutuspintaa on hyvin jäljellä</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreGoodDesc">Renkaissa voi olla kulumaa, mutta kulutuspintaa on hyvin jäljellä.</p>
                   </div>
                 </div>
               </label>
               <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
-                <div class="w-full h-[100px] rounded-md overflow-hidden bg-av-cream">
-                  <img src="assets/tire-summer-fair.png" class="w-full h-full object-cover object-center" alt="" />
-                </div>
+                <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-av-cream">
+                  <img src="assets/summer-tire-ok.png" class="max-w-full max-h-[100px] object-contain" alt="" />
+                </figure>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="kesarenkaat" value="Kohtalaiset" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
                     <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreFair">Kohtalaiset</p>
-                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreFairDesc">Renkaissa on huomattavaa kulumaa, mutta kulutuspintaa on vielä jäljellä</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreFairDesc">Renkaissa on huomattavaa kulumaa, mutta kulutuspintaa on vielä jäljellä.</p>
                   </div>
                 </div>
               </label>
               <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
-                <div class="w-full h-[100px] rounded-md overflow-hidden bg-av-cream">
-                  <img src="assets/tire-summer-worn.png" class="w-full h-full object-cover object-center" alt="" />
-                </div>
+                <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-av-cream">
+                  <img src="assets/summer-tire-bad.png" class="max-w-full max-h-[100px] object-contain" alt="" />
+                </figure>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="kesarenkaat" value="Uusimisen tarpeessa" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
                     <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreWorn">Uusimisen tarpeessa</p>
-                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreWornDesc">Renkaissa on merkittävää kulumaa ja matala kulutuspinta, mikä voi vaikuttaa turvallisuuteen</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreWornDescSummer">Renkaat ovat elinkaarensa lopussa, niissä on merkittävää kulumaa ja matala kulutuspinta.</p>
                   </div>
                 </div>
               </label>
@@ -1018,7 +1022,7 @@
                 <input type="radio" name="kesarenkaat" value="Ei ole" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <div>
                   <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreNone">Ei ole</p>
-                  <p class="font-barlow text-sm text-black" data-i18n="details.tyreNoneDescSummer">Kesärenkaita ei ole ollenkaan</p>
+                  <p class="font-barlow text-sm text-black" data-i18n="details.tyreNoneDescSummer">Kesärenkaita ei ole ollenkaan.</p>
                 </div>
               </label>
             </div>
@@ -1046,11 +1050,11 @@
           <!-- Talvirenkaat -->
           <div class="flex flex-col gap-2">
             <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.winterTyres">Talvirenkaat</span> <span class="text-red-500 font-medium">*</span></p>
-            <div id="talvirenkaat-options" class="flex flex-col gap-2">
+            <div id="talvirenkaat-options" class="flex flex-col gap-3.5">
               <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
-                <div class="w-full h-[100px] rounded-md overflow-hidden bg-[#b9e0ff]">
-                  <img src="assets/tire-winter-good.png" class="w-full h-full object-cover object-center" alt="" />
-                </div>
+                <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-[#b9e0ff]">
+                  <img src="assets/winter-tire-great.png" class="max-w-full max-h-[100px] object-contain" alt="" />
+                </figure>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="talvirenkaat" value="Hyvät" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
@@ -1060,9 +1064,9 @@
                 </div>
               </label>
               <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
-                <div class="w-full h-[100px] rounded-md overflow-hidden bg-[#b9e0ff]">
-                  <img src="assets/tire-winter-fair.png" class="w-full h-full object-cover object-center" alt="" />
-                </div>
+                <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-[#b9e0ff]">
+                  <img src="assets/winter-tire-ok.png" class="max-w-full max-h-[100px] object-contain" alt="" />
+                </figure>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="talvirenkaat" value="Kohtalaiset" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
@@ -1072,14 +1076,14 @@
                 </div>
               </label>
               <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
-                <div class="w-full h-[100px] rounded-md overflow-hidden bg-[#b9e0ff]">
-                  <img src="assets/tire-summer-worn.png" class="w-full h-full object-cover object-center" alt="" />
-                </div>
+                <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-[#b9e0ff]">
+                  <img src="assets/winter-tire-bad.png" class="max-w-full max-h-[100px] object-contain" alt="" />
+                </figure>
                 <div class="flex items-center gap-2.5">
                   <input type="radio" name="talvirenkaat" value="Uusimisen tarpeessa" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                   <div>
                     <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreWorn">Uusimisen tarpeessa</p>
-                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreWornDesc">Renkaissa on merkittävää kulumaa ja matala kulutuspinta, mikä voi vaikuttaa turvallisuuteen</p>
+                    <p class="font-barlow text-sm text-black" data-i18n="details.tyreWornDescWinter">Renkaissa on merkittävää kulumaa ja matala kulutuspinta, mikä voi vaikuttaa turvallisuuteen.</p>
                   </div>
                 </div>
               </label>
@@ -1087,7 +1091,7 @@
                 <input type="radio" name="talvirenkaat" value="Ei ole" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <div>
                   <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreNone">Ei ole</p>
-                  <p class="font-barlow text-sm text-black" data-i18n="details.tyreNoneDescWinter">Talvirenkaita ei ole ollenkaan</p>
+                  <p class="font-barlow text-sm text-black" data-i18n="details.tyreNoneDescWinter">Talvirenkaita ei ole ollenkaan.</p>
                 </div>
               </label>
             </div>
