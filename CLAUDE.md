@@ -181,7 +181,8 @@ These rules apply to all new pages and components in this prototype, without exc
    Prod's own new question settles it: `PriceInfo.vue` renders the `104_combi`
    intent options with `Chips`, so `price.html` and the seller-intent spec now
    draw them semibold. AutoVex exclusive's `.vis-option` cards in `contact.html`
-   were built medium on the same reasoning and are not changed yet.
+   (and their spec demo) had been built medium on the same reasoning and are
+   semibold now too.
 
    Field borders are **`gray-500`** (#6B7280), not `slate-400`. **Option cards
    select with an OUTLINE, never a border width** (corrected 2026-10-22, Jussi's
@@ -2546,7 +2547,8 @@ cleared on load.
 - **Contact step** (`contact.html`, `#exclusive-choice`): a required yes/no
   between the email field and `#contact-consents`, so logged-in sellers see it
   too. Group-legend heading "Haluatko autollesi ilmaista lisänäkyvyyttä?" with
-  a red asterisk. Two real radio cards (funnel radio-card style, Barlow medium,
+  a red asterisk. Two real radio cards (funnel radio-card style, Barlow semibold
+  as prod's `Chip.vue`,
   selected state by `.vis-option:has()` CSS), neither preselected:
   - yes, first: "Kyllä, haluan ilmaista lisänäkyvyyttä" with the lime
     "Suosittelemme" tag inside the card at the right end of the label's first
