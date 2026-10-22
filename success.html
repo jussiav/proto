@@ -209,6 +209,27 @@
           </div>
         </div>
 
+        <!-- Hotjar's embedded rating survey. Prod mounts it into Review.vue's last
+             child, `<div id="hotjar-survey" />`, so it follows everything else on
+             every waitingForReview screen (in review, rejected) and nowhere else:
+             Success.vue, PublishQueue.vue and Publish.vue have no anchor. Static,
+             because the survey is Hotjar's: its copy and its second step live in
+             Hotjar, not in the codebase. Styled in `.hj-survey` below. -->
+        <div id="hotjar-survey" class="hidden justify-center">
+          <div class="hj-survey" role="group" aria-labelledby="hj-survey-title">
+            <p id="hj-survey-title" class="hj-title">Kuinka helppoa asiointisi oli?</p>
+            <div class="hj-stars" aria-hidden="true">
+              <svg viewBox="0 0 40 38"><path d="M20 1.5L24.37 14.94H38.5L27.07 23.25L31.43 36.69L20 28.38L8.57 36.69L12.93 23.25L1.5 14.94H15.63Z"/></svg>
+              <svg viewBox="0 0 40 38"><path d="M20 1.5L24.37 14.94H38.5L27.07 23.25L31.43 36.69L20 28.38L8.57 36.69L12.93 23.25L1.5 14.94H15.63Z"/></svg>
+              <svg viewBox="0 0 40 38"><path d="M20 1.5L24.37 14.94H38.5L27.07 23.25L31.43 36.69L20 28.38L8.57 36.69L12.93 23.25L1.5 14.94H15.63Z"/></svg>
+              <svg viewBox="0 0 40 38"><path d="M20 1.5L24.37 14.94H38.5L27.07 23.25L31.43 36.69L20 28.38L8.57 36.69L12.93 23.25L1.5 14.94H15.63Z"/></svg>
+              <svg viewBox="0 0 40 38"><path d="M20 1.5L24.37 14.94H38.5L27.07 23.25L31.43 36.69L20 28.38L8.57 36.69L12.93 23.25L1.5 14.94H15.63Z"/></svg>
+            </div>
+            <div class="hj-scale"><span>Ei kovin helppoa</span><span>Hyvin helppoa</span></div>
+            <div class="hj-actions"><button type="button" disabled>Seuraava</button></div>
+          </div>
+        </div>
+
       </div>
 
       <!-- ── Right column (cream) ── -->
@@ -558,6 +579,12 @@
       document.getElementById('success-action-card-cta').href = info.href;
     }
 
+    function setHotjarSurvey(on) {
+      var el = document.getElementById('hotjar-survey');
+      el.classList.toggle('hidden', !on);
+      el.classList.toggle('flex', on);
+    }
+
     function renderSteps(keys) {
       // Mirrors WhatHappensNext.vue's own v-if="computedNextSteps.length > 0" on its heading.
       document.getElementById('success-next-steps-title').style.display = keys.length > 0 ? '' : 'none';
@@ -589,6 +616,7 @@
         actionCard: { icon: 'car', color: 'blue', title: 'Mietitkö vielä?', body: 'Ymmärrämme täysin. Monet asiakkaamme palaavat myynnin pariin myöhemmin ja tekevät hyvät kaupat. Voit päivittää tarjouspyyntöä milloin tahansa.', cta: 'Päivitä tarjouspyyntöä', href: 'details.html?edit=rejected' },
         // Copied from prod: resources/assets/img/rejected.png
         illustration: 'assets/success-rejected.png',
+        hotjar: true,
       },
       'rejected-missing-images': {
         headline: 'Huomio! Tarvitsemme sinulta lisätietoja.',
@@ -604,6 +632,7 @@
         // Prod's rejected_info_missing.png — already in this prototype byte-identical
         // as success-photos-missing.png (same image, used by the organic photos-missing state).
         illustration: 'assets/success-photos-missing.png',
+        hotjar: true,
       },
       'in-review-unverified': {
         headline: 'Tarjouspyyntösi on valmis! Yksi juttu vielä.',
@@ -614,6 +643,7 @@
         emailCard: true,
         // Matches prod exactly: Review.vue shows verify_email.png for the unverified case.
         illustration: 'assets/success-verify-email-illustration.png',
+        hotjar: true,
       },
       'in-review-verified': {
         headline: 'Hienoa! Ilmoitustasi tarkastetaan parhaillaan.',
@@ -628,6 +658,7 @@
         notice: { title: 'Ota rennosti ja tarkkaile sähköpostiasi!', body: 'Pidä sähköposti lähettyvillä, ettet vahingossa menetä parasta tarjousta autostasi.', cta: 'Näytä tarjouspyyntöni', href: 'offers.html?scenario=draft-in-review' },
         // Copied from prod: resources/assets/img/in_review.svg
         illustration: 'assets/success-in-review.svg',
+        hotjar: true,
       },
       'queued': {
         headline: 'Tarjouspyyntösi on valmis! Yksi juttu vielä.',
@@ -737,6 +768,7 @@
       setNotice(def.notice || null);
       setActionCard(def.actionCard || null);
       opRoutingShown(id);
+      setHotjarSurvey(!!def.hotjar);
 
       emailCard.style.display = def.emailCard ? 'flex' : 'none';
       if (def.emailCard) {
@@ -787,7 +819,7 @@
         /* The draft stays open on the publish step, which is where prod's saved
            funnel position resumes it (funnel-guard.js). */
         if (!FORCED_SCENARIO) { s.funnelPosition = 'success.html'; setStore(s); }
-        setNotice(null); setActionCard(null);
+        setNotice(null); setActionCard(null); setHotjarSurvey(false);
         if (vehicleCard) vehicleCard.style.display = '';
         if (offersBtn) offersBtn.style.display = 'none';
 
@@ -1087,6 +1119,27 @@
     .funnel-col > *             { width: 100%; max-width: 28rem; }
     .funnel-col > .funnel-logo  { width: auto; max-width: none; align-self: flex-start; }
     .funnel-col > .funnel-steps { max-width: 32rem; }
+
+    /* Hotjar's survey draws its own look, so these are NOT design tokens: every
+       value is measured from a production screenshot (2026-10-22) of the in-review
+       screen, at 1440px. The card sits 46px under whatever precedes it. */
+    #hotjar-survey { margin-top: 22px; }
+    .hj-survey {
+      width: 320px; max-width: 100%; box-sizing: border-box;
+      padding: 16px 20px 20px; background: #fff; border-radius: 6px;
+      box-shadow: 0 0 36px rgba(0, 0, 0, 0.08);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    .hj-title   { margin: 0; font-size: 16px; line-height: 20px; color: #000; }
+    .hj-stars   { display: flex; margin-top: 20px; }
+    .hj-stars svg { flex: 1 1 0; height: 38px; fill: #848697; }
+    .hj-stars path { stroke: #848697; stroke-width: 3; stroke-linejoin: round; }
+    .hj-scale   { display: flex; justify-content: space-between; gap: 12px; margin-top: 17px; font-size: 13px; line-height: 16px; color: #464646; }
+    .hj-actions { display: flex; justify-content: flex-end; margin-top: 18px; }
+    .hj-actions button {
+      height: 32px; padding: 0 17px; border: 0; border-radius: 4px;
+      background: #EFF1F3; color: #A9ADB0; font: inherit; font-size: 13px; cursor: default;
+    }
 </style>
 
 

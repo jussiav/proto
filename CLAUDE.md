@@ -2280,6 +2280,37 @@ right edge of a phone. It sets `bottom` from the button too, not from the bar:
 once the bar opens into a column its rows sit at different heights, and a panel
 pinned to the bar's top edge would cover the control that opened it.
 
+## Hotjar rating survey — `success.html`
+
+Added 2026-10-22 from a production screenshot. Prod embeds Hotjar's survey
+into `<div id="hotjar-survey" />`, the LAST child of `Review.vue`, so it closes
+the left column on every `waitingForReview` screen and nowhere else:
+
+| Screen | Survey |
+|---|---|
+| in review, verified or not, every call timing | yes |
+| rejected, either reason | yes |
+| published (`Success.vue`), queued (`PublishQueue.vue`), photos missing (`Publish.vue`) | **no**, none of them has an anchor |
+
+The anchor is unchanged since the 08-14 dump. The proto follows it with one
+flag, `hotjar: true` on four `SUCCESS_SCENARIOS` entries, read by
+`setHotjarSurvey()`; widening it is a one-word change per state. It shows in
+every arm wherever its state has it, in test mode too (it is prod UI), and with
+OP routing in review it sits BELOW the OP block, which the OP spec now says.
+
+- **Static.** The copy ("Kuinka helppoa asiointisi oli?", "Ei kovin helppoa",
+  "Hyvin helppoa", "Seuraava") and the survey's second step live in Hotjar, not
+  in the codebase, so nothing is clickable and the copy stays Finnish in EN.
+- **Not tokens.** `.hj-*` is hand-written CSS measured from the screenshot at
+  1440px: 320×196 card, 6px radius, soft 36px shadow, system font, title
+  16/20 black, five #848697 stars in 56px cells, labels 13px #464646, a
+  disabled 90×32 "Seuraava" in #EFF1F3 / #A9ADB0, 46px below the block above.
+- **One prod discrepancy, kept as the screenshot shows it.** `Review.vue`'s
+  `onMounted` hack hides "Seuraava" (`button[kind]`) and clicks it when a star
+  is chosen, so a seller would never see the button. The screenshot shows it,
+  so the hack did not run there (Hotjar's markup may no longer match). Not
+  verifiable from the dump.
+
 ## Vehicle info loading screen — `details.html`
 
 Prod's `retrievingVehicleInfo` state, transcribed 2026-10-02:
@@ -2618,7 +2649,7 @@ and deal terms stay out of this repo.
   AutoVex voice, no frame or banner, the partner-branded button is the only
   exit signal (no "you are leaving" line, no "palvelun tarjoaa" line), no
   partner branding off the button. Name further partner initiatives `<partner>-routing`.
-- **Where:** `success.html`, `#op-routing`, last in the LEFT column. The right
+- **Where:** `success.html`, `#op-routing`, after the page's own content in the LEFT column (in review, Hotjar's rating survey follows it). The right
   column was considered (conceptually closer) and rejected: it is sticky at
   `100vh − 4rem` with its own scroll, so the block would push the car card out
   of view.
