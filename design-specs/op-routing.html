@@ -85,7 +85,7 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: draft &middot; 1 placement, 2 variants &middot; copy and offer unconfirmed
+          Status: draft &middot; 1 placement, 3 variants &middot; copy and offer unconfirmed
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
@@ -144,6 +144,13 @@
             <tr>
               <td class="px-4 py-3 font-bold">2</td>
               <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">Variant 2: OP perk behind a reveal</a></td>
+              <td class="px-4 py-3">Success page</td>
+              <td class="px-4 py-3 text-slate-600">Email verified: in review, or published</td>
+              <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">3</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c3">Variant 3: the suggestion as a coupon</a></td>
               <td class="px-4 py-3">Success page</td>
               <td class="px-4 py-3 text-slate-600">Email verified: in review, or published</td>
               <td class="px-4 py-3"><span class="bg-info-100 text-info-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Draft</span></td>
@@ -442,6 +449,69 @@
       </div>
     </section>
 
+    <section class="av-band av-band-grey" id="c3">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">3 &mdash; Variant 3: the suggestion as a coupon</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1">Draft &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Success page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Email verified: in review, or published</span></div>
+
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes from variant 1</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Same place, same states, same copy, and no modal.</b> Everything variant 1 does, the button still goes straight to OP's page in a new tab.</li>
+            <li><b>A dashed border around the block</b>, the coupon frame from variant 2's modal: 2px dashed, light grey, 12px corners, white fill, 20px padding.</li>
+            <li><b>OP's round logo (40px) beside the heading</b>, as in variant 2's coupon. The intro line and the heading row stay centred.</li>
+            <li><b>The button is filled with OP's orange</b>, 56px tall, with a white label and arrow, the same button as variant 2's modal. It no longer carries the logo, which now sits beside the heading.</li>
+            <li><b>New button label:</b> &ldquo;Laske vakuutustarjous OP:ssa&rdquo; (calculate an insurance quote at OP) in place of &ldquo;Tutustu OP:ssa&rdquo; (explore at OP). It names what the seller does next, and &ldquo;OP:ssa&rdquo; says the click takes them to an external service. On screens narrower than about 395px the label wraps to two lines; the button stays 56px tall.</li>
+            <li><b>What this tests:</b> whether a coupon frame and a louder exit make the suggestion stronger without reading as an ad. It deliberately departs from two of the shared principles above: the block has a frame, and OP's mark appears off the button.</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v3" target="_blank" rel="noopener">See it in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v3" target="_blank" rel="noopener">see it published</a> &middot; <a class="text-av-blue underline font-medium" href="#c1">compare with variant 1</a></p>
+        </div>
+
+        <div class="rounded-lg p-5 border border-slate-200 bg-white">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">The block, live</p>
+          <div class="max-w-md flex flex-col gap-4 p-5 bg-white border-2 border-dashed border-slate-300 rounded-xl">
+            <div class="flex flex-col items-center gap-2.5 pb-1 text-center">
+              <p class="font-dm text-base leading-5 text-black" data-i18n="opRouting.title">Tutustu sillä aikaa suosittelemaamme tarjoukseen</p>
+              <div class="flex items-center justify-center gap-3">
+                <img src="../assets/op-logo.svg" class="w-10 h-10 flex-shrink-0" alt="OP" />
+                <p class="font-barlow font-bold text-2xl leading-[26px] text-slate-900 text-left"><span data-i18n="opRouting.offer">Uudelle autollesi vakuutus</span>&nbsp;<span data-i18n="opRouting.discount">−50&nbsp;%</span></p>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <a href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle"
+                 target="_blank" rel="noopener"
+                 class="w-full inline-flex justify-center items-center gap-2 transition rounded-lg px-8 h-14 text-base leading-tight bg-[#EE5A00] text-white no-underline shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:opacity-[0.94] font-dm"
+                 ><span data-i18n="opRouting.ctaV3">Laske vakuutustarjous OP:ssa</span><span class="sr-only" data-i18n="opRouting.newTab">(avautuu uuteen välilehteen)</span><svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+              <p class="text-center font-dm text-sm leading-5 text-slate-600" data-i18n="opRouting.terms">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</p>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3">Rendered from the same copy as the prototype. On the page it fills the 448px left column: 218px tall on desktop, 270px at 375px.</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; only the button changes</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Button, variant 1</p><p class="av-copy"><span class="av-del">Tutustu OP:ssa</span></p><p class="av-gloss">Explore at OP</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Button, variant 3</p><p class="av-copy"><span class="av-ins">Laske vakuutustarjous OP:ssa</span></p><p class="av-gloss">Calculate an insurance quote at OP</p></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">The intro, heading, terms line and screen-reader text are variant 1's, unchanged. The grey lines are English glosses for reading, not copy.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>Variant 1's criteria apply unchanged: the same states, never while verification is pending, on a rejected ad or when photos are missing.</li>
+          <li>The button opens OP's car insurance page in a new tab, with no step in between; the success page stays open.</li>
+          <li>The block's frame and button fill the left column's width; at 360px wide nothing scrolls sideways.</li>
+          <li>Clicks on the button are recorded with the arm and the page state.</li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> variant 1 may be too quiet to notice and variant 2 hides the offer behind a click; this keeps the offer visible and the path direct, and makes the exit unmistakable.</p>
+      </div>
+      </div>
+    </section>
+
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Later placements</h2>
@@ -463,7 +533,7 @@
         <li><b>Are campaign codes supported</b>, for example an AutoVex-specific code in OP's purchase flow?</li>
         <li><b>How are leads attributed to AutoVex</b>, and what counts as a qualified lead? This decides what the button's link carries.</li>
         <li><b>The logo and the button's colour</b> need OP's approval; they are taken from OP's public site for this draft.</li>
-        <li><b>Contrast of the orange button in variant 2.</b> White 16px text on OP's orange is 3.4:1, below the 4.5:1 accessibility minimum for normal text (OP's own site uses the same pairing). Options: a darker orange agreed with OP, or a larger label.</li>
+        <li><b>Contrast of the orange button in variants 2 and 3.</b> White 16px text on OP's orange is 3.4:1, below the 4.5:1 accessibility minimum for normal text (OP's own site uses the same pairing). Options: a darker orange agreed with OP, or a larger label.</li>
         <li><b>The target page.</b> OP's car insurance page for now; a direct link to the calculator, or a landing page of OP's, may convert better.</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Legal</p>
