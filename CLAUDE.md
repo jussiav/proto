@@ -801,8 +801,8 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
-| OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
-| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html` | none |
+| OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
+| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (2026-10-22) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: an estimate page that routes the seller by the funnel's intent questions and the car, keeping the funnel offered to almost everyone | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 
 **Completed initiatives:**
 
@@ -2845,6 +2845,19 @@ and deal terms stay out of this repo.
   left to OP's page until OP confirms. OP confirms offer, codes, attribution
   and qualifying lead; Legal confirms what the link may carry and whether a
   marketing label is needed.
+- **`v3` (2026-10-22), Jussi's brief:** `v1` (same states, copy, terms
+  line, new tab straight to OP, no modal) with three changes from `v2`'s
+  modal: the block sits in the coupon frame (`p-5 border-2 border-dashed
+  border-slate-300 rounded-xl`, white), OP's 40px logo sits beside the
+  heading (intro and heading row still centred), and the button is the
+  filled orange AButton `lg` with no logo. Label `opRouting.ctaV3` "Laske
+  vakuutustarjous OP:ssa" (Jussi's wording, 2026-10-22: "OP:ssa" says the
+  click leaves for an external service; EN "Calculate an insurance quote at OP").
+  `#op-routing-v3` in `success.html`, wired through `OPR_ARM` and
+  `opRoutingShown`. 218px desktop / 270px at 375px. It knowingly breaks two
+  of the partner-routing principles (a frame; OP's mark off the button), which
+  is what it tests. Shares `v2`'s 3.4:1 contrast question. Spec section `#c3`.
+  Not in Figma.
 - **Copy:** `opRouting.*`, Claude's draft. Later placements (auction email
   `ad-published`, offers/decision while waiting, profile) are spec-only.
 
@@ -3030,6 +3043,87 @@ give a real price.
 - Copy `priceSanta.*` / `priceSantaTeaser.*`, Claude's draft, English a
   working translation. Seasonal colours (Tailwind red, green, amber) and
   emoji in the USP cards are campaign choices, not tokens.
+
+### Price guess `v4` — Hinta-arvio, a router in place of `/hinta-arvio` (2026-10-22)
+
+After the team's replies to v1–v3. Sebu (CEO): credible estimates (GT-X + AI),
+not "guesses"; many sellers want an estimate to plan the next car; an expert
+call can sharpen it; then move them into the auction. Pia (CMO): consumers do
+not read, and want the estimate they came for. Marcus: serious entry,
+playful result. **Jussi's framing, which shaped the build:** the estimate
+question is really "what do we do with sellers who are not ready yet". Funnel
+conversion rose when the funnel's own estimate was removed years ago, while
+acceptance fell and dealers got sellers who never meant to sell; yet some
+sellers who say they are not selling do accept offers. So v4 is a **router,
+not a gate**: the seller's answers and the car decide what is shown first,
+and the funnel stays offered to almost everyone.
+
+- **Prod today:** `/hinta-arvio` (`PriceEstimateController`, Vue route
+  `price-estimation`, noindex): plate + km, a GT-X (Netwheels) estimate,
+  "Laita autosi myyntiin", no contact details. Prod's GT-X + AI tool
+  (`SalesAdvisorPricingToolV2`, `OpenAiPriceAdvice`) is the advisors'.
+- **Built from the site's own parts** (Jussi, 2026-10-22: the navy page, the
+  context-free wizard and the page's unique copy did not belong to the site):
+  - **Landing** = the front page hero (brand-blue gradient, centred title,
+    the hero's plate and mileage fields with their markup and validation,
+    turquoise "Hae hinta-arvio", prod's `/hinta-arvio` label), then the front
+    page's own **How it works** and **stats** sections, copied with their
+    markup. Their buttons scroll to the form here, and become "Täytä
+    myynti-ilmoitus" once there is a recommendation.
+  - **Wizard** = the funnel's layout: left column with the funnel's step bar
+    (Auto · Tilanteesi · Hinta-arvio · Suositus, the funnel's icons), Barlow
+    step titles, the funnel's radio cards, blue "Jatka" and "Takaisin"; right
+    column the funnel's **cream sidebar** with prod's car card
+    (`buildCarCard`) and a checklist of what the seller gets (estimate, then
+    its value · recommendation · the email report), ticked as they arrive. The
+    landing sections hide during the wizard. Each step scrolls to the top.
+  - Fetching uses prod's vehicle-info loading content (`car_loading.svg`,
+    "Haetaan autosi perustiedot", "Muutama sekunti jäljellä").
+- **Every route now gets the estimate** (Jussi: a ready seller came for an
+  estimate too): q1 → q2 → own estimate (price step's field) → email, once →
+  gauge → **"Autosi hinta-arvio"** (prod's result title) with the number or
+  range, "Arvio, ei tarjous" (UiBadge amber), the seller's mark "Oma arviosi
+  X €", and prod's two `price_estimation_description` lines as the only
+  caveat → "Katso suosituksemme".
+- **The recommendation**, one action: auction → three facts + "Täytä
+  myynti-ilmoitus"; explore → the reminder (radio cards), or with high demand
+  the listing + "Muistuta minua myöhemmin"; plan → the reminder; overmax →
+  Huutokaupat.com. The demand line uses the funnel's (i) info line. Below:
+  similar cars (basis `similar`), the budget field (buying another car), How
+  it works, the expert call, stats.
+- **Removed:** the navy hero and intro column, the dev-only route line, the
+  page's own auction section (four steps, fit list), the basis section, and
+  the "Hinta-arvio on suuntaa antava…" fine print (prod's description says it
+  once). Front-page section restyled to the site's white section + cream card.
+- **Funnel button everywhere:** "Täytä myynti-ilmoitus" (Jussi).
+- **Demand** stands in for how attractive the car is to AutoVex buyers:
+  model year and mileage (≤5 years and ≤120 000 km high; ≥15 years or >240 000
+  km low). High and low each add one line to the recommendation. A
+  placeholder for a real signal.
+- **Bar, Events → "Variant 4 — estimate and car":** estimate format (per
+  route / number / range), basis (GT-X / similar cars sold, the Similar cars
+  cards scaled to the estimate), demand (from the car / high / normal / low).
+- **Estimate is deterministic:** mock GT-X 12 000 € at 148 000 km, −0.03
+  €/km, rounded to 10 €.
+- **Handoff:** v2/v3's, plus the seller's own estimate as `priceExpectation`,
+  the phone as `contact.puhelin`, both answers and the route under
+  `estimateIntent`, and the answer to whichever question the live seller-intent
+  arm asks under `sellerIntentQuestion` / `sellerIntentAnswer`, so the price
+  step shows it already chosen.
+- **Scenarios:** `route-auction` / `route-auction-rec`, `route-explore` /
+  `route-explore-rec`, `route-plan` / `route-plan-rec`, `route-overmax`. Redirects: v1/v2 → `price-guess.html`, v3 → `santa.html`.
+- **Open before launch:** required marketing consent (Legal); the reminder,
+  the updated estimate and the estimate email do not exist yet; the call
+  promise needs Ops; whether GT-X + AI or accepted offers can back a consumer
+  estimate (Marcus); the route thresholds need 104_combi's acceptance rate by
+  intent answer (Analytics); "~1 day to respond" rests on prod's default
+  `reaction_time_for_offers` and "~5 business days" on AutoVex exclusive's
+  figure; this routing and Seller intent phase 2 (`deriveOutcome`) are the
+  same decision and should share one logic.
+- Copy `estimatePage.*` / `estimateTeaser.*`, Claude's draft; the two
+  questions are `intent.*`, `basisGtx` / `finePrint` adapt prod's
+  `price_estimation_description`, the timeline's steps 2–4 lean on prod's
+  `howItWorks.*`, the phone error is prod's `validation.phone`.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

@@ -52,13 +52,12 @@
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
   <script>
-    /* This page is the price-guess initiative's v3. Picking v1 or v2 on the
-       bar (or arriving with them remembered) belongs to price-guess.html. */
+    /* This page is the price-guess initiative's v3. v1 and v2 belong to
+       price-guess.html, v4 to hinta-arvio.html. */
     (function () {
       var arm = window.protoVariant('price-guess', 'v3');
-      if (arm === 'v1' || arm === 'v2') {
-        window.location.replace('price-guess.html' + window.location.search + window.location.hash);
-      }
+      var to = arm === 'v1' || arm === 'v2' ? 'price-guess.html' : arm === 'v4' ? 'hinta-arvio.html' : null;
+      if (to) window.location.replace(to + window.location.search + window.location.hash);
     })();
   </script>
   <style>
@@ -445,7 +444,8 @@
           variants: [
             { id: 'v1', label: 'Variant 1 — price guess (lottery)' },
             { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' },
-            { id: 'v3', label: 'Variant 3 — Kirje Joulupukille (Christmas)' }
+            { id: 'v3', label: 'Variant 3 — Kirje Joulupukille (Christmas)' },
+            { id: 'v4', label: 'Variant 4 — Hinta-arvio (hinta-arvio.html)' }
           ]
         }
       ]

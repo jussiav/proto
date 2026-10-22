@@ -92,6 +92,7 @@
     { href: 'dac7.html',      label: 'DAC7' },
     { href: 'help.html',      label: 'Support' },
     { href: 'price-guess.html', label: 'Price guess' },
+    { href: 'hinta-arvio.html', label: 'Price estimate (v4)' },
     { href: 'emails.html',    label: 'Transactional emails' },
     { href: 'components.html', label: 'Component gallery' }
   ];
