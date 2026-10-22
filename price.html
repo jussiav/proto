@@ -618,16 +618,14 @@
       setStore(s);
     }
 
-    /* Selected state is services.html's exactly: the card gains a 2px blue
-       border and the dot fills. */
+    /* Selected state is services.html's exactly: aria-checked swaps the 1px grey
+       outline for prod Chip.vue's 2px blue one and the dot fills. An outline takes
+       no layout space, so selecting never moves the page. */
     function paintIntentSelection(selectedId) {
       var rows = document.querySelectorAll('#price-intent-options .radio-btn');
       [].forEach.call(rows, function (row) {
         var on = row.getAttribute('data-intent-option') === selectedId;
-        row.classList.toggle('border-2', on);
-        row.classList.toggle('border-av-blue', on);
-        row.classList.toggle('border', !on);
-        row.classList.toggle('border-gray-500', !on);
+        row.setAttribute('aria-checked', on ? 'true' : 'false');
         var dot = row.querySelector('.radio-dot');
         dot.classList.toggle('bg-av-blue', on);
         dot.classList.toggle('bg-white', !on);
@@ -675,16 +673,16 @@
       list.innerHTML = '';
       question.options.forEach(function (option) {
         var row = document.createElement('div');
-        /* prod RadioButtons.vue: text-base font-display (Barlow) rounded-lg p-4,
-           label span ml-2 font-medium — taller cards and a medium weight, not the
-           bold DM Sans the proto used to draw. */
-        row.className = 'radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer';
+        /* prod PriceInfo.vue renders these options with Chips, so each row is
+           Chip.vue: text-base font-display (Barlow) p-4, label span font-semibold. */
+        row.className = 'radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer';
+        row.setAttribute('role', 'radio');
         row.setAttribute('data-intent-option', option.id);
         row.innerHTML =
           '<div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">' +
             '<div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>' +
           '</div>' +
-          '<span class="font-barlow font-medium text-base text-black"></span>';
+          '<span class="font-barlow font-semibold text-base text-black"></span>';
         row.querySelector('span').textContent = t(option.key);
         row.addEventListener('click', function () {
           saveIntentAnswer(question, option.id);

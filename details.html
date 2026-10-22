@@ -893,21 +893,25 @@
               </div>
             </div>
 
-            <!-- Vetotapa: prod's Chips over tender.drive_types, same cards as Vaihteisto -->
+            <!-- Vetotapa: prod's Chips over tender.drive_types, same cards as Vaihteisto.
+                 Every option card on this step selects the way prod's Chip.vue does: an
+                 outline, never a border width, because an outline takes no layout space
+                 and a selected card must not move what sits below it. -->
+
             <div class="flex flex-col gap-2">
               <label class="font-dm font-medium text-base leading-5 text-slate-900">
                 <span data-i18n="details.drivetrain">Vetotapa</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <div id="vetotapa-options" class="flex flex-col gap-2">
-                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                   <input type="radio" name="vetotapa" value="Etuveto" class="w-4 h-4 accent-av-blue cursor-pointer" />
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="details.drivetrainFront">Etuveto</span>
                 </label>
-                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                   <input type="radio" name="vetotapa" value="Takaveto" class="w-4 h-4 accent-av-blue cursor-pointer" />
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="details.drivetrainRear">Takaveto</span>
                 </label>
-                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                   <input type="radio" name="vetotapa" value="Neliveto" class="w-4 h-4 accent-av-blue cursor-pointer" />
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="details.drivetrainAll">Neliveto</span>
                 </label>
@@ -920,15 +924,15 @@
                 <span data-i18n="details.transmission">Vaihteisto</span> <span class="text-red-500 font-medium">*</span>
               </label>
               <div id="vaihteisto-options" class="flex flex-col gap-2">
-                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                   <input type="radio" name="vaihteisto" value="Manuaali" class="w-4 h-4 accent-av-blue cursor-pointer" />
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="details.manual">Manuaali</span>
                 </label>
-                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                   <input type="radio" name="vaihteisto" value="Automaatti" class="w-4 h-4 accent-av-blue cursor-pointer" />
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="details.automatic">Automaatti</span>
                 </label>
-                <label class="flex items-center gap-2.5 h-14 border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+                <label class="flex items-center gap-2.5 h-14 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                   <input type="radio" name="vaihteisto" value="Portaaton" class="w-4 h-4 accent-av-blue cursor-pointer" />
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="details.cvt">Portaaton</span>
                 </label>
@@ -982,7 +986,7 @@
           <div class="flex flex-col gap-2">
             <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.summerTyres">Kesärenkaat</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="kesarenkaat-options" class="flex flex-col gap-3.5">
-              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-av-cream">
                   <img src="assets/summer-tire-great.png" class="max-w-full max-h-[100px] object-contain" alt="" />
                 </figure>
@@ -994,7 +998,7 @@
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-av-cream">
                   <img src="assets/summer-tire-ok.png" class="max-w-full max-h-[100px] object-contain" alt="" />
                 </figure>
@@ -1006,7 +1010,7 @@
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-av-cream">
                   <img src="assets/summer-tire-bad.png" class="max-w-full max-h-[100px] object-contain" alt="" />
                 </figure>
@@ -1018,7 +1022,7 @@
                   </div>
                 </div>
               </label>
-              <label class="flex items-center gap-2.5 h-[68px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[68px] outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="kesarenkaat" value="Ei ole" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <div>
                   <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreNone">Ei ole</p>
@@ -1034,12 +1038,12 @@
           <div id="kesavanteet-group" class="flex flex-col gap-2">
             <p class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="details.rimsWithSummer">Vanteet (kesä)</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="kesavanteet-options" class="flex flex-row w-full">
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg outline outline-1 outline-gray-500 outline-offset-0 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="kesavanteet" value="Vanteilla" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWith">Vanteilla</span>
                 <img src="assets/rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg outline outline-1 outline-gray-500 outline-offset-0 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="kesavanteet" value="Ilman vanteita" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWithout">Ilman vanteita</span>
                 <img src="assets/no-rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
@@ -1051,7 +1055,7 @@
           <div class="flex flex-col gap-2">
             <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.winterTyres">Talvirenkaat</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="talvirenkaat-options" class="flex flex-col gap-3.5">
-              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-[#b9e0ff]">
                   <img src="assets/winter-tire-great.png" class="max-w-full max-h-[100px] object-contain" alt="" />
                 </figure>
@@ -1063,7 +1067,7 @@
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-[#b9e0ff]">
                   <img src="assets/winter-tire-ok.png" class="max-w-full max-h-[100px] object-contain" alt="" />
                 </figure>
@@ -1075,7 +1079,7 @@
                   </div>
                 </div>
               </label>
-              <label class="flex flex-col gap-2.5 border border-gray-500 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex flex-col gap-2.5 outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <figure class="w-full max-h-[100px] aspect-[3/1] flex items-center justify-center rounded-lg bg-[#b9e0ff]">
                   <img src="assets/winter-tire-bad.png" class="max-w-full max-h-[100px] object-contain" alt="" />
                 </figure>
@@ -1087,7 +1091,7 @@
                   </div>
                 </div>
               </label>
-              <label class="flex items-center gap-2.5 h-[68px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[68px] outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="talvirenkaat" value="Ei ole" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <div>
                   <p class="font-barlow font-semibold text-base text-black" data-i18n="details.tyreNone">Ei ole</p>
@@ -1102,12 +1106,12 @@
           <div id="talvivanteet-group" class="flex flex-col gap-2">
             <p class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="details.rimsWithWinter">Vanteet (talvi)</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="talvivanteet-options" class="flex flex-row w-full">
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg border border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-l-lg outline outline-1 outline-gray-500 outline-offset-0 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="talvivanteet" value="Vanteilla" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWith">Vanteilla</span>
                 <img src="assets/rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
               </label>
-              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg border border-l-0 border-gray-500 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 has-[:checked]:z-10 transition-colors">
+              <label class="flex-1 min-w-[50%] flex items-center gap-2.5 p-4 bg-white rounded-r-lg outline outline-1 outline-gray-500 outline-offset-0 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="talvivanteet" value="Ilman vanteita" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="details.rimsWithout">Ilman vanteita</span>
                 <img src="assets/no-rims.svg" class="ml-auto w-12 flex-shrink-0 max-w-none" alt="" />
@@ -1119,11 +1123,11 @@
           <div class="flex flex-col gap-2">
             <p class="font-dm font-bold text-xl text-slate-900"><span data-i18n="details.keys">Avaimet</span> <span class="text-red-500 font-medium">*</span></p>
             <div id="avaimet-options" class="flex flex-col gap-1.5">
-              <label class="flex items-center gap-2.5 h-[52px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[52px] outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="avaimet" value="Yksi" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="details.keysOne">Yksi</span>
               </label>
-              <label class="flex items-center gap-2.5 h-[52px] border border-gray-500 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:border-av-blue has-[:checked]:border-2 transition-colors">
+              <label class="flex items-center gap-2.5 h-[52px] outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white px-4 cursor-pointer has-[:checked]:outline-2 has-[:checked]:outline-blue has-[:checked]:outline-offset-[-1px] has-[:checked]:z-10 transition-colors">
                 <input type="radio" name="avaimet" value="2 tai enemmän" class="w-4 h-4 accent-av-blue cursor-pointer flex-shrink-0" />
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="details.keysTwo">2 tai enemmän</span>
               </label>

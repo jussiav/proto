@@ -315,17 +315,18 @@
     window.addEventListener('DOMContentLoaded', () => {
       const groups = Array.from(document.querySelectorAll('.radio-group'));
 
+      /* Selection is aria-checked, which swaps prod Chip.vue's 1px grey outline for
+         its 2px blue one. An outline takes no layout space, so selecting a card never
+         moves what sits below it. */
       function selectRadioBtn(btn) {
         const group = btn.closest('.radio-group');
         group.querySelectorAll('.radio-btn').forEach(b => {
-          b.classList.remove('border-2', 'border-av-blue');
-          b.classList.add('border', 'border-gray-500');
+          b.setAttribute('aria-checked', 'false');
           b.querySelector('.radio-dot').classList.remove('bg-av-blue');
           b.querySelector('.radio-dot').classList.add('bg-white');
           b.querySelector('.radio-inner')?.classList.add('hidden');
         });
-        btn.classList.remove('border', 'border-gray-500');
-        btn.classList.add('border-2', 'border-av-blue');
+        btn.setAttribute('aria-checked', 'true');
         btn.querySelector('.radio-dot').classList.remove('bg-white');
         btn.querySelector('.radio-dot').classList.add('bg-av-blue');
         btn.querySelector('.radio-inner')?.classList.remove('hidden');
@@ -334,10 +335,10 @@
       // ── Save / Load ──
       function saveServices() {
         const s = getStore();
-        const bookTypeSel = document.getElementById('book-type-group')?.querySelector('.radio-btn.border-2');
+        const bookTypeSel = document.getElementById('book-type-group')?.querySelector('.radio-btn[aria-checked="true"]');
         s.services = {
           radioGroups: groups.map(g => {
-            const sel = g.querySelector('.radio-btn.border-av-blue, .radio-btn.border-2');
+            const sel = g.querySelector('.radio-btn[aria-checked="true"]');
             return sel ? sel.querySelector('span')?.textContent?.trim() ?? null : null;
           }),
           korjaukset: document.getElementById('korjaukset')?.value ?? '',
@@ -435,7 +436,7 @@
 
       function updateLastServiceDetail() {
         const grp = document.getElementById('last-service-group');
-        const sel = grp?.querySelector('.radio-btn.border-2');
+        const sel = grp?.querySelector('.radio-btn[aria-checked="true"]');
         const val = sel?.getAttribute('data-last-service');
         const detail = document.getElementById('last-service-detail');
         if (detail) detail.style.display = (sel && val === 'older') ? 'flex' : 'none';
@@ -446,7 +447,7 @@
       const lasivakuutusSec  = document.getElementById('lasivakuutus-section');
 
       function getSelectedText(group) {
-        const sel = group?.querySelector('.radio-btn.border-2');
+        const sel = group?.querySelector('.radio-btn[aria-checked="true"]');
         return sel ? sel.querySelector('span')?.textContent?.trim() ?? null : null;
       }
 
@@ -458,8 +459,7 @@
           const lasivakuutusGroup = groups[groups.indexOf(tuulilasiGroup) + 1];
           if (lasivakuutusGroup) {
             lasivakuutusGroup.querySelectorAll('.radio-btn').forEach(b => {
-              b.classList.remove('border-2', 'border-av-blue');
-              b.classList.add('border', 'border-gray-500');
+              b.setAttribute('aria-checked', 'false');
               b.querySelector('.radio-dot')?.classList.remove('bg-av-blue');
               b.querySelector('.radio-dot')?.classList.add('bg-white');
               b.querySelector('.radio-inner')?.classList.add('hidden');
@@ -486,8 +486,7 @@
         bookTypeSection.style.display = hide ? 'none' : 'flex';
         if (hide) {
           document.getElementById('book-type-group')?.querySelectorAll('.radio-btn').forEach(b => {
-            b.classList.remove('border-2', 'border-av-blue');
-            b.classList.add('border', 'border-gray-500');
+            b.setAttribute('aria-checked', 'false');
             b.querySelector('.radio-dot')?.classList.remove('bg-av-blue');
             b.querySelector('.radio-dot')?.classList.add('bg-white');
             b.querySelector('.radio-inner')?.classList.add('hidden');
@@ -570,7 +569,7 @@
       var group = document.getElementById('book-type-group');
       var banner = document.getElementById('tiedot-banner');
       if (!group || !banner) return;
-      var sel = group.querySelector('.radio-btn.border-2');
+      var sel = group.querySelector('.radio-btn[aria-checked="true"]');
       var type = sel ? sel.getAttribute('data-book-type') : null;
       if (type === 'digital' || type === 'both') {
         banner.style.display = 'flex';
@@ -645,10 +644,7 @@
     function _tiedotSetFetch(on) {
       var btn = document.getElementById('tiedot-fetch-btn');
       if (!btn) return;
-      btn.classList.toggle('border-2', on);
-      btn.classList.toggle('border-av-blue', on);
-      btn.classList.toggle('border', !on);
-      btn.classList.toggle('border-gray-500', !on);
+      btn.setAttribute('aria-checked', on ? 'true' : 'false');
       var dot = btn.querySelector('.tiedot-fetch-dot');
       var inner = btn.querySelector('.tiedot-fetch-inner');
       if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-gray-500', !on); }
@@ -658,11 +654,7 @@
     function _tiedotSetNo(on) {
       var btn = document.getElementById('tiedot-no-btn');
       if (!btn) return;
-      btn.classList.toggle('border-2', on);
-      btn.classList.toggle('border-av-blue', on);
-      btn.classList.toggle('bg-white', true);
-      btn.classList.toggle('border', !on);
-      btn.classList.toggle('border-gray-500', !on);
+      btn.setAttribute('aria-checked', on ? 'true' : 'false');
       var dot = btn.querySelector('.tiedot-no-dot');
       var inner = btn.querySelector('.tiedot-no-inner');
       if (dot) { dot.classList.toggle('bg-av-blue', on); dot.classList.toggle('bg-white', !on); dot.classList.toggle('border-av-blue', on); dot.classList.toggle('border-gray-500', !on); }
@@ -725,25 +717,25 @@
               <span data-i18n="service.historyLabel">Huoltohistoria</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="history-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.historyFull">Täydellinen merkkiliikkeen historia</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.historyFullOther">Täysi – muissa huoltamoissa</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.historyPartial">Osittainen</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
@@ -759,25 +751,25 @@
               <span data-i18n="service.bookTypeLabel">Huoltokirjan tyyppi</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="book-type-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="digital">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="digital">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.bookDigital">Sähköinen huoltokirja</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="paper">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="paper">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.bookPaper">Paperinen huoltokirja</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="both">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="both">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.bookBoth">Molemmat</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="unknown">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-book-type="unknown">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
@@ -798,7 +790,7 @@
             </div>
             <div id="tiedot-options" class="flex flex-col gap-2">
             <!-- Option 1: Hae sähköinen huoltohistoria -->
-            <div id="tiedot-fetch-btn" class="flex flex-col gap-[10px] p-4 border border-gray-500 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectFetch()">
+            <div id="tiedot-fetch-btn" role="radio" aria-checked="false" class="flex flex-col gap-[10px] p-4 outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectFetch()">
               <div id="tiedot-fetch-header" class="flex items-center gap-[10px]">
                 <div class="tiedot-fetch-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="tiedot-fetch-inner w-2 h-2 rounded-full bg-white hidden"></div>
@@ -832,7 +824,7 @@
               </button>
             </div>
             <!-- Option 2: Ei kiitos -->
-            <div id="tiedot-no-btn" class="flex items-center gap-[10px] p-4 border border-gray-500 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectNo()">
+            <div id="tiedot-no-btn" role="radio" aria-checked="false" class="flex items-center gap-[10px] p-4 outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white cursor-pointer" onclick="tiedotSelectNo()">
               <div class="tiedot-no-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                 <div class="tiedot-no-inner w-2 h-2 rounded-full bg-white hidden"></div>
               </div>
@@ -848,19 +840,19 @@
               <span data-i18n="service.lastServiceLabel">Viimeisin huolto</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="last-service-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="6mo">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="6mo">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.lastService6mo">Viimeisen 6 kuukauden aikana</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="older">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="older">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.lastServiceOlder">Yli 6 kuukautta sitten</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="unsure">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer" data-last-service="unsure">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
@@ -910,19 +902,19 @@
               <span data-i18n="service.windshieldLabel">Tuulilasin kunto</span> <span class="text-red-500 font-medium">*</span>
             </div>
             <div id="tuulilasi-group" class="flex flex-col gap-2 radio-group">
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.windshieldOk">Ehjä</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
                 <span class="font-barlow font-semibold text-base text-black" data-i18n="service.windshieldChips">Kiveniskemiä</span>
               </div>
-              <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+              <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                 <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                   <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                 </div>
@@ -936,19 +928,19 @@
                 <span data-i18n="service.glassInsurance">Löytyykö sinulta lasivakuutus?</span> <span class="text-red-500 font-medium">*</span>
               </div>
               <div class="flex flex-col gap-2 radio-group">
-                <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                   <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                     <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                   </div>
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="service.yes">Kyllä</span>
                 </div>
-                <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                   <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                     <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                   </div>
                   <span class="font-barlow font-semibold text-base text-black" data-i18n="service.no">Ei</span>
                 </div>
-                <div class="radio-btn flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
+                <div role="radio" aria-checked="false" class="radio-btn flex w-full outline outline-1 outline-gray-500 outline-offset-0 aria-checked:outline-2 aria-checked:outline-blue aria-checked:outline-offset-[-1px] aria-checked:z-10 rounded-lg bg-white p-4 items-center gap-2 cursor-pointer">
                   <div class="radio-dot w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0 flex items-center justify-center">
                     <div class="radio-inner w-2 h-2 rounded-full bg-white hidden"></div>
                   </div>

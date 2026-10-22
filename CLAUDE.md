@@ -149,7 +149,7 @@ These rules apply to all new pages and components in this prototype, without exc
    | Group legend | `<legend class="text-xl font-bold mb-4">` | `font-dm font-bold text-xl` |
    | Field label / sub-legend | `Input.vue`, `NumberInput.vue`, `labels.rims`, `labels.maximum_distance` | `font-dm font-medium text-base leading-none` |
    | Photo section title | `ImageSections.vue` `<legend class="text-base font-medium">` | `font-dm font-medium text-base` |
-   | Option card | `Chip.vue` / `RadioButtons.vue` | `border border-gray-500 rounded-lg bg-white p-4`, 14px apart |
+   | Option card | `Chip.vue` / `RadioButtons.vue` | `outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4`, 14px apart; selected `outline-2 outline-blue outline-offset-[-1px] z-10` |
    | Option label — heavier | `Chip.vue` `<span class="font-semibold">` inside a `font-display` label | `font-barlow font-semibold text-base text-black` |
    | Option label — lighter | `RadioButtons.vue` `<span class="ml-2 font-medium">` | `font-barlow font-medium text-base text-black` |
    | Option description | `Chip.vue` `<span class="text-sm">` | `font-barlow text-sm text-black` |
@@ -170,15 +170,33 @@ These rules apply to all new pages and components in this prototype, without exc
 
    **Two option-label weights, and the difference is the component.** `Chips`
    (Barlow **semibold**) is what the funnel uses — service book, service history,
-   windscreen, tyres, rims, keys. `RadioButtons` (Barlow **medium**, which lands
-   on 400 since prod ships no 500 face) appears only on `ReplacementQuestions` and
-   `ReferralSource`, steps this proto has no copy of — so it is the right analogue
-   for a NEW question added to the funnel, which is why the seller-intent options
-   use it. Do not mix them within one group.
+   windscreen, tyres, rims, keys, **and the seller-intent question**. `RadioButtons`
+   (Barlow **medium**, which lands on 400 since prod ships no 500 face) appears
+   only on `ReplacementQuestions` and `ReferralSource`, steps this proto has no
+   copy of. Do not mix them within one group.
 
-   Field borders are **`gray-500`** (#6B7280), not `slate-400`. Radio selection
-   keeps the proto's `border-2 border-av-blue` rather than prod's `outline-2`;
-   same result, and the proto's JS toggles borders everywhere.
+   **A new funnel question takes `Chips`, not `RadioButtons`** (corrected
+   2026-10-22). This rule used to call `RadioButtons` the analogue for a new
+   question, and the seller-intent options were drawn medium on that reasoning.
+   Prod's own new question settles it: `PriceInfo.vue` renders the `104_combi`
+   intent options with `Chips`, so `price.html` and the seller-intent spec now
+   draw them semibold. AutoVex exclusive's `.vis-option` cards in `contact.html`
+   were built medium on the same reasoning and are not changed yet.
+
+   Field borders are **`gray-500`** (#6B7280), not `slate-400`. **Option cards
+   select with an OUTLINE, never a border width** (corrected 2026-10-22, Jussi's
+   catch). Prod's `Chip.vue`, `MChip.vue` and `RadioButtons.vue` draw no border at
+   all: a 1px grey outline, and a 2px blue one inset by 1px when selected. An
+   outline takes no layout space, so nothing moves. The proto used to swap
+   `border` for `border-2`, which grew the card 2px and nudged everything below
+   it. That is not "the same result", as this rule used to claim. `details.html`
+   does it with `has-[:checked]:` variants. `services.html` and `price.html`
+   toggle `aria-checked` (prod's Chips markup, `role="radio"`) with
+   `aria-checked:` variants, and read selection as
+   `.radio-btn[aria-checked="true"]`, never a border class. Two proto-only cards
+   were already shift-free and are left alone: `contact.html`'s `.vis-option`
+   (inset shadow) and `hinta-arvio.html`'s `.ha-opt` (2px border with padding
+   reduced by 1px).
 
    **Column widths.** Prod's funnel is two halves of `max-w-screen-xxl`
    (`TenderRequestDraftForm.vue`: `lg:w-1/2` each, no padding or gap on the row —

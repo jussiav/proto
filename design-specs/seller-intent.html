@@ -416,13 +416,12 @@
     const stem = q => pick(FI, q.stem);
 
     /* Inert replicas — the same radio card markup the funnel uses. */
-    /* Mirrors the step exactly: prod RadioButtons.vue geometry (p-4, 14px apart,
-       gray-500) with its lighter Barlow font-medium label — the weight that marks
-       a NEW question, as opposed to Chips' semibold used by the car-detail groups. */
+    /* Mirrors the step exactly: prod renders these options with Chips, so each row
+       is Chip.vue (p-4, 14px apart, a 1px gray-500 outline, Barlow semibold label). */
     function optionRow(labelKey) {
-      return '<div class="flex w-full border border-gray-500 rounded-lg bg-white p-4 items-center gap-2">' +
+      return '<div class="flex w-full outline outline-1 outline-gray-500 outline-offset-0 rounded-lg bg-white p-4 items-center gap-2">' +
         '<div class="w-4 h-4 rounded-full border border-gray-500 bg-white flex-shrink-0"></div>' +
-        '<span class="font-barlow font-medium text-base text-black">' + pick(FI, labelKey) + '</span></div>';
+        '<span class="font-barlow font-semibold text-base text-black">' + pick(FI, labelKey) + '</span></div>';
     }
     ['v1', 'v2', 'v3'].forEach(arm => {
       const q = QUESTIONS.find(x => x.arm === arm);
