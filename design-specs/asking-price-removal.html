@@ -320,27 +320,27 @@
     <section class="av-band av-band-grey" id="scope">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Not in this initiative yet</h2>
-      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-5">The asking price appears elsewhere in the seller journey. These are separate pieces of work, listed so nobody assumes they came with the two changes above &mdash; and so the first one is not quietly folded into a neighbouring initiative.</p>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-5">The asking price appears elsewhere in the seller journey. These are separate pieces of work, listed so nobody assumes they came with the two changes above.</p>
 
       <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
         <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 mb-3">
           <span class="font-barlow font-bold text-black text-lg">The counter-offer ceiling</span>
-          <span class="font-dm text-xs bg-info-100 text-info-800 rounded-full px-2.5 py-1 md:ml-auto">Own work &middot; will be A/B tested</span>
+          <span class="font-dm text-xs bg-slate-200 text-slate-700 font-bold rounded-full px-2.5 py-1 md:ml-auto">Resolved &middot; October 2026</span>
         </div>
-        <p class="mb-3"><b>A seller can be stopped by a number they were never shown.</b> The asking price left the decision page, but it still decides what they may counter-offer. Two places, both live for every seller:</p>
+        <p class="mb-3"><b>Resolved by its own A/B test, promoted in October 2026.</b> Until then a seller could be stopped by a number they were never shown: the asking price had left the decision page but still decided what they could counter-offer, through a red line under the field (&ldquo;Pyyntihintasi oli [amount]&rdquo;) and a server-side rule (&ldquo;Vastatarjouksesi ei voi olla asettamaasi pyyntihintaa korkeampi.&rdquo;).</p>
+        <p class="mb-3">The ceiling no longer reads the asking price. What the seller sees now:</p>
         <ul class="list-disc pl-5 space-y-1 mb-3">
-          <li>A <b>red line under the counter-offer field</b> the moment the typed amount goes above it &mdash; <span class="font-medium">&ldquo;Pyyntihintasi oli [amount]&rdquo;</span>, which is the first and only time that figure appears.</li>
-          <li>A <b>server-side rule</b> that rejects the counter offer outright: <span class="font-medium">&ldquo;Vastatarjouksesi ei voi olla asettamaasi pyyntihintaa korkeampi.&rdquo;</span> It fires only while the highest offer is still below the asking price, and only for a reviewed listing.</li>
+          <li>A <b>red line under the counter-offer field</b> once the typed amount goes above the ceiling: <span class="font-medium">&ldquo;Korkein suositeltava vastatarjous on [amount].&rdquo;</span><br><span class="text-xs text-slate-500">English gloss (a reading aid, not copy): &ldquo;The highest recommended counter offer is [amount].&rdquo;</span></li>
+          <li>The <b>server-side rule</b> that rejects a counter offer above it: <span class="font-medium">&ldquo;Autoliikkeet pyrkivät tekemään jo huutokaupan aikana kilpailukykyisiä tarjouksia. Vastatarjouksesi tämän hintaluokan autossa voi olla enintään [amount] €.&rdquo;</span><br><span class="text-xs text-slate-500">English gloss: &ldquo;Dealerships aim to make competitive offers already during the auction. For a car in this price range, your counter offer can be at most [amount] €.&rdquo;</span></li>
         </ul>
-        <p class="mb-3">Both are <b>settled production behaviour, not an oversight</b>: the arm of the concluded test that removed them was the arm that lost.</p>
-        <p class="mb-3"><b>What the ceiling actually is, today.</b> It is the stored asking price &mdash; or the <b>GT-X estimate</b> where a listing was published without one, because the routing writes the estimate into that field when it auto-publishes. And the field itself can be set from several different sources. So &ldquo;the asking price&rdquo; is one name for more than one number, which is part of what makes it hard to explain to a seller.</p>
-        <p class="mb-0"><b>Do not build this off this page, and do not fold it into Enhanced negotiations.</b> That initiative deliberately leaves the ceiling alone. Resolving it &mdash; whether to show the figure, rename it, raise it or drop it &mdash; is its own decision and will be settled by an A/B test of its own.</p>
+        <p class="mb-0">So no screen after the price step shows the consumer seller their asking price or stops them with it. It still reaches <b>dealerships</b>, listed below.</p>
       </div>
 
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl">
         <table class="w-full font-dm text-sm text-left">
           <tbody class="divide-y divide-slate-100 text-slate-800 align-top">
             <tr><td class="px-4 py-3 font-medium whitespace-nowrap">The funnel</td><td class="px-4 py-3">Where the asking price is asked for in the first place, and the screens that echo it back.</td></tr>
+            <tr><td class="px-4 py-3 font-medium whitespace-nowrap">Dealerships</td><td class="px-4 py-3">Dealers still see a consumer listing&rsquo;s asking price as &ldquo;Pyyntihinta&rdquo;: on the search results&rsquo; photo label, on the listing page, as a search filter and sort, and in the daily new-leads email. The minimum first bid is also derived from it. B2B already hides its reserve price from buyers; consumer listings do not.</td></tr>
             <tr><td class="px-4 py-3 font-medium whitespace-nowrap">B2B</td><td class="px-4 py-3">Out of scope by design. The B2B decision page keeps all three columns and both chart lines, and its third column is a live feature rather than a field being sunset.</td></tr>
           </tbody>
         </table>

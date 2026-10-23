@@ -74,7 +74,8 @@
     }
     .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; }
     .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
-    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #475569; margin: 0.25rem 0 0; }
+    .av-field-error { margin-top: 0.375rem; line-height: 1rem; }
+    .av-neutral-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #64748B; margin: 0.25rem 0 0; }
     /* Checkbox */
     input[type="checkbox"] {
       -webkit-appearance: none;
@@ -287,9 +288,9 @@
       const radioGroups = [
         { name: 'vetotapa',     containerId: 'vetotapa-options',     val: d.vetotapa },
         { name: 'vaihteisto',   containerId: 'vaihteisto-options',   val: d.vaihteisto },
-        // A km input rather than a choice, so it takes the standard required-field message.
+        // A km input rather than a choice: prod's MFieldInput marks the input itself.
         { name: 'toimitus', val: d.deliveryRange, containerId: 'delivery-field',
-          msgKey: 'err.required' },
+          inputId: 'delivery-km', msgKey: 'err.mandatoryInformation' },
         { name: 'kesarenkaat',  containerId: 'kesarenkaat-options',  val: d.kesarenkaat },
         // Rims groups are skipped entirely when that season's tyres are "Ei ole" — the question
         // is hidden, so it must not block Continue.
@@ -336,6 +337,19 @@
       missingRadio.forEach(g => {
         const container = document.getElementById(g.containerId);
         if (!container) return;
+        if (g.inputId) {
+          const input = document.getElementById(g.inputId);
+          input.style.borderColor = '#ef4444';
+          input.style.background = 'rgba(239, 68, 68, 0.1)';
+          if (!document.getElementById('err-' + g.name)) {
+            const errEl = document.createElement('p');
+            errEl.id = 'err-' + g.name;
+            errEl.className = 'av-error-msg av-field-error';
+            errEl.textContent = t(g.msgKey);
+            input.parentNode.after(errEl);
+          }
+          return;
+        }
         container.style.outline = '2px solid #ef4444';
         container.style.outlineOffset = '4px';
         container.style.borderRadius = '8px';
@@ -390,7 +404,6 @@
 
       // Toimitusmatka: a plain km field with no default value, so the seller has to
       // enter a distance (see design-specs/delivery-distance.html).
-      const deliveryWrap  = document.getElementById('delivery-field');
       const deliveryInput = document.getElementById('delivery-km');
       const deliveryMsg   = document.getElementById('delivery-msg');
       let deliveryValue = null;
@@ -400,9 +413,8 @@
       // Clear the page-level required error from validateAndContinue, if present
       function clearDeliveryGroupErr() {
         document.getElementById('err-toimitus')?.remove();
-        deliveryWrap.style.outline = '';
-        deliveryWrap.style.outlineOffset = '';
-        deliveryWrap.style.borderRadius = '';
+        deliveryInput.style.borderColor = '';
+        deliveryInput.style.background = '';
       }
 
       function getDeliveryVal() {
@@ -421,8 +433,10 @@
       deliveryInput.addEventListener('blur', () => {
         if (deliveryInput.value === '') { deliveryValue = null; deliveryHideMsg(); saveDetails(); return; }
         const raw = Number(deliveryInput.value);
-        const fixed = clampDeliveryKm(isNaN(raw) ? 50 : raw);
-        if (isNaN(raw) || raw < 50 || raw > 500) {
+        const snapped = Math.round((isNaN(raw) ? 50 : raw) / 10) * 10;
+        const fixed = clampDeliveryKm(snapped);
+        // Snapping to 10 km stays silent; only a value pulled into range earns the message.
+        if (fixed !== snapped) {
           deliveryMsg.textContent = t('details.deliveryMsgFixed');
           deliveryMsg.style.display = '';
         } else deliveryHideMsg();
@@ -961,17 +975,17 @@
 
           <!-- Toimitusmatka. Spec and A/B test record: design-specs/delivery-distance.html -->
           <div class="flex flex-col gap-3">
-            <div id="delivery-field" class="flex flex-col gap-3">
+            <div id="delivery-field" class="flex flex-col">
               <label for="delivery-km" class="font-dm font-bold text-xl text-slate-900">
                 <span data-i18n="details.deliveryRange">Kuinka kauas voit tarvittaessa toimittaa auton?</span> <span class="text-red-500 font-medium">*</span>
               </label>
-              <div class="relative">
+              <div class="relative mt-4">
                 <input id="delivery-km" type="number" inputmode="numeric" placeholder="50–500" data-i18n-placeholder="details.deliveryRangePlaceholder"
-                  class="w-full h-14 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-slate-900 placeholder:text-slate-300 transition-colors" />
-                <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm font-medium text-base leading-5 text-gray-700">km</span>
+                  class="w-full h-16 py-4 border border-gray-500 rounded-lg bg-white px-4 pr-12 font-dm text-base leading-5 text-black placeholder:text-slate-300 transition-colors" />
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 font-dm text-base leading-5 text-black">km</span>
               </div>
               <p id="delivery-msg" class="av-neutral-msg" style="display:none"></p>
-              <div class="flex items-start gap-2">
+              <div class="flex items-start gap-2 mt-2">
                 <svg width="16" height="16" viewBox="0 0 30 31" fill="#0B6DFF" class="flex-shrink-0 mt-0.5" aria-hidden="true"><path d="M15 3.14648C12.5895 3.14648 10.2332 3.86127 8.22899 5.20045C6.22477 6.53963 4.66267 8.44306 3.74022 10.67C2.81778 12.897 2.57643 15.3475 3.04668 17.7116C3.51694 20.0758 4.67769 22.2474 6.38214 23.9518C8.08659 25.6563 10.2582 26.817 12.6223 27.2873C14.9865 27.7576 17.437 27.5162 19.664 26.5938C21.8909 25.6713 23.7944 24.1092 25.1335 22.105C26.4727 20.1008 27.1875 17.7444 27.1875 15.334C27.1841 12.1027 25.899 9.00475 23.6141 6.71989C21.3292 4.43503 18.2313 3.1499 15 3.14648ZM14.5313 8.77148C14.8094 8.77148 15.0813 8.85396 15.3125 9.00848C15.5438 9.163 15.724 9.38263 15.8305 9.63959C15.9369 9.89654 15.9647 10.1793 15.9105 10.4521C15.8562 10.7249 15.7223 10.9754 15.5256 11.1721C15.329 11.3688 15.0784 11.5027 14.8056 11.557C14.5328 11.6112 14.2501 11.5834 13.9931 11.4769C13.7361 11.3705 13.5165 11.1903 13.362 10.959C13.2075 10.7277 13.125 10.4559 13.125 10.1777C13.125 9.80477 13.2732 9.44709 13.5369 9.18337C13.8006 8.91964 14.1583 8.77148 14.5313 8.77148ZM15.9375 21.8965C15.4402 21.8965 14.9633 21.6989 14.6117 21.3473C14.26 20.9957 14.0625 20.5188 14.0625 20.0215V15.334C13.8139 15.334 13.5754 15.2352 13.3996 15.0594C13.2238 14.8836 13.125 14.6451 13.125 14.3965C13.125 14.1478 13.2238 13.9094 13.3996 13.7336C13.5754 13.5578 13.8139 13.459 14.0625 13.459C14.5598 13.459 15.0367 13.6565 15.3883 14.0082C15.74 14.3598 15.9375 14.8367 15.9375 15.334V20.0215C16.1861 20.0215 16.4246 20.1203 16.6004 20.2961C16.7762 20.4719 16.875 20.7103 16.875 20.959C16.875 21.2076 16.7762 21.4461 16.6004 21.6219C16.4246 21.7977 16.1861 21.8965 15.9375 21.8965Z"/></svg>
                 <p class="font-dm text-base leading-5 text-black" data-i18n="details.deliveryImpactNote">Alueesi sisällä autoliikkeet voivat tehdä tarjouksen ilman noutoa. Alueesi ulkopuoliset liikkeet sisällyttävät noudon tarjoukseen.</p>
               </div>

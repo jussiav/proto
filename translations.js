@@ -690,6 +690,7 @@ window.TRANSLATIONS = {
     /* ── Shared: validation error messages ── */
     err: {
       required:          'Pakollinen kenttä.',
+      mandatoryInformation: 'Pakollinen tieto',
       selectOne:         'Valitse yksi vaihtoehto.',
       selectionRequired: 'Valinta vaaditaan.',
     },
@@ -1616,6 +1617,7 @@ window.TRANSLATIONS = {
 
     err: {
       required:          'Required field.',
+      mandatoryInformation: 'Required information',
       selectOne:         'Select one option.',
       selectionRequired: 'A selection is required.',
     },

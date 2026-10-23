@@ -26,7 +26,9 @@ window.DECISION_I18N = {
     { re: /^(\d+)\+ kauppaa AutoVexissä$/,            en: '$1+ deals on AutoVex' },
     { re: /^(\d+) pv sitten$/,                        en: '$1 d ago' },
     { re: /^Toimita liikkeeseen \((\d+) km\)$/,       en: 'Deliver to the dealership ($1 km)' },
-    { re: /^Pyyntihintasi oli (.+)$/,                 en: 'Your asking price was $1' },
+    { re: /^Korkein suositeltava vastatarjous on (.+)\.$/, en: 'The highest recommended counter offer is $1.' },
+    { re: /^Autoliikkeet pyrkivät tekemään jo huutokaupan aikana kilpailukykyisiä tarjouksia\. Vastatarjouksesi tämän hintaluokan autossa voi olla enintään (.+)\.$/,
+      en: 'Dealerships aim to make competitive offers already during the auction. For a car in this price range, your counter offer can be at most $1.' },
     { re: /^Lähetä vastatarjous \((\d+) jäljellä\)$/, en: 'Send counter offer ($1 left)' },
     { re: /^Vastatarjouksia jäljellä (\d+)$/,         en: 'Counter offers left: $1' }
   ],

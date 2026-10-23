@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-10-16)
+## Reference Source Locations (updated 2026-10-23)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-15-37e1d26ca1cc/` (previous: `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-23-e5397b1844cf/` (previous: `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -849,7 +849,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 
 | Initiative | Outcome | Spec |
 |---|---|---|
-| Delivery distance A/B test | **Variant 1 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders what ships (Jussi, 2026-10-19, initiative closed): V1's plain km field (no default, `50–500` placeholder) with the label **"Kuinka kauas voit tarvittaessa toimittaa auton?"** and V2's info line (`deliveryImpactNote`, black like prod's inherited text). `deliveryRangeNoteCurrent` is gone from `translations.js`; the spec's tested-arm demos inline their old copy. Registry entry and `?delivery=` are gone. **V2 was recorded as the winner on 2026-10-12 by mistake and corrected 2026-10-16**; the −/+ stepper survives only on the spec's retired V2 demo. **Pending: confirm label + info line against the first prod dump that has the dev's change** (the 2026-10-15 dump still has the A/B: label without `tarvittaessa`, tip by arm). All three arms are restorable from the git tag `delivery-distance-arms`. **Re-check against the first prod dump that contains the rollout** | `design-specs/delivery-distance.html` |
+| Delivery distance A/B test | **Variant 1 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders what ships (Jussi, 2026-10-19, initiative closed): V1's plain km field (no default, `50–500` placeholder) with the label **"Kuinka kauas voit tarvittaessa toimittaa auton?"** and V2's info line (`deliveryImpactNote`, black like prod's inherited text). `deliveryRangeNoteCurrent` is gone from `translations.js`; the spec's tested-arm demos inline their old copy. Registry entry and `?delivery=` are gone. **V2 was recorded as the winner on 2026-10-12 by mistake and corrected 2026-10-16**; the −/+ stepper survives only on the spec's retired V2 demo. **Rollout confirmed in the 2026-10-23 dump**: label and info line match prod's `maximum_distance` / `maximum_distance_tip` word for word. The same pass aligned the field to prod's `EquipmentInfo.vue`: a 64px input (`h-16 py-4`), the field 16px under the question and the info line 8px under it, the "Arvo korjattiin välille 50–500 km." notice in slate-500 and only when a value is pulled into range (snapping to 10 km stays silent), and an empty field at Jatka marked on the input itself (red border, `bg-red-500/10`) with prod's "Pakollinen tieto" (`err.mandatoryInformation`). Prod also validates 50–500 server-side now. All three arms are restorable from the git tag `delivery-distance-arms` | `design-specs/delivery-distance.html` |
 | Enhanced negotiations | **All 18 changes shipped, October 2026** (1–8 and 17 by the 2026-10-07 dump, 9–16 and 18 in the 2026-10-15 dump, from PRs 2526 and 2543). No arms remain — `decision.html` and the email tool render the shipped design unasked, and the registry entry is gone. The `v1`-only message placeholder was dropped, not shipped | `design-specs/enhanced-negotiations.html` |
 | Review/No review | **Changes 1–3 shipped, September 2026**; change 4 closed as no change; change 5 still with the PM, Marketing-owned. No arms remain — `price.html` and `contact.html` render the shipped design unasked, and the registry entry is gone | `design-specs/review-no-review.html` |
 
@@ -867,7 +867,8 @@ to a discarded one dates a comment badly:
 
 | Test | State | Bearing on the proto |
 |---|---|---|
-| `105_combi` delivery distance | **concluded, Variant 1 won** (October 2026) | Promoted in the proto; see Delivery distance under Completed initiatives |
+| `105_combi` delivery distance | **concluded, Variant 1 won** (October 2026); rollout in the 2026-10-23 dump | Promoted in the proto; see Delivery distance under Completed initiatives |
+| `106_combi` counter-offer ceiling | **concluded, promoted** (2026-10-23 dump) | The proto renders it with a stand-in ceiling; see the `106_combi` note under Enhanced negotiations |
 | `103_combi` hide expected price | **concluded, split** | Promoted for the insights block, discarded for the negotiation modal — see Asking price removal below |
 | `100_combi` verified service history | **discarded** | Constant and component both deleted. Was paused by a hotfix in the 08-31 dump; that is resolved, no owner needed |
 | `93_combi` remove service book upload | **not progressing** — team's call, 2026-09-07 | Still registered with no consumer, so it writes assignments for nobody. Would have collided with Seller file upload; it will not |
@@ -1275,14 +1276,20 @@ wrapper are hand-written CSS (`.neg-guidance`, `.neg-guidance-title`) because
 the class `leading-4` means 16px on the CDN's scale, and the markup carries
 `leading-[27px]` for the record.
 
-**A second negotiation-modal A/B is live and NOT in the proto:** `106_combi`
-(`COUNTEROFFER_CEILING`, present since the 2026-10-05 dump) changes how the
-counter-offer ceiling is computed and, in its variant, replaces the asking-price
-warning under the field with "Korkein suositeltava vastatarjous on [amount]."
-The formula is pricing logic and stays out of this public repo. **Not modelled,
-by Jussi's decision (2026-10-07):** once the test concludes, the proto's default
-takes whatever gets deployed, from the next dump. The "Asking price removal" note
-that such a test "may still arrive" is now out of date.
+**`106_combi` (`COUNTEROFFER_CEILING`) was PROMOTED in the 2026-10-23 dump,
+and the proto now renders it.** The ceiling (`counteroffer_ceiling`, computed by
+`ResolveCounterofferCeiling`) no longer reads the asking price. The red line
+under the field is `auction.auction_details.counteroffer_ceiling_warning`,
+"Korkein suositeltava vastatarjous on [amount].", and the server error is
+`validation.negotiation_amount_cannot_exceed_counteroffer_ceiling`, "Autoliikkeet
+pyrkivät tekemään jo huutokaupan aikana kilpailukykyisiä tarjouksia.
+Vastatarjouksesi tämän hintaluokan autossa voi olla enintään [amount] €."
+"Pyyntihintasi oli" and the old asking-price error are gone from prod and the
+proto. **The formula is pricing logic and stays out of this public repo**, so
+`decision.html` uses a stand-in: the highest offer plus a fixed
+`MOCK_CEILING_MARGIN`, which only keeps it above the highest offer as prod's
+always is, and `?ceiling=` (Events → Auction — dealerships → Counter-offer
+ceiling) sets an exact value. Never replace the stand-in with prod's rule.
 
 **The closed state is where change 12 earns its place.** Control says only
 "Voit hyväksyä tarjouksen" at `text-sm` — the modal never states that the
@@ -1696,18 +1703,17 @@ plus `border-b`. So the switcher now compares the two things still in question:
 the old `dl` against the shared grid. One prod leftover NOT reproduced: the
 hidden y axis still reads `askingPrice` in its `stepSize`.
 
-**The removal created a problem it did not solve, and it is deliberately nobody's
-change yet.** The asking price still decides what a seller may counter-offer —
-the red `asking_price_error` line under the field, and the server-side ceiling —
-while no longer appearing anywhere the consumer can read it. For an
-auto-published listing the ceiling is the **GT-X estimate**, because the publish
-routing writes `price_estimation` into `asking_price` when there is none, and the
-field can be set from several sources besides. The team's call (2026-09-07):
-**resolve it later, with its own A/B test, and Enhanced negotiations explicitly
-takes no view on it.** Recorded on the asking-price spec under *Not in this
-initiative yet* and as an excluded row on the negotiations spec, so it cannot be
-folded into either. The proto already transcribes both the warning and all four
-of the ceiling's conditions, so it needs no change.
+**The removal created a problem it did not solve, and its own A/B test solved it
+(2026-10-23 dump).** Until then the asking price still decided what a seller
+could counter-offer (the red `asking_price_error` line and the server-side
+ceiling) while appearing nowhere the consumer could read it. `106_combi` was
+promoted: the ceiling no longer reads the asking price (see the `106_combi`
+note under Enhanced negotiations). The asking-price spec records it as
+*Resolved · October 2026* under *Not in this initiative yet*, which now also
+lists the dealer side: dealers still see a C2B listing's asking price (search
+teaser label, request page, search filter and sort, new-leads email) and the
+minimum first bid is derived from it. The hide gate is B2B only (findings
+EML-05, BO-02).
 
 **The block is not a component in prod.** It is markup inside `Timer.vue`, which
 also draws the progress bar, end date and reg badge — so the spec asks for the
@@ -1806,11 +1812,8 @@ requires.
 
 **Two things left out on purpose.** The negotiation modal's asking-price
 warning and its counter-offer ceiling: `103_combi`'s arm for those was
-**discarded**, so both are settled prod behaviour rather than a pending arm, and
-the team has parked the wider question (a ceiling nothing tells the consumer
-about) for its own A/B test. And a **second negotiation-modal A/B** may still
-arrive testing that ceiling; worth knowing before anyone reads the modal's
-asking-price references as final.
+**discarded**. The ceiling was then settled by its own test, `106_combi`,
+promoted in the 2026-10-23 dump, and neither reads the asking price any more.
 
 **Seller intent** asks one question per arm on the price step, below the
 estimate field, to learn how ready the seller actually is to sell — today the
@@ -3347,8 +3350,9 @@ machinery is easy to over-read:
   observations table in the same dump.
 - **One side effect that reaches another initiative:** on `auto_publish` the
   engine writes `price_estimation` into `asking_price` when the draft has none
-  (left dirty and unsaved so a failed publish rolls it back). That field is the
-  negotiation ceiling — see Asking price removal.
+  (left dirty and unsaved so a failed publish rolls it back). It is no longer
+  the negotiation ceiling (2026-10-23 dump), but dealers see it as the seller's
+  "Pyyntihinta" and it sets the minimum first bid — see Asking price removal.
 - Observations now carry **offer acceptance, accepted price and a resolution
   timestamp**, so the engine is measured on whether the car sold, not on whether
   the ad published.
@@ -6032,8 +6036,9 @@ brings it back, exactly as `v-model` does.
 
 **The first question's follow-up branches on the offer, not the answer.** "Olen
 epävarma" asks *"Kuinka voimme auttaa sinua?"* with one option when the offer
-clears **90 % of the seller's own estimate** (`price_estimation`, falling back to
-`asking_price`), and *"Miksi olet epävarma tarjouksesta?"* with two when it does
+clears **90 % of the GT-X estimate** (`price_estimation`, falling back to
+`asking_price`; the seller's own estimate is `customer_price_estimate` and the
+survey does not read it), and *"Miksi olet epävarma tarjouksesta?"* with two when it does
 not. Reachable in the proto with `?asking=` — 11 500 against 12 000 takes the
 first branch, against 20 000 the second.
 

@@ -771,6 +771,13 @@
        stand in for the bidder count. This field is what a tester moves to
        reach a genuinely thin auction. */
     var OV_BUYERS = _params.get('buyers') ? parseInt(_params.get('buyers'), 10) : null;
+    /* COUNTER-OFFER CEILING — prod computes `counteroffer_ceiling` server-side
+       (`ResolveCounterofferCeiling`). That rule is pricing logic and stays out
+       of this public repo, so the proto's default is a stand-in that only
+       keeps the ceiling above the highest offer, as prod's always is.
+       `?ceiling=` sets an exact value. */
+    var OV_CEILING = _params.get('ceiling') ? parseInt(_params.get('ceiling'), 10) : null;
+    var MOCK_CEILING_MARGIN = 2000;
 
     // OV_SECOND === undefined  → use scenario default (may show 2 offers)
     // OV_SECOND === null       → param present but empty → force single offer
@@ -935,20 +942,6 @@
       return msgs[msgs.length - 1].sender === 'dealer' ? 7 : 0;
     }
 
-    /* prod's TenderRequest::wasReviewed() — an admin accepted the draft in
-       review, which is also the moment the asking price gets set: the review
-       page refuses to save without Pricing Tool data. The funnel's own price
-       step never writes asking_price for a review-segment car (PriceInfo.vue
-       posts customer_price_estimate there), so the closest signal the proto
-       has is the price step's own `reviewable` flag. Absent a funnel walk this
-       is true, which is the common case and keeps the ceiling demoable. */
-    function draftWasReviewed() {
-      try {
-        var f = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
-        return f.reviewable !== false;
-      } catch (e) { return true; }
-    }
-
     /* ── Counter-offer validation — StoreNegotiationFormRequest ──
        All of this is server-side in prod: the seller can type any number, Send
        is never disabled by it, and the messages arrive with the failed POST to
@@ -959,10 +952,6 @@
        field's own negotiation.counter_offer.amount label ("Vastatarjous"). So
        prod's generic messages name a different field than the one on screen.
        Kept as-is; it is what a seller sees today.
-
-       Deliberate deviation: prod's asking-price ceiling message ends
-       "Jos tarvitset apua, otathan yhteyttä asiakaspalveluumme." — dropped
-       here per team decision. Everything else is verbatim.
 
        Not ported, both dead in prod: NegotiationFormRequest's
        `min:tenderoffer.amount` / "Tarjoustasi ei voida laskea" (no route
@@ -988,13 +977,11 @@
         return errors;
       }
 
-      var asking  = req.asking_price || 0;
-      var highest = req.highest_offer || (offers[0] ? offers[0].amount : 0);
-
-      /* The ceiling needs all four conditions, so it does NOT fire when the
-         highest offer already reached the asking price. */
-      if (asking > 100 && draftWasReviewed() && amount > asking && highest < asking) {
-        errors.push('Vastatarjouksesi ei voi olla asettamaasi pyyntihintaa korkeampi.');
+      var ceiling = req.counteroffer_ceiling;
+      if (ceiling !== null && ceiling !== undefined && amount > ceiling) {
+        errors.push('Autoliikkeet pyrkivät tekemään jo huutokaupan aikana kilpailukykyisiä tarjouksia. ' +
+          'Vastatarjouksesi tämän hintaluokan autossa voi olla enintään ' +
+          String(ceiling).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €.');
       }
 
       /* Round two may not ask for more than round one did. */
@@ -1374,6 +1361,10 @@
       } else if (OV_SECOND !== undefined && d.offers.length > 1) {
         d.offers[1].amount = OV_SECOND;
       }
+      var _highestAmount = d.offers.reduce(function(m, o) { return Math.max(m, o.amount || 0); }, 0);
+      d.request.counteroffer_ceiling = OV_CEILING !== null ? OV_CEILING
+        : _highestAmount ? _highestAmount + MOCK_CEILING_MARGIN
+        : null;
       return d;
     }
 
@@ -3311,12 +3302,14 @@
         /* The thread renders even with no negotiation yet — prod's Negotiate.vue
            dropped its `v-if="negotiation"`, so it opens on the auction result. */
         html += thread();
-        /* The amount field and its live asking-price warning are one block in
-           prod (Negotiate.vue's first div.my-4), the warning a sibling of the
+        /* The amount field and its live ceiling warning are one block in prod
+           (Negotiate.vue's first div.my-4), the warning a sibling of the
            NumberInput rather than one of its errors. */
         html += '<div class="my-4">';
         html += buildNegAmountField(errors.amount);
-        html += '<div id="modal-neg-asking-warning" class="text-red-500 hidden">Pyyntihintasi oli ' + fmtCurrency(req.asking_price) + '</div>';
+        if (req.counteroffer_ceiling !== null && req.counteroffer_ceiling !== undefined) {
+          html += '<div id="modal-neg-ceiling-warning" class="text-red-500 hidden">Korkein suositeltava vastatarjous on ' + fmtCurrency(req.counteroffer_ceiling) + '.</div>';
+        }
         html += '</div>';
         if (!isQuick) {
           html += '<div class="my-4">';
@@ -3398,21 +3391,19 @@
       var amountEl       = document.getElementById('modal-neg-amount');
       var messageEl      = document.getElementById('modal-neg-message');
       var countEl        = document.getElementById('modal-neg-count');
-      var warningEl      = document.getElementById('modal-neg-asking-warning');
+      var warningEl      = document.getElementById('modal-neg-ceiling-warning');
 
       /* NumberInput.vue: digits only through the keypress guard, fi-FI grouping
-         on the way back out. The live asking-price warning is unconditional in
-         prod — it fires on amount > asking_price alone, so it can appear on a
-         value the ceiling would let through. Reproduced as-is. */
+         on the way back out. */
       if (amountEl) {
         amountEl.value = negAmountGet(MODAL.amount);
         amountEl.addEventListener('keypress', function(ev) {
           var allowed = ['0','1','2','3','4','5','6','7','8','9','Backspace','Enter'];
           if (allowed.indexOf(ev.key) === -1) ev.preventDefault();
         });
-        var showAskingWarning = function() {
+        var showCeilingWarning = function() {
           if (!warningEl) return;
-          var over = MODAL.amount !== null && MODAL.amount > (req.asking_price || 0);
+          var over = MODAL.amount !== null && MODAL.amount > req.counteroffer_ceiling;
           warningEl.classList.toggle('hidden', !over);
         };
         /* Bound to input only, never called on render: an untouched field has to
@@ -3422,9 +3413,9 @@
         amountEl.addEventListener('input', function() {
           MODAL.amount = negAmountSet(amountEl.value);
           amountEl.value = negAmountGet(MODAL.amount);
-          showAskingWarning();
+          showCeilingWarning();
         });
-        showAskingWarning();
+        showCeilingWarning();
       }
 
       if (messageEl) {
@@ -4135,7 +4126,8 @@
         /* Not a price, but it belongs with them: it is the one other fact about
            the auction result that changes what the page renders. `0` turns the
            fair offer off; anything else leaves the scenario's own value. */
-        { key: 'fair',    label: 'Fair offer',    placeholder: '0 = not fair', width: '110px' }
+        { key: 'fair',    label: 'Fair offer',    placeholder: '0 = not fair', width: '110px' },
+        { key: 'ceiling', label: 'Counter-offer ceiling €', placeholder: 'mock', width: '110px' }
       ],
       actionsLabel: 'Dealer response',
       actions: [
