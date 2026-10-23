@@ -60,30 +60,27 @@
            '</li>';
   }).join('');
 
-  /* Price guess (initiative price-guess), v1 and v2 only: the landing page
+  /* Price guess (initiative price-guess), v1-v3 only: the landing page
      joins the menu as its own machine sign. The label follows the arm, so it
      matches the sign on the page. price-guess.html renders v1 when no arm is
      remembered, so the item shows there too. */
   var pgArm = window.protoVariantStored ? window.protoVariantStored('price-guess') : null;
   var onPriceGuess = path.indexOf('price-guess') !== -1;
   var onSanta = path.indexOf('santa') !== -1;
-  var onEstimate = path.indexOf('hinta-arvio') !== -1;
   if (!pgArm && onPriceGuess) pgArm = 'v1';
   if ((!pgArm || pgArm === 'control') && onSanta) pgArm = 'v3';
-  if ((!pgArm || pgArm === 'control') && onEstimate) pgArm = 'v4';
-  if (showMenu && (pgArm === 'v1' || pgArm === 'v2' || pgArm === 'v3' || pgArm === 'v4')) {
+  if (showMenu && (pgArm === 'v1' || pgArm === 'v2' || pgArm === 'v3')) {
     /* v3 is the Christmas campaign: its own page, a red sign, snowflakes.
-       v4 is the price estimate page: the same sign with a euro, no twinkle. */
+       v4 has no item: hinta-arvio.html is a landing for search traffic. */
     var xmas = pgArm === 'v3';
-    var est = pgArm === 'v4';
-    var pgKey = est ? 'estimateTeaser.navLabel' : xmas ? 'priceSanta.navLabel' : pgArm === 'v2' ? 'priceEstimate.sign' : 'priceGuess.sign';
-    var pgLabel = est ? 'Autosi arvo' : xmas ? 'Kirje Pukille' : pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';
-    var pgGlyph = est ? '€' : xmas ? '❄' : '★';
-    var pgHref = est ? 'hinta-arvio.html' : xmas ? 'santa.html' : 'price-guess.html';
-    var pgHere = est ? onEstimate : xmas ? onSanta : onPriceGuess;
+    var pgKey = xmas ? 'priceSanta.navLabel' : pgArm === 'v2' ? 'priceEstimate.sign' : 'priceGuess.sign';
+    var pgLabel = xmas ? 'Kirje Pukille' : pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';
+    var pgGlyph = xmas ? '❄' : '★';
+    var pgHref = xmas ? 'santa.html' : 'price-guess.html';
+    var pgHere = xmas ? onSanta : onPriceGuess;
     MENU_HTML +=
       '<li class="flex flex-col items-center justify-center w-full lg:w-auto h-auto lg:h-full lg:pr-2">' +
-        '<a href="' + pgHref + '" class="nav-pg' + (xmas ? ' is-xmas' : est ? ' is-est' : '') + '" title="' + pgLabel + '"' +
+        '<a href="' + pgHref + '" class="nav-pg' + (xmas ? ' is-xmas' : '') + '" title="' + pgLabel + '"' +
           (pgHere ? ' aria-current="page"' : '') + '>' +
           '<span class="nav-pg-star" aria-hidden="true">' + pgGlyph + '</span>' +
           '<span class="nav-pg-label" data-i18n="' + pgKey + '">' + pgLabel + '</span>' +
@@ -113,7 +110,6 @@
       '.nav-pg.is-xmas:hover{box-shadow:0 6px 0 #7F1D1D,0 0 26px rgba(220,38,38,.75)}' +
       '.nav-pg.is-xmas[aria-current="page"]{box-shadow:0 0 0 2px #fff,0 4px 0 2px #7F1D1D,0 0 18px rgba(220,38,38,.55)}' +
       '.nav-pg.is-xmas .nav-pg-star{color:#fff}' +
-      '.nav-pg.is-est .nav-pg-star{animation:none}' +
       '@keyframes nav-pg-twinkle{50%{transform:scale(.6) rotate(45deg);opacity:.5}}' +
       '@media (prefers-reduced-motion:reduce){.nav-pg-star{animation:none}}';
     document.head.appendChild(pgCss);

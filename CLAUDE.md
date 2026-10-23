@@ -3097,39 +3097,82 @@ Rebuilt from scratch on 2026-10-23 after the team's replies to the first v4
 Jussi's brief: an AutoVex version of Motorway's Car Value Tracker
 (motorway.co.uk/car-value-tracker), keeping the page's front-page look.
 
+- **A hidden landing page for search traffic** ("auton hinta-arvio"), so it
+  has **no nav item** (`site-nav.js` adds one for v1–v3 only). The front
+  page's v4 teaser still links to it.
+- **SEO, in the page head:** title "Auton hinta-arvio ilmaiseksi
+  rekisterinumerolla | AutoVex", a meta description, canonical
+  `https://autovex.fi/hinta-arvio`, Open Graph, and JSON-LD (`WebPage` with a
+  breadcrumb, `FAQPage` from the five FAQ items). One `h1`; every later stage
+  title is an `h2` with the same classes. The FAQ is static HTML (text from
+  `valueTracker.faq*`, `data-i18n` for EN), so it reads without script; keep
+  the JSON-LD in step when the FAQ copy changes. The keyword sits in the `h1`,
+  subtitle, "Näin auton hinta-arvio lasketaan" and the FAQ title. **For
+  prod:** `/hinta-arvio` is noindex today; the shipped page needs index and
+  these tags server-rendered.
+- **Two looks, split at verification** (Jussi, 2026-10-23). Email, link sent
+  and details look like the **ad creation funnel**: no site nav or footer
+  (`layout.js` swaps the mount for a bare `<footer>`, so the rule hides
+  `body > footer`), the funnel's logo, its step nav with this flow's own steps
+  (Auto · Sähköposti · Tiedot · Hinta-arvio; the car is done on arrival, the
+  email and link-sent screens are step 2, details step 3), the funnel's
+  `.funnel-col` (448px, centred in the left half), titles in
+  the "Löysimme autosi tiedot!" style (Barlow bold 28/36, 48/48 from `lg`,
+  left-aligned, subtitle DM Sans 16/20 black), and the cream sidebar: the car
+  card as the funnel shows it (prod's no-photo placeholder, centred as on
+  `contact.html`) above the demand card, which takes the shape of the
+  funnel's "Erinomainen aika myydä" (same white card, Barlow 24/26 title; a
+  chart icon in place of the flame). The **tracker**
+  looks like the **offers page**: `blue-50` background and its 768px column
+  (`max-w-[768px] mx-auto px-6`), market cards two across. Calculating and
+  the auction result stay white at full width. A tan page background was
+  tried and dropped the same day.
+
 - **Prod today:** `/hinta-arvio` (`PriceEstimateController`, Vue route
   `price-estimation`, noindex): plate + km, a GT-X estimate, "Laita autosi
   myyntiin", no contact details.
 - **Flow, one page, `hinta-arvio.html`:**
-  1. **Landing**: the front page hero with its plate and mileage fields kept
-     together (Jussi: no reason to split them as Motorway does), turquoise
-     "Katso autosi arvo"; then Arvioi · Seuraa · Myy, three feature cards with
-     cream preview panels, what lowers and holds value, how we value, a FAQ
-     (the front page's accordion), the front page's How it works and stats.
+  1. **Landing**: the front page hero, wave and Google rating widget
+     included, headline "Hinta-arvio autostasi - ilmaiseksi" (lower-case after
+     the dash, as the front page's), plate and mileage kept together (Jussi: no
+     reason to split them as Motorway does), turquoise "Katso autosi arvo";
+     then Arvioi · Seuraa · Myy, three feature cards with cream preview panels,
+     what lowers and holds value, how the estimate is calculated, a FAQ (the
+     front page's accordion) and the front page's stats. **No "Näin löydämme
+     autollesi ostajan"**: it describes the auction, not the estimate.
   2. **Loading**: prod's vehicle-info loading screen, 4 s.
-  3. **Email**: "Syötä sähköpostisi jatkaaksesi" under a demand card
-     ("{dealers} autoliikettä teki viime kuussa AutoVexissä {offers}
+  3. **Email** ("Anna sähköposti jatkaaksesi"): the "new email" illustration (`success-verify-email-illustration.png`,
+     220px tall, placed as `price.html` places its own), with the demand card in the
+     sidebar ("{dealers} autoliikettä teki viime kuussa AutoVexissä {offers}
      tarjousta {make}-autoista", mock figures). A logged-in seller skips it.
   4. **Login link sent**: our existing email-link login. **No email is built**
      (Jussi): the success page's "Sinulla on 1 uusi sähköposti" toast stands in,
      and "Avaa linkki" sets `loggedIn` + `contact.sahkoposti`, as the real link
      would. Shown in test mode too, since the flow continues through it.
-  5. **Details**: email with Muokkaa, name, phone (required), postcode
+  5. **Details**: "Arvioimme autosi hinnan", email with Muokkaa, name, phone (required), postcode
      (optional, 5 digits), prod's marketing checkbox, "Näytä arvio". Writes
      into the funnel's contact step.
-  6. **Tracker**: the car on a blue strip (reg badge, name, details,
-     "Vaihda auto"), an overlapping white card with the value*, "Aloita
-     myynti", period chips 3 kk / 6 kk / 1 v / 2 v / 3 v (UiButton sm: secondary
+  6. **Tracker**: one white card opening with **a small car header**
+     (`renderStrip`): the plate badge with "Vaihda auto" beside it, make +
+     model with the spec beside them, and the car card's pills; no rule under
+     it. It replaced a blue strip, then the full car card, both too heavy for
+     context. Then the value*, "Aloita kilpailutus", period chips 3 kk / 6 kk / 1 v / 2 v / 3 v (UiButton sm: secondary
      when chosen, ghost otherwise), the change for the period, and **the
      decision page's chart** (line #2890FF, #EEF6FA fill, boxed end label) with
-     HTML axis labels so they stay legible on a phone (middle x labels hidden
-     below 768px). Then "{make} markkinoilla": four cards (demand, mileage vs
+     HTML axis labels so they stay legible on a phone. **The one price chart
+     on the page**: history solid, then a dashed forecast a quarter of the
+     period long (at least 3 months), split at today, legend Toteutunut /
+     Ennuste and the forecast note under it. x ticks sit at start, today and
+     the forecast's end; "today" is hidden below 768px. Then "{make} markkinoilla": four cards (demand, mileage vs
      age, season, age).
   7. **Calculating** (~3.6 s, three ticking steps), then the **estimated
      auction result**: cream "Miksi AutoVex?" + a white card with the figure,
-     "Miten arvio lasketaan?", "Kerro autostasi" into the funnel, three points
-     and the 4,7/5 rating; then a depreciation chart (history solid, forecast
-     dashed), How it works and stats.
+     "Miten arvio lasketaan?", **"Aloita kilpailutus"** (the label every
+     consumer button that starts the funnel carries), three points and the
+     4,7/5 rating. The same small car header opens the estimate's card, so
+     the figure reads as this car's; "Miksi AutoVex?" sits to its right from
+     `lg`, below it on a phone. No stats section here (landing only). Its own depreciation chart was removed: the
+     forecast moved into the tracker's chart.
 - **Every valid plate under 280 000 km can be valued** (Jussi): the plate
   and mileage use the front page's rules and errors, 280 000+ shows
   `hero.mileageMaxError`, and the car is `PROTO_MOCK.lookupResult()` with any
@@ -3142,17 +3185,29 @@ Jussi's brief: an AutoVex version of Motorway's Car Value Tracker
 - **The value claim** is Motorway's, in our terms: "based on offers
   dealerships made on AutoVex for similar cars". **Needs Analytics** before
   launch: whether accepted or highest offers can back a consumer estimate.
+- **The tracker is a logged-in view:** the nav's "Kirjaudu" shows the
+  seller's first name (`syncNavLogin`, re-run after i18n.js on
+  DOMContentLoaded, since `site-nav.js` reads the login state before this
+  page logs the seller in). A `?scenario=` from details onwards logs in as
+  the seed seller (Matti Meikäläinen) when the store has no name.
 - **State:** `localStorage['autovex_value_tracker']` (plate, km, car, email,
   period, simulated months, tracked). A returning, logged-in seller who has
   tracked lands on the tracker. `?scenario=` is kept in step with the stage so
   the bar and a reload agree.
-- **Handoff:** "Aloita myynti" → calculating → auction; "Kerro autostasi" opens
-  `details.html?plate=&km=&from=price-guess` with the car written, as v2/v3 do.
+- **Handoff:** every button that moves on reads **"Aloita kilpailutus"**
+  (Jussi, 2026-10-23). On the tracker it leads through calculating to the
+  auction estimate; there it opens the first unfinished funnel step, the equipment step
+  (`details.html?plate=&km=&from=price-guess`, loading screen skipped), with
+  the car, postcode, name, phone and email written and the seller logged in,
+  so the contact step later asks for nothing but what is missing.
 - **Scenarios:** `landing`, `email`, `email-sent`, `details`, `tracker`,
   `calculating`, `auction`. Redirects: v1/v2 → `price-guess.html`, v3 →
   `santa.html`.
 - **Front page:** `#price-estimate-teaser` is now "Seuraa autosi arvoa" with a
-  mini value card and the chart; the nav sign reads "Autosi arvo".
+  mini value card and the chart, on the grey section gradient so it does not
+  run into its neighbours, and its button is UiButton **secondary**
+  (`bg-blue-100 text-blue-800`), so it never competes with "Aloita
+  kilpailutus".
 - **Open before launch:** the monthly email and its unsubscribe; whether the
   marketing checkbox is the right consent for it (Legal); what backs the value
   (Analytics); "Tarjoukset tyypillisesti 36 tunnissa" needs checking against
