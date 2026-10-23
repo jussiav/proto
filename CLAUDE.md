@@ -388,6 +388,27 @@ Finnish grammar over a requested literal wording, and say when you did
 ("…, mikä voi nostaa tarjouksia" rather than "…ja voi nostaa tarjouksia",
 which makes the listing the subject).
 
+## Findings register — `findings/`
+
+Product issues, gaps and opportunities we notice but leave out of the work at
+hand: from PR and preview testing, from design iteration (anything a design
+spec deliberately leaves out), and from reading prod dumps. Started 2026-10-22
+after the PR 2546 preview test. `findings/README.md` holds the entry format,
+statuses and review log; one file per area (`FUN`, `OFF`, `DEC`, `EML`, `BO`,
+`DS`, `ENV`).
+
+- **Read it** when an initiative starts or changes scope (every area it
+  touches), and say which entries the initiative takes on.
+- **Add to it** whenever something real is found outside the current scope,
+  including a PR's own test findings (as `Reported` until fixed).
+- **Re-check it** against every new prod dump: code-based `Open`, `Reported`,
+  `Parked` and `Watching` entries get a new **Last checked**; fixed ones move to
+  `Fixed` with the dump date. Never renumber or delete entries.
+- **Proto-only divergences stay in this file**, not in the register.
+- **It is tracked and mirrored publicly**, so the same exclusions as everywhere
+  else apply: no security findings, no confidential figures or undecided A/B
+  results, no ticket links or ids, no credentials or signed links.
+
 ## Proto bar rework — BUILT 2026-10-20, all four batches, pushed
 
 Agreed with Jussi over several rounds; build in the batches below, one commit
@@ -6408,6 +6429,7 @@ Always read `design-library/components.md` before any UI work. Use `design-libra
 - **[Anti-Patterns](docs/anti_patterns.md)** — Patterns to avoid, even if they improve short-term metrics.
 - **[Decision Playbooks](docs/decision_playbooks.md)** — How to handle specific user scenarios.
 - **[Opportunity Areas](docs/opportunity_areas.md)** — Prioritized areas for improvement.
+- **[Findings register](findings/README.md)** — Known issues and opportunities left out of scope, per area, with status and last prod check. Read at initiative start; update after PR tests and new prod dumps.
 - **[Real Examples](docs/real_examples.md)** — Concrete good/bad UX and copy examples.
 - **[How to Use](docs/HOW_TO_USE.md)** — How to apply this kit across AI tools.
 - **[Component Gallery Process](docs/component-gallery-process.md)** — How to add, update, and maintain Vue components. MUST follow when touching any component, `COMPONENTS.md`, or `components.html`.
