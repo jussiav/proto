@@ -558,10 +558,15 @@
             </nav>
           <!-- Email -->
           <form id="vt-email-form" data-phase-show="email" class="flex-col gap-6" novalidate>
+            <!-- The funnel's details step opens the same way: "Löysimme autosi
+                 tiedot!", a line under it, then the illustration -->
+            <div class="flex flex-col gap-4">
+              <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="details.title">Löysimme autosi tiedot!</h2>
+              <p class="m-0 font-dm text-base leading-5 text-black" data-i18n="valueTracker.emailTitle">Anna sähköpostisi jatkaaksesi.</p>
+            </div>
             <div class="flex items-center justify-center h-[230px]">
               <img src="assets/success-verify-email-illustration.png" alt="" class="h-[220px] w-auto object-contain" />
             </div>
-            <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="valueTracker.emailTitle">Anna sähköposti jatkaaksesi</h2>
             <div class="flex flex-col gap-2">
               <label for="vt-email" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="valueTracker.emailLabel">Sähköposti</label>
               <input id="vt-email" type="email" inputmode="email" autocomplete="email" aria-describedby="vt-email-error"
@@ -574,7 +579,7 @@
 
           <!-- Login link sent -->
           <div data-phase-show="sent" class="flex-col items-start gap-5">
-            <span class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 text-av-blue"><svg class="w-8 h-8" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z"/></svg></span>
+            <span class="self-center flex items-center justify-center w-[220px] h-[220px] rounded-full bg-blue-50 text-av-blue"><svg class="w-28 h-28" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z"/></svg></span>
             <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="valueTracker.sentTitle">Tarkista sähköpostisi</h2>
             <p id="vt-sent-body" class="m-0 font-dm text-base leading-5 text-black -mt-2"></p>
             <div class="flex flex-col items-start gap-3">
@@ -598,8 +603,9 @@
               <button type="button" id="vt-email-edit" class="bg-transparent border-0 p-0 font-dm text-base text-av-blue underline cursor-pointer flex-shrink-0" data-i18n="valueTracker.edit">Muokkaa</button>
             </div>
             <div class="flex flex-col gap-2">
-              <label for="vt-name" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="valueTracker.nameLabel">Nimi</label>
-              <input id="vt-name" type="text" autocomplete="name" class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg text-base bg-white" />
+              <label for="vt-name" class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="valueTracker.nameLabel">Nimi</span> <span class="text-red-500">*</span></label>
+              <input id="vt-name" type="text" autocomplete="name" aria-describedby="vt-name-error" class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg text-base bg-white" />
+              <p id="vt-name-error" class="hidden av-error-msg" role="alert"></p>
             </div>
             <div class="flex flex-col gap-2">
               <label for="vt-phone" class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="valueTracker.phoneLabel">Puhelinnumero</span> <span class="text-red-500">*</span></label>
@@ -608,7 +614,7 @@
               <p id="vt-phone-error" class="hidden av-error-msg" role="alert"></p>
             </div>
             <div class="flex flex-col gap-2">
-              <label for="vt-postal" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="valueTracker.postalLabel">Postinumero</label>
+              <label for="vt-postal" class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="valueTracker.postalLabel">Postinumero</span> <span class="text-red-500">*</span></label>
               <input id="vt-postal" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="00100" aria-describedby="vt-postal-error"
                      class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg text-base bg-white placeholder:text-slate-300" />
               <p id="vt-postal-error" class="hidden av-error-msg" role="alert"></p>
@@ -654,7 +660,7 @@
                 <p class="m-0 font-dm text-base text-slate-600" data-i18n="valueTracker.latest">Autosi viimeisin arvio</p>
                 <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
                   <p class="m-0 font-barlow font-bold text-slate-900 text-5xl leading-[52px] tabular-nums"><span id="vt-amount"></span><sup class="text-2xl align-super">*</sup></p>
-                  <button type="button" data-start-sell class="inline-flex items-center justify-center gap-2 h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.startSell">Aloita kilpailutus</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
+                  <button type="button" data-start-sell class="inline-flex items-center justify-center gap-2 h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.startSell">Arvioi tarjouskilpailun tulos</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
                 </div>
               </div>
               <div class="flex flex-col gap-0.5">
@@ -685,7 +691,7 @@
           <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.marketSub">Näet, mitkä asiat vaikuttavat autosi arvoon. Päivitämme tiedot kerran kuukaudessa.</p>
         </div>
         <div id="vt-market" class="grid sm:grid-cols-2 gap-5 w-full"></div>
-        <button type="button" data-start-sell class="inline-flex items-center justify-center gap-2 h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.startSell">Aloita kilpailutus</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
+        <button type="button" data-start-sell class="inline-flex items-center justify-center gap-2 h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.startSell">Arvioi tarjouskilpailun tulos</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
       </section>
     </div>
 
@@ -731,7 +737,6 @@
               <div class="flex flex-col items-center gap-2"><svg class="w-8 h-8 text-slate-900" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="128 72 128 128 184 128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg><span class="font-dm font-medium text-sm leading-5 text-slate-900" data-i18n="valueTracker.point2">Tarjoukset tyypillisesti 36 tunnissa</span></div>
               <div class="flex flex-col items-center gap-2"><svg class="w-8 h-8 text-slate-900" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,100h-8.2L205.08,39.88A20,20,0,0,0,186.8,28H69.2A20,20,0,0,0,50.92,39.88L24.2,100H16a12,12,0,0,0,0,24h4v76a20,20,0,0,0,20,20H68a20,20,0,0,0,20-20V180h80v20a20,20,0,0,0,20,20h28a20,20,0,0,0,20-20V124h4a12,12,0,0,0,0-24ZM71.8,52H184.2l21.33,48H50.47ZM64,196H44V180H64Zm128,0V180h20v16Zm20-40H44V124H212Z"/></svg><span class="font-dm font-medium text-sm leading-5 text-slate-900" data-i18n="valueTracker.point3">Päätät itse</span></div>
             </div>
-            <p class="m-0 flex items-center gap-2 font-dm text-sm text-slate-700"><img src="assets/stats-star-icon.svg" class="w-5 h-5" alt="" /><span data-i18n="valueTracker.rating">Asiakkaiden arvosana 4,7/5</span></p>
           </div>
             </div>
           <div class="bg-av-cream rounded-3xl p-10 max-md:p-6 flex flex-col gap-6">
@@ -750,6 +755,25 @@
                 <div class="flex flex-col gap-1"><h3 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="valueTracker.why3Title">Päätät itse</h3><p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="valueTracker.why3Body">Hyväksy tarjous, tee vastatarjous tai jätä myymättä.</p></div>
               </li>
             </ul>
+            <!-- Google rating: the front page hero's widget, dark text on the cream -->
+            <div class="flex items-center gap-3 justify-center">
+              <div class="flex items-center gap-2.5">
+                <div class="bg-white p-1.5 rounded-lg w-[30px] h-[30px] flex items-center justify-center">
+                  <img src="assets/1baf3416-84ef-4543-9acb-d36d0298ed3b.png" class="w-[18px] h-[18px] object-contain" alt="Google" />
+                </div>
+                <div class="flex items-center gap-1">
+                  <span class="font-dm font-bold text-base text-slate-900">4.7</span>
+                  <div class="flex items-center gap-px">
+                    <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                    <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                    <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                    <img src="assets/ff80198e-178d-4242-836c-ee8f46cd62a6.svg" class="w-[17px] h-[17px]" alt="★" />
+                    <img src="assets/bc2225e8-3677-41d6-bfb9-06c2d82e4377.svg" class="w-[17px] h-[17px]" alt="½" />
+                  </div>
+                </div>
+              </div>
+              <a href="#" class="font-dm text-xs text-slate-900 underline whitespace-nowrap" data-i18n="hero.ratingCount">7000+ arvostelua</a>
+            </div>
           </div>
         </div>
       </section>
@@ -1241,20 +1265,23 @@
       }
       el('vt-email-edit').addEventListener('click', function () { inEmail.value = vt.email || ''; setStage('flow', 'email'); inEmail.focus(); });
       function fieldErr(input, errId, msg) { var p = el(errId); p.textContent = msg; p.classList.remove('hidden'); input.setAttribute('aria-invalid', 'true'); }
-      [[inPhone, 'vt-phone-error'], [inPostal, 'vt-postal-error']].forEach(function (pair) {
+      [[inName, 'vt-name-error'], [inPhone, 'vt-phone-error'], [inPostal, 'vt-postal-error']].forEach(function (pair) {
         pair[0].addEventListener('input', function () { el(pair[1]).classList.add('hidden'); pair[0].removeAttribute('aria-invalid'); });
       });
       el('vt-details-form').addEventListener('submit', function (e) {
         e.preventDefault();
-        var phone = inPhone.value.replace(/[\s-]/g, ''), postal = inPostal.value.trim(), bad = null;
+        var name = inName.value.trim(), phone = inPhone.value.replace(/[\s-]/g, ''), postal = inPostal.value.trim(), bad = null;
+        if (!name) { fieldErr(inName, 'vt-name-error', t('contact.nameError')); bad = bad || inName; }
         if (!phone) { fieldErr(inPhone, 'vt-phone-error', t('contact.phoneError')); bad = bad || inPhone; }
         else if (!/^(\+358|0)\d{6,12}$/.test(phone)) { fieldErr(inPhone, 'vt-phone-error', T('phoneInvalid')); bad = bad || inPhone; }
-        if (postal && !/^\d{5}$/.test(postal)) { fieldErr(inPostal, 'vt-postal-error', T('postalError')); bad = bad || inPostal; }
+        if (!postal) { fieldErr(inPostal, 'vt-postal-error', t('err.mandatoryInformation')); bad = bad || inPostal; }
+        else if (!/^\d{5}$/.test(postal)) { fieldErr(inPostal, 'vt-postal-error', T('postalError')); bad = bad || inPostal; }
         if (bad) { bad.focus(); return; }
         var s = funnel();
         s.contact = Object.assign({}, s.contact || {}, { sahkoposti: vt.email, puhelin: inPhone.value.trim(), markkinointi: inConsent.checked });
-        if (inName.value.trim()) s.contact.kokoNimi = inName.value.trim();
-        if (postal) { s.details = Object.assign({}, s.details || {}, { sijainti: postal }); vt.postal = postal; }
+        s.contact.kokoNimi = name;
+        s.details = Object.assign({}, s.details || {}, { sijainti: postal });
+        vt.postal = postal;
         write(FUNNEL_KEY, s);
         vt.tracked = true; save();
         setStage('tracker');
