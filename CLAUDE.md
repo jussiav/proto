@@ -843,6 +843,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (2026-10-22) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: an estimate page that routes the seller by the funnel's intent questions and the car, keeping the funnel offered to almost everyone | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
+| Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 
 **Completed initiatives:**
 
@@ -3166,6 +3167,51 @@ and the funnel stays offered to almost everyone.
   questions are `intent.*`, `basisGtx` / `finePrint` adapt prod's
   `price_estimation_description`, the timeline's steps 2–4 lean on prod's
   `howItWorks.*`, the phone error is prod's `validation.phone`.
+
+## Hero theme — `v1` Syksy (ideation)
+
+Started 2026-10-22. Seasonal decoration on the front page hero; one arm per
+theme. Finnish only in subject matter: birch, aspen, Norway maple, rowan, fly
+agaric, chanterelle, lingonberry, no palm trees.
+
+- **`hero-theme.js`** draws it: `HeroTheme.autumn(section)` adds two
+  `aria-hidden`, `pointer-events:none` layers, both `absolute inset-0` inside
+  a section that already clips. The back layer sits under the section's own
+  children (`.ht-on > :not(.ht-root)` are lifted to `z-index:1`), so the form,
+  headline and wave stay on top and clickable. The front layer (`z-index:2`)
+  holds only the ground pieces, so they lie on the wave's edge. CSS is
+  injected by the script; control loads the file and never calls it.
+  Host-agnostic, so another page's hero can call it.
+- **By width:**
+
+  | Width | Top left | Top right | Bottom corners |
+  |---|---|---|---|
+  | < 768 | birch twigs, incl. a branch beside the headline's short 2nd line | rowan sprig, berries beside the 2nd line | fly agarics · chanterelles + lingonberries |
+  | 768–991 | birch twigs without that branch (the headline is one long line) | rowan sprig, nudged 14px off the edge | same, 156px wide |
+  | 992–1199 | birch tree | rowan sprig | same |
+  | ≥ 1200 | birch tree | rowan branch | same |
+
+  Leaves fall at every width; half of them are hidden below 768px.
+- **The spruce forest along the bottom was removed** (Jussi, 2026-10-22): a
+  forest at ground level behind the armchair figure did not make sense. The
+  ground pieces stay in the corners, clear of the illustration.
+- **Corner pieces are placed against the FI headline at 375px.** Long twig
+  pendants stay inside the 20px gutter, short ones only in the band above the
+  headline. Checked in EN and in the in-review hero; a longer headline would
+  sit over a leaf or two, which only costs contrast, never a click.
+- **Motion:** leaves fall 10–17 s with sway and a 3D tumble; the birch, the
+  rowan and each twig sway gently. Fall distance is `100cqh` (the back layer
+  is a size container), so it needs no measuring in any hero state. Paused
+  while the hero is off screen (IntersectionObserver). `prefers-reduced-motion`:
+  no motion, leaves rest at fixed heights. A seeded random (`rng(2026)`) draws
+  the same scene on every load.
+- **Colours are a seasonal choice, not tokens** (as with Price guess `v3`):
+  Tailwind yellow/amber/orange/red/green for the ruska and the ground pieces,
+  `#F5AB84` (av-peach) among the aspen leaves.
+- **No copy.** Nothing new to approve.
+- **Open before any production use:** WCAG 2.2.2 (Pause, Stop, Hide) — the
+  leaves move for more than 5 s alongside other content, so production needs a
+  pause control or a time limit; reduced motion alone does not satisfy it.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

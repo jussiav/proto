@@ -188,6 +188,14 @@
       name: 'Price guess',
       spec: null,
       prodArm: 'control'
+    },
+    /* No spec page: seasonal decoration on the front page hero, one arm per
+       theme, all drawn by hero-theme.js. */
+    {
+      slug: 'hero-theme',
+      name: 'Hero theme',
+      spec: null,
+      prodArm: 'control'
     }
   ];
 

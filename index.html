@@ -337,6 +337,14 @@
             { id: 'v3',      label: 'Variant 3 — Kirje Joulupukille: Christmas campaign, links to santa.html' },
             { id: 'v4',      label: 'Variant 4 — Hinta-arvio: section links to hinta-arvio.html' }
           ]
+        },
+        {
+          slug:    'hero-theme',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — production hero' },
+            { id: 'v1',      label: 'Variant 1 — Syksy: ruska leaves falling, birch and rowan, forest-floor corners' }
+          ]
         }
       ]
     };
@@ -530,6 +538,14 @@
       <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="white"/>
     </svg>
   </section>
+  <script src="hero-theme.js"></script>
+  <script>
+    (function () {
+      var arm = window.protoVariant('hero-theme', 'control');
+      if (['control', 'v1'].indexOf(arm) === -1) { window.protoVariantSet('hero-theme', null); arm = 'control'; }
+      if (arm === 'v1') window.HeroTheme.autumn(document.getElementById('hero-section'));
+    })();
+  </script>
 
   <!-- ── Dealers ── -->
   <section class="flex flex-col items-center gap-10 px-10 pt-[68px] pb-10 max-md:px-5 max-md:pt-10" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
