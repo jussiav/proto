@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hinta-arvio – AutoVex</title>
+  <title>Autosi arvo – AutoVex</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -59,20 +59,27 @@
     })();
   </script>
   <style>
-    /* The page is assembled from the site's own parts: the front page's hero,
-       How it works and stats sections, and the funnel's layout, step bar,
-       radio cards, buttons and cream sidebar. Hand-written rules cover only
-       what the script switches, since the Play CDN generates utilities at
-       first paint only. */
+    /* The page is built from the site's own parts: the front page's hero,
+       How it works, FAQ and stats, the funnel's fields and buttons, prod's
+       vehicle-info loading screen and the decision page's chart. Hand-written
+       rules cover what the script switches, since the Play CDN generates
+       utilities at first paint only. */
 
-    /* Which parts show at each stage of the page */
     [data-stages] { display: none; }
     body[data-stage="landing"] [data-stages~="landing"],
-    body[data-stage="wizard"] [data-stages~="wizard"],
-    body[data-stage="rec"] [data-stages~="rec"] { display: block; }
-    [data-stages].hidden { display: none !important; }
+    body[data-stage="flow"] [data-stages~="flow"],
+    body[data-stage="tracker"] [data-stages~="tracker"],
+    body[data-stage="calc"] [data-stages~="calc"],
+    body[data-stage="auction"] [data-stages~="auction"] { display: block; }
 
-    /* The front page hero's fields, transcribed with their markup */
+    #vt-flow [data-phase-show] { display: none; }
+    #vt-flow[data-phase="email"] [data-phase-show~="email"],
+    #vt-flow[data-phase="sent"] [data-phase-show~="sent"],
+    #vt-flow[data-phase="details"] [data-phase-show~="details"] { display: flex; }
+    .vt-in { animation: vt-in .25s ease both; }
+    @keyframes vt-in { from { opacity: 0; transform: translateY(6px); } }
+
+    /* The front page hero's fields */
     .eu-stars { width: 20px; height: 20px; }
     @keyframes av-error-pulse {
       0%   { box-shadow: 0 0 0 0 rgba(239,68,68,0.6); }
@@ -82,73 +89,53 @@
     .av-error-pulse { animation: av-error-pulse 0.5s ease-out 2; border-radius: 8px; }
     .av-error-msg { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.25rem; color: #ef4444; margin: 0.25rem 0 0; }
 
-    /* The funnel's column: every step max-w-md, the step bar max-w-lg */
-    .funnel-col > *             { width: 100%; max-width: 28rem; }
-    .funnel-col > .funnel-steps { max-width: 32rem; }
-
-    /* One screen at a time */
-    #ha-card [data-show] { display: none; }
-    #ha-card[data-phase="fetching"] [data-show~="fetching"],
-    #ha-card[data-phase="found"] [data-show~="found"],
-    #ha-card[data-phase="q1"] [data-show~="q1"],
-    #ha-card[data-phase="q2"] [data-show~="q2"],
-    #ha-card[data-phase="guess"] [data-show~="guess"],
-    #ha-card[data-phase="contact"] [data-show~="contact"],
-    #ha-card[data-phase="calculating"] [data-show~="calculating"],
-    #ha-card[data-phase="estimate"] [data-show~="estimate"],
-    #ha-card[data-phase="rec"] [data-show~="rec"] { display: flex; }
-    .ha-step-in { animation: ha-in .25s ease both; }
-    @keyframes ha-in { from { opacity: 0; transform: translateY(6px); } }
-
-    /* The funnel's radio card (price.html .radio-btn), selection by :has() */
-    .ha-opt { display: flex; align-items: center; gap: 8px; width: 100%; padding: 16px; border: 1px solid #6B7280; border-radius: 8px; background: #fff; cursor: pointer; }
-    .ha-opt input { appearance: none; -webkit-appearance: none; flex-shrink: 0; width: 16px; height: 16px; margin: 0; border: 1px solid #6B7280; border-radius: 50%; background: #fff; cursor: pointer; }
-    .ha-opt:has(input:checked) { border: 2px solid #0B6DFF; padding: 15px; }
-    .ha-opt input:checked { border-color: #0B6DFF; background: radial-gradient(circle, #0B6DFF 0 3.5px, #fff 4px); }
-    .ha-opt input:focus-visible { outline: 2px solid #0B6DFF; outline-offset: 2px; }
-    .ha-q.is-invalid .ha-opt { border-color: #EF4444; }
-
-    /* The contact step's checkbox (contact.html .av-checkbox) */
+    /* The funnel's text input and the contact step's checkbox */
+    .vt-field:focus { border-color: #0B6DFF; box-shadow: 0 0 0 2px rgba(11,109,255,0.15); outline: none; }
+    .vt-field[aria-invalid="true"] { border-color: #EF4444; }
     .av-checkbox { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; border: 1px solid #94a3b8; border-radius: 2px; background: white; flex-shrink: 0; cursor: pointer; position: relative; margin: 0; }
     .av-checkbox:checked { background: #0B6DFF; border-color: #0B6DFF; }
     .av-checkbox:checked::after { content: ''; position: absolute; left: 4px; top: 1px; width: 5px; height: 9px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg); }
-    .av-checkbox[aria-invalid="true"] { border-color: #EF4444; box-shadow: 0 0 0 3px rgba(239,68,68,.2); }
 
-    /* The price step's own estimate field */
-    .price-input-wrapper:focus-within { border-color: #0B6DFF; box-shadow: 0 0 0 2px rgba(11,109,255,0.15); }
-    .ha-field:focus { border-color: #0B6DFF; box-shadow: 0 0 0 2px rgba(11,109,255,0.15); outline: none; }
-    .ha-field[aria-invalid="true"] { border-color: #EF4444; }
+    /* The front page FAQ's accordion */
+    .faq-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.25s ease; }
+    .faq-body > div { overflow: hidden; }
+    .faq-item.open .faq-body { grid-template-rows: 1fr; }
+    .faq-item .faq-caret { transition: transform .2s ease; }
+    .faq-item.open .faq-caret { transform: rotate(180deg); }
 
-    /* The gauge */
-    .ha-gauge { display: block; width: 100%; max-width: 300px; margin: 32px auto 0; overflow: visible; }
-    .ha-gauge-track { fill: none; stroke: #E2E8F0; stroke-width: 16; stroke-linecap: round; }
-    .ha-gauge-fill { fill: none; stroke: url(#ha-arc); stroke-width: 16; stroke-linecap: round; }
-    .ha-gauge-band { fill: none; stroke: #0B6DFF; stroke-width: 22; opacity: 0; transition: opacity .4s .9s; }
-    .ha-gauge.is-range .ha-gauge-band { opacity: .9; }
-    .ha-gauge-tick { stroke: #CBD5E1; stroke-width: 2; }
-    .ha-gauge-end { font: 600 11px/1 "DM Sans", sans-serif; fill: #64748B; }
-    .ha-needle { transform-box: view-box; transform-origin: 120px 120px; transform: rotate(10deg); transition: transform 1.3s cubic-bezier(.3,1.5,.5,1); }
-    .ha-needle line { stroke: #0F172A; stroke-width: 5; stroke-linecap: round; }
-    .ha-needle circle { fill: #0F172A; }
-    .ha-gauge.is-searching .ha-needle { animation: ha-wobble 1.6s ease-in-out infinite alternate; }
-    @keyframes ha-wobble { 0% { transform: rotate(25deg); } 35% { transform: rotate(120deg); } 60% { transform: rotate(70deg); } 100% { transform: rotate(150deg); } }
-    .ha-gauge-guess { opacity: 0; transition: opacity .4s 1.1s; }
-    .ha-gauge.is-guessed .ha-gauge-guess { opacity: 1; }
-    .ha-gauge-guess circle { fill: #F59E0B; stroke: #fff; stroke-width: 3; }
-    .ha-gauge-guess rect { fill: #FFFBEB; stroke: #FBBF24; stroke-width: 1; }
-    .ha-gauge-guess text { font: 700 11px/1 "DM Sans", sans-serif; fill: #B45309; text-anchor: middle; }
+    /* The period choice: UiButton sm, secondary when chosen, ghost otherwise */
+    .vt-period { height: 32px; padding: 0 14px; border-radius: 8px; font: 400 14px/1 "DM Sans", sans-serif; color: #0B6DFF; background: transparent; border: 0; cursor: pointer; transition: background-color .15s; }
+    .vt-period:hover { background: #EEF6FA; }
+    .vt-period[aria-pressed="true"] { background: #D7EDFF; color: #0F47BE; }
 
-    /* The sidebar's checklist */
-    .ha-gets li { display: flex; align-items: flex-start; gap: 10px; }
-    .ha-gets img { flex-shrink: 0; width: 24px; height: 24px; }
-    .ha-side-skel { height: 180px; border-radius: 12px; background: linear-gradient(90deg, #fff 0%, #FDF5EC 50%, #fff 100%) 0 0 / 200% 100%; animation: ha-shimmer 1.2s linear infinite; }
-    @keyframes ha-shimmer { to { background-position: -200% 0; } }
-    #ha-side-car.is-found .av-card { box-shadow: 0 0 0 2px #22C55E; }
+    /* The chart: the decision page's line and fill, stretched to its box with
+       the stroke kept at 2px; labels are HTML so they stay legible on a phone. */
+    .vt-chart svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+    .vt-chart .vt-line { fill: none; stroke: #2890FF; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+    .vt-chart .vt-line-fc { stroke-dasharray: 6 5; }
+    .vt-chart .vt-fill { fill: #EEF6FA; opacity: .8; }
+    .vt-chart .vt-grid { stroke: #E2E8F0; stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .vt-chart .vt-split { stroke: #94A3B8; stroke-width: 1; stroke-dasharray: 3 4; vector-effect: non-scaling-stroke; }
+    .vt-end-label { position: absolute; right: 0; transform: translateY(-140%); padding: 1px 6px; border: 1px solid #000; border-radius: 3px; background: #fff; font: 400 12px/18px "DM Sans", sans-serif; color: #000; white-space: nowrap; }
+    .vt-end-dot { position: absolute; right: -4px; width: 8px; height: 8px; margin-top: -4px; border-radius: 9999px; background: #2890FF; }
+    @media (max-width: 767px) { .vt-xmid { display: none; } }
+    .vt-ylabel { position: absolute; right: 0; transform: translateY(-50%); font: 400 12px/1 "DM Sans", sans-serif; color: #64748B; white-space: nowrap; }
 
-    .ha-remind-done.hidden, .ha-call-done.hidden { display: none; }
+    /* The calculating screen */
+    .vt-progress { height: 8px; border-radius: 9999px; background: #E2E8F0; overflow: hidden; }
+    .vt-progress span { display: block; height: 100%; width: 0; background: #0B6DFF; border-radius: inherit; transition: width 3.4s linear; }
+    .vt-calc-item { color: #94A3B8; transition: color .2s; }
+    .vt-calc-item.is-done { color: #0F172A; }
+
+    /* The login-link email, standing in for the inbox: the success page's
+       email toast, shown in both modes because it is how the flow continues. */
+    #vt-toast { position: fixed; bottom: 24px; right: 24px; z-index: 8000; width: 320px; max-width: calc(100vw - 32px); background: rgba(255,255,255,.97); border-radius: 16px; box-shadow: 0 16px 56px rgba(0,0,0,.20), 0 4px 16px rgba(0,0,0,.10), 0 0 0 1.5px rgba(11,109,255,.12); padding: 14px 14px 14px 16px; display: none; flex-direction: column; gap: 6px; font-family: 'DM Sans', sans-serif; }
+    #vt-toast.is-on { display: flex; animation: vt-in .3s ease both; }
+    body:has(#proto-bar) #vt-toast { bottom: 54px; }
+
     @media (prefers-reduced-motion: reduce) {
-      .ha-step-in, .ha-side-skel, .ha-gauge.is-searching .ha-needle { animation: none !important; }
-      .ha-needle { transition-duration: .01s !important; }
+      .vt-in, #vt-toast.is-on { animation: none !important; }
+      .vt-progress span { transition-duration: .01s !important; }
     }
   </style>
 </head>
@@ -159,16 +146,17 @@
   <script>
     window.protoPage = {
       scenarios: [
-        { group: 'Recommendation', items: [
-          { id: 'route-auction',     label: 'Ready to sell — the estimate' },
-          { id: 'route-auction-rec', label: 'Ready to sell — the recommendation' },
-          { id: 'route-explore',     label: 'Wants the value — the estimate' },
-          { id: 'route-explore-rec', label: 'Wants the value — the recommendation' },
-          { id: 'route-plan',        label: 'Selling later — the estimate' },
-          { id: 'route-plan-rec',    label: 'Selling later — the recommendation' },
-          { id: 'route-overmax',     label: 'Over 280 000 km — Huutokaupat.com' }
+        { group: 'Your car’s value', items: [
+          { id: 'landing',     label: 'Landing' },
+          { id: 'email',       label: 'Email to continue' },
+          { id: 'email-sent',  label: 'Login link sent' },
+          { id: 'details',     label: 'Details (logged in)' },
+          { id: 'tracker',     label: 'Value and history' },
+          { id: 'calculating', label: 'Calculating the auction estimate' },
+          { id: 'auction',     label: 'Estimated auction result' }
         ] }
       ],
+      scenarioCurrent: function () { return window.vtScenarioNow ? window.vtScenarioNow() : null; },
       initiatives: [
         {
           slug:    'price-guess',
@@ -177,46 +165,28 @@
             { id: 'v1', label: 'Variant 1 — price guess (lottery)' },
             { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' },
             { id: 'v3', label: 'Variant 3 — Kirje Joulupukille (Christmas)' },
-            { id: 'v4', label: 'Variant 4 — Hinta-arvio, replaces /hinta-arvio' }
+            { id: 'v4', label: 'Variant 4 — your car’s value (tracker)' }
           ]
         }
       ],
-      actionsLabel: 'Variant 4 — estimate and car',
-      actions: (function () {
-        var p = new URLSearchParams(window.location.search);
-        var display = p.get('display') || 'auto';
-        var basis = p.get('basis') === 'similar' ? 'similar' : 'gtx';
-        var demand = p.get('demand') || 'auto';
-        function go(key, value) {
-          var q = new URLSearchParams(window.location.search);
-          if (value) q.set(key, value); else q.delete(key);
-          window.location.search = q.toString();
-        }
-        function opt(label, on, run, title) { return { label: (on ? '✓ ' : '') + label, title: title, run: run }; }
-        return [
-          opt('Estimate format: per recommendation', display === 'auto', function () { go('display', null); }, 'A range while exploring, a number otherwise'),
-          opt('Estimate format: one number', display === 'number', function () { go('display', 'number'); }),
-          opt('Estimate format: a range', display === 'range', function () { go('display', 'range'); }),
-          opt('Basis: GT-X', basis === 'gtx', function () { go('basis', null); }),
-          opt('Basis: similar cars sold', basis === 'similar', function () { go('basis', 'similar'); }),
-          opt('Demand: from the car', demand === 'auto', function () { go('demand', null); }, 'Model year and mileage decide, a stand-in for a real demand signal'),
-          opt('Demand: high', demand === 'high', function () { go('demand', 'high'); }),
-          opt('Demand: normal', demand === 'normal', function () { go('demand', 'normal'); }),
-          opt('Demand: low', demand === 'low', function () { go('demand', 'low'); })
-        ];
-      })()
+      actionsLabel: 'Value tracker — time',
+      actions: [
+        { label: 'A month passes', title: 'Moves the tracker one month on: a new estimate and one more point in the history', run: function () { if (window.vtMonth) window.vtMonth(1); } },
+        { label: 'Back to this month', title: 'Undoes every simulated month', run: function () { if (window.vtMonth) window.vtMonth(0); } }
+      ]
     };
   </script>
 
   <main>
-    <!-- Landing: the front page hero -->
+    <!-- ── Landing ─────────────────────────────────────────────────────── -->
     <div data-stages="landing">
       <section class="flex flex-col items-center overflow-hidden" style="background: linear-gradient(to bottom, #0B6DFF 26%, #0050C8 60%);">
-        <div class="flex flex-col items-center gap-14 pt-12 pb-16 px-10 w-full max-w-[1366px] md:gap-14 max-md:px-5 max-md:gap-8 max-md:pt-10 max-md:pb-12">
+        <div class="flex flex-col items-center gap-14 pt-12 pb-16 px-10 w-full max-w-[1366px] max-md:px-5 max-md:gap-8 max-md:pt-10 max-md:pb-12">
           <div class="flex flex-col items-center gap-5 text-center w-full">
-            <h1 class="font-barlow font-bold text-white w-full text-4xl leading-10 md:text-6xl md:leading-tight" data-i18n="estimatePage.title">Ilmainen hinta-arvio autostasi</h1>
-            <p class="font-dm font-medium text-slate-200 w-full max-w-[640px] text-xl leading-6" data-i18n="estimatePage.subtitle">Arvioimme autosi ja tilanteesi ja kerromme, kannattaako autosi laittaa tarjouskilpailuun nyt vai myöhemmin.</p>
+            <h1 class="font-barlow font-bold text-white w-full text-4xl leading-10 md:text-6xl md:leading-tight" data-i18n="valueTracker.title">Paljonko autosi on arvoinen?</h1>
+            <p class="font-dm font-medium text-slate-200 w-full max-w-[640px] text-xl leading-6" data-i18n="valueTracker.subtitle">Katso autosi arvo maksutta, seuraa sen kehitystä ja myy, kun aika on sinulle sopiva.</p>
           </div>
+          <div class="flex flex-col items-center gap-4 w-full">
           <form id="ha-car-form" class="flex flex-col gap-1.5 w-[336px] flex-shrink-0 max-md:w-full max-md:max-w-sm" style="scroll-margin-top: 96px;" novalidate>
           <!-- Registration plate -->
           <div id="ha-plate-field" class="flex flex-col gap-1">
@@ -263,298 +233,343 @@
               <span class="font-dm font-medium text-base text-gray-700 flex-shrink-0">km</span>
             </div>
             <p id="ha-mileage-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.mileageError">Syötä ajokilometrit</p>
+            <p id="ha-mileage-max-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.mileageMaxError"></p>
           </div>
 
             <button type="submit" class="flex items-center justify-center gap-2 w-full h-14 bg-av-turquoise text-black font-dm text-base rounded-lg shadow-2xl hover:bg-[#00E4D1] transition-colors">
-              <span data-i18n="estimatePage.carBtn">Hae hinta-arvio</span>
+              <span data-i18n="valueTracker.carBtn">Katso autosi arvo</span>
               <img src="assets/679c64f9-3060-4fbd-85b7-d40eff72d139.svg" class="w-6 h-6" alt="" />
             </button>
           </form>
+            <p class="m-0 flex items-center gap-2 font-dm text-sm text-white"><img src="assets/stats-star-icon.svg" class="w-5 h-5" alt="" /><span data-i18n="valueTracker.rating">Asiakkaiden arvosana 4,7/5</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Arvioi · Seuraa · Myy -->
+      <section class="flex flex-col items-center px-10 pt-16 pb-6 max-md:px-5 max-md:pt-10">
+        <div class="grid md:grid-cols-3 gap-10 md:gap-8 w-full max-w-[1366px]">
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-3"><svg class="w-8 h-8 text-av-blue" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M207.06,72.67A111.24,111.24,0,0,0,128,40h-.4C66.07,40.21,16,91,16,153.13V176a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V152A111.25,111.25,0,0,0,207.06,72.67ZM224,176H119.71l54.76-75.3a8,8,0,0,0-12.94-9.42L99.92,176H32V153.13c0-3.08.15-6.12.43-9.13H56a8,8,0,0,0,0-16H35.27c10.32-38.86,44-68.24,84.73-71.66V80a8,8,0,0,0,16,0V56.33A96.14,96.14,0,0,1,221,128H200a8,8,0,0,0,0,16h23.67c.21,2.65.33,5.31.33,8Z"/></svg><h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-i18n="valueTracker.step1Title">Arvioi</h2></div>
+            <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.step1Body">Saat autosi arvion heti ja maksutta.</p>
+          </div>
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-3"><svg class="w-8 h-8 text-av-blue" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0v94.37L90.73,98a8,8,0,0,1,10.07-.38l58.81,44.11L218.73,90a8,8,0,1,1,10.54,12l-64,56a8,8,0,0,1-10.07.38L96.39,114.29,40,163.63V200H224A8,8,0,0,1,232,208Z"/></svg><h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-i18n="valueTracker.step2Title">Seuraa</h2></div>
+            <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.step2Body">Näet, miten arvo muuttuu, ja saat päivitetyn arvion kerran kuukaudessa.</p>
+          </div>
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-3"><svg class="w-8 h-8 text-av-blue" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,100h-8.2L205.08,39.88A20,20,0,0,0,186.8,28H69.2A20,20,0,0,0,50.92,39.88L24.2,100H16a12,12,0,0,0,0,24h4v76a20,20,0,0,0,20,20H68a20,20,0,0,0,20-20V180h80v20a20,20,0,0,0,20,20h28a20,20,0,0,0,20-20V124h4a12,12,0,0,0,0-24ZM71.8,52H184.2l21.33,48H50.47ZM64,196H44V180H64Zm128,0V180h20v16Zm20-40H44V124H212Z"/></svg><h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-i18n="valueTracker.step3Title">Myy</h2></div>
+            <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.step3Body">Laita autosi tarjouskilpailuun, kun aika on sinulle sopiva.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Three features, each with a small preview of the tracker -->
+      <section class="flex flex-col items-center px-10 pt-10 pb-16 max-md:px-5">
+        <div class="grid lg:grid-cols-3 gap-5 w-full max-w-[1366px]">
+          <div class="flex flex-col bg-white border border-slate-200 rounded-3xl overflow-hidden">
+            <div class="bg-av-cream flex items-center justify-center p-8 h-60">
+              <div class="w-full max-w-[260px] bg-white rounded-xl p-5 flex flex-col gap-2 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <div id="vt-feat-badge"></div>
+                <p class="m-0 font-barlow font-bold text-slate-900 text-lg leading-6">Volkswagen Amarok</p>
+                <p class="m-0 font-dm text-sm text-slate-500" data-i18n="valueTracker.latest">Autosi viimeisin arvio</p>
+                <p class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-8">12&nbsp;340&nbsp;€</p>
+              </div>
+            </div>
+            <div class="flex flex-col gap-3 p-8 max-md:p-6">
+              <h3 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-tight" data-i18n="valueTracker.feat1Title">Arvio autoliikkeiden tarjouksista</h3>
+              <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.feat1Body">Arvio perustuu tarjouksiin, joita autoliikkeet ovat tehneet AutoVexissä samanlaisista autoista. Huomioimme mallin, iän ja ajokilometrit.</p>
+            </div>
+          </div>
+          <div class="flex flex-col bg-white border border-slate-200 rounded-3xl overflow-hidden">
+            <div class="bg-av-cream flex items-center justify-center p-8 h-60">
+              <div class="w-full max-w-[260px] bg-white rounded-xl p-5 flex flex-col gap-1 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <p class="m-0 font-dm text-sm text-slate-500" data-i18n="valueTracker.change24">2 vuoden muutos</p>
+                <p class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-7">−13,2&nbsp;%</p>
+                <svg viewBox="0 0 220 80" class="w-full h-auto mt-2" aria-hidden="true"><polygon points="0,14 22,18 44,16 66,24 88,30 110,27 132,38 154,44 176,42 198,52 220,58 220,80 0,80" fill="#EEF6FA" opacity=".8"/><polyline points="0,14 22,18 44,16 66,24 88,30 110,27 132,38 154,44 176,42 198,52 220,58" fill="none" stroke="#2890FF" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
+              </div>
+            </div>
+            <div class="flex flex-col gap-3 p-8 max-md:p-6">
+              <h3 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-tight" data-i18n="valueTracker.feat2Title">Arvon kehitys</h3>
+              <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.feat2Body">Näet, miten autosi arvo on muuttunut kahden viime vuoden aikana, ja voit valita sinulle sopivan hetken myydä.</p>
+            </div>
+          </div>
+          <div class="flex flex-col bg-white border border-slate-200 rounded-3xl overflow-hidden">
+            <div class="bg-av-cream flex items-center justify-center p-8 h-60">
+              <div class="w-full max-w-[260px] bg-white rounded-xl p-5 flex items-start gap-3 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
+                <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-blue-50 text-av-blue flex-shrink-0"><svg class="w-6 h-6" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M225.81,74.65A11.86,11.86,0,0,1,220.3,76a12,12,0,0,1-10.67-6.47,90.1,90.1,0,0,0-32-35.38,12,12,0,1,1,12.8-20.29,115.25,115.25,0,0,1,40.54,44.62A12,12,0,0,1,225.81,74.65ZM46.37,69.53a90.1,90.1,0,0,1,32-35.38A12,12,0,1,0,65.6,13.86,115.25,115.25,0,0,0,25.06,58.48a12,12,0,0,0,5.13,16.17A11.86,11.86,0,0,0,35.7,76,12,12,0,0,0,46.37,69.53Zm173.51,98.35A20,20,0,0,1,204,200H171.81a44,44,0,0,1-87.62,0H52a20,20,0,0,1-15.91-32.12c7.17-9.33,15.73-26.62,15.88-55.94A76,76,0,0,1,204,112C204.15,141.26,212.71,158.55,219.88,167.88ZM147.6,200H108.4a20,20,0,0,0,39.2,0Zm48.74-24c-8.16-13-16.19-33.57-16.34-63.94A52,52,0,1,0,76,112c-.15,30.42-8.18,51-16.34,64Z"/></svg></span>
+                <div class="flex flex-col gap-0.5">
+                  <p class="m-0 font-dm text-sm text-slate-500" data-i18n="valueTracker.featMonthly">Kuukauden muutos</p>
+                  <p class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-7">−1,1&nbsp;%</p>
+                  <p class="m-0 font-dm text-sm text-slate-900">12&nbsp;340&nbsp;€</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-3 p-8 max-md:p-6">
+              <h3 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-tight" data-i18n="valueTracker.feat3Title">Arvio kerran kuukaudessa</h3>
+              <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.feat3Body">Lähetämme sinulle joka kuukausi päivitetyn arvion, joten tiedät aina, paljonko autosi on arvoinen.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- What lowers and holds the value -->
+      <section class="flex flex-col items-center gap-10 px-10 py-16 max-md:px-5 max-md:py-12" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
+        <h2 class="m-0 font-barlow font-bold text-black text-center text-3xl leading-tight md:text-5xl" data-i18n="valueTracker.factorsTitle">Mikä vaikuttaa autosi arvoon?</h2>
+        <div class="grid md:grid-cols-2 gap-5 w-full max-w-[1100px]">
+          <div class="bg-white border border-slate-200 rounded-3xl p-10 max-md:p-6 flex flex-col gap-5">
+            <h3 class="m-0 flex items-center gap-3 font-barlow font-bold text-slate-900 text-2xl leading-tight"><span class="flex items-center justify-center w-10 h-10 rounded-lg bg-red-50 text-red-600"><svg class="w-5 h-3" viewBox="0 0 20 12" fill="currentColor" aria-hidden="true"><path d="M14 12L16.29 9.71L11.41 4.83L7.41 8.83L0 1.41L1.41 0L7.41 6L11.41 2L17.71 8.29L20 6V12H14Z"/></svg></span><span data-i18n="valueTracker.factorsDown">Arvoa laskevat</span></h3>
+            <ul class="m-0 p-0 list-none grid sm:grid-cols-2 gap-x-6 gap-y-3 font-dm text-base text-slate-700">
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down1">Auton ikä</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down2">Ajokilometrit</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down3">Puutteellinen huoltohistoria</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down4">Kolarihistoria</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down5">Omistajien määrä</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down6">Heikko kysyntä</span></li>
+            </ul>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-3xl p-10 max-md:p-6 flex flex-col gap-5">
+            <h3 class="m-0 flex items-center gap-3 font-barlow font-bold text-slate-900 text-2xl leading-tight"><span class="flex items-center justify-center w-10 h-10 rounded-lg bg-green-50 text-green-700"><svg class="w-5 h-3" viewBox="0 0 20 12" fill="currentColor" aria-hidden="true"><path d="M14 0L16.29 2.29L11.41 7.17L7.41 3.17L0 10.59L1.41 12L7.41 6L11.41 10L17.71 3.71L20 6V0H14Z"/></svg></span><span data-i18n="valueTracker.factorsUp">Arvoa pitävät yllä</span></h3>
+            <ul class="m-0 p-0 list-none grid sm:grid-cols-2 gap-x-6 gap-y-3 font-dm text-base text-slate-700">
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.up1">Hyvä kunto</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.up2">Täydellinen huoltohistoria</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.up3">Lisävarusteet</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.up4">Kysytty väri ja varustelu</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.up5">Hyvät renkaat</span></li>
+              <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.up6">Voimassa oleva katsastus</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- How we value your car -->
+      <section class="flex flex-col items-center px-10 py-16 max-md:px-5 max-md:py-12">
+        <div class="flex flex-col gap-5 w-full max-w-[800px]">
+          <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-tight md:text-5xl" data-i18n="valueTracker.howTitle">Miten arvioimme autosi</h2>
+          <p class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="valueTracker.howBody1">Arvio perustuu tarjouksiin, joita autoliikkeet tekevät AutoVexissä joka päivä.</p>
+          <p class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="valueTracker.howBody2">Tarvitset vain rekisterinumeron ja ajokilometrit.</p>
+          <a href="#" data-how-cta class="self-start inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg hover:bg-[#0A59EB] transition-colors max-sm:self-stretch"></a>
+        </div>
+      </section>
+
+      <!-- FAQ: the front page's accordion -->
+      <section class="px-5 md:px-10 pt-16 md:pt-20 pb-14 md:pb-[52px]" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
+        <div class="max-w-[800px] mx-auto flex flex-col gap-8">
+          <h2 class="m-0 font-barlow font-bold text-black text-center text-3xl leading-tight md:text-5xl" data-i18n="valueTracker.faqTitle">Usein kysyttyä autosi arvosta</h2>
+          <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden">
+            <div id="vt-faq" class="divide-y divide-slate-100"></div>
+          </div>
         </div>
       </section>
     </div>
 
-    <!-- The wizard: the funnel's layout, steps left, context right -->
-    <div data-stages="wizard rec">
-      <div class="flex flex-col items-center pt-8 pb-16 max-md:pt-0 max-md:pb-0">
-        <div class="flex items-start justify-between w-full max-w-[1440px] px-8 gap-8 lg:px-0 lg:gap-0 max-md:flex-col max-md:px-0 max-md:gap-0">
+    <!-- ── Email, login link and details: one centred column ───────────── -->
+    <div data-stages="flow">
+      <div id="vt-flow" data-phase="email" class="flex flex-col items-center px-5 pt-12 pb-20 max-md:pt-8">
+        <div class="flex flex-col gap-8 w-full max-w-md">
+          <!-- Demand: shown above the email and the details -->
+          <div data-phase-show="email details" class="vt-demand flex-col gap-2 bg-white border border-slate-200 rounded-xl p-5">
+            <p class="m-0 flex items-center gap-2 font-dm font-bold text-base text-slate-900"><svg class="w-5 h-5 text-av-blue flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0v94.37L90.73,98a8,8,0,0,1,10.07-.38l58.81,44.11L218.73,90a8,8,0,1,1,10.54,12l-64,56a8,8,0,0,1-10.07.38L96.39,114.29,40,163.63V200H224A8,8,0,0,1,232,208Z"/></svg><span data-i18n="valueTracker.demandTitle">Autollesi on kysyntää</span></p>
+            <p class="vt-demand-body m-0 font-dm text-base leading-6 text-slate-700"></p>
+          </div>
 
-          <div class="funnel-col w-full lg:w-1/2 md:px-4 flex flex-col items-center gap-6 max-md:w-full max-md:px-5 max-md:pt-5 max-md:pb-8">
-            <nav aria-label="Vaiheet" class="funnel-steps w-full flex items-start pb-3">
-              <div data-step="1" class="flex flex-col items-center gap-2 flex-1 min-w-0"><div class="w-7 h-7 flex-shrink-0"></div><span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="estimatePage.step1">Auto</span></div>
-              <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
-              <div data-step="2" class="flex flex-col items-center gap-2 flex-1 min-w-0"><div class="w-7 h-7 flex-shrink-0"></div><span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="estimatePage.step2">Tilanteesi</span></div>
-              <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
-              <div data-step="3" class="flex flex-col items-center gap-2 flex-1 min-w-0"><div class="w-7 h-7 flex-shrink-0"></div><span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="estimatePage.step3">Hinta-arvio</span></div>
-              <div class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
-              <div data-step="4" class="flex flex-col items-center gap-2 flex-1 min-w-0"><div class="w-7 h-7 flex-shrink-0"></div><span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="estimatePage.step4">Suositus</span></div>
-            </nav>
+          <!-- Email -->
+          <form id="vt-email-form" data-phase-show="email" class="flex-col gap-6" novalidate>
+            <h1 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px] text-center" data-i18n="valueTracker.emailTitle">Syötä sähköpostisi jatkaaksesi</h1>
+            <div class="flex flex-col gap-2">
+              <label for="vt-email" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="valueTracker.emailLabel">Sähköposti</label>
+              <input id="vt-email" type="email" inputmode="email" autocomplete="email" aria-describedby="vt-email-error"
+                     class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg text-base bg-white" />
+              <p id="vt-email-error" class="hidden av-error-msg" role="alert"></p>
+            </div>
+            <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.emailBtn">Jatka</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
+            <p class="m-0 font-dm text-sm text-slate-600 text-center" data-i18n="valueTracker.emailNote">Lähetämme sinulle kirjautumislinkin. Salasanaa ei tarvita.</p>
+          </form>
 
-            <div id="ha-card" data-phase="fetching" style="scroll-margin-top: 110px;">
-
-              <!-- Fetching: prod's vehicle-info loading content -->
-              <div data-show="fetching" class="flex-col items-center gap-y-4 py-10">
-                <div class="p-4"><img class="pointer-events-none min-h-32 max-h-40" src="assets/car_loading.svg" aria-hidden="true" role="presentation" alt="" /></div>
-                <div role="heading" aria-level="2" class="text-lg md:text-xl font-medium text-center" data-i18n="loadingScreen.title">Haetaan autosi perustiedot</div>
-                <p class="m-0 text-base md:text-lg text-slate-500 text-center" data-i18n="loadingScreen.description">Muutama sekunti jäljellä</p>
-              </div>
-
-              <div data-show="found" class="flex-col gap-6">
-                <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="details.title">Löysimme autosi tiedot!</h1>
-                <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="estimatePage.foundBody">Kerro seuraavaksi tilanteestasi.</p>
-                <div id="ha-found-car" class="lg:hidden"></div>
-              </div>
-
-              <!-- The situation: the funnel's own intent questions and answer ids -->
-              <form id="ha-q1-form" data-show="q1" class="flex-col gap-6" novalidate>
-                <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="estimatePage.intentTitle">Kerro vielä tilanteestasi</h1>
-                <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="estimatePage.intentBody">Vastaustesi perusteella kerromme, sopiiko tarjouskilpailu sinulle nyt vai myöhemmin.</p>
-                <fieldset id="ha-q-timing" class="ha-q flex flex-col gap-4 m-0 p-0 border-0">
-                  <legend class="contents"><span class="block font-dm text-sm text-slate-500 mb-1" data-count="1"></span><span class="block font-dm font-bold text-xl leading-7 text-slate-900" data-i18n="intent.timingQuestion">Jos saat hyvän tarjouksen, milloin voisit aikaisintaan luovuttaa autosi ostajalle?</span></legend>
-                  <div class="flex flex-col gap-3.5">
-                    <label class="ha-opt"><input type="radio" name="timing" value="asap" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.timingAsap">Mahdollisimman pian</span></label>
-                    <label class="ha-opt"><input type="radio" name="timing" value="within-week" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.timingWithinWeek">Viikon sisällä</span></label>
-                    <label class="ha-opt"><input type="radio" name="timing" value="coming-months" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.timingComingMonths">Lähikuukausina</span></label>
-                    <label class="ha-opt"><input type="radio" name="timing" value="later" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.timingLater">Myöhemmin</span></label>
-                    <label class="ha-opt"><input type="radio" name="timing" value="just-exploring" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.timingJustExploring">Tutkailen vasta vaihtoehtoja</span></label>
-                  </div>
-                  <p id="ha-q1-error" class="hidden av-error-msg" role="alert"></p>
-                </fieldset>
-                <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
-                  <span data-i18n="btn.continue">Jatka</span>
-                  <img src="assets/faffcfa0-49b2-4740-9fff-3edecf20e750.svg" class="w-6 h-6" alt="" />
-                </button>
-                <div class="flex items-center justify-center w-full"><a href="#" data-back class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a></div>
-              </form>
-
-              <form id="ha-q2-form" data-show="q2" class="flex-col gap-6" novalidate>
-                <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="estimatePage.intentTitle">Kerro vielä tilanteestasi</h1>
-                <fieldset id="ha-q-situation" class="ha-q flex flex-col gap-4 m-0 p-0 border-0">
-                  <legend class="contents"><span class="block font-dm text-sm text-slate-500 mb-1" data-count="2"></span><span class="block font-dm font-bold text-xl leading-7 text-slate-900" data-i18n="intent.situationQuestion">Mikä kuvaa tilannettasi parhaiten?</span></legend>
-                  <div class="flex flex-col gap-3.5">
-                    <label class="ha-opt"><input type="radio" name="situation" value="buying-another" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.situationBuyingAnother">Olen myymässä autoani, koska tiedän jo hankkivani toisen auton</span></label>
-                    <label class="ha-opt"><input type="radio" name="situation" value="not-buying" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.situationNotBuying">Olen myymässä autoani, ja en aio ostaa toista</span></label>
-                    <label class="ha-opt"><input type="radio" name="situation" value="curious-value" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.situationCuriousValue">Haluan vain tietää autoni tämänhetkisen arvon</span></label>
-                    <label class="ha-opt"><input type="radio" name="situation" value="exploring-service" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.situationExploring">Haluan tutustua palveluun</span></label>
-                    <label class="ha-opt"><input type="radio" name="situation" value="other" /><span class="font-barlow font-medium text-base text-black" data-i18n="intent.situationOther">Jokin muu</span></label>
-                  </div>
-                  <p id="ha-q2-error" class="hidden av-error-msg" role="alert"></p>
-                </fieldset>
-                <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
-                  <span data-i18n="btn.continue">Jatka</span>
-                  <img src="assets/faffcfa0-49b2-4740-9fff-3edecf20e750.svg" class="w-6 h-6" alt="" />
-                </button>
-                <div class="flex items-center justify-center w-full"><a href="#" data-back class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a></div>
-              </form>
-
-              <!-- The seller's own estimate: the price step's optional field -->
-              <form id="ha-guess-form" data-show="guess" class="flex-col gap-6" novalidate>
-                <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="estimatePage.guessTitle">Paljonko itse arvioisit?</h1>
-                <p class="font-dm text-base leading-5 text-black -mt-2" data-i18n="estimatePage.guessBody">Voit kertoa oman arviosi ennen kuin näytämme omamme.</p>
-                <div class="price-input-wrapper w-full h-14 border border-gray-500 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
-                  <input id="ha-guess" type="text" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="Oma arvio (vapaaehtoinen)"
-                         data-i18n-placeholder="price.targetPlaceholder" aria-label="Oma arvio (vapaaehtoinen)" data-i18n-aria="price.targetLabel"
-                         class="flex-1 min-w-0 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
-                  <span class="font-dm text-xl text-slate-400 flex-shrink-0">€</span>
-                </div>
-                <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
-                  <span data-i18n="btn.continue">Jatka</span>
-                  <img src="assets/faffcfa0-49b2-4740-9fff-3edecf20e750.svg" class="w-6 h-6" alt="" />
-                </button>
-                <div class="flex items-center justify-center w-full"><a href="#" data-back class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a></div>
-              </form>
-
-              <!-- Email: a fuller report than the page shows -->
-              <form id="ha-contact-form" data-show="contact" class="flex-col gap-6" novalidate>
-                <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="estimatePage.contactTitle">Saat tarkemman raportin sähköpostiisi</h1>
-                <div class="-mt-2 flex flex-col gap-3">
-                  <p class="m-0 font-dm text-base leading-5 text-black" data-i18n="estimatePage.contactBody">Näytämme hinta-arvion heti. Sähköpostiisi lähetämme lisäksi:</p>
-                  <ul class="m-0 p-0 list-none flex flex-col gap-2">
-                    <li class="flex items-start gap-2 font-dm text-base leading-5 text-slate-900"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="estimatePage.report1">Vastaavista autoista AutoVexissä hyväksytyt tarjoukset</span></li>
-                    <li class="flex items-start gap-2 font-dm text-base leading-5 text-slate-900"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="estimatePage.report2">Miten ajokilometrit, kunto ja varusteet vaikuttavat hintaan</span></li>
-                    <li class="flex items-start gap-2 font-dm text-base leading-5 text-slate-900"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="estimatePage.report3">Päivitetyn hinta-arvion, kun olet valmis myymään</span></li>
-                  </ul>
-                </div>
-                <div class="flex flex-col gap-2 w-full">
-                  <label for="ha-email" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="contact.emailLabel">Sähköposti</span> <span class="text-red-500 font-medium">*</span></label>
-                  <input id="ha-email" type="text" inputmode="email" autocomplete="email" placeholder="Sähköpostiosoitteesi" data-i18n-placeholder="contact.emailPlaceholder" aria-describedby="ha-contact-error"
-                         class="ha-field w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
-                </div>
-                <label class="flex items-start gap-2.5 cursor-pointer">
-                  <input id="ha-consent" type="checkbox" class="av-checkbox mt-0.5" aria-describedby="ha-contact-error" />
-                  <span class="font-dm font-medium text-base leading-5 text-slate-900"><span data-i18n="contact.marketingLabel">Haluan vastaanottaa mielenkiintoista sisältöä ja vinkkejä auton myyntiin sähköpostitse.</span> <span class="text-red-500">*</span></span>
-                </label>
-                <p id="ha-contact-error" class="hidden av-error-msg -mt-3" role="alert"></p>
-                <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
-                  <span data-i18n="estimatePage.showBtn">Näytä hinta-arvio</span>
-                  <img src="assets/faffcfa0-49b2-4740-9fff-3edecf20e750.svg" class="w-6 h-6" alt="" />
-                </button>
-                <div class="flex items-center justify-center w-full"><a href="#" data-back class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="btn.back">Takaisin</a></div>
-              </form>
-
-              <!-- Calculating, then the estimate alone -->
-              <div data-show="calculating" class="flex-col items-center gap-4 py-6 text-center">
-                <div id="ha-gauge-calc-slot" class="w-full"></div>
-                <div role="heading" aria-level="2" class="text-lg md:text-xl font-medium text-center" data-i18n="estimatePage.calcTitle">Lasketaan hinta-arviota</div>
-                <p id="ha-calc-status" class="m-0 text-base md:text-lg text-slate-500 text-center min-h-[28px]"></p>
-              </div>
-
-              <div data-show="estimate" class="flex-col gap-6">
-                <h1 class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="estimatePage.resultTitle">Autosi hinta-arvio</h1>
-                <div class="flex flex-col items-center text-center">
-                  <div id="ha-gauge-result-slot" class="w-full"></div>
-                  <p id="ha-amount" class="m-0 mt-3 font-barlow font-bold text-slate-900 text-5xl leading-[52px] tabular-nums"></p>
-                  <span class="mt-3 inline-flex items-center space-x-2 px-2 py-1 font-dm text-xs xs:text-sm rounded border bg-amber-50 border-amber-400 text-amber-700" data-i18n="estimatePage.resultTag">Arvio, ei tarjous</span>
-                </div>
-                <div class="flex flex-col gap-2 font-dm text-sm leading-5 text-slate-600">
-                  <p class="m-0" id="ha-desc1" data-i18n="priceEstimationDescription.first">Hinta-arvio perustuu samankaltaisten autojen hintoihin, keskimääräiseen myyntiaikaan ja markkinatilanteeseen.</p>
-                  <p class="m-0" data-i18n-html="priceEstimationDescription.second">Hinta-arvio ei ota huomioon auton kuntoa tai lisävarusteita. <b>Auton käypä arvo saattaa siis olla yli tai alle arvion.</b></p>
-                </div>
-                <button type="button" id="ha-to-rec" class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
-                  <span data-i18n="estimatePage.toRec">Katso suosituksemme</span>
-                  <img src="assets/faffcfa0-49b2-4740-9fff-3edecf20e750.svg" class="w-6 h-6" alt="" />
-                </button>
-              </div>
-
-              <!-- The recommendation, with one action -->
-              <div data-show="rec" class="flex-col gap-6">
-                <div class="flex flex-col gap-3">
-                  <span id="ha-rec-tag" class="self-start inline-flex items-center px-2 py-1 font-dm text-xs xs:text-sm rounded border bg-blue-50 border-blue-300 text-blue-800" data-i18n="estimatePage.recTag">Suosituksemme</span>
-                  <h1 id="ha-res-title" class="font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]"></h1>
-                </div>
-                <div class="-mt-2 flex flex-col gap-3">
-                  <p id="ha-res-why" class="m-0 font-dm text-base leading-5 text-slate-600"><span id="ha-res-why-text"></span> <a href="#" id="ha-edit" class="text-av-blue underline hover:text-av-blue-dark" data-i18n="estimatePage.editAnswers">Muuta vastauksia</a></p>
-                  <p id="ha-res-lead" class="m-0 font-dm text-base leading-5 text-black"></p>
-                  <!-- The funnel's info line (price.html) -->
-                  <div id="ha-res-demand" class="hidden flex items-start gap-2">
-                    <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-blue-600" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm16-40a8,8,0,0,1-8,8,16,16,0,0,1-16-16V128a8,8,0,0,1,0-16,16,16,0,0,1,16,16v40A8,8,0,0,1,144,176ZM112,84a12,12,0,1,1,12,12A12,12,0,0,1,112,84Z"/></svg>
-                    <p id="ha-res-demand-text" class="m-0 font-dm text-sm text-slate-700"></p>
-                  </div>
-                </div>
-
-                <!-- Ready: the facts, then the listing -->
-                <ul data-route="auction" class="m-0 p-0 list-none flex flex-col gap-2">
-                  <li class="flex items-start gap-2 font-dm text-base leading-5 text-slate-900"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="estimatePage.fact1">Tarjoukset noin 5 arkipäivässä</span></li>
-                  <li class="flex items-start gap-2 font-dm text-base leading-5 text-slate-900"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="estimatePage.fact2">Tarjouksiin on aikaa vastata noin vuorokausi</span></li>
-                  <li class="flex items-start gap-2 font-dm text-base leading-5 text-slate-900"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="estimatePage.fact3">Ilmainen, ja päätät itse, hyväksytkö tarjouksen</span></li>
-                </ul>
-
-                <div id="ha-main-cta" class="flex flex-col gap-3">
-                  <a href="details.html" data-go class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors no-underline">
-                    <span data-i18n="estimatePage.ctaMain">Täytä myynti-ilmoitus</span>
-                    <img src="assets/faffcfa0-49b2-4740-9fff-3edecf20e750.svg" class="w-6 h-6" alt="" />
-                  </a>
-                  <p id="ha-main-cta-fit" class="m-0 font-dm text-sm leading-5 text-slate-600" data-i18n="estimatePage.ctaFit">Valitse tämä, jos olet valmis myymään autosi, kun saat hyvän tarjouksen.</p>
-                  <p class="m-0 font-dm text-sm leading-5 text-slate-600" data-i18n="estimatePage.ctaNote">Autosi tiedot ja vastauksesi siirtyvät mukana.</p>
-                  <div data-route="explore" class="flex items-center justify-center w-full pt-1"><a href="#" id="ha-remind-later" class="font-dm font-bold text-base leading-5 text-slate-700 hover:text-slate-900 transition-colors no-underline" data-i18n="estimatePage.remindLater">Muistuta minua myöhemmin</a></div>
-                </div>
-
-                <!-- Not yet: the reminder -->
-                <div id="ha-remind" class="flex flex-col gap-4">
-                  <form id="ha-remind-form" class="flex flex-col gap-4" novalidate>
-                    <fieldset class="flex flex-col gap-4 m-0 p-0 border-0">
-                      <legend class="contents"><span class="block font-dm font-bold text-xl leading-7 text-slate-900" data-i18n="estimatePage.remindTitle">Milloin muistutamme sinua?</span><span class="block mt-1 font-dm text-base leading-5 text-slate-600" data-i18n="estimatePage.remindBody">Lähetämme silloin päivitetyn hinta-arvion ja kerromme, miten vastaavien autojen kysyntä on muuttunut.</span></legend>
-                      <div class="flex flex-col gap-3.5">
-                        <label class="ha-opt"><input type="radio" name="remind" value="1" /><span class="font-barlow font-medium text-base text-black" data-i18n="estimatePage.remind1">Kuukauden päästä</span></label>
-                        <label class="ha-opt"><input type="radio" name="remind" value="3" /><span class="font-barlow font-medium text-base text-black" data-i18n="estimatePage.remind3">3 kuukauden päästä</span></label>
-                        <label class="ha-opt"><input type="radio" name="remind" value="6" /><span class="font-barlow font-medium text-base text-black" data-i18n="estimatePage.remind6">Puolen vuoden päästä</span></label>
-                      </div>
-                    </fieldset>
-                    <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
-                      <span data-i18n="estimatePage.remindBtn">Muistuta minua</span>
-                    </button>
-                  </form>
-                  <!-- Done: the offers page's green notice shell -->
-                  <div id="ha-remind-done" class="ha-remind-done hidden flex items-start gap-3 p-4 rounded-xl border border-green-500 bg-green-50 font-dm text-base leading-5 text-green-900">
-                    <img src="assets/step-completed.svg" class="w-6 h-6 flex-shrink-0" alt="" />
-                    <span><span id="ha-remind-done-text"></span> <a href="#" id="ha-remind-change" class="text-green-900 underline" data-i18n="estimatePage.remindChange">Muuta</a></span>
-                  </div>
-                </div>
-
-                <!-- Over the limit: Huutokaupat routing v6's recommendation -->
-                <div data-route="overmax" class="flex flex-col gap-5">
-                  <p class="m-0 font-dm font-bold text-xl leading-7 text-slate-900" data-i18n="huutokaupat.title">Suosittelemme Huutokaupat.comia</p>
-                  <ul class="m-0 p-0 list-none flex flex-col gap-2 font-dm text-base leading-5 text-slate-900">
-                    <li class="flex items-center gap-2"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="huutokaupat.check1">Ei kilometri- tai ikärajoja</span></li>
-                    <li class="flex items-center gap-2"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="huutokaupat.check2">Huutokaupat.com hoitaa kaupan</span></li>
-                    <li class="flex items-center gap-2"><svg class="w-5 h-5 flex-shrink-0 text-slate-600" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C1.94139 9.97659 1.8573 9.77356 1.8573 9.56182C1.8573 9.35008 1.94139 9.14705 2.0911 8.99737C2.24082 8.84766 2.44385 8.76356 2.65556 8.76356C2.86727 8.76356 3.07031 8.84766 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span data-i18n="huutokaupat.check3">Ei kauppaa, ei kuluja</span></li>
-                  </ul>
-                  <a href="https://huutokaupat.com/sivu/myy-autosi?utm_source=autovex&amp;utm_medium=referral&amp;utm_campaign=kuhu-leadit"
-                     class="w-full h-14 px-8 bg-[#142C10] text-white rounded-lg flex items-center justify-center gap-3 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:opacity-[0.94] transition-opacity"
-                     ><span class="sr-only" data-i18n="huutokaupat.cta">Huutokaupat.comiin</span><img src="assets/huutokaupat-logo-white.svg" class="h-[26px] w-auto" alt="" /><svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
-                  <p class="m-0 font-dm text-xs leading-4 text-slate-500" data-i18n="huutokaupat.disclaimer">AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.</p>
-                </div>
-              </div>
-
-              <!-- The gauge moves between the calculating and estimate slots -->
-              <div class="hidden" aria-hidden="true">
-                <svg id="ha-gauge" class="ha-gauge" viewBox="0 0 240 140" aria-hidden="true">
-                  <defs><linearGradient id="ha-arc" x1="0" x2="1"><stop offset="0" stop-color="#D7EDFF"/><stop offset="1" stop-color="#88CFFF"/></linearGradient></defs>
-                  <path class="ha-gauge-track" d="M20 120 A100 100 0 0 1 220 120" />
-                  <path class="ha-gauge-fill" d="M20 120 A100 100 0 0 1 220 120" />
-                  <g id="ha-gauge-ticks"></g>
-                  <path id="ha-gauge-band" class="ha-gauge-band" d="" />
-                  <g id="ha-gauge-guess" class="ha-gauge-guess">
-                    <rect id="ha-gauge-guess-box" x="-40" y="-36" width="80" height="20" rx="10" />
-                    <text id="ha-gauge-guess-text" x="0" y="-22"></text>
-                    <circle r="8" cx="0" cy="0" />
-                  </g>
-                  <g id="ha-needle" class="ha-needle"><line x1="120" y1="120" x2="38" y2="120" /><circle cx="120" cy="120" r="9" /></g>
-                  <text class="ha-gauge-end" x="20" y="138" text-anchor="middle">0 €</text>
-                  <text id="ha-gauge-max" class="ha-gauge-end" x="220" y="138" text-anchor="middle"></text>
-                </svg>
-              </div>
+          <!-- Login link sent -->
+          <div data-phase-show="sent" class="flex-col items-center gap-5 text-center">
+            <span class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 text-av-blue"><svg class="w-8 h-8" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z"/></svg></span>
+            <h1 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-i18n="valueTracker.sentTitle">Tarkista sähköpostisi</h1>
+            <p id="vt-sent-body" class="m-0 font-dm text-base leading-6 text-slate-700"></p>
+            <div class="flex flex-col items-center gap-3">
+              <button type="button" id="vt-resend" class="bg-transparent border-0 p-0 font-dm text-base text-av-blue underline cursor-pointer" data-i18n="valueTracker.sentResend">Lähetä linkki uudelleen</button>
+              <p id="vt-resent" class="hidden m-0 font-dm text-sm text-green-700" role="status" data-i18n="valueTracker.sentResent">Lähetimme linkin uudelleen.</p>
+              <button type="button" id="vt-change-email" class="bg-transparent border-0 p-0 font-dm text-base text-av-blue underline cursor-pointer" data-i18n="valueTracker.sentChange">Vaihda sähköpostiosoite</button>
             </div>
           </div>
 
-          <!-- The funnel's cream sidebar: the car and what the seller gets -->
-          <aside class="w-full lg:w-[calc(50%-3rem)] lg:m-6 bg-av-cream rounded-xl p-8 flex flex-col gap-6 md:sticky md:top-24 max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
-            <p class="m-0 font-barlow font-bold text-[#020617]" style="font-size:24px;line-height:26px;" data-i18n="estimatePage.sideTitle">Hinta-arviosi</p>
-            <div id="ha-side-car"><div class="ha-side-skel"></div></div>
-            <ul class="ha-gets m-0 p-0 list-none bg-white rounded-xl p-5 flex flex-col gap-4 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
-              <li data-get="estimate"><img src="assets/step-default.svg" alt="" /><span class="font-dm text-base leading-6 text-slate-900"></span></li>
-              <li data-get="rec"><img src="assets/step-default.svg" alt="" /><span class="font-dm text-base leading-6 text-slate-900" data-i18n="estimatePage.sideItem2">Suositus tilanteeseesi</span></li>
-              <li data-get="report"><img src="assets/step-default.svg" alt="" /><span class="font-dm text-base leading-6 text-slate-900" data-i18n="estimatePage.sideItem3">Tarkempi raportti sähköpostiisi</span></li>
-            </ul>
-          </aside>
+          <!-- Details, once logged in -->
+          <form id="vt-details-form" data-phase-show="details" class="flex-col gap-6" novalidate>
+            <div class="flex flex-col gap-2 text-center">
+              <h1 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-i18n="valueTracker.detailsTitle">Arvioi autosi</h1>
+              <p class="m-0 font-dm text-base text-slate-700" data-i18n="valueTracker.detailsSub">Täydennä tietosi, niin näet arvion heti.</p>
+            </div>
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex flex-col gap-1 min-w-0">
+                <span class="font-dm text-sm text-slate-500" data-i18n="valueTracker.emailLabel">Sähköposti</span>
+                <span id="vt-email-shown" class="font-dm text-base text-slate-900 break-all"></span>
+              </div>
+              <button type="button" id="vt-email-edit" class="bg-transparent border-0 p-0 font-dm text-base text-av-blue underline cursor-pointer flex-shrink-0" data-i18n="valueTracker.edit">Muokkaa</button>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="vt-name" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="valueTracker.nameLabel">Nimi</label>
+              <input id="vt-name" type="text" autocomplete="name" class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg text-base bg-white" />
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="vt-phone" class="font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="valueTracker.phoneLabel">Puhelinnumero</span> <span class="text-red-500">*</span></label>
+              <input id="vt-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="040 1234567" aria-describedby="vt-phone-error"
+                     class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg text-base bg-white placeholder:text-slate-300" />
+              <p id="vt-phone-error" class="hidden av-error-msg" role="alert"></p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="vt-postal" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="valueTracker.postalLabel">Postinumero</label>
+              <input id="vt-postal" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="5" placeholder="00100" aria-describedby="vt-postal-error"
+                     class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg text-base bg-white placeholder:text-slate-300" />
+              <p id="vt-postal-error" class="hidden av-error-msg" role="alert"></p>
+            </div>
+            <label class="flex items-start gap-2.5 cursor-pointer">
+              <input id="vt-consent" type="checkbox" class="av-checkbox mt-0.5" />
+              <span class="font-dm text-sm leading-5 text-slate-700" data-i18n="contact.marketingLabel">Haluan vastaanottaa mielenkiintoista sisältöä ja vinkkejä auton myyntiin sähköpostitse.</span>
+            </label>
+            <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.detailsBtn">Näytä arvio</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
+          </form>
         </div>
       </div>
     </div>
 
-    <!-- After the recommendation: only what applies to the route -->
-    <div data-stages="rec">
-      <!-- Similar cars sold, when the estimate is based on them -->
-      <section id="ha-sec-similar" class="flex flex-col items-center gap-6 px-10 pt-16 pb-6 max-md:px-5 max-md:pt-10">
-        <div class="w-full max-w-[1366px] flex flex-col gap-6">
-          <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-8" data-i18n="estimatePage.similarTitle">Vastaavista autoista hyväksytyt tarjoukset</h2>
-          <div id="ha-similar"></div>
+    <!-- ── The car, on every screen after the details ─────────────────── -->
+    <div data-stages="tracker calc auction">
+      <section id="vt-strip" class="flex flex-col items-center px-10 pt-8 max-md:px-5 max-md:pt-6" style="background: linear-gradient(to bottom, #0B6DFF 26%, #0050C8 100%);">
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-3 w-full max-w-[1366px] pb-8">
+          <div id="vt-strip-badge" class="flex-shrink-0"></div>
+          <div class="flex flex-col gap-1 min-w-0">
+            <p id="vt-strip-name" class="m-0 font-barlow font-bold text-white text-2xl leading-7"></p>
+            <p id="vt-strip-line" class="m-0 font-dm text-base text-blue-100"></p>
+          </div>
+          <button type="button" id="vt-change-car" class="sm:ml-auto bg-transparent border-0 p-0 font-dm text-base text-white underline cursor-pointer" data-i18n="valueTracker.changeCar">Vaihda auto</button>
+        </div>
+        <div id="vt-strip-pad" class="w-full h-16"></div>
+      </section>
+    </div>
+
+    <!-- ── The value and its history ───────────────────────────────────── -->
+    <div data-stages="tracker">
+      <section class="flex flex-col items-center px-10 pb-16 max-md:px-5">
+        <div class="w-full max-w-[1366px] -mt-16 bg-white border border-slate-200 rounded-3xl p-10 max-md:p-5 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
+          <div class="flex flex-wrap items-start justify-between gap-6">
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1">
+                <p class="m-0 font-dm text-base text-slate-600" data-i18n="valueTracker.latest">Autosi viimeisin arvio</p>
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+                  <p class="m-0 font-barlow font-bold text-slate-900 text-5xl leading-[52px] tabular-nums"><span id="vt-amount"></span><sup class="text-2xl align-super">*</sup></p>
+                  <button type="button" data-start-sell class="inline-flex items-center justify-center gap-2 h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.startSell">Aloita myynti</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
+                </div>
+              </div>
+              <div class="flex flex-col gap-0.5">
+                <p id="vt-change-label" class="m-0 font-dm text-sm text-slate-500"></p>
+                <p id="vt-change" class="m-0 font-dm font-bold text-base text-slate-900 tabular-nums"></p>
+              </div>
+            </div>
+            <div id="vt-periods" class="flex flex-wrap gap-1" role="group" data-i18n-aria="valueTracker.periodsLabel" aria-label="Aikaväli"></div>
+          </div>
+          <div class="mt-8" id="vt-chart-main"></div>
+          <div class="mt-6 pt-5 border-t border-slate-200 flex flex-col gap-2">
+            <p class="m-0 flex items-start gap-2 font-dm text-sm text-slate-700"><svg class="w-4 h-4 mt-0.5 text-av-blue flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M225.81,74.65A11.86,11.86,0,0,1,220.3,76a12,12,0,0,1-10.67-6.47,90.1,90.1,0,0,0-32-35.38,12,12,0,1,1,12.8-20.29,115.25,115.25,0,0,1,40.54,44.62A12,12,0,0,1,225.81,74.65ZM46.37,69.53a90.1,90.1,0,0,1,32-35.38A12,12,0,1,0,65.6,13.86,115.25,115.25,0,0,0,25.06,58.48a12,12,0,0,0,5.13,16.17A11.86,11.86,0,0,0,35.7,76,12,12,0,0,0,46.37,69.53Zm173.51,98.35A20,20,0,0,1,204,200H171.81a44,44,0,0,1-87.62,0H52a20,20,0,0,1-15.91-32.12c7.17-9.33,15.73-26.62,15.88-55.94A76,76,0,0,1,204,112C204.15,141.26,212.71,158.55,219.88,167.88ZM147.6,200H108.4a20,20,0,0,0,39.2,0Zm48.74-24c-8.16-13-16.19-33.57-16.34-63.94A52,52,0,1,0,76,112c-.15,30.42-8.18,51-16.34,64Z"/></svg><span data-i18n="valueTracker.alertsLine">Lähetämme sinulle päivitetyn arvion sähköpostiin kerran kuukaudessa.</span></p>
+            <p class="m-0 font-dm text-xs leading-4 text-slate-500">* <span data-i18n="valueTracker.footnote">Arvio perustuu autoliikkeiden tarjouksiin samanlaisista autoista.</span></p>
+          </div>
         </div>
       </section>
 
-      <!-- Changing cars: the next car's budget -->
-      <section id="ha-sec-budget" class="flex flex-col items-center px-10 pt-16 pb-6 max-md:px-5 max-md:pt-10">
-        <div class="w-full max-w-[1366px] bg-white border border-slate-200 rounded-3xl p-10 max-md:p-6 grid grid-cols-2 gap-10 items-center max-lg:grid-cols-1 max-lg:gap-6">
-          <div class="flex flex-col gap-4">
-            <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-8" data-i18n="estimatePage.budgetTitle">Millaiseen autoon sinulla voisi olla varaa?</h2>
-            <p class="m-0 font-dm text-base leading-5 text-slate-700" data-i18n="estimatePage.budgetBody">Lisää hinta-arvioon väliraha, jonka voit laittaa seuraavaan autoon.</p>
-            <p class="m-0 font-dm text-sm leading-5 text-slate-500" data-i18n="estimatePage.budgetCaveat">Budjetti on vain niin varma kuin autostasi saatava hinta. Kun hyväksyt tarjouksen, tiedät tarkalleen, paljonko sinulla on käytettävissä.</p>
-          </div>
+      <!-- The car in the market -->
+      <section class="flex flex-col items-center gap-8 px-10 pb-20 max-md:px-5 max-md:pb-14">
+        <div class="flex flex-col gap-3 w-full max-w-[1366px]">
+          <h2 id="vt-market-title" class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-tight"></h2>
+          <p class="m-0 font-dm text-base leading-6 text-slate-600" data-i18n="valueTracker.marketSub">Näet, mitkä asiat vaikuttavat autosi arvoon. Päivitämme tiedot kerran kuukaudessa.</p>
+        </div>
+        <div id="vt-market" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 w-full max-w-[1366px]"></div>
+        <button type="button" data-start-sell class="inline-flex items-center justify-center gap-2 h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.startSell">Aloita myynti</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
+      </section>
+    </div>
+
+    <!-- ── Calculating the auction estimate ────────────────────────────── -->
+    <div data-stages="calc">
+      <section class="flex flex-col items-center px-5 pt-16 pb-28 max-md:pt-10">
+        <div class="flex flex-col items-center gap-8 w-full max-w-md text-center">
           <div class="flex flex-col gap-2">
-            <label for="ha-cash" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="estimatePage.budgetCash">Väliraha</label>
-            <div class="price-input-wrapper w-full h-14 border border-gray-500 rounded-lg bg-white px-4 flex items-center gap-2 transition-colors">
-              <input id="ha-cash" type="text" inputmode="numeric" maxlength="9" autocomplete="off" placeholder="0"
-                     class="flex-1 min-w-0 border-none outline-none bg-transparent font-dm text-base text-slate-900 placeholder:text-slate-300" />
-              <span class="font-dm text-xl text-slate-400 flex-shrink-0">€</span>
-            </div>
-            <p class="m-0 mt-4 font-dm text-sm text-slate-600" data-i18n="estimatePage.budgetResult">Seuraavan autosi budjetti noin</p>
-            <p id="ha-budget-total" class="m-0 font-barlow font-bold text-slate-900 text-4xl leading-10 tabular-nums"></p>
+            <h1 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px]" data-i18n="valueTracker.calcTitle">Lasketaan arviota tarjouskilpailun tuloksesta</h1>
+            <p id="vt-calc-car" class="m-0 font-dm text-base text-slate-600"></p>
           </div>
+          <div class="vt-progress w-full" role="progressbar" aria-valuemin="0" aria-valuemax="100" data-i18n-aria="valueTracker.calcTitle" aria-label="Lasketaan arviota"><span id="vt-progress-bar"></span></div>
+          <ul class="m-0 p-0 list-none flex flex-col gap-4 self-center text-left font-dm text-base">
+            <li class="vt-calc-item flex items-center gap-3" data-calc="1"><img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span></span></li>
+            <li class="vt-calc-item flex items-center gap-3" data-calc="2"><img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span data-i18n="valueTracker.calc2">Huomioidaan malli, ikä ja ajokilometrit</span></li>
+            <li class="vt-calc-item flex items-center gap-3" data-calc="3"><img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" /><span data-i18n="valueTracker.calc3">Viimeistellään arvio</span></li>
+          </ul>
         </div>
       </section>
     </div>
 
-    <!-- The front page's How it works: on the landing, and with the recommendation -->
-    <div data-stages="landing rec" id="ha-how">
+    <!-- ── Estimated auction result ────────────────────────────────────── -->
+    <div data-stages="auction">
+      <section class="flex flex-col items-center gap-10 px-10 pt-12 pb-16 max-md:px-5 max-md:pt-8 max-md:gap-8">
+        <h1 class="m-0 font-barlow font-bold text-slate-900 text-center text-3xl leading-[36px] lg:text-5xl lg:leading-[52px]" data-i18n="valueTracker.auctionTitle">Anna autoliikkeiden kilpailla autostasi</h1>
+        <div class="grid lg:grid-cols-2 gap-8 w-full max-w-[1100px] items-stretch">
+          <div class="bg-av-cream rounded-3xl p-10 max-md:p-6 flex flex-col gap-6 order-2 lg:order-1">
+            <h2 class="m-0 font-barlow font-bold text-slate-900 text-center text-3xl leading-[36px]" data-i18n="valueTracker.whyTitle">Miksi AutoVex?</h2>
+            <ul class="m-0 p-0 list-none flex flex-col divide-y divide-slate-900/10">
+              <li class="flex items-start gap-4 py-5 first:pt-0">
+                <svg class="w-8 h-8 flex-shrink-0 text-slate-900" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>
+                <div class="flex flex-col gap-1"><h3 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="valueTracker.why1Title">Sadat autoliikkeet kilpailevat</h3><p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="valueTracker.why1Body">Ilmoituksesi näkyy sadoille autoliikkeille ympäri Suomen, ja ne tekevät autostasi tarjouksia.</p></div>
+              </li>
+              <li class="flex items-start gap-4 py-5">
+                <svg class="w-8 h-8 flex-shrink-0 text-slate-900" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>
+                <div class="flex flex-col gap-1"><h3 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="valueTracker.why2Title">Maksuton myyjälle</h3><p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="valueTracker.why2Body">Ilmoituksen tekeminen ja tarjousten saaminen eivät maksa sinulle mitään.</p></div>
+              </li>
+              <li class="flex items-start gap-4 py-5 last:pb-0">
+                <svg class="w-8 h-8 flex-shrink-0 text-slate-900" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>
+                <div class="flex flex-col gap-1"><h3 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="valueTracker.why3Title">Päätät itse</h3><p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="valueTracker.why3Body">Hyväksy tarjous, tee vastatarjous tai jätä myymättä.</p></div>
+              </li>
+            </ul>
+          </div>
+          <div class="bg-white border border-slate-200 rounded-3xl p-10 max-md:p-6 flex flex-col items-center gap-6 text-center order-1 lg:order-2">
+            <div class="flex flex-col items-center gap-2">
+              <h2 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="valueTracker.auctionLabel">Arvioitu tarjouskilpailun tulos</h2>
+              <p id="vt-auction-amount" class="m-0 font-barlow font-bold text-slate-900 text-[56px] leading-[60px] tabular-nums"></p>
+              <button type="button" id="vt-how-toggle" aria-expanded="false" aria-controls="vt-how-answer" class="inline-flex items-center gap-1.5 bg-transparent border-0 p-0 font-dm text-base text-slate-900 underline cursor-pointer"><svg class="w-4 h-4" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/></svg><span data-i18n="valueTracker.howLink">Miten arvio lasketaan?</span></button>
+              <p id="vt-how-answer" class="hidden m-0 max-w-sm font-dm text-sm leading-5 text-slate-600" data-i18n="valueTracker.howAnswer">Arvio perustuu tarjouksiin, joita autoliikkeet ovat tehneet AutoVexissä samanlaisista autoista.</p>
+            </div>
+            <div class="flex flex-col gap-2 w-full">
+              <a href="details.html" data-go class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors no-underline"><span data-i18n="valueTracker.auctionCta">Kerro autostasi</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+              <p class="m-0 font-dm text-sm text-slate-500" data-i18n="valueTracker.ctaNote">Autosi tiedot siirtyvät mukana.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-4 w-full pt-2">
+              <div class="flex flex-col items-center gap-2"><svg class="w-8 h-8 text-slate-900" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg><span class="font-dm font-medium text-sm leading-5 text-slate-900" data-i18n="valueTracker.point1">Maksuton</span></div>
+              <div class="flex flex-col items-center gap-2"><svg class="w-8 h-8 text-slate-900" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="128 72 128 128 184 128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg><span class="font-dm font-medium text-sm leading-5 text-slate-900" data-i18n="valueTracker.point2">Tarjoukset tyypillisesti 36 tunnissa</span></div>
+              <div class="flex flex-col items-center gap-2"><svg class="w-8 h-8 text-slate-900" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M240,100h-8.2L205.08,39.88A20,20,0,0,0,186.8,28H69.2A20,20,0,0,0,50.92,39.88L24.2,100H16a12,12,0,0,0,0,24h4v76a20,20,0,0,0,20,20H68a20,20,0,0,0,20-20V180h80v20a20,20,0,0,0,20,20h28a20,20,0,0,0,20-20V124h4a12,12,0,0,0,0-24ZM71.8,52H184.2l21.33,48H50.47ZM64,196H44V180H64Zm128,0V180h20v16Zm20-40H44V124H212Z"/></svg><span class="font-dm font-medium text-sm leading-5 text-slate-900" data-i18n="valueTracker.point3">Päätät itse</span></div>
+            </div>
+            <p class="m-0 flex items-center gap-2 font-dm text-sm text-slate-700"><img src="assets/stats-star-icon.svg" class="w-5 h-5" alt="" /><span data-i18n="valueTracker.rating">Asiakkaiden arvosana 4,7/5</span></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How the value develops: the decision chart, history solid, forecast dashed -->
+      <section class="flex flex-col items-center px-10 pb-16 max-md:px-5">
+        <div class="w-full max-w-[1100px] bg-white border border-slate-200 rounded-3xl p-10 max-md:p-5 flex flex-col gap-5">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <h2 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-7" data-i18n="valueTracker.deprTitle">Autosi arvon kehitys</h2>
+            <div class="flex flex-wrap items-center gap-5 font-dm text-sm text-slate-700">
+              <span class="flex items-center gap-2"><svg width="28" height="4" aria-hidden="true"><line x1="0" y1="2" x2="28" y2="2" stroke="#2890FF" stroke-width="2"/></svg><span data-i18n="valueTracker.deprHistory">Toteutunut</span></span>
+              <span class="flex items-center gap-2"><svg width="28" height="4" aria-hidden="true"><line x1="0" y1="2" x2="28" y2="2" stroke="#2890FF" stroke-width="2" stroke-dasharray="6 5"/></svg><span data-i18n="valueTracker.deprForecast">Ennuste</span></span>
+            </div>
+          </div>
+          <div id="vt-chart-depr"></div>
+          <p class="m-0 font-dm text-xs leading-4 text-slate-500" data-i18n="valueTracker.deprNote">Ennuste perustuu samanlaisten autojen hintakehitykseen.</p>
+        </div>
+      </section>
+    </div>
+
+    <!-- The front page's How it works: on the landing and the auction result -->
+    <div data-stages="landing auction">
   <section class="hidden md:flex flex-col items-center gap-10 px-10 pt-20 pb-[52px]" style="background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%);">
     <div class="flex flex-col items-center gap-5 w-full max-w-[1366px]">
       <h2 class="font-barlow font-bold text-black text-center text-5xl leading-tight" data-i18n="howItWorks.title">Näin löydämme autollesi ostajan</h2>
@@ -648,34 +663,7 @@
   </section>
     </div>
 
-    <div data-stages="rec">
-      <!-- Follow-up: an expert call -->
-      <section id="ha-sec-call" class="flex flex-col items-center px-10 py-16 max-md:px-5 max-md:py-10">
-        <div id="ha-call" class="w-full max-w-[640px] bg-white border border-slate-200 rounded-3xl p-10 max-md:p-6" style="scroll-margin-top: 110px;">
-          <form id="ha-call-form" class="flex flex-col gap-4" novalidate>
-            <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-8" data-i18n="estimatePage.callTitle">Haluatko tarkemman arvion?</h2>
-            <p class="m-0 font-dm text-base leading-5 text-slate-700" data-i18n="estimatePage.callBody">AutoVexin asiantuntija käy autosi tiedot kanssasi läpi puhelimessa ja kertoo, mitä hintaan vaikuttaa. Jätä numerosi, niin soitamme sinulle.</p>
-            <div class="flex flex-col gap-2 w-full">
-              <label for="ha-phone" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900" data-i18n="contact.phoneLabel">Puhelinnumero</label>
-              <input id="ha-phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="040 1234567" data-i18n-placeholder="estimatePage.phonePlaceholder" aria-describedby="ha-call-error"
-                     class="ha-field w-full h-14 border border-gray-500 rounded-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300 transition-colors" />
-              <p id="ha-call-error" class="hidden av-error-msg" role="alert"></p>
-            </div>
-            <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors" data-i18n="estimatePage.callBtn">Pyydä soittoa</button>
-          </form>
-          <div id="ha-call-done" class="ha-call-done hidden flex items-start gap-3">
-            <img src="assets/step-completed.svg" class="w-7 h-7 flex-shrink-0" alt="" />
-            <div class="flex flex-col gap-1">
-              <h2 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-8" data-i18n="estimatePage.callDoneTitle">Kiitos!</h2>
-              <p id="ha-call-done-body" class="m-0 font-dm text-base leading-5 text-slate-700"></p>
-              <a href="#" id="ha-call-change" class="self-start mt-1 font-dm text-base text-av-blue underline" data-i18n="estimatePage.callChange">Muuta numeroa</a>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div data-stages="landing rec">
+    <div data-stages="landing auction">
   <section class="stats-map-section relative flex flex-col items-center py-16 md:py-28 px-5 md:px-10 overflow-hidden bg-white"
            style="background-image: url('assets/stats-finland-map.png');
                   background-repeat: no-repeat;
@@ -719,193 +707,269 @@
   </section>
     </div>
 
-    <p id="ha-live" class="sr-only" aria-live="polite"></p>
+    <p id="vt-live" class="sr-only" aria-live="polite"></p>
   </main>
+
+  <!-- prod's vehicle-info loading screen (details.html), between the hero and the next step -->
+  <div id="vt-loading" class="hidden fixed inset-0 flex-col items-center z-50 bg-white">
+    <div class="p-4">
+      <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+    </div>
+    <div class="flex-1 flex items-center justify-center">
+      <div class="sr-only" role="status" aria-live="polite" aria-atomic="true"><span data-i18n="loadingScreen.title">Haetaan autosi perustiedot</span> <span data-i18n="loadingScreen.description">Muutama sekunti jäljellä</span></div>
+      <div class="flex flex-col items-center gap-y-4">
+        <div class="p-4"><img class="pointer-events-none min-h-32 max-h-40" src="assets/car_loading.svg" aria-hidden="true" role="presentation" alt="" /></div>
+        <div role="heading" aria-level="2" class="text-lg md:text-xl font-medium text-center" data-i18n="loadingScreen.title">Haetaan autosi perustiedot</div>
+        <p class="m-0 text-base md:text-lg text-slate-500 text-center" data-i18n="loadingScreen.description">Muutama sekunti jäljellä</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- The login-link email, standing in for the seller's inbox -->
+  <div id="vt-toast" role="dialog" aria-labelledby="vt-toast-title">
+    <div class="flex items-center gap-2">
+      <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-av-blue flex-shrink-0"><svg width="16" height="13" viewBox="0 0 16 13" fill="none" aria-hidden="true"><rect x="0.75" y="0.75" width="14.5" height="11.5" rx="2.25" stroke="white" stroke-width="1.5"/><path d="M1 2.5l7 4.5 7-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <span class="flex-1 text-[13px] font-bold text-slate-950">AutoVex</span>
+      <span class="text-xs text-slate-400" data-i18n="success.emailToastNow">nyt</span>
+    </div>
+    <p id="vt-toast-title" class="m-0 text-sm font-bold text-slate-900" data-i18n="success.emailToastTitle">Sinulla on 1 uusi sähköposti</p>
+    <p class="m-0 text-sm text-slate-600" data-i18n="valueTracker.toastSubject">Kirjaudu ja katso autosi arvo</p>
+    <button type="button" id="vt-toast-open" class="self-start mt-1 h-8 px-3.5 rounded-lg bg-av-blue text-white text-sm border-0 cursor-pointer hover:bg-[#0A59EB]" data-i18n="valueTracker.toastBtn">Avaa linkki</button>
+  </div>
 
   <div id="site-footer"></div>
   <script src="layout.js"></script>
   <script src="vehicle-card.js"></script>
-  <script src="similar-cars.js"></script>
   <script>
     (function () {
-      var STORE_KEY = 'autovex_funnel';
-      /* prod's server rule is between:0,280000 and Huutokaupat routing v6
-         routes 280 000 and up, so this page does the same. */
+      var FUNNEL_KEY = 'autovex_funnel';
+      var VT_KEY = 'autovex_value_tracker';
+      /* The rest of the service refuses 280 000 km and up (the front page,
+         the funnel), so this page does too. */
       var MAX_MILEAGE = 280000;
       var VEHICLE_FIELDS = ['merkki', 'malli', 'mallitarkennus', 'vuosimalli', 'polttoaine', 'vetotapa', 'vaihteisto'];
+      /* Every valid plate can be valued: whatever the mock lookup leaves out
+         is filled from the seed car. */
+      var FALLBACK_CAR = { merkki: 'Volkswagen', malli: 'Amarok', mallitarkennus: '2.0 TDI Highline', vuosimalli: '2019', polttoaine: 'Diesel', vetotapa: 'Etuveto', vaihteisto: 'Automaatti' };
+      var DEFAULT_PLATE = 'LRX-345', DEFAULT_KM = '148000', DEFAULT_EMAIL = 'matti.meikalainen@example.fi';
       var REDUCED = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      var LOOKUP_MS = 4000, TOAST_MS = 1400, CALC_MS = 3600;
+      /* Mock value: decision.html's 12 000 € fallback at the seed car's
+         148 000 km, moved by the mileage; about 0.6 % a month of
+         depreciation with a seasonal wave. The same car and mileage always
+         draw the same history. */
+      var BASE_VALUE = 12000, BASE_KM = 148000, PER_KM = 0.03, MONTHLY = 0.0062;
+      var PERIODS = [3, 6, 12, 24, 36];
       var params = new URLSearchParams(window.location.search);
 
-      var DISPLAY = params.get('display') === 'number' || params.get('display') === 'range' ? params.get('display') : 'auto';
-      var BASIS = params.get('basis') === 'similar' ? 'similar' : 'gtx';
-      var DEMAND_FORCED = ['high', 'normal', 'low'].indexOf(params.get('demand')) !== -1 ? params.get('demand') : null;
+      function T(k) { return t('valueTracker.' + k); }
+      function fill(str, map) { return str.replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : m; }); }
+      function read(key) { try { return JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch (e) { return {}; } }
+      function write(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+      function digits(v) { return String(v || '').replace(/\D/g, ''); }
+      function lang() { return (window.getLang && window.getLang()) || 'fi'; }
+      function group(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+      function euros(n) { return group(n) + ' €'; }
+      function signedEuros(n) { return (n < 0 ? '−' : '+') + euros(Math.abs(n)); }
+      function pct(p) {
+        var s = Math.abs(p).toFixed(1);
+        if (lang() === 'fi') s = s.replace('.', ',') + ' %'; else s = s + '%';
+        return (p < 0 ? '−' : '+') + s;
+      }
+      function el(id) { return document.getElementById(id); }
 
-      /* Mock GT-X: decision.html's 12 000 € price_estimation fallback at the
-         seed car's 148 000 km, moved a little by the typed mileage. The same
-         car and mileage always get the same estimate. */
-      var GTX_BASE = 12000, BASE_KM = 148000, PER_KM = 0.03, RANGE = 0.06;
-      var FETCH_MS = 3200, FOUND_MS = 1300, CALC_MS = 3000;
+      var vt = read(VT_KEY);
+      function save() { write(VT_KEY, vt); }
+      function funnel() { return read(FUNNEL_KEY); }
+      function loggedIn() { return !!funnel().loggedIn; }
 
-      var card  = document.getElementById('ha-card');
-      var live  = document.getElementById('ha-live');
-      var gauge = document.getElementById('ha-gauge');
-      var needle = document.getElementById('ha-needle');
+      function lookupCar() {
+        var got = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult && window.PROTO_MOCK.lookupResult()) || {};
+        var car = {};
+        VEHICLE_FIELDS.forEach(function (k) { car[k] = got[k] || FALLBACK_CAR[k]; });
+        return car;
+      }
+      function ensureCar() {
+        if (!vt.plate) { vt.plate = DEFAULT_PLATE; vt.km = DEFAULT_KM; }
+        if (!vt.car || !vt.car.merkki) vt.car = lookupCar();
+        if (vt.months == null) vt.months = 0;
+        if (!vt.period) vt.period = 24;
+      }
+      function carName() { return [vt.car.merkki, vt.car.malli, vt.car.mallitarkennus].filter(Boolean).join(' '); }
+      function carLine() { return [vt.car.vuosimalli, group(vt.km) + ' km', vt.car.polttoaine, vt.car.vaihteisto].filter(Boolean).join(' · '); }
+      function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return Math.abs(h); }
 
-      var state = {
-        phase: 'car', plate: '', km: '', car: {}, timing: null, situation: null, route: null, demand: 'normal',
-        guess: null, email: '', phone: '', remind: null, estimate: null, estimateFor: null, timer: null, history: []
+      /* ── The value model ─────────────────────────────────────────────── */
+      function nowValue() {
+        var base = Math.max(1500, BASE_VALUE - (Number(vt.km) - BASE_KM) * PER_KM);
+        return Math.round(base * Math.pow(1 - 0.011, vt.months || 0) / 10) * 10;
+      }
+      /* history[0] is this month, history[m] m months ago. */
+      function valueHistory() {
+        var now = nowValue(), seed = hash(vt.plate || '');
+        var out = [];
+        for (var m = 0; m <= 36; m++) {
+          var month = (new Date().getMonth() + (vt.months || 0) - m + 1200) % 12;
+          var wave = 1 + 0.014 * Math.sin((month + 2) * Math.PI / 6);
+          var noise = 1 + (((seed >> (m % 16)) & 7) - 3.5) * 0.0018;
+          var v = m === 0 ? now : now * Math.pow(1 + MONTHLY, m) * wave * noise / (1 + 0.014 * Math.sin(((new Date().getMonth() + (vt.months || 0)) % 12 + 2) * Math.PI / 6));
+          out.push(Math.round(v / 10) * 10);
+        }
+        return out;
+      }
+      function forecast(n) {
+        var h = valueHistory(), out = [];
+        for (var i = 1; i <= n; i++) out.push(Math.round(h[0] * Math.pow(1 - MONTHLY * 1.1, i) / 10) * 10);
+        return out;
+      }
+      function monthLabel(offset) {
+        var d = new Date(); d.setDate(1); d.setMonth(d.getMonth() + (vt.months || 0) + offset);
+        return d.toLocaleDateString(lang() === 'fi' ? 'fi-FI' : 'en-GB', { month: 'short', year: 'numeric' }).replace('.', '');
+      }
+      function demand() {
+        var h = hash((vt.car.merkki || '') + (vt.plate || ''));
+        var dealers = 180 + h % 300;
+        return { dealers: group(dealers), offers: group(dealers * 9 + h % 400), make: vt.car.merkki };
+      }
+
+      /* ── The chart: the decision page's line and fill ────────────────── */
+      function niceStep(range) { var steps = [100, 200, 250, 500, 1000, 2000, 2500, 5000]; for (var i = 0; i < steps.length; i++) if (range / steps[i] <= 5) return steps[i]; return 10000; }
+      function drawChart(target, values, labels, opts) {
+        opts = opts || {};
+        var fcFrom = opts.forecastFrom != null ? opts.forecastFrom : values.length;
+        var min = Math.min.apply(null, values), max = Math.max.apply(null, values);
+        var step = niceStep(Math.max(1, max - min));
+        var lo = Math.floor(min / step) * step - step, hi = Math.ceil(max / step) * step;
+        if (lo < 0) lo = 0;
+        var n = values.length;
+        function x(i) { return n > 1 ? (i / (n - 1)) * 1000 : 500; }
+        function y(v) { return 1000 - ((v - lo) / (hi - lo)) * 1000; }
+        var pts = values.map(function (v, i) { return x(i).toFixed(1) + ',' + y(v).toFixed(1); });
+        var hist = pts.slice(0, fcFrom), fc = pts.slice(Math.max(0, fcFrom - 1));
+        var grid = '', ylab = '';
+        for (var g = lo; g <= hi + 0.1; g += step) {
+          grid += '<line class="vt-grid" x1="0" x2="1000" y1="' + y(g).toFixed(1) + '" y2="' + y(g).toFixed(1) + '"/>';
+          ylab += '<span class="vt-ylabel" style="top:' + (y(g) / 10).toFixed(2) + '%">' + euros(g) + '</span>';
+        }
+        var fillPts = hist.join(' ') + ' ' + x(hist.length - 1).toFixed(1) + ',1000 0,1000';
+        var split = fcFrom < n ? '<line class="vt-split" x1="' + x(fcFrom - 1).toFixed(1) + '" x2="' + x(fcFrom - 1).toFixed(1) + '" y1="0" y2="1000"/>' : '';
+        var endIdx = fcFrom - 1, endVal = values[endIdx];
+        var endLeft = fcFrom < n ? 'left:' + (x(endIdx) / 10).toFixed(2) + '%;right:auto;transform:translate(-50%,-140%)' : '';
+        var xs = opts.xLabels || [];
+        target.innerHTML =
+          '<div class="flex gap-3">' +
+            '<div class="flex-1 min-w-0 flex flex-col gap-2">' +
+              '<div class="vt-chart relative h-60 max-md:h-48">' +
+                '<svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">' + grid +
+                  '<polygon class="vt-fill" points="' + fillPts + '"/>' +
+                  '<polyline class="vt-line" points="' + hist.join(' ') + '"/>' +
+                  (fc.length > 1 && fcFrom < n ? '<polyline class="vt-line vt-line-fc" points="' + fc.join(' ') + '"/>' : '') +
+                  split +
+                '</svg>' +
+                '<span class="vt-end-dot" style="top:' + (y(endVal) / 10).toFixed(2) + '%;' + (fcFrom < n ? 'right:auto;left:calc(' + (x(endIdx) / 10).toFixed(2) + '% - 4px)' : '') + '"></span>' +
+                '<span class="vt-end-label" style="top:' + (y(endVal) / 10).toFixed(2) + '%;' + endLeft + '">' + euros(endVal) + '</span>' +
+              '</div>' +
+              '<div class="flex justify-between font-dm text-xs text-slate-500">' + xs.map(function (l, i) { return '<span' + (i > 0 && i < xs.length - 1 ? ' class="vt-xmid"' : '') + '>' + l + '</span>'; }).join('') + '</div>' +
+            '</div>' +
+            '<div class="relative w-[72px] max-md:w-14 h-60 max-md:h-48 flex-shrink-0">' + ylab + '</div>' +
+          '</div>';
+        target.setAttribute('role', 'img');
+        target.setAttribute('aria-label', opts.label || '');
+      }
+
+      /* ── Rendering ───────────────────────────────────────────────────── */
+      function renderStrip() {
+        el('vt-strip-badge').innerHTML = window.buildRegBadge(vt.plate);
+        el('vt-strip-name').textContent = carName();
+        el('vt-strip-line').textContent = carLine();
+        el('vt-strip-pad').style.display = document.body.getAttribute('data-stage') === 'tracker' ? '' : 'none';
+      }
+      function renderDemand() {
+        var d = demand();
+        [].forEach.call(document.querySelectorAll('.vt-demand-body'), function (p) { p.textContent = fill(T('demandBody'), d); });
+      }
+      function renderPeriods() {
+        el('vt-periods').innerHTML = PERIODS.map(function (p) {
+          return '<button type="button" class="vt-period" data-period="' + p + '" aria-pressed="' + (vt.period === p) + '">' + T('period' + p) + '</button>';
+        }).join('');
+      }
+      function renderTracker() {
+        var h = valueHistory(), now = h[0], p = vt.period, then = h[p];
+        el('vt-amount').textContent = euros(now);
+        el('vt-change-label').textContent = T('change' + p);
+        el('vt-change').textContent = signedEuros(now - then) + ' (' + pct((now - then) / then * 100) + ')';
+        renderPeriods();
+        var series = h.slice(0, p + 1).reverse();
+        var xl = [monthLabel(-p), monthLabel(-Math.round(p * 2 / 3)), monthLabel(-Math.round(p / 3)), monthLabel(0)];
+        drawChart(el('vt-chart-main'), series, null, { xLabels: xl, label: T('change' + p) + ' ' + el('vt-change').textContent });
+        el('vt-market-title').textContent = fill(T('marketTitle'), { make: vt.car.merkki });
+        var d = demand();
+        var age = Math.max(1, new Date().getFullYear() - Number(vt.car.vuosimalli || 2019));
+        var lowKm = Number(vt.km) < age * 17000;
+        var cards = [
+          { icon: ICONS.users, title: T('demandTitle'), body: fill(T('demandBody'), d) },
+          { icon: ICONS.gauge, title: T(lowKm ? 'kmLowTitle' : 'kmHighTitle'), body: fill(T(lowKm ? 'kmLowBody' : 'kmHighBody'), { model: vt.car.malli }) },
+          { icon: ICONS.calendar, title: T('seasonTitle'), body: T('seasonBody') },
+          { icon: ICONS.clock, title: T('ageTitle'), body: fill(T('ageBody'), { age: age }) }
+        ];
+        el('vt-market').innerHTML = cards.map(function (c) {
+          return '<div class="bg-white border border-slate-200 rounded-3xl p-6 flex flex-col gap-4">' +
+            '<span class="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 text-av-blue">' + c.icon + '</span>' +
+            '<h3 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7"></h3>' +
+            '<p class="m-0 font-dm text-base leading-6 text-slate-600"></p></div>';
+        }).join('');
+        var nodes = el('vt-market').children;
+        cards.forEach(function (c, i) { nodes[i].querySelector('h3').textContent = c.title; nodes[i].querySelector('p').textContent = c.body; });
+      }
+      function renderAuction() {
+        el('vt-auction-amount').textContent = euros(Math.round(nowValue() / 100) * 100);
+        var h = valueHistory().slice(0, 6).reverse(), f = forecast(5);
+        var xl = [monthLabel(-5), monthLabel(-2), monthLabel(1), monthLabel(5)];
+        drawChart(el('vt-chart-depr'), h.concat(f), null, { forecastFrom: h.length, xLabels: xl, label: T('deprTitle') });
+      }
+      var ICONS = {
+        users: '<svg class="w-6 h-6" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0v94.37L90.73,98a8,8,0,0,1,10.07-.38l58.81,44.11L218.73,90a8,8,0,1,1,10.54,12l-64,56a8,8,0,0,1-10.07.38L96.39,114.29,40,163.63V200H224A8,8,0,0,1,232,208Z"/></svg>',
+        gauge: '<svg class="w-6 h-6" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M207.06,72.67A111.24,111.24,0,0,0,128,40h-.4C66.07,40.21,16,91,16,153.13V176a16,16,0,0,0,16,16H224a16,16,0,0,0,16-16V152A111.25,111.25,0,0,0,207.06,72.67ZM224,176H119.71l54.76-75.3a8,8,0,0,0-12.94-9.42L99.92,176H32V153.13c0-3.08.15-6.12.43-9.13H56a8,8,0,0,0,0-16H35.27c10.32-38.86,44-68.24,84.73-71.66V80a8,8,0,0,0,16,0V56.33A96.14,96.14,0,0,1,221,128H200a8,8,0,0,0,0,16h23.67c.21,2.65.33,5.31.33,8Z"/></svg>',
+        calendar: '<svg class="w-6 h-6" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m208 32h-24v-8a8 8 0 0 0 -16 0v8h-80v-8a8 8 0 0 0 -16 0v8h-24a16 16 0 0 0 -16 16v160a16 16 0 0 0 16 16h160a16 16 0 0 0 16-16v-160a16 16 0 0 0 -16-16zm-136 16v8a8 8 0 0 0 16 0v-8h80v8a8 8 0 0 0 16 0v-8h24v32h-160v-32zm136 160h-160v-112h160zm-68-76a12 12 0 1 1 -12-12 12 12 0 0 1 12 12zm44 0a12 12 0 1 1 -12-12 12 12 0 0 1 12 12zm-88 40a12 12 0 1 1 -12-12 12 12 0 0 1 12 12zm44 0a12 12 0 1 1 -12-12 12 12 0 0 1 12 12zm44 0a12 12 0 1 1 -12-12 12 12 0 0 1 12 12z"/></svg>',
+        clock: '<svg class="w-6 h-6" viewBox="0 0 256 256" aria-hidden="true"><circle cx="128" cy="128" r="96" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/><polyline points="128 72 128 128 184 128" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/></svg>'
       };
 
-      function T(k) { return t('estimatePage.' + k); }
-      function fill(str, map) { return str.replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : m; }); }
-      function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
-      function setStore(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {} }
-      function digits(v) { return String(v || '').replace(/\D/g, ''); }
-      function group(d) { return String(d).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
-      function euros(n) { return group(n) + ' €'; }
-      function round(n, to) { return Math.round(n / to) * to; }
-      function carName() { return [state.car.merkki, state.car.malli].filter(Boolean).join(' ') || state.plate; }
-      function later(ms, fn) { return setTimeout(fn, ms); }
-      function checked(name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : null; }
+      /* ── Stages ──────────────────────────────────────────────────────── */
+      var calcTimers = [];
+      function setStage(stage, phase) {
+        document.body.setAttribute('data-stage', stage);
+        if (phase) el('vt-flow').setAttribute('data-phase', phase);
+        if (stage !== 'flow' || phase !== 'sent') hideToast();
+        calcTimers.forEach(clearTimeout); calcTimers = [];
+        window.scrollTo(0, 0);
+        renderHowCta();
+        if (stage === 'flow') { renderDemand(); if (phase === 'details') fillDetails(); }
+        if (stage === 'tracker' || stage === 'calc' || stage === 'auction') renderStrip();
+        if (stage === 'tracker') renderTracker();
+        if (stage === 'auction') renderAuction();
+        if (stage === 'calc') startCalc();
+        syncScenario();
+      }
+      /* The bar reads the scenario from the address, and a reload should land
+         on the same screen. */
+      function syncScenario() {
+        var id = window.vtScenarioNow();
+        var u = new URL(window.location.href);
+        u.searchParams.set('scenario', id);
+        window.history.replaceState(window.history.state, '', u);
+        var ids = [];
+        window.protoPage.scenarios.forEach(function (g) { (g.items || [g]).forEach(function (it) { ids.push(it.id); }); });
+        var sel = document.querySelector('#proto-bar select');
+        if (sel && ids.indexOf(id) !== -1) sel.value = String(ids.indexOf(id));
+      }
+      window.vtScenarioNow = function () {
+        var s = document.body.getAttribute('data-stage');
+        if (s === 'flow') { var p = el('vt-flow').getAttribute('data-phase'); return p === 'sent' ? 'email-sent' : p; }
+        return { landing: 'landing', tracker: 'tracker', calc: 'calculating', auction: 'auction' }[s];
+      };
 
-      if (BASIS === 'similar') document.getElementById('ha-desc1').setAttribute('data-i18n', 'estimatePage.desc1Similar');
-
-      /* ── The router ─────────────────────────────────────────────────────────
-         Every seller gets the estimate; the answers decide the recommendation
-         and its one action. Nothing is closed off: every route except overmax
-         keeps the funnel one click away.
-
-         auction  could hand the car over within weeks
-         explore  wants the value, or is only looking
-         plan     would sell, but only later
-         overmax  280 000 km or more: no auction on AutoVex
-
-         Demand stands in for how attractive the car is to AutoVex buyers: an
-         exploring seller whose car is in demand gets the funnel as the action,
-         the reminder one link away. */
-      function routeFor() {
-        if (Number(state.km) >= MAX_MILEAGE) return 'overmax';
-        var selling = state.situation === 'buying-another' || state.situation === 'not-buying';
-        if (state.timing === 'asap' || state.timing === 'within-week') return 'auction';
-        if (state.timing === 'coming-months') return selling ? 'auction' : 'explore';
-        if (state.timing === 'later') return selling ? 'plan' : 'explore';
-        return 'explore';
-      }
-      function demandFor() {
-        if (DEMAND_FORCED) return DEMAND_FORCED;
-        var year = Number(state.car.vuosimalli), km = Number(state.km);
-        if (!year) return 'normal';
-        var age = new Date().getFullYear() - year;
-        if (age <= 5 && km <= 120000) return 'high';
-        if (age >= 15 || km > 240000) return 'low';
-        return 'normal';
-      }
-      function displayFor() {
-        if (DISPLAY !== 'auto') return DISPLAY;
-        return state.route === 'explore' ? 'range' : 'number';
-      }
-
-      /* ── Stages and screens ─────────────────────────────────────────────── */
-      function setStage(s) { document.body.setAttribute('data-stage', s); }
-
-      /* The funnel's step bar (details.html initStepNav), four steps */
-      var STEP_OF = { fetching: 1, found: 1, q1: 2, q2: 2, guess: 2, contact: 3, calculating: 3, estimate: 3, rec: 4 };
-      var LOCKED   = '<img src="assets/step-default.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
-      var COMPLETE = '<img src="assets/step-completed.svg" class="w-7 h-7 flex-shrink-0" alt="" />';
-      var ACTIVE   = '<div class="w-7 h-7 rounded-full border-2 border-av-blue flex items-center justify-center flex-shrink-0"><img src="assets/step-default-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>';
-      function renderSteps(p) {
-        var cur = STEP_OF[p] || 1;
-        [].forEach.call(document.querySelectorAll('[data-step]'), function (el) {
-          var n = Number(el.getAttribute('data-step'));
-          el.firstElementChild.outerHTML = n === cur ? ACTIVE : n < cur ? COMPLETE : LOCKED;
-          var label = el.querySelector('span');
-          label.style.color = n <= cur ? '#080808' : '#475569';
-          label.style.fontWeight = n === cur ? '700' : '';
-        });
-      }
-
-      var TRANSIENT = ['fetching', 'found', 'calculating'];
-      function setPhase(p) {
-        state.phase = p;
-        card.setAttribute('data-phase', p);
-        renderSteps(p);
-        [].forEach.call(card.querySelectorAll('[data-show]'), function (el) {
-          if ((' ' + el.getAttribute('data-show') + ' ').indexOf(' ' + p + ' ') === -1) return;
-          el.classList.remove('ha-step-in'); void el.offsetWidth; el.classList.add('ha-step-in');
-        });
-        var slot = p === 'calculating' ? 'ha-gauge-calc-slot' : p === 'estimate' ? 'ha-gauge-result-slot' : null;
-        if (slot) document.getElementById(slot).appendChild(gauge);
-        setStage(p === 'rec' ? 'rec' : 'wizard');
-        renderSide();
-        window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
-      }
-      function go(p) {
-        if (TRANSIENT.indexOf(state.phase) === -1 && state.phase !== p) state.history.push(state.phase);
-        setPhase(p);
-      }
-      card.addEventListener('click', function (e) {
-        if (!e.target.closest('[data-back]')) return;
-        e.preventDefault();
-        var prev = state.history.pop();
-        if (!prev || prev === 'car') { showLanding(); return; }
-        setPhase(prev);
-      });
-      function showLanding() {
-        state.history = [];
-        state.phase = 'car';
-        setStage('landing');
-        window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
-        document.getElementById('ha-plate').focus();
-      }
-      function rotate(list, el, total) {
-        var i = 0;
-        clearInterval(state.timer);
-        el.textContent = T(list[0]);
-        state.timer = setInterval(function () { i = Math.min(i + 1, list.length - 1); el.textContent = T(list[i]); }, total / list.length);
-      }
-
-      /* ── The sidebar: the car, and what the seller gets ─────────────────── */
-      function carCardHtml() {
-        return window.buildCarCard({
-          registrationNumber: state.plate,
-          make: state.car.merkki, model: state.car.malli, modelSpecification: state.car.mallitarkennus,
-          year: state.car.vuosimalli, mileage: group(state.km) + ' km',
-          driveType: state.car.vetotapa, fuelType: state.car.polttoaine,
-          cardClass: 'shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]'
-        });
-      }
-      function renderSide() {
-        var p = state.phase;
-        var side = document.getElementById('ha-side-car');
-        var found = p !== 'fetching';
-        if (found && !side.querySelector('.av-card')) side.innerHTML = carCardHtml();
-        if (!found) side.innerHTML = '<div class="ha-side-skel"></div>';
-        side.classList.toggle('is-found', p === 'found');
-        var estDone = !!state.estimate && (p === 'estimate' || p === 'rec');
-        var items = {
-          estimate: estDone,
-          rec: p === 'rec',
-          report: !!state.email
-        };
-        [].forEach.call(document.querySelectorAll('[data-get]'), function (li) {
-          var k = li.getAttribute('data-get');
-          li.querySelector('img').src = items[k] ? 'assets/step-completed.svg' : 'assets/step-default.svg';
-        });
-        var estText = document.querySelector('[data-get="estimate"] span');
-        estText.innerHTML = '';
-        if (estDone) {
-          estText.appendChild(document.createTextNode(T('sideItem1Done').replace('{amount}', '')));
-          var b = document.createElement('b');
-          b.textContent = amountText(displayFor());
-          estText.appendChild(b);
-        } else {
-          estText.textContent = T('sideItem1');
-        }
-      }
-
-      /* ── 1. The car: the front page hero's fields and validation ─────────── */
-      var inPlate = document.getElementById('ha-plate');
-      var inKm = document.getElementById('ha-mileage');
+      /* ── 1. The car: the front page hero's fields and validation ─────── */
+      var inPlate = el('ha-plate'), inKm = el('ha-mileage');
       var PLATE_RE = /^(?:[A-ZÅÄÖ]{2,3}-[1-9][0-9]{0,2}|ÅL[N]?-[1-9][0-9]{0,4}|CD-[0-9]{4}|C-[0-9]{5})$/;
       function normalizePlate(raw) {
         var clean   = raw.replace(/[^A-Za-zÅÄÖåäö0-9]/g, '').toUpperCase();
@@ -922,13 +986,13 @@
       });
       inKm.addEventListener('input', function () {
         var raw = this.value.replace(/\D/g, ''), pos = this.selectionStart, prevLen = this.value.length;
-        this.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        this.value = raw.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
         var diff = this.value.length - prevLen;
         this.setSelectionRange(Math.max(0, pos + diff), Math.max(0, pos + diff));
       });
-      function fieldError(fieldId, wrapperId, input, valid) {
-        var field = document.getElementById(fieldId), wrapper = document.getElementById(wrapperId);
-        var errEl = document.getElementById(fieldId.replace('-field', '-error'));
+      function fieldError(fieldId, wrapperId, input, errId, valid) {
+        var field = el(fieldId), wrapper = el(wrapperId), errEl = el(errId);
+        ['ha-mileage-error', 'ha-mileage-max-error'].forEach(function (id) { if (id !== errId && fieldId === 'ha-mileage-field') el(id).classList.add('hidden'); });
         errEl.classList.remove('hidden');
         wrapper.style.outline = '2px solid rgba(239,68,68,0.85)';
         wrapper.style.outlineOffset = '-2px';
@@ -943,466 +1007,236 @@
         }
         input.addEventListener('input', clearIfValid);
       }
-      document.getElementById('ha-car-form').addEventListener('submit', function (e) {
+      el('ha-car-form').addEventListener('submit', function (e) {
         e.preventDefault();
         var plate = normalizePlate(inPlate.value.trim());
         var km = digits(inKm.value);
         if (!PLATE_RE.test(plate)) {
-          fieldError('ha-plate-field', 'ha-plate-wrapper', inPlate, function () { return PLATE_RE.test(normalizePlate(inPlate.value.trim())); });
+          fieldError('ha-plate-field', 'ha-plate-wrapper', inPlate, 'ha-plate-error', function () { return PLATE_RE.test(normalizePlate(inPlate.value.trim())); });
           return;
         }
         if (!km) {
-          fieldError('ha-mileage-field', 'ha-mileage-wrapper', inKm, function () { return digits(inKm.value).length > 0; });
+          fieldError('ha-mileage-field', 'ha-mileage-wrapper', inKm, 'ha-mileage-error', function () { return digits(inKm.value).length > 0; });
+          return;
+        }
+        if (Number(km) >= MAX_MILEAGE) {
+          fieldError('ha-mileage-field', 'ha-mileage-wrapper', inKm, 'ha-mileage-max-error', function () { var d = digits(inKm.value); return d.length > 0 && Number(d) < MAX_MILEAGE; });
           return;
         }
         inPlate.value = plate;
-        if (plate + '|' + km !== state.plate + '|' + state.km) state.estimate = null;
-        state.plate = plate;
-        state.km = km;
-        state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
-        state.history = ['car'];
-        document.getElementById('ha-side-car').innerHTML = '';
-        setPhase('fetching');
-        live.textContent = t('loadingScreen.title');
-        later(FETCH_MS, function () {
-          document.getElementById('ha-found-car').innerHTML = carCardHtml();
-          setPhase('found');
-          live.textContent = t('details.title') + ' ' + carName();
-          later(FOUND_MS, function () { setPhase(Number(state.km) >= MAX_MILEAGE ? afterAnswers() : 'q1'); });
-        });
+        if (plate !== vt.plate || km !== vt.km) { vt.months = 0; vt.period = 24; }
+        vt.plate = plate; vt.km = km; vt.car = lookupCar(); vt.tracked = false;
+        save();
+        var loading = el('vt-loading');
+        loading.classList.remove('hidden'); loading.classList.add('flex');
+        setTimeout(function () {
+          loading.classList.add('hidden'); loading.classList.remove('flex');
+          if (loggedIn()) setStage('flow', 'details'); else setStage('flow', 'email');
+        }, REDUCED ? 600 : LOOKUP_MS);
       });
 
-      /* ── 2. The situation, one question at a time ───────────────────────── */
-      function renderCounts() {
-        [].forEach.call(document.querySelectorAll('[data-count]'), function (el) { el.textContent = fill(T('questionCount'), { n: el.getAttribute('data-count') }); });
-      }
-      function requireAnswer(fs, errId, name) {
-        var v = checked(name);
-        var err = document.getElementById(errId);
-        if (v) { fs.classList.remove('is-invalid'); err.classList.add('hidden'); return v; }
-        fs.classList.add('is-invalid');
-        err.textContent = t('err.selectionRequired');
-        err.classList.remove('hidden');
-        fs.querySelector('input').focus();
-        return null;
-      }
-      [['ha-q-timing', 'ha-q1-error'], ['ha-q-situation', 'ha-q2-error']].forEach(function (pair) {
-        document.getElementById(pair[0]).addEventListener('change', function () {
-          this.classList.remove('is-invalid');
-          document.getElementById(pair[1]).classList.add('hidden');
-        });
-      });
-      document.getElementById('ha-q1-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var v = requireAnswer(document.getElementById('ha-q-timing'), 'ha-q1-error', 'timing');
-        if (!v) return;
-        state.timing = v;
-        go('q2');
-      });
-      document.getElementById('ha-q2-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var v = requireAnswer(document.getElementById('ha-q-situation'), 'ha-q2-error', 'situation');
-        if (!v) return;
-        state.situation = v;
-        go(afterAnswers());
-      });
-
-      /* Every route gets the estimate: own estimate (not over the limit),
-         email once, then the estimate. */
-      function afterAnswers() {
-        state.route = routeFor();
-        state.demand = demandFor();
-        return state.route === 'overmax' ? afterGuess() : 'guess';
-      }
-      function afterGuess() {
-        if (!state.email) return 'contact';
-        if (state.estimate && state.estimateFor === state.plate + '|' + state.km) { prepareEstimate(false); return 'estimate'; }
-        later(0, calculate);
-        return 'calculating';
-      }
-
-      /* ── The seller's own estimate ──────────────────────────────────────── */
-      var inGuess = document.getElementById('ha-guess');
-      function moneyInput(el) {
-        el.addEventListener('input', function () {
-          var raw = digits(this.value).slice(0, 7);
-          this.value = raw ? group(raw) : '';
-        });
-      }
-      moneyInput(inGuess);
-      document.getElementById('ha-guess-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        state.guess = Number(digits(inGuess.value)) || null;
-        go(afterGuess());
-      });
-
-      /* ── The email, for the fuller report ───────────────────────────────── */
-      var inEmail = document.getElementById('ha-email');
-      var inConsent = document.getElementById('ha-consent');
-      var contactErr = document.getElementById('ha-contact-error');
+      /* ── 2. Email, and the login link ────────────────────────────────── */
       var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      function clearContactError() { contactErr.classList.add('hidden'); inEmail.removeAttribute('aria-invalid'); inConsent.removeAttribute('aria-invalid'); }
-      inEmail.addEventListener('input', clearContactError);
-      inConsent.addEventListener('change', clearContactError);
-      function contactError(input, key) {
-        contactErr.textContent = t(key);
-        contactErr.classList.remove('hidden');
-        input.setAttribute('aria-invalid', 'true');
-        input.focus();
-      }
-      document.getElementById('ha-contact-form').addEventListener('submit', function (e) {
+      var inEmail = el('vt-email');
+      inEmail.addEventListener('input', function () { el('vt-email-error').classList.add('hidden'); inEmail.removeAttribute('aria-invalid'); });
+      el('vt-email-form').addEventListener('submit', function (e) {
         e.preventDefault();
-        clearContactError();
-        var email = inEmail.value.trim();
-        if (!email) { contactError(inEmail, 'contact.emailEmptyError'); return; }
-        if (!EMAIL_RE.test(email)) { contactError(inEmail, 'contact.emailInvalidError'); return; }
-        if (!inConsent.checked) { contactError(inConsent, 'estimatePage.consentError'); return; }
-        state.email = email;
-        go(afterGuess());
+        var v = inEmail.value.trim();
+        var err = !v ? t('contact.emailEmptyError') : !EMAIL_RE.test(v) ? t('contact.emailInvalidError') : null;
+        if (err) { var p = el('vt-email-error'); p.textContent = err; p.classList.remove('hidden'); inEmail.setAttribute('aria-invalid', 'true'); inEmail.focus(); return; }
+        vt.email = v; save();
+        showSent();
+      });
+      var toastTimer = null;
+      function showSent() {
+        setStage('flow', 'sent');
+        el('vt-sent-body').textContent = fill(T('sentBody'), { email: vt.email || DEFAULT_EMAIL });
+        el('vt-resent').classList.add('hidden');
+        toastTimer = setTimeout(function () { el('vt-toast').classList.add('is-on'); }, REDUCED ? 200 : TOAST_MS);
+      }
+      function hideToast() { clearTimeout(toastTimer); el('vt-toast').classList.remove('is-on'); }
+      el('vt-resend').addEventListener('click', function () {
+        el('vt-resent').classList.remove('hidden');
+        hideToast();
+        toastTimer = setTimeout(function () { el('vt-toast').classList.add('is-on'); }, REDUCED ? 200 : TOAST_MS);
+      });
+      el('vt-change-email').addEventListener('click', function () { inEmail.value = vt.email || ''; setStage('flow', 'email'); inEmail.focus(); });
+      /* Opening the link logs the seller in, as prod's email-link login does. */
+      el('vt-toast-open').addEventListener('click', function () {
+        var s = funnel();
+        s.loggedIn = true;
+        s.contact = Object.assign({}, s.contact || {}, { sahkoposti: vt.email || DEFAULT_EMAIL });
+        write(FUNNEL_KEY, s);
+        setStage('flow', 'details');
       });
 
-      function estimateFor(km) { return Math.max(1000, round(GTX_BASE - (Number(km) - BASE_KM) * PER_KM, 10)); }
-      function calculate() {
-        state.estimate = estimateFor(state.km);
-        state.estimateFor = state.plate + '|' + state.km;
-        drawGauge();
-        gauge.classList.remove('is-guessed', 'is-range');
-        needle.style.transform = 'rotate(90deg)';
-        gauge.classList.add('is-searching');
-        rotate(BASIS === 'similar' ? ['calcSimilar1', 'calcSimilar2', 'calcSimilar3'] : ['calcGtx1', 'calcGtx2', 'calcGtx3'],
-          document.getElementById('ha-calc-status'), CALC_MS);
-        later(REDUCED ? 600 : CALC_MS, function () {
-          clearInterval(state.timer);
-          prepareEstimate(true);
-          setPhase('estimate');
+      /* ── 3. Details ──────────────────────────────────────────────────── */
+      var inName = el('vt-name'), inPhone = el('vt-phone'), inPostal = el('vt-postal'), inConsent = el('vt-consent');
+      function fillDetails() {
+        var s = funnel(), c = s.contact || {};
+        if (!vt.email) vt.email = c.sahkoposti || DEFAULT_EMAIL;
+        el('vt-email-shown').textContent = vt.email;
+        if (!inName.value) inName.value = c.kokoNimi || '';
+        if (!inPhone.value) inPhone.value = c.puhelin || '';
+        if (!inPostal.value) inPostal.value = (s.details && s.details.sijainti) || '';
+        inConsent.checked = !!c.markkinointi;
+      }
+      el('vt-email-edit').addEventListener('click', function () { inEmail.value = vt.email || ''; setStage('flow', 'email'); inEmail.focus(); });
+      function fieldErr(input, errId, msg) { var p = el(errId); p.textContent = msg; p.classList.remove('hidden'); input.setAttribute('aria-invalid', 'true'); }
+      [[inPhone, 'vt-phone-error'], [inPostal, 'vt-postal-error']].forEach(function (pair) {
+        pair[0].addEventListener('input', function () { el(pair[1]).classList.add('hidden'); pair[0].removeAttribute('aria-invalid'); });
+      });
+      el('vt-details-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var phone = inPhone.value.replace(/[\s-]/g, ''), postal = inPostal.value.trim(), bad = null;
+        if (!phone) { fieldErr(inPhone, 'vt-phone-error', t('contact.phoneError')); bad = bad || inPhone; }
+        else if (!/^(\+358|0)\d{6,12}$/.test(phone)) { fieldErr(inPhone, 'vt-phone-error', T('phoneInvalid')); bad = bad || inPhone; }
+        if (postal && !/^\d{5}$/.test(postal)) { fieldErr(inPostal, 'vt-postal-error', T('postalError')); bad = bad || inPostal; }
+        if (bad) { bad.focus(); return; }
+        var s = funnel();
+        s.contact = Object.assign({}, s.contact || {}, { sahkoposti: vt.email, puhelin: inPhone.value.trim(), markkinointi: inConsent.checked });
+        if (inName.value.trim()) s.contact.kokoNimi = inName.value.trim();
+        if (postal) { s.details = Object.assign({}, s.details || {}, { sijainti: postal }); vt.postal = postal; }
+        write(FUNNEL_KEY, s);
+        vt.tracked = true; save();
+        setStage('tracker');
+      });
+
+      /* ── 4. The tracker ──────────────────────────────────────────────── */
+      el('vt-periods').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-period]');
+        if (!b) return;
+        vt.period = Number(b.getAttribute('data-period')); save();
+        renderTracker();
+        el('vt-periods').querySelector('[data-period="' + vt.period + '"]').focus();
+      });
+      el('vt-change-car').addEventListener('click', function () {
+        vt.tracked = false; save();
+        inPlate.value = ''; inKm.value = '';
+        setStage('landing');
+        inPlate.focus();
+      });
+      [].forEach.call(document.querySelectorAll('[data-start-sell]'), function (b) { b.addEventListener('click', function () { setStage('calc'); }); });
+      window.vtMonth = function (step) {
+        ensureCar();
+        vt.months = step ? (vt.months || 0) + step : 0;
+        save();
+        var s = document.body.getAttribute('data-stage');
+        if (s === 'tracker') renderTracker();
+        if (s === 'auction') renderAuction();
+        el('vt-live').textContent = T('monthPassed');
+      };
+
+      /* ── 5. Calculating, then the auction estimate ───────────────────── */
+      function startCalc() {
+        el('vt-calc-car').textContent = carName();
+        document.querySelector('[data-calc="1"] span').textContent = fill(T('calc1'), { make: vt.car.merkki });
+        var bar = el('vt-progress-bar');
+        bar.style.transition = 'none'; bar.style.width = '0';
+        void bar.offsetWidth;
+        bar.style.transition = ''; bar.style.width = '100%';
+        [].forEach.call(document.querySelectorAll('[data-calc]'), function (li) { li.classList.remove('is-done'); li.querySelector('img').src = 'assets/step-default.svg'; });
+        var total = REDUCED ? 900 : CALC_MS;
+        [1, 2, 3].forEach(function (n) {
+          calcTimers.push(setTimeout(function () {
+            var li = document.querySelector('[data-calc="' + n + '"]');
+            li.classList.add('is-done'); li.querySelector('img').src = 'assets/step-completed.svg';
+          }, total * n / 3.4));
         });
+        calcTimers.push(setTimeout(function () { setStage('auction'); }, total + 300));
       }
-
-      /* ── The gauge ───────────────────────────────────────────────────────── */
-      var scaleMax = 40000;
-      function pointAt(v, r) {
-        var a = Math.PI - Math.min(1, Math.max(0, v / scaleMax)) * Math.PI;
-        return [120 + r * Math.cos(a), 120 - r * Math.sin(a)];
-      }
-      function lo() { return round(state.estimate * (1 - RANGE), 100); }
-      function hi() { return round(state.estimate * (1 + RANGE), 100); }
-      function drawGauge() {
-        scaleMax = Math.ceil(Math.max(state.estimate * 1.7, (state.guess || 0) * 1.15) / 5000) * 5000;
-        var ticks = '';
-        for (var i = 1; i < 8; i++) {
-          var a = pointAt(scaleMax * i / 8, 82), b = pointAt(scaleMax * i / 8, 92);
-          ticks += '<line class="ha-gauge-tick" x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '"/>';
-        }
-        document.getElementById('ha-gauge-ticks').innerHTML = ticks;
-        document.getElementById('ha-gauge-max').textContent = group(scaleMax) + ' €';
-        var p1 = pointAt(lo(), 100), p2 = pointAt(hi(), 100);
-        document.getElementById('ha-gauge-band').setAttribute('d',
-          'M' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + ' A100 100 0 0 1 ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1));
-        if (state.guess) {
-          var g = pointAt(state.guess, 100);
-          document.getElementById('ha-gauge-guess').setAttribute('transform', 'translate(' + g[0].toFixed(1) + ' ' + g[1].toFixed(1) + ')');
-          renderGuessLabel();
-        }
-      }
-      function renderGuessLabel() {
-        var text = document.getElementById('ha-gauge-guess-text');
-        text.textContent = T('gaugeYou') + ' ' + euros(state.guess);
-        var w = Math.max(60, text.textContent.length * 6.4 + 16);
-        var box = document.getElementById('ha-gauge-guess-box');
-        box.setAttribute('width', w.toFixed(0));
-        box.setAttribute('x', (-w / 2).toFixed(0));
-      }
-      function amountText(display) {
-        if (!state.estimate) return '';
-        return display === 'range' ? group(lo()) + '–' + euros(hi()) : euros(state.estimate);
-      }
-      function countUp(el, display, animated) {
-        var target = amountText(display);
-        if (!animated || REDUCED) { el.textContent = target; return; }
-        var t0 = performance.now(), dur = 1300, l = lo(), h = hi();
-        (function frame(now) {
-          var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-          el.textContent = display === 'range' ? group(round(l * e, 10)) + '–' + euros(round(h * e, 10)) : euros(round(state.estimate * e, 10));
-          if (k < 1) requestAnimationFrame(frame); else el.textContent = target;
-        })(t0);
-        /* Frames pause in a background tab; the number must still land */
-        later(dur + 100, function () { el.textContent = target; });
-      }
-
-      /* ── 3. The estimate, alone ──────────────────────────────────────────── */
-      function prepareEstimate(animated) {
-        var display = displayFor();
-        drawGauge();
-        gauge.classList.remove('is-searching');
-        gauge.classList.toggle('is-range', display === 'range');
-        gauge.classList.toggle('is-guessed', !!state.guess);
-        var deg = Math.min(1, state.estimate / scaleMax) * 180;
-        if (animated && !REDUCED) requestAnimationFrame(function () { requestAnimationFrame(function () { needle.style.transform = 'rotate(' + deg + 'deg)'; }); });
-        else needle.style.transform = 'rotate(' + deg + 'deg)';
-        var amount = document.getElementById('ha-amount');
-        amount.style.fontSize = display === 'range' ? '40px' : '';
-        countUp(amount, display, animated);
-        live.textContent = T('resultTitle') + ': ' + amountText(display) + '. ' + T('resultTag') + '.';
-      }
-      document.getElementById('ha-to-rec').addEventListener('click', function () { prepareRec(); go('rec'); });
-
-      /* ── 4. The recommendation, with one action ─────────────────────────── */
-      function whyText() {
-        if (state.route === 'overmax') return '';
-        if (state.route === 'auction') {
-          var key = state.timing === 'asap' ? 'timingAsap' : state.timing === 'within-week' ? 'timingWithinWeek' : 'timingComingMonths';
-          return fill(T('whyTiming'), { timing: T(key) });
-        }
-        if (state.situation === 'curious-value') return T('whyCurious');
-        if (state.timing === 'just-exploring' || state.situation === 'exploring-service') return T('whyExploring');
-        if (state.timing === 'later') return T('whyLater');
-        return T('whyCurious');
-      }
-      function prepareRec() {
-        var r = state.route;
-        [].forEach.call(card.querySelectorAll('[data-route]'), function (el) {
-          el.classList.toggle('hidden', (' ' + el.getAttribute('data-route') + ' ').indexOf(' ' + r + ' ') === -1);
-        });
-        document.getElementById('ha-rec-tag').classList.toggle('hidden', r === 'overmax');
-        var title = document.getElementById('ha-res-title'), lead = document.getElementById('ha-res-lead');
-        if (r === 'overmax') {
-          title.textContent = t('huutokaupat.sorry');
-          lead.textContent = t('huutokaupat.limit');
-        } else {
-          title.textContent = T(r === 'auction' ? 'titleAuction' : r === 'plan' ? 'titlePlan' : 'titleExplore');
-          lead.textContent = T(r === 'auction' ? 'leadAuction' : r === 'plan' ? (state.situation === 'buying-another' ? 'leadPlanBuying' : 'leadPlan') : 'leadExplore');
-        }
-        var why = whyText();
-        document.getElementById('ha-res-why-text').textContent = why;
-        document.getElementById('ha-res-why').classList.toggle('hidden', !why);
-
-        var showDemand = r !== 'overmax' && state.demand !== 'normal';
-        document.getElementById('ha-res-demand').classList.toggle('hidden', !showDemand);
-        if (showDemand) document.getElementById('ha-res-demand-text').textContent = T(state.demand === 'high' ? 'demandHigh' : 'demandLow');
-
-        var mainCta = r === 'auction' || (r === 'explore' && state.demand === 'high');
-        document.getElementById('ha-main-cta').classList.toggle('hidden', !mainCta);
-        document.getElementById('ha-main-cta-fit').classList.toggle('hidden', r === 'auction');
-        document.getElementById('ha-remind').classList.toggle('hidden', mainCta || r === 'overmax');
-        renderRemind(false);
-
-        /* Sections after the recommendation, by route */
-        document.getElementById('ha-sec-similar').classList.toggle('hidden', BASIS !== 'similar');
-        document.getElementById('ha-sec-budget').classList.toggle('hidden', !((r === 'plan' || r === 'explore') && state.situation === 'buying-another'));
-        document.getElementById('ha-sec-call').classList.toggle('hidden', !(r === 'explore' || r === 'plan'));
-        document.getElementById('ha-how').classList.toggle('hidden', r === 'overmax');
-        renderSimilar();
-        renderBudget();
-        live.textContent = title.textContent + '. ' + lead.textContent;
-      }
-      document.getElementById('ha-edit').addEventListener('click', function (e) {
-        e.preventDefault();
-        state.history = ['car'];
-        setPhase('q1');
-      });
-      document.getElementById('ha-remind-later').addEventListener('click', function (e) {
-        e.preventDefault();
-        document.getElementById('ha-main-cta').classList.add('hidden');
-        document.getElementById('ha-remind').classList.remove('hidden');
-        renderRemind(false);
-        var first = document.querySelector('#ha-remind input:checked') || document.querySelector('#ha-remind input');
-        if (first) first.focus();
+      el('vt-how-toggle').addEventListener('click', function () {
+        var open = this.getAttribute('aria-expanded') === 'true';
+        this.setAttribute('aria-expanded', String(!open));
+        el('vt-how-answer').classList.toggle('hidden', open);
       });
 
-      /* How it works: its button gets the estimate on the landing and opens
-         the listing after the recommendation. */
+      /* ── Into the funnel, with the car already found ─────────────────── */
+      function goToFunnel(e) {
+        if (e) e.preventDefault();
+        ensureCar();
+        var prev = funnel();
+        var s = { hero: { plate: vt.plate, km: group(vt.km).replace(/ /g, ' ') }, details: {} };
+        if (prev.loggedIn) s.loggedIn = prev.loggedIn;
+        s.contact = Object.assign({}, prev.contact || {});
+        VEHICLE_FIELDS.forEach(function (k) { s.details[k] = vt.car[k] || ''; });
+        if (prev.details && prev.details.sijainti) s.details.sijainti = prev.details.sijainti;
+        write(FUNNEL_KEY, s);
+        window.location.href = 'details.html?' + new URLSearchParams({ plate: vt.plate, km: s.hero.km, from: 'price-guess' });
+      }
+      [].forEach.call(document.querySelectorAll('[data-go]'), function (a) { a.addEventListener('click', goToFunnel); });
+
+      /* The How it works and stats buttons: back to the form on the landing,
+         into the funnel on the auction result. */
+      function renderHowCta() {
+        var onAuction = document.body.getAttribute('data-stage') === 'auction';
+        [].forEach.call(document.querySelectorAll('[data-how-cta]'), function (a) { a.textContent = onAuction ? T('auctionCta') : T('carBtn'); });
+      }
       [].forEach.call(document.querySelectorAll('[data-how-cta]'), function (a) {
         a.addEventListener('click', function (e) {
-          if (document.body.getAttribute('data-stage') === 'rec' && state.route !== 'overmax') { goToFunnel(e); return; }
           e.preventDefault();
+          if (document.body.getAttribute('data-stage') === 'auction') { goToFunnel(); return; }
           window.scrollTo({ top: 0, behavior: REDUCED ? 'auto' : 'smooth' });
           inPlate.focus({ preventScroll: true });
         });
       });
-      function renderHowCta() {
-        var rec = document.body.getAttribute('data-stage') === 'rec';
-        [].forEach.call(document.querySelectorAll('[data-how-cta]'), function (a) { a.textContent = rec ? T('ctaMain') : T('carBtn'); });
-      }
-      new MutationObserver(renderHowCta).observe(document.body, { attributes: true, attributeFilter: ['data-stage'] });
 
-      function renderSimilar() {
-        var box = document.getElementById('ha-similar');
-        if (BASIS !== 'similar' || !window.SimilarCars || !state.estimate) { box.innerHTML = ''; return; }
-        var car = { make: state.car.merkki || 'Volkswagen', model: state.car.malli || 'Amarok' };
-        var cars = window.SimilarCars.mock(car, 'same');
-        var sorted = cars.map(function (c) { return c.accepted_offer; }).sort(function (a, b) { return a - b; });
-        var k = state.estimate / sorted[Math.floor(sorted.length / 2)];
-        cars.forEach(function (c) { c.accepted_offer = round(c.accepted_offer * k, 50); c.highest_offer = c.accepted_offer; });
-        window.SimilarCars.render(box, { variant: 'cards', price: 'accepted', groups: [{ car: car, cars: cars }], initial: 6 });
+      /* ── FAQ: the front page's accordion ─────────────────────────────── */
+      var CARET = '<svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg>';
+      function buildFaq() {
+        var list = el('vt-faq');
+        list.innerHTML = [1, 2, 3, 4, 5].map(function () {
+          return '<div class="faq-item"><button class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false"><span></span>' + CARET + '</button>' +
+            '<div class="faq-body"><div><p class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5"></p></div></div></div>';
+        }).join('');
+        [].forEach.call(list.children, function (row, i) {
+          row.querySelector('.faq-trigger span').textContent = T('faq' + (i + 1) + 'Q');
+          row.querySelector('.faq-body p').textContent = T('faq' + (i + 1) + 'A');
+          var btn = row.querySelector('.faq-trigger');
+          btn.addEventListener('click', function () {
+            var open = row.classList.toggle('open');
+            btn.setAttribute('aria-expanded', String(open));
+          });
+        });
       }
-
-      var inCash = document.getElementById('ha-cash');
-      moneyInput(inCash);
-      function renderBudget() {
-        if (!state.estimate) return;
-        var c = Number(digits(inCash.value)) || 0;
-        document.getElementById('ha-budget-total').textContent = displayFor() === 'range'
-          ? group(lo() + c) + '–' + euros(hi() + c) : euros(state.estimate + c);
-      }
-      inCash.addEventListener('input', renderBudget);
-
-      /* ── The reminder ────────────────────────────────────────────────────── */
-      var remindForm = document.getElementById('ha-remind-form');
-      var remindDone = document.getElementById('ha-remind-done');
-      function suggestedRemind() { return state.timing === 'coming-months' ? '1' : '3'; }
-      function renderRemind(announce) {
-        var done = !!state.remind;
-        remindForm.classList.toggle('hidden', done);
-        remindDone.classList.toggle('hidden', !done);
-        if (done) {
-          document.getElementById('ha-remind-done-text').textContent = fill(T('remindDone'), { when: T('remindWhen' + state.remind), email: state.email });
-          if (announce) live.textContent = document.getElementById('ha-remind-done-text').textContent;
-        } else if (!checked('remind')) {
-          var pick = remindForm.querySelector('input[value="' + suggestedRemind() + '"]');
-          if (pick) pick.checked = true;
-        }
-      }
-      remindForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        state.remind = checked('remind') || suggestedRemind();
-        renderRemind(true);
-      });
-      document.getElementById('ha-remind-change').addEventListener('click', function (e) {
-        e.preventDefault();
-        state.remind = null;
-        renderRemind(false);
-        remindForm.querySelector('input:checked').focus();
-      });
-
-      /* ── Follow-up: the expert call ──────────────────────────────────────── */
-      var callForm = document.getElementById('ha-call-form');
-      var callDone = document.getElementById('ha-call-done');
-      var callErr  = document.getElementById('ha-call-error');
-      var inPhone  = document.getElementById('ha-phone');
-      var PHONE_RE = /^(?:\+358|0)\d{5,11}$/;
-      function renderCall() {
-        var done = !!state.phone;
-        callForm.classList.toggle('hidden', done);
-        callDone.classList.toggle('hidden', !done);
-        if (done) document.getElementById('ha-call-done-body').textContent = fill(T('callDoneBody'), { phone: state.phone });
-      }
-      inPhone.addEventListener('input', function () { callErr.classList.add('hidden'); inPhone.removeAttribute('aria-invalid'); });
-      callForm.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var raw = inPhone.value.trim();
-        var key = !raw ? 'contact.phoneError' : !PHONE_RE.test(raw.replace(/[\s()-]/g, '')) ? 'estimatePage.phoneInvalidError' : null;
-        if (key) {
-          callErr.textContent = t(key);
-          callErr.classList.remove('hidden');
-          inPhone.setAttribute('aria-invalid', 'true');
-          inPhone.focus();
-          return;
-        }
-        state.phone = raw;
-        renderCall();
-        live.textContent = T('callDoneTitle') + ' ' + document.getElementById('ha-call-done-body').textContent;
-      });
-      document.getElementById('ha-call-change').addEventListener('click', function (e) {
-        e.preventDefault();
-        inPhone.value = state.phone;
-        state.phone = '';
-        renderCall();
-        inPhone.focus();
-      });
-
-      /* Into the funnel with the car found and the answers given: a new draft
-         (contact and login kept), the vehicle fields, the seller's own
-         estimate as the price step's estimate, and the email, consent and
-         phone for the contact step. The answer to whichever intent question
-         the price step's live arm asks is written under that question's id,
-         so the step shows it already chosen; both answers are kept apart
-         under estimateIntent. from=price-guess skips the loading screen. */
-      var INTENT_IDS = { v1: { q: 'handover-timing', key: 'timing' }, v3: { q: 'selling-situation', key: 'situation' } };
-      function goToFunnel(e) {
-        if (!state.plate || state.route === 'overmax') return;
-        e.preventDefault();
-        var prev = getStore();
-        var s = { hero: { plate: state.plate, km: group(state.km).replace(/ /g, ' ') }, details: {} };
-        if (prev.loggedIn) s.loggedIn = prev.loggedIn;
-        s.contact = Object.assign({}, prev.contact || {}, state.email ? { sahkoposti: state.email, markkinointi: true } : {});
-        if (state.phone) s.contact.puhelin = state.phone;
-        if (state.guess) s.priceExpectation = String(state.guess);
-        s.estimateIntent = { 'handover-timing': state.timing, 'selling-situation': state.situation, route: state.route, demand: state.demand };
-        var intentArm = window.protoVariantStored ? window.protoVariantStored('seller-intent') : null;
-        var ids = INTENT_IDS[intentArm];
-        if (ids && state[ids.key]) { s.sellerIntentQuestion = ids.q; s.sellerIntentAnswer = state[ids.key]; }
-        VEHICLE_FIELDS.forEach(function (k) { s.details[k] = state.car[k] || ''; });
-        setStore(s);
-        window.location.href = 'details.html?' + new URLSearchParams({ plate: state.plate, km: s.hero.km, from: 'price-guess' });
-      }
-      [].forEach.call(document.querySelectorAll('[data-go]'), function (a) { a.addEventListener('click', goToFunnel); });
 
       document.addEventListener('av:langchange', function () {
-        document.title = T('docTitle') + ' – AutoVex';
-        renderCounts();
+        buildFaq();
         renderHowCta();
-        if (state.plate && state.phase !== 'fetching') {
-          document.getElementById('ha-side-car').innerHTML = carCardHtml();
-          document.getElementById('ha-found-car').innerHTML = carCardHtml();
-        }
-        if (state.estimate && state.guess) renderGuessLabel();
-        if (state.phase === 'estimate') document.getElementById('ha-amount').textContent = amountText(displayFor());
-        if (state.phase === 'rec') prepareRec();
-        if (state.phase !== 'car') renderSide();
-        renderCall();
+        var s = document.body.getAttribute('data-stage');
+        if (s === 'flow') { renderDemand(); if (el('vt-flow').getAttribute('data-phase') === 'sent') el('vt-sent-body').textContent = fill(T('sentBody'), { email: vt.email || DEFAULT_EMAIL }); }
+        if (s === 'tracker' || s === 'calc' || s === 'auction') renderStrip();
+        if (s === 'tracker') renderTracker();
+        if (s === 'auction') renderAuction();
+        if (s === 'calc') { el('vt-calc-car').textContent = carName(); document.querySelector('[data-calc="1"] span').textContent = fill(T('calc1'), { make: vt.car.merkki }); }
       });
 
-      /* ── Start ───────────────────────────────────────────────────────────── */
-      document.title = T('docTitle') + ' – AutoVex';
-      renderCounts();
-      renderHowCta();
-      var store = getStore();
-      var hero = store.hero || {};
-      if (hero.plate) inPlate.value = normalizePlate(hero.plate);
-      if (hero.km && digits(hero.km)) inKm.value = group(digits(hero.km));
-      if ((store.contact || {}).sahkoposti) inEmail.value = store.contact.sahkoposti;
-
-      var SCENARIOS = {
-        'route-auction':     { timing: 'within-week', situation: 'buying-another', guess: 13000, screen: 'estimate' },
-        'route-auction-rec': { timing: 'within-week', situation: 'buying-another', guess: 13000, screen: 'rec' },
-        'route-explore':     { timing: 'just-exploring', situation: 'curious-value', guess: 13000, screen: 'estimate' },
-        'route-explore-rec': { timing: 'just-exploring', situation: 'curious-value', guess: 13000, screen: 'rec' },
-        'route-plan':        { timing: 'later', situation: 'buying-another', guess: 13000, screen: 'estimate' },
-        'route-plan-rec':    { timing: 'later', situation: 'buying-another', guess: 13000, screen: 'rec' },
-        'route-overmax':     { km: '305000', screen: 'estimate' }
-      };
-      var sc = SCENARIOS[params.get('scenario')];
-      if (sc) {
-        state.plate = normalizePlate(hero.plate || 'LRX-345');
-        state.km = sc.km || digits(hero.km || '148000');
-        state.car = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult()) || {};
-        state.timing = sc.timing || null;
-        state.situation = sc.situation || null;
-        state.guess = sc.guess || null;
-        state.email = inEmail.value || 'matti.meikalainen@example.fi';
-        inEmail.value = state.email;
-        inConsent.checked = true;
-        inPlate.value = state.plate;
-        inKm.value = group(state.km);
-        if (state.guess) inGuess.value = group(state.guess);
-        ['timing', 'situation'].forEach(function (n) {
-          var el = state[n] && document.querySelector('input[name="' + n + '"][value="' + state[n] + '"]');
-          if (el) el.checked = true;
-        });
-        state.route = routeFor();
-        state.demand = demandFor();
-        state.estimate = estimateFor(state.km);
-        state.estimateFor = state.plate + '|' + state.km;
-        state.history = ['car'];
-        document.getElementById('ha-found-car').innerHTML = carCardHtml();
-        state.phase = 'estimate';
-        if (sc.screen === 'estimate') { prepareEstimate(false); setPhase('estimate'); }
-        else { prepareRec(); setPhase('rec'); }
-        window.scrollTo(0, 0);
+      /* ── Start ───────────────────────────────────────────────────────── */
+      buildFaq();
+      el('vt-feat-badge').innerHTML = window.buildRegBadge(DEFAULT_PLATE);
+      var scenario = params.get('scenario');
+      if (scenario && scenario !== 'landing') {
+        ensureCar(); save();
+        if (['details', 'tracker', 'calculating', 'auction'].indexOf(scenario) !== -1) {
+          var s = funnel();
+          if (!s.loggedIn) { s.loggedIn = true; s.contact = Object.assign({}, s.contact || {}, { sahkoposti: (s.contact && s.contact.sahkoposti) || DEFAULT_EMAIL }); write(FUNNEL_KEY, s); }
+          if (!vt.email) { vt.email = (s.contact && s.contact.sahkoposti) || DEFAULT_EMAIL; save(); }
+        }
+        if (scenario === 'email') setStage('flow', 'email');
+        else if (scenario === 'email-sent') { if (!vt.email) vt.email = DEFAULT_EMAIL; showSent(); }
+        else if (scenario === 'details') setStage('flow', 'details');
+        else if (scenario === 'tracker') setStage('tracker');
+        else if (scenario === 'calculating') setStage('calc');
+        else if (scenario === 'auction') setStage('auction');
+        else setStage('landing');
+      } else if (!scenario && vt.tracked && vt.car && loggedIn()) {
+        ensureCar();
+        setStage('tracker');
+      } else {
+        setStage('landing');
       }
     })();
   </script>
-
   <script src="proto-bar.js"></script>
 </body>
 </html>

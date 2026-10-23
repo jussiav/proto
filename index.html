@@ -154,10 +154,6 @@
        interaction happens. Its mini estimate card is decoration. */
     #price-estimate-teaser { display: none; }
     html[data-price-guess-arm="v4"] #price-estimate-teaser { display: block; }
-    .est-t-needle { transform-box: view-box; transform-origin: 120px 120px; animation: est-t-sweep 4s ease-in-out infinite alternate; }
-    @keyframes est-t-sweep { 0% { transform: rotate(40deg); } 50% { transform: rotate(120deg); } 100% { transform: rotate(78deg); } }
-    .est-t-amount { filter: blur(7px); user-select: none; }
-    @media (prefers-reduced-motion: reduce) { .est-t-needle { animation: none; transform: rotate(78deg); } }
 
     /* v3: the Christmas campaign's teaser, "Kirje Joulupukille" */
     #price-santa-teaser { display: none; }
@@ -843,26 +839,22 @@
     })();
   </script>
 
-  <!-- ── Price guess v4: price estimate section, links to hinta-arvio.html ── -->
+  <!-- ── Price guess v4: car value tracker section, links to hinta-arvio.html ── -->
   <section id="price-estimate-teaser" class="px-10 py-20 max-md:px-5 max-md:py-12 bg-white" aria-labelledby="est-t-title">
     <div class="flex items-center gap-16 w-full max-w-[1366px] mx-auto max-md:flex-col max-md:gap-10">
       <div class="flex-1 flex flex-col gap-5">
-        <h2 id="est-t-title" class="m-0 font-barlow font-bold text-slate-900 text-4xl md:text-5xl leading-tight" data-i18n="estimateTeaser.title">Ilmainen hinta-arvio autostasi</h2>
-        <p class="m-0 font-dm text-slate-600 text-base leading-5 max-w-[520px]" data-i18n="estimateTeaser.body">Arvioimme autosi ja tilanteesi ja kerromme, kannattaako autosi laittaa tarjouskilpailuun nyt vai myöhemmin.</p>
-        <a href="hinta-arvio.html" class="self-start inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg hover:bg-[#0A59EB] transition-colors max-sm:self-stretch" data-i18n="estimateTeaser.cta">Tarkista autosi hinta</a>
+        <h2 id="est-t-title" class="m-0 font-barlow font-bold text-slate-900 text-4xl md:text-5xl leading-tight" data-i18n="estimateTeaser.title">Seuraa autosi arvoa</h2>
+        <p class="m-0 font-dm text-slate-600 text-base leading-5 max-w-[520px]" data-i18n="estimateTeaser.body">Katso autosi arvo maksutta ja saat päivitetyn arvion kerran kuukaudessa. Myy, kun aika on sinulle sopiva.</p>
+        <a href="hinta-arvio.html" class="self-start inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm font-bold text-base rounded-lg hover:bg-[#0A59EB] transition-colors max-sm:self-stretch" data-i18n="estimateTeaser.cta">Katso autosi arvo</a>
       </div>
       <div class="flex-1 flex justify-center max-md:w-full">
         <!-- A second way in, hidden from assistive tech: the button beside it carries the name. -->
         <a href="hinta-arvio.html" class="block w-full max-w-[360px] bg-av-cream rounded-3xl p-8 text-center" tabindex="-1" aria-hidden="true">
           <div class="bg-white rounded-xl p-6 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
-            <p class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="estimateTeaser.cardKicker">Autosi hinta-arvio</p>
-            <svg viewBox="0 0 240 140" class="block w-full max-w-[220px] mx-auto mt-3">
-              <defs><linearGradient id="est-t-arc" x1="0" x2="1"><stop offset="0" stop-color="#D7EDFF"/><stop offset="1" stop-color="#88CFFF"/></linearGradient></defs>
-              <path d="M20 120 A100 100 0 0 1 220 120" fill="none" stroke="url(#est-t-arc)" stroke-width="16" stroke-linecap="round"/>
-              <g class="est-t-needle"><line x1="120" y1="120" x2="38" y2="120" stroke="#0F172A" stroke-width="5" stroke-linecap="round"/><circle cx="120" cy="120" r="9" fill="#0F172A"/></g>
-            </svg>
-            <p class="est-t-amount m-0 mt-2 font-barlow font-bold text-slate-900 text-4xl leading-10">12 340 €</p>
-            <span class="mt-3 inline-flex items-center px-2 py-1 font-dm text-xs xs:text-sm rounded border bg-amber-50 border-amber-400 text-amber-700" data-i18n="estimateTeaser.cardTag">Arvio, ei tarjous</span>
+            <p class="m-0 font-dm text-sm text-slate-500 text-left" data-i18n="estimateTeaser.cardKicker">Autosi viimeisin arvio</p>
+            <p class="m-0 mt-1 font-barlow font-bold text-slate-900 text-4xl leading-10 text-left">12&nbsp;340&nbsp;€</p>
+            <p class="m-0 mt-3 font-dm text-sm text-slate-500 text-left"><span data-i18n="estimateTeaser.cardChange">2 vuoden muutos</span> <b class="text-slate-900">−13,2&nbsp;%</b></p>
+            <svg viewBox="0 0 220 80" class="block w-full h-auto mt-3" aria-hidden="true"><polygon points="0,14 22,18 44,16 66,24 88,30 110,27 132,38 154,44 176,42 198,52 220,58 220,80 0,80" fill="#EEF6FA" opacity=".8"/><polyline points="0,14 22,18 44,16 66,24 88,30 110,27 132,38 154,44 176,42 198,52 220,58" fill="none" stroke="#2890FF" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>
           </div>
         </a>
       </div>

@@ -77,7 +77,7 @@
     var xmas = pgArm === 'v3';
     var est = pgArm === 'v4';
     var pgKey = est ? 'estimateTeaser.navLabel' : xmas ? 'priceSanta.navLabel' : pgArm === 'v2' ? 'priceEstimate.sign' : 'priceGuess.sign';
-    var pgLabel = est ? 'Hinta-arvio' : xmas ? 'Kirje Pukille' : pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';
+    var pgLabel = est ? 'Autosi arvo' : xmas ? 'Kirje Pukille' : pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';
     var pgGlyph = est ? '€' : xmas ? '❄' : '★';
     var pgHref = est ? 'hinta-arvio.html' : xmas ? 'santa.html' : 'price-guess.html';
     var pgHere = est ? onEstimate : xmas ? onSanta : onPriceGuess;

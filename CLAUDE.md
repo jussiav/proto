@@ -842,7 +842,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
-| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (2026-10-22) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: an estimate page that routes the seller by the funnel's intent questions and the car, keeping the funnel offered to almost everyone | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
+| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 
 **Completed initiatives:**
@@ -3090,86 +3090,75 @@ give a real price.
   working translation. Seasonal colours (Tailwind red, green, amber) and
   emoji in the USP cards are campaign choices, not tokens.
 
-### Price guess `v4` — Hinta-arvio, a router in place of `/hinta-arvio` (2026-10-22)
+### Price guess `v4` — Autosi arvo, a value tracker in place of `/hinta-arvio` (2026-10-23)
 
-After the team's replies to v1–v3. Sebu (CEO): credible estimates (GT-X + AI),
-not "guesses"; many sellers want an estimate to plan the next car; an expert
-call can sharpen it; then move them into the auction. Pia (CMO): consumers do
-not read, and want the estimate they came for. Marcus: serious entry,
-playful result. **Jussi's framing, which shaped the build:** the estimate
-question is really "what do we do with sellers who are not ready yet". Funnel
-conversion rose when the funnel's own estimate was removed years ago, while
-acceptance fell and dealers got sellers who never meant to sell; yet some
-sellers who say they are not selling do accept offers. So v4 is a **router,
-not a gate**: the seller's answers and the car decide what is shown first,
-and the funnel stays offered to almost everyone.
+Rebuilt from scratch on 2026-10-23 after the team's replies to the first v4
+(a router by intent questions, 2026-10-22, now gone; git history has it).
+Jussi's brief: an AutoVex version of Motorway's Car Value Tracker
+(motorway.co.uk/car-value-tracker), keeping the page's front-page look.
 
 - **Prod today:** `/hinta-arvio` (`PriceEstimateController`, Vue route
-  `price-estimation`, noindex): plate + km, a GT-X (Netwheels) estimate,
-  "Laita autosi myyntiin", no contact details. Prod's GT-X + AI tool
-  (`SalesAdvisorPricingToolV2`, `OpenAiPriceAdvice`) is the advisors'.
-- **Built from the site's own parts** (Jussi, 2026-10-22: the navy page, the
-  context-free wizard and the page's unique copy did not belong to the site):
-  - **Landing** = the front page hero (brand-blue gradient, centred title,
-    the hero's plate and mileage fields with their markup and validation,
-    turquoise "Hae hinta-arvio", prod's `/hinta-arvio` label), then the front
-    page's own **How it works** and **stats** sections, copied with their
-    markup. Their buttons scroll to the form here, and become "Täytä
-    myynti-ilmoitus" once there is a recommendation.
-  - **Wizard** = the funnel's layout: left column with the funnel's step bar
-    (Auto · Tilanteesi · Hinta-arvio · Suositus, the funnel's icons), Barlow
-    step titles, the funnel's radio cards, blue "Jatka" and "Takaisin"; right
-    column the funnel's **cream sidebar** with prod's car card
-    (`buildCarCard`) and a checklist of what the seller gets (estimate, then
-    its value · recommendation · the email report), ticked as they arrive. The
-    landing sections hide during the wizard. Each step scrolls to the top.
-  - Fetching uses prod's vehicle-info loading content (`car_loading.svg`,
-    "Haetaan autosi perustiedot", "Muutama sekunti jäljellä").
-- **Every route now gets the estimate** (Jussi: a ready seller came for an
-  estimate too): q1 → q2 → own estimate (price step's field) → email, once →
-  gauge → **"Autosi hinta-arvio"** (prod's result title) with the number or
-  range, "Arvio, ei tarjous" (UiBadge amber), the seller's mark "Oma arviosi
-  X €", and prod's two `price_estimation_description` lines as the only
-  caveat → "Katso suosituksemme".
-- **The recommendation**, one action: auction → three facts + "Täytä
-  myynti-ilmoitus"; explore → the reminder (radio cards), or with high demand
-  the listing + "Muistuta minua myöhemmin"; plan → the reminder; overmax →
-  Huutokaupat.com. The demand line uses the funnel's (i) info line. Below:
-  similar cars (basis `similar`), the budget field (buying another car), How
-  it works, the expert call, stats.
-- **Removed:** the navy hero and intro column, the dev-only route line, the
-  page's own auction section (four steps, fit list), the basis section, and
-  the "Hinta-arvio on suuntaa antava…" fine print (prod's description says it
-  once). Front-page section restyled to the site's white section + cream card.
-- **Funnel button everywhere:** "Täytä myynti-ilmoitus" (Jussi).
-- **Demand** stands in for how attractive the car is to AutoVex buyers:
-  model year and mileage (≤5 years and ≤120 000 km high; ≥15 years or >240 000
-  km low). High and low each add one line to the recommendation. A
-  placeholder for a real signal.
-- **Bar, Events → "Variant 4 — estimate and car":** estimate format (per
-  route / number / range), basis (GT-X / similar cars sold, the Similar cars
-  cards scaled to the estimate), demand (from the car / high / normal / low).
-- **Estimate is deterministic:** mock GT-X 12 000 € at 148 000 km, −0.03
-  €/km, rounded to 10 €.
-- **Handoff:** v2/v3's, plus the seller's own estimate as `priceExpectation`,
-  the phone as `contact.puhelin`, both answers and the route under
-  `estimateIntent`, and the answer to whichever question the live seller-intent
-  arm asks under `sellerIntentQuestion` / `sellerIntentAnswer`, so the price
-  step shows it already chosen.
-- **Scenarios:** `route-auction` / `route-auction-rec`, `route-explore` /
-  `route-explore-rec`, `route-plan` / `route-plan-rec`, `route-overmax`. Redirects: v1/v2 → `price-guess.html`, v3 → `santa.html`.
-- **Open before launch:** required marketing consent (Legal); the reminder,
-  the updated estimate and the estimate email do not exist yet; the call
-  promise needs Ops; whether GT-X + AI or accepted offers can back a consumer
-  estimate (Marcus); the route thresholds need 104_combi's acceptance rate by
-  intent answer (Analytics); "~1 day to respond" rests on prod's default
-  `reaction_time_for_offers` and "~5 business days" on AutoVex exclusive's
-  figure; this routing and Seller intent phase 2 (`deriveOutcome`) are the
-  same decision and should share one logic.
-- Copy `estimatePage.*` / `estimateTeaser.*`, Claude's draft; the two
-  questions are `intent.*`, `basisGtx` / `finePrint` adapt prod's
-  `price_estimation_description`, the timeline's steps 2–4 lean on prod's
-  `howItWorks.*`, the phone error is prod's `validation.phone`.
+  `price-estimation`, noindex): plate + km, a GT-X estimate, "Laita autosi
+  myyntiin", no contact details.
+- **Flow, one page, `hinta-arvio.html`:**
+  1. **Landing**: the front page hero with its plate and mileage fields kept
+     together (Jussi: no reason to split them as Motorway does), turquoise
+     "Katso autosi arvo"; then Arvioi · Seuraa · Myy, three feature cards with
+     cream preview panels, what lowers and holds value, how we value, a FAQ
+     (the front page's accordion), the front page's How it works and stats.
+  2. **Loading**: prod's vehicle-info loading screen, 4 s.
+  3. **Email**: "Syötä sähköpostisi jatkaaksesi" under a demand card
+     ("{dealers} autoliikettä teki viime kuussa AutoVexissä {offers}
+     tarjousta {make}-autoista", mock figures). A logged-in seller skips it.
+  4. **Login link sent**: our existing email-link login. **No email is built**
+     (Jussi): the success page's "Sinulla on 1 uusi sähköposti" toast stands in,
+     and "Avaa linkki" sets `loggedIn` + `contact.sahkoposti`, as the real link
+     would. Shown in test mode too, since the flow continues through it.
+  5. **Details**: email with Muokkaa, name, phone (required), postcode
+     (optional, 5 digits), prod's marketing checkbox, "Näytä arvio". Writes
+     into the funnel's contact step.
+  6. **Tracker**: the car on a blue strip (reg badge, name, details,
+     "Vaihda auto"), an overlapping white card with the value*, "Aloita
+     myynti", period chips 3 kk / 6 kk / 1 v / 2 v / 3 v (UiButton sm: secondary
+     when chosen, ghost otherwise), the change for the period, and **the
+     decision page's chart** (line #2890FF, #EEF6FA fill, boxed end label) with
+     HTML axis labels so they stay legible on a phone (middle x labels hidden
+     below 768px). Then "{make} markkinoilla": four cards (demand, mileage vs
+     age, season, age).
+  7. **Calculating** (~3.6 s, three ticking steps), then the **estimated
+     auction result**: cream "Miksi AutoVex?" + a white card with the figure,
+     "Miten arvio lasketaan?", "Kerro autostasi" into the funnel, three points
+     and the 4,7/5 rating; then a depreciation chart (history solid, forecast
+     dashed), How it works and stats.
+- **Every valid plate under 280 000 km can be valued** (Jussi): the plate
+  and mileage use the front page's rules and errors, 280 000+ shows
+  `hero.mileageMaxError`, and the car is `PROTO_MOCK.lookupResult()` with any
+  missing field filled from the seed Amarok, so Seed car's "Car details"
+  outcome never blocks a value.
+- **Mock value, deterministic:** decision.html's 12 000 € at 148 000 km,
+  −0.03 €/km; 36 months of history at ~0.6 %/month with a seasonal wave and
+  plate-seeded noise. Events → **Value tracker — time**: "A month passes"
+  (−1.1 %, one more point) and "Back to this month".
+- **The value claim** is Motorway's, in our terms: "based on offers
+  dealerships made on AutoVex for similar cars". **Needs Analytics** before
+  launch: whether accepted or highest offers can back a consumer estimate.
+- **State:** `localStorage['autovex_value_tracker']` (plate, km, car, email,
+  period, simulated months, tracked). A returning, logged-in seller who has
+  tracked lands on the tracker. `?scenario=` is kept in step with the stage so
+  the bar and a reload agree.
+- **Handoff:** "Aloita myynti" → calculating → auction; "Kerro autostasi" opens
+  `details.html?plate=&km=&from=price-guess` with the car written, as v2/v3 do.
+- **Scenarios:** `landing`, `email`, `email-sent`, `details`, `tracker`,
+  `calculating`, `auction`. Redirects: v1/v2 → `price-guess.html`, v3 →
+  `santa.html`.
+- **Front page:** `#price-estimate-teaser` is now "Seuraa autosi arvoa" with a
+  mini value card and the chart; the nav sign reads "Autosi arvo".
+- **Open before launch:** the monthly email and its unsubscribe; whether the
+  marketing checkbox is the right consent for it (Legal); what backs the value
+  (Analytics); "Tarjoukset tyypillisesti 36 tunnissa" needs checking against
+  real auction times.
+- Copy `valueTracker.*` / `estimateTeaser.*`, Claude's draft; English a
+  working translation. `estimatePage.*` is gone.
 
 ## Hero theme — `v1` Syksy (ideation)
 
