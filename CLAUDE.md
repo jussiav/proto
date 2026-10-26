@@ -3143,16 +3143,27 @@ Jussi's brief: an AutoVex version of Motorway's Car Value Tracker
   2. **Loading**: prod's vehicle-info loading screen, 4 s.
   3. **Email**: opens as the funnel's details step does, "Löysimme autosi
      tiedot!" (`details.title`) with "Anna sähköpostisi jatkaaksesi." under it,
-     then the "new email" illustration (`success-verify-email-illustration.png`,
-     220px tall), then the field. The link-sent screen's envelope is the same
-     220px size, with the demand card in the
+     then the funnel's car illustration from that same step (280px wide, as
+     on `details.html`; the "new email" illustration is the link-sent
+     screen's), then the field, with the demand card in the
      sidebar ("{dealers} autoliikettä teki viime kuussa AutoVexissä {offers}
      tarjousta {make}-autoista", mock figures). A logged-in seller skips it.
-  4. **Login link sent**: our existing email-link login. **No email is built**
+  4. **Login link sent**: **the success page's unverified state, reused**
+     (Jussi, 2026-10-26, so v4 needs no new design here): centred 24/26
+     headline "Tarkista sähköpostisi" (Jussi: "Autosi arvo on valmis!" claimed
+     too much) and subtext, the
+     288px verify-email illustration, and prod's blue-bordered card ("Vahvista
+     sähköpostisi jatkaaksesi", email chip with pencil, "Etkö saanut
+     sähköpostia?", resend, change). The card body is v4's own
+     (`valueTracker.sentCardBody`); the rest is `success.emailCard*`. Change
+     and the pencil go back to the email step instead of the success page's
+     inline form. "Vahvistuslinkki" throughout, also in the email step's note.
+     Our existing email-link login. **No email is built**
      (Jussi): the success page's "Sinulla on 1 uusi sähköposti" toast stands in,
      and "Avaa linkki" sets `loggedIn` + `contact.sahkoposti`, as the real link
      would. Shown in test mode too, since the flow continues through it.
-  5. **Details**: "Arvioimme autosi hinnan", email with Muokkaa, name, phone
+  5. **Details**: "Arvioimme autosi hinnan", then name, phone (no email row:
+     the address is already verified, so it is neither shown nor editable)
      and postcode, **all required** (name: `contact.nameError`; postcode:
      prod's "Pakollinen tieto" empty, `postalError` when not 5 digits), prod's marketing checkbox, "Näytä arvio". Writes
      into the funnel's contact step.
