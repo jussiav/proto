@@ -3228,6 +3228,23 @@ Jussi's brief: an AutoVex version of Motorway's Car Value Tracker
   real auction times.
 - Copy `valueTracker.*` / `estimateTeaser.*`, Claude's draft; English a
   working translation. `estimatePage.*` is gone.
+- **Figma:** file `sHQk3FUhEZM7EFbYaAcjxX`, page `Price estimate v4 (AI
+  drafting)` `7366:5`. `Components — Price estimate v4` `7366:6` holds the
+  local components: `Nav / Blue` `7368:37` (Account text, Menu boolean),
+  `Nav / Blue (phone)` `7373:394`, `Rating / On blue` `7367:5` and `/ On
+  light` `7367:23` (Google logo uploaded), `Step` set `7367:54` (State
+  Done/Active/Locked, Label), `Pill` `7367:55`, `Car header` `7367:57`,
+  `Demand card` `7367:76`, `Car card / Funnel (no photo)` `7367:95` and its
+  stacked copy `7373:379`, `Button / Primary` `7367:83`, `/ Accent` `7367:87`,
+  `/ Primary inverted` `7367:91`, `Illustration / New email` `7367:14774`, plus
+  icons. Iteration 1 = wrapper `7368:65` "✅ Iteration 1 — value tracker in
+  place of /hinta-arvio (IN PROTO)": Desktop 1440 `7368:66` (landing
+  `7372:329`, email `7368:68`, link sent `7368:149`, details `7368:224`,
+  tracker `7369:189`, auction `7370:244`, front-page panel `7371:309`), Mobile
+  375 `7368:67` (email, tracker, auction) and Notes. Built 2026-10-23 from the
+  proto; the chart is the proto's own line points. Not drawn: loading and
+  calculating screens, the landing's stats and footer. Keep every pushed
+  iteration; rename a replaced one `◻︎ Superseded — … (not in proto)`.
 
 ## Hero theme — `v1` Syksy (ideation)
 
