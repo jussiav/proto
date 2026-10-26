@@ -346,6 +346,10 @@
       if (!s.loggedIn) {
         s.loggedIn = false;
         s.dac7Completed = false;
+        /* prod counts every save that carries the email towards the two
+           allowed email updates (UpdateDraft::handleEmail); the success page
+           offers a change only below that limit. */
+        s.emailUpdatesCount = (typeof s.emailUpdatesCount === 'number' ? s.emailUpdatesCount : 0) + 1;
       }
       if (FunnelGuard.reviewEdit(s)) {
         const back = FunnelGuard.finishReviewEdit(s);

@@ -3640,6 +3640,45 @@ initiative. Do not "correct" it in passing.
 own `unfit_cars_auto_rejection` config, disabled for Finland. Not the review
 filters; easy to conflate.
 
+## Changing the email on the waiting screen — `success.html`
+
+Transcribed 2026-10-26 (Jussi had missed it in the proto and remembered it
+from prod). Prod's `Review.vue` (in review, unverified) and `PublishQueue.vue`
+(queued) share one verification card; both offer **Muokkaa
+sähköpostiosoitetta** as a pencil in the address chip and as a text link under
+the resend link. Either opens an inline field (`tenderform.labels.email`
+"Sähköpostiosoite") with **Lähetä vahvistusviesti** (UiButton primary `lg`) and
+**Peruuta** (ghost `md`). The endpoint (`UpdateEmail`) saves the address, adds 1
+to `email_updates_count` and mails the verification link to it; the proto shows
+its email toast.
+
+- **When:** `TenderRequestDraft::emailCanBeUpdated()` = seller unverified AND
+  `email_updates_count < 2` (`EMAIL_UPDATE_THRESHOLD`). Every contact-step save
+  that carries the email counts too (`UpdateDraft::handleEmail`), so **a seller
+  who submitted the contact step once has exactly one change left** here.
+- **Proto:** `store.emailUpdatesCount`, incremented by `contact.html`'s submit
+  (unverified only) and by the change itself; cleared by `details.html` on a
+  new draft (`?plate=`). A store with no count but an email (Seed car, older
+  stores) counts as 1.
+- **Errors** are the endpoint's: empty "Pakollinen tieto", invalid "Sähköposti
+  ei kelpaa" (`:attribute ei kelpaa` + `form.generic.email`). Prod has no
+  English for any of this copy; EN is a working translation.
+- **The whole card was re-transcribed** at the same time: `p-6`, `space-y-3`,
+  prod's `envelope` sprite at 2.5em (the old Figma-export icon, with a stray
+  frame stroke, is deleted), weights and colours inherited. Prod's markup is
+  kept verbatim, so its dead classes behave as in prod: `space-y-3` beats the
+  children's own `mt-8`/`mb-2`/`mb-4`, the body `<span>` sits flush under the
+  title, and the input touches the send button with no gap.
+- **Prod quirks reproduced:** the field is filled once when the screen mounts
+  and keeps what was typed across Peruuta; an error stays until the next send;
+  Enter does nothing (no `<form>`); the send button's `:disabled` reads a state
+  that does not exist, so it never disables. **Proto addition, invisible:** the
+  pencil carries an `aria-label` (prod's button has none).
+- **Seller edits before review, `v1`:** an unverified seller who walks the
+  funnel again and re-submits the contact step uses up their change, as prod
+  would today. This is that initiative's open question about contact details
+  mid-edit, now visible in the proto.
+
 ## Login state — `loggedIn`
 
 One flag, `store.loggedIn`, means "email verified" AND "logged in", because in

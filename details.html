@@ -664,6 +664,15 @@
     (function () {
       var params = new URLSearchParams(window.location.search);
       if (!params.has('plate')) return;
+      /* A new draft starts its own email update count, as prod's
+         email_updates_count lives on the draft. */
+      try {
+        var st = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
+        if ('emailUpdatesCount' in st) {
+          delete st.emailUpdatesCount;
+          localStorage.setItem('autovex_funnel', JSON.stringify(st));
+        }
+      } catch (e) {}
       /* Price guess (price-guess.html) has already shown the looked-up car,
          so it skips the screen. Its params go on `load`, after the plate and
          mileage badges have read them. */

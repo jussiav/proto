@@ -90,22 +90,42 @@
                class="w-[288px] h-auto object-contain" />
         </div>
 
-        <!-- Email verification card (shown when email not yet verified) -->
-        <div id="success-email-card" class="hidden w-full border-2 border-av-blue rounded-xl p-4 flex flex-col gap-6">
-          <div class="flex items-center justify-between">
-            <img src="assets/icon-email-envelope.svg" class="w-8 h-8 flex-shrink-0" alt="" />
-            <div class="bg-white border border-slate-200 rounded px-2 py-0.5">
-              <span id="success-email-address" class="font-dm font-medium text-base text-slate-600 whitespace-nowrap"></span>
-            </div>
+        <!-- Email verification card, prod's Review.vue / PublishQueue.vue (the
+             same markup in both unverified states). Transcribed verbatim, dead
+             classes included: under `space-y-3` the children's own mt-*/mb-*
+             lose to the space-y selector, so every row is 12px apart and the
+             inline body span sits flush under the title, as in prod. Only the
+             wrapper's mt-2 mb-6 are left out, since this column spaces its
+             blocks with gap-6. -->
+        <div id="success-email-card" class="hidden w-full p-6 text-start border-2 border-blue rounded-xl font-dm text-base space-y-3">
+          <div class="flex justify-between items-center">
+            <svg class="fill-current inline-block text-blue" width="2.5em" height="2.5em" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12.713l-11.985-9.713h23.97l-11.985 9.713zm0 2.574l-12-9.725v15.438h24v-15.438l-12 9.725z"/></svg>
+            <span class="flex items-center px-1.5 py-1 border border-slate-200 text-slate-600 rounded">
+              <span id="success-email-address" class="mr-1"></span>
+              <button id="success-email-edit" class="-mt-0.5" type="button" aria-label="Muokkaa sähköpostiosoitetta" data-i18n-aria="success.emailCardChange">
+                <svg class="fill-current inline-block text-blue" width="1em" height="1em" viewBox="0 0 256 256" aria-hidden="true"><path d="M232.49,55.51l-32-32a12,12,0,0,0-17,0l-96,96A12,12,0,0,0,84,128v32a12,12,0,0,0,12,12h32a12,12,0,0,0,8.49-3.51l96-96A12,12,0,0,0,232.49,55.51ZM192,49l15,15L196,75,181,60Zm-69,99H108V133l56-56,15,15Zm105-7.43V208a20,20,0,0,1-20,20H48a20,20,0,0,1-20-20V48A20,20,0,0,1,48,28h67.43a12,12,0,0,1,0,24H52V204H204V140.57a12,12,0,0,1,24,0Z"/></svg>
+              </button>
+            </span>
           </div>
-          <div class="flex flex-col gap-5">
-            <div class="flex flex-col gap-2.5">
-              <p id="success-email-card-title" class="font-dm font-bold text-lg text-slate-800 leading-[22px]"></p>
-              <p id="success-email-card-body" class="font-dm font-medium text-base text-slate-600 leading-5"></p>
-            </div>
-            <div class="flex flex-col gap-2">
-              <p id="success-email-card-no-email" class="font-dm font-bold text-base text-slate-800 leading-5"></p>
-              <button id="success-email-resend" class="font-dm font-medium text-base text-slate-600 leading-5 underline text-left bg-transparent border-none p-0 cursor-pointer"></button>
+          <div class="text-lg font-semibold mb-2" data-i18n="success.emailCardTitle">Vahvista sähköpostisi jatkaaksesi</div>
+          <span data-i18n="success.emailCardBody">Olemme lähettäneet sinulle vahvistuslinkin. Seuraa sitä jatkaaksesi tarjouskilpailuun.</span>
+          <div class="font-semibold mt-8 mb-4" data-i18n="success.emailCardNoEmail">Etkö saanut sähköpostia?</div>
+          <button id="success-email-resend" type="button" class="flex gap-x-2 mt-4 text-slate-600 underline cursor-pointer">
+            <span data-i18n="success.emailCardResend">Lähetä vahvistusviesti uudelleen</span>
+          </button>
+          <button id="success-email-change" type="button" class="block text-slate-600 underline cursor-pointer" data-i18n="success.emailCardChange">Muokkaa sähköpostiosoitetta</button>
+          <div id="success-email-form" class="w-full mt-8" style="display:none">
+            <label class="block w-full">
+              <span class="mb-3 inline-block text-base leading-none font-medium" data-i18n="success.emailCardLabel">Sähköpostiosoite</span>
+              <div>
+                <input id="success-email-input" type="email" autocomplete="email"
+                       class="w-full h-14 rounded-lg border font-dm py-4 px-4 text-black focus:outline-none focus:ring border-gray-500 !bg-white" />
+              </div>
+              <p id="success-email-error" class="text-red-500 text-sm leading-[16px] mt-1.5" style="display:none"></p>
+            </label>
+            <div class="w-full space-y-2">
+              <button id="success-email-send" type="button" class="w-full inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 px-8 h-14 text-base leading-tight rounded-lg relative shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white active:text-blue-100" data-i18n="success.emailCardSend">Lähetä vahvistusviesti</button>
+              <button id="success-email-cancel" type="button" class="w-full inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 px-5 h-10 text-sm leading-tight rounded-lg relative border-none bg-transparent hover:bg-blue-50 active:bg-blue-100 text-blue-600 active:text-blue-500" data-i18n="success.emailCardCancel">Peruuta</button>
             </div>
           </div>
         </div>
@@ -793,15 +813,8 @@
       opRoutingShown(id);
       setHotjarSurvey(!!def.hotjar);
 
-      emailCard.style.display = def.emailCard ? 'flex' : 'none';
-      if (def.emailCard) {
-        var userEmail = (getStore().contact || {}).sahkoposti || 'esimerkki@email.fi';
-        document.getElementById('success-email-address').textContent = userEmail;
-        document.getElementById('success-email-card-title').textContent = t('success.emailCardTitle');
-        document.getElementById('success-email-card-body').textContent = t('success.emailCardBody');
-        document.getElementById('success-email-card-no-email').textContent = t('success.emailCardNoEmail');
-        document.getElementById('success-email-resend').textContent = t('success.emailCardResend');
-      }
+      emailCard.style.display = def.emailCard ? 'block' : 'none';
+      if (def.emailCard) renderEmailCard();
 
       // Standalone blue button retired — in-review-verified now uses the notice's text link,
       // which carries the review-call copy variant through to offers.html.
@@ -1042,6 +1055,10 @@
       document.getElementById('success-email-resend').addEventListener('click', function () {
         showEmailToast();
       });
+      document.getElementById('success-email-edit').addEventListener('click', startEmailChange);
+      document.getElementById('success-email-change').addEventListener('click', startEmailChange);
+      document.getElementById('success-email-cancel').addEventListener('click', cancelEmailChange);
+      document.getElementById('success-email-send').addEventListener('click', submitEmailChange);
 
       document.getElementById('email-toast-close').addEventListener('click', function () {
         var toast = document.getElementById('email-toast');
@@ -1058,6 +1075,86 @@
     window.addEventListener('pageshow', function (e) {
       if (e.persisted) { updateContent(); renderVehicleCard('av-vehicle-card', { successView: true, draftStatus: currentDraftStatus(), primaryCta: cardPrimaryCta() }); }
     });
+
+    /* Changing the email while it is unverified, prod's CHANGE_EMAIL /
+       UPDATE_EMAIL. Offered while TenderRequestDraft::emailCanBeUpdated(): the
+       seller is unverified and the draft has had fewer than
+       EMAIL_UPDATE_THRESHOLD (2) email updates. Every contact-step save counts
+       as one (UpdateDraft::handleEmail), so a seller who submitted it once has
+       one change left here. A store with no count (Seed car, or written before
+       the count existed) has saved the contact step once. */
+    var EMAIL_UPDATE_THRESHOLD = 2;
+    var emailChanging = false;
+    var emailFormFilled = false;
+
+    function emailUpdatesCount(s) {
+      if (typeof s.emailUpdatesCount === 'number') return s.emailUpdatesCount;
+      return (s.contact && s.contact.sahkoposti) ? 1 : 0;
+    }
+
+    function canUpdateEmail(s) {
+      return !s.loggedIn && emailUpdatesCount(s) < EMAIL_UPDATE_THRESHOLD;
+    }
+
+    function renderEmailCard() {
+      var s = getStore();
+      var email = (s.contact || {}).sahkoposti || 'esimerkki@email.fi';
+      var offer = canUpdateEmail(s) && !emailChanging;
+      document.getElementById('success-email-address').textContent = email;
+      document.getElementById('success-email-edit').style.display = offer ? '' : 'none';
+      document.getElementById('success-email-change').style.display = offer ? '' : 'none';
+      document.getElementById('success-email-form').style.display = emailChanging ? '' : 'none';
+      /* prod's form state is filled once, when the screen mounts, and keeps
+         whatever was typed across Peruuta. */
+      if (!emailFormFilled) {
+        document.getElementById('success-email-input').value = (s.contact || {}).sahkoposti || '';
+        emailFormFilled = true;
+      }
+    }
+
+    function setEmailError(msg) {
+      var input = document.getElementById('success-email-input');
+      var err = document.getElementById('success-email-error');
+      input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+      input.classList.toggle('border-gray-500', !msg);
+      input.classList.toggle('!bg-white', !msg);
+      input.classList.toggle('border-red-500', !!msg);
+      input.classList.toggle('bg-red-500', !!msg);
+      input.classList.toggle('bg-opacity-10', !!msg);
+      err.textContent = msg || '';
+      err.style.display = msg ? '' : 'none';
+    }
+
+    function startEmailChange() {
+      emailChanging = true;
+      renderEmailCard();
+      document.getElementById('success-email-card').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelEmailChange() {
+      emailChanging = false;
+      renderEmailCard();
+    }
+
+    /* The endpoint (UpdateEmail) validates `required|email` and answers with
+       prod's "Pakollinen tieto" / ":attribute ei kelpaa"; on success it saves
+       the address, counts the update and mails the verification link to it. */
+    function submitEmailChange() {
+      var input = document.getElementById('success-email-input');
+      var value = input.value.trim();
+      input.value = value;
+      var msg = !value ? t('err.mandatoryInformation')
+        : (!/^[^\s@]+@[^\s@]+$/.test(value) ? t('success.emailCardInvalid') : null);
+      setEmailError(msg);
+      if (msg) return;
+      var s = getStore();
+      s.emailUpdatesCount = emailUpdatesCount(s) + 1;
+      s.contact = Object.assign({}, s.contact, { sahkoposti: value });
+      setStore(s);
+      emailChanging = false;
+      renderEmailCard();
+      showEmailToast();
+    }
 
     var emailToastTimer = null;
 
@@ -1120,6 +1217,12 @@
        `rejected` too, which has the same flag in prod. */
     @media (max-width: 991px) {
       html[data-success-sidebar="empty"] #success-sidebar { display: none; }
+    }
+    /* Input.vue's error state. The utilities are toggled by JS, and the Play
+       CDN generates a class it has not seen yet a tick late. */
+    #success-email-input[aria-invalid="true"] {
+      border-color: #EF4444;
+      background-color: rgb(239 68 68 / 0.1);
     }
     @keyframes toastIn {
       0%   { opacity:0; transform:translateY(56px) scale(0.88); }
