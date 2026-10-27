@@ -2898,12 +2898,21 @@ and deal terms stay out of this repo.
   filled orange AButton `lg` with no logo. Label `opRouting.ctaV3` "Laske
   vakuutustarjous OP:ssa" (Jussi's wording, 2026-10-22: "OP:ssa" says the
   click leaves for an external service; EN "Calculate an insurance quote at OP").
-  `#op-routing-v3` in `success.html`, placed AFTER Hotjar's survey (Jussi,
-  2026-10-22; v1/v2 sit above it), wired through `OPR_ARM` and
+  `#op-routing-v3` in `success.html`, placed BEFORE Hotjar's survey like
+  v1/v2 (Jussi, 2026-10-27; it sat after it from 2026-10-22), wired through
+  `OPR_ARM` and
   `opRoutingShown`. 218px desktop / 270px at 375px. It knowingly breaks two
   of the partner-routing principles (a frame; OP's mark off the button), which
   is what it tests. Shares `v2`'s 3.4:1 contrast question. Spec section `#c3`.
-  Not in Figma.
+  In Figma
+  (2026-10-27): wrapper `✅ Variant 3 — v1 in a coupon frame, orange OP button,
+  above the rating survey (IN PROTO)` `7386:2492` (desktop `7386:2495`, mobile
+  `7386:2533`), below Variant 2. Component set `OP routing v3 / Coupon block`
+  `7386:3146` with `Size=Desktop` / `Size=Mobile` (the mobile variant caps the
+  heading at 239px so it wraps beside the logo; max width cannot be overridden
+  on an instance). The Hotjar survey is a static component, `Hotjar rating
+  survey (prod embed, static)` `7386:2473`, 46px under the block; earlier
+  iterations predate it and do not show it.
 - **Copy:** `opRouting.*`, Claude's draft. Later placements (auction email
   `ad-published`, offers/decision while waiting, profile) are spec-only.
 
