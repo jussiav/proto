@@ -365,6 +365,11 @@
       setStore(s);
       if (_offersScenario && !resubmitted) {
         window.location.href = 'offers.html?scenario=' + encodeURIComponent(_offersScenario);
+      } else if (window.protoVariant('similar-cars', 'control') !== 'control' && FunnelGuard.photosComplete(s)) {
+        /* Similar cars: the submit loader shows them before the success page.
+           Not when publishing is refused for photos; that seller goes
+           straight to the refusal. */
+        window.location.href = 'submit-loader.html';
       } else {
         window.location.href = 'success.html';
       }

@@ -440,7 +440,7 @@
      variants already on included); the URL exceptions below then apply on
      top. Runs in test mode too. The funnel steps and the front page are left
      alone: an empty store is real there. */
-  var CAR_PAGES = ['success.html', 'offers.html', 'decision.html', 'dac7.html'];
+  var CAR_PAGES = ['success.html', 'submit-loader.html', 'offers.html', 'decision.html', 'dac7.html'];
   var page = window.location.pathname.split('/').pop() || 'index.html';
   if (CAR_PAGES.indexOf(page) !== -1 && !readFunnel().hero) {
     BUILDERS['draft-complete']();

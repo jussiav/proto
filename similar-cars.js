@@ -8,10 +8,12 @@
  *   opts.variant  'table' | 'cards'
  *   opts.groups   Array<{ car: {make, model}, cars: Array<SimilarCar> }>, one per
  *                 seller's car in the order the host lists them; cars sharing a
- *                 make and model collapse into the first one's list
+ *                 make and model collapse into the first one's list. Each list
+ *                 is ordered latest first by ended_at and split into recency
+ *                 bands (RECENCY), whatever order the host passes
  *   opts.car + opts.cars  shorthand for a single group
  *   opts.price    'highest' (default) | 'accepted' - which offer each car shows
- *   opts.initial  shown per group before "Näytä lisää" (default 5)
+ *   opts.initial  shown per group before the load-more button (default 5)
  *   opts.step     added per press (default 5)
  *
  * window.SimilarCars.mock(car, mode) -> Array<SimilarCar>
@@ -30,7 +32,7 @@
  * @property {{x:number,y:number,w:number,h:number}|null} plate_box
  *           proto only: where the plate sits in the 16:9 frame, as fractions,
  *           so the mock photos can be blurred client-side
- * @property {number} ended_days_ago
+ * @property {string} ended_at            ISO 8601, when the car's auction ended
  */
 (function () {
   'use strict';
@@ -38,6 +40,20 @@
   /* Below this many cars the block renders nothing: a list of one or two
      reads as a quote for the seller's own car rather than as evidence. */
   var MIN_RESULTS = 3;
+
+  /* Rolling day counts, never "this week" or "this month": a calendar band
+     would be empty or nearly so on a Monday or on the 1st. */
+  var RECENCY = [
+    { key: 'recent7',  maxDays: 7 },
+    { key: 'recent30', maxDays: 30 },
+    { key: 'older',    maxDays: Infinity }
+  ];
+  var RECENCY_FALLBACK = {
+    recent7:  'Viimeisen 7 päivän aikana',
+    recent30: 'Viimeisen kuukauden aikana',
+    older:    'Yli kuukausi sitten'
+  };
+  var DAY_MS = 864e5;
 
   /* Resolved against this script's own src so spec pages under design-specs/
      can mount the block too. */
@@ -60,11 +76,31 @@
       '.sc-table{width:100%;border-collapse:collapse;}',
       '.sc-table th,.sc-table td{padding:8px 0;vertical-align:top;}',
       '.sc-table th+th,.sc-table td+td{padding-left:16px;}',
-      /* OProductCard + OProductCardMedia (aspect-ratio-16/9). */
-      '.sc-strip{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;padding-bottom:6px;}',
+      /* Recency band label: caption text with prod's calendar icon, one grey
+         for every band. No fill, border, underline or blue, so it reads as a
+         label rather than something to press, and stays quieter than the
+         cars under it. slate-600: slate-500 is 4.35:1 on the offers page's
+         blue-50, under AA at 12px. */
+      '.sc-recency{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;line-height:1rem;font-weight:500;color:#475569;white-space:nowrap;margin:0;}',
+      '.sc-recency svg{width:14px;height:14px;flex:0 0 auto;}',
+      /* Rows carry no rule of their own; a gray-300 rule sits only above each
+         band label, the first one being the column headings' own. */
+      '.sc-table .sc-recency-row th{padding:16px 0 4px;}',
+      '.sc-table tbody:first-of-type .sc-recency-row th{padding-top:12px;}',
+      '.sc-table tbody + tbody .sc-recency-row th{border-top:1px solid #D1D5DB;}',
+      /* OProductCard + OProductCardMedia (aspect-ratio-16/9). Bands sit side
+         by side at the cards' own 16px gap, each label 6px above its first
+         card. */
+      '.sc-strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:thin;padding-bottom:6px;}',
+      '.sc-band{display:flex;flex-direction:column;gap:6px;flex:0 0 auto;}',
+      '.sc-band + .sc-band{margin-left:16px;}',
+      /* Sticky, so the band of the card at the left edge stays named while a
+         long band scrolls past; fit-content gives it room to travel. */
+      '.sc-band > .sc-recency{position:sticky;left:0;align-self:flex-start;}',
+      '.sc-band-cards{display:flex;gap:16px;flex:1 1 auto;}',
       /* OProductCard carries h-full, which in a flex row with no set height
          resolves to auto and stops the row stretching its cards level. */
-      '.sc-strip > .sc-card{flex:0 0 260px;scroll-snap-align:start;height:auto;}',
+      '.sc-band-cards > .sc-card{flex:0 0 260px;scroll-snap-align:start;height:auto;}',
       '.sc-media{position:relative;aspect-ratio:16/9;overflow:hidden;background:#88CFFF;}',
       '.sc-media img.sc-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}',
       '.sc-plate{position:absolute;border-radius:2px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);background:rgba(255,255,255,.2);}',
@@ -111,6 +147,43 @@
     return { from: Math.min.apply(null, ys), to: Math.max.apply(null, ys) };
   }
 
+  function endedMs(c) {
+    var t = Date.parse(c.ended_at);
+    return isNaN(t) ? -Infinity : t;
+  }
+
+  function latestFirst(cars) {
+    return cars
+      .map(function (c, i) { return { c: c, i: i }; })
+      .sort(function (a, b) { return (endedMs(b.c) - endedMs(a.c)) || (a.i - b.i); })
+      .map(function (x) { return x.c; });
+  }
+
+  /* Consecutive runs of an already latest-first list; empty bands are left
+     out, so a list of recent cars shows one label. */
+  function bands(cars) {
+    var now = Date.now();
+    var out = [];
+    cars.forEach(function (c) {
+      var days = Math.floor((now - endedMs(c)) / DAY_MS);
+      var band = RECENCY.filter(function (b) { return days <= b.maxDays; })[0];
+      var last = out[out.length - 1];
+      if (last && last.key === band.key) last.cars.push(c);
+      else out.push({ key: band.key, cars: [c] });
+    });
+    return out;
+  }
+
+  function bandLabel(key) { return tr(key, RECENCY_FALLBACK[key]); }
+
+  /* ph-bold-calendar-dots from prod's sprite. */
+  var ICON_CALENDAR = '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,28H188V24a12,12,0,0,0-24,0v4H92V24a12,12,0,0,0-24,0v4H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28ZM68,52a12,12,0,0,0,24,0h72a12,12,0,0,0,24,0h16V76H52V52ZM52,204V100H204V204Zm92-76a16,16,0,1,1-16-16A16,16,0,0,1,144,128Zm48,0a16,16,0,1,1-16-16A16,16,0,0,1,192,128ZM96,176a16,16,0,1,1-16-16A16,16,0,0,1,96,176Zm48,0a16,16,0,1,1-16-16A16,16,0,0,1,144,176Zm48,0a16,16,0,1,1-16-16A16,16,0,0,1,192,176Z"/></svg>';
+
+  function bandTag(key, tag, id) {
+    return '<' + tag + ' class="sc-recency"' + (id ? ' id="' + id + '"' : '') + '>' +
+      ICON_CALENDAR + '<span>' + esc(bandLabel(key)) + '</span></' + tag + '>';
+  }
+
   var ICON_CARET_LEFT = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z"/></svg>';
   var ICON_CARET_RIGHT = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z"/></svg>';
   var ICON_CAR = '<img src="' + ROOT + 'assets/ph-car-simple-white.svg" class="relative opacity-60" style="width:70px;height:70px" alt="" />';
@@ -129,7 +202,7 @@
 
   function loadMore(gi, shown, total) {
     if (shown >= total) return '';
-    return '<button type="button" data-sc-more="' + gi + '" class="' + BTN_SECONDARY + '">' + esc(tr('loadMore', 'Näytä lisää')) + '</button>';
+    return '<button type="button" data-sc-more="' + gi + '" class="' + BTN_SECONDARY + '">' + esc(tr('loadEarlier', 'Näytä aiemmat')) + '</button>';
   }
 
   /* Names the seller's car each list belongs to, so a seller with several cars
@@ -148,15 +221,15 @@
       ' <span class="text-slate-500">· <span class="whitespace-nowrap">' + esc(t.years) + '</span></span></div>';
   }
 
-  /* Timer.vue's card shell, so the block reads as one of the offers page's
-     own white cards; rows take ComissionList.vue's border-b-gray-300 rule,
+  /* Timer.vue's card shell without its border, so the block reads as one of
+     the page's own white cards; its rules are ComissionList.vue's border-b-gray-300,
      the only consumer-side table prod has. */
   function buildTableGroup(g, gi, shown, kind) {
     var uni = uniformModel(g.cars);
     var firstCol = uni ? tr('colSpec', 'Mallitarkennus') : tr('colCar', 'Auto');
     var t = subjectText(g);
-    var rows = g.cars.slice(0, shown).map(function (c) {
-      return '<tr class="border-b border-b-gray-300 last:border-b-0">' +
+    function row(c) {
+      return '<tr class="sc-row">' +
         '<td class="text-left">' +
           (uni ? '' : '<span class="block font-bold text-slate-900">' + esc(c.make + ' ' + c.model) + '</span>') +
           '<span class="block text-black">' + esc(c.model_specification) + '</span>' +
@@ -166,6 +239,13 @@
         '<td class="sc-wide text-right text-black whitespace-nowrap">' + esc(km(c.driven)) + '</td>' +
         '<td class="text-right font-bold text-black whitespace-nowrap">' + esc(eur(priceOf(c, kind))) + '</td>' +
       '</tr>';
+    }
+    /* One tbody per band, its label a rowgroup header. */
+    var bodies = bands(g.cars.slice(0, shown)).map(function (b) {
+      return '<tbody>' +
+        '<tr class="sc-recency-row"><th colspan="4" scope="rowgroup" class="text-left">' + bandTag(b.key, 'span') + '</th></tr>' +
+        b.cars.map(row).join('') +
+      '</tbody>';
     }).join('');
     return '<div class="flex flex-col gap-4" data-sc-group="' + gi + '">' +
       subject(g) +
@@ -177,14 +257,14 @@
           '<th scope="col" class="sc-wide text-right font-bold text-black">' + esc(tr('colKm', 'Ajokilometrit')) + '</th>' +
           '<th scope="col" class="text-right font-bold text-black">' + esc(priceLabel(kind)) + '</th>' +
         '</tr></thead>' +
-        '<tbody>' + rows + '</tbody>' +
+        bodies +
       '</table>' +
       (shown < g.cars.length ? '<div class="flex justify-center">' + loadMore(gi, shown, g.cars.length) + '</div>' : '') +
     '</div>';
   }
 
   function buildTable(groups, shown, kind) {
-    return '<div class="sc sc--table bg-white border border-gray-200 shadow-sm rounded-xl p-4 sm:p-5 flex flex-col gap-8">' +
+    return '<div class="sc sc--table bg-white shadow-sm rounded-xl p-4 sm:p-5 flex flex-col gap-8">' +
       groups.map(function (g, gi) { return buildTableGroup(g, gi, shown[gi], kind); }).join('') +
     '</div>';
   }
@@ -232,6 +312,17 @@
     var more = shown < g.cars.length
       ? '<div class="sc-card flex items-center justify-center rounded-2xl border border-slate-200 bg-white">' + loadMore(gi, shown, g.cars.length) + '</div>'
       : '';
+    var bs = bands(g.cars.slice(0, shown));
+    var strip = bs.map(function (b, bi) {
+      var id = 'sc-' + gi + '-' + b.key;
+      return '<div class="sc-band">' +
+        bandTag(b.key, 'p', id) +
+        '<div class="sc-band-cards" role="list" aria-labelledby="' + id + '">' +
+          b.cars.map(function (c) { return buildCard(c, kind); }).join('') +
+          (bi === bs.length - 1 ? more : '') +
+        '</div>' +
+      '</div>';
+    }).join('');
     return '<div class="flex flex-col gap-4" data-sc-group="' + gi + '">' +
       '<div class="flex items-center justify-between gap-4">' + subject(g) +
         '<div class="sc-arrows gap-2 flex-shrink-0">' +
@@ -239,7 +330,7 @@
           '<button type="button" data-sc-next class="' + BTN_ICON + '" aria-label="' + esc(tr('next', 'Seuraavat')) + '">' + ICON_CARET_RIGHT + '</button>' +
         '</div>' +
       '</div>' +
-      '<div class="sc-strip" role="list" tabindex="0">' + g.cars.slice(0, shown).map(function (c) { return buildCard(c, kind); }).join('') + more + '</div>' +
+      '<div class="sc-strip" tabindex="0">' + strip + '</div>' +
     '</div>';
   }
 
@@ -302,12 +393,12 @@
     });
   }
 
-  /* After "Näytä lisää" the button is gone, so focus would drop to <body>;
+  /* After a load-more press the button is gone, so focus would drop to <body>;
      moving it to the first added item keeps a keyboard user in place. */
   function focusFirstNew(m, gi, index) {
     var group = m.el.querySelectorAll('[data-sc-group]')[gi];
     if (!group) return;
-    var target = group.querySelectorAll(m.opts.variant === 'cards' ? '.sc-strip article' : 'tbody tr')[index];
+    var target = group.querySelectorAll(m.opts.variant === 'cards' ? '.sc-strip article' : 'tr.sc-row')[index];
     if (!target) return;
     target.setAttribute('tabindex', '-1');
     target.focus({ preventScroll: m.opts.variant !== 'cards' });
@@ -329,7 +420,7 @@
       if (key && seen[key]) return false;
       if (key) seen[key] = true;
       return (g.cars || []).length >= MIN_RESULTS;
-    });
+    }).map(function (g) { return { car: g.car, cars: latestFirst(g.cars) }; });
     m.shown = m.groups.map(function () { return opts.initial || 5; });
     return draw(m);
   }
@@ -415,11 +506,13 @@
     rows.sort(function (a, b) { return a[6] - b[6]; });
     if (mode === 'few') rows = rows.slice(0, MIN_RESULTS);
     if (mode === 'none') rows = rows.slice(0, MIN_RESULTS - 1);
+    var now = Date.now();
     return rows.map(function (r, i) {
       var p = PHOTOS[i % PHOTOS.length];
       return {
         make: r[0], model: r[1], model_specification: r[2], year: r[3], driven: r[4],
-        highest_offer: r[5], accepted_offer: r[5], ended_days_ago: r[6],
+        highest_offer: r[5], accepted_offer: r[5],
+        ended_at: new Date(now - r[6] * DAY_MS).toISOString(),
         image: p.src, plate_box: p.plate
       };
     });

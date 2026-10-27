@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-10-23)
+## Reference Source Locations (updated 2026-10-26)
 
-- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-23-e5397b1844cf/` (previous: `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
+- **Production codebase (read-only reference):** `Prod-codebase/<folder>/` inside this project — currently `Prod-codebase/autovex-2026-10-26-ead421f6c80b/` (previous: `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b`; rename it to `autovex-<date>-<hash>` before using it. Newer dumps are added as sibling folders; always use the newest. Gitignored, never push, nothing in the proto depends on it.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside the production codebase folder above; `resources/astro/...` paths resolve inside the archive.
 
@@ -540,12 +540,15 @@ advisor booking, formerly its own "Advisor booking" button) comes first:
 ```js
 window.protoPage = {
   fieldsLabel: 'Auction — dealerships',  fields:  [ { key, label, placeholder, width, keepEmpty } ],
-  actionsLabel: 'Dealer response',       actions: [ { label, title, run } ]
+  actionsLabel: 'Dealer response',       actions: [ { label, title, run } ],
+  actionSections: [ { label, actions: [ { label, title, run } ] } ]  // further sections, after `actions`
 };
 ```
 
-Current sections: decision **Auction — dealerships** + **Dealer response**,
-offers **Market data — similar cars**, photos **System — upload errors**. Older
+Current sections: decision **Auction — dealerships** + **Dealer response** +
+**Market data — similar cars** (the last via `actionSections`, added
+2026-10-27 because decision already used `actions`), offers **Market data —
+similar cars**, photos **System — upload errors**. Older
 notes in this file that say "Auction settings", "Similar cars data", "Upload
 errors" or "Advisor booking" mean these sections.
 
@@ -838,7 +841,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
-| Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; what counts as similar is with Analytics; copy draft | `similar-cars` | `control` | `control` | `offers.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
+| Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; latest first in three recency bands, grey caption labels, "Näytä aiemmat" (2026-10-27, matched to Jussi's Figma edits); table is the priority, cards a future alternative; what counts as similar is with Analytics; copy draft; on the decision page and a funnel submit loader too (2026-10-27) | `similar-cars` | `control` | `control` | `offers.html`, `decision.html`, `submit-loader.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
@@ -2468,6 +2471,58 @@ data exists.
   the decision page or a funnel step can host it later with one script tag and
   `SimilarCars.render(el, { variant, groups })`. Offers page wraps it in its own
   `#section-similar` (ph-bold-chart-bar heading), under the seller's cars.
+- **Decision page (Jussi, 2026-10-27):** `#section-similar`, same heading,
+  between `#section-insights` ("Tarjouskilpailun tulos") and
+  `#section-banner-bottom` ("Tarvitsetko apua?" + "Hylkää tarjouskilpailu").
+  It sits before Informed decision's reference sections when those arms are
+  on. **Only the decision's own car** (`req.make` / `req.model`), never the
+  seller's other cars. All three arms, read the same way as offers
+  (`SIMILAR_ARM`, `?similar=` world state in Events → Market data). Shown
+  while `DECISION_OPEN` (price tiers, final offer, negotiation states,
+  negotiation stopped) and there are offers; hidden on the warm-up screen
+  until "Katso tulokset", and on accepted, rejected, no offers and expired.
+  `renderSimilarCars` draws only when arm, data or car change, because
+  `renderMain` runs after every action and `SimilarCars.render` resets
+  "Näytä aiemmat". The table's white card lost its gray-200 border on every
+  page (Jussi, 2026-10-27); it keeps Timer.vue's `shadow-sm`.
+- **Submit loader, `submit-loader.html` (Jussi, 2026-10-27):** a faux-loading
+  page between the contact step and the success page, modelled on the details
+  step's vehicle-info screen (prod's `OFullscreenLoading`: plain logo, the
+  `car_loading.svg` animation, a `role="heading"` DM Sans line), but as a
+  scrolling page with the submitted car's similar cars below. Copy:
+  `submitLoader.title` "Ilmoitusta vastaanotetaan" (Jussi's) +
+  `loadingScreen.description` "Muutama sekunti jäljellä" (prod's; Jussi
+  wrote "muutama sekunti vielä" meaning that line), then after `SL_WAIT_MS`
+  5000 `submitLoader.done` "Ilmoitus vastaanotettu" (Claude's draft, because
+  "Muutama sekunti jäljellä" beside a finished state would be false) and
+  prod's "Jatka" button (`btn.continue`, the funnel's `h-14` Jatka) **in the
+  same 56px slot** as the line, so the list does not move. An sr-only
+  `role="status"` announces both states; focus is not moved.
+  - **Routing:** `contact.html` sends the submit there only when the
+    `similar-cars` arm is on and `FunnelGuard.photosComplete` (a publish
+    refused for photos goes straight to the success page's refusal); the
+    offers-return path and a review-edit save are untouched. The page's head
+    script `location.replace`s to `success.html` in control or without
+    photos, so a direct link cannot strand anyone.
+  - **No way back:** "Jatka" is `location.replace('success.html')`, so back
+    from success lands on the contact step, as before the loader existed.
+    Verified: history length unchanged by the hop.
+  - Auto-seeds a car (`CAR_PAGES` in `proto-mock.js`), declares the
+    `similar-cars` arms and Market data in Events, and is in Go to as
+    "Funnel · Submit loader (Similar cars)", which adds `?similar-cars=v1`
+    when no arm is in force (Jussi could not reach the page: control sends it
+    straight on, and the success page offers no Similar cars select). Go to
+    also has "Funnel · Vehicle info loader", `details.html?plate=&km=` from
+    the stored hero (as the front page form submits it). PAGES entries take
+    `url` (builds the address) and `state` (a view of a page, never marked
+    as the current page); options are indexed since two share
+    `details.html`. The logo is a plain image, not
+    the vehicle-info screen's proto-only home link, so nothing leaves the
+    flow before the success page.
+  - **Open, for Jussi:** where "Jatka" sits (above the list now: visible
+    without scrolling, but easy to skip the cars), the 5 s, and that the wait
+    delays email verification for unverified sellers. On the spec under
+    Open questions. Not in Figma.
 - **One list per make + model of the seller's cars** (Jussi, 2026-10-08): two
   cars of the same model share one list, under the first (the component
   collapses them). Each opens with "Volkswagen Amarok · vuosimallit 2018–2020"
@@ -2483,6 +2538,54 @@ data exists.
   not accepted / completed / all rejected (no second-guessing the decision).
   Nothing before review. Order follows the page: drafts in review, then
   published.
+- **Latest first, in recency bands** (Jussi, 2026-10-27). The component sorts
+  each list by `ended_at` (ISO, when the car's auction ended; it replaced the
+  mock's `ended_days_ago`) whatever order the host passes, then splits the
+  shown cars into `recent7` "Viimeisen 7 päivän aikana" (≤7 days),
+  `recent30` "Viimeisen kuukauden aikana" (8–30) and `older` "Yli kuukausi
+  sitten", whole days back from today. **Rolling days, never "this week" /
+  "this month"** (Jussi): a calendar band is empty early in a week or month.
+  Empty bands are dropped. Copy is Claude's draft; the 7/30 edges
+  are Claude's reading of Jussi's "Within 7 days / Within 1 month / More than
+  1 month, or similar". Same edges for `v3`: it reads
+  the auction end, not the acceptance.
+  - **Band label = grey caption + calendar icon** (third pass, same day).
+    The first pass drew the auth "tai" divider (label + line); Jussi dropped
+    the line. The second drew UiBadge-shaped tags faded blue → blue outline
+    → grey; Jussi: too heavy, it outweighed the cars. Now one style for
+    every band: 12px medium **slate-600** (slate-500 is 4.35:1 on the offers
+    page's blue-50, under AA), prod's `ph-bold-calendar-dots` at 14px, no
+    fill, border, underline or blue, so it cannot read as a link or button.
+    No colour coding.
+  - **Table** (Jussi's Figma edit of iteration 2, 2026-10-27): one
+    `<tbody>` per band, the label in a `th scope="rowgroup"` (16px above,
+    4px below; 12px above the first). **Rows carry no rules**; a gray-300
+    rule sits only above each band label: the thead's `border-b` for the
+    first, `tbody + tbody` th `border-top` for the rest.
+  - **Cards** (same edit): bands sit side by side in the strip
+    (`.sc-band`), 16px apart like the cards, each label 6px above its first
+    card. **No bracket**: Jussi removed it in Figma, which accepts the
+    earlier concern that the label alone may read as belonging to the card
+    below it (a vertical rule, a 32px gap and the bracket were all tried).
+    The label is `position:sticky; left:0`, so the band of the card at the
+    strip's left edge stays named while a long band scrolls by. Each band's
+    cards are their own `role="list"` labelled by the band; the load-more
+    tile joins the last band. Cards stay level across bands (311 v2, 331
+    v3).
+  - **Table first, cards later** (Jussi, 2026-10-27): the table is the
+    likely way forward and the cards a future alternative. Both stay
+    switchable in the proto. **When the spec moves from design to
+    development**, split it: the table as the priority choice, the cards
+    as a future alternative.
+  - **Load more reads "Näytä aiemmat"** ("Show earlier", `loadEarlier`,
+    draft; Jussi's first idea was "Näytä vanhemmat"). Latest first means
+    every press adds the same age or older. Not "vanhemmat": in a car list
+    it reads as older model years, beside a Vuosimalli column, and it is
+    also the word for parents. Prod's "Näytä lisää" (`loadMore`) is gone
+    from `translations.js`.
+  - **The in-app browser pane does not animate smooth scrolling** (nor fire
+    scroll events reliably): test arrow paging with the scroll call stubbed
+    to instant.
 - **`v1` table:** make + model not repeated in rows when every row shares them;
   when they differ the first column becomes "Auto" and each row leads with
   make + model. Below 520px of the BLOCK's width (container query) year and
@@ -2528,6 +2631,21 @@ data exists.
   Hand-built editable layers, DM Sans + Barlow, mock photos uploaded as image
   fills (hashes `67e4999c…` Corolla, `977b9648…` EQC, `31c062c5…` Focus).
   Keep in step with the proto by hand; the `✅ … — IN PROTO` names claim it.
+  **Iteration 2, recency bands (2026-10-27)**: section `7388:200` at the
+  bottom of the wrapper, with notes `7388:202`. Table desktop `7388:204`,
+  table mobile `7388:350`, cards desktop `7388:415`, cards mobile `7388:635`,
+  all `✅ … recency bands — IN PROTO`, cloned from iteration 1 and changed:
+  label rows in the tables, cards grouped into `Band —` frames (label +
+  `Bracket` frame, 1px slate-400 stroke on top/left/right, 4px top radii) and
+  "Näytä aiemmat". The four iteration-1 frames are renamed `◻︎ Superseded —
+  … (not in proto)`. **Jussi then edited the two desktop frames**, and the
+  proto follows them: row rules removed except the one ending each band,
+  brackets removed from the cards. The mobile frames were not edited: cards
+  mobile `7388:635` still draws both brackets, and table mobile `7388:350`
+  has its second-band rule as an extra 17px spacer (`7389:7067`, 16px more
+  air than desktop). The Notes text still describes the brackets. Sticky
+  labels and the cards' "Näytä aiemmat" tile are not drawn (the strip is
+  clipped at 5 cards).
 - **Cleared 2026-10-09 by Legal, Marketing and Ops** (Jussi): consumer sellers'
   own car photos may be shown with the plate blurred, and the ACCEPTED offer
   may be shown. The privacy question is closed.
@@ -2555,8 +2673,8 @@ data exists.
   dataset the funnel car is not (VW Amarok / Toyota Corolla). Figures are
   invented.
 - **Copy:** `similarCars.*` in `translations.js`. `colSpec`, `colYear`,
-  `colKm`, `highestOffer`, `loadMore` are prod; title, years, colCar, prev/next
-  are draft. Prod has no English for any of them.
+  `colKm`, `highestOffer` are prod; title, years, colCar, prev/next,
+  loadEarlier and the recency labels are draft. Prod has no English for any of them.
 
 ## AutoVex exclusive — `v2` (painted door)
 
@@ -3260,10 +3378,11 @@ Jussi's brief: an AutoVex version of Motorway's Car Value Tracker
   icons. Iteration 1 = wrapper `7368:65` "✅ Iteration 1 — value tracker in
   place of /hinta-arvio (IN PROTO)": Desktop 1440 `7368:66` (landing
   `7372:329`, email `7368:68`, link sent `7368:149`, details `7368:224`,
-  tracker `7369:189`, auction `7370:244`, front-page panel `7371:309`), Mobile
+  tracker `7369:189`, calculating `7381:526`, auction `7370:244`, front-page
+  panel `7371:309`), Mobile
   375 `7368:67` (email, tracker, auction) and Notes. Built 2026-10-23 from the
-  proto; the chart is the proto's own line points. Not drawn: loading and
-  calculating screens, the landing's stats and footer. Keep every pushed
+  proto; the chart is the proto's own line points. Not drawn: the
+  vehicle-info loading screen, the landing's stats and footer. Keep every pushed
   iteration; rename a replaced one `◻︎ Superseded — … (not in proto)`.
 
 ## Hero theme — `v1` Syksy (ideation)

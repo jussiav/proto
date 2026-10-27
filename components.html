@@ -731,9 +731,9 @@
                 <tbody class="text-slate-700">
                   <tr class="prop-row"><td class="py-1 pr-4"><code>variant</code></td><td class="pr-4">'table'|'cards'</td><td>Default 'table'</td></tr>
                   <tr class="prop-row"><td class="py-1 pr-4"><code>groups</code></td><td class="pr-4">Array</td><td>[{ car: { make, model }, cars }] — one list per seller's car, each under a "make model · vuosimallit" line; same make + model collapse into one list; groups under 3 cars are dropped</td></tr>
-                  <tr class="prop-row"><td class="py-1 pr-4"><code>car</code> + <code>cars</code></td><td class="pr-4">Object + Array</td><td>Single-group shorthand. cars: { make, model, model_specification, year, driven, highest_offer, image, plate_box }, pre-sorted</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>car</code> + <code>cars</code></td><td class="pr-4">Object + Array</td><td>Single-group shorthand. cars: { make, model, model_specification, year, driven, highest_offer, ended_at, image, plate_box }, in any order; shown latest first in recency bands (≤7 d, ≤30 d, older), each opened by a grey caption label</td></tr>
                   <tr class="prop-row"><td class="py-1 pr-4"><code>price</code></td><td class="pr-4">'highest'|'accepted'</td><td>Which figure each car shows; 'accepted' labels it "Hyväksytty tarjous", label above the amount on cards</td></tr>
-                  <tr class="prop-row"><td class="py-1 pr-4"><code>initial</code> / <code>step</code></td><td class="pr-4">Number</td><td>Shown first / added per "Näytä lisää". Default 5 / 5</td></tr>
+                  <tr class="prop-row"><td class="py-1 pr-4"><code>initial</code> / <code>step</code></td><td class="pr-4">Number</td><td>Shown first / added per "Näytä aiemmat". Default 5 / 5</td></tr>
                   <tr class="prop-row"><td class="py-1 pr-4"><code>SimilarCars.mock(car, mode)</code></td><td class="pr-4">fn</td><td>Proto data; mode 'same' | 'mixed' | 'few' | 'none'</td></tr>
                 </tbody>
               </table>

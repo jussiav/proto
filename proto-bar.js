@@ -25,6 +25,7 @@
  *     fields:    [ { key, label, placeholder, width, keepEmpty } ],  // URL overrides
  *     actions:   [ { label, title, run } ],                          // state mutations
  *     fieldsLabel: 'Auction — dealerships', actionsLabel: 'Dealer response',
+ *     actionSections: [ { label, actions: [ { label, title, run } ] } ],  // more, after `actions`
  *   };
  *
  * ── The bar's fixed slots ──────────────────────────────────────────────────
@@ -79,13 +80,29 @@
 
   var BAR_H = 30;
 
+  /* `url`, when present, builds the address instead of `href`. `state` marks
+     a view of a page rather than the page, so it is never "you are here". */
   var PAGES = [
     { href: 'index.html',     label: 'Front page' },
+    /* The front page form's submit lands here, on the vehicle-info screen. */
+    { href: 'details.html',   label: 'Funnel · Vehicle info loader', state: true,
+      url: function () {
+        var h = {};
+        try { h = (JSON.parse(localStorage.getItem('autovex_funnel') || '{}').hero) || {}; } catch (e) {}
+        return 'details.html?' + new URLSearchParams({ plate: h.plate || 'ABC-123', km: h.km || '148 000' });
+      } },
     { href: 'details.html',   label: 'Funnel · Details' },
     { href: 'services.html',  label: 'Funnel · Services' },
     { href: 'photos.html',    label: 'Funnel · Photos' },
     { href: 'price.html',     label: 'Funnel · Price' },
     { href: 'contact.html',   label: 'Funnel · Contact' },
+    /* The page exists only in a Similar cars arm and sends control straight
+       to the success page, so it pins one unless one is already in force. */
+    { href: 'submit-loader.html', label: 'Funnel · Submit loader (Similar cars)',
+      url: function () {
+        var arm = window.protoVariant ? window.protoVariant('similar-cars', 'control') : 'control';
+        return 'submit-loader.html' + (arm === 'control' ? '?similar-cars=v1' : '');
+      } },
     { href: 'success.html',   label: 'Funnel · Success' },
     { href: 'offers.html',    label: 'Offers' },
     { href: 'decision.html',  label: 'Decision' },
@@ -720,6 +737,7 @@
        navigate. */
     var hasFields  = !!(cfg.fields && cfg.fields.length);
     var hasActions = !!(cfg.actions && cfg.actions.length);
+    var moreActions = (cfg.actionSections || []).filter(function (s) { return s.actions && s.actions.length; });
     var activeFields = hasFields ? cfg.fields.filter(function (f) { return params.has(f.key); }) : [];
 
     /* Review — AutoVex: whether an advisor has booked the ad for its review
@@ -828,8 +846,13 @@
         return { label: a.label, title: a.title, run: function () { setPanelOpen(false); a.run(); } };
       }));
     }
+    moreActions.forEach(function (sec) {
+      popoverSection(panel, sec.label, sec.actions.map(function (a) {
+        return { label: a.label, title: a.title, run: function () { setPanelOpen(false); a.run(); } };
+      }));
+    });
 
-    if (!hasBooking && !hasFields && !hasActions) {
+    if (!hasBooking && !hasFields && !hasActions && !moreActions.length) {
       var noEvents = document.createElement('div');
       noEvents.textContent = 'No events on this page.';
       noEvents.style.color = '#8a8a90';
@@ -991,22 +1014,28 @@
     var goWrap = document.createElement('label');
     goWrap.appendChild(document.createTextNode('Go to'));
     var goSel = document.createElement('select');
-    var known = PAGES.some(function (p) { return p.href === file; });
+    /* Options are indexed, since two entries can share a file. The current
+       page is the plain entry for it, not a state with its own `url`. */
+    var here = -1;
+    PAGES.forEach(function (p, i) { if (here === -1 && p.href === file && !p.state) here = i; });
+    var known = here !== -1;
     if (!known) {   // e.g. a design-specs page, which isn't in the list
       var cur = document.createElement('option');
       cur.value = ''; cur.textContent = file;
       goSel.appendChild(cur);
     }
-    PAGES.forEach(function (p) {
+    PAGES.forEach(function (p, i) {
       var o = document.createElement('option');
-      o.value = p.href; o.textContent = p.label;
+      o.value = String(i); o.textContent = p.label;
       goSel.appendChild(o);
     });
     /* Preselect the current page so the browser marks it in the open dropdown —
        the same "you are here" check the Scenario and Variant selects get. */
-    goSel.value = known ? file : '';
+    goSel.value = known ? String(here) : '';
     goSel.addEventListener('change', function () {
-      if (goSel.value && goSel.value !== file) window.location.href = ROOT + goSel.value;
+      if (goSel.value === '' || +goSel.value === here) return;
+      var p = PAGES[+goSel.value];
+      window.location.href = ROOT + (p.url ? p.url() : p.href);
     });
     goWrap.appendChild(goSel);
     bar.appendChild(goWrap);

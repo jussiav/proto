@@ -62,10 +62,18 @@ window.TRANSLATIONS = {
       description: 'Muutama sekunti jäljellä',
     },
 
+    /* Similar cars' submit loader (submit-loader.html), between the contact
+       step and the success page. Draft, not approved; its second line is
+       loadingScreen.description. */
+    submitLoader: {
+      title: 'Ilmoitusta vastaanotetaan',
+      done:  'Ilmoitus vastaanotettu',
+    },
+
     /* Similar cars (design-specs/similar-cars.html). Prod strings, verbatim:
        colSpec, colYear, colKm (tenderform.*), highestOffer
        (seller-listings.b2b.cards.auction_ongoing.highest_offer), acceptedOffer
-       (app.offer_accepted_text_to_seller) and loadMore (tenderform view_more). Everything else is draft, not approved, and
+       (app.offer_accepted_text_to_seller). Everything else is draft, not approved, and
        the English is a working translation: prod has none for these. */
     similarCars: {
       title:        'Vastaavien autojen tarjouksia',
@@ -77,9 +85,12 @@ window.TRANSLATIONS = {
       colKm:        'Ajokilometrit',
       highestOffer: 'Korkein tarjous',
       acceptedOffer:'Hyväksytty tarjous',
-      loadMore:     'Näytä lisää',
+      loadEarlier:  'Näytä aiemmat',
       prev:         'Edelliset',
       next:         'Seuraavat',
+      recent7:      'Viimeisen 7 päivän aikana',
+      recent30:     'Viimeisen kuukauden aikana',
+      older:        'Yli kuukausi sitten',
     },
 
     /* Huutokaupat routing, v1 only. Not approved: `body`, `cta` and
@@ -1109,6 +1120,11 @@ window.TRANSLATIONS = {
       dealCompleted:   'Transaction complete',
     },
 
+    submitLoader: {
+      title: 'Receiving your listing',
+      done:  'Listing received',
+    },
+
     similarCars: {
       title:        'Offers on similar cars',
       titleAccepted:'Similar cars',
@@ -1119,9 +1135,12 @@ window.TRANSLATIONS = {
       colKm:        'Mileage',
       highestOffer: 'Highest offer',
       acceptedOffer:'Accepted offer',
-      loadMore:     'Show more',
+      loadEarlier:  'Show earlier',
       prev:         'Previous',
       next:         'Next',
+      recent7:      'Within the last 7 days',
+      recent30:     'Within the last month',
+      older:        'More than a month ago',
     },
 
     huutokaupat: {

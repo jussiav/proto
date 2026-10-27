@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ilmoitusta vastaanotetaan – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="tw-tokens.js"></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
+  <script src="proto-mock.js"></script>
+  <script>
+    /* "Similar cars" funnel placement (design-specs/similar-cars.html): a
+       faux-loading screen between the contact step and the success page that
+       shows the similar cars while the ad is "received". It exists only for
+       the block, so it is skipped in control, and when prod's publish step
+       would refuse the ad for its photos (the success page then shows that
+       refusal). location.replace keeps it out of the history either way. */
+    var SL_ARM = (function () {
+      var arm = window.protoVariant('similar-cars', 'control');
+      if (['control', 'v1', 'v2', 'v3'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
+      return arm;
+    }());
+    var SL_STORE = (function () { try { return JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) { return {}; } }());
+    /* funnel-guard.js photosComplete, not loaded here because it records the
+       funnel position of whatever page loads it. */
+    function slPhotosComplete(s) {
+      var ph = s.photos || {};
+      var total = Object.keys(ph).reduce(function (n, k) { return n + (ph[k] ? ph[k].length : 0); }, 0);
+      return total >= 5 && !!(ph.ulkopuoli && ph.ulkopuoli.length) && !!(ph.sisatilat && ph.sisatilat.length);
+    }
+    if (SL_ARM === 'control' || !slPhotosComplete(SL_STORE)) window.location.replace('success.html');
+  </script>
+  <script src="similar-cars.js"></script>
+  <style>
+    /* The description and the button share one slot of the button's height,
+       so nothing below moves when the button replaces the line. */
+    .sl-slot { display: grid; min-height: 56px; width: 100%; max-width: 448px; }
+    .sl-slot > * { grid-area: 1 / 1; align-self: center; }
+    .sl-slot > [aria-hidden="true"] { visibility: hidden; }
+  </style>
+</head>
+<body class="font-dm bg-white min-h-screen">
+
+  <!-- Prod's OFullscreenLoading + MAnimatedLoadingMessage + ALoadingAnimation,
+       as on the details step's vehicle-info screen, but as a page that scrolls:
+       the similar cars follow the message. The logo is prod's plain image, so
+       nothing here leaves the flow before the success page. -->
+  <div class="p-4">
+    <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+  </div>
+
+  <main class="pb-16">
+    <div id="sl-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
+
+    <section class="flex flex-col items-center gap-y-4 px-6 pt-2 md:pt-8">
+      <div class="p-4">
+        <img class="pointer-events-none min-h-32 max-h-40" src="assets/car_loading.svg" aria-hidden="true" role="presentation" alt="" />
+      </div>
+      <div id="sl-title" role="heading" aria-level="1" class="text-lg md:text-xl font-medium text-center" data-i18n="submitLoader.title">Ilmoitusta vastaanotetaan</div>
+      <div class="sl-slot">
+        <p id="sl-desc" class="m-0 text-base md:text-lg text-slate-500 text-center" data-i18n="loadingScreen.description">Muutama sekunti jäljellä</p>
+        <button id="sl-continue" type="button" aria-hidden="true" tabindex="-1"
+          class="w-full h-14 bg-av-blue text-white font-dm font-medium text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] cursor-pointer hover:bg-[#0A59EB] transition-colors">
+          <span data-i18n="btn.continue">Jatka</span>
+          <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <section id="section-similar" class="hidden max-w-[768px] mx-auto px-6 mt-10">
+      <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+        <!-- ph-bold-chart-bar -->
+        <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true">
+          <path d="M16.416 14.0625H16.1348V3.09375C16.1348 2.86997 16.0459 2.65536 15.8876 2.49713C15.7294 2.33889 15.5148 2.25 15.291 2.25H11.3535C11.1297 2.25 10.9151 2.33889 10.7569 2.49713C10.5987 2.65536 10.5098 2.86997 10.5098 3.09375V5.625H7.41602C7.19224 5.625 6.97763 5.71389 6.81939 5.87213C6.66116 6.03036 6.57227 6.24497 6.57227 6.46875V9H4.04102C3.81724 9 3.60263 9.08889 3.44439 9.24713C3.28616 9.40536 3.19727 9.61997 3.19727 9.84375V14.0625H2.91602C2.69224 14.0625 2.47763 14.1514 2.31939 14.3096C2.16116 14.4679 2.07227 14.6825 2.07227 14.9062C2.07227 15.13 2.16116 15.3446 2.31939 15.5029C2.47763 15.6611 2.69224 15.75 2.91602 15.75H16.416C16.6398 15.75 16.8544 15.6611 17.0126 15.5029C17.1709 15.3446 17.2598 15.13 17.2598 14.9062C17.2598 14.6825 17.1709 14.4679 17.0126 14.3096C16.8544 14.1514 16.6398 14.0625 16.416 14.0625ZM12.1973 3.9375H14.4473V14.0625H12.1973V3.9375ZM8.25977 7.3125H10.5098V14.0625H8.25977V7.3125ZM4.88477 10.6875H6.57227V14.0625H4.88477V10.6875Z"/>
+        </svg>
+        <span class="text-blue-900 leading-[24px]" data-i18n="similarCars.title">Vastaavien autojen tarjouksia</span>
+      </h2>
+      <div id="similar-cars"></div>
+    </section>
+  </main>
+
+  <script>
+    var SL_DATA = (function () {
+      var v = new URLSearchParams(window.location.search).get('similar');
+      return ['same', 'mixed', 'few', 'none'].indexOf(v) !== -1 ? v : 'same';
+    }());
+    /* Prod's draft has finished saving long before this; the wait is the
+       proto's, and its length is the thing to tune. */
+    var SL_WAIT_MS = 5000;
+
+    function slStatus() {
+      var done = document.documentElement.hasAttribute('data-sl-done');
+      document.getElementById('sl-status').textContent = done
+        ? t('submitLoader.done')
+        : t('submitLoader.title') + '. ' + t('loadingScreen.description');
+    }
+
+    function slRenderSimilar() {
+      var section = document.getElementById('section-similar');
+      var d = SL_STORE.details || {};
+      var car = { make: d.merkki || 'Toyota', model: d.malli || 'Corolla' };
+      var titleKey = SL_ARM === 'v3' ? 'similarCars.titleAccepted' : 'similarCars.title';
+      var titleEl = section.querySelector('[data-i18n^="similarCars.title"]');
+      titleEl.setAttribute('data-i18n', titleKey);
+      titleEl.textContent = t(titleKey);
+      var drawn = window.SimilarCars.render(document.getElementById('similar-cars'), {
+        variant: SL_ARM === 'v1' ? 'table' : 'cards',
+        price: SL_ARM === 'v3' ? 'accepted' : 'highest',
+        car: car,
+        cars: window.SimilarCars.mock(car, SL_DATA)
+      });
+      section.classList.toggle('hidden', !drawn);
+    }
+
+    function slDone() {
+      document.documentElement.setAttribute('data-sl-done', '');
+      var title = document.getElementById('sl-title');
+      title.setAttribute('data-i18n', 'submitLoader.done');
+      title.textContent = t('submitLoader.done');
+      document.title = t('submitLoader.done') + ' – AutoVex';
+      document.getElementById('sl-desc').setAttribute('aria-hidden', 'true');
+      var btn = document.getElementById('sl-continue');
+      btn.removeAttribute('aria-hidden');
+      btn.removeAttribute('tabindex');
+      slStatus();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      slRenderSimilar();
+      slStatus();
+      setTimeout(slDone, SL_WAIT_MS);
+      /* Replaced, not pushed: browser back from the success page must not
+         return here. */
+      document.getElementById('sl-continue').addEventListener('click', function () {
+        window.location.replace('success.html');
+      });
+    });
+    document.addEventListener('av:langchange', slStatus);
+
+    window.protoPage = {
+      initiatives: [
+        {
+          slug:    'similar-cars',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no submit loader, straight to success' },
+            { id: 'v1',      label: 'Variant 1 — table' },
+            { id: 'v2',      label: 'Variant 2 — photo cards' },
+            { id: 'v3',      label: 'Variant 3 — photo cards, accepted offers' }
+          ]
+        }
+      ],
+      actionSections: [{
+        label: 'Market data — similar cars',
+        actions: [
+          { label: 'Same model only',          key: 'same' },
+          { label: 'Mixed models in the list', key: 'mixed' },
+          { label: 'Only 3 cars (minimum shown)', key: 'few' },
+          { label: '2 cars — block hidden',     key: 'none' }
+        ].map(function (a) {
+          return {
+            label: (SL_DATA === a.key ? '✓ ' : '') + a.label,
+            title: 'Sets ?similar=' + a.key,
+            run: function () {
+              var u = new URL(window.location.href);
+              if (a.key === 'same') u.searchParams.delete('similar'); else u.searchParams.set('similar', a.key);
+              window.location.href = u.toString();
+            }
+          };
+        })
+      }]
+    };
+  </script>
+  <script src="proto-bar.js"></script>
+</body>
+</html>

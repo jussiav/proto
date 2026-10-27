@@ -385,6 +385,12 @@ media wrapper and leaves `flex-shrink` at its default 1, with the body at
 Highest offers on cars similar to the seller's. Brings no section heading, so
 the offers page, decision page or a funnel step can each wrap it in their own.
 Returns `false` and renders nothing when no group reaches `SimilarCars.MIN_RESULTS` (3) cars.
+Each list runs latest first in recency bands (up to 7 days, up to 30 days, older,
+counted back from today; empty bands dropped). Each band opens with a grey
+caption label and calendar icon: in the table as a row-group header under a
+rule (rows themselves carry none), on cards 6px above the band's first card
+(16px between cards throughout).
+The load-more button reads "Näytä aiemmat".
 Re-renders on `av:langchange`. Asset paths resolve from the script's own `src`,
 so `design-specs/` pages can mount it.
 
@@ -393,9 +399,9 @@ so `design-specs/` pages can mount it.
 |---|---|---|
 | `variant` | `'table'` \| `'cards'` | Default `'table'` |
 | `groups` | Array | `[{ car: { make, model }, cars }]`, one list per seller's car, each opened by a "make model · vuosimallit from–to" line. Groups sharing make + model collapse into the first; groups under 3 cars are dropped |
-| `car` + `cars` | Object + Array | Single-group shorthand. `cars`: `{ make, model, model_specification, year, driven, highest_offer, image, plate_box }`, pre-sorted by the caller |
+| `car` + `cars` | Object + Array | Single-group shorthand. `cars`: `{ make, model, model_specification, year, driven, highest_offer, ended_at, image, plate_box }`, in any order: the block orders them latest first by `ended_at` |
 | `price` | `'highest'` \| `'accepted'` | Which figure each car shows. `'accepted'` reads `accepted_offer`, labels it "Hyväksytty tarjous" and, on cards, puts the label above the amount. Default `'highest'` |
-| `initial` / `step` | Number | Shown first / added per "Näytä lisää". Default 5 / 5 |
+| `initial` / `step` | Number | Shown first / added per "Näytä aiemmat". Default 5 / 5 |
 
 `SimilarCars.mock(car, mode)` returns proto data for the seller's car
 (`'volkswagen amarok'` and `'toyota corolla'`, anything else falls back to the

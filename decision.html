@@ -44,6 +44,7 @@
   <script src="proto-mock.js"></script>
   <!-- StarRating.vue's five faces, used only by the reject survey. -->
   <script src="rating-icons.js"></script>
+  <script src="similar-cars.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <style>
     /* NumberInput.vue's own <style> — the suffix (€) is drawn by the wrapper
@@ -498,6 +499,20 @@
         </div>
       </section>
 
+      <!-- Section 3a-2: Similar cars initiative (v1 table, v2/v3 photo cards),
+           for this decision's car only. The block is similar-cars.js; this
+           section only supplies the page's own heading. -->
+      <section id="section-similar" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <!-- ph-bold-chart-bar -->
+          <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true">
+            <path d="M16.416 14.0625H16.1348V3.09375C16.1348 2.86997 16.0459 2.65536 15.8876 2.49713C15.7294 2.33889 15.5148 2.25 15.291 2.25H11.3535C11.1297 2.25 10.9151 2.33889 10.7569 2.49713C10.5987 2.65536 10.5098 2.86997 10.5098 3.09375V5.625H7.41602C7.19224 5.625 6.97763 5.71389 6.81939 5.87213C6.66116 6.03036 6.57227 6.24497 6.57227 6.46875V9H4.04102C3.81724 9 3.60263 9.08889 3.44439 9.24713C3.28616 9.40536 3.19727 9.61997 3.19727 9.84375V14.0625H2.91602C2.69224 14.0625 2.47763 14.1514 2.31939 14.3096C2.16116 14.4679 2.07227 14.6825 2.07227 14.9062C2.07227 15.13 2.16116 15.3446 2.31939 15.5029C2.47763 15.6611 2.69224 15.75 2.91602 15.75H16.416C16.6398 15.75 16.8544 15.6611 17.0126 15.5029C17.1709 15.3446 17.2598 15.13 17.2598 14.9062C17.2598 14.6825 17.1709 14.4679 17.0126 14.3096C16.8544 14.1514 16.6398 14.0625 16.416 14.0625ZM12.1973 3.9375H14.4473V14.0625H12.1973V3.9375ZM8.25977 7.3125H10.5098V14.0625H8.25977V7.3125ZM4.88477 10.6875H6.57227V14.0625H4.88477V10.6875Z"/>
+          </svg>
+          <span class="text-blue-900 leading-[24px]" data-i18n="similarCars.title">Vastaavien autojen tarjouksia</span>
+        </h2>
+        <div id="similar-cars"></div>
+      </section>
+
       <!-- Section 3b: the price belief — Informed decision, v1 only.
            The one objection this initiative still answers: "I saw similar cars
            selling for thousands more." It explains what a dealership's
@@ -675,6 +690,41 @@
        ticket carries. */
     var ID_V5 = ID_ARM === 'v5';
     var ID_ANY = ID_V1 || ID_V2 || ID_V3 || ID_V4 || ID_V5;
+
+    /* "Similar cars" (design-specs/similar-cars.html): the offers page's arms,
+       here for this decision's car alone. v1 table, v2 photo cards with
+       highest offers, v3 photo cards with accepted offers. */
+    var SIMILAR_ARM = (function () {
+      var arm = window.protoVariant('similar-cars', 'control');
+      if (['control', 'v1', 'v2', 'v3'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
+      return arm;
+    }());
+    /* World state, not a variant: what the Analytics query would return.
+       Set from the Market data section of the bar's Events popover. */
+    var SIMILAR_DATA = ['same', 'mixed', 'few', 'none'].indexOf(_params.get('similar')) !== -1 ? _params.get('similar') : 'same';
+    var _similarKey = null;
+    /* renderMain runs after every action on the page, and drawing the block
+       again would collapse a list the seller has opened with "Näytä aiemmat",
+       so it is drawn only when what it shows changes. */
+    function renderSimilarCars(req, open) {
+      var section = document.getElementById('section-similar');
+      if (SIMILAR_ARM === 'control' || !open) { section.classList.add('hidden'); _similarKey = null; return; }
+      var car = { make: req.make, model: req.model };
+      var key = [SIMILAR_ARM, SIMILAR_DATA, car.make, car.model].join('|');
+      if (key === _similarKey) return;
+      var titleKey = SIMILAR_ARM === 'v3' ? 'similarCars.titleAccepted' : 'similarCars.title';
+      var titleEl = section.querySelector('[data-i18n^="similarCars.title"]');
+      titleEl.setAttribute('data-i18n', titleKey);
+      titleEl.textContent = t(titleKey);
+      var drawn = window.SimilarCars.render(document.getElementById('similar-cars'), {
+        variant: SIMILAR_ARM === 'v1' ? 'table' : 'cards',
+        price: SIMILAR_ARM === 'v3' ? 'accepted' : 'highest',
+        car: car,
+        cars: window.SimilarCars.mock(car, SIMILAR_DATA)
+      });
+      _similarKey = drawn ? key : null;
+      section.classList.toggle('hidden', !drawn);
+    }
 
     /* The negotiation modal's footer is prod's AButton at size lg: 56px tall and
        no font weight of its own, so labels are 400. Disabled swaps the colour
@@ -3103,6 +3153,10 @@
       } else {
         insightsSec.classList.add('hidden');
       }
+
+      /* Same rule as the offers page: only while there are offers to decide
+         on, never after accepting or rejecting. */
+      renderSimilarCars(req, offers.length > 0 && DECISION_OPEN.indexOf(pas) !== -1);
     }
 
     // ── Interactive modal state ──
@@ -4109,8 +4163,38 @@
             { id: 'control', label: 'Control — no exclusivity reminder' },
             { id: 'v2',      label: 'Variant 2 — thanks yes-sellers in the warm-up and hero copy' }
           ]
+        },
+        {
+          slug:    'similar-cars',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no similar cars block' },
+            { id: 'v1',      label: 'Variant 1 — table' },
+            { id: 'v2',      label: 'Variant 2 — photo cards' },
+            { id: 'v3',      label: 'Variant 3 — photo cards, accepted offers' }
+          ]
         }
       ],
+      /* World state for the similar-cars block, as on the offers page. */
+      actionSections: [{
+        label: 'Market data — similar cars',
+        actions: [
+          { label: 'Same model only',          key: 'same' },
+          { label: 'Mixed models in the list', key: 'mixed' },
+          { label: 'Only 3 cars (minimum shown)', key: 'few' },
+          { label: '2 cars — block hidden',     key: 'none' }
+        ].map(function (a) {
+          return {
+            label: (SIMILAR_DATA === a.key ? '✓ ' : '') + a.label,
+            title: 'Sets ?similar=' + a.key,
+            run: function () {
+              var u = new URL(window.location.href);
+              if (a.key === 'same') u.searchParams.delete('similar'); else u.searchParams.set('similar', a.key);
+              window.location.href = u.toString();
+            }
+          };
+        })
+      }],
       /* Shown as sections of the bar's Events popover. */
       fieldsLabel: 'Auction — dealerships',
       fields: [
