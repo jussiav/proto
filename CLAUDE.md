@@ -2765,6 +2765,24 @@ data exists.
   air than desktop). The Notes text still describes the brackets. Sticky
   labels and the cards' "Näytä aiemmat" tile are not drawn (the strip is
   clipped at 5 cards).
+  **Proposal, Variant 5 (2026-10-28)**: the wrapper now reads Intro →
+  `✅ Proposal — Variant 5 (2026-10-28)` `7395:320` → `Other
+  considerations — not in this proposal` `7396:395` (muted #EEF0F3 block;
+  the wrapper hugs its width, 1463). Proposal frames, all `✅ … — IN PROTO
+  (v5)`: offers page desktop `7395:326` and mobile `7395:402` (3 newest, no
+  load-more), decision page desktop `7395:470` and mobile `7395:546` (3 +
+  "Näytä aiemmat"), cloned from iteration 2's tables and trimmed; submit
+  loader mobile receiving `7396:320`, mobile received `7396:345` (loading
+  line at opacity 0 so nothing moves) and desktop 1024 receiving
+  `7396:371`, hand-built (logo from `assets/logo-fi.svg`, a static arc for
+  prod's spinner, the check-circle in green-600, the card's lead split over
+  two lines on the phone). The mobile tables put row 3 (5 days old) in the
+  7-day band, as the proto does; iteration 2's mobile frame had it in the
+  month band. Other considerations holds the `Component` frame, iteration
+  1's `v1 — Table` and `v2 — Photo cards`, and iteration 2 `7388:200`,
+  whose tables are renamed `◻︎ Superseded — …` and cards `◻︎ Parked — …
+  (in proto as v2, not in the proposal)`. The other loader shapes are not
+  drawn.
 - **Cleared 2026-10-09 by Legal, Marketing and Ops** (Jussi): consumer sellers'
   own car photos may be shown with the plate blurred, and the ACCEPTED offer
   may be shown. The privacy question is closed.
