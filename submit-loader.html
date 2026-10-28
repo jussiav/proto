@@ -51,12 +51,20 @@
        shows the similar cars while the ad is "received". It exists only for
        the block, so it is skipped in control, and when prod's publish step
        would refuse the ad for its photos (the success page then shows that
-       refusal). location.replace keeps it out of the history either way. */
+       refusal). location.replace keeps it out of the history either way.
+       v4 and v5 are this page's own, both with the heading first and a
+       longer wait: v4 scatters a few cars around it as decoration, v5 shows
+       only the range of their offers and moves on by itself, v6 shows one car
+       at a time with "Jatka" under it. Elsewhere all three are the table. */
     var SL_ARM = (function () {
       var arm = window.protoVariant('similar-cars', 'control');
-      if (['control', 'v1', 'v2', 'v3'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
+      if (['control', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
       return arm;
     }());
+    if (['v4', 'v5', 'v6'].indexOf(SL_ARM) !== -1) {
+      document.documentElement.setAttribute('data-sl-headfirst', '');
+      document.documentElement.setAttribute('data-sl-' + SL_ARM, '');
+    }
     var SL_STORE = (function () { try { return JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) { return {}; } }());
     /* funnel-guard.js photosComplete, not loaded here because it records the
        funnel position of whatever page loads it. */
@@ -74,6 +82,136 @@
     .sl-slot { display: grid; min-height: 56px; width: 100%; max-width: 448px; }
     .sl-slot > * { grid-area: 1 / 1; align-self: center; }
     .sl-slot > [aria-hidden="true"] { visibility: hidden; }
+
+    /* v4: the headline is the screen. No car animation: a status row above
+       the heading holds prod's ASpinner (four ring segments on lds-ring,
+       hand-written here) while loading, then a drawn green check-circle
+       (ph-check-circle-bold's geometry in the success intent's green-600).
+       The row keeps one size, so the swap moves nothing. The heading takes
+       the success page's own h1 style, so the next screen continues it. */
+    html[data-sl-headfirst] body { display: flex; flex-direction: column; }
+    html[data-sl-headfirst] main { flex: 1 1 auto; display: flex; flex-direction: column; padding-bottom: 32px; position: relative; overflow: hidden; }
+    html[data-sl-headfirst] .sl-head { position: relative; z-index: 1; margin-top: auto; margin-bottom: auto; padding-top: 24px; padding-bottom: 48px; }
+    html[data-sl-headfirst] .sl-anim { display: none; }
+    html[data-sl-headfirst] .sl-title-row { font-family: Barlow, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 26px; color: #0F172A; }
+    .sl-status-icon { display: none; }
+    html[data-sl-headfirst] .sl-status-icon { display: flex; width: 56px; height: 56px; align-items: center; justify-content: center; }
+    .sl-spinner { position: relative; display: inline-block; width: 1em; height: 1em; font-size: 48px; color: #0B6DFF; }
+    .sl-spinner > span { box-sizing: border-box; position: absolute; display: block; width: .875em; height: .875em; margin: .125em; border-radius: 50%; border: .125em solid transparent; border-top-color: currentColor; animation: sl-lds-ring 1.2s cubic-bezier(.5, 0, .5, 1) infinite; }
+    .sl-spinner > span:nth-child(1) { animation-delay: -.45s; }
+    .sl-spinner > span:nth-child(2) { animation-delay: -.3s; }
+    .sl-spinner > span:nth-child(3) { animation-delay: -.15s; }
+    @keyframes sl-lds-ring { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .sl-check { display: none; width: 56px; height: 56px; color: #16A34A; }
+    html[data-sl-done] .sl-spinner { display: none; }
+    html[data-sl-done] .sl-check { display: block; }
+    .sl-check circle { stroke-dasharray: 604; stroke-dashoffset: 604; animation: sl-draw .45s ease-out forwards; }
+    .sl-check polyline { stroke-dasharray: 120; stroke-dashoffset: 120; animation: sl-draw .3s ease-out .35s forwards; }
+    @keyframes sl-draw { to { stroke-dashoffset: 0; } }
+
+    /* v5: one teaser card under the heading with the average highest offer
+       of similar cars. No button: the slot holds only the loading line. */
+    html[data-sl-v5] .sl-slot { min-height: 0; }
+    html[data-sl-v5] #sl-continue { display: none; }
+    #sl-teaser { display: none; }
+    html[data-sl-v5] #sl-teaser { display: block; width: 100%; max-width: 448px; margin-top: 16px; }
+    .sl-teaser-card { box-sizing: border-box; width: 100%; padding: 16px 20px; border-radius: 12px; background: #F1F5F9; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+    .sl-teaser-lead { margin: 0; font-size: .875rem; line-height: 1.25rem; color: #475569; text-wrap: balance; }
+    .sl-teaser-lead svg { display: inline; vertical-align: -3px; margin-right: 6px; }
+    .sl-teaser-figure { margin: 0; font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: #0F172A; white-space: nowrap; }
+
+    /* v6: the heading and "Jatka" right under it, in the middle; the
+       similar cars in a carousel along the bottom of the view, under a
+       section heading in the offers page's own style so the offers read as
+       other cars' and not the seller's. One card at a time on a phone, two
+       from prod's sm, three from lg, four from xl. No loading line. */
+    html[data-sl-v6] .sl-head { padding-top: 16px; padding-bottom: 24px; row-gap: 16px; }
+    html[data-sl-v6] #sl-desc { display: none; }
+    #sl-browse { display: none; }
+    html[data-sl-v6] #sl-browse { box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; max-width: 1120px; margin: 0 auto; padding: 0 24px 16px; }
+    /* Section.vue's title: font-display font-bold text-xl, leading 24px,
+       blue-900, with the section's blue-500 icon. */
+    .sl-browse-title { display: flex; align-items: center; gap: 10px; margin: 0; font-family: Barlow, sans-serif; font-weight: 700; font-size: 1.25rem; line-height: 24px; color: #134195; }
+    /* Arrows beside the cards, the count on its own line under them. Below
+       360px the cards take the full width and the arrows go under them,
+       either side of the count, so a card's lines are not cut off. */
+    .sl-browse-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; column-gap: 12px; row-gap: 8px; width: 100%; }
+    /* The track moves by one card (its width plus the 16px gap) per step;
+       --per is how many cards fit, --i the first one shown. */
+    .sl-viewport { --per: 1; flex: 1 1 0; min-width: 0; overflow: hidden; border-radius: 12px; touch-action: pan-y; }
+    @media (min-width: 620px) { .sl-viewport { --per: 2; } }
+    @media (min-width: 992px) { .sl-viewport { --per: 3; } }
+    @media (min-width: 1200px) { .sl-viewport { --per: 4; } }
+    .sl-track { display: flex; gap: 16px; margin: 0; padding: 0; list-style: none; transform: translateX(calc(var(--i, 0) * -1 * (100% + 16px) / var(--per))); transition: transform .3s ease; user-select: none; }
+    .sl-one { box-sizing: border-box; flex: 0 0 calc((100% - (var(--per) - 1) * 16px) / var(--per)); min-width: 0; padding: 14px 16px; border-radius: 12px; background: #F1F5F9; display: flex; flex-direction: column; align-items: flex-start; text-align: left; color: #475569; font-size: .75rem; line-height: 1rem; }
+    .sl-one > * { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sl-one-when { display: flex; align-items: center; gap: 6px; }
+    .sl-one-when svg { flex: 0 0 auto; width: 14px; height: 14px; }
+    .sl-one-name { margin-top: 8px; font-size: .875rem; line-height: 1.25rem; font-weight: 700; color: #1E293B; }
+    .sl-one-label { margin-top: 10px; }
+    .sl-one-price { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: #0F172A; }
+    /* UiButton secondary md, icon only. */
+    .sl-nav { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: 0; border-radius: 8px; background: #D7EDFF; color: #0F47BE; cursor: pointer; }
+    .sl-nav:hover { background: #B9E0FF; }
+    .sl-nav:disabled { opacity: .4; cursor: default; background: #D7EDFF; }
+    .sl-count { order: 5; flex-basis: 100%; margin: 0; font-size: .75rem; line-height: 1rem; color: #475569; text-align: center; }
+    @media (max-width: 359px) {
+      .sl-viewport { order: -1; flex-basis: 100%; }
+      .sl-count { order: 0; flex-basis: auto; min-width: 56px; }
+      #sl-next { order: 1; }
+    }
+    @media (prefers-reduced-motion: reduce) { .sl-track { transition: none; } }
+    @media (max-height: 600px) {
+      html[data-sl-v6] main { padding-bottom: 24px; }
+      html[data-sl-v6] .sl-head { padding-top: 0; padding-bottom: 12px; row-gap: 12px; }
+      html[data-sl-v6] .sl-status-icon { width: 40px; height: 40px; }
+      html[data-sl-v6] .sl-spinner { font-size: 36px; }
+      html[data-sl-v6] .sl-check { width: 40px; height: 40px; }
+      html[data-sl-v6] #sl-browse { gap: 8px; padding-bottom: 8px; }
+    }
+
+    /* v4 similar cars as decoration: a few grey cards without photos, still,
+       scattered around the message with a slight tilt. Positions are offsets
+       from the middle of the view, so they keep clear of the message at any
+       width; on a narrow screen the outer ones run off the edge, which is
+       part of reading them as decoration. Hidden from screen readers. */
+    #sl-deco { display: none; }
+    html[data-sl-v4] #sl-deco { display: block; position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+    .sl-card { position: absolute; left: var(--x); top: var(--y); transform: rotate(var(--r)); width: 184px; padding: 12px 14px; border-radius: 12px; background: #F1F5F9; display: flex; flex-direction: column; font-size: .75rem; line-height: 1rem; color: #94A3B8; }
+    .sl-card-price { margin-top: 2px; font-size: .875rem; line-height: 1.25rem; font-weight: 700; color: #64748B; }
+    .sl-card-name { margin-top: 4px; color: #64748B; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* Filled in this order, so 3 cars still sit left, right and below. */
+    .sl-card:nth-child(1) { --x: -470px; --y: -60px;  --r: 2deg; }
+    .sl-card:nth-child(2) { --x: 290px;  --y: -40px;  --r: -3deg; }
+    .sl-card:nth-child(3) { --x: -150px; --y: 130px;  --r: -2deg; }
+    .sl-card:nth-child(4) { --x: -110px; --y: -290px; --r: 3deg; }
+    .sl-card:nth-child(5) { --x: -620px; --y: -260px; --r: -4deg; }
+    .sl-card:nth-child(6) { --x: 430px;  --y: -270px; --r: 2deg; }
+    .sl-card:nth-child(7) { --x: -600px; --y: 140px;  --r: 3deg; }
+    .sl-card:nth-child(8) { --x: 260px;  --y: 170px;  --r: -2deg; }
+    /* Below prod's lg (992px) there is no room beside the message for more
+       than a sliver, so the cards go above and below it: six on a tablet,
+       five below prod's sm (620px), where the message fills the width. */
+    @media (min-width: 620px) and (max-width: 991px) {
+      .sl-card:nth-child(1) { --x: -330px; --y: -300px; --r: -3deg; }
+      .sl-card:nth-child(2) { --x: -60px;  --y: -250px; --r: 2deg; }
+      .sl-card:nth-child(3) { --x: 170px;  --y: -330px; --r: -2deg; }
+      .sl-card:nth-child(4) { --x: -300px; --y: 130px;  --r: 3deg; }
+      .sl-card:nth-child(5) { --x: -20px;  --y: 200px;  --r: -2deg; }
+      .sl-card:nth-child(6) { --x: 220px;  --y: 140px;  --r: 2deg; }
+      .sl-card:nth-child(n+7) { display: none; }
+    }
+    @media (max-width: 619px) {
+      .sl-card:nth-child(1) { --x: -215px; --y: -330px; --r: -4deg; }
+      .sl-card:nth-child(2) { --x: 20px;   --y: -275px; --r: 3deg; }
+      .sl-card:nth-child(3) { --x: -235px; --y: 120px;  --r: 3deg; }
+      .sl-card:nth-child(4) { --x: -30px;  --y: 250px;  --r: -2deg; }
+      .sl-card:nth-child(5) { --x: 95px;   --y: 135px;  --r: -3deg; }
+      .sl-card:nth-child(n+6) { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sl-check circle, .sl-check polyline { animation: none; stroke-dashoffset: 0; }
+    }
   </style>
 </head>
 <body class="font-dm bg-white min-h-screen">
@@ -89,11 +227,17 @@
   <main class="pb-16">
     <div id="sl-status" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></div>
 
-    <section class="flex flex-col items-center gap-y-4 px-6 pt-2 md:pt-8">
-      <div class="p-4">
+    <section class="sl-head flex flex-col items-center gap-y-4 px-6 pt-2 md:pt-8">
+      <div class="sl-anim p-4">
         <img class="pointer-events-none min-h-32 max-h-40" src="assets/car_loading.svg" aria-hidden="true" role="presentation" alt="" />
       </div>
-      <div id="sl-title" role="heading" aria-level="1" class="text-lg md:text-xl font-medium text-center" data-i18n="submitLoader.title">Ilmoitusta vastaanotetaan</div>
+      <span class="sl-status-icon" aria-hidden="true">
+        <span class="sl-spinner"><span></span><span></span><span></span><span></span></span>
+        <svg class="sl-check" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><circle cx="128" cy="128" r="96" transform="rotate(-90 128 128)"/><polyline points="88 136 112 160 168 104"/></svg>
+      </span>
+      <div class="sl-title-row text-lg md:text-xl font-medium text-center" role="heading" aria-level="1">
+        <span id="sl-title" data-i18n="submitLoader.title">Ilmoitusta vastaanotetaan</span>
+      </div>
       <div class="sl-slot">
         <p id="sl-desc" class="m-0 text-base md:text-lg text-slate-500 text-center" data-i18n="loadingScreen.description">Muutama sekunti jäljellä</p>
         <button id="sl-continue" type="button" aria-hidden="true" tabindex="-1"
@@ -101,6 +245,17 @@
           <span data-i18n="btn.continue">Jatka</span>
           <svg class="w-6 h-6 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg>
         </button>
+      </div>
+          <!-- v5 only: filled by slRenderTeaser. -->
+      <div id="sl-teaser">
+        <div class="sl-teaser-card">
+          <p class="sl-teaser-lead">
+            <!-- ph-bold-chart-bar -->
+            <svg class="text-blue-500 flex-shrink-0" width="16" height="16" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><path d="M16.416 14.0625H16.1348V3.09375C16.1348 2.86997 16.0459 2.65536 15.8876 2.49713C15.7294 2.33889 15.5148 2.25 15.291 2.25H11.3535C11.1297 2.25 10.9151 2.33889 10.7569 2.49713C10.5987 2.65536 10.5098 2.86997 10.5098 3.09375V5.625H7.41602C7.19224 5.625 6.97763 5.71389 6.81939 5.87213C6.66116 6.03036 6.57227 6.24497 6.57227 6.46875V9H4.04102C3.81724 9 3.60263 9.08889 3.44439 9.24713C3.28616 9.40536 3.19727 9.61997 3.19727 9.84375V14.0625H2.91602C2.69224 14.0625 2.47763 14.1514 2.31939 14.3096C2.16116 14.4679 2.07227 14.6825 2.07227 14.9062C2.07227 15.13 2.16116 15.3446 2.31939 15.5029C2.47763 15.6611 2.69224 15.75 2.91602 15.75H16.416C16.6398 15.75 16.8544 15.6611 17.0126 15.5029C17.1709 15.3446 17.2598 15.13 17.2598 14.9062C17.2598 14.6825 17.1709 14.4679 17.0126 14.3096C16.8544 14.1514 16.6398 14.0625 16.416 14.0625ZM12.1973 3.9375H14.4473V14.0625H12.1973V3.9375ZM8.25977 7.3125H10.5098V14.0625H8.25977V7.3125ZM4.88477 10.6875H6.57227V14.0625H4.88477V10.6875Z"/></svg>
+            <span data-i18n="submitLoader.teaserLead">Vastaavista autoista on tarjottu AutoVexissä keskimäärin</span>
+          </p>
+          <p id="sl-teaser-figure" class="sl-teaser-figure"></p>
+        </div>
       </div>
     </section>
 
@@ -114,6 +269,28 @@
       </h2>
       <div id="similar-cars"></div>
     </section>
+
+    <!-- v6 only: filled by slRenderBrowse; along the bottom of the view. -->
+    <div id="sl-browse" role="region" aria-labelledby="sl-browse-title">
+      <h2 class="sl-browse-title">
+        <!-- ph-bold-chart-bar -->
+        <svg class="text-blue-500 flex-shrink-0" width="20" height="20" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><path d="M16.416 14.0625H16.1348V3.09375C16.1348 2.86997 16.0459 2.65536 15.8876 2.49713C15.7294 2.33889 15.5148 2.25 15.291 2.25H11.3535C11.1297 2.25 10.9151 2.33889 10.7569 2.49713C10.5987 2.65536 10.5098 2.86997 10.5098 3.09375V5.625H7.41602C7.19224 5.625 6.97763 5.71389 6.81939 5.87213C6.66116 6.03036 6.57227 6.24497 6.57227 6.46875V9H4.04102C3.81724 9 3.60263 9.08889 3.44439 9.24713C3.28616 9.40536 3.19727 9.61997 3.19727 9.84375V14.0625H2.91602C2.69224 14.0625 2.47763 14.1514 2.31939 14.3096C2.16116 14.4679 2.07227 14.6825 2.07227 14.9062C2.07227 15.13 2.16116 15.3446 2.31939 15.5029C2.47763 15.6611 2.69224 15.75 2.91602 15.75H16.416C16.6398 15.75 16.8544 15.6611 17.0126 15.5029C17.1709 15.3446 17.2598 15.13 17.2598 14.9062C17.2598 14.6825 17.1709 14.4679 17.0126 14.3096C16.8544 14.1514 16.6398 14.0625 16.416 14.0625ZM12.1973 3.9375H14.4473V14.0625H12.1973V3.9375ZM8.25977 7.3125H10.5098V14.0625H8.25977V7.3125ZM4.88477 10.6875H6.57227V14.0625H4.88477V10.6875Z"/></svg>
+        <span id="sl-browse-title" data-i18n="similarCars.title">Vastaavien autojen tarjouksia</span>
+      </h2>
+      <div class="sl-browse-row">
+        <button type="button" id="sl-prev" class="sl-nav" data-i18n-aria="submitLoader.prevCar" aria-label="Edellinen auto">
+          <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M168.49,199.51a12,12,0,0,1-17,17l-80-80a12,12,0,0,1,0-17l80-80a12,12,0,0,1,17,17L97,128Z"/></svg>
+        </button>
+        <div class="sl-viewport" id="sl-viewport"><ul class="sl-track" id="sl-track"></ul></div>
+        <button type="button" id="sl-next" class="sl-nav" data-i18n-aria="submitLoader.nextCar" aria-label="Seuraava auto">
+          <svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M184.49,136.49l-80,80a12,12,0,0,1-17-17L159,128,87.51,56.49a12,12,0,1,1,17-17l80,80A12,12,0,0,1,184.49,136.49Z"/></svg>
+        </button>
+        <p id="sl-count" class="sl-count"></p>
+      </div>
+    </div>
+
+    <!-- v4 only: the similar cars as decoration, filled by slRenderDeco. -->
+    <div id="sl-deco" aria-hidden="true"></div>
   </main>
 
   <script>
@@ -123,13 +300,143 @@
     }());
     /* Prod's draft has finished saving long before this; the wait is the
        proto's, and its length is the thing to tune. */
-    var SL_WAIT_MS = 5000;
+    var SL_V4 = SL_ARM === 'v4';
+    var SL_V5 = SL_ARM === 'v5';
+    var SL_V6 = SL_ARM === 'v6';
+    var SL_WAIT_MS = SL_V4 || SL_V5 ? 10000 : 5000;
+    var SL_BROWSE_MAX = 10;
+    var SL_TEASER_MAX = 20;
+    /* v5 shows the finished state this long before moving on by itself. */
+    var SL_V5_LEAVE_MS = 1500;
+
+    function slEndedMs(c) { var t = Date.parse(c.ended_at); return isNaN(t) ? 0 : t; }
+    function slGroup(n) { return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+
+    function slCard(c) {
+      var card = document.createElement('div');
+      card.className = 'sl-card';
+      [['', t('similarCars.highestOffer')],
+       ['sl-card-price', slGroup(c.highest_offer) + ' €'],
+       ['sl-card-name', c.make + ' ' + c.model],
+       ['', c.year + ' · ' + slGroup(c.driven) + ' km']].forEach(function (p) {
+        var el = document.createElement('span');
+        if (p[0]) el.className = p[0];
+        el.textContent = p[1];
+        card.appendChild(el);
+      });
+      return card;
+    }
+
+    /* The latest eight; the phone layout shows five of them. */
+    function slRenderDeco() {
+      var deco = document.getElementById('sl-deco');
+      var d = SL_STORE.details || {};
+      var car = { make: d.merkki || 'Toyota', model: d.malli || 'Corolla' };
+      var cars = window.SimilarCars.mock(car, SL_DATA)
+        .slice().sort(function (a, b) { return slEndedMs(b) - slEndedMs(a); });
+      if (cars.length < window.SimilarCars.MIN_RESULTS) { deco.style.display = 'none'; return; }
+      deco.innerHTML = '';
+      cars.slice(0, 8).forEach(function (c) { deco.appendChild(slCard(c)); });
+    }
+
+    /* The mean of the highest offers over the cars the decision page would
+       list (the newest SL_TEASER_MAX), to the nearest 100 €, so it reads as
+       an average rather than as one car's price. */
+    function slRenderTeaser() {
+      var box = document.getElementById('sl-teaser');
+      var d = SL_STORE.details || {};
+      var car = { make: d.merkki || 'Toyota', model: d.malli || 'Corolla' };
+      var cars = window.SimilarCars.mock(car, SL_DATA)
+        .slice().sort(function (a, b) { return slEndedMs(b) - slEndedMs(a); })
+        .slice(0, SL_TEASER_MAX);
+      if (cars.length < window.SimilarCars.MIN_RESULTS) { box.style.display = 'none'; return; }
+      var sum = cars.reduce(function (n, c) { return n + c.highest_offer; }, 0);
+      var mean = Math.round(sum / cars.length / 100) * 100;
+      document.getElementById('sl-teaser-figure').textContent = slGroup(mean).replace(/ /g, '\u00a0') + '\u00a0€';
+    }
+
+    /* The newest ten, latest first, as many side by side as --per allows.
+       The arrows and a horizontal swipe move one card; they stop at either
+       end. The cards are a list, so a screen reader reads them all. */
+    function slRenderBrowse() {
+      var box = document.getElementById('sl-browse');
+      var d = SL_STORE.details || {};
+      var car = { make: d.merkki || 'Toyota', model: d.malli || 'Corolla' };
+      var cars = window.SimilarCars.mock(car, SL_DATA)
+        .slice().sort(function (a, b) { return slEndedMs(b) - slEndedMs(a); })
+        .slice(0, SL_BROWSE_MAX);
+      if (cars.length < window.SimilarCars.MIN_RESULTS) { box.style.display = 'none'; return; }
+      var vp = document.getElementById('sl-viewport');
+      var track = document.getElementById('sl-track');
+      var prev = document.getElementById('sl-prev');
+      var next = document.getElementById('sl-next');
+      var CAL = '<svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M208,28H188V24a12,12,0,0,0-24,0v4H92V24a12,12,0,0,0-24,0v4H48A20,20,0,0,0,28,48V208a20,20,0,0,0,20,20H208a20,20,0,0,0,20-20V48A20,20,0,0,0,208,28ZM68,52a12,12,0,0,0,24,0h72a12,12,0,0,0,24,0h16V76H52V52ZM52,204V100H204V204Zm92-76a16,16,0,1,1-16-16A16,16,0,0,1,144,128Zm48,0a16,16,0,1,1-16-16A16,16,0,0,1,192,128ZM96,176a16,16,0,1,1-16-16A16,16,0,0,1,96,176Zm48,0a16,16,0,1,1-16-16A16,16,0,0,1,144,176Zm48,0a16,16,0,1,1-16-16A16,16,0,0,1,192,176Z"/></svg>';
+      var i = 0;
+      function when(c) {
+        var days = Math.floor((Date.now() - slEndedMs(c)) / 864e5);
+        return t(days <= 7 ? 'similarCars.recent7' : days <= 30 ? 'similarCars.recent30' : 'similarCars.older');
+      }
+      /* When, then the car, then its offer. */
+      function card(c) {
+        var li = document.createElement('li');
+        li.className = 'sl-one';
+        var whenEl = document.createElement('span');
+        whenEl.className = 'sl-one-when';
+        whenEl.innerHTML = CAL;
+        whenEl.appendChild(document.createTextNode(when(c)));
+        li.appendChild(whenEl);
+        [['sl-one-name', c.make + ' ' + c.model],
+         ['', c.model_specification],
+         ['', c.year + ' · ' + slGroup(c.driven) + ' km'],
+         ['sl-one-label', t('similarCars.highestOffer')],
+         ['sl-one-price', slGroup(c.highest_offer) + ' €']].forEach(function (p) {
+          var el = document.createElement('span');
+          if (p[0]) el.className = p[0];
+          el.textContent = p[1];
+          li.appendChild(el);
+        });
+        return li;
+      }
+      function fill() {
+        track.innerHTML = '';
+        cars.forEach(function (c) { track.appendChild(card(c)); });
+      }
+      function per() { return parseInt(getComputedStyle(vp).getPropertyValue('--per'), 10) || 1; }
+      function last() { return Math.max(0, cars.length - per()); }
+      function nav() {
+        var p = per();
+        i = Math.min(i, last());
+        track.style.setProperty('--i', i);
+        document.getElementById('sl-count').textContent =
+          (p > 1 ? (i + 1) + '\u2013' + Math.min(i + p, cars.length) : String(i + 1)) + ' / ' + cars.length;
+        prev.disabled = i === 0;
+        next.disabled = i >= last();
+      }
+      function go(step) {
+        var to = Math.max(0, Math.min(last(), i + step));
+        if (to !== i) { i = to; nav(); }
+      }
+      prev.addEventListener('click', function () { go(-1); });
+      next.addEventListener('click', function () { go(1); });
+      var x0 = null;
+      vp.addEventListener('pointerdown', function (e) { x0 = e.clientX; });
+      vp.addEventListener('pointerup', function (e) {
+        if (x0 === null) return;
+        var dx = e.clientX - x0;
+        x0 = null;
+        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+      });
+      window.addEventListener('resize', nav);
+      document.addEventListener('av:langchange', fill);
+      fill();
+      nav();
+    }
 
     function slStatus() {
       var done = document.documentElement.hasAttribute('data-sl-done');
       document.getElementById('sl-status').textContent = done
         ? t('submitLoader.done')
-        : t('submitLoader.title') + '. ' + t('loadingScreen.description');
+        : t('submitLoader.title') + (SL_V6 ? '' : '. ' + t('loadingScreen.description'));
     }
 
     function slRenderSimilar() {
@@ -156,14 +463,21 @@
       title.textContent = t('submitLoader.done');
       document.title = t('submitLoader.done') + ' – AutoVex';
       document.getElementById('sl-desc').setAttribute('aria-hidden', 'true');
+      slStatus();
+      if (SL_V5) {
+        setTimeout(function () { window.location.replace('success.html'); }, SL_V5_LEAVE_MS);
+        return;
+      }
       var btn = document.getElementById('sl-continue');
       btn.removeAttribute('aria-hidden');
       btn.removeAttribute('tabindex');
-      slStatus();
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      slRenderSimilar();
+      if (SL_V4) slRenderDeco();
+      else if (SL_V5) slRenderTeaser();
+      else if (SL_V6) slRenderBrowse();
+      else slRenderSimilar();
       slStatus();
       setTimeout(slDone, SL_WAIT_MS);
       /* Replaced, not pushed: browser back from the success page must not
@@ -182,8 +496,11 @@
           variants: [
             { id: 'control', label: 'Control — no submit loader, straight to success' },
             { id: 'v1',      label: 'Variant 1 — table' },
-            { id: 'v2',      label: 'Variant 2 — photo cards' },
-            { id: 'v3',      label: 'Variant 3 — photo cards, accepted offers' }
+            { id: 'v2',      label: 'Variant 2 — photo cards (parked)' },
+            { id: 'v3',      label: 'Variant 3 — photo cards, accepted offers (parked)' },
+            { id: 'v4',      label: 'Variant 4 — status icon + headline, a few cars scattered, 10 s' },
+            { id: 'v5',      label: 'Variant 5 — chosen: average offer of similar cars, moves on by itself after 10 s' },
+            { id: 'v6',      label: 'Variant 6 — one car at a time with arrows, Jatka below, 5 s' }
           ]
         }
       ],

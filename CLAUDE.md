@@ -841,7 +841,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
-| Similar cars | **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers; latest first in three recency bands, grey caption labels, "Näytä aiemmat" (2026-10-27, matched to Jussi's Figma edits); table is the priority, cards a future alternative; what counts as similar is with Analytics; copy draft; on the decision page and a funnel submit loader too (2026-10-27) | `similar-cars` | `control` | `control` | `offers.html`, `decision.html`, `submit-loader.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
+| Similar cars | **Direction decided** (2026-10-28) — the table with highest offers (offers page 3 rows, decision page 3 → up to 20) and `v5` on the submit loader (one average figure); photo cards and accepted offers parked. History: **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers, `v4` (2026-10-28) on the submit loader only: a spinner turning into a green check above the heading, a few still grey cards scattered around it, 10 s; the table elsewhere; `v5` (2026-10-28) the same top with only an offer-range teaser card, moving on by itself; `v6` (2026-10-28) "Jatka" under the heading, a carousel of 1-4 cars along the bottom, 5 s, fits a phone without scrolling; latest first in three recency bands, grey caption labels, "Näytä aiemmat" (2026-10-27, matched to Jussi's Figma edits); table is the priority, cards a future alternative; what counts as similar is with Analytics; copy draft; on the decision page and a funnel submit loader too (2026-10-27) | `similar-cars` | `control` | `control` | `offers.html`, `decision.html`, `submit-loader.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
@@ -2467,6 +2467,22 @@ theirs, to anchor expectations to real offers. Started 2026-10-08. How similar
 the cars are, how many, and the sort order are open; Analytics is checking what
 data exists.
 
+- **Decided direction (team, 2026-10-28): the table with highest offers, and
+  `v5` on the submit loader.** Photo cards (`v2`) and accepted offers (`v3`)
+  are **parked** for later; `v4` and `v6` stay switchable as the loader
+  shapes not chosen. The bar's arm labels say so. Every table arm (`v1`,
+  `v4`–`v6`) now follows the team's counts:
+  - **Offers page:** each car's 3 newest, no "Näytä aiemmat"
+    (`initial: 3, max: 3`).
+  - **Decision page:** 3 first, "Näytä aiemmat" adds 5, at most 20
+    (`initial: 3, max: 20`). The step of 5 is the component's default, not
+    a team decision.
+  - `SimilarCars.render` takes `opts.max` (the newest kept). The mock lists
+    were lengthened (Amarok 16 same-model / 22 mixed, Corolla 16 / 21; the
+    added cars ended 49–80 days ago) so the cap of 20 is reachable with
+    Events → Market data → mixed.
+  - The cards (parked) keep 5 + 5 everywhere.
+
 - **One block, `similar-cars.js`, vanilla, no section heading of its own**, so
   the decision page or a funnel step can host it later with one script tag and
   `SimilarCars.render(el, { variant, groups })`. Offers page wraps it in its own
@@ -2523,13 +2539,101 @@ data exists.
     without scrolling, but easy to skip the cars), the 5 s, and that the wait
     delays email verification for unverified sellers. On the spec under
     Open questions. Not in Figma.
+  - **`v4`, this screen's own arm (Jussi, 2026-10-28), fourth shape; Jussi:
+    "the best variant so far" for this screen:** the heading is the screen
+    and the similar cars are decoration. Stamped in `<head>` as
+    `html[data-sl-v4]`, so no first-paint flash. **No car animation**
+    (`.sl-anim` hidden). From the top: `.sl-status-icon`, its own 56px row,
+    holds prod's `ASpinner` (four ring segments on `lds-ring`, transcribed
+    as `.sl-spinner`, 48px) while loading and `.sl-check` (56px,
+    `ph-check-circle-bold`'s geometry as strokes: r 96, stroke 24, points
+    88 136 112 160 168 104, drawn by stroke-dashoffset in green-600, the
+    success intent's colour) once done; then the heading in the success
+    page's h1 style (Barlow 700, 24/26, slate-900, hand-written CSS); then
+    the shared slot, where "Jatka" replaces "Muutama sekunti jäljellä".
+    `SL_WAIT_MS` 10000 (5000 in the other arms); the screen never moves on
+    by itself. **Similar cars:** `#sl-deco`, `aria-hidden`, an origin at
+    the middle of `main` with each `.sl-card` placed by `--x`/`--y`/`--r`
+    per `nth-child`: 8 slots on desktop (beside, above and below the
+    message), 6 between prod's `sm` and `lg` and 5 below `sm` (above and
+    below; the outer ones run off the edge). Still, tilted 2-4°, grey
+    (slate-100, 184px, no photo: "Korkein tarjous", amount, make + model,
+    year · km in slate-400/500), latest first. Measured at 1440×900,
+    1024×700, 992×700, 991×800, 900×600, 768×1024, 375×812 and 360×640:
+    no card overlaps the message or another card, no scroll. The "Korkein
+    tarjous" label stays so an amount cannot read as this seller's own
+    valuation. **Shapes tried and dropped the same day:** a ticker line with
+    a caption and a "Näet lisää vastaavia autoja…" note (key removed), a
+    timed move to the success page, "Jatka" before the heading changed,
+    the spinner inline after the heading, and two rows of cards drifting
+    along the bottom (too many cars at once, and motion over 5 s). **Why
+    (Jussi):** the heading, its change and the button matter most; the
+    team will show 5-10 cars; a list invites reading, and a seller who then
+    presses back from success leaves the funnel in prod. **On offers and
+    decision `v4` renders the table** (one arm per initiative; the table is
+    the priority). The only motion left is the spinner while nothing can be
+    done, which WCAG 2.2.2 treats as essential.
+  - **`v5`, the chosen loader (Jussi, 2026-10-28; revised the same day
+    after the team's review):** `v4`'s heading-first top
+    (`html[data-sl-headfirst]`, shared by both) without the cars. Under the
+    loading line `#sl-teaser`: a slate-100 card with the chart-bar icon and
+    `submitLoader.teaserLead` "Vastaavista autoista on tarjottu AutoVexissä
+    keskimäärin" (Claude's draft from Jussi's suggestions; his "Lähin
+    vastaava tarjous" names one car, not an average), then ONE figure: the
+    mean `highest_offer` over the newest 20 (`SL_TEASER_MAX`, the decision
+    page's cap), rounded to the nearest 100 € (Claude's call, so it reads as
+    an average, not as one car's price). Mock: 25 900 € Amarok, 17 100 €
+    Corolla. Fewer than `MIN_RESULTS` cars → no card. **Cut by the team:**
+    the range ("19 800–31 200 €"), its period ("Viimeisen kuukauden aikana")
+    and the note under the card ("Näet vastaavat autot ja niiden
+    tarjoukset, kun ilmoituksesi on valmis.", `teaserNote`, removed). No
+    button (`#sl-continue` is `display:none`, the slot shrinks to the line).
+    At 10 s the done state (check, "Ilmoitus vastaanotettu"), then
+    `location.replace('success.html')` after `SL_V5_LEAVE_MS` 1500, so it
+    **moves on by itself** (Jussi's call for this arm, unlike `v4`).
+    **Open:** mean or median ("keskimäärin" describes a mean; a median wants
+    other words), and the lead says "tarjottu" while the figure is the
+    highest offers only. **Purpose (Jussi):** tease the data the seller will
+    have access to, which may also make finishing the process more
+    worthwhile. On offers and decision `v5` renders the table.
+  - **`v6`, the cars along the bottom (Jussi, 2026-10-28), third pass:**
+    the heading-first top without the loading line (`#sl-desc` hidden;
+    status announces the heading only) and with "Jatka" **directly under
+    the heading** (the slot in its DOM place, 16px below). A body line
+    ("Näet kaikki vastaavat autot…") was tried and removed, key gone.
+    `#sl-browse` sits **outside `.sl-head`, after it in `main`**, so the
+    head centres in the space above and the carousel sits at the bottom of
+    the view, to keep the cars visually secondary (Jussi). It has an `h2`
+    "Vastaavien autojen tarjouksia" in `Section.vue`'s title style (Barlow
+    700, 20/24, blue-900, the 20px blue-500 chart icon) so the offers read
+    as other cars' and not the seller's, then a track of slate-100 cards
+    between two UiButton secondary md icon arrows (40px) and the count.
+    **Cards per view** from `--per` on `.sl-viewport`: 1, 2 from prod's
+    `sm` (620), 3 from `lg` (992), 4 from `xl` (1200); card width
+    `(100% − (per−1)·16px)/per`, the track moved by `--i` steps of
+    `(100% + 16px)/per` with a 0.3 s transform transition (none with
+    reduced motion). Arrows and a 40px pointer swipe move one card, disabled
+    at the ends; the count reads "1 / 10" or "1–4 / 10"; `resize` re-reads
+    `--per` and clamps. The card, left-aligned: recency label with the
+    calendar icon, make + model (14px bold), `model_specification`, year ·
+    km, then "Korkein tarjous" and the amount (20px bold); secondary text
+    slate-600. The cards are a `ul`, so a screen reader reads them all.
+    **Below 360px wide** the viewport takes the full width and the arrows go
+    under it, either side of the count; those rules sit after the base ones
+    on purpose (placed first they lost on source order). At `SL_WAIT_MS`
+    5000 the done state and "Jatka", **no automatic move**. Below 600px of
+    height: icon 40px, gaps 12. Measured with no scroll and nothing clipped
+    at 1440×900 (4 cards), 1024×700 (3), 768×1024 (2), 375×812, 375×667,
+    360×640 and 320×568 (1). An earlier pass kept one card mid-screen with
+    the button under it, sliding with Web Animations; replaced by this. On
+    offers and decision `v6` renders the table.
 - **One list per make + model of the seller's cars** (Jussi, 2026-10-08): two
   cars of the same model share one list, under the first (the component
   collapses them). Each opens with "Volkswagen Amarok · vuosimallit 2018–2020"
   (the seller's car + the list's year range). **No plate badge** — tried and
   removed: the plate is the seller's own car, so beside "similar cars" it reads
   as if the list were about that exact car. Then its rows or cards and its
-  own "Näytä lisää". **No intro sentence and no caveat line** — Jussi removed
+  own "Näytä aiemmat". **No intro sentence and no caveat line** — Jussi removed
   both ("Jokainen auto on yksilö…" with its info icon went 2026-10-08); the
   section heading says what the lists are.
 - **Which cars get a list (Jussi's rule):** a draft in review, or a published

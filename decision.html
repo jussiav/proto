@@ -693,10 +693,11 @@
 
     /* "Similar cars" (design-specs/similar-cars.html): the offers page's arms,
        here for this decision's car alone. v1 table, v2 photo cards with
-       highest offers, v3 photo cards with accepted offers. */
+       highest offers, v3 photo cards with accepted offers. v4-v6 differ
+       only on the submit loader, so here they are the table. */
     var SIMILAR_ARM = (function () {
       var arm = window.protoVariant('similar-cars', 'control');
-      if (['control', 'v1', 'v2', 'v3'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
+      if (['control', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
       return arm;
     }());
     /* World state, not a variant: what the Analytics query would return.
@@ -716,9 +717,12 @@
       var titleEl = section.querySelector('[data-i18n^="similarCars.title"]');
       titleEl.setAttribute('data-i18n', titleKey);
       titleEl.textContent = t(titleKey);
+      var table = ['v1', 'v4', 'v5', 'v6'].indexOf(SIMILAR_ARM) !== -1;
       var drawn = window.SimilarCars.render(document.getElementById('similar-cars'), {
-        variant: SIMILAR_ARM === 'v1' ? 'table' : 'cards',
+        variant: table ? 'table' : 'cards',
         price: SIMILAR_ARM === 'v3' ? 'accepted' : 'highest',
+        initial: table ? 3 : undefined,
+        max: table ? 20 : undefined,
         car: car,
         cars: window.SimilarCars.mock(car, SIMILAR_DATA)
       });
@@ -4170,8 +4174,11 @@
           variants: [
             { id: 'control', label: 'Control — no similar cars block' },
             { id: 'v1',      label: 'Variant 1 — table' },
-            { id: 'v2',      label: 'Variant 2 — photo cards' },
-            { id: 'v3',      label: 'Variant 3 — photo cards, accepted offers' }
+            { id: 'v2',      label: 'Variant 2 — photo cards (parked)' },
+            { id: 'v3',      label: 'Variant 3 — photo cards, accepted offers (parked)' },
+            { id: 'v4',      label: 'Variant 4 — table here; scattered cars on the submit loader' },
+            { id: 'v5',      label: 'Variant 5 — chosen: table here; average offer on the submit loader' },
+            { id: 'v6',      label: 'Variant 6 — table here; one car at a time on the submit loader' }
           ]
         }
       ],

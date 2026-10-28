@@ -68,6 +68,9 @@ window.TRANSLATIONS = {
     submitLoader: {
       title: 'Ilmoitusta vastaanotetaan',
       done:  'Ilmoitus vastaanotettu',
+      teaserLead:   'Vastaavista autoista on tarjottu AutoVexissä keskimäärin',
+      prevCar:      'Edellinen auto',
+      nextCar:      'Seuraava auto',
     },
 
     /* Similar cars (design-specs/similar-cars.html). Prod strings, verbatim:
@@ -1123,6 +1126,9 @@ window.TRANSLATIONS = {
     submitLoader: {
       title: 'Receiving your listing',
       done:  'Listing received',
+      teaserLead:   'On average, similar cars on AutoVex have been offered',
+      prevCar:      'Previous car',
+      nextCar:      'Next car',
     },
 
     similarCars: {

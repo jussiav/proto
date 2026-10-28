@@ -15,6 +15,7 @@
  *   opts.price    'highest' (default) | 'accepted' - which offer each car shows
  *   opts.initial  shown per group before the load-more button (default 5)
  *   opts.step     added per press (default 5)
+ *   opts.max      the most a list ever shows, newest kept (default: all)
  *
  * window.SimilarCars.mock(car, mode) -> Array<SimilarCar>
  *   car   { make, model } - the seller's own car
@@ -420,7 +421,10 @@
       if (key && seen[key]) return false;
       if (key) seen[key] = true;
       return (g.cars || []).length >= MIN_RESULTS;
-    }).map(function (g) { return { car: g.car, cars: latestFirst(g.cars) }; });
+    }).map(function (g) {
+      var cars = latestFirst(g.cars);
+      return { car: g.car, cars: opts.max ? cars.slice(0, opts.max) : cars };
+    });
     m.shown = m.groups.map(function () { return opts.initial || 5; });
     return draw(m);
   }
@@ -454,7 +458,11 @@
         ['2.0 TDI Trendline', 2018, 192000, 19800, 30],
         ['2.0 TDI Highline 4Motion', 2019, 158000, 25100, 35],
         ['3.0 V6 TDI Aventura 4Motion', 2018, 133000, 28300, 41],
-        ['2.0 BiTDI Comfortline 4Motion', 2020, 149000, 26900, 47]
+        ['2.0 BiTDI Comfortline 4Motion', 2020, 149000, 26900, 47],
+        ['2.0 TDI Trendline 4Motion', 2018, 184000, 20600, 52],
+        ['3.0 V6 TDI Highline 4Motion', 2019, 141000, 28100, 58],
+        ['2.0 BiTDI Highline 4Motion', 2018, 166000, 23400, 64],
+        ['2.0 TDI Comfortline', 2020, 132000, 25800, 71]
       ],
       peers: [
         ['Ford', 'Ranger', '2.0 EcoBlue Wildtrak 4x4', 2019, 141000, 27200, 4],
@@ -476,7 +484,13 @@
         ['2.0 Hybrid Executive', 2020, 84000, 20400, 27],
         ['1.8 Hybrid Active Sedan', 2020, 97000, 16100, 31],
         ['1.8 Hybrid Prestige Touring Sports', 2021, 69000, 20100, 38],
-        ['1.2 T Active Touring Sports', 2019, 109000, 13300, 44]
+        ['1.2 T Active Touring Sports', 2019, 109000, 13300, 44],
+        ['1.8 Hybrid Active Touring Sports', 2019, 96000, 15700, 49],
+        ['2.0 Hybrid GR Sport Touring Sports', 2021, 58000, 21300, 54],
+        ['1.8 Hybrid Style', 2020, 87000, 17600, 60],
+        ['1.2 T Active Hatchback', 2019, 104000, 12900, 66],
+        ['1.8 Hybrid Prestige Edition', 2020, 72000, 18800, 73],
+        ['1.8 Hybrid Active Sedan', 2019, 113000, 14600, 80]
       ],
       peers: [
         ['Volkswagen', 'Golf', '1.5 eTSI Life DSG', 2020, 83000, 17900, 5],

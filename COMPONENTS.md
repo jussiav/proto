@@ -402,6 +402,7 @@ so `design-specs/` pages can mount it.
 | `car` + `cars` | Object + Array | Single-group shorthand. `cars`: `{ make, model, model_specification, year, driven, highest_offer, ended_at, image, plate_box }`, in any order: the block orders them latest first by `ended_at` |
 | `price` | `'highest'` \| `'accepted'` | Which figure each car shows. `'accepted'` reads `accepted_offer`, labels it "Hyväksytty tarjous" and, on cards, puts the label above the amount. Default `'highest'` |
 | `initial` / `step` | Number | Shown first / added per "Näytä aiemmat". Default 5 / 5 |
+| `max` | Number | The most a list ever shows, newest kept. Default: all. The offers page passes `initial: 3, max: 3` (no button), the decision page `initial: 3, max: 20` |
 
 `SimilarCars.mock(car, mode)` returns proto data for the seller's car
 (`'volkswagen amarok'` and `'toyota corolla'`, anything else falls back to the
@@ -418,6 +419,6 @@ wrappers (B2B seller, dealership), which carry their own state logic;
 **Responsiveness:** container query at 520px of the block's own width — year
 and mileage columns fold into a meta line, and the card arrows appear.
 
-**Used on:** `offers.html` (`similar-cars` arm `v1`/`v2`),
-`design-specs/similar-cars.html`, `components.html`
+**Used on:** `offers.html`, `decision.html`, `submit-loader.html` (`similar-cars`
+arms), `design-specs/similar-cars.html`, `components.html`
 
