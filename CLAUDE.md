@@ -2484,6 +2484,17 @@ data exists.
     added cars ended 49–80 days ago) so the cap of 20 is reachable with
     Events → Market data → mixed.
   - The cards (parked) keep 5 + 5 everywhere.
+  - **The spec page is the proposal, top to bottom** (2026-10-28, Jussi):
+    the proposal (three surface cards + rules true everywhere), its open
+    questions, one section per design (offers page, decision page, submit
+    loader) with `?similar-cars=v5` links, then **What the build needs**
+    (counts per surface, data per car, loader rules, built from, copy).
+    Everything else sits in a muted **Other considerations** band at the
+    bottom as collapsed `<details>`: photo cards, accepted offers, the other
+    loader shapes, ideas for later and their copy. The card demos there are
+    drawn on first open (they measure their own width). The loader is shown
+    as a static 375px replica of both states (`.slr-*` CSS), not an iframe,
+    because the real page seeds the store and moves on after 11.5 s.
 
 - **One block, `similar-cars.js`, vanilla, no section heading of its own**, so
   the decision page or a funnel step can host it later with one script tag and
@@ -2534,9 +2545,11 @@ data exists.
     the stored hero (as the front page form submits it). PAGES entries take
     `url` (builds the address) and `state` (a view of a page, never marked
     as the current page); options are indexed since two share
-    `details.html`. The logo is a plain image, not
-    the vehicle-info screen's proto-only home link, so nothing leaves the
-    flow before the success page.
+    `details.html`. **The logo links to the front page in every variant**
+    (Jussi, 2026-10-28; it was a plain image, as prod's), like the
+    vehicle-info screen's proto-only home link, labelled with the success
+    page's `success.backToHome`. It is a `location.replace`, as "Jatka" is,
+    so back from the front page lands on the contact step, never the loader.
   - **Open, for Jussi:** where "Jatka" sits (above the list now: visible
     without scrolling, but easy to skip the cars), the 5 s, and that the wait
     delays email verification for unverified sellers. On the spec under

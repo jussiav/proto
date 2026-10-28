@@ -82,6 +82,45 @@
        block renders at the size it has in the product. */
     .demo-stage { background: #EEF6FA; border-radius: 12px; padding: 24px; }
     .demo-narrow { width: 343px; max-width: 100%; }
+    /* Submit loader replica: the screen at phone width, transcribed from
+       submit-loader.html (Variant 5). Hand-written so it renders without the
+       prototype's own scripts, timers or redirects. */
+    .slr-frames { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+    .slr-fig { margin: 0; width: 375px; max-width: 100%; }
+    .slr-phone { box-sizing: border-box; width: 100%; height: 540px; background: #fff; border: 1px solid #E2E8F0; border-radius: 20px; box-shadow: 0 1px 3px rgba(15, 23, 42, .08); display: flex; flex-direction: column; overflow: hidden; }
+    .slr-logo { padding: 16px; }
+    .slr-logo img { display: block; }
+    .slr-body { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 0 24px 56px; text-align: center; }
+    .slr-icon { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; }
+    .slr-spin { position: relative; display: inline-block; width: 1em; height: 1em; font-size: 48px; color: #0B6DFF; }
+    .slr-spin > span { box-sizing: border-box; position: absolute; display: block; width: .875em; height: .875em; margin: .125em; border-radius: 50%; border: .125em solid transparent; border-top-color: currentColor; animation: slr-ring 1.2s cubic-bezier(.5, 0, .5, 1) infinite; }
+    .slr-spin > span:nth-child(1) { animation-delay: -.45s; }
+    .slr-spin > span:nth-child(2) { animation-delay: -.3s; }
+    .slr-spin > span:nth-child(3) { animation-delay: -.15s; }
+    @keyframes slr-ring { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @media (prefers-reduced-motion: reduce) { .slr-spin > span { animation: none; } }
+    .slr-check { width: 56px; height: 56px; color: #16A34A; }
+    .slr-title { font-family: Barlow, sans-serif; font-weight: 700; font-size: 1.5rem; line-height: 26px; color: #0F172A; }
+    .slr-line { margin: 0; font-size: 1rem; line-height: 1.5rem; color: #64748B; }
+    .slr-line.is-gone { visibility: hidden; }
+    .slr-card { box-sizing: border-box; width: 100%; padding: 16px 20px; border-radius: 12px; background: #F1F5F9; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .slr-lead { margin: 0; font-size: .875rem; line-height: 1.25rem; color: #475569; text-wrap: balance; }
+    .slr-lead svg { display: inline; vertical-align: -3px; margin-right: 6px; }
+    .slr-amount { margin: 0; font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: #0F172A; white-space: nowrap; }
+    .slr-cap { margin-top: 10px; font-family: "DM Sans", sans-serif; font-size: .875rem; line-height: 1.25rem; color: #334155; }
+    .slr-next { box-sizing: border-box; width: 375px; max-width: 100%; height: 540px; border: 2px dashed #CBD5E1; border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center; font-family: "DM Sans", sans-serif; font-size: .875rem; line-height: 1.25rem; color: #475569; }
+    @media (max-width: 767px) { .slr-next { height: auto; padding: 20px; } }
+
+    /* The muted band for everything outside the proposal. */
+    .av-band-muted { background: #EEF0F3; }
+    .parked { background: #fff; border: 1px solid #E2E8F0; border-radius: 8px; }
+    .parked + .parked { margin-top: 12px; }
+    .parked > summary { cursor: pointer; list-style: none; padding: 16px 20px; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .parked > summary::-webkit-details-marker { display: none; }
+    .parked > summary::before { content: "+"; font-family: "DM Sans", sans-serif; font-weight: 700; color: #64748B; width: 12px; }
+    .parked[open] > summary::before { content: "–"; }
+    .parked-body { padding: 0 20px 20px 44px; }
+    @media (max-width: 767px) { .parked-body { padding-left: 20px; } }
   </style>
 </head>
 <body class="font-body text-slate-900" style="background:#f5f5f5">
@@ -91,17 +130,16 @@
       <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
            class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
       <div class="flex flex-col gap-4">
-        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · offers page first, reusable elsewhere</p>
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative · proposal for review</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Similar cars</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Sellers wonder what price to expect. This block shows the highest offers that dealerships made on AutoVex for cars like theirs, so the expectation is anchored to real offers rather than to asking prices seen elsewhere. The table comes first; a row of photo cards is parked as a later alternative.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Sellers wonder what price to expect. We show them the highest offers dealerships made on AutoVex for cars like theirs: as a table on the offers page and the decision page, and as one average figure while their listing is being received.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: direction decided — the table, and Variant 5 on the submit loader; data definition with Analytics, copy is draft
+          Proposal · data definition with Analytics · copy is draft
         </span>
-        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Arms: control · v1 table · v2 photo cards (parked) · v3 accepted offers (parked) · v4–v6 submit loader, v5 chosen</span>
-        <span class="bg-info-100 text-info-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype param: <code>?similar-cars=</code></span>
+        <span class="bg-white text-blue-800 font-medium rounded-full px-3 py-1 shadow-lg">Prototype: <code>?similar-cars=v5</code></span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">October 2026</span>
       </div>
     </div>
@@ -112,150 +150,102 @@
 
   <main>
 
-    <section class="av-band av-band-grey">
+    <!-- ═════════════ THE PROPOSAL ═════════════ -->
+
+    <section class="av-band av-band-grey" id="scope">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">In short</h2>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>Decided (October 2026): the table, with each car's highest offer, comes first.</b> On the offers page it lists the 3 newest similar cars per car, with no "Näytä aiemmat". On the decision page it shows 3 first and "Näytä aiemmat" opens more, up to 20. On the submit loader, Variant 5: one figure, the average highest offer of similar cars. The photo cards and the accepted offer are parked for later; their sections below stay as the record.</li>
-          <li><b>One block, two shapes, two figures.</b> Variant 1 is a table and Variant 2 a sideways-scrolling row of photo cards, both showing each car's highest offer. Variant 3 is Variant 2's cards showing the offer the seller accepted instead. Variants 4–6 differ only on the submit loader: Variant 4 scatters a few cars around the "received" message, Variant 5 shows only the average of their highest offers, Variant 6 shows the cars in a carousel along the bottom. Everywhere else all three are the table.</li>
-          <li><b>Shown only while the seller is forming an expectation</b>: ad in review, auction live, offers waiting for a decision or under negotiation. Hidden once the seller has accepted or rejected.</li>
-          <li><b>The figure is labelled with production's own words</b>: "Korkein tarjous" for the auction's highest offer (Variants 1 and 2), "Hyväksytty tarjous" for the accepted offer (Variant 3).</li>
-          <li><b>Cleared by Legal, Marketing and Ops</b> (October 2026): sellers' own car photos may be shown with the registration plate blurred, and the accepted offer may be shown.</li>
-          <li><b>One list per car.</b> A seller with several cars sees a list for each car in review or at auction, each under its own make, model and model-year line. Unfinished drafts and decided cars get no list.</li>
-          <li><b>Three places: the offers page, the decision page and a submit loader after the contact step.</b> On the decision page the block shows that car's list only, between "Tarjouskilpailun tulos" and the "Tarvitsetko apua?" banner with "Hylkää tarjouskilpailu", while the seller still has offers to decide on.</li>
-          <li><b>Latest first, in three recency bands</b>: "Viimeisen 7 päivän aikana", "Viimeisen kuukauden aikana" and "Yli kuukausi sitten", counted in days back from today. Never "this week" or "this month", which would leave the first band empty early in a week or month. The band is a light cue for how recent the offers are, not a headline. Its label is quiet grey caption text with a calendar icon, and the load-more button says "Näytä aiemmat", so the order is legible before anyone reads a label.</li>
-          <li><b>Hidden below 3 cars.</b> One or two cars read as a quote for the seller's own car, not as evidence.</li>
-          <li><b>What counts as "similar" is open</b> and is Analytics' question. The block is built to work whether the answer is "same model only" or "comparable models".</li>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">The proposal</h2>
+      <p class="font-dm text-sm text-slate-700 mb-5 max-w-3xl">Three places, one block of data. Everything in this section and the next four is what we propose to build. Anything else lives at the bottom of the page, under <a class="text-av-blue underline" href="#other">Other considerations</a>.</p>
+      <div class="grid md:grid-cols-3 gap-4 max-w-5xl">
+        <div class="bg-white rounded-lg p-5 border border-slate-200 flex flex-col">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">1 · Offers page</p>
+          <p class="font-barlow font-bold text-xl text-black mb-2">A table, 3 cars</p>
+          <p class="font-dm text-sm leading-6 text-slate-700 flex-1">The 3 newest similar cars for each of the seller's cars in review or at auction, with each car's highest offer. No "Näytä aiemmat".</p>
+          <a class="font-dm text-sm text-av-blue underline font-medium mt-3" href="#offers">Design</a>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200 flex flex-col">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">2 · Decision page</p>
+          <p class="font-barlow font-bold text-xl text-black mb-2">The same table, up to 20</p>
+          <p class="font-dm text-sm leading-6 text-slate-700 flex-1">For the car being decided on only: 3 first, then "Näytä aiemmat" opens older ones, up to 20.</p>
+          <a class="font-dm text-sm text-av-blue underline font-medium mt-3" href="#decision">Design</a>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200 flex flex-col">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-1">3 · Submit loader</p>
+          <p class="font-barlow font-bold text-xl text-black mb-2">A new screen, one figure</p>
+          <p class="font-dm text-sm leading-6 text-slate-700 flex-1">Between "Lähetä ilmoitus" and the success page: 10 seconds of "receiving", the average highest offer of similar cars, then the success page opens by itself.</p>
+          <a class="font-dm text-sm text-av-blue underline font-medium mt-3" href="#loader">Design</a>
+        </div>
+      </div>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-5xl mt-4">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">True everywhere</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
+          <li><b>The figure is each car's highest offer</b>, labelled with production's own "Korkein tarjous". Never an accepted price or a sale price.</li>
+          <li><b>Latest first, in three recency bands</b>: "Viimeisen 7 päivän aikana", "Viimeisen kuukauden aikana", "Yli kuukausi sitten", counted in days back from today.</li>
+          <li><b>Hidden below 3 similar cars.</b> One or two cars read as a quote for the seller's own car, not as evidence.</li>
+          <li><b>Only while the seller is forming an expectation</b>: ad in review, auction live, offers waiting, negotiating. Never once they have accepted or rejected.</li>
+          <li><b>What counts as "similar" is Analytics' question.</b> The design works whether the answer is "same model only" or "comparable models".</li>
         </ul>
+      </div>
+      <p class="font-dm text-xs text-slate-500 mt-4 max-w-3xl">Not in this proposal: the photo-card version of the list, showing the accepted offer, and the other submit-loader shapes. They are parked at the bottom of the page.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="concerns">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Open questions for this proposal</h2>
+      <p class="font-dm text-sm text-slate-700 mb-5 max-w-3xl">Each one has to be answered before the build, or decided as part of it.</p>
+      <div class="grid md:grid-cols-2 gap-5 items-start max-w-5xl">
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">For Analytics</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>How similar?</b> Same model and specification, same model only, or comparable models, and which year and mileage band around the seller's car.</li>
+            <li><b>How many cars, over what period?</b> This decides whether 3 is the right minimum and whether 20 is reachable for a typical car.</li>
+            <li><b>Average or median on the submit loader?</b> "Keskimäärin" describes an average (mean). A median, which one very high offer moves less, would need other words.</li>
+            <li><b>Spread.</b> If a list ranges widely, it may anchor the seller to the top rather than inform. Should cars outside a band be left out?</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg p-5 border border-slate-200">
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">For the team</p>
+          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
+            <li><b>The loader delays email verification.</b> A seller who still has to verify their address reaches the success page, and the verification card, 11.5 seconds later.</li>
+            <li><b>The loader moves on by itself.</b> A normal loader pattern once the work is done, but a seller reading the card is moved mid-sentence. 10 seconds is meant to be enough.</li>
+            <li><b>The loader's figure says "tarjottu"</b> while it is the average of the highest offers only. A seller may read it as all offers.</li>
+            <li><b>With fewer than 3 similar cars</b>, the loader still runs, without the card. Should it be skipped instead?</li>
+            <li><b>How many does each "Näytä aiemmat" add</b> on the decision page? The prototype adds 5.</li>
+            <li><b>Copy marked draft</b> in the copy table needs approval.</li>
+          </ul>
+        </div>
       </div>
       </div>
     </section>
 
-    <section class="av-band av-band-grey">
+    <section class="av-band av-band-grey" id="offers">
       <div class="av-container">
       <div class="flex flex-wrap gap-2 font-dm text-xs mb-3">
         <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Where: offers page</span>
-        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: any state below</span>
+        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: ad in review, auction live, offers waiting, negotiating</span>
       </div>
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 1 — table</h2>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">1 — Offers page: the table</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Its own section, "Vastaavien autojen tarjouksia", directly under the seller's own cars and above the FAQ.</p>
       <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
         <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What it shows</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
-          <li><b>Each list opens with the seller's car</b>: make and model in bold, then the model-year range of the list, e.g. "Volkswagen Amarok · vuosimallit 2018–2020". No intro sentence — the section heading already says these are similar cars.</li>
-          <li><b>Make and model are not repeated in the rows</b> when every car is the same model; the first column is then the model specification.</li>
-          <li><b>When models differ</b>, the first column becomes "Auto" and each row leads with make and model in bold, the specification under it.</li>
-          <li>Columns: specification · model year · mileage · highest offer. Offer right-aligned and bold — it is the figure the block exists for.</li>
-          <li><b>Rows run latest first, stacked in recency bands.</b> Each band opens with its label, left-aligned. The rows carry no rules of their own: a thin grey rule sits only above each band label, the first one being the column headings' own. A band with no cars is left out.</li>
-          <li><b>Band label</b>: calendar icon + text, 12px medium, dark grey (slate-600), the same for every band. No fill, border, underline or blue, so it never reads as a link or a button and stays quieter than the cars.</li>
-          <li><b>On a phone</b> (block narrower than 520px) the year and mileage columns fold into a grey line under the specification, leaving two columns. No sideways scrolling.</li>
-          <li><b>How many rows:</b> on the offers page each car's 3 newest, with no "Näytä aiemmat". On the decision page 3 first; "Näytä aiemmat" adds the next 5, which are always the same age or older, up to 20 in all. The demo below is the decision page's.</li>
+          <li><b>Each list opens with the seller's car</b>: make and model in bold, then the model-year range of the list, e.g. "Volkswagen Amarok · vuosimallit 2018–2020". No intro sentence: the section heading already says these are similar cars.</li>
+          <li><b>The 3 newest cars, and no "Näytä aiemmat".</b> The longer list is the decision page's.</li>
+          <li>Columns: specification · model year · mileage · highest offer. The offer is right-aligned and bold.</li>
+          <li><b>Make and model are not repeated in the rows</b> when every car is the same model. When models differ, the first column becomes "Auto" and each row leads with make and model in bold.</li>
+          <li><b>Recency bands</b>: each band opens with its label, left-aligned. Rows carry no rules of their own; a thin grey rule sits only above each band label, the first one being the column headings' own. A band with no cars is left out.</li>
+          <li><b>Band label</b>: calendar icon and text, 12px medium, dark grey (slate-600), the same for every band. No fill, border, underline or blue, so it never reads as a link or a button.</li>
+          <li><b>On a phone</b> (block narrower than 520px) year and mileage fold into a grey line under the specification, leaving two columns. No sideways scrolling.</li>
+          <li><b>A seller with several cars</b> gets one list per car, in the order the page lists the cars (drafts in review first, then published cars). Two cars of the same make and model share one list, under the first. No registration plate on the list: it belongs to the seller's own car, and next to "similar cars" it would read as if the list were about that exact car.</li>
         </ul>
       </div>
-      <div class="grid xl:grid-cols-[minmax(0,1fr)_391px] gap-5 items-start">
-        <div>
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Same model only</p>
-          <div class="demo-stage"><div id="demo-table-same"></div></div>
-        </div>
-        <div>
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Mixed models, phone width</p>
-          <div class="demo-stage"><div class="demo-narrow" id="demo-table-mixed"></div></div>
-        </div>
-      </div>
-      <p class="font-dm text-sm text-slate-700 mt-4"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=new-offers&similar-cars=v1">Open in the prototype</a></p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <div class="flex flex-wrap gap-2 font-dm text-xs mb-3">
-        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Where: offers page</span>
-        <span class="bg-slate-200 text-slate-700 font-medium rounded-full px-3 py-1">Parked — later</span>
-        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: any state below</span>
-      </div>
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 2 — photo cards</h2>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What it shows</p>
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
-          <li>Each list opens with the same seller's-car line as Variant 1, with the arrow buttons beside it.</li>
-          <li>One card per car: photo, make and model, specification, year and mileage, and the <b>highest offer at the bottom of the card</b>, label left and amount right in large bold.</li>
-          <li><b>Make and model stay on one line</b> (14px bold): names up to about 28 characters, such as "Land Rover Range Rover Sport", fit a 260px card; only a longer one ends in an ellipsis. The specification is 12px and at most two lines, so every card in a row keeps one height.</li>
-          <li><b>The price stays off the photo.</b> These cards are much narrower than the ones dealers browse, so a price tag on the photo hid too much of it. The bottom of the card is the last thing read and stays level across the row.</li>
-          <li><b>The card is the design system's product card, unchanged</b> — the same generic card the business seller's listings and the dealership's task list are built on, used through its own slots. The buyer-side and business-seller listing cards are wrappers around it with their own logic; this block does not use those wrappers, so it adds no case for them to support.</li>
-          <li><b>The photo is the front three-quarter shot</b> — the first photo the funnel asks for, which the product treats as the main photo.</li>
-          <li><b>The registration plate is blurred</b> before the photo is shown. In the prototype only the second card's photo has a visible plate.</li>
-          <li>The row scrolls sideways with the finger and snaps to a card. From 520px of block width, arrow buttons move it <b>two cards per press</b>.</li>
-          <li><b>Cards run latest first, side by side in recency bands.</b> Every card is 16px from the next, across a band break too. Each band's label (the same as the table's) sits 6px above the band's first card. While a band's cards scroll past, its label stays at the left edge.</li>
-          <li>5 cards first; the last tile is "Näytä aiemmat", which adds the next 5.</li>
-          <li><b>Prototype photos are placeholders</b> and do not show the model named on the card. Real photos will replace them.</li>
-        </ul>
-      </div>
-      <div class="demo-stage max-w-[768px]"><div id="demo-cards"></div></div>
-      <p class="font-dm text-sm text-slate-700 mt-4"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=auction-live&similar-cars=v2">Open in the prototype</a></p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <div class="flex flex-wrap gap-2 font-dm text-xs mb-3">
-        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Where: offers page</span>
-        <span class="bg-slate-200 text-slate-700 font-medium rounded-full px-3 py-1">Parked — later</span>
-        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: any state below</span>
-      </div>
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Variant 3 — photo cards, accepted offers</h2>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes from Variant 2</p>
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
-          <li><b>Each card shows the offer the seller accepted</b>, labelled "Hyväksytty tarjous", instead of the auction's highest offer. So the list holds cars that sold through AutoVex.</li>
-          <li><b>The section heading is "Vastaavia autoja"</b> (similar cars), since the cards no longer list offers in general.</li>
-          <li><b>The label sits above the amount.</b> "Hyväksytty tarjous" beside the amount does not fit a 260px card, so on every card the label takes its own line and the amount stays as large as in Variant 2. The card is 20px taller than in Variant 2.</li>
-          <li>Everything else is Variant 2: card, photo, list headings, arrows, "Näytä aiemmat", and when the block appears.</li>
-        </ul>
-      </div>
-      <div class="demo-stage max-w-[768px]"><div id="demo-cards-accepted"></div></div>
-      <p class="font-dm text-sm text-slate-700 mt-4"><a class="text-av-blue underline font-medium" href="../offers.html?scenario=auction-live&similar-cars=v3">Open in the prototype</a></p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <div class="flex flex-wrap gap-2 font-dm text-xs mb-3">
-        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Where: offers page</span>
-        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: Several cars</span>
-      </div>
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">A seller with several cars</h2>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
-        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes</p>
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
-          <li>The block repeats from the seller's-car line down: <b>one list per car</b>, in the order the page lists the cars (drafts in review first, then published cars).</li>
-          <li><b>One list per make and model.</b> Two of the seller's cars of the same model share one list, under the first. No registration plate on the list: it belongs to the seller's own car, and next to "similar cars" it reads as if the list were about that exact car.</li>
-          <li>The rest of the page already repeats per car: one notification and one car card for each.</li>
-          <li>A car gets a list only while it is <b>in review or at auction</b> (live, offers waiting, negotiating). Unfinished drafts, accepted, rejected and sold cars get none.</li>
-          <li>Each list shows that car's 3 newest, with no "Näytä aiemmat" (the photo cards, parked, keep their own).</li>
-          <li>A car whose list is too short is simply left out; if no car has a list, the section is hidden.</li>
-        </ul>
-      </div>
-      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Draft in review + car at auction</p>
-      <div class="demo-stage max-w-[768px]"><div id="demo-table-multi"></div></div>
-      <p class="font-dm text-sm text-slate-700 mt-4">
-        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-review&similar-cars=v1">Two cars in review</a> ·
-        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-same-model&similar-cars=v1">Two cars in review, same model</a> ·
-        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-live&similar-cars=v1">Live auction + draft in review + unfinished draft</a> ·
-        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-sold&similar-cars=v1">Offer accepted + draft in review</a>
-      </p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">When it appears on the offers page</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Its own section, "Vastaavien autojen tarjouksia", directly under the seller's own cars and above the FAQ. The rules apply per car.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl">
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl mb-5">
         <table class="w-full font-dm text-sm text-left">
-          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Seller's state</th><th class="px-5 py-3 font-medium">Block</th><th class="px-5 py-3 font-medium">Why</th></tr></thead>
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Seller's car</th><th class="px-5 py-3 font-medium">List</th><th class="px-5 py-3 font-medium">Why</th></tr></thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr><td class="px-5 py-3">Ad in review</td><td class="px-5 py-3">Shown</td><td class="px-5 py-3">Earliest moment the seller wonders what to expect</td></tr>
-            <tr><td class="px-5 py-3">Auction live</td><td class="px-5 py-3">Shown</td><td class="px-5 py-3">Expectation forms while waiting for the result</td></tr>
+            <tr><td class="px-5 py-3">Ad in review</td><td class="px-5 py-3">Shown</td><td class="px-5 py-3">The earliest moment the seller wonders what to expect</td></tr>
+            <tr><td class="px-5 py-3">Auction live</td><td class="px-5 py-3">Shown</td><td class="px-5 py-3">The expectation forms while waiting for the result</td></tr>
             <tr><td class="px-5 py-3">Offers waiting for a decision, negotiating, final offer</td><td class="px-5 py-3">Shown</td><td class="px-5 py-3">The seller is judging their own offer</td></tr>
             <tr><td class="px-5 py-3">Accepted, deal completed, all rejected</td><td class="px-5 py-3">Hidden</td><td class="px-5 py-3">The decision is made; other cars' offers can only cause regret</td></tr>
             <tr><td class="px-5 py-3">Unfinished draft, rejected draft, no ad</td><td class="px-5 py-3">Hidden</td><td class="px-5 py-3">The car's details are not final, so similar cars cannot be picked reliably</td></tr>
@@ -263,163 +253,182 @@
           </tbody>
         </table>
       </div>
+      <div class="grid xl:grid-cols-[minmax(0,1fr)_391px] gap-5 items-start">
+        <div>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">A draft in review and a car at auction</p>
+          <div class="demo-stage"><div id="demo-offers-multi"></div></div>
+        </div>
+        <div>
+          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Mixed models, phone width</p>
+          <div class="demo-stage"><div class="demo-narrow" id="demo-offers-mixed"></div></div>
+        </div>
+      </div>
+      <p class="font-dm text-sm text-slate-700 mt-4">Open in the prototype:
+        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=new-offers&similar-cars=v5">offers waiting</a> ·
+        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=multi-car-live&similar-cars=v5">several cars</a> ·
+        <a class="text-av-blue underline font-medium" href="../offers.html?scenario=new-offers&similar-cars=v5&similar=mixed">mixed models</a>
+      </p>
       </div>
     </section>
 
-    <section class="av-band av-band-grey">
+    <section class="av-band av-band-grey" id="decision">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">When it appears on the decision page</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Its own section, with the same heading as on the offers page, directly under "Tarjouskilpailun tulos" and above the "Tarvitsetko apua?" banner that carries "Hylkää tarjouskilpailu". <b>One list only, for the car the decision is about</b>: the seller's other cars are not listed here, even when they are in review or at auction. It is the table: 3 cars first, "Näytä aiemmat" adds 5 at a time, up to 20. The parked photo-card variants show their cards here too.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl">
+      <div class="flex flex-wrap gap-2 font-dm text-xs mb-3">
+        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Where: decision page</span>
+        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: offers waiting for a decision, negotiating</span>
+      </div>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">2 — Decision page: the same table, up to 20</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Its own section, with the offers page's heading, directly under "Tarjouskilpailun tulos" and above the "Tarvitsetko apua?" banner that carries "Hylkää tarjouskilpailu".</p>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What changes from the offers page</p>
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
+          <li><b>One list only, for the car the decision is about.</b> The seller's other cars are not listed here, even when they are in review or at auction.</li>
+          <li><b>3 cars first; "Näytä aiemmat" adds the next 5</b>, which are always the same age or older, up to 20 in all. Then the button goes.</li>
+          <li>Everything else is the offers page's table: columns, recency bands, the phone layout.</li>
+        </ul>
+      </div>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl mb-5">
         <table class="w-full font-dm text-sm text-left">
-          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Decision page state</th><th class="px-5 py-3 font-medium">Block</th><th class="px-5 py-3 font-medium">Why</th></tr></thead>
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Decision page state</th><th class="px-5 py-3 font-medium">List</th><th class="px-5 py-3 font-medium">Why</th></tr></thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr><td class="px-5 py-3">Offers waiting for a decision, final offer, counter offer sent, dealership replied, negotiation closed by the dealership</td><td class="px-5 py-3">Shown</td><td class="px-5 py-3">The seller is judging their own offer</td></tr>
-            <tr><td class="px-5 py-3">The "Tarjouskilpailu on päättynyt" screen before "Katso tulokset"</td><td class="px-5 py-3">Hidden</td><td class="px-5 py-3">The page's sections are not shown yet; the block appears with them</td></tr>
+            <tr><td class="px-5 py-3">The "Tarjouskilpailu on päättynyt" screen before "Katso tulokset"</td><td class="px-5 py-3">Hidden</td><td class="px-5 py-3">The page's sections are not shown yet; the list appears with them</td></tr>
             <tr><td class="px-5 py-3">Accepted, rejected, no offers, offers expired</td><td class="px-5 py-3">Hidden</td><td class="px-5 py-3">Nothing left to decide, or nothing to compare against</td></tr>
             <tr><td class="px-5 py-3">Fewer than 3 similar cars</td><td class="px-5 py-3">Hidden</td><td class="px-5 py-3">Too thin to be evidence</td></tr>
           </tbody>
         </table>
       </div>
+      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Same model only: press "Näytä aiemmat" to open more</p>
+      <div class="demo-stage max-w-[768px]"><div id="demo-decision"></div></div>
       <p class="font-dm text-sm text-slate-700 mt-4">Open in the prototype:
-        <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&similar-cars=v1">table</a> ·
-        <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&similar-cars=v2">photo cards</a> ·
-        <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&similar-cars=v3">photo cards, accepted offers</a>
+        <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&similar-cars=v5">offers waiting for a decision</a> ·
+        <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&similar-cars=v5&similar=mixed">mixed models, 20 cars</a>
       </p>
       </div>
     </section>
 
-    <section class="av-band av-band-grey">
+    <section class="av-band av-band-grey" id="loader">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">In the funnel: the submit loader</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A new screen between the contact step's "Lähetä ilmoitus" and the success page. It is production's loading screen (the one after the front page's registration and mileage form) with its own copy, and the submitted car's similar cars below it. One list, for that car.</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>While it "loads"</b>: the logo, the car animation, "Ilmoitusta vastaanotetaan" and "Muutama sekunti jäljellä". The similar cars are there from the start, below the message, so there is something to read while waiting.</li>
-          <li><b>After about 5 seconds</b>: the heading becomes "Ilmoitus vastaanotettu" and "Jatka" replaces the "Muutama sekunti jäljellä" line in the same place. The space is reserved from the start, so the list below does not move when the button appears. Screen readers hear both states.</li>
-          <li><b>"Jatka" opens the success page</b> in place of this screen, so the browser's back button from the success page goes to the contact step, never back to the loader.</li>
-          <li><b>Only when the ad was really submitted.</b> If publishing is refused for missing photos, the seller goes straight to the success page's refusal. An edit saved from the offers page returns there as before. With fewer than 3 similar cars, the screen shows the message and the button only.</li>
-          <li><b>Variants 1–3 apply as they are</b>; the logo is a plain image, as in production, so nothing on this screen leaves the flow before the success page.</li>
-        </ul>
+      <div class="flex flex-wrap gap-2 font-dm text-xs mb-3">
+        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Where: a new screen after the contact step</span>
+        <span class="bg-white border border-slate-200 text-slate-700 rounded-full px-3 py-1">Scenario: "Lähetä ilmoitus" with the photos complete</span>
       </div>
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">Variant 4 — the message first, the cars as decoration (this screen only)</h3>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">The headline, its change and the button are the screen; the similar cars only hint that other cars have had offers, without a list to stop and read. A seller who has read a list closely may press back from the success page to read it again, which in production leaves the funnel. On the offers page and the decision page Variant 4 is the table.</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>No car animation.</b> From the top: a status icon in its own row, the heading, then the line or the button. The heading takes the success page's own heading style (Barlow bold, 24px), so the next screen continues it.</li>
-          <li><b>While loading</b>: production's loading spinner (48px), "Ilmoitusta vastaanotetaan" and "Muutama sekunti jäljellä".</li>
-          <li><b>After 10 seconds</b>: the spinner turns into a green check-circle (56px) that draws itself, the heading becomes "Ilmoitus vastaanotettu" and "Jatka" replaces "Muutama sekunti jäljellä" in the same place. Nothing else moves. The seller moves on with "Jatka"; the screen never moves on by itself.</li>
-          <li><b>The similar cars are a few grey cards without photos, scattered around the message and still.</b> Each card: "Korkein tarjous", the amount, make and model, year and mileage, in muted grey, tilted a few degrees. Up to 8 on a desktop (left, right, above and below the message), 6 on a tablet and 5 on a phone (above and below it, the outer ones running off the edge of the screen). They never overlap the message or each other. They are decoration, hidden from screen readers.</li>
-          <li><b>Same rules as the other variants</b> for when the screen appears; with fewer than 3 similar cars the cards are left out.</li>
-        </ul>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">3 — Submit loader: the average offer</h2>
+      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">A short screen between the contact step and the success page. It confirms the listing is being received and shows one figure: what similar cars have been offered on AutoVex on average. A teaser of data the seller will have on the offers page, which may also make finishing worth it.</p>
+      <div class="flex flex-wrap items-center gap-2 font-dm text-sm text-slate-700 mb-5" aria-label="Flow">
+        <span class="bg-white border border-slate-200 rounded-full px-3 py-1">Contact step · "Lähetä ilmoitus"</span>
+        <span aria-hidden="true">→</span>
+        <span class="bg-blue-100 text-blue-800 font-medium rounded-full px-3 py-1">Submit loader · 10 s + 1.5 s</span>
+        <span aria-hidden="true">→</span>
+        <span class="bg-white border border-slate-200 rounded-full px-3 py-1">Success page, in place of the loader</span>
       </div>
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">Variant 5 — the average offer, then on (this screen only) · chosen</h3>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Variant 4's screen without the cars: one small card tells the seller what similar cars have been offered on AutoVex on average. A teaser of data the seller will have access to, which may also make finishing worth it. On the offers page and the decision page Variant 5 is the table.</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>Same top as Variant 4</b>: the spinner in its own row, "Ilmoitusta vastaanotetaan", "Muutama sekunti jäljellä".</li>
-          <li><b>Under it, a grey card</b>: the chart icon and "Vastaavista autoista on tarjottu AutoVexissä keskimäärin", then one figure in bold, e.g. "25 900 €". The sentence says the figure is an average over other cars, so it does not read as an offer or a valuation for the seller's own car.</li>
-          <li><b>The figure</b> is the average of the highest offers of the cars the decision page would list for this car (the newest 20 at most), rounded to the nearest 100 €. With fewer than 3 similar cars, the card is left out.</li>
-          <li><b>Nothing else on the card</b>: no range, no time period and no note under it.</li>
-          <li><b>After 10 seconds</b>: the green check, "Ilmoitus vastaanotettu" and the loading line goes. There is no "Jatka": 1.5 seconds later the success page opens by itself, in place of this screen, so back from the success page never returns here. The card does not move.</li>
-        </ul>
+      <div class="slr-frames mb-5">
+        <figure class="slr-fig">
+          <div class="slr-phone">
+            <div class="slr-logo"><img src="../assets/logo-fi.svg" width="108" height="22" alt="AutoVex" /></div>
+            <div class="slr-body">
+              <span class="slr-icon" aria-hidden="true"><span class="slr-spin"><span></span><span></span><span></span><span></span></span></span>
+              <div class="slr-title" data-copy="submitLoader.title"></div>
+              <p class="slr-line" data-copy="loadingScreen.description"></p>
+              <div class="slr-card">
+                <p class="slr-lead"><svg class="text-blue-500" width="16" height="16" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><path d="M16.416 14.0625H16.1348V3.09375C16.1348 2.86997 16.0459 2.65536 15.8876 2.49713C15.7294 2.33889 15.5148 2.25 15.291 2.25H11.3535C11.1297 2.25 10.9151 2.33889 10.7569 2.49713C10.5987 2.65536 10.5098 2.86997 10.5098 3.09375V5.625H7.41602C7.19224 5.625 6.97763 5.71389 6.81939 5.87213C6.66116 6.03036 6.57227 6.24497 6.57227 6.46875V9H4.04102C3.81724 9 3.60263 9.08889 3.44439 9.24713C3.28616 9.40536 3.19727 9.61997 3.19727 9.84375V14.0625H2.91602C2.69224 14.0625 2.47763 14.1514 2.31939 14.3096C2.16116 14.4679 2.07227 14.6825 2.07227 14.9062C2.07227 15.13 2.16116 15.3446 2.31939 15.5029C2.47763 15.6611 2.69224 15.75 2.91602 15.75H16.416C16.6398 15.75 16.8544 15.6611 17.0126 15.5029C17.1709 15.3446 17.2598 15.13 17.2598 14.9062C17.2598 14.6825 17.1709 14.4679 17.0126 14.3096C16.8544 14.1514 16.6398 14.0625 16.416 14.0625ZM12.1973 3.9375H14.4473V14.0625H12.1973V3.9375ZM8.25977 7.3125H10.5098V14.0625H8.25977V7.3125ZM4.88477 10.6875H6.57227V14.0625H4.88477V10.6875Z"/></svg><span data-copy="submitLoader.teaserLead"></span></p>
+                <p class="slr-amount" data-average></p>
+              </div>
+            </div>
+          </div>
+          <figcaption class="slr-cap"><b>1 · Receiving, 10 seconds.</b> Production's loading spinner.</figcaption>
+        </figure>
+        <figure class="slr-fig">
+          <div class="slr-phone">
+            <div class="slr-logo"><img src="../assets/logo-fi.svg" width="108" height="22" alt="AutoVex" /></div>
+            <div class="slr-body">
+              <span class="slr-icon" aria-hidden="true"><svg class="slr-check" viewBox="0 0 256 256" fill="none" stroke="currentColor" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><circle cx="128" cy="128" r="96"/><polyline points="88 136 112 160 168 104"/></svg></span>
+              <div class="slr-title" data-copy="submitLoader.done"></div>
+              <p class="slr-line is-gone" data-copy="loadingScreen.description"></p>
+              <div class="slr-card">
+                <p class="slr-lead"><svg class="text-blue-500" width="16" height="16" viewBox="0 0 19 18" fill="currentColor" aria-hidden="true"><path d="M16.416 14.0625H16.1348V3.09375C16.1348 2.86997 16.0459 2.65536 15.8876 2.49713C15.7294 2.33889 15.5148 2.25 15.291 2.25H11.3535C11.1297 2.25 10.9151 2.33889 10.7569 2.49713C10.5987 2.65536 10.5098 2.86997 10.5098 3.09375V5.625H7.41602C7.19224 5.625 6.97763 5.71389 6.81939 5.87213C6.66116 6.03036 6.57227 6.24497 6.57227 6.46875V9H4.04102C3.81724 9 3.60263 9.08889 3.44439 9.24713C3.28616 9.40536 3.19727 9.61997 3.19727 9.84375V14.0625H2.91602C2.69224 14.0625 2.47763 14.1514 2.31939 14.3096C2.16116 14.4679 2.07227 14.6825 2.07227 14.9062C2.07227 15.13 2.16116 15.3446 2.31939 15.5029C2.47763 15.6611 2.69224 15.75 2.91602 15.75H16.416C16.6398 15.75 16.8544 15.6611 17.0126 15.5029C17.1709 15.3446 17.2598 15.13 17.2598 14.9062C17.2598 14.6825 17.1709 14.4679 17.0126 14.3096C16.8544 14.1514 16.6398 14.0625 16.416 14.0625ZM12.1973 3.9375H14.4473V14.0625H12.1973V3.9375ZM8.25977 7.3125H10.5098V14.0625H8.25977V7.3125ZM4.88477 10.6875H6.57227V14.0625H4.88477V10.6875Z"/></svg><span data-copy="submitLoader.teaserLead"></span></p>
+                <p class="slr-amount" data-average></p>
+              </div>
+            </div>
+          </div>
+          <figcaption class="slr-cap"><b>2 · Received, 1.5 seconds.</b> The check draws itself in the success green; nothing else moves.</figcaption>
+        </figure>
+        <div class="slr-fig">
+          <div class="slr-next">The success page opens by itself, in place of this screen, so the browser's back button from the success page never returns here.</div>
+          <p class="slr-cap"><b>3 · On to the success page.</b> No button.</p>
+        </div>
       </div>
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mt-8 mb-2">Variant 6 — the message in the middle, the cars along the bottom (this screen only)</h3>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Variant 5's screen with the cars themselves instead of the average, browsed in a carousel along the bottom of the view, so they stay secondary to the message and the button. Everything fits a phone screen without scrolling. On the offers page and the decision page Variant 6 is the table.</p>
       <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
-        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-          <li><b>In the middle</b>: the spinner, "Ilmoitusta vastaanotetaan", and directly under the heading the space for "Jatka". No body line and no "Muutama sekunti jäljellä".</li>
-          <li><b>After 5 seconds</b>: the green check, "Ilmoitus vastaanotettu", and "Jatka" appears under it, in space kept for it from the start, so nothing moves. The seller moves on with "Jatka", which replaces this screen with the success page; the screen never moves on by itself.</li>
-          <li><b>Along the bottom</b>: "Vastaavien autojen tarjouksia" as a section heading in the offers page's own style (bold, 20px, dark blue, with the chart icon), so the offers read as other cars' and not the seller's. Under it the cars side by side between two arrows: one on a phone, two on a tablet, three from 992px and four from 1200px wide. Each card shows when its auction ended (with the calendar icon), then make and model, model specification, year and mileage, and "Korkein tarjous" with the amount at the bottom.</li>
-          <li><b>Browsing</b>: the arrows, or a sideways swipe, move the row by one card with a short slide (instant with reduced motion); they stop at either end. The count under the row reads "1 / 10" on a phone and "1–4 / 10" when several are shown. Below 360px wide the arrows go under the card, either side of the count. Latest first, the newest ten at most; the cards are a list, so a screen reader reads them all.</li>
-          <li><b>Fits without scrolling</b> from 320 × 568 up, with tighter spacing on screens under 600px tall. With fewer than 3 similar cars the carousel is left out.</li>
-        </ul>
-      </div>
-      <p class="font-dm text-sm text-slate-700 mt-4">Open in the prototype (needs a submitted car, which the page seeds on a fresh browser):
-        <a class="text-av-blue underline font-medium" href="../submit-loader.html?similar-cars=v1">table</a> ·
-        <a class="text-av-blue underline font-medium" href="../submit-loader.html?similar-cars=v2">photo cards</a> ·
-        <a class="text-av-blue underline font-medium" href="../submit-loader.html?similar-cars=v3">photo cards, accepted offers</a> ·
-        <a class="text-av-blue underline font-medium" href="../submit-loader.html?similar-cars=v4">message first, cars scattered</a> ·
-        <a class="text-av-blue underline font-medium" href="../submit-loader.html?similar-cars=v5">average offer (chosen)</a> ·
-        <a class="text-av-blue underline font-medium" href="../submit-loader.html?similar-cars=v6">cars along the bottom</a>
-      </p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Built from what exists</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Nothing in the product shows a consumer seller other cars' offers, so the block itself is new. Every part inside it is an existing pattern:</p>
-      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">What it shows</p>
         <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
-          <li><b>Table frame</b> — the offers page's own white auction card; row dividers from the one existing consumer-side table.</li>
-          <li><b>Photo card</b> — the product card the business seller's listings already use, with its 16:9 photo.</li>
-          <li><b>Highest offer</b> — in the product card's own footer slot, the bottom of the white area. Amount enlarged.</li>
-          <li><b>"Näytä aiemmat"</b> and the arrows — the standard secondary button.</li>
-          <li><b>Recency band label</b> — caption text with production's calendar icon.</li>
-          <li>Labels "Mallitarkennus", "Vuosimalli", "Ajokilometrit" and "Korkein tarjous" are production copy. "Näytä aiemmat" replaces production's "Näytä lisää" and is a draft.</li>
+          <li><b>From the top</b>: the logo, a status icon in its own row, the heading, the loading line, and the card. The heading takes the success page's own heading style (Barlow bold, 24px), so the next screen continues it.</li>
+          <li><b>While receiving</b>: production's loading spinner (48px), "Ilmoitusta vastaanotetaan" and "Muutama sekunti jäljellä".</li>
+          <li><b>The card</b>: the chart icon and "Vastaavista autoista on tarjottu AutoVexissä keskimäärin", then one figure in bold. The sentence says the figure is an average over other cars, so it does not read as an offer or a valuation for the seller's own car. Nothing else on the card: no range, no time period, no note.</li>
+          <li><b>The figure</b> is the average of the highest offers of the cars the decision page would list for this car (the newest 20 at most), rounded to the nearest 100 €. With fewer than 3 similar cars, the card is left out.</li>
+          <li><b>After 10 seconds</b>: the spinner turns into a green check-circle (56px) that draws itself, the heading becomes "Ilmoitus vastaanotettu" and the loading line goes, its space kept so the card does not move. 1.5 seconds later the success page opens by itself.</li>
+          <li><b>The AutoVex logo links to the front page.</b> Like the move to the success page, it replaces this screen, so back from the front page goes to the contact step, never into the loader.</li>
         </ul>
       </div>
+      <p class="font-dm text-sm text-slate-700 mt-4">Open in the prototype (it seeds a submitted car on a fresh browser, and moves on to the success page after 11.5 seconds):
+        <a class="text-av-blue underline font-medium" href="../submit-loader.html?similar-cars=v5">submit loader</a>
+      </p>
       </div>
     </section>
 
-    <section class="av-band av-band-grey">
+    <section class="av-band av-band-grey" id="build">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Data the block needs</h2>
-      <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">One list per eligible car of the seller, already filtered. The block decides nothing about similarity; it orders each list latest first and splits it into the recency bands.</p>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">What the build needs</h2>
+      <p class="font-dm text-sm text-slate-700 mb-5 max-w-3xl">The block decides nothing about similarity. It gets one list per eligible car, already filtered, orders it latest first and splits it into the recency bands.</p>
+
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-3">How many cars, where</h3>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl mb-8">
+        <table class="w-full font-dm text-sm text-left">
+          <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Surface</th><th class="px-5 py-3 font-medium">Shown first</th><th class="px-5 py-3 font-medium">"Näytä aiemmat"</th><th class="px-5 py-3 font-medium">At most</th></tr></thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr><td class="px-5 py-3">Offers page</td><td class="px-5 py-3">3 per car</td><td class="px-5 py-3">None</td><td class="px-5 py-3">3 per car</td></tr>
+            <tr><td class="px-5 py-3">Decision page</td><td class="px-5 py-3">3</td><td class="px-5 py-3">Adds 5 (open question)</td><td class="px-5 py-3">20</td></tr>
+            <tr><td class="px-5 py-3">Submit loader</td><td class="px-5 py-3">One average figure</td><td class="px-5 py-3">None</td><td class="px-5 py-3">Average over the newest 20</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-3">Data per car</h3>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl mb-8">
         <table class="w-full font-dm text-sm text-left">
           <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Field</th><th class="px-5 py-3 font-medium">Notes</th></tr></thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
             <tr><td class="px-5 py-3"><code>make</code>, <code>model</code></td><td class="px-5 py-3">If all rows share them, the table states them once</td></tr>
-            <tr><td class="px-5 py-3"><code>model_specification</code></td><td class="px-5 py-3">Required — the main way a seller tells cars apart</td></tr>
+            <tr><td class="px-5 py-3"><code>model_specification</code></td><td class="px-5 py-3">Required: the main way a seller tells cars apart</td></tr>
             <tr><td class="px-5 py-3"><code>year</code>, <code>driven</code></td><td class="px-5 py-3">Model year, km</td></tr>
-            <tr><td class="px-5 py-3"><code>highest_offer</code></td><td class="px-5 py-3">Variants 1 and 2. The auction's highest offer in euros. Not the accepted price, not a sale price</td></tr>
-            <tr><td class="px-5 py-3"><code>accepted_offer</code></td><td class="px-5 py-3">Variant 3. The offer the seller accepted, in euros. The list then contains only cars whose offer was accepted</td></tr>
-            <tr><td class="px-5 py-3"><code>image</code></td><td class="px-5 py-3">Variant 2 only. The front three-quarter photo (the funnel's first photo), <b>plate blurred server-side</b> before it reaches the browser</td></tr>
-            <tr><td class="px-5 py-3">Average highest offer</td><td class="px-5 py-3">Submit loader, Variant 5. The average of <code>highest_offer</code> over the same list the decision page would show (newest 20 at most), in euros. The block rounds it to the nearest 100 €. Can come from the server or be computed from the list</td></tr>
-            <tr><td class="px-5 py-3"><code>ended_at</code></td><td class="px-5 py-3">When the car's auction ended (date and time). Orders the list latest first and picks the band: up to 7 days, up to 30 days, older. Never shown as a date</td></tr>
+            <tr><td class="px-5 py-3"><code>highest_offer</code></td><td class="px-5 py-3">The auction's highest offer in euros. Not the accepted price, not a sale price</td></tr>
+            <tr><td class="px-5 py-3"><code>ended_at</code></td><td class="px-5 py-3">When the car's auction ended (date and time). Orders the list and picks the band: up to 7 days, up to 30 days, older. Never shown as a date</td></tr>
+            <tr><td class="px-5 py-3">Average highest offer</td><td class="px-5 py-3">Submit loader only. The average of <code>highest_offer</code> over the same list the decision page would show, in euros, rounded to the nearest 100 €. Can come from the server or be computed from the list</td></tr>
           </tbody>
         </table>
       </div>
-      </div>
-    </section>
 
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Open questions</h2>
-      <div class="grid md:grid-cols-2 gap-5 items-start">
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">For Analytics</p>
-          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-            <li><b>How similar?</b> Same model and specification, same model only, or comparable models — and which year and mileage band around the seller's car.</li>
-            <li><b>How many cars does each definition give</b> for a typical seller, and in what time window? This sets whether 3 is the right minimum.</li>
-            <li><b>Settled — sort order:</b> latest first, in three recency bands. Sorting by price would anchor to the highest; sorting by closeness needs a distance measure.</li>
-            <li><b>Spread check.</b> If the list ranges widely, the block may anchor to the top rather than inform. Is there a band outside which a car should be left out?</li>
-          </ul>
-        </div>
-        <div class="bg-white rounded-lg p-5 border border-slate-200">
-          <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">For the team</p>
-          <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2">
-            <li><b>Settled — how many:</b> 3 per car on the offers page with no "Näytä aiemmat"; 3 first and up to 20 on the decision page. <b>Open:</b> how many each "Näytä aiemmat" adds; the prototype uses 5.</li>
-            <li><b>Variant 5: average or median, and which offers?</b> "Keskimäärin" describes an average (mean); a median, which one very high offer moves less, would need other words. The figure is the highest offers only, while the sentence says "tarjottu", which a seller may read as all offers. Over how many cars and how far back is for Analytics.</li>
-            <li><b>Variant 5 moves on by itself.</b> A normal loader pattern once the work is "done", but a seller reading the card is moved mid-sentence; 10 seconds is meant to be enough.</li>
-            <li><b>Settled — Variant 4 and moving content:</b> the cards are still. The only motion is the spinner, which runs while the screen offers nothing to do, the case WCAG 2.2.2 counts as essential, and stops when "Jatka" appears.</li>
-            <li><b>Submit loader: how long, and where does "Jatka" sit?</b> 5 seconds and in place of the loading line, above the list, so it is visible without scrolling. Below the list would make more sellers see the cars but hide the way on. The wait also delays the success page's email verification for sellers who still need it.</li>
-            <li><b>More details?</b> Fuel, transmission or drive could help a seller judge similarity; each one costs a column on a phone.</li>
-            <li><b>Show the seller's own car as a reference row</b> at the top, without a price?</li>
-            <li><b>Settled — other sellers' photos and offers:</b> Legal, Marketing and Ops cleared showing sellers' own car photos with the registration plate blurred, and showing the accepted offer (October 2026).</li>
-            <li><b>Settled for now — highest offer.</b> The accepted offer (Variant 3) is parked for later.</li>
-            <li>All Finnish copy below marked draft needs approval.</li>
-          </ul>
-        </div>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-3">Submit loader rules</h3>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-8">
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
+          <li><b>Only when the ad was really submitted.</b> If publishing is refused for missing photos, the seller goes straight to the success page's refusal. An edit saved from the offers page returns there as before.</li>
+          <li><b>It replaces itself in the browser history</b>, both when it moves on and when the logo is pressed, so the back button never lands on it.</li>
+          <li><b>Screen readers</b> hear both states through a status message ("Ilmoitusta vastaanotetaan. Muutama sekunti jäljellä", then "Ilmoitus vastaanotettu"). Focus is not moved.</li>
+          <li><b>With reduced motion</b> the spinner and the check do not animate; the timing stays.</li>
+        </ul>
       </div>
-      </div>
-    </section>
 
-    <section class="av-band av-band-grey">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Copy (FI / EN)</h2>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-3">Built from what exists</h3>
+      <div class="bg-white rounded-lg p-5 border border-slate-200 max-w-3xl mb-8">
+        <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5">
+          <li><b>Table frame</b>: the offers page's own white auction card, no border; row and band rules from the one existing consumer-side table.</li>
+          <li><b>"Näytä aiemmat"</b>: the standard secondary button.</li>
+          <li><b>Recency band label</b>: caption text with production's calendar icon.</li>
+          <li><b>Submit loader</b>: production's full-screen loading screen (the one after the front page's registration and mileage form), its spinner, the success page's heading style, and the check-circle icon in the success green.</li>
+          <li>"Mallitarkennus", "Vuosimalli", "Ajokilometrit", "Korkein tarjous" and "Muutama sekunti jäljellä" are production copy. The rest is draft.</li>
+        </ul>
+      </div>
+
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-2">Copy (FI / EN)</h3>
       <p class="font-dm text-sm text-slate-700 mb-4 max-w-3xl">Rows marked <b>prod</b> are production strings. The rest are drafts. The English is a reading aid.</p>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
@@ -430,18 +439,83 @@
       </div>
     </section>
 
-    <section class="av-band av-band-grey">
+    <!-- ═════════════ NOT IN THIS PROPOSAL ═════════════ -->
+
+    <section class="av-band av-band-muted" id="other">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">How to try it</h2>
-      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl">Prototype: <a class="text-av-blue underline font-medium" href="https://jussiav.github.io/proto">https://jussiav.github.io/proto</a> → offers page or decision page. Switch arms from the <b>Variants</b> menu on the prototype bar, in its <b>Similar cars</b> select. The bar's <b>Events</b> menu (Market data section) sets what each list returns: same model only, mixed models in each list, only 3 cars, or 2 cars (block hidden). A seller with several cars is a <b>Scenario</b>, under <b>Several cars</b>.</p>
-      <p class="font-dm text-sm leading-6 text-slate-800 mt-2">
-        <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/offers.html?scenario=new-offers&similar-cars=v1">…/offers.html?scenario=new-offers&amp;similar-cars=v1</a><br>
-        <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/offers.html?scenario=new-offers&similar-cars=v2">…/offers.html?scenario=new-offers&amp;similar-cars=v2</a><br>
-        <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/offers.html?scenario=new-offers&similar-cars=v1&similar=mixed">…/offers.html?scenario=new-offers&amp;similar-cars=v1&amp;similar=mixed</a><br>
-        <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/offers.html?scenario=multi-car-live&similar-cars=v1">…/offers.html?scenario=multi-car-live&amp;similar-cars=v1</a><br>
-        <a class="text-av-blue underline break-all" href="https://jussiav.github.io/proto/decision.html?scenario=seen-offers&similar-cars=v1">…/decision.html?scenario=seen-offers&amp;similar-cars=v1</a>
-      </p>
-      <p class="font-dm text-sm leading-6 text-slate-700 mt-4 max-w-3xl">The <b>Several cars</b> scenarios on the bar show a seller with more than one car. The list follows the seller's car: <b>Seed car</b> gives a Volkswagen Amarok, an unseeded prototype a Toyota Corolla. All figures are invented for the prototype.</p>
+      <p class="font-dm text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Not in this proposal</p>
+      <h2 class="font-barlow font-bold text-slate-700 text-2xl md:text-3xl leading-tight mb-2">Other considerations</h2>
+      <p class="font-dm text-sm text-slate-600 mb-5 max-w-3xl">Kept as a record and for later iterations. Nothing here is to be built now. Each item opens on its own; the prototype keeps them switchable from the bar's Variants menu.</p>
+
+      <details class="parked max-w-5xl" data-demo="cards">
+        <summary><span class="font-barlow font-bold text-lg text-slate-800">Photo cards instead of the table</span><span class="font-dm text-xs text-slate-500">Variant 2 · parked, a future alternative</span></summary>
+        <div class="parked-body">
+          <ul class="font-dm text-sm leading-6 text-slate-700 list-disc pl-5 space-y-1.5 mb-4 max-w-3xl">
+            <li>One card per car in a sideways-scrolling row: photo, make and model, specification, year and mileage, and the highest offer at the bottom of the card, label left and amount right in large bold.</li>
+            <li>The card is the design system's product card, unchanged, used through its own slots; the buyer-side and business-seller listing cards are wrappers around it with their own logic, and this does not use them.</li>
+            <li>Make and model on one line (14px bold), the specification 12px and at most two lines, so every card in a row keeps one height. The price stays off the photo: these cards are much narrower than the ones dealers browse.</li>
+            <li>The photo is the front three-quarter shot, the first photo the funnel asks for, with the registration plate blurred before it is shown (server-side in production).</li>
+            <li>Cards run latest first, side by side in recency bands, each band's label above its first card and sticky while its cards scroll past. From 520px of width, arrows move the row two cards per press. 5 cards first; the last tile is "Näytä aiemmat".</li>
+            <li>Needs one more field per car: <code>image</code>, the front three-quarter photo with the plate blurred.</li>
+          </ul>
+          <div class="demo-stage max-w-[768px]"><div id="demo-cards"></div></div>
+          <p class="font-dm text-sm text-slate-600 mt-3"><a class="text-av-blue underline" href="../offers.html?scenario=auction-live&similar-cars=v2">Open in the prototype</a></p>
+        </div>
+      </details>
+
+      <details class="parked max-w-5xl" data-demo="cards-accepted">
+        <summary><span class="font-barlow font-bold text-lg text-slate-800">The accepted offer instead of the highest</span><span class="font-dm text-xs text-slate-500">Variant 3 · parked</span></summary>
+        <div class="parked-body">
+          <ul class="font-dm text-sm leading-6 text-slate-700 list-disc pl-5 space-y-1.5 mb-4 max-w-3xl">
+            <li>Each card shows the offer the seller accepted, labelled "Hyväksytty tarjous", so the list holds cars that sold through AutoVex. The section heading becomes "Vastaavia autoja".</li>
+            <li>The label sits above the amount: beside it, it does not fit a 260px card. The card is 20px taller than the photo card above.</li>
+            <li>Legal, Marketing and Ops cleared showing sellers' own car photos with the registration plate blurred, and showing the accepted offer (October 2026).</li>
+            <li>Needs <code>accepted_offer</code> per car, and the list then contains only cars whose offer was accepted.</li>
+          </ul>
+          <div class="demo-stage max-w-[768px]"><div id="demo-cards-accepted"></div></div>
+          <p class="font-dm text-sm text-slate-600 mt-3"><a class="text-av-blue underline" href="../offers.html?scenario=auction-live&similar-cars=v3">Open in the prototype</a></p>
+        </div>
+      </details>
+
+      <details class="parked max-w-5xl">
+        <summary><span class="font-barlow font-bold text-lg text-slate-800">Other submit-loader shapes</span><span class="font-dm text-xs text-slate-500">Variants 1–4 and 6 · not chosen</span></summary>
+        <div class="parked-body">
+          <ul class="font-dm text-sm leading-6 text-slate-700 list-disc pl-5 space-y-2 mb-3 max-w-3xl">
+            <li><b>The list on the loader</b> (Variants 1–3): production's car animation, the message, and the whole table or card row below it, with "Jatka" after 5 seconds. A list invites reading, and a seller who reads it closely may press back from the success page to read it again, which in production leaves the funnel.</li>
+            <li><b>The message first, the cars as decoration</b> (Variant 4): the same top as the proposal, with up to 8 still, tilted grey cards scattered around the message (6 on a tablet, 5 on a phone) and "Jatka" after 10 seconds.</li>
+            <li><b>The cars along the bottom</b> (Variant 6): "Jatka" under the heading after 5 seconds, and a carousel of 1–4 cards by width along the bottom of the screen, under a "Vastaavien autojen tarjouksia" heading. Fits a phone without scrolling.</li>
+          </ul>
+          <p class="font-dm text-sm text-slate-600">Open in the prototype:
+            <a class="text-av-blue underline" href="../submit-loader.html?similar-cars=v1">table</a> ·
+            <a class="text-av-blue underline" href="../submit-loader.html?similar-cars=v2">photo cards</a> ·
+            <a class="text-av-blue underline" href="../submit-loader.html?similar-cars=v4">cars scattered</a> ·
+            <a class="text-av-blue underline" href="../submit-loader.html?similar-cars=v6">cars along the bottom</a>
+          </p>
+        </div>
+      </details>
+
+      <details class="parked max-w-5xl">
+        <summary><span class="font-barlow font-bold text-lg text-slate-800">Ideas for later</span><span class="font-dm text-xs text-slate-500">not specified</span></summary>
+        <div class="parked-body">
+          <ul class="font-dm text-sm leading-6 text-slate-700 list-disc pl-5 space-y-2 max-w-3xl">
+            <li><b>More details per car?</b> Fuel, transmission or drive could help a seller judge similarity; each one costs a column on a phone.</li>
+            <li><b>The seller's own car as a reference row</b> at the top of the list, without a price.</li>
+            <li><b>Settled along the way:</b> the list runs latest first (sorting by price would anchor to the highest, sorting by closeness needs a distance measure); motion on the loader is limited to the spinner, which runs only while there is nothing to do.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="parked max-w-5xl">
+        <summary><span class="font-barlow font-bold text-lg text-slate-800">Copy used only by the parked designs</span></summary>
+        <div class="parked-body">
+          <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+            <table class="w-full font-dm text-sm text-left">
+              <thead><tr class="border-b border-slate-200 text-slate-500"><th class="px-5 py-3 font-medium">Use</th><th class="px-5 py-3 font-medium">Finnish</th><th class="px-5 py-3 font-medium">English</th><th class="px-5 py-3 font-medium">Source</th></tr></thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700" id="copy-table-parked"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
       </div>
     </section>
 
@@ -480,38 +554,66 @@
   <script src="../similar-cars.js"></script>
   <script>
     const SEED = { make: 'Volkswagen', model: 'Amarok' };
-    /* The table demos run as the decision page does; the several-cars one as the offers page does. */
-    SimilarCars.render(document.getElementById('demo-table-same'),  { variant: 'table', initial: 3, max: 20, car: SEED, cars: SimilarCars.mock(SEED, 'same') });
-    SimilarCars.render(document.getElementById('demo-table-mixed'), { variant: 'table', initial: 3, max: 20, car: SEED, cars: SimilarCars.mock(SEED, 'mixed') });
-    SimilarCars.render(document.getElementById('demo-cards'),       { variant: 'cards', car: SEED, cars: SimilarCars.mock(SEED, 'same') });
-    SimilarCars.render(document.getElementById('demo-cards-accepted'), { variant: 'cards', price: 'accepted', car: SEED, cars: SimilarCars.mock(SEED, 'same') });
     const OTHER = { make: 'Toyota', model: 'Corolla' };
-    SimilarCars.render(document.getElementById('demo-table-multi'), { variant: 'table', initial: 3, max: 3, groups: [
+
+    /* The proposal's demos run with the counts each page uses. */
+    SimilarCars.render(document.getElementById('demo-offers-multi'), { variant: 'table', initial: 3, max: 3, groups: [
       { car: SEED,  cars: SimilarCars.mock(SEED, 'same') },
       { car: OTHER, cars: SimilarCars.mock(OTHER, 'same') }
     ] });
+    SimilarCars.render(document.getElementById('demo-offers-mixed'), { variant: 'table', initial: 3, max: 3, car: SEED, cars: SimilarCars.mock(SEED, 'mixed') });
+    SimilarCars.render(document.getElementById('demo-decision'), { variant: 'table', initial: 3, max: 20, car: SEED, cars: SimilarCars.mock(SEED, 'same') });
 
-    /* Generated from translations.js so the table is what the prototype renders. */
-    (function buildCopyTable() {
-      const rows = [
-        ['title', 'Section heading, Variants 1–2', 'draft'], ['titleAccepted', 'Section heading, Variant 3', 'draft'],
-        ['years', 'Model-year range beside the seller\'s car', 'draft'], ['colCar', 'First column, mixed models', 'draft'],
-        ['colSpec', 'First column, one model', 'prod'], ['colYear', 'Column', 'prod'], ['colKm', 'Column', 'prod'],
-        ['highestOffer', 'Column and card row, Variants 1–2', 'prod'], ['acceptedOffer', 'Card row, Variant 3', 'prod'], ['loadEarlier', 'Button', 'draft'],
-        ['prev', 'Arrow, screen reader only', 'draft'], ['next', 'Arrow, screen reader only', 'draft'],
-        ['recent7', 'Recency band, up to 7 days', 'draft'], ['recent30', 'Recency band, 8–30 days', 'draft'], ['older', 'Recency band, over 30 days', 'draft'],
-        ['submitLoader.title', 'Submit loader heading, while loading', 'draft'], ['loadingScreen.description', 'Submit loader line, while loading', 'prod'],
-        ['submitLoader.done', 'Submit loader heading, when done', 'draft'], ['btn.continue', 'Submit loader button', 'prod'],
-        ['submitLoader.teaserLead', 'Submit loader, Variant 5: above the average figure', 'draft'],
-        ['submitLoader.prevCar', 'Submit loader, Variant 6: arrow, screen reader only', 'draft'], ['submitLoader.nextCar', 'Submit loader, Variant 6: arrow, screen reader only', 'draft']
-      ];
-      document.getElementById('copy-table').innerHTML = rows.map(r =>
-        '<tr><td class="px-5 py-3">' + r[1] + '</td>' +
-        '<td class="px-5 py-3">' + pick(FI, r[0].indexOf('.') !== -1 ? r[0] : 'similarCars.' + r[0]) + '</td>' +
-        '<td class="px-5 py-3 text-slate-500">' + (function (k) { const v = pick(EN, k); return v === k ? 'no English in production' : v; })(r[0].indexOf('.') !== -1 ? r[0] : 'similarCars.' + r[0]) + '</td>' +
-        '<td class="px-5 py-3"><span class="rounded-full px-2 py-0.5 text-xs font-medium ' + (r[2] !== 'draft' ? 'bg-success-100 text-success-800' : 'bg-warning-100 text-warning-800') + '">' + r[2] + '</span></td></tr>'
-      ).join('');
+    /* The loader replica: its copy from translations.js, its figure from the
+       same mock list and rule the prototype uses. */
+    (function fillLoader() {
+      document.querySelectorAll('[data-copy]').forEach(el => { el.textContent = pick(FI, el.getAttribute('data-copy')); });
+      const cars = SimilarCars.mock(SEED, 'same')
+        .slice().sort((a, b) => Date.parse(b.ended_at) - Date.parse(a.ended_at))
+        .slice(0, 20);
+      const mean = Math.round(cars.reduce((n, c) => n + c.highest_offer, 0) / cars.length / 100) * 100;
+      const text = String(mean).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' €';
+      document.querySelectorAll('[data-average]').forEach(el => { el.textContent = text; });
     })();
+
+    /* The card rows measure their own width, so a parked demo is drawn when
+       its section is opened rather than while it is hidden. */
+    const PARKED_DEMOS = {
+      'cards': () => SimilarCars.render(document.getElementById('demo-cards'), { variant: 'cards', car: SEED, cars: SimilarCars.mock(SEED, 'same') }),
+      'cards-accepted': () => SimilarCars.render(document.getElementById('demo-cards-accepted'), { variant: 'cards', price: 'accepted', car: SEED, cars: SimilarCars.mock(SEED, 'same') })
+    };
+    document.querySelectorAll('details[data-demo]').forEach(d => {
+      d.addEventListener('toggle', () => { if (d.open) PARKED_DEMOS[d.getAttribute('data-demo')](); });
+    });
+
+    /* Generated from translations.js so the tables are what the prototype renders. */
+    function copyRows(rows) {
+      return rows.map(r => {
+        const key = r[0].indexOf('.') !== -1 ? r[0] : 'similarCars.' + r[0];
+        const en = pick(EN, key);
+        return '<tr><td class="px-5 py-3">' + r[1] + '</td>' +
+          '<td class="px-5 py-3">' + pick(FI, key) + '</td>' +
+          '<td class="px-5 py-3 text-slate-500">' + (en === key ? 'no English in production' : en) + '</td>' +
+          '<td class="px-5 py-3"><span class="rounded-full px-2 py-0.5 text-xs font-medium ' + (r[2] !== 'draft' ? 'bg-success-100 text-success-800' : 'bg-warning-100 text-warning-800') + '">' + r[2] + '</span></td></tr>';
+      }).join('');
+    }
+    document.getElementById('copy-table').innerHTML = copyRows([
+      ['title', 'Section heading, offers and decision page', 'draft'],
+      ['years', 'Model-year range beside the seller\'s car', 'draft'], ['colCar', 'First column, mixed models', 'draft'],
+      ['colSpec', 'First column, one model', 'prod'], ['colYear', 'Column', 'prod'], ['colKm', 'Column', 'prod'],
+      ['highestOffer', 'Column', 'prod'], ['loadEarlier', 'Button, decision page', 'draft'],
+      ['recent7', 'Recency band, up to 7 days', 'draft'], ['recent30', 'Recency band, 8–30 days', 'draft'], ['older', 'Recency band, over 30 days', 'draft'],
+      ['submitLoader.title', 'Submit loader heading, while receiving', 'draft'], ['loadingScreen.description', 'Submit loader line, while receiving', 'prod'],
+      ['submitLoader.done', 'Submit loader heading, when received', 'draft'],
+      ['submitLoader.teaserLead', 'Submit loader card, above the average figure', 'draft'],
+      ['success.backToHome', 'Submit loader logo link, screen reader only', 'draft']
+    ]);
+    document.getElementById('copy-table-parked').innerHTML = copyRows([
+      ['titleAccepted', 'Section heading, accepted offers', 'draft'], ['acceptedOffer', 'Card row, accepted offers', 'prod'],
+      ['prev', 'Card arrows, screen reader only', 'draft'], ['next', 'Card arrows, screen reader only', 'draft'],
+      ['submitLoader.prevCar', 'Loader carousel arrow, screen reader only', 'draft'], ['submitLoader.nextCar', 'Loader carousel arrow, screen reader only', 'draft'],
+      ['btn.continue', 'Loader button in the other shapes', 'prod']
+    ]);
   </script>
   <script src="../proto-bar.js"></script>
 </body>

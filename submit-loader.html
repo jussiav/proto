@@ -218,10 +218,12 @@
 
   <!-- Prod's OFullscreenLoading + MAnimatedLoadingMessage + ALoadingAnimation,
        as on the details step's vehicle-info screen, but as a page that scrolls:
-       the similar cars follow the message. The logo is prod's plain image, so
-       nothing here leaves the flow before the success page. -->
+       the similar cars follow the message. The logo links to the front page
+       (Jussi's call; prod's ABrandLogo here is a plain image). -->
   <div class="p-4">
-    <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+    <a id="sl-home" href="index.html" aria-label="Takaisin etusivulle" data-i18n-aria="success.backToHome" class="inline-block">
+      <img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="inline-block pointer-events-none" />
+    </a>
   </div>
 
   <main class="pb-16">
@@ -482,6 +484,13 @@
       setTimeout(slDone, SL_WAIT_MS);
       /* Replaced, not pushed: browser back from the success page must not
          return here. */
+      /* Replaced rather than followed, so back from the front page goes to
+         the contact step and never into the loader again. */
+      document.getElementById('sl-home').addEventListener('click', function (e) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+        e.preventDefault();
+        window.location.replace(this.href);
+      });
       document.getElementById('sl-continue').addEventListener('click', function () {
         window.location.replace('success.html');
       });
