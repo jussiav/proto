@@ -56,7 +56,7 @@ window.TRANSLATIONS = {
     },
 
     /* Prod's tenderform.loading_screen.*, verbatim. Prod has no English for
-       it, so the EN page falls back to these. */
+       it; the EN entry is a working translation. */
     loadingScreen: {
       title:       'Haetaan autosi perustiedot',
       description: 'Muutama sekunti jäljellä',
@@ -1121,6 +1121,11 @@ window.TRANSLATIONS = {
       auctionOngoing:  'Auction is live',
       auctionEnded:    'Auction has ended',
       dealCompleted:   'Transaction complete',
+    },
+
+    loadingScreen: {
+      title:       'Fetching your car\'s basic details',
+      description: 'A few seconds left',
     },
 
     submitLoader: {

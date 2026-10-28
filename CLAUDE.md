@@ -2364,7 +2364,9 @@ Prod's `retrievingVehicleInfo` state, transcribed 2026-10-02:
 `VehicleInfoRetrieval.vue` → `OFullscreenLoading` → `MAnimatedLoadingMessage`
 → `ALoadingAnimation`. Copy `tenderform.loading_screen.title` /
 `.description` ("Haetaan autosi perustiedot" / "Muutama sekunti jäljellä");
-**prod has no English for it**, so the EN page falls back to Finnish.
+**prod has no English for it**; the EN page shows a working translation
+("Fetching your car's basic details" / "A few seconds left", added
+2026-10-28 for the submit loader, which shares the second line).
 `assets/car_loading.svg` (it carries its own CSS animation) and
 `assets/logo-fi.svg` (`ABrandLogo`'s default, 108×22) are byte-identical
 copies of prod's.
