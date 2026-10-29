@@ -507,7 +507,7 @@
     /* Where the copy came from, shown on the page so nobody mistakes the shell
        for a rendered export. */
     source: {
-      dump: 'Prod-codebase/autovex-2026-08-26-1ee95731e59f',
+      dump: 'prod/autovex-2026-08-26-1ee95731e59f',
       lang: 'resources/lang/fi/email.php',
       views: 'resources/views/mail/',
       preview: 'app/Filament/Pages/TransactionalEmails.php'

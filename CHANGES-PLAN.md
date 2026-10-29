@@ -122,5 +122,5 @@ Check with: `grep -c '<marker>' details.html services.html photos.html price.htm
   "Ei tiedossa"; proto keeps "Vanteet (kesä)/(talvi)" where prod says just "Vanteet".
 
 ## Notes / dependencies
-- Prod reference root: `Prod-codebase/autovex-2026-08-14-435a41f68ebc/resources/assets/js/`
+- Prod reference root: `../prod/autovex-2026-08-14-435a41f68ebc/resources/assets/js/`
 - Funnel form steps live in `tenderRequestDraftForm/steps/`

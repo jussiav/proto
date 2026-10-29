@@ -89,7 +89,7 @@ to compile a cross-participant report, so the structure is the contract.
 
 - **Verify every measurement centrally.** Agent-reported pixel positions have
   been wrong in two of three cases, both understating the problem.
-- **Check findings against production** (`Prod-codebase/<newest>/`) before
+- **Check findings against production** (`../prod/current/`, the newest dump) before
   reporting them as product issues. Copy, rules and thresholds get quoted from
   the language files, not from the prototype.
 - Say plainly when a design failed to communicate. A negative result is the
