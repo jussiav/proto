@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-10-29)
+## Reference Source Locations (updated 2026-11-02)
 
-- **Production codebase (read-only reference):** `../prod/current/`, a link to the newest dump in the sibling folder `../prod/`, OUTSIDE this repo (moved 2026-10-29 so every local prototype reads one shared copy). `current` → `autovex-2026-10-29-82636d6655b9/` (previous, beside it: `autovex-2026-10-26-ead421f6c80b/`, `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b` and the 10-29 one as `autovex-autovex-82636d6655b9`; rename it to `autovex-<date>-<hash>` before using it. **A new dump** (downloaded by hand from Bitbucket for now) goes into `../prod/` beside the others: rename it, then repoint the link with `ln -sfn <folder> current` from inside `../prod/`. Older dumps stay there so a new one can be compared with the previous. Never push, nothing in the proto depends on it; `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case a dump is ever dropped in the old place.
+- **Production codebase (read-only reference):** `../prod/current/`, a link to the newest dump in the sibling folder `../prod/`, OUTSIDE this repo (moved 2026-10-29 so every local prototype reads one shared copy). `current` → `autovex-2026-11-02-a17b66244b10/` (previous, beside it: `autovex-2026-10-29-82636d6655b9/`, `autovex-2026-10-26-ead421f6c80b/`, `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b` and the 10-29 one as `autovex-autovex-82636d6655b9` and the 11-02 one as `autovex-autovex-a17b66244b10`; rename it to `autovex-<date>-<hash>` before using it. **A new dump** (downloaded by hand from Bitbucket for now) goes into `../prod/` beside the others: rename it, then repoint the link with `ln -sfn <folder> current` from inside `../prod/`. Older dumps stay there so a new one can be compared with the previous. Never push, nothing in the proto depends on it; `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case a dump is ever dropped in the old place.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside `../prod/current/`; `resources/astro/...` paths resolve inside the archive.
 
@@ -27,7 +27,7 @@ These rules apply to all new pages and components in this prototype, without exc
 
 1. **Never invent visual style.** Every color, spacing, shadow, border-radius, font size, and layout pattern must come from an existing source — either `design-library/tokens.css`, `design-library/tokens.js`, or by reading the equivalent production Vue component in `resources/assets/js/`. Do not guess or approximate.
 
-2. **Never invent copy.** All labels, headings, button text, status text, error messages, and descriptions must come from the production codebase (`resources/assets/js/lang/` translation files, or directly from Vue component templates). Do not write new Finnish or English copy.
+2. **Never invent copy.** All labels, headings, button text, status text, error messages, and descriptions must come from the production codebase (`resources/assets/js/lang/` translation files, or directly from Vue component templates). Do not write new Finnish or English copy. The source of truth behind the generated locale file is `resources/lang/fi/*.php` (see rule 13's note on prod's component docs); cite the key from there.
 
 3. **Never invent flows or structure.** Page structure, section order, component hierarchy, and navigation must match the equivalent Astro prototype page (archived, see Reference Source Locations) or the production Vue app. The Astro dev server is retired — read the archived `.astro` source instead.
 
@@ -311,6 +311,35 @@ These rules apply to all new pages and components in this prototype, without exc
     where devs on other repos can use it too; this file holds only what is true
     of THIS repo. Read the skill before proposing; read the worked example
     below for what it looks like against prod.
+
+    **Prod documents its own component structure now; read it before any
+    inventory** (since the 2026-11-02 dump, by the Platform team). Start at
+    `../prod/current/docs/frontend-components/README.md`, which names the
+    topic file per task, the same way its skill
+    (`.ai/skills/frontend-components/SKILL.md`) tells an agent to. Use the
+    README's **Finding things** commands, not repo-wide grep; Platform's own
+    trial found one confident false "it doesn't exist" this way. **An empty
+    search result is not proof of absence**: check the command first
+    (`grep -r 'a|b'` needs `-E`, `--include` does not brace-expand). What the
+    docs settle, and this file no longer has to work out by hand:
+
+    | | |
+    |---|---|
+    | Lanes | public marketing = Astro (`resources/astro`, Contentful) · logged-in app = Vue inside Blade · email and PDF = Blade only (`resources/views/mail`, `/pdf`). The email tool here is the Blade lane |
+    | Current vs legacy | `resources/assets/app/` (`@app`, `@atoms`, `@molecules`, `@organisms`; A/M/O prefixes) is where all new components go. `resources/assets/js/` is legacy: read to reuse, never extend |
+    | Dead ends | `resources/assets/js/components/ui/Ui*.vue` are shadcn-vue primitives and shadcn-vue is abandoned, which is why `UiButton` is deprecated; `components/ui/{atoms,…}` was an earlier atomic attempt, replaced |
+    | Every `@app` component | ships with a `.spec.ts` and a `.stories.ts` beside the `.vue`. Missing ones are gaps, not precedent |
+    | Conventions for a candidate | `AButton` is the reference: `<script setup lang="ts">`, an exported `<Name>Props`, JSDoc with `@default` on every prop (Storybook autodocs reads it), `cva` with `variant` + `intent`, `cn()` + `useClassMerging`, no `class` prop. Inside `.astro`, an inline `:style` instead of `<style scoped>` |
+    | Copy | source of truth is `resources/lang/fi/*.php`; `vue-i18n-locales.generated.js` is generated, read it but cite the lang file. `resources/lang/en/` is a partial stub, which is why prod has no English for many strings |
+    | Per-country values | phone numbers, social links and the like live in `config/country/finland.php`, never in components |
+    | Planned tiers | Templates (T) and Pages (P) are planned, not built. A Storybook page will be "one story per state, with realistic fake data", the same idea as this proto's scenarios |
+    | Marketing deploys | publishing in Contentful triggers the static rebuild (`DeployContentfulController.php`) |
+
+    **When the docs and the code disagree, trust the code and say what
+    differs**, as the docs themselves ask. `docs/frontend-components/prototyping.md`
+    is Platform's guide for designing on the real code (full local stack,
+    Storybook first, pick the lane); this proto is not that, but a component it
+    builds as a prod candidate (`vue-tests/`) follows `building-components.md`.
 
     **The worked example is `accept-button-lab.html`** (2026-09-17, the
     `intent="success"` change). Everything the inventory turned up, which is
