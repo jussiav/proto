@@ -38,6 +38,6 @@ Klaviyo, outside it), CMS copy, and copy that reaches dealerships.
 - **Where:** Dealership side: the daily "new leads" email (only dealer email with a euro asking price), the minimum first bid shown in the bid field and its error, two negotiation emails that use the word "pyyntihinta" for the seller's counter offer
 - **Found:** 2026-09-23, audit for Asking price removal; dealer emails re-checked 2026-09-24
 - **Evidence:** None of these three dealer emails appears in Filament's Transactional Emails preview, which is why they were hard to find. The B2B reserve is already hidden from buyers by a gate that could be extended to C2B. The dealer UI shows the C2B asking price too: the search teaser's photo overlay, the first figures cell on the request page, and sorting and filtering by it in search. Only B2B is hidden.
-- **Last checked:** prod dump 2026-10-23, still present
+- **Last checked:** prod dump 2026-11-02, still present. The B2B gate gained an exception in the 2026-10-26 dump: behind a feature flag, the highest bidder sees a B2B reserve once the auction has ended below it. C2B is unchanged
 - **Next step:** Handed to the team 2026-09-24; no change requested yet.
 - **Touches:** Asking price removal, dealership squad work

@@ -45,4 +45,5 @@ can prove.
 - **Where:** Offers page FAQ, "Miten toimin, kun autoliike ei ole reagoinut vastatarjoukseeni…", on the PR 2546 preview
 - **Found:** 2026-10-22, PR 2546 preview test
 - **Evidence:** The answer ends with "…kauppojen sopimiseksi. null". The copy itself is fine: `Faqs.vue` fills `{email}` from the site's seller support email setting, and on the preview that setting is empty, which JavaScript turns into the text "null".
+- **Last checked:** prod dump 2026-11-02, still present. Since the 2026-10-26 dump `Faqs.vue` reads the setting from the configurations endpoint; an empty setting still arrives as null and still prints "null"
 - **Next step:** Set the setting in preview seed data. Optionally render nothing when it is missing. Check that production has it set.

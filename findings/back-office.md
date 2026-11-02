@@ -8,7 +8,7 @@ experiment registration.
 - **Where:** Review qualification engine, Filament → Tender Review Settings → Review Algorithm
 - **Found:** 2026-09-07, reading the dump for Review/No review
 - **Evidence:** For the live slice, `DecideViaQualificationEngine` returns the engine's answer without passing on to the legacy rules. The team's stated intent is that the filters stay in priority and the engine only adds fidelity within them. The mode and live percentage are editable in Filament by anyone with access to that page.
-- **Last checked:** prod dump 2026-10-23, still present
+- **Last checked:** prod dump 2026-11-02, still present. Since the 2026-10-29 dump the skip-segment rule (BO-07) runs before the engine, so an ad in an active skip segment publishes whatever the engine would decide
 - **Re-opens if:** someone moves the mode from `evaluate` to `enabled`.
 - **Touches:** Review/No review, Seller intent phase 2
 
@@ -16,8 +16,8 @@ experiment registration.
 - **Status:** Watching · **Type:** UX
 - **Where:** Ads published without review
 - **Found:** 2026-09-07, reading the dump
-- **Evidence:** On `auto_publish`, an empty `asking_price` is filled from `price_estimation`. Since the 2026-10-23 dump the asking price no longer caps the seller's counter offer (DEC-05), but dealers still see it as the seller's "Pyyntihinta" and it still sets the minimum first bid (EML-05). For these ads that is the machine estimate, presented as the seller's own price.
-- **Last checked:** prod dump 2026-10-23, still present
+- **Evidence:** On `auto_publish`, an empty `asking_price` is filled from `price_estimation`. Since the 2026-10-23 dump the asking price no longer caps the seller's counter offer (DEC-05), but dealers still see it as the seller's "Pyyntihinta" and it still sets the minimum first bid (EML-05). For these ads that is the machine estimate, presented as the seller's own price. Since the 2026-10-29 dump the skip-segment rule (BO-07) fills it the same way, so ads published from an active skip segment are affected too.
+- **Last checked:** prod dump 2026-11-02, still present, and reaches more ads (BO-07)
 - **Touches:** Asking price removal, negotiation ceiling test
 
 ### BO-03 · Reviewable Drafts shows no plate or car
@@ -25,7 +25,7 @@ experiment registration.
 - **Where:** Filament → Reviewable Drafts
 - **Found:** 2026-10-22, PR 2546 preview test
 - **Evidence:** Three columns only: calls, added for review, drafts for user. Matching a row to an ad means comparing timestamps. Tender Request Drafts also opens filtered to "Status: OPEN", which hides drafts in review or queued.
-- **Last checked:** prod dump 2026-10-23, still present
+- **Last checked:** prod dump 2026-11-02, still present
 - **Next step:** Advisors may not need it (they book by queue order), so ask before changing. It mainly hurts testing.
 
 ### BO-04 · Advisors can't see what a seller edited before the call
@@ -48,4 +48,14 @@ experiment registration.
 - **Where:** `VwoExperiment` enum and `config/vwo.php`: `73_combi`, `91_combi`, `93_combi`
 - **Found:** 2026-09-07, experiment review
 - **Evidence:** Still registered; the only consumers copy their cookie and list them in a Filament widget. No frontend or backend check reads them. `93_combi` (remove service book upload) is not progressing by the team's call.
-- **Last checked:** prod dump 2026-10-23, still present
+- **Last checked:** prod dump 2026-11-02, still present
+
+### BO-07 · Skip-review segments publish ads the funnel treated as reviewable
+- **Status:** Watching · **Type:** UX · **Severity:** Medium
+- **Where:** Filament → Tender Review Settings → "Skipped from Review"; the price step and what dealers see for the ads it routes
+- **Found:** 2026-11-02, reading prod dump 2026-10-29 while re-checking the register
+- **Evidence:** A new rule, `PublishIfSkipSegment`, runs at publish before the review engine: an ad inside the Allowed for Review band that also matches an active skip segment (fuel types, model year, mileage and GT-X estimate ranges; ads without an estimate never match) goes live without a review call. The funnel's `can_review` is still computed from the older rules only, so for these cars the price step asks the optional estimate rather than the required asking price, and publishing then copies `price_estimation` into `asking_price` (BO-02). Dealers see the machine estimate as the seller's "Pyyntihinta", which the seller was never asked for. The settings ship with no segments; they are added by hand in Filament, so nothing changes until someone adds one. Each routing decision is now tracked with its reason (`drafts.review_routed`).
+- **Last checked:** prod dump 2026-11-02, rule present, no segments by default
+- **Re-opens if:** someone adds an active skip segment.
+- **Next step:** Decide whether a skip-segment car should get the asking-price question at the price step, as other unreviewed cars do. That needs the funnel's `can_review` to see the skip segments.
+- **Touches:** Review/No review, Seller intent phase 2, Asking price removal, BO-01, BO-02
