@@ -191,6 +191,7 @@ window.DECISION_I18N = {
     '(Älä lisää yhteystietojasi)':         '(Do not add your contact details)',
     'Lähetä':                              'Send',
     'Pakollinen tieto':                    'Required',
+    'Vastatarjouksesi ei voi olla edellistä tarjoustasi korkeampi': 'Your counter offer cannot be higher than your previous one',
     'Sulje':                               'Close',
     'Hylkää tarjous':                      'Reject the offer',
     'Hylkää tarjouskilpailu':              'Reject the auction',

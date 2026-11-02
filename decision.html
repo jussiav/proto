@@ -1042,7 +1042,7 @@
       var msgs = (neg && neg.messages) || [];
       var lastSeller = msgs.filter(function(m) { return m.sender === 'seller'; }).slice(-1)[0];
       if (lastSeller && amount > lastSeller.amount) {
-        errors.push('Pyyntihinta liian korkea');
+        errors.push('Vastatarjouksesi ei voi olla edellistä tarjoustasi korkeampi');
       }
 
       return errors;
