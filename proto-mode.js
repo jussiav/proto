@@ -179,6 +179,12 @@
       spec: 'design-specs/op-routing.html',
       prodArm: 'control'
     },
+    {
+      slug: 'seller-protection',
+      name: 'Seller protection',
+      spec: 'design-specs/seller-protection.html',
+      prodArm: 'control'
+    },
     /* No spec page: an ideation piece. v1 and v2 are price-guess.html,
        v3 (the Christmas campaign) is santa.html, v4 (a replacement for
        prod's /hinta-arvio) is hinta-arvio.html; each page forwards to the

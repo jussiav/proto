@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller protection · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-blue-500':  '#2890FF',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+            // Semantic scales from design-library/tokens.css
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <!-- The same renderer the decision page uses, so the demo below is the
+       prototype's own block and cannot drift from it. -->
+  <script src="../seller-protection.js"></script>
+  <style>
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }
+    .av-arc-flip { transform: rotate(180deg); }
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); }
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    code { overflow-wrap: anywhere; }
+    .av-copy  { font-family: "DM Sans", sans-serif; font-size: 0.9375rem; line-height: 1.65; color: #1e293b; margin: 0; }
+    .av-gloss { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.6; color: #64748B; margin: 0.25rem 0 0; }
+    .av-ins { color: #3F6212; background: #ECFCCB; font-weight: 700; border-radius: 2px; padding: 0 2px; }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; decision page</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Seller protection</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller should be able to accept an offer without hesitating. Sellers who call AutoVex at this point already get help from customer service and sales advisors, but the page never says so. This initiative names that help &ldquo;AutoVex-turva&rdquo; and shows it on the decision page.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: ideation &middot; two variants &middot; copy is a draft
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">November 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Summary</h2>
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Two variants</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Variant 1 (<a class="text-av-blue underline" href="#c1">section 1</a>):</b> a card under the offers with an &ldquo;AutoVex-turva&rdquo; ribbon, a shield and a short statement of support.</li>
+            <li><b>Variant 2 (<a class="text-av-blue underline" href="#c2">section 2</a>):</b> a small &ldquo;AutoVex-turva&rdquo; badge directly under the hero's text. The hero already tells the seller to accept and that the dealership will call; the badge adds trust to that, and opens to what the help covers for a seller who wants to know.</li>
+            <li><b>A name for help that already exists.</b> Nothing new is built behind it. The help is what customer service and sales advisors already give to sellers who call, and its phone number is in the &ldquo;Tarvitsetko apua?&rdquo; (need help?) banner further down the page.</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v1" target="_blank" rel="noopener">Variant 1</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v2" target="_blank" rel="noopener">variant 2</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=control" target="_blank" rel="noopener">production</a></p>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What it is meant to do</p>
+          <p>Take the hesitation out of accepting. Customer service and sales advisors name what makes sellers unsure at this point: whether to sell directly or trade the car in, how and when the car is handed over, why the offer is what it is, whether the dealership can be trusted, and less often a remaining car loan. After accepting, the usual question is timing: when the dealership calls, when it pays, what happens next.</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3 mt-4">Where it stands</p>
+          <p>Ideation. Variant 1 is the first version; variant 2 follows the team's feedback. A middle iteration (a seal on the page background with no container) led to variant 2 and is not kept as an arm.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-2">Change log</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">Change</th>
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Scenario</th>
+              <th class="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 text-slate-800">
+            <tr>
+              <td class="px-4 py-3 font-bold">1</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c1">Variant 1 &mdash; AutoVex-turva card under the offers</a></td>
+              <td class="px-4 py-3">Decision page</td>
+              <td class="px-4 py-3 text-slate-600">Offers open for a decision</td>
+              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ideation &middot; draft copy</span></td>
+            </tr>
+            <tr>
+              <td class="px-4 py-3 font-bold">2</td>
+              <td class="px-4 py-3"><a class="text-av-blue underline font-medium" href="#c2">Variant 2 &mdash; AutoVex-turva badge under the hero</a></td>
+              <td class="px-4 py-3">Decision page hero</td>
+              <td class="px-4 py-3 text-slate-600">Offers open for a decision</td>
+              <td class="px-4 py-3"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Ideation &middot; draft copy</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c1">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; Variant 1: AutoVex-turva card under the offers</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1">Ideation &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Offers open for a decision</span></div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>A card directly under the offer cards</b>, above the auction result, with no section heading of its own.</li>
+          <li><b>Ribbon:</b> blue, top-left, a check and &ldquo;AutoVex-turva&rdquo; in white, its right end cut into a notch.</li>
+          <li><b>Content:</b> a gold shield with a check, a heading and one short paragraph, centred. From 620px the shield sits to the left of the text; below it, above.</li>
+          <li><b>Known issues from review:</b> the light blue outline and the ribbon are the offer cards' marks on this page, and the heading is larger than the page's other block headlines.</li>
+        </ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v1" target="_blank" rel="noopener">See it in the prototype</a></p>
+      </div>
+
+      <div class="rounded-lg p-5 border border-slate-200 bg-[#EEF6FA] mb-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Variant 1, live</p>
+        <div class="max-w-[720px]" id="sp-demo-v1"></div>
+        <p class="font-dm text-xs text-slate-500 mt-3">Drawn by the same script as the prototype, at the decision page's 720px column on its own background.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; draft</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Ribbon</p><p class="av-copy"><span class="av-ins">AutoVex-turva</span></p><p class="av-gloss">AutoVex protection (a name; not translated)</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Heading</p><p class="av-copy"><span class="av-ins">Me olemme tukenasi myös tarjouksen hyväksymisen jälkeen</span></p><p class="av-gloss">We support you after accepting the offer too</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Body</p><p class="av-copy"><span class="av-ins">AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.</span></p><p class="av-gloss">AutoVex's experts help you all the way, right up to handing over the car. If anything is on your mind, get in touch.</p></div>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="c2">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 &mdash; Variant 2: AutoVex-turva badge under the hero</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1">Ideation &middot; draft copy</span><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page hero</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Offers open for a decision</span></div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800 mb-5">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>A badge directly under the hero's text</b>, centred, above the offer cards. It adds trust to what the hero already says (&ldquo;Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä&rdquo;, accept the offer and the dealership will contact you) rather than repeating it.</li>
+          <li><b>Closed, it is a branded badge:</b> the gold shield, &ldquo;AutoVex-turva&rdquo; in bold, the line &ldquo;Tukenasi koko kaupan ajan&rdquo; (with you throughout the sale) and a caret. White with a soft shadow and no outline: an outline is the offer cards' mark on this page.</li>
+          <li><b>Pressing it opens a panel under it:</b> one sentence on who helps and when, five topics we help with, and a link &ldquo;Ota yhteyttä asiantuntijaamme&rdquo; (contact our experts). Pressing again closes it. It opens with the FAQ accordion's own transition.</li>
+          <li><b>The link scrolls to the &ldquo;Tarvitsetko apua?&rdquo; banner</b>, which carries the phone number. The help is the same, so the number is not repeated. While that banner is hidden (a counter offer waiting for the dealership's reply), the link is left out.</li>
+          <li><b>Stays open</b> when the page updates, for example after a negotiation action, until the seller closes it.</li>
+          <li><b>When it shows:</b> while the seller has offers open for a decision: any auction result with offers, a final offer, a negotiation in progress or a closed negotiation. Not before the offers are revealed, after accepting or rejecting, or with no offers.</li>
+        </ul>
+        <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v2" target="_blank" rel="noopener">Offers waiting</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=final-offer&amp;seller-protection=v2" target="_blank" rel="noopener">final offer</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=counter-offer-sent&amp;seller-protection=v2" target="_blank" rel="noopener">counter offer sent (no contact link)</a></p>
+      </div>
+
+      <div class="rounded-lg p-5 border border-slate-200 bg-[#EEF6FA] mb-5">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Variant 2, live &mdash; press the badge</p>
+        <div class="max-w-[720px] text-center px-4 py-4">
+          <p class="font-barlow font-bold text-black" style="font-size:28px;line-height:38.5px;margin:0 0 8px">Nyt on aikasi toimia!</p>
+          <p class="font-dm text-base text-gray-600">Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.</p>
+          <div id="sp-demo-v2"></div>
+        </div>
+        <div id="sp-demo-help" class="max-w-[720px] mt-4 rounded-lg border border-dashed border-slate-300 px-4 py-3 font-dm text-xs text-slate-500">&ldquo;Tarvitsetko apua?&rdquo; banner further down the page, with the phone number. The contact link scrolls here.</div>
+        <p class="font-dm text-xs text-slate-500 mt-3">The hero's heading and text are production's, drawn here for context. The badge is drawn by the same script as the prototype.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl">
+        <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Copy &mdash; draft</p>
+        <div class="space-y-4">
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Badge</p><p class="av-copy"><span class="av-ins">AutoVex-turva</span></p><p class="av-gloss">AutoVex protection (a name; not translated)</p><p class="av-copy mt-2"><span class="av-ins">Tukenasi koko kaupan ajan</span></p><p class="av-gloss">With you throughout the sale</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Panel, intro</p><p class="av-copy"><span class="av-ins">Asiantuntijamme auttavat sinua ennen tarjouksen hyväksymistä ja sen jälkeen, esimerkiksi näissä asioissa:</span></p><p class="av-gloss">Our experts help you before and after you accept the offer, for example with:</p></div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Panel, topics</p>
+            <p class="av-copy"><span class="av-ins">Suora myynti vai vaihtokauppa</span></p><p class="av-gloss">A direct sale or a trade-in</p>
+            <p class="av-copy mt-2"><span class="av-ins">Auton luovutus ja aikataulut</span></p><p class="av-gloss">Handing over the car and the schedule</p>
+            <p class="av-copy mt-2"><span class="av-ins">Mistä tarjouksen hinta muodostuu</span></p><p class="av-gloss">How the offer price is made up</p>
+            <p class="av-copy mt-2"><span class="av-ins">Jäljellä oleva autolaina</span></p><p class="av-gloss">A remaining car loan</p>
+            <p class="av-copy mt-2"><span class="av-ins">Asiointi autoliikkeen kanssa</span></p><p class="av-gloss">Dealing with the dealership</p>
+          </div>
+          <div><p class="font-dm text-xs text-slate-500 mb-1">Panel, link</p><p class="av-copy"><span class="av-ins">Ota yhteyttä asiantuntijaamme</span></p><p class="av-gloss">Contact our experts</p></div>
+        </div>
+        <p class="font-dm text-xs text-slate-500 mt-4">The topics are what sellers who call at this point ask about, as customer service and sales advisors describe it. Each is phrased as a subject we help with, never as a problem the seller might run into.</p>
+      </div>
+
+      <div class="bg-white rounded-lg border border-slate-200 p-5 mt-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Acceptance criteria</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li>The badge appears under the hero's text whenever the seller has offers open for a decision, and nowhere else.</li>
+          <li>It is a button that announces whether it is open; the panel is hidden from screen readers while closed.</li>
+          <li>The contact link scrolls to the help banner, and is not shown while that banner is hidden.</li>
+          <li>The open state survives the page updating after a negotiation action.</li>
+          <li>The badge has no outline; the shield is decorative.</li>
+        </ul>
+        <p class="mt-4 text-xs text-slate-500"><b>Why:</b> the hero is where the seller is told to accept, so the reassurance belongs beside it; the details are there for the seller who wants them, without making every seller read them.</p>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What to read from it</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>Acceptance rate</b> on the decision page, each variant against control.</li>
+        <li><b>Time to decide</b>, from the offers being revealed to accepting.</li>
+        <li><b>Variant 2: how many open the badge</b>, and whether those who do accept more or less often.</li>
+        <li><b>Calls to customer service</b> at this point: whether naming the help changes how many sellers call, and about what.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>What the help covers.</b> Ops should confirm customer service and sales advisors can carry each of the five topics for every seller who asks, including a remaining car loan and a trade-in.</li>
+        <li><b>When the dealership calls.</b> Timing is the most common question after accepting. A typical time (&ldquo;usually within a day&rdquo;) would answer it, but needs real data before it can be stated.</li>
+        <li><b>After accepting.</b> The badge disappears once the seller accepts, which is when the timing questions start. Should it stay on the accepted page?</li>
+        <li><b>The contact link while the help banner is hidden.</b> During a counter offer the banner is hidden, so the panel has no way to reach us. Show the phone number in the panel then, or leave it?</li>
+        <li><b>The name.</b> Does &ldquo;-turva&rdquo; read as insurance or a guarantee? Legal and Marketing should confirm the name promises no more than customer service delivers.</li>
+        <li><b>The gold shield.</b> Gold is not in the design system. Keep it as AutoVex-turva's own mark, or draw the shield in brand blue?</li>
+      </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Seller protection</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+  <script>
+    window.SellerProtection.card(document.getElementById('sp-demo-v1'));
+    window.SellerProtection.badge(document.getElementById('sp-demo-v2'), { contactTarget: 'sp-demo-help' });
+  </script>
+</body>
+</html>

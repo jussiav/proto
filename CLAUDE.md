@@ -876,6 +876,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
+| Seller protection | **Ideation** (2026-11-04) — `v1` an outlined "AutoVex-turva" card with a ribbon under the offer cards (first version); `v2` a badge under the hero copy ("AutoVex-turva · Tukenasi koko kaupan ajan") that expands to five topics we help with and a link to the "Tarvitsetko apua?" banner. A middle iteration (containerless seal) led to `v2` and was not kept. Copy is Claude's draft, Jussi iterates | `seller-protection` | `control` | `control` | `decision.html` (drawn by `seller-protection.js`) | `design-specs/seller-protection.html` |
 
 **Completed initiatives:**
 
@@ -3595,6 +3596,62 @@ agaric, chanterelle, lingonberry, no palm trees.
 - **Open before any production use:** WCAG 2.2.2 (Pause, Stop, Hide) — the
   leaves move for more than 5 s alongside other content, so production needs a
   pause control or a time limit; reduced motion alone does not satisfy it.
+
+## Seller protection — `v1` / `v2` (ideation)
+
+Started 2026-11-04. Take the hesitation out of accepting an offer. Sellers who
+call AutoVex at this point already get help from customer service and sales
+advisors; the page never says so. The initiative names that help
+**AutoVex-turva**. The phone number for it is already in the decision page's
+"Tarvitsetko apua?" banner (the one with "Hylkää tarjouskilpailu"): same help.
+
+- **`seller-protection.js`** draws both arms, host-agnostic, so the spec
+  page's demos are the same code: `SellerProtection.card(el)` (v1) and
+  `SellerProtection.badge(el, { contactTarget })` (v2). Separate copy and
+  builders per arm; only the shield is shared (prod's
+  `ph-fill-shield-check` drawn twice for two-tone gold, amber-300 / amber-400,
+  over a white disc; colours from Jussi's screenshot, not the design system).
+  Injected `.sp-*` / `.spb-*` CSS, no utilities (JS-built markup; the spec page
+  has no `tw-tokens.js`).
+- **When (both):** `renderSellerProtection(open)` at the end of `renderMain`,
+  same gate as Similar cars: `DECISION_OPEN` and offers. Hidden on the
+  warm-up, accepted, rejected and no offers.
+- **`v1`, the first version:** `#section-protection` under the offers section,
+  an outlined white card (2px blue-100) with a blue notched ribbon, shield
+  beside the text from 620px, heading "Me olemme tukenasi myös tarjouksen
+  hyväksymisen jälkeen" at Barlow 20/26 → 24/30. Jussi's review: the outline
+  and the ribbon are the offer cards' marks, and the heading is off the page's
+  block-headline scale (20px). Kept as an arm for comparison.
+- **The middle iteration, not kept:** a containerless seal on the page
+  background, "Voit hyväksyä tarjouksen turvallisin mielin". Jussi: it
+  repeated the hero ("Nyt on aikasi toimia! Hyväksy tarjous, niin autoliike
+  ottaa sinuun yhteyttä"), which is what led to `v2`.
+- **`v2`, an add-on to the hero:** mounted into the hero's text column
+  (`buildHero` marks it `data-hero-copy`) because the trust message belongs
+  beside "accept". Closed: a white pill (soft shadow, no outline), shield,
+  "AutoVex-turva" Barlow 700 16 blue-900 over "Tukenasi koko kaupan ajan" DM
+  Sans 13 slate-600, prod's `caret-down`. A button with `aria-expanded`;
+  opens a 440px white panel with MAccordion's grid-rows transition and
+  `visibility` so the closed panel is out of the a11y tree. Panel: one
+  intro sentence, five topics with blue check-bold (direct sale vs trade-in,
+  handover and schedule, how the price is made up, remaining car loan,
+  dealing with the dealership), and "Ota yhteyttä asiantuntijaamme", which
+  scrolls to `#section-banner-bottom` and is left out while that banner is
+  hidden (counter offer awaiting the dealer). The open state lives in the
+  module, so it survives `renderMain` rebuilding the hero. Measured: badge
+  246×52, panel 440 wide at 1024 and 295×271 at 375, no overflow.
+- **Copy rules (Jussi, Oskari):** never name a risk; topics are phrased as
+  subjects we help with. Speak to certainty for accepting, not to what our
+  process or the buyer makes necessary. Claude's draft; EN in
+  `decision-i18n.js`.
+- **What sellers are unsure about** (Oskari, Kasper, 2026-11-04): before
+  accepting, replacement car / trade-in, delivery or pickup schedule, price
+  ("why this offer"), trust in the dealership, rarely a remaining car loan;
+  after accepting, mostly timing (when the dealer calls, when they pay). A
+  dealer renegotiating after acceptance happens, but AutoVex is not party to
+  the deal, so nothing here may promise help with it.
+- **Related:** findings DEC-09 (nothing says who buys the car). Timo (PM) has
+  his own local prototype of the idea; not used as the base.
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

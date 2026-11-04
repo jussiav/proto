@@ -45,6 +45,7 @@
   <!-- StarRating.vue's five faces, used only by the reject survey. -->
   <script src="rating-icons.js"></script>
   <script src="similar-cars.js"></script>
+  <script src="seller-protection.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <style>
     /* NumberInput.vue's own <style> — the suffix (€) is drawn by the wrapper
@@ -481,6 +482,13 @@
         <div id="offers-grid" class="grid items-start gap-y-7 md:grid-cols-2 md:gap-12"></div>
       </section>
 
+      <!-- Seller protection, v1: the "AutoVex-turva" card, directly under the
+           offers so it is read at the moment of accepting. Drawn by
+           seller-protection.js; v2 mounts in the hero instead. -->
+      <section id="section-protection" class="hidden">
+        <div id="protection-content"></div>
+      </section>
+
       <!-- Section 2: Top BannerHelperCard (if allRejected || hasAccepted) -->
       <section id="section-banner-top" class="hidden">
         <div id="banner-top-content"></div>
@@ -700,6 +708,39 @@
       if (['control', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'].indexOf(arm) === -1) { window.protoVariantSet('similar-cars', null); return 'control'; }
       return arm;
     }());
+    /* "Seller protection" (design-specs/seller-protection.html). */
+    var SP_ARM = (function () {
+      var arm = window.protoVariant('seller-protection', 'control');
+      if (['control', 'v1', 'v2'].indexOf(arm) === -1) { window.protoVariantSet('seller-protection', null); return 'control'; }
+      return arm;
+    }());
+    /* Only while there are offers to accept: both arms speak to the moment of
+       deciding, not to a seller who has already accepted or walked away.
+       Runs last in renderMain, so the hero and the help banner it reads are
+       already drawn. */
+    function renderSellerProtection(open) {
+      var section = document.getElementById('section-protection');
+      if (SP_ARM === 'v1' && open) {
+        if (!section.dataset.drawn) {
+          window.SellerProtection.card(document.getElementById('protection-content'));
+          section.dataset.drawn = '1';
+        }
+        section.classList.remove('hidden');
+      } else {
+        section.classList.add('hidden');
+      }
+      /* v2 lives in the hero, which renderMain rebuilds every time, so it is
+         mounted afresh each time. Its contact link points at the "Tarvitsetko
+         apua?" banner and is left out while that banner is hidden (a counter
+         offer awaiting the dealership's reply). */
+      var heroCopyEl = document.querySelector('#offers-grid [data-hero-copy]');
+      if (SP_ARM === 'v2' && open && heroCopyEl) {
+        var mount = document.createElement('div');
+        heroCopyEl.appendChild(mount);
+        var helpShown = !document.getElementById('section-banner-bottom').classList.contains('hidden');
+        window.SellerProtection.badge(mount, { contactTarget: helpShown ? 'section-banner-bottom' : null });
+      }
+    }
     /* World state, not a variant: what the Analytics query would return.
        Set from the Market data section of the bar's Events popover. */
     var SIMILAR_DATA = ['same', 'mixed', 'few', 'none'].indexOf(_params.get('similar')) !== -1 ? _params.get('similar') : 'same';
@@ -1705,7 +1746,7 @@
       }
       return '<div class="flex flex-col rounded-lg max-w-3xl mx-auto items-center justify-center text-center">' +
         '<div class="mb-4">' + imgHtml + '</div>' +
-        '<div class="px-4">' +
+        '<div class="px-4" data-hero-copy>' +
           '<h2 class="font-display text-3xl font-bold text-black mb-2 leading-snug">' + hc.title + '</h2>' +
           '<p class="text-gray-600 text-base">' + hc.desc + '</p>' +
         '</div>' +
@@ -3161,6 +3202,7 @@
       /* Same rule as the offers page: only while there are offers to decide
          on, never after accepting or rejecting. */
       renderSimilarCars(req, offers.length > 0 && DECISION_OPEN.indexOf(pas) !== -1);
+      renderSellerProtection(offers.length > 0 && DECISION_OPEN.indexOf(pas) !== -1);
     }
 
     // ── Interactive modal state ──
@@ -4179,6 +4221,15 @@
             { id: 'v4',      label: 'Variant 4 — table here; scattered cars on the submit loader' },
             { id: 'v5',      label: 'Variant 5 — chosen: table here; average offer on the submit loader' },
             { id: 'v6',      label: 'Variant 6 — table here; one car at a time on the submit loader' }
+          ]
+        },
+        {
+          slug:    'seller-protection',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no AutoVex-turva block' },
+            { id: 'v1',      label: 'Variant 1 — AutoVex-turva card under the offers' },
+            { id: 'v2',      label: 'Variant 2 — AutoVex-turva badge under the hero, expands' }
           ]
         }
       ],

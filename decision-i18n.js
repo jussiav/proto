@@ -78,6 +78,20 @@ window.DECISION_I18N = {
       'Your listing got extra visibility and reached a network of hundreds of dealerships.',
     'Ilmoituksesi sai lisänäkyvyyttä, koska odotit tarjouskilpailun loppuun. Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.':
       'Your listing got extra visibility because you waited until the auction ended. Accept the offer and the dealership will contact you.',
+    /* Seller protection — "AutoVex-turva" is a name and stays as it is. */
+    'Me olemme tukenasi myös tarjouksen hyväksymisen jälkeen':
+      'We support you after accepting the offer too',
+    'AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.':
+      "AutoVex's experts help you all the way, right up to handing over the car. If anything is on your mind, get in touch.",
+    'Tukenasi koko kaupan ajan':           'With you throughout the sale',
+    'Asiantuntijamme auttavat sinua ennen tarjouksen hyväksymistä ja sen jälkeen, esimerkiksi näissä asioissa:':
+      'Our experts help you before and after you accept the offer, for example with:',
+    'Suora myynti vai vaihtokauppa':       'A direct sale or a trade-in',
+    'Auton luovutus ja aikataulut':        'Handing over the car and the schedule',
+    'Mistä tarjouksen hinta muodostuu':    'How the offer price is made up',
+    'Jäljellä oleva autolaina':            'A remaining car loan',
+    'Asiointi autoliikkeen kanssa':        'Dealing with the dealership',
+    'Ota yhteyttä asiantuntijaamme':       'Contact our experts',
     'Muistathan, että Nettiauton hintaa ei kannata verrata saamaasi tarjoukseen. Pyyntihinta ei ole sama asia kuin saamasi tarjous.':
       'Remember that a Nettiauto price is not worth comparing to the offer you received. An asking price is not the same thing as the offer you received.',
     'Tarjouskilpailu on päättynyt':         'The auction has ended',
