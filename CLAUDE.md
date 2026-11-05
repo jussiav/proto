@@ -438,22 +438,26 @@ building, writing a spec or testing: one situation, one term.
 | Asking price | Hintavaraus | Pyyntihinta / Hintapyyntö / minimi hinta |
 | Offer received through auction | Korkein tarjous | Auton hinta |
 
-**How it meets the rest of this file:**
+**How it meets prod's copy** (Jussi, 2026-11-05):
 
-- **New or changed copy follows the table.** That covers initiative arms, spec
-  pages, simulated user-test reports that quote copy, and anything written for
-  the Business side.
-- **A transcription of prod keeps prod's word** (rule 2, and control mirrors
-  prod). Prod's Finnish uses several ruled-out terms today, so the proto's
-  control shows them: in the 2026-11-02 dump's `resources/lang/fi`,
-  "Tarjouspyyntö" appears 50 times, "Neuvottelu" 34, "Pyyntihinta" 24 and
-  "Huutokauppa" 9. A ruled-out term in prod copy is a finding, not something to
-  fix in passing.
-- **"Hintavaraus" is prod's own B2B label** (`auction.auction_details.reserve_price`),
-  so B2B already follows the table there.
-- **Open:** the sheet is titled B2B. Whether it also governs new consumer (C2B)
-  copy is not decided; until it is, follow it for B2B surfaces and flag any C2B
-  conflict rather than resolving it silently.
+- **Prod keeps its own terms until the team changes them widely.** Prod's
+  Finnish uses several ruled-out terms today: in the 2026-11-02 dump's
+  `resources/lang/fi`, "Tarjouspyyntö" appears 50 times, "Neuvottelu" 34,
+  "Pyyntihinta" 24 and "Huutokauppa" 9. A transcription of prod, and so the
+  proto's control, keeps prod's word (rule 2). Do not "fix" a prod string to
+  match the table in passing.
+- **New copy: the table first, prod second.** For any new or changed copy
+  (initiative arms, spec pages, user-test material, anything for the Business
+  side), take the term from the table. Use prod's wording only for what the
+  table does not cover.
+- **When unsure which term to use, ask Jussi** rather than pick one. A new
+  string that has to sit beside a prod string using a ruled-out term is the
+  usual case.
+- **"Hintavaraus" is already prod's own B2B label**
+  (`auction.auction_details.reserve_price`).
+- **C2B:** the sheet sent as the C2B guidelines on 2026-11-05 was this same
+  B2B image, so whether C2B has a table of its own is still to confirm. Until
+  then, apply this table to C2B copy too, under the rules above.
 
 ## Findings register — `findings/`
 
