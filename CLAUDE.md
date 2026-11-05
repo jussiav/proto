@@ -417,11 +417,39 @@ Finnish grammar over a requested literal wording, and say when you did
 ("…, mikä voi nostaa tarjouksia" rather than "…ja voi nostaa tarjouksia",
 which makes the listing the subject).
 
-### B2B terminology
+### Terminology: C2B and B2B
 
-Added 2026-11-05 from the team's terminology sheet (Jussi; not sensitive, fine
-in the public repo). Check every piece of copy against it when ideating,
-building, writing a spec or testing: one situation, one term.
+Added 2026-11-05 from the team's two terminology sheets (Jussi; not sensitive,
+fine in the public repo). Check every piece of copy against the table for its
+side when ideating, building, writing a spec or testing: one situation, one
+term. The two tables differ, so pick by who the seller is (consumer or
+company), not by habit.
+
+#### C2B (consumer seller)
+
+| Situation | Correct term | Terms not to be used |
+|---|---|---|
+| Customer fills in their car details | Myynti-ilmoitus / Täytä myynti-ilmoitus | Tarjouspyyntö / lomake / hakemus |
+| Customer submits their car | Myynti-ilmoitus / Julkaise myynti-ilmoitus | Jätä tarjouspyyntö / lähetä ilmoitus |
+| Review call | Hinta-arviopuhelu | Huutokauppa / Tarjouskauppa |
+| Car dealerships compete | Tarjouskilpailu | Auton hinta |
+| Offer received on car | Tarjous / Ostotarjous | Hyväksy osto / Myy auto |
+| Accept offer | Hyväksy tarjous | Myy auto |
+| Seller negotiates offer received | Vastatarjous | Neuvottelu |
+| Car dealership increase their offer | Vastatarjous | Neuvottelu |
+| Car dealership gives their final offer | Korotettu tarjous | Neuvottelu, viimeinen tarjous |
+| Delivery of car to car dealership | Auton luovutus | Auton jättö |
+| Offer rejected | Hylkää tarjous / Tarjous raukeaa | Lopeta kauppa |
+| Price reached after auction | Hinta / Paras hinta | Pyyntihinta / Hintapyyntö / minimi hinta |
+| Price-estimation | Hinta-arvio | Auton hinta / Pyyntihinta / Hintapyyntö |
+
+Transcribed as sent. In rows 3–5 the "not to be used" entries sit one row
+lower than in the B2B sheet (Huutokauppa / Tarjouskauppa beside the review
+call, Auton hinta beside the auction). Until Jussi confirms the placement,
+treat every term in that column as ruled out in C2B copy, whichever row it is
+on.
+
+#### B2B (company seller)
 
 | Situation | Correct term | Terms not to be used |
 |---|---|---|
@@ -443,9 +471,11 @@ building, writing a spec or testing: one situation, one term.
 - **Prod keeps its own terms until the team changes them widely.** Prod's
   Finnish uses several ruled-out terms today: in the 2026-11-02 dump's
   `resources/lang/fi`, "Tarjouspyyntö" appears 50 times, "Neuvottelu" 34,
-  "Pyyntihinta" 24 and "Huutokauppa" 9. A transcription of prod, and so the
-  proto's control, keeps prod's word (rule 2). Do not "fix" a prod string to
-  match the table in passing.
+  "Pyyntihinta" 24 and "Huutokauppa" 9, and the contact step's submit
+  (`tenderform.personal_info.submit`) is "Lähetä ilmoitus", which the C2B
+  table rules out. A transcription of prod, and so the proto's control, keeps
+  prod's word (rule 2). Do not "fix" a prod string to match the table in
+  passing.
 - **New copy: the table first, prod second.** For any new or changed copy
   (initiative arms, spec pages, user-test material, anything for the Business
   side), take the term from the table. Use prod's wording only for what the
@@ -455,9 +485,6 @@ building, writing a spec or testing: one situation, one term.
   usual case.
 - **"Hintavaraus" is already prod's own B2B label**
   (`auction.auction_details.reserve_price`).
-- **C2B:** the sheet sent as the C2B guidelines on 2026-11-05 was this same
-  B2B image, so whether C2B has a table of its own is still to confirm. Until
-  then, apply this table to C2B copy too, under the rules above.
 
 ## Findings register — `findings/`
 
