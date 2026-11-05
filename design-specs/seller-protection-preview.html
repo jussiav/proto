@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fi" class="bg-blue-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller protection preview · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA', 100: '#D7EDFF', 200: '#B9E0FF', 300: '#88CFFF',
+              400: '#50B2FF', 500: '#2890FF', 600: '#0B6DFF', 700: '#0A59EB',
+              800: '#0F47BE', 900: '#134195', 950: '#11285A',
+            },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="../tw-tokens.js"></script>
+  <!-- ?variant=v1 or v2 runs that build snippet on this page, exactly as VWO
+       would on the decision page. -->
+  <script>
+    (function () {
+      var v = new URLSearchParams(location.search).get('variant');
+      if (v === 'v1' || v === 'v2') document.write('<script src="../vwo/seller-protection-' + v + '.js"><\/script>');
+    }());
+  </script>
+</head>
+<body class="font-body text-slate-900 bg-blue-50">
+  <!-- A trimmed copy of the consumer decision page (C2BDecision.vue) with an
+       offer waiting: the offers section, the auction result section and the
+       "Tarvitsetko apua?" banner. Same structure and classes as production,
+       which is what the snippets select on. -->
+  <main class="max-w-[768px] mx-auto p-6 sm:py-14">
+    <div class="grid gap-y-12 relative z-10">
+
+      <section>
+        <div class="container mx-auto">
+          <div class="grid items-start gap-y-7 md:grid-cols-2 md:gap-12">
+            <div class="mb-auto md:col-span-2"><div class="flex flex-col rounded-lg max-w-3xl mx-auto items-center justify-center text-center"><div class="mb-4"><div class="p-1 bg-white rounded-full"><img src="../assets/scenario-ulkopuoli-2.jpg" alt="" class="rounded-full object-cover w-28 h-28 md:w-44 md:h-44"></div></div><div class="px-4"><h2 class="font-display text-3xl font-bold text-black mb-2 leading-snug">Nyt on aikasi toimia!</h2><p class="text-gray-600 text-base">Hyväksy tarjous, niin autoliike ottaa sinuun yhteyttä.</p></div></div></div>
+
+            <div class="w-full flex justify-center"><div class="w-full transition-all rounded-xl border-2 bg-white shadow-sm border-blue-500"><div class="flex flex-col"><div class="flex"><div class="inline-flex items-center space-x-2 px-2 py-1 text-sm rounded-tl-lg border bg-blue border-blue"><span class="-mt-0.5 text-white"><svg width="14" height="14" viewBox="0 0 256 256" fill="currentColor"><path d="M232 64h-24V48a8 8 0 0 0-8-8H56a8 8 0 0 0-8 8v16H24A16 16 0 0 0 8 80v16a40 40 0 0 0 40 40h3.65A80.13 80.13 0 0 0 120 191.61V216H96a8 8 0 0 0 0 16h64a8 8 0 0 0 0-16h-24v-24.42c31.94-3.23 58.44-25.64 68.08-55.58H208a40 40 0 0 0 40-40V80a16 16 0 0 0-16-16ZM48 120a24 24 0 0 1-24-24V80h24v32q0 4 .39 8Zm184-24a24 24 0 0 1-24 24h-.5a81.81 81.81 0 0 0 .5-8.9V80h24Z"></path></svg></span><span class="text-white font-bold">Korkein tarjous</span></div><span class="flex items-end text-white bg-blue"><svg width="11" height="32" viewBox="0 0 11 32" fill="none"><path d="M0 16L11 32V0L0 16Z" fill="currentColor"></path></svg></span></div><div class="flex flex-col gap-1 px-5 py-5"><div class="flex items-center gap-1 leading-tight text-blue-600 justify-center text-center"><span class="font-bold text-xs">Toimita liikkeeseen (15 km)</span></div><div class="text-5xl font-bold font-display text-center text-slate-900">11&nbsp;500&nbsp;€</div><div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center"><span>Umpeutuu:</span><span class="font-mono">23 h 0 min</span></div><div><button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base leading-tight bg-green-400 hover:bg-green-500 text-black">Hyväksy korkein tarjous</button><div class="flex text-xs mt-2 mb-2 space-x-2 text-left"><span class="text-slate-700">Autoliike ottaa sinuun yhteyttä kaupan viimeistelyä varten.</span></div></div><div class="relative"><button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base leading-tight bg-blue-100 hover:bg-blue-200 text-blue-800">Tee vastatarjous</button><div class="flex text-xs mt-2 mb-2 space-x-2 text-left"><span class="text-slate-700">Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen.</span></div></div></div><div class="px-5 rounded-b-lg text-xs text-slate-600 bg-slate-100"><div class="flex text-xs mt-2 gap-2 text-left pt-2"><span class="flex items-center text-blue-600"><svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="100" fill="none" stroke="currentColor" stroke-width="24"/><path d="M176.49 95.51a12 12 0 0 1 0 17l-56 56a12 12 0 0 1-17 0l-24-24a12 12 0 1 1 17-17L112 143l47.51-47.52a12 12 0 0 1 16.98.03"/></svg></span><span class="text-slate-600 mt-0.5">100+ kauppaa AutoVexissä</span></div><div class="flex text-xs mt-2 gap-2 text-left mb-4"><span class="flex items-center text-blue-600"><svg width="22" height="22" viewBox="0 0 16 17" fill="currentColor"><path d="M6.75 5.5a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0Zm-3 0a4.25 4.25 0 0 1 8.5 0c0 3.89-3.72 6.063-3.878 6.151a.75.75 0 0 1-.744 0C7.47 11.563 3.75 9.391 3.75 5.5Zm1.5 0c0 2.388 1.92 4.012 2.75 4.602.826-.593 2.75-2.227 2.75-4.602a2.75 2.75 0 1 0-5.5 0Z"></path></svg></span><span class="text-slate-600 mt-0.5">15 km (Helsinki)</span></div></div></div></div></div>
+
+            <div class="w-full flex justify-center"><div class="w-full transition-all rounded-xl border-2 bg-white shadow-sm border-blue-100"><div class="flex flex-col"><div class="flex"><div class="inline-flex items-center space-x-2 px-2 py-1 text-sm rounded-tl-lg border bg-blue-100 border-blue-100"><span class="text-blue-800 font-medium text-sm">Toiseksi korkein</span></div><span class="flex items-end text-white bg-blue-100"><svg width="11" height="32" viewBox="0 0 11 32" fill="none"><path d="M0 16L11 32V0L0 16Z" fill="currentColor"></path></svg></span></div><div class="flex flex-col gap-1 px-5 py-5"><div class="flex items-center gap-1 leading-tight text-blue-600 justify-center text-center"><span class="font-bold text-xs">Nouto pihasta</span></div><div class="text-5xl font-bold font-display text-center text-slate-900">11&nbsp;000&nbsp;€</div><div class="flex items-center justify-center gap-2 text-sm mb-2 font-medium text-red-500 text-center"><span>Umpeutuu:</span><span class="font-mono">23 h 0 min</span></div><div><button class="w-full inline-flex items-center justify-center px-8 h-14 rounded-lg text-base leading-tight bg-green-400 hover:bg-green-500 text-black">Hyväksy alhaisempi tarjous</button><div class="flex text-xs mt-2 mb-2 space-x-2 text-left"><span class="text-slate-700">Autoliike ottaa sinuun yhteyttä kaupan viimeistelyä varten.</span></div></div></div><div class="px-5 rounded-b-lg text-xs text-slate-600 bg-slate-100"><div class="flex text-xs mt-2 gap-2 text-left pt-2"><span class="flex items-center text-blue-600"><svg width="22" height="22" viewBox="0 0 256 256" fill="currentColor"><circle cx="128" cy="128" r="100" fill="none" stroke="currentColor" stroke-width="24"/><path d="M176.49 95.51a12 12 0 0 1 0 17l-56 56a12 12 0 0 1-17 0l-24-24a12 12 0 1 1 17-17L112 143l47.51-47.52a12 12 0 0 1 16.98.03"/></svg></span><span class="text-slate-600 mt-0.5">80+ kauppaa AutoVexissä</span></div><div class="flex text-xs mt-2 gap-2 text-left mb-4"><span class="flex items-center text-blue-600"><svg width="22" height="22" viewBox="0 0 16 17" fill="currentColor"><path d="M6.75 5.5a1.25 1.25 0 1 1 2.5 0 1.25 1.25 0 0 1-2.5 0Zm-3 0a4.25 4.25 0 0 1 8.5 0c0 3.89-3.72 6.063-3.878 6.151a.75.75 0 0 1-.744 0C7.47 11.563 3.75 9.391 3.75 5.5Zm1.5 0c0 2.388 1.92 4.012 2.75 4.602.826-.593 2.75-2.227 2.75-4.602a2.75 2.75 0 1 0-5.5 0Z"></path></svg></span><span class="text-slate-600 mt-0.5">25 km (Espoo)</span></div></div></div></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl"><span class="text-blue-900 leading-[24px]">Tarjouskilpailun tulos</span></h2>
+        <div class="container mx-auto"><div><div class="w-full p-5 bg-white rounded-xl font-body text-sm text-slate-500">Auction result block, unchanged by the test.</div></div></div>
+      </section>
+
+      <section>
+        <div class="container mx-auto"><div>
+          <div class="font-body rounded-xl justify-center items-center overflow-hidden w-full outline outline-offset-[-2px] lg:flex lg:flex-row lg:justify-between bg-orange-50 outline-orange-400 text-sm"><div class="self-stretch inline-flex justify-start items-center p-4"><div class="flex items-stretch overflow-hidden"><div class="flex-1 content-center ps-0"><h5 class="mb-2 leading-snug">Tarvitsetko apua?</h5><p class="text-sm leading-none">Asiantuntijamme auttavat mielellään! Soita numeroon <a class="text-blue" href="tel:+358 40 040 7002">+358 40 040 7002</a> (arkisin klo 10–16)</p></div></div></div><div class="self-stretch justify-start items-center gap-1 p-4 w-full lg:w-4/6 content-center block bg-orange-100"><button class="inline-flex justify-center items-center rounded-lg px-8 h-14 bg-red-200 hover:bg-red-300 text-red-700 w-full md:h-10 md:px-5 text-base">Hylkää tarjouskilpailu</button><div class="mt-3 text-xs text-slate-600">Hylättyäsi tuloksen et voi enää hyväksyä sitä myöhemmin.</div></div></div>
+        </div></div>
+      </section>
+
+    </div>
+  </main>
+</body>
+</html>

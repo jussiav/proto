@@ -83,9 +83,10 @@ window.DECISION_I18N = {
       'We support you after accepting the offer too',
     'AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.':
       "AutoVex's experts help you all the way, right up to handing over the car. If anything is on your mind, get in touch.",
-    'Tukenasi koko kaupan ajan':           'With you throughout the sale',
-    'Asiantuntijamme auttavat sinua ennen tarjouksen hyväksymistä ja sen jälkeen, esimerkiksi näissä asioissa:':
-      'Our experts help you before and after you accept the offer, for example with:',
+    'Ilmaiseksi sinulle':                  'Free for you',
+    'Asiantuntijamme ovat tukenasi koko kaupan ajan, ennen tarjouksen hyväksymistä ja sen jälkeen.':
+      'Our experts support you throughout the sale, before and after you accept the offer.',
+    'Autamme esimerkiksi näissä asioissa:': 'We can help with, for example:',
     'Suora myynti vai vaihtokauppa':       'A direct sale or a trade-in',
     'Auton luovutus ja aikataulut':        'Handing over the car and the schedule',
     'Mistä tarjouksen hinta muodostuu':    'How the offer price is made up',
