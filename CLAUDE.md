@@ -417,6 +417,44 @@ Finnish grammar over a requested literal wording, and say when you did
 ("…, mikä voi nostaa tarjouksia" rather than "…ja voi nostaa tarjouksia",
 which makes the listing the subject).
 
+### B2B terminology
+
+Added 2026-11-05 from the team's terminology sheet (Jussi; not sensitive, fine
+in the public repo). Check every piece of copy against it when ideating,
+building, writing a spec or testing: one situation, one term.
+
+| Situation | Correct term | Terms not to be used |
+|---|---|---|
+| Customer fills in their car details | Myynti-ilmoitus / Luo myynti-ilmoitus | Tarjouspyyntö / lomake, hakemus |
+| Customer submits their car | Myynti-ilmoitus / Julkaise myynti-ilmoitus | Jätä tarjouspyyntö |
+| Car dealerships compete | Tarjouskilpailu | Huutokauppa / Tarjouskauppa |
+| Offers received on the car | Tarjous / Ostotarjous | Auton hinta |
+| Company accepts offer | Hyväksy tarjous | Hyväksy osto / Myy auto |
+| Asking price reached | Tarjous hyväksytään automaattisesti | Tarjous voittaa automaattisesti, auto myydään automaattisesti |
+| Seller negotiates offer received | Vastatarjous | Neuvottelu |
+| Car dealership increase their offer | Korotettu tarjous | Neuvottelu |
+| Delivery of car to car dealership | Auton luovutus | Auton jättö |
+| Offer rejected | Hylkää tarjous / Tarjous raukeaa | Lopeta kauppa |
+| Asking price | Hintavaraus | Pyyntihinta / Hintapyyntö / minimi hinta |
+| Offer received through auction | Korkein tarjous | Auton hinta |
+
+**How it meets the rest of this file:**
+
+- **New or changed copy follows the table.** That covers initiative arms, spec
+  pages, simulated user-test reports that quote copy, and anything written for
+  the Business side.
+- **A transcription of prod keeps prod's word** (rule 2, and control mirrors
+  prod). Prod's Finnish uses several ruled-out terms today, so the proto's
+  control shows them: in the 2026-11-02 dump's `resources/lang/fi`,
+  "Tarjouspyyntö" appears 50 times, "Neuvottelu" 34, "Pyyntihinta" 24 and
+  "Huutokauppa" 9. A ruled-out term in prod copy is a finding, not something to
+  fix in passing.
+- **"Hintavaraus" is prod's own B2B label** (`auction.auction_details.reserve_price`),
+  so B2B already follows the table there.
+- **Open:** the sheet is titled B2B. Whether it also governs new consumer (C2B)
+  copy is not decided; until it is, follow it for B2B surfaces and flag any C2B
+  conflict rather than resolving it silently.
+
 ## Findings register — `findings/`
 
 Product issues, gaps and opportunities we notice but leave out of the work at
