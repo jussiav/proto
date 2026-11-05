@@ -73,7 +73,7 @@
       <div class="flex flex-col gap-4">
         <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; decision page</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Seller protection</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller should be able to accept an offer without hesitating. Sellers who call AutoVex at this point already get help from customer service and sales advisors, but the page never says so. This initiative names that help &ldquo;AutoVex-turva&rdquo; and shows it on the decision page, as a front-end A/B test with two variants.</p>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller should be able to accept an offer without hesitating. Sellers who call AutoVex at this point already get help from customer service and sales advisors, but the page never says so. This initiative names that help &ldquo;AutoVex-turva&rdquo; and shows it on the decision page. Variants 1 and 3 go into a front-end A/B test; variant 2 is kept for later.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
@@ -95,7 +95,7 @@
       <div class="bg-white rounded-lg border-2 border-av-blue p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
         <p class="text-xs font-bold uppercase tracking-wide text-av-blue mb-2">How to read this page</p>
         <ul class="list-disc pl-5 space-y-1">
-          <li><b>For the team:</b> part 1 (<a class="text-av-blue underline" href="#summary">summary</a>, <a class="text-av-blue underline" href="#v1">variant 1</a>, <a class="text-av-blue underline" href="#v2">variant 2</a>, <a class="text-av-blue underline" href="#questions">open questions</a>).</li>
+          <li><b>For the team:</b> part 1 (<a class="text-av-blue underline" href="#summary">summary</a>, <a class="text-av-blue underline" href="#v1">variant 1</a>, <a class="text-av-blue underline" href="#v3">variant 3</a>, <a class="text-av-blue underline" href="#v2">variant 2</a>, <a class="text-av-blue underline" href="#questions">open questions</a>).</li>
           <li><b>To build the test</b> (a developer, or Claude Code pointed at this page): <a class="text-av-blue underline" href="#build">part 2, the build brief</a>, is the complete instruction. Build only from part 2. Part 1 is context and decides nothing about the build.</li>
         </ul>
       </div>
@@ -112,16 +112,17 @@
           <ul class="list-disc pl-5 space-y-1">
             <li><b>A name for help that already exists.</b> Nothing new is built behind it: &ldquo;AutoVex-turva&rdquo; is the help customer service and sales advisors already give sellers who call. Its phone number is in the &ldquo;Tarvitsetko apua?&rdquo; (need help?) banner further down the same page.</li>
             <li><b>Variant 1 (<a class="text-av-blue underline" href="#v1">section 2</a>):</b> a card under the offers, with an AutoVex-turva logo panel beside a short statement of support.</li>
-            <li><b>Variant 2 (<a class="text-av-blue underline" href="#v2">section 3</a>):</b> an &ldquo;AutoVex-turvattu&rdquo; row in every offer card that opens a modal on what the help covers.</li>
+            <li><b>Variant 3 (<a class="text-av-blue underline" href="#v3">section 3</a>):</b> the same card; its body names what the help covers.</li>
+            <li><b>In the production test: variants 1 and 3.</b> Variant 2 (<a class="text-av-blue underline" href="#v2">section 4</a>), an &ldquo;AutoVex-turvattu&rdquo; row in every offer card that opens a modal, is kept for a later test.</li>
             <li><b>Shown only while an offer can be accepted.</b> Gone once the seller accepts or rejects.</li>
           </ul>
-          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v1" target="_blank" rel="noopener">Variant 1 in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v2" target="_blank" rel="noopener">variant 2</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=control" target="_blank" rel="noopener">production</a></p>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v1" target="_blank" rel="noopener">Variant 1 in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v3" target="_blank" rel="noopener">variant 3</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=v2" target="_blank" rel="noopener">variant 2</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;seller-protection=control" target="_blank" rel="noopener">production</a></p>
         </div>
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Why</p>
           <p>Take the hesitation out of accepting. Customer service and sales advisors name what makes sellers unsure at this point: whether to sell directly or trade the car in, how and when the car is handed over, why the offer is what it is, whether the dealership can be trusted, and less often a remaining car loan. After accepting, the usual question is timing: when the dealership calls, when it pays, what happens next.</p>
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3 mt-4">Copy rules</p>
-          <p>The copy never names a risk or a problem the seller might meet with the dealership. It speaks to certainty for accepting, not to what our process or the buyer makes necessary. A dealership renegotiating after acceptance does happen, but AutoVex is not a party to the deal, so nothing here promises help with it.</p>
+          <p>The copy never names a particular risk or a problem the seller might meet with the dealership; variant 3 speaks of problems only in general (&ldquo;mahdollisissa ongelmatilanteissa&rdquo;). It speaks to certainty for accepting, not to what our process or the buyer makes necessary. A dealership renegotiating after acceptance does happen, but AutoVex is not a party to the deal; see the <a class="text-av-blue underline" href="#questions">open question</a> on what variant 3's body promises.</p>
         </div>
       </div>
       </div>
@@ -147,9 +148,35 @@
       </div>
     </section>
 
+    <section class="av-band av-band-grey" id="v3">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">3 &mdash; Variant 3: variant 1&rsquo;s card, the help named</h2>
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What the seller sees</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>Variant 1&rsquo;s card, unchanged:</b> same place, layout, logo panel and headline.</li>
+            <li><b>Only the body differs.</b> It names what the help covers, then closes on support until the deal is done.</li>
+          </ul>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1 mt-4">Body, variant 1</p>
+          <p class="text-slate-900">AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.</p>
+          <p class="av-gloss">AutoVex's experts help you all the way, right up to handing over the car. If anything is on your mind, get in touch.</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-1 mt-4">Body, variant 3</p>
+          <p class="text-slate-900">Autamme sinua esimerkiksi auton luovutukseen, maksuaikatauluun ja kaupan ehtoihin liittyvissä kysymyksissä sekä mahdollisissa ongelmatilanteissa. Olemme tukenasi kauppojen loppuun asti.</p>
+          <p class="av-gloss">We help you with, for example, questions about handing over the car, the payment schedule and the terms of the sale, and with any problems that come up. We support you until the deal is done.</p>
+        </div>
+        <div class="font-dm text-xs text-slate-500">
+          <p class="font-medium uppercase tracking-wide mb-2">Live: the variant 3 build code, running on a copy of the decision page</p>
+          <iframe class="av-frame" src="seller-protection-preview.html?variant=v3" height="620" title="Variant 3 preview" loading="lazy"></iframe>
+        </div>
+      </div>
+      </div>
+    </section>
+
     <section class="av-band av-band-grey" id="v2">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">3 &mdash; Variant 2: AutoVex-turvattu row in each offer card</h2>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">4 &mdash; Variant 2: AutoVex-turvattu row in each offer card (not in this test)</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-4"><b>Not in the production test.</b> Kept for a later test. Its build code is at the end of this section, outside the build brief.</p>
       <div class="grid lg:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What the seller sees</p>
@@ -163,224 +190,11 @@
           <iframe class="av-frame" src="seller-protection-preview.html?variant=v2" height="620" title="Variant 2 preview" loading="lazy"></iframe>
         </div>
       </div>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey" id="questions">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">4 &mdash; Open questions</h2>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>The test setup.</b> The build brief assumes one test with three arms (control, variant 1, variant 2). If the team picks one variant, it runs as control against that one; each build snippet stands alone.</li>
-        <li><b>What the help covers.</b> Ops should confirm customer service and sales advisors can carry each of variant 2's five topics for every seller who asks, including a remaining car loan and a trade-in, and variant 1's &ldquo;aina auton luovutukseen asti&rdquo; (right up to handing over the car).</li>
-        <li><b>When the dealership calls.</b> Timing is the most common question after accepting. A typical time (&ldquo;usually within a day&rdquo;) would answer it, but needs real data before it can be stated.</li>
-        <li><b>After accepting.</b> Both variants disappear once the seller accepts, which is when the timing questions start. Should a version stay on the accepted page?</li>
-        <li><b>No contact link during a counter offer.</b> While a counter offer waits for the dealership, the help banner is hidden, so variant 2's modal has no way to reach us. Show the phone number in the modal then?</li>
-        <li><b>The name.</b> Does &ldquo;-turva&rdquo; read as insurance or a guarantee? Legal and Marketing should confirm the name promises no more than customer service delivers.</li>
-        <li><b>The gold shield.</b> Gold is not in the design system. Keep it as AutoVex-turva's own mark, or draw it in brand blue?</li>
-      </ul>
-      </div>
-    </section>
-
-    <section class="av-band av-band-build" id="build">
-      <div class="av-container">
-      <p class="font-dm text-xs font-bold uppercase tracking-widest text-av-blue mb-2">Part 2 &middot; build brief</p>
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Build a VWO front-end test</h2>
-      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl">Everything needed to build the test is in this part. The build code is the source of truth: use it as written. The previews in part 1 and the prototype run exactly this code.</p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-build">
-      <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B1 &mdash; What to build</h3>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
-        <li><b>One VWO front-end test, three arms.</b> Control: the page as it is. Variant 1: the <a class="text-av-blue underline" href="#build-v1">variant 1 snippet</a>. Variant 2: the <a class="text-av-blue underline" href="#build-v2">variant 2 snippet</a>. Each snippet is the variant's whole JavaScript (its CSS, markup and behaviour) and stands alone.</li>
-        <li><b>No backend, Vue or stylesheet changes</b> in the codebase. Nothing is stored.</li>
-        <li><b>One page:</b> the consumer seller's decision page. Finnish only, like the page.</li>
-        <li><b>Audience:</b> every visitor of that page. The snippets act only on consumer offer cards, so a B2B seller on the same URL sees nothing.</li>
-      </ul>
-      </div>
-    </section>
-
-    <section class="av-band av-band-build">
-      <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B2 &mdash; Where it goes</h3>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-5">
-        <li><b>URL:</b> <code>https://autovex.fi/decision/&lt;tender request id&gt;</code> (route <code>user.offers.decision</code>; logged-in sellers). Target <code>/decision/*</code>.</li>
-        <li><b>The page is a single-page app.</b> The offers mount after load (behind a &ldquo;Katso tulokset&rdquo; screen on the first visit) and re-render after every action. The snippets watch the DOM and keep their elements in step; never insert twice.</li>
-        <li><b>Consumer offer cards</b> are found by their distance row, the last fact row in the card's footer (&ldquo;15 km (Helsinki)&rdquo;): <code>div.rounded-b-lg div.flex.text-xs.text-left.mb-4</code>. The B2B card has no such row.</li>
-        <li><b>When to show:</b> an offer is open for a decision while its card shows an accept button, a <code>&lt;button&gt;</code> whose text starts &ldquo;Hyväksy&rdquo; (&ldquo;Hyväksy korkein tarjous&rdquo;, &ldquo;Hyväksy alhaisempi tarjous&rdquo;, &ldquo;Hyväksy lopullinen tarjous&rdquo;). Accepted, rejected and expired cards show none.</li>
-        <li><b>Variant 1 insertion point:</b> as the next sibling of the offer cards' own <code>&lt;section&gt;</code> (the one holding the cards), while at least one card can be accepted. The page grid puts 48px between sections.</li>
-        <li><b>Variant 2 insertion point:</b> directly after each acceptable card's distance row, inside the card footer.</li>
-        <li><b>Variant 2's contact link</b> scrolls to the <code>&lt;section&gt;</code> holding the <code>&lt;h5&gt;</code> &ldquo;Tarvitsetko apua?&rdquo;. That banner is hidden while a counter offer waits for the dealership's reply; then the link is left out.</li>
-      </ul>
-      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl"><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Production DOM of the decision page (C2BDecision.vue, C2BOfferCard.vue), trimmed</p><pre class="av-code">&lt;main class="max-w-[768px] mx-auto p-6 sm:py-14"&gt;
-  &lt;div class="grid gap-y-12 relative z-10"&gt;
-    &lt;section&gt;                                         &lt;- the offer cards' section
-      &lt;div class="container mx-auto"&gt;
-        &lt;div class="grid items-start gap-y-7 md:grid-cols-2 md:gap-12"&gt;
-          &lt;!-- DecisionHero --&gt;
-          &lt;div class="w-full flex justify-center"&gt;     &lt;- C2BOfferCard, one per offer
-            &lt;div class="w-full transition-all rounded-xl border-2 bg-white shadow-sm …"&gt;
-              &lt;div class="flex flex-col"&gt;
-                &lt;!-- ribbon, amount, status --&gt;
-                &lt;div&gt;&lt;button …&gt;Hyväksy korkein tarjous&lt;/button&gt; …&lt;/div&gt;
-                &lt;!-- counter-offer button --&gt;
-                &lt;div class="px-5 rounded-b-lg text-xs text-slate-600 …"&gt;   &lt;- footer
-                  &lt;div&gt;
-                    &lt;div class="flex text-xs mt-2 gap-2 text-left pt-2"&gt;… kauppaa AutoVexissä&lt;/div&gt;
-                    &lt;div class="flex text-xs mt-2 gap-2 text-left mb-4"&gt;15 km (Helsinki)&lt;/div&gt;
-                    &lt;!-- variant 2: insert the row here --&gt;
-                  &lt;/div&gt;
-                &lt;/div&gt;
-          …
-    &lt;/section&gt;
-    &lt;!-- variant 1: insert the section here --&gt;
-    &lt;section&gt;… Tarjouskilpailun tulos …&lt;/section&gt;
-    &lt;section&gt;&lt;!-- OBannerHelperCard --&gt;&lt;h5&gt;Tarvitsetko apua?&lt;/h5&gt; …&lt;/section&gt;
-    &lt;section&gt;… Usein kysytyt kysymykset …&lt;/section&gt;</pre></div>
-      </div>
-    </section>
-
-    <section class="av-band av-band-build">
-      <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B3 &mdash; Copy</h3>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl"><table class="w-full font-dm text-sm text-left"><tbody class="divide-y divide-slate-100">
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V1 name</td><td class="px-4 py-3 align-top"><span class="text-slate-900">AutoVex-turva</span><div class="av-gloss">AutoVex protection (a name; not translated)</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V1 under the name</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Ilmaiseksi sinulle</span><div class="av-gloss">Free for you</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V1 headline</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Me olemme tukenasi myös tarjouksen hyväksymisen jälkeen</span><div class="av-gloss">We support you after accepting the offer too</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V1 body</td><td class="px-4 py-3 align-top"><span class="text-slate-900">AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.</span><div class="av-gloss">AutoVex's experts help you all the way, right up to handing over the car. If anything is on your mind, get in touch.</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 card row</td><td class="px-4 py-3 align-top"><span class="text-slate-900">AutoVex-turvattu</span><div class="av-gloss">AutoVex-protected</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 modal title</td><td class="px-4 py-3 align-top"><span class="text-slate-900">AutoVex-turva</span><div class="av-gloss">AutoVex protection</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 what it is</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Asiantuntijamme ovat tukenasi koko kaupan ajan, ennen tarjouksen hyväksymistä ja sen jälkeen.</span><div class="av-gloss">Our experts support you throughout the sale, before and after you accept the offer.</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 list lead-in</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Autamme esimerkiksi näissä asioissa:</span><div class="av-gloss">We can help with, for example:</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 topics</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Suora myynti vai vaihtokauppa</span><div class="av-gloss">A direct sale or a trade-in</div><span class="text-slate-900">Auton luovutus ja aikataulut</span><div class="av-gloss">Handing over the car and the schedule</div><span class="text-slate-900">Mistä tarjouksen hinta muodostuu</span><div class="av-gloss">How the offer price is made up</div><span class="text-slate-900">Jäljellä oleva autolaina</span><div class="av-gloss">A remaining car loan</div><span class="text-slate-900">Asiointi autoliikkeen kanssa</span><div class="av-gloss">Dealing with the dealership</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 link</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Ota yhteyttä asiantuntijaamme</span><div class="av-gloss">Contact our experts</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 last line</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Ilmaiseksi sinulle</span><div class="av-gloss">Free for you</div></td></tr>
-        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">V2 close label</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Sulje</span><div class="av-gloss">Close (the &times; button's accessible name)</div></td></tr>
-      </tbody></table></div>
-      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">Draft copy; the team approves it before launch. The grey lines are English glosses for reading; do not render them. The copy is already in the build code.</p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-build" id="build-v1">
-      <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B4 &mdash; Build code, variant 1</h3>
-      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 1's JavaScript in VWO. It adds its own CSS; the only production classes it uses are <code>container mx-auto</code>, which every section of this page already has. The shield is the production sprite's <code>ph-fill-shield-check</code> outline with the logo's &ldquo;A&rdquo;, the check is <code>check-bold</code>. Same file in the repository: <code>vwo/seller-protection-v1.js</code>.</p>
-      <p id="sync-v1" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/seller-protection-v1.js. Regenerate it before handing over.</p>
-      <pre class="av-code" id="code-v1" data-src="vwo/seller-protection-v1.js">/* Seller protection, variant 1: VWO front-end test snippet for the consumer
- * decision page (autovex.fi/decision/&lt;id&gt;). Adds an "AutoVex-turva" card
- * directly under the offer cards while an offer can be accepted.
- *
- * Source of truth: design-specs/seller-protection.html#build. The
- * prototype's decision page runs this exact file for the arm.
- */
-(function () {
-  var ID = 'av-sp-v1';
-
-  var CSS = [
-    '#av-sp-v1 .av-sp-card{display:grid;gap:20px;padding:20px;border-radius:12px;background:#fff}',
-    '#av-sp-v1 .av-sp-emblem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px;border-radius:8px;background:#F1F5F9}',
-    '#av-sp-v1 .av-sp-shield{display:block;width:48px;height:48px}',
-    '#av-sp-v1 .av-sp-name{margin:0;font-family:Barlow,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:24px;line-height:30px;color:#1E293B}',
-    '#av-sp-v1 .av-sp-included{display:inline-flex;align-items:flex-start;gap:6px;margin:0;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:20px;color:#334155}',
-    '#av-sp-v1 .av-sp-included svg{width:16px;height:16px;margin-top:2px;flex-shrink:0;color:#0B6DFF}',
-    '#av-sp-v1 .av-sp-text{display:flex;flex-direction:column;justify-content:center;text-align:left}',
-    '#av-sp-v1 .av-sp-title{margin:0;font-family:Barlow,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:20px;line-height:27.5px;color:#000}',
-    '#av-sp-v1 .av-sp-body{margin:8px 0 0;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:24px;color:#334155}',
-    '@media (min-width:768px){#av-sp-v1 .av-sp-card{grid-template-columns:1fr 1fr;gap:24px}}'
-  ].join('');
-
-  // The production sprite's ph-fill-shield-check outline in two golds, with
-  // the "A" of the AutoVex logo in white where the check was.
-  var SHIELD_D = 'M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Z';
-  var SHIELD =
-    '&lt;svg class="av-sp-shield" viewBox="0 0 256 256" aria-hidden="true"&gt;' +
-      '&lt;defs&gt;&lt;clipPath id="av-sp-v1-half"&gt;&lt;rect x="128" y="0" width="128" height="256"/&gt;&lt;/clipPath&gt;&lt;/defs&gt;' +
-      '&lt;path fill="#FCD34D" d="' + SHIELD_D + '"/&gt;' +
-      '&lt;path fill="#FBBF24" clip-path="url(#av-sp-v1-half)" d="' + SHIELD_D + '"/&gt;' +
-      '&lt;path fill="#fff" fill-rule="evenodd" transform="translate(94.4 82) scale(4.04)" d="M4.69085 0L0.415527 21.7816H5.37707L5.84491 18.9416H10.6503L11.1181 21.7816H16.2358L11.8995 0H4.69085ZM6.53175 14.8541L8.24823 4.68096H8.31044L9.99581 14.8541H6.53175Z"/&gt;' +
-    '&lt;/svg&gt;';
-
-  // The production sprite's check-bold.
-  var CHECK = '&lt;svg viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/&gt;&lt;/svg&gt;';
-
-  var MARKUP =
-    '&lt;section id="av-sp-v1" aria-labelledby="av-sp-v1-title"&gt;' +
-      '&lt;div class="container mx-auto"&gt;' +
-        '&lt;div class="av-sp-card"&gt;' +
-          '&lt;div class="av-sp-emblem"&gt;' + SHIELD +
-            '&lt;p class="av-sp-name"&gt;AutoVex-turva&lt;/p&gt;' +
-            '&lt;p class="av-sp-included"&gt;' + CHECK + '&lt;span&gt;Ilmaiseksi sinulle&lt;/span&gt;&lt;/p&gt;' +
-          '&lt;/div&gt;' +
-          '&lt;div class="av-sp-text"&gt;' +
-            '&lt;h2 class="av-sp-title" id="av-sp-v1-title"&gt;Me olemme tukenasi myös tarjouksen hyväksymisen jälkeen&lt;/h2&gt;' +
-            '&lt;p class="av-sp-body"&gt;AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.&lt;/p&gt;' +
-          '&lt;/div&gt;' +
-        '&lt;/div&gt;' +
-      '&lt;/div&gt;' +
-    '&lt;/section&gt;';
-
-  // The distance row ("15 km (Helsinki)") closes the footer of every consumer
-  // offer card and appears nowhere else; the B2B card has none.
-  function distanceRows() {
-    return document.querySelectorAll('div.rounded-b-lg div.flex.text-xs.text-left.mb-4');
-  }
-
-  // An offer is open for a decision while its card shows an accept button
-  // ("Hyväksy korkein tarjous", "Hyväksy alhaisempi tarjous", "Hyväksy
-  // lopullinen tarjous"). Accepted, rejected and expired cards show none.
-  function canAccept(row) {
-    var card = row.closest('.rounded-xl');
-    if (!card) return false;
-    return Array.prototype.some.call(card.querySelectorAll('button'), function (b) {
-      return /^\s*Hyväksy/.test(b.textContent);
-    });
-  }
-
-  function injectCss() {
-    if (document.getElementById(ID + '-style')) return;
-    var style = document.createElement('style');
-    style.id = ID + '-style';
-    style.textContent = CSS;
-    document.head.appendChild(style);
-  }
-
-  function sync() {
-    var rows = distanceRows();
-    var open = Array.prototype.some.call(rows, canAccept);
-    var existing = document.getElementById(ID);
-    if (!open) {
-      if (existing) existing.remove();
-      return;
-    }
-    // The offer cards' own &lt;section&gt;; the page's grid puts 48px between it
-    // and the section inserted after it.
-    var offersSection = rows[0].closest('section');
-    if (!offersSection) return;
-    if (existing &amp;&amp; existing.previousElementSibling === offersSection) return;
-    if (existing) existing.remove();
-    injectCss();
-    offersSection.insertAdjacentHTML('afterend', MARKUP);
-  }
-
-  // The page is a single-page app that mounts after load and re-renders on
-  // every action, so sync whenever the DOM changes. sync is idempotent.
-  function start() {
-    sync();
-    new MutationObserver(sync).observe(document.body, { childList: true, subtree: true });
-  }
-  if (document.body) start();
-  else document.addEventListener('DOMContentLoaded', start);
-}());</pre>
-      </div>
-    </section>
-
-    <section class="av-band av-band-build" id="build-v2">
-      <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B5 &mdash; Build code, variant 2</h3>
-      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 2's JavaScript in VWO. It adds its own CSS and builds its own modal (production's modal shell copied: overlay, 512px panel, &times; in the corner). The event pushes use the same queue polyfill as the app's own <code>sendVwoEvent</code>. Same file in the repository: <code>vwo/seller-protection-v2.js</code>.</p>
-      <p id="sync-v2" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/seller-protection-v2.js. Regenerate it before handing over.</p>
-      <pre class="av-code" id="code-v2" data-src="vwo/seller-protection-v2.js">/* Seller protection, variant 2: VWO front-end test snippet for the consumer
+      <details class="mt-5">
+        <summary class="font-dm text-sm font-medium text-av-blue cursor-pointer">Variant 2 build code, for a later test</summary>
+        <p class="font-dm text-sm text-slate-800 my-3 max-w-3xl">Not part of the current build. It adds its own CSS and builds its own modal (production's modal shell copied: overlay, 512px panel, &times; in the corner). It inserts its row directly after each acceptable card's distance row. The contact link scrolls to the <code>&lt;section&gt;</code> holding the <code>&lt;h5&gt;</code> &ldquo;Tarvitsetko apua?&rdquo; and is left out while that banner is hidden (a counter offer waiting for the dealership). It sends the VWO custom events <code>sellerProtectionOpened</code> and <code>sellerProtectionContactClicked</code>. Same file in the repository: <code>vwo/seller-protection-v2.js</code>.</p>
+        <p id="sync-v2" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/seller-protection-v2.js. Regenerate it before handing over.</p>
+        <pre class="av-code" id="code-v2" data-src="vwo/seller-protection-v2.js">/* Seller protection, variant 2: VWO front-end test snippet for the consumer
  * decision page (autovex.fi/decision/&lt;id&gt;). Adds an "AutoVex-turvattu" row
  * to every offer card that can be accepted; the row opens a modal describing
  * AutoVex-turva.
@@ -568,6 +382,322 @@
   if (document.body) start();
   else document.addEventListener('DOMContentLoaded', start);
 }());</pre>
+      </details>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="questions">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">5 &mdash; Open questions</h2>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
+        <li><b>The test setup.</b> The build brief assumes one test with three arms: control (the page as it is), variant 1 and variant 3. If the test runs variant 1 against variant 3 with no control, drop the control arm from B1; the snippets do not change.</li>
+        <li><b>What the help covers.</b> Ops should confirm customer service and sales advisors can carry what each variant names, for every seller who asks: variant 1&rsquo;s &ldquo;aina auton luovutukseen asti&rdquo; (right up to handing over the car); variant 3&rsquo;s payment schedule, terms of the sale and &ldquo;mahdollisissa ongelmatilanteissa&rdquo; (any problems that come up), given that AutoVex is not a party to the deal; and, for a later test, variant 2&rsquo;s five topics.</li>
+        <li><b>When the dealership calls.</b> Timing is the most common question after accepting. A typical time (&ldquo;usually within a day&rdquo;) would answer it, but needs real data before it can be stated.</li>
+        <li><b>After accepting.</b> Every variant disappears once the seller accepts, which is when the timing questions start. Should a version stay on the accepted page?</li>
+        <li><b>No contact link during a counter offer</b> (variant 2). While a counter offer waits for the dealership, the help banner is hidden, so variant 2's modal has no way to reach us. Show the phone number in the modal then?</li>
+        <li><b>The name.</b> Does &ldquo;-turva&rdquo; read as insurance or a guarantee? Legal and Marketing should confirm the name promises no more than customer service delivers.</li>
+        <li><b>The gold shield.</b> Gold is not in the design system. Keep it as AutoVex-turva's own mark, or draw it in brand blue?</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build" id="build">
+      <div class="av-container">
+      <p class="font-dm text-xs font-bold uppercase tracking-widest text-av-blue mb-2">Part 2 &middot; build brief</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Build a VWO front-end test</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl">Everything needed to build the test is in this part. The build code is the source of truth: use it as written. The previews in part 1 and the prototype run exactly this code.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B1 &mdash; What to build</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>One VWO front-end test, three arms.</b> Control: the page as it is. Variant 1: the <a class="text-av-blue underline" href="#build-v1">variant 1 snippet</a>. Variant 3: the <a class="text-av-blue underline" href="#build-v3">variant 3 snippet</a>. Each snippet is the variant's whole JavaScript (its CSS, markup and behaviour) and stands alone. Name the VWO variations &ldquo;Variant 1&rdquo; and &ldquo;Variant 3&rdquo; so results map to this page.</li>
+        <li><b>Variants 1 and 3 differ only in the card&rsquo;s body copy</b> (<a class="text-av-blue underline" href="#build-copy">B3</a>). Position, layout, sizes and colours are the same; the two snippets differ only in the body and the element id (<code>av-sp-v1</code>, <code>av-sp-v3</code>).</li>
+        <li><b>There is no variant 2 in this test.</b> Variant 2 in part 1 is kept for a later test.</li>
+        <li><b>No backend, Vue or stylesheet changes</b> in the codebase. Nothing is stored.</li>
+        <li><b>One page:</b> the consumer seller's decision page. Finnish only, like the page.</li>
+        <li><b>Audience:</b> every visitor of that page. The snippets act only on consumer offer cards, so a B2B seller on the same URL sees nothing.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B2 &mdash; Where it goes</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-5">
+        <li><b>URL:</b> <code>https://autovex.fi/decision/&lt;tender request id&gt;</code> (route <code>user.offers.decision</code>; logged-in sellers). Target <code>/decision/*</code>.</li>
+        <li><b>The page is a single-page app.</b> The offers mount after load (behind a &ldquo;Katso tulokset&rdquo; screen on the first visit) and re-render after every action. The snippets watch the DOM and keep their elements in step; never insert twice.</li>
+        <li><b>Consumer offer cards</b> are found by their distance row, the last fact row in the card's footer (&ldquo;15 km (Helsinki)&rdquo;): <code>div.rounded-b-lg div.flex.text-xs.text-left.mb-4</code>. The B2B card has no such row.</li>
+        <li><b>When to show:</b> an offer is open for a decision while its card shows an accept button, a <code>&lt;button&gt;</code> whose text starts &ldquo;Hyväksy&rdquo; (&ldquo;Hyväksy korkein tarjous&rdquo;, &ldquo;Hyväksy alhaisempi tarjous&rdquo;, &ldquo;Hyväksy lopullinen tarjous&rdquo;). Accepted, rejected and expired cards show none.</li>
+        <li><b>Insertion point, variants 1 and 3:</b> as the next sibling of the offer cards' own <code>&lt;section&gt;</code> (the one holding the cards), while at least one card can be accepted. The page grid puts 48px between sections.</li>
+      </ul>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl"><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Production DOM of the decision page (C2BDecision.vue, C2BOfferCard.vue), trimmed</p><pre class="av-code">&lt;main class="max-w-[768px] mx-auto p-6 sm:py-14"&gt;
+  &lt;div class="grid gap-y-12 relative z-10"&gt;
+    &lt;section&gt;                                         &lt;- the offer cards' section
+      &lt;div class="container mx-auto"&gt;
+        &lt;div class="grid items-start gap-y-7 md:grid-cols-2 md:gap-12"&gt;
+          &lt;!-- DecisionHero --&gt;
+          &lt;div class="w-full flex justify-center"&gt;     &lt;- C2BOfferCard, one per offer
+            &lt;div class="w-full transition-all rounded-xl border-2 bg-white shadow-sm …"&gt;
+              &lt;div class="flex flex-col"&gt;
+                &lt;!-- ribbon, amount, status --&gt;
+                &lt;div&gt;&lt;button …&gt;Hyväksy korkein tarjous&lt;/button&gt; …&lt;/div&gt;
+                &lt;!-- counter-offer button --&gt;
+                &lt;div class="px-5 rounded-b-lg text-xs text-slate-600 …"&gt;   &lt;- footer
+                  &lt;div&gt;
+                    &lt;div class="flex text-xs mt-2 gap-2 text-left pt-2"&gt;… kauppaa AutoVexissä&lt;/div&gt;
+                    &lt;div class="flex text-xs mt-2 gap-2 text-left mb-4"&gt;15 km (Helsinki)&lt;/div&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+          …
+    &lt;/section&gt;
+    &lt;!-- variants 1 and 3: insert the section here --&gt;
+    &lt;section&gt;… Tarjouskilpailun tulos …&lt;/section&gt;
+    &lt;section&gt;&lt;!-- OBannerHelperCard --&gt;&lt;h5&gt;Tarvitsetko apua?&lt;/h5&gt; …&lt;/section&gt;
+    &lt;section&gt;… Usein kysytyt kysymykset …&lt;/section&gt;</pre></div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build" id="build-copy">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B3 &mdash; Copy</h3>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl"><table class="w-full font-dm text-sm text-left"><tbody class="divide-y divide-slate-100">
+        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Name (V1, V3)</td><td class="px-4 py-3 align-top"><span class="text-slate-900">AutoVex-turva</span><div class="av-gloss">AutoVex protection (a name; not translated)</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Under the name (V1, V3)</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Ilmaiseksi sinulle</span><div class="av-gloss">Free for you</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Headline (V1, V3)</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Me olemme tukenasi myös tarjouksen hyväksymisen jälkeen</span><div class="av-gloss">We support you after accepting the offer too</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Body, V1</td><td class="px-4 py-3 align-top"><span class="text-slate-900">AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.</span><div class="av-gloss">AutoVex's experts help you all the way, right up to handing over the car. If anything is on your mind, get in touch.</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top whitespace-nowrap">Body, V3</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Autamme sinua esimerkiksi auton luovutukseen, maksuaikatauluun ja kaupan ehtoihin liittyvissä kysymyksissä sekä mahdollisissa ongelmatilanteissa. Olemme tukenasi kauppojen loppuun asti.</span><div class="av-gloss">We help you with, for example, questions about handing over the car, the payment schedule and the terms of the sale, and with any problems that come up. We support you until the deal is done.</div></td></tr>
+      </tbody></table></div>
+      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">Draft copy; the team approves it before launch. The grey lines are English glosses for reading; do not render them. The copy is already in the build code.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build" id="build-v1">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B4 &mdash; Build code, variant 1</h3>
+      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 1's JavaScript in VWO. It adds its own CSS; the only production classes it uses are <code>container mx-auto</code>, which every section of this page already has. The shield is the production sprite's <code>ph-fill-shield-check</code> outline with the logo's &ldquo;A&rdquo;, the check is <code>check-bold</code>. Same file in the repository: <code>vwo/seller-protection-v1.js</code>.</p>
+      <p id="sync-v1" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/seller-protection-v1.js. Regenerate it before handing over.</p>
+      <pre class="av-code" id="code-v1" data-src="vwo/seller-protection-v1.js">/* Seller protection, variant 1: VWO front-end test snippet for the consumer
+ * decision page (autovex.fi/decision/&lt;id&gt;). Adds an "AutoVex-turva" card
+ * directly under the offer cards while an offer can be accepted.
+ *
+ * Source of truth: design-specs/seller-protection.html#build. The
+ * prototype's decision page runs this exact file for the arm.
+ */
+(function () {
+  var ID = 'av-sp-v1';
+
+  var CSS = [
+    '#av-sp-v1 .av-sp-card{display:grid;gap:20px;padding:20px;border-radius:12px;background:#fff}',
+    '#av-sp-v1 .av-sp-emblem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px;border-radius:8px;background:#F1F5F9}',
+    '#av-sp-v1 .av-sp-shield{display:block;width:48px;height:48px}',
+    '#av-sp-v1 .av-sp-name{margin:0;font-family:Barlow,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:24px;line-height:30px;color:#1E293B}',
+    '#av-sp-v1 .av-sp-included{display:inline-flex;align-items:flex-start;gap:6px;margin:0;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:20px;color:#334155}',
+    '#av-sp-v1 .av-sp-included svg{width:16px;height:16px;margin-top:2px;flex-shrink:0;color:#0B6DFF}',
+    '#av-sp-v1 .av-sp-text{display:flex;flex-direction:column;justify-content:center;text-align:left}',
+    '#av-sp-v1 .av-sp-title{margin:0;font-family:Barlow,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:20px;line-height:27.5px;color:#000}',
+    '#av-sp-v1 .av-sp-body{margin:8px 0 0;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:24px;color:#334155}',
+    '@media (min-width:768px){#av-sp-v1 .av-sp-card{grid-template-columns:1fr 1fr;gap:24px}}'
+  ].join('');
+
+  // The production sprite's ph-fill-shield-check outline in two golds, with
+  // the "A" of the AutoVex logo in white where the check was.
+  var SHIELD_D = 'M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Z';
+  var SHIELD =
+    '&lt;svg class="av-sp-shield" viewBox="0 0 256 256" aria-hidden="true"&gt;' +
+      '&lt;defs&gt;&lt;clipPath id="av-sp-v1-half"&gt;&lt;rect x="128" y="0" width="128" height="256"/&gt;&lt;/clipPath&gt;&lt;/defs&gt;' +
+      '&lt;path fill="#FCD34D" d="' + SHIELD_D + '"/&gt;' +
+      '&lt;path fill="#FBBF24" clip-path="url(#av-sp-v1-half)" d="' + SHIELD_D + '"/&gt;' +
+      '&lt;path fill="#fff" fill-rule="evenodd" transform="translate(94.4 82) scale(4.04)" d="M4.69085 0L0.415527 21.7816H5.37707L5.84491 18.9416H10.6503L11.1181 21.7816H16.2358L11.8995 0H4.69085ZM6.53175 14.8541L8.24823 4.68096H8.31044L9.99581 14.8541H6.53175Z"/&gt;' +
+    '&lt;/svg&gt;';
+
+  // The production sprite's check-bold.
+  var CHECK = '&lt;svg viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/&gt;&lt;/svg&gt;';
+
+  var MARKUP =
+    '&lt;section id="av-sp-v1" aria-labelledby="av-sp-v1-title"&gt;' +
+      '&lt;div class="container mx-auto"&gt;' +
+        '&lt;div class="av-sp-card"&gt;' +
+          '&lt;div class="av-sp-emblem"&gt;' + SHIELD +
+            '&lt;p class="av-sp-name"&gt;AutoVex-turva&lt;/p&gt;' +
+            '&lt;p class="av-sp-included"&gt;' + CHECK + '&lt;span&gt;Ilmaiseksi sinulle&lt;/span&gt;&lt;/p&gt;' +
+          '&lt;/div&gt;' +
+          '&lt;div class="av-sp-text"&gt;' +
+            '&lt;h2 class="av-sp-title" id="av-sp-v1-title"&gt;Me olemme tukenasi myös tarjouksen hyväksymisen jälkeen&lt;/h2&gt;' +
+            '&lt;p class="av-sp-body"&gt;AutoVexin asiantuntijat auttavat sinua koko matkan, aina auton luovutukseen asti. Jos jokin mietityttää, ota meihin yhteyttä.&lt;/p&gt;' +
+          '&lt;/div&gt;' +
+        '&lt;/div&gt;' +
+      '&lt;/div&gt;' +
+    '&lt;/section&gt;';
+
+  // The distance row ("15 km (Helsinki)") closes the footer of every consumer
+  // offer card and appears nowhere else; the B2B card has none.
+  function distanceRows() {
+    return document.querySelectorAll('div.rounded-b-lg div.flex.text-xs.text-left.mb-4');
+  }
+
+  // An offer is open for a decision while its card shows an accept button
+  // ("Hyväksy korkein tarjous", "Hyväksy alhaisempi tarjous", "Hyväksy
+  // lopullinen tarjous"). Accepted, rejected and expired cards show none.
+  function canAccept(row) {
+    var card = row.closest('.rounded-xl');
+    if (!card) return false;
+    return Array.prototype.some.call(card.querySelectorAll('button'), function (b) {
+      return /^\s*Hyväksy/.test(b.textContent);
+    });
+  }
+
+  function injectCss() {
+    if (document.getElementById(ID + '-style')) return;
+    var style = document.createElement('style');
+    style.id = ID + '-style';
+    style.textContent = CSS;
+    document.head.appendChild(style);
+  }
+
+  function sync() {
+    var rows = distanceRows();
+    var open = Array.prototype.some.call(rows, canAccept);
+    var existing = document.getElementById(ID);
+    if (!open) {
+      if (existing) existing.remove();
+      return;
+    }
+    // The offer cards' own &lt;section&gt;; the page's grid puts 48px between it
+    // and the section inserted after it.
+    var offersSection = rows[0].closest('section');
+    if (!offersSection) return;
+    if (existing &amp;&amp; existing.previousElementSibling === offersSection) return;
+    if (existing) existing.remove();
+    injectCss();
+    offersSection.insertAdjacentHTML('afterend', MARKUP);
+  }
+
+  // The page is a single-page app that mounts after load and re-renders on
+  // every action, so sync whenever the DOM changes. sync is idempotent.
+  function start() {
+    sync();
+    new MutationObserver(sync).observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.body) start();
+  else document.addEventListener('DOMContentLoaded', start);
+}());</pre>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build" id="build-v3">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B5 &mdash; Build code, variant 3</h3>
+      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 3's JavaScript in VWO. It is variant 1's code with the body copy and the element id changed; everything else is identical. Same file in the repository: <code>vwo/seller-protection-v3.js</code>.</p>
+      <p id="sync-v3" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/seller-protection-v3.js. Regenerate it before handing over.</p>
+      <pre class="av-code" id="code-v3" data-src="vwo/seller-protection-v3.js">/* Seller protection, variant 3: VWO front-end test snippet for the consumer
+ * decision page (autovex.fi/decision/&lt;id&gt;). Adds an "AutoVex-turva" card
+ * directly under the offer cards while an offer can be accepted. Identical to
+ * variant 1 except the body copy.
+ *
+ * Source of truth: design-specs/seller-protection.html#build. The
+ * prototype's decision page runs this exact file for the arm.
+ */
+(function () {
+  var ID = 'av-sp-v3';
+
+  var CSS = [
+    '#av-sp-v3 .av-sp-card{display:grid;gap:20px;padding:20px;border-radius:12px;background:#fff}',
+    '#av-sp-v3 .av-sp-emblem{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px;border-radius:8px;background:#F1F5F9}',
+    '#av-sp-v3 .av-sp-shield{display:block;width:48px;height:48px}',
+    '#av-sp-v3 .av-sp-name{margin:0;font-family:Barlow,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:24px;line-height:30px;color:#1E293B}',
+    '#av-sp-v3 .av-sp-included{display:inline-flex;align-items:flex-start;gap:6px;margin:0;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:14px;line-height:20px;color:#334155}',
+    '#av-sp-v3 .av-sp-included svg{width:16px;height:16px;margin-top:2px;flex-shrink:0;color:#0B6DFF}',
+    '#av-sp-v3 .av-sp-text{display:flex;flex-direction:column;justify-content:center;text-align:left}',
+    '#av-sp-v3 .av-sp-title{margin:0;font-family:Barlow,ui-sans-serif,system-ui,sans-serif;font-weight:700;font-size:20px;line-height:27.5px;color:#000}',
+    '#av-sp-v3 .av-sp-body{margin:8px 0 0;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:16px;line-height:24px;color:#334155}',
+    '@media (min-width:768px){#av-sp-v3 .av-sp-card{grid-template-columns:1fr 1fr;gap:24px}}'
+  ].join('');
+
+  // The production sprite's ph-fill-shield-check outline in two golds, with
+  // the "A" of the AutoVex logo in white where the check was.
+  var SHIELD_D = 'M208,40H48A16,16,0,0,0,32,56v56c0,52.72,25.52,84.67,46.93,102.19,23.06,18.86,46,25.26,47,25.53a8,8,0,0,0,4.2,0c1-.27,23.91-6.67,47-25.53C198.48,196.67,224,164.72,224,112V56A16,16,0,0,0,208,40Z';
+  var SHIELD =
+    '&lt;svg class="av-sp-shield" viewBox="0 0 256 256" aria-hidden="true"&gt;' +
+      '&lt;defs&gt;&lt;clipPath id="av-sp-v3-half"&gt;&lt;rect x="128" y="0" width="128" height="256"/&gt;&lt;/clipPath&gt;&lt;/defs&gt;' +
+      '&lt;path fill="#FCD34D" d="' + SHIELD_D + '"/&gt;' +
+      '&lt;path fill="#FBBF24" clip-path="url(#av-sp-v3-half)" d="' + SHIELD_D + '"/&gt;' +
+      '&lt;path fill="#fff" fill-rule="evenodd" transform="translate(94.4 82) scale(4.04)" d="M4.69085 0L0.415527 21.7816H5.37707L5.84491 18.9416H10.6503L11.1181 21.7816H16.2358L11.8995 0H4.69085ZM6.53175 14.8541L8.24823 4.68096H8.31044L9.99581 14.8541H6.53175Z"/&gt;' +
+    '&lt;/svg&gt;';
+
+  // The production sprite's check-bold.
+  var CHECK = '&lt;svg viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"&gt;&lt;path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/&gt;&lt;/svg&gt;';
+
+  var MARKUP =
+    '&lt;section id="av-sp-v3" aria-labelledby="av-sp-v3-title"&gt;' +
+      '&lt;div class="container mx-auto"&gt;' +
+        '&lt;div class="av-sp-card"&gt;' +
+          '&lt;div class="av-sp-emblem"&gt;' + SHIELD +
+            '&lt;p class="av-sp-name"&gt;AutoVex-turva&lt;/p&gt;' +
+            '&lt;p class="av-sp-included"&gt;' + CHECK + '&lt;span&gt;Ilmaiseksi sinulle&lt;/span&gt;&lt;/p&gt;' +
+          '&lt;/div&gt;' +
+          '&lt;div class="av-sp-text"&gt;' +
+            '&lt;h2 class="av-sp-title" id="av-sp-v3-title"&gt;Me olemme tukenasi myös tarjouksen hyväksymisen jälkeen&lt;/h2&gt;' +
+            '&lt;p class="av-sp-body"&gt;Autamme sinua esimerkiksi auton luovutukseen, maksuaikatauluun ja kaupan ehtoihin liittyvissä kysymyksissä sekä mahdollisissa ongelmatilanteissa. Olemme tukenasi kauppojen loppuun asti.&lt;/p&gt;' +
+          '&lt;/div&gt;' +
+        '&lt;/div&gt;' +
+      '&lt;/div&gt;' +
+    '&lt;/section&gt;';
+
+  // The distance row ("15 km (Helsinki)") closes the footer of every consumer
+  // offer card and appears nowhere else; the B2B card has none.
+  function distanceRows() {
+    return document.querySelectorAll('div.rounded-b-lg div.flex.text-xs.text-left.mb-4');
+  }
+
+  // An offer is open for a decision while its card shows an accept button
+  // ("Hyväksy korkein tarjous", "Hyväksy alhaisempi tarjous", "Hyväksy
+  // lopullinen tarjous"). Accepted, rejected and expired cards show none.
+  function canAccept(row) {
+    var card = row.closest('.rounded-xl');
+    if (!card) return false;
+    return Array.prototype.some.call(card.querySelectorAll('button'), function (b) {
+      return /^\s*Hyväksy/.test(b.textContent);
+    });
+  }
+
+  function injectCss() {
+    if (document.getElementById(ID + '-style')) return;
+    var style = document.createElement('style');
+    style.id = ID + '-style';
+    style.textContent = CSS;
+    document.head.appendChild(style);
+  }
+
+  function sync() {
+    var rows = distanceRows();
+    var open = Array.prototype.some.call(rows, canAccept);
+    var existing = document.getElementById(ID);
+    if (!open) {
+      if (existing) existing.remove();
+      return;
+    }
+    // The offer cards' own &lt;section&gt;; the page's grid puts 48px between it
+    // and the section inserted after it.
+    var offersSection = rows[0].closest('section');
+    if (!offersSection) return;
+    if (existing &amp;&amp; existing.previousElementSibling === offersSection) return;
+    if (existing) existing.remove();
+    injectCss();
+    offersSection.insertAdjacentHTML('afterend', MARKUP);
+  }
+
+  // The page is a single-page app that mounts after load and re-renders on
+  // every action, so sync whenever the DOM changes. sync is idempotent.
+  function start() {
+    sync();
+    new MutationObserver(sync).observe(document.body, { childList: true, subtree: true });
+  }
+  if (document.body) start();
+  else document.addEventListener('DOMContentLoaded', start);
+}());</pre>
       </div>
     </section>
 
@@ -577,7 +707,7 @@
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
         <li><b>Primary goal, all arms:</b> offer accepted. The app already sends the VWO custom event <code>offerAccepted</code> when the seller confirms acceptance; use it.</li>
         <li><b>Secondary goals, all arms:</b> <code>allOffersRejected</code> (the seller rejects the auction) and <code>sendNegotiation</code> (a counter offer is sent). Both are already sent by the app.</li>
-        <li><b>Variant 2 only:</b> <code>sellerProtectionOpened</code> (the modal opened) and <code>sellerProtectionContactClicked</code> (the contact link pressed), sent by the snippet. Create them as custom-event goals in VWO.</li>
+        <li><b>Variants 1 and 3 send no events of their own.</b></li>
         <li><b>Outside VWO:</b> calls to customer service from sellers with offers open, before and during the test, to see whether naming the help changes them.</li>
       </ul>
       </div>
@@ -587,11 +717,12 @@
       <div class="av-container">
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B7 &mdash; Do not</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
-        <li>Show either variant on any other page, on B2B cards, before the offers are revealed, or on a card that cannot be accepted.</li>
-        <li>Give variant 1's card or variant 2's row an outline or border: an outline is the offer cards' mark on this page.</li>
+        <li>Build variant 2: it is not in this test.</li>
+        <li>Show the card on any other page, for a B2B seller, before the offers are revealed, or when no offer can be accepted.</li>
+        <li>Give the card an outline or border: an outline is the offer cards' mark on this page.</li>
         <li>Change the offer cards' own content, the hero, the auction result or the help banner.</li>
         <li>Add a phone number, email or any promise beyond the copy in B3.</li>
-        <li>Store anything, or remember whether the modal was opened.</li>
+        <li>Store anything.</li>
         <li>Rewrite the build code's copy, colours or sizes.</li>
       </ul>
       </div>
@@ -602,9 +733,9 @@
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B8 &mdash; Acceptance criteria</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
         <li><b>Control:</b> the page is unchanged.</li>
-        <li><b>Variant 1:</b> the card appears 48px under the offer cards once the offers are revealed, whenever at least one offer can be accepted, including a final offer and a negotiation in progress; it goes away when the seller accepts or rejects, without a reload. Two halves from 768px, stacked below.</li>
-        <li><b>Variant 2:</b> every acceptable card has exactly one &ldquo;AutoVex-turvattu&rdquo; row, after its distance row; a rejected or expired card has none. The row is a button announcing a dialog. The modal closes with &times;, Esc and a click outside, and focus returns to the row. The contact link closes the modal and scrolls to the help banner, and is absent while that banner is hidden.</li>
-        <li>Re-renders (a counter offer sent, a dealer reply arriving) never duplicate either variant.</li>
+        <li><b>Variants 1 and 3:</b> the card appears 48px under the offer cards once the offers are revealed, whenever at least one offer can be accepted, including a final offer and a negotiation in progress; it goes away when the seller accepts or rejects, without a reload. Two halves from 768px, stacked below.</li>
+        <li><b>Variant 3</b> differs from variant 1 only in the body copy in B3.</li>
+        <li>Re-renders (a counter offer sent, a dealer reply arriving) never duplicate the card.</li>
         <li>No console errors and no horizontal scroll at 360px.</li>
         <li>The goals in B6 record in VWO for each arm.</li>
       </ul>
@@ -615,7 +746,7 @@
       <div class="av-container">
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B9 &mdash; Check against the prototype</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
-        <li>The prototype's decision page runs these exact snippets: <a class="text-av-blue underline" href="../decision.html?scenario=seen-offers&amp;seller-protection=v1" target="_blank" rel="noopener">variant 1</a>, <a class="text-av-blue underline" href="../decision.html?scenario=seen-offers&amp;seller-protection=v2" target="_blank" rel="noopener">variant 2</a>, <a class="text-av-blue underline" href="../decision.html?scenario=final-offer&amp;seller-protection=v2" target="_blank" rel="noopener">final offer</a>, <a class="text-av-blue underline" href="../decision.html?scenario=counter-offer-sent&amp;seller-protection=v2" target="_blank" rel="noopener">counter offer sent (no contact link)</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;seller-protection=v2" target="_blank" rel="noopener">accepted (nothing shown)</a>.</li>
+        <li>The prototype's decision page runs these exact snippets: <a class="text-av-blue underline" href="../decision.html?scenario=seen-offers&amp;seller-protection=v1" target="_blank" rel="noopener">variant 1</a>, <a class="text-av-blue underline" href="../decision.html?scenario=seen-offers&amp;seller-protection=v3" target="_blank" rel="noopener">variant 3</a>, <a class="text-av-blue underline" href="../decision.html?scenario=final-offer&amp;seller-protection=v3" target="_blank" rel="noopener">final offer</a>, <a class="text-av-blue underline" href="../decision.html?scenario=counter-offer-sent&amp;seller-protection=v3" target="_blank" rel="noopener">counter offer sent</a>, <a class="text-av-blue underline" href="../decision.html?scenario=new-offers&amp;seller-protection=v3" target="_blank" rel="noopener">first visit (shown after &ldquo;Katso tulokset&rdquo;)</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;seller-protection=v3" target="_blank" rel="noopener">accepted (nothing shown)</a>.</li>
         <li>The live result on production must match: same position, sizes, colours and copy.</li>
       </ul>
       </div>
@@ -642,7 +773,7 @@
   <script>
     // The code blocks above are pasted from vwo/*.js by bin/vwo-spec-sync.mjs.
     // When this page is served, flag a block that no longer matches its file.
-    ['v1', 'v2'].forEach(function (v) {
+    ['v1', 'v2', 'v3'].forEach(function (v) {
       fetch('../vwo/seller-protection-' + v + '.js').then(function (r) { return r.ok ? r.text() : null; }).then(function (text) {
         if (text === null) return;
         if (text.trim() !== document.getElementById('code-' + v).textContent.trim()) {

@@ -51,7 +51,7 @@
   <script>
     (function () {
       var arm = window.protoVariant('seller-protection', 'control');
-      if (arm === 'v1' || arm === 'v2') document.write('<script src="vwo/seller-protection-' + arm + '.js"><\/script>');
+      if (arm === 'v1' || arm === 'v2' || arm === 'v3') document.write('<script src="vwo/seller-protection-' + arm + '.js"><\/script>');
     }());
   </script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
@@ -712,7 +712,7 @@
     /* "Seller protection" (design-specs/seller-protection.html). */
     var SP_ARM = (function () {
       var arm = window.protoVariant('seller-protection', 'control');
-      if (['control', 'v1', 'v2'].indexOf(arm) === -1) { window.protoVariantSet('seller-protection', null); return 'control'; }
+      if (['control', 'v1', 'v2', 'v3'].indexOf(arm) === -1) { window.protoVariantSet('seller-protection', null); return 'control'; }
       return arm;
     }());
     /* World state, not a variant: what the Analytics query would return.
@@ -4202,7 +4202,8 @@
           variants: [
             { id: 'control', label: 'Control — no AutoVex-turva block' },
             { id: 'v1',      label: 'Variant 1 — AutoVex-turva card under the offers' },
-            { id: 'v2',      label: 'Variant 2 — AutoVex-turvattu row in each offer card, opens a modal' }
+            { id: 'v2',      label: 'Variant 2 — AutoVex-turvattu row in each offer card, opens a modal' },
+            { id: 'v3',      label: 'Variant 3 — variant 1’s card, body names what we help with' }
           ]
         }
       ],

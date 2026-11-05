@@ -943,7 +943,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
-| Seller protection | **For team review, build brief ready** (2026-11-05) — to run as a VWO front-end test, control vs `v1` vs `v2`. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js`) | `design-specs/seller-protection.html` |
+| Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
 
 **Completed initiatives:**
 
@@ -3664,7 +3664,7 @@ agaric, chanterelle, lingonberry, no palm trees.
   leaves move for more than 5 s alongside other content, so production needs a
   pause control or a time limit; reduced motion alone does not satisfy it.
 
-## Seller protection — `v1` / `v2` (VWO test, for team review)
+## Seller protection — `v1` vs `v3` (VWO test), `v2` for later
 
 Started 2026-11-04. Take the hesitation out of accepting an offer. Sellers who
 call AutoVex at this point already get help from customer service and sales
@@ -3672,6 +3672,19 @@ advisors; the page never says so. The initiative names that help
 **AutoVex-turva**. The phone number for it is already in the decision page's
 "Tarvitsetko apua?" banner (the one with "Hylkää tarjouskilpailu"): same help.
 
+- **The production test is `v1` against `v3`** (Jussi, 2026-11-05). `v3`
+  is `v1`'s card with one change, the body, which is Jussi's copy: "Autamme
+  sinua esimerkiksi auton luovutukseen, maksuaikatauluun ja kaupan ehtoihin
+  liittyvissä kysymyksissä sekä mahdollisissa ongelmatilanteissa. Olemme
+  tukenasi kauppojen loppuun asti." `vwo/seller-protection-v3.js` is `v1`'s
+  file with that string and the element id (`av-sp-v3`) changed; keep the two
+  identical otherwise. The build brief ASSUMES control stays in as a third
+  arm (stated in its open questions; drop it from B1 if the test is v1 vs v3
+  only). `v2` left the build brief: its code sits in a `<details>` in part 1's
+  variant 2 section, and B7 says not to build it. Measured `v3` 720×223 at
+  1024, 457 tall at 375. `v3`'s body mentions "kaupan ehtoihin" and
+  "ongelmatilanteissa" while AutoVex is not party to the deal; the spec asks
+  Ops to confirm what that promises.
 - **The VWO snippets ARE the implementation** (2026-11-05):
   `vwo/seller-protection-v1.js` and `-v2.js` are the variants' whole
   JavaScript, written against prod's DOM (`C2BDecision.vue`,
@@ -3683,13 +3696,13 @@ advisors; the page never says so. The initiative names that help
 - **The spec page is a build brief for Claude Code / a dev** (Informed ad
   creation's pattern): part 1 for the team (summary, variants with live
   previews, open questions), part 2 "Build a VWO front-end test" (B1 what,
-  B2 where with prod's trimmed DOM, B3 copy, B4/B5 the code, B6 tracking, B7
+  B2 where with prod's trimmed DOM, B3 copy, B4/B5 the code for `v1`/`v3`, B6 tracking, B7
   do not, B8 acceptance, B9 prototype links), and the page says to build from
   part 2 only. The code blocks are pasted from the files by
   **`bin/vwo-spec-sync.mjs`** (any `<pre data-src="vwo/…">` in
   `design-specs/`; run it after every snippet edit), and the page flags a
   block that no longer matches its file when served. Its live previews are
-  iframes of `design-specs/seller-protection-preview.html?variant=v1|v2`, a
+  iframes of `design-specs/seller-protection-preview.html?variant=v1|v2|v3`, a
   trimmed copy of prod's decision DOM that runs the snippet.
 - **Prod hooks the snippets rely on** (2026-11-02 dump): route
   `/decision/{tenderRequest}` (`user.offers.decision`); consumer cards are
@@ -3703,8 +3716,9 @@ advisors; the page never says so. The initiative names that help
   `allOffersRejected`, `sendNegotiation` from `OfferActions.vue`; v2's
   snippet adds `sellerProtectionOpened` and `sellerProtectionContactClicked`
   with the app's own queue polyfill (`useVwo.ts`).
-- **When (both):** per card, while it shows an accept button; v1 while any
-  card does. So a final offer's rejected second card gets no v2 row. Hidden
+- **When (all arms):** per card, while it shows an accept button; v1/v3 while any
+  card does. The gate reads the Finnish "Hyväksy", so the bar's English
+  reading aid hides every arm (prod's page is Finnish only). So a final offer's rejected second card gets no v2 row. Hidden
   on the warm-up (nothing rendered yet), accepted, rejected and no offers.
 - **`v1`:** `<section id="av-sp-v1">` after the offer cards' section, the
   page's plain white container (`p-5 rounded-xl`, no border, as

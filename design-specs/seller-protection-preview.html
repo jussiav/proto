@@ -29,12 +29,12 @@
     }
   </script>
   <script src="../tw-tokens.js"></script>
-  <!-- ?variant=v1 or v2 runs that build snippet on this page, exactly as VWO
+  <!-- ?variant=v1, v2 or v3 runs that build snippet on this page, exactly as VWO
        would on the decision page. -->
   <script>
     (function () {
       var v = new URLSearchParams(location.search).get('variant');
-      if (v === 'v1' || v === 'v2') document.write('<script src="../vwo/seller-protection-' + v + '.js"><\/script>');
+      if (v === 'v1' || v === 'v2' || v === 'v3') document.write('<script src="../vwo/seller-protection-' + v + '.js"><\/script>');
     }());
   </script>
 </head>
