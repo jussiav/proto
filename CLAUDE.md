@@ -431,10 +431,10 @@ company), not by habit.
 |---|---|---|
 | Customer fills in their car details | Myynti-ilmoitus / Täytä myynti-ilmoitus | Tarjouspyyntö / lomake / hakemus |
 | Customer submits their car | Myynti-ilmoitus / Julkaise myynti-ilmoitus | Jätä tarjouspyyntö / lähetä ilmoitus |
-| Review call | Hinta-arviopuhelu | Huutokauppa / Tarjouskauppa |
-| Car dealerships compete | Tarjouskilpailu | Auton hinta |
-| Offer received on car | Tarjous / Ostotarjous | Hyväksy osto / Myy auto |
-| Accept offer | Hyväksy tarjous | Myy auto |
+| Review call | Hinta-arviopuhelu | (none listed) |
+| Car dealerships compete | Tarjouskilpailu | Huutokauppa / Tarjouskauppa |
+| Offer received on car | Tarjous / Ostotarjous | Auton hinta |
+| Accept offer | Hyväksy tarjous | Hyväksy osto / Myy auto |
 | Seller negotiates offer received | Vastatarjous | Neuvottelu |
 | Car dealership increase their offer | Vastatarjous | Neuvottelu |
 | Car dealership gives their final offer | Korotettu tarjous | Neuvottelu, viimeinen tarjous |
@@ -443,11 +443,9 @@ company), not by habit.
 | Price reached after auction | Hinta / Paras hinta | Pyyntihinta / Hintapyyntö / minimi hinta |
 | Price-estimation | Hinta-arvio | Auton hinta / Pyyntihinta / Hintapyyntö |
 
-Transcribed as sent. In rows 3–5 the "not to be used" entries sit one row
-lower than in the B2B sheet (Huutokauppa / Tarjouskauppa beside the review
-call, Auton hinta beside the auction). Until Jussi confirms the placement,
-treat every term in that column as ruled out in C2B copy, whichever row it is
-on.
+The sheet as sent had the "not to be used" column one row low from the review
+call to accepting an offer; Jussi confirmed the shift (2026-11-05) and the rows
+above follow the B2B sheet's placement.
 
 #### B2B (company seller)
 
