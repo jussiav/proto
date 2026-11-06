@@ -728,6 +728,7 @@
         <li><b>Primary goal, all arms:</b> offer accepted. The app already sends the VWO custom event <code>offerAccepted</code> when the seller confirms acceptance; use it.</li>
         <li><b>Secondary goals, all arms:</b> <code>allOffersRejected</code> (the seller rejects the auction) and <code>sendNegotiation</code> (a counter offer is sent). Both are already sent by the app.</li>
         <li><b>Variants 1 and 3 send no events of their own.</b></li>
+        <li><b>Group membership is already recorded.</b> Since the November 2026 build, when VWO applies an A/B variation for a logged-in seller, the app stores the seller's arm on their account and keeps them in it on other devices. The decision page needs a login, so every seller in this test is covered. Nothing to build.</li>
         <li><b>Outside VWO:</b> calls to customer service from sellers with offers open, before and during the test, to see whether naming the help changes them.</li>
       </ul>
       </div>

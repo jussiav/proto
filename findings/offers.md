@@ -8,7 +8,7 @@ unfinished and submitted ads, published ads, FAQ.
 - **Where:** Offers page notifications, after a dealership closes a negotiation
 - **Found:** 2026-08-26, offers and decision audit
 - **Evidence:** `updates/main.vue` has a finished "negotiation stopped" notification block, but its list is never declared as a prop or passed in by `C2B.vue`, so it never renders. The seller gets the generic offers-validity notification ("Toimi nyt! Viimeistele kaupat", Act now! Finish the deal) instead.
-- **Last checked:** prod dump 2026-11-02, still present
+- **Last checked:** prod dump 2026-11-05, still present
 - **Next step:** Probably a one-line wiring fix. Check the copy is still wanted after Enhanced negotiations.
 - **Touches:** Enhanced negotiations follow-ups
 
@@ -31,4 +31,4 @@ unfinished and submitted ads, published ads, FAQ.
 - **Where:** `auction.landing.auctions_in_progress.pick_up_offered` ("Noutopalvelua tarjoavat")
 - **Found:** 2026-08-26, offers and decision audit
 - **Evidence:** Only in the language files; `Timer.vue` renders total bids, bidders and end time.
-- **Last checked:** prod dump 2026-11-02, still unused
+- **Last checked:** prod dump 2026-11-05, still unused

@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-11-02)
+## Reference Source Locations (updated 2026-11-06)
 
-- **Production codebase (read-only reference):** `../prod/current/`, a link to the newest dump in the sibling folder `../prod/`, OUTSIDE this repo (moved 2026-10-29 so every local prototype reads one shared copy). `current` → `autovex-2026-11-02-a17b66244b10/` (previous, beside it: `autovex-2026-10-29-82636d6655b9/`, `autovex-2026-10-26-ead421f6c80b/`, `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b` and the 10-29 one as `autovex-autovex-82636d6655b9` and the 11-02 one as `autovex-autovex-a17b66244b10`; rename it to `autovex-<date>-<hash>` before using it. **A new dump** (downloaded by hand from Bitbucket for now) goes into `../prod/` beside the others: rename it, then repoint the link with `ln -sfn <folder> current` from inside `../prod/`. Older dumps stay there so a new one can be compared with the previous. Never push, nothing in the proto depends on it; `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case a dump is ever dropped in the old place.
+- **Production codebase (read-only reference):** `../prod/current/`, a link to the newest dump in the sibling folder `../prod/`, OUTSIDE this repo (moved 2026-10-29 so every local prototype reads one shared copy). `current` → `autovex-2026-11-05-358560b7f364/` (previous, beside it: `autovex-2026-11-02-a17b66244b10/`, `autovex-2026-10-29-82636d6655b9/`, `autovex-2026-10-26-ead421f6c80b/`, `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b` and the 10-29 one as `autovex-autovex-82636d6655b9` and the 11-02 one as `autovex-autovex-a17b66244b10`; rename it to `autovex-<date>-<hash>` before using it. **A new dump** (downloaded by hand from Bitbucket for now) goes into `../prod/` beside the others: rename it, then repoint the link with `ln -sfn <folder> current` from inside `../prod/`. Older dumps stay there so a new one can be compared with the previous. Never push, nothing in the proto depends on it; `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case a dump is ever dropped in the old place.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside `../prod/current/`; `resources/astro/...` paths resolve inside the archive.
 
@@ -3716,6 +3716,10 @@ advisors; the page never says so. The initiative names that help
   `allOffersRejected`, `sendNegotiation` from `OfferActions.vue`; v2's
   snippet adds `sellerProtectionOpened` and `sellerProtectionContactClicked`
   with the app's own queue polyfill (`useVwo.ts`).
+  Since the 2026-11-05 dump prod also stores a logged-in seller's VWO arm
+  on the account when VWO applies it (`vwo-exposures` → `features`, only
+  for tests not declared in `VwoExperiment`) and keeps it across devices, so
+  this front-end test needs no exposure tracking of its own; B6 says so.
 - **When (all arms):** per card, while it shows an accept button; v1/v3 while any
   card does. The gate reads the Finnish "Hyväksy", so the bar's English
   reading aid hides every arm (prod's page is Finnish only). So a final offer's rejected second card gets no v2 row. Hidden
@@ -3914,6 +3918,16 @@ machinery is easy to over-read:
 - Observations now carry **offer acceptance, accepted price and a resolution
   timestamp**, so the engine is measured on whether the car sold, not on whether
   the ad published.
+
+**Skip-review segments arrived in the 2026-10-29 dump** (findings BO-07).
+`PublishIfSkipSegment` runs at publish, before the engine: a car in the review
+band that also matches an active "Skipped from Review" segment (Filament,
+`TenderRequestSkipReviewSettings`, none by default) publishes with no call, and
+its `asking_price` is filled from the GT-X estimate. `can_review` does not read
+these segments, so that seller is asked the optional estimate and then not
+called. The proto's one `store.reviewable` flag drives both the question and the
+outcome, so it cannot show that combination; nothing to build while no segment
+is active.
 
 **The proto models the OUTCOME, so none of this changes it** — same two paths,
 same two price questions. What it does change is the strength of Review/No
@@ -4136,13 +4150,18 @@ to `email_updates_count` and mails the verification link to it; the proto shows
 its email toast.
 
 - **When:** `TenderRequestDraft::emailCanBeUpdated()` = seller unverified AND
-  `email_updates_count < 2` (`EMAIL_UPDATE_THRESHOLD`). Every contact-step save
-  that carries the email counts too (`UpdateDraft::handleEmail`), so **a seller
-  who submitted the contact step once has exactly one change left** here.
+  `email_updates_count < 2` (`EMAIL_UPDATE_THRESHOLD`). A contact-step save
+  counts too when it changes the draft's address (`UpdateDraft::handleEmail`;
+  since the 2026-11-05 dump a save with the same address neither counts nor
+  sends the verification email again), so **a seller who submitted the contact
+  step once has exactly one change left** here. A change made here always
+  counts (`UpdateEmail`).
 - **Proto:** `store.emailUpdatesCount`, incremented by `contact.html`'s submit
-  (unverified only) and by the change itself; cleared by `details.html` on a
-  new draft (`?plate=`). A store with no count but an email (Seed car, older
-  stores) counts as 1.
+  (unverified only, and only when the address differs from `store.draftEmail`,
+  the draft's own copy) and by the change itself; `details.html` clears the
+  count and sets `draftEmail` to null on a new draft (`?plate=`). A store with
+  no count but an email (Seed car, older stores) counts as 1, and its stored
+  address stands in for `draftEmail`.
 - **Errors** are the endpoint's: empty "Pakollinen tieto", invalid "Sähköposti
   ei kelpaa" (`:attribute ei kelpaa` + `form.generic.email`). Prod has no
   English for any of this copy; EN is a working translation.
@@ -4158,9 +4177,9 @@ its email toast.
   that does not exist, so it never disables. **Proto addition, invisible:** the
   pencil carries an `aria-label` (prod's button has none).
 - **Seller edits before review, `v1`:** an unverified seller who walks the
-  funnel again and re-submits the contact step uses up their change, as prod
-  would today. This is that initiative's open question about contact details
-  mid-edit, now visible in the proto.
+  funnel again and re-submits the contact step with the same address keeps
+  their change, as prod does since the 2026-11-05 dump; a new address uses it
+  up and sends a new verification email.
 
 ## Login state — `loggedIn`
 
@@ -4202,6 +4221,12 @@ editing from the waiting screen (funnel success) before verifying is not logged
 in and still sees the email field, as in prod.
 
 ## Funnel entry by draft status — `funnel-guard.js`
+
+**Steps save as the seller types.** Since the 2026-11-05 dump prod autosaves the
+equipment, service and photo steps (`useStepFormAutosave`: a local journal plus a
+server save on blur, or on change for photos), so leaving mid-step loses
+nothing. The proto's steps always wrote the store on input, so it already
+behaves this way.
 
 Loaded in `<head>` of the five funnel steps, after `proto-mock.js`. It
 reproduces what prod decides before any step renders (2026-09-30, from the
@@ -4399,8 +4424,9 @@ drafts get booked together. A draft save carrying an email sets it, increments
 `email_updates_count` and queues the verification mail to it
 (`UpdateDraft::handleEmail`), and the change-email action on the waiting screen (funnel success) is
 offered only while that count is under `EMAIL_UPDATE_THRESHOLD`
-(`can_update_email`). Walking the funnel again must not resend the mail or use
-up a change.
+(`can_update_email`). **The email half is settled by prod** (2026-11-05 dump):
+a save whose address is unchanged no longer counts or resends the mail, so
+walking the funnel again costs nothing; a changed address still does both.
 
 **The auction-time edit question gained two reasons** for freeing the edit
 modal: the edit becomes linear (one screen, one save, no walk to the end), and

@@ -1079,10 +1079,11 @@
     /* Changing the email while it is unverified, prod's CHANGE_EMAIL /
        UPDATE_EMAIL. Offered while TenderRequestDraft::emailCanBeUpdated(): the
        seller is unverified and the draft has had fewer than
-       EMAIL_UPDATE_THRESHOLD (2) email updates. Every contact-step save counts
-       as one (UpdateDraft::handleEmail), so a seller who submitted it once has
-       one change left here. A store with no count (Seed car, or written before
-       the count existed) has saved the contact step once. */
+       EMAIL_UPDATE_THRESHOLD (2) email updates. A contact-step save counts as
+       one when it changes the address (UpdateDraft::handleEmail), so a seller
+       who submitted it once has one change left here; a change made here
+       always counts. A store with no count (Seed car, or written before the
+       count existed) has saved the contact step once. */
     var EMAIL_UPDATE_THRESHOLD = 2;
     var emailChanging = false;
     var emailFormFilled = false;
@@ -1149,6 +1150,7 @@
       if (msg) return;
       var s = getStore();
       s.emailUpdatesCount = emailUpdatesCount(s) + 1;
+      s.draftEmail = value;
       s.contact = Object.assign({}, s.contact, { sahkoposti: value });
       setStore(s);
       emailChanging = false;

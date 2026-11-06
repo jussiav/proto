@@ -346,10 +346,15 @@
       if (!s.loggedIn) {
         s.loggedIn = false;
         s.dac7Completed = false;
-        /* prod counts every save that carries the email towards the two
-           allowed email updates (UpdateDraft::handleEmail); the success page
-           offers a change only below that limit. */
-        s.emailUpdatesCount = (typeof s.emailUpdatesCount === 'number' ? s.emailUpdatesCount : 0) + 1;
+        /* prod counts a save towards the two allowed email updates only when
+           it changes the draft's address (UpdateDraft::handleEmail); the
+           success page offers a change only below that limit. */
+        const email = ((s.contact || {}).sahkoposti || '').trim();
+        if (email !== DRAFT_EMAIL) {
+          const count = typeof s.emailUpdatesCount === 'number' ? s.emailUpdatesCount : (DRAFT_EMAIL ? 1 : 0);
+          s.emailUpdatesCount = count + 1;
+          s.draftEmail = email;
+        }
       }
       if (FunnelGuard.reviewEdit(s)) {
         const back = FunnelGuard.finishReviewEdit(s);
@@ -374,6 +379,15 @@
         window.location.href = 'success.html';
       }
     }
+
+    /* The address the draft holds, read before typing starts: saveContact()
+       writes the field on every keystroke. A store without draftEmail holds
+       the address already saved. */
+    const DRAFT_EMAIL = (function () {
+      const s = getStore();
+      if ('draftEmail' in s) return s.draftEmail;
+      return ((s.contact || {}).sahkoposti || '').trim() || null;
+    })();
 
     function saveContact() {
       const s = getStore();
