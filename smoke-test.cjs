@@ -1,7 +1,7 @@
 /**
- * Simulated user test — full seller journey. Spec: USERTEST.md (spec wins on conflict).
- * Run:  NODE_PATH=<repo>/node_modules node usertest.cjs
- * Headed by default (project rule). Human pacing: slowMo, typing delays, scroll, idle waits.
+ * Smoke test: a scripted happy-path walk of the full seller journey with fixed choreography.
+ * Run:  NODE_PATH=<repo>/node_modules node smoke-test.cjs
+ * Headless unless HEADED=1. Human pacing: typing delays, scroll, idle waits (plus slowMo when headed).
  */
 const { chromium } = require('playwright');
 const http = require('http');
@@ -34,7 +34,7 @@ async function banner(page, label) {
       b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483647;background:#0B6DFF;color:#fff;font:600 15px monospace;padding:7px 16px;text-align:center;pointer-events:none';
       document.body.appendChild(b);
     }
-    b.textContent = 'USER TEST — ' + l;
+    b.textContent = 'SMOKE TEST — ' + l;
   }, label).catch(() => {});
 }
 
@@ -49,7 +49,7 @@ async function humanScroll(page, ms) {
 
 (async () => {
   await new Promise((r) => server.listen(PORT, r));
-  const browser = await chromium.launch({ channel: 'chrome', headless: false, slowMo: 120 });
+  const browser = await chromium.launch({ channel: 'chrome', headless: process.env.HEADED !== '1', slowMo: process.env.HEADED === '1' ? 120 : 0 });
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const B = `http://localhost:${PORT}`;
   let step = 'init';
@@ -231,10 +231,10 @@ async function humanScroll(page, ms) {
     step = '10 Hyväksytty';
     await banner(page, '10/10 TARJOUS HYVÄKSYTTY ✓ — testi läpi');
     await page.waitForTimeout(6000);
-    console.log('\nUSER TEST PASSED — all 10 journey steps completed.');
+    console.log('\nSMOKE TEST PASSED — all 10 journey steps completed.');
   } catch (err) {
-    console.error(`\nUSER TEST FAILED at step "${step}": ${err.message}`);
-    const shot = path.join(__dirname, 'usertest-failure.png');
+    console.error(`\nSMOKE TEST FAILED at step "${step}": ${err.message}`);
+    const shot = path.join(__dirname, 'smoke-test-failure.png');
     await page.screenshot({ path: shot, fullPage: true }).catch(() => {});
     console.error('Screenshot: ' + shot + ' — browser stays open 30 s for inspection.');
     await banner(page, 'FAILED @ ' + step);

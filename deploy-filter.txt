@@ -6,9 +6,9 @@
 - /deploy-filter.txt
 - /bin/
 - /usertest/
-- /usertest.cjs
+- /smoke-test.cjs
 - /usertest-results/
-- /usertest-failure.png
+- /smoke-test-failure.png
 - /logs/
 - /docs/
 - /screenshots/

@@ -7,7 +7,7 @@ logs/
 screenshots/
 vue-tests/node_modules/
 usertest-results/
-usertest-failure.png
+smoke-test-failure.png
 
 # simulated user tests
 usertest/node_modules/

@@ -1,8 +1,8 @@
-# User Test — Goal-Driven Simulated User
+# Simulated user test — goal-driven AI persona
 
-**Trigger:** when the user asks to "run usertest" (or "run a user test", "/usertest"). An optional participant count — "run usertest 4", "run usertest with 3 participants" — means run that many independent test runs (default 1), each with a **different generated participant** (see Participant generation), sequentially, and write **one report file per participant** (see Report files).
+**Trigger:** when Jussi asks for a simulated user test: agentic, AI-driven, local testing where the "user" is an agent, not a real person. Never call it just a "user test", which means real users only (see the root `CLAUDE.md`). An optional participant count — "a simulated user test with 3 participants" — means run that many independent test runs (default 1), each with a **different generated participant** (see Participant generation), sequentially, and write **one report file per participant** (see Report files).
 
-**This is not a script.** There is no predefined sequence of buttons to press or fields to fill. The simulated user has a *goal* and *zero knowledge of the UI*. Claude plays that user: opens the prototype in a **visible browser** (per project CLAUDE.md browser rules), reads each page the way a first-time visitor would, and decides what to do next based only on what the page communicates and what the persona wants. If the user gets stuck, hesitates, or is misled — that is a finding, not a failure to route around silently.
+**This is not a script.** There is no predefined sequence of buttons to press or fields to fill. The simulated user has a *goal* and *zero knowledge of the UI*. Claude plays that user: opens the prototype in a browser (hidden by default; Claude asks Jussi before launching whether to show it, per the root CLAUDE.md browser rule), reads each page the way a first-time visitor would, and decides what to do next based only on what the page communicates and what the persona wants. If the user gets stuck, hesitates, or is misled — that is a finding, not a failure to route around silently.
 
 ## Participant generation
 
@@ -168,4 +168,4 @@ After a multi-participant batch, also print a short chat summary (participants, 
 
 ## Deterministic smoke test (separate thing)
 
-`usertest.cjs` is a scripted happy-path regression run of the whole funnel (fixed choreography, fast). Use it only when asked for a "smoke test" / "scripted usertest" — it verifies the flow still works, it does not simulate a human.
+`smoke-test.cjs` is a scripted happy-path regression run of the whole funnel (fixed choreography, fast). Use it only when asked for a smoke test. It verifies the flow still works; it simulates nobody and is not a user test of any kind.

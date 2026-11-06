@@ -1,5 +1,5 @@
 ---
-description: Run a simulated user test against the AutoVex prototype — an AI-played persona driving a real browser, one report per participant. Use when asked to "run usertest", "/usertest", run simulated participants, or test a surface with simulated sellers. Covers run shapes, the driver, the token budget and the report format.
+description: Run a simulated user test against the AutoVex prototype — an AI-played persona driving a real browser, one report per participant. Use when Jussi asks for a simulated user test (AI-driven, local, the "user" is an agent), simulated participants, or testing a surface with simulated sellers. Never call it just a "user test": that means real users. Covers run shapes, the driver, the token budget and the report format.
 ---
 
 # Simulated user test

@@ -12,9 +12,10 @@ Chrome against the local prototype, deciding each next action from what the page
 says, and writing a report. The value is in the decisions — where a persona
 hesitates, what they misread, what they do instead.
 
-**It is not:** `usertest.cjs`. That file is a scripted regression walk of the
+**It is not:** `smoke-test.cjs`. That file is a scripted regression walk of the
 funnel with fixed choreography. It verifies the flow still works and simulates
-nobody. The two get confused because of the shared name.
+nobody. It was called `usertest.cjs` until 2026-11-06 and renamed because the old
+name made a smoke test sound like a user test.
 
 ## The three layers
 
@@ -156,7 +157,7 @@ Rebuilt into the repo on 2026-09-29, so nothing lives in a scratchpad any more:
 | Skill — run checklist, batch design rules | `usertest/SKILL.md` | yes |
 | Skill registration | `.claude/skills/simulated-usertest/` | no (`.claude/` is gitignored) — a 15-line pointer at the tracked file |
 | Reports | `usertest-results/` | no, deliberately |
-| Scripted smoke walk, unrelated | `usertest.cjs` | yes |
+| Scripted smoke test, unrelated | `smoke-test.cjs` | yes |
 
 `cd Claude-Figma/usertest && npm install` once; profiles and session files go to
 `usertest/.run/`, ignored.
@@ -178,7 +179,7 @@ count rather than at the per-call size:
 - Does `state` cut enough, or should it diff against the previous state and
   return only what changed? That is the next obvious step and it was not built.
 - Should the deterministic half — seeding, world events, assertions — become a
-  library that `usertest.cjs` uses too? The two currently duplicate the notion of
+  library that `smoke-test.cjs` uses too? The two currently duplicate the notion of
   a scenario.
 - Should the driver move out of this repo into a shared internal package, so
   other prototypes can use it? It has one AutoVex-specific dependency: `seed` and

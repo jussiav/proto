@@ -3,9 +3,8 @@
 `USERTEST.md` (repo root) is the protocol: personas, world events, end
 conditions, report template. **This is the tooling that protocol runs on.**
 
-`usertest.cjs` in the repo root is a different thing — a scripted happy-path
-regression walk with fixed choreography. It simulates nobody. Do not confuse the
-two because of the name.
+`smoke-test.cjs` in the repo root is a different thing: a smoke test, a scripted
+happy-path regression walk with fixed choreography. It simulates nobody.
 
 ## Install
 
