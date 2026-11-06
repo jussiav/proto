@@ -488,16 +488,16 @@ correct for the price the auction reached, ruled out for an offer received.
 ## Findings register — `findings/`
 
 Product issues, gaps and opportunities we notice but leave out of the work at
-hand: from PR and preview testing, from design iteration (anything a design
+hand: from Design QA of PR previews, from design iteration (anything a design
 spec deliberately leaves out), and from reading prod dumps. Started 2026-10-22
-after the PR 2546 preview test. `findings/README.md` holds the entry format,
+after the PR 2546 Design QA. `findings/README.md` holds the entry format,
 statuses and review log; one file per area (`FUN`, `OFF`, `DEC`, `EML`, `BO`,
 `DS`, `ENV`).
 
 - **Read it** when an initiative starts or changes scope (every area it
   touches), and say which entries the initiative takes on.
 - **Add to it** whenever something real is found outside the current scope,
-  including a PR's own test findings (as `Reported` until fixed).
+  including a PR's own Design QA findings (as `Reported` until fixed).
 - **Re-check it** against every new prod dump: code-based `Open`, `Reported`,
   `Parked` and `Watching` entries get a new **Last checked**; fixed ones move to
   `Fixed` with the dump date. Never renumber or delete entries.
@@ -1326,7 +1326,7 @@ straight into a bulleted list. The proto keeps the Reveal's own × rather than t
 header icon that modal draws for itself (it passes `:show-close-button="false"`).
 
 **SHIPPED IN THE 2026-10-07 DUMP: changes 1, 2, 3, 6, 7, 8 and 17** (PR 2493,
-tested in its preview on 2026-10-06). The proto's `control` now renders all of
+Design QA in its preview on 2026-10-06). The proto's `control` now renders all of
 them, so they look the same in both arms. What prod does:
 
 | Part | Prod, 2026-10-07 |
@@ -1342,7 +1342,7 @@ them, so they look the same in both arms. What prod does:
 **Everything else shipped in the 2026-10-15 dump** — see the completion block
 at the top of this section.
 
-**PR 2526 (preview tested 2026-10-09) builds changes 10, 12, 13 and 16**; all
+**PR 2526 (Design QA in its preview 2026-10-09) builds changes 10, 12, 13 and 16**; all
 four matched `v1`. Two decisions came out of the test, both Jussi's:
 
 - **The waiting hero keeps "(viim. 24 h kuluessa)"**, which the PR had added
@@ -7104,7 +7104,7 @@ Always read `design-library/components.md` before any UI work. Use `design-libra
 - **[Anti-Patterns](docs/anti_patterns.md)** — Patterns to avoid, even if they improve short-term metrics.
 - **[Decision Playbooks](docs/decision_playbooks.md)** — How to handle specific user scenarios.
 - **[Opportunity Areas](docs/opportunity_areas.md)** — Prioritized areas for improvement.
-- **[Findings register](findings/README.md)** — Known issues and opportunities left out of scope, per area, with status and last prod check. Read at initiative start; update after PR tests and new prod dumps.
+- **[Findings register](findings/README.md)** — Known issues and opportunities left out of scope, per area, with status and last prod check. Read at initiative start; update after Design QA of PRs and new prod dumps.
 - **[Real Examples](docs/real_examples.md)** — Concrete good/bad UX and copy examples.
 - **[How to Use](docs/HOW_TO_USE.md)** — How to apply this kit across AI tools.
 - **[Component Gallery Process](docs/component-gallery-process.md)** — How to add, update, and maintain Vue components. MUST follow when touching any component, `COMPONENTS.md`, or `components.html`.

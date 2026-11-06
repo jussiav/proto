@@ -23,7 +23,7 @@ experiment registration.
 ### BO-03 · Reviewable Drafts shows no plate or car
 - **Status:** Open · **Type:** UX · **Severity:** Low
 - **Where:** Filament → Reviewable Drafts
-- **Found:** 2026-10-22, PR 2546 preview test
+- **Found:** 2026-10-22, PR 2546 Design QA
 - **Evidence:** Three columns only: calls, added for review, drafts for user. Matching a row to an ad means comparing timestamps. Tender Request Drafts also opens filtered to "Status: OPEN", which hides drafts in review or queued.
 - **Last checked:** prod dump 2026-11-05, still present
 - **Next step:** Advisors may not need it (they book by queue order), so ask before changing. It mainly hurts testing.

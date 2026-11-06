@@ -7,7 +7,7 @@ editing an ad before review (PR 2546).
 ### FUN-01 · Front page shows the "finish your ad" hero for an ad that is already submitted
 - **Status:** Open · **Type:** UX · **Severity:** Medium
 - **Where:** Front page hero for a returning seller whose latest ad is in review or waiting for email verification
-- **Found:** 2026-10-22, PR 2546 preview test
+- **Found:** 2026-10-22, PR 2546 Design QA
 - **Evidence:** The hero reads "Laitetaan Corolla liikkeelle! Viimeistele tarjouspyyntö ja saat oikeita tarjouksia autoliikkeiltä." (Let's get the Corolla moving! Finish your listing…) with "Tee uusi tarjouspyyntö (Nykyinen tarjouspyyntösi poistetaan)" (Make a new listing; your current one will be deleted). `useExistingDraft.js` drops the stored draft only when it is `published`, expired or fails to refresh. The "will be deleted" note is not true for a submitted ad: the button only starts a new draft.
 - **Last checked:** prod dump 2026-11-05, still present
 - **Next step:** Show this hero only for unfinished drafts, or give submitted ads their own state. The proto has a proto-only "under review" hero for this case (see `CLAUDE.md`, Review segment).
@@ -16,7 +16,7 @@ editing an ad before review (PR 2546).
 ### FUN-02 · Waiting-screen car card shows the make without the model right after submitting
 - **Status:** Open · **Type:** Defect · **Severity:** Low
 - **Where:** Waiting screen (funnel success), car card in the right column, first load after submit
-- **Found:** 2026-10-22, PR 2546 preview test
+- **Found:** 2026-10-22, PR 2546 Design QA
 - **Evidence:** Card reads "Toyota" instead of "Toyota Corolla". `Preview.vue` looks the names up in make and model lists by id and falls back to an empty string when the model list is not loaded on that screen.
 - **Last checked:** prod dump 2026-11-05, still present
 
@@ -103,7 +103,7 @@ editing an ad before review (PR 2546).
 ### FUN-13 · An edit can leave an in-review ad below the 5-photo minimum
 - **Status:** Reported (PR 2546 QA report) · **Type:** Defect · **Severity:** High
 - **Where:** Edit before review, photos step
-- **Found:** 2026-10-22, PR 2546 preview test (F1)
+- **Found:** 2026-10-22, PR 2546 Design QA (F1)
 - **Evidence:** Delete photos to 4, Jatka, "Jatka ilman kuvia": the step saves 4 photos to the in-review draft. The final save then refuses, but the 4-photo state is already stored.
 - **Last checked:** prod dump 2026-11-05, PR 2546 is not in the dump yet
 - **Next step:** Confirm fixed in the first dump containing PR 2546.
@@ -111,42 +111,42 @@ editing an ad before review (PR 2546).
 ### FUN-14 · A refused final save during an edit shows no message
 - **Status:** Reported (PR 2546 QA report) · **Type:** UX · **Severity:** Medium
 - **Where:** Edit before review, last step → back to photos
-- **Found:** 2026-10-22, PR 2546 preview test (F2)
+- **Found:** 2026-10-22, PR 2546 Design QA (F2)
 - **Evidence:** `seller-edit-completions` returns 422 "Lisää vähintään 5 kuvaa" and the funnel returns to the photos step silently. The skip modal's "Tallennamme luonnoksesi, joten voit … lisätä kuvat myöhemmin" (we'll save your draft, so you can add photos later) is not true during an edit.
 - **Last checked:** prod dump 2026-11-05, PR 2546 is not in the dump yet
 
 ### FUN-15 · "Viimeisin huolto" is not pre-selected when editing
 - **Status:** Reported (PR 2546 QA report) · **Type:** Defect · **Severity:** Low
 - **Where:** Edit before review, service step
-- **Found:** 2026-10-22, PR 2546 preview test (F3)
+- **Found:** 2026-10-22, PR 2546 Design QA (F3)
 - **Evidence:** The stored value is intact and not cleared, but no option shows as selected. Check whether a normal funnel "Takaisin" does the same; if so it predates the PR.
 - **Last checked:** prod dump 2026-11-05, PR 2546 is not in the dump yet
 
 ### FUN-16 · Locked contact fields look editable, and the heading asks the seller to check them
 - **Status:** Reported (PR 2546 QA report) · **Type:** UX · **Severity:** Low
 - **Where:** Edit before review, contact step
-- **Found:** 2026-10-22, PR 2546 preview test (F4)
+- **Found:** 2026-10-22, PR 2546 Design QA (F4)
 - **Evidence:** All fields are disabled, but only phone looks greyed. The logged-in heading still reads "Tarkista yhteystietosi" (Check your contact details).
 - **Last checked:** prod dump 2026-11-05, PR 2546 is not in the dump yet
 
 ### FUN-17 · Reload during an edit restarts at the equipment step
 - **Status:** Reported (PR 2546 QA report) · **Type:** UX · **Severity:** Low
 - **Where:** Edit before review, any step after the first
-- **Found:** 2026-10-22, PR 2546 preview test (F5)
+- **Found:** 2026-10-22, PR 2546 Design QA (F5)
 - **Evidence:** Edit mode and saved data survive; the position does not.
 - **Last checked:** prod dump 2026-11-05, PR 2546 is not in the dump yet
 
 ### FUN-18 · Step bar on the first edit step leaves out "Hinta"
 - **Status:** Reported (PR 2546 QA report) · **Type:** Defect · **Severity:** Low
 - **Where:** Edit before review, equipment step
-- **Found:** 2026-10-22, PR 2546 preview test (F6)
+- **Found:** 2026-10-22, PR 2546 Design QA (F6)
 - **Evidence:** Shows four steps where a new ad shows five; the price step still appears later.
 - **Last checked:** prod dump 2026-11-05, PR 2546 is not in the dump yet
 
 ### FUN-19 · Clearing the make requests models for "null"
 - **Status:** Open · **Type:** Cleanup
 - **Where:** Equipment step, make dropdown → clear
-- **Found:** 2026-10-22, PR 2546 preview test
+- **Found:** 2026-10-22, PR 2546 Design QA
 - **Evidence:** `GET /api/vehicles/null/models` fires (502 on preview).
 
 ### FUN-20 · Dead "Published" badge config in the funnel preview card

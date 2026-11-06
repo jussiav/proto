@@ -30,7 +30,7 @@ modal and the reject flow.
 ### DEC-04 · Card help lines contradict the hero on the last negotiation round
 - **Status:** Parked · **Type:** Copy · **Severity:** Medium
 - **Where:** Offer card, line under the negotiate / "Näytä vastaus" button
-- **Found:** 2026-10-09, PR 2526 test
+- **Found:** 2026-10-09, PR 2526 Design QA
 - **Evidence:** "Nykyinen tarjous on edelleen voimassa, vaikka tekisit vastatarjouksen." (The current offer stays valid even if you make a counter offer.) sits beside a hero saying no more counter offers can be made.
 - **Last checked:** prod dump 2026-11-05, still present
 - **Next step:** Both card help lines (under accept and under negotiate) get rewritten together in a later copy optimisation. Bring this contradiction to that work.
@@ -46,7 +46,7 @@ modal and the reject flow.
 ### DEC-06 · The waiting hero's "(viim. 24 h kuluessa)" is inexact over weekends
 - **Status:** Accepted · **Type:** Copy
 - **Where:** Decision page hero and negotiation modal while waiting for the dealership
-- **Found:** 2026-10-09, PR 2526 test
+- **Found:** 2026-10-09, PR 2526 Design QA
 - **Evidence:** The dealership's deadline is 24 business hours, so a Friday counter offer can wait past 24 hours.
 - **Why accepted:** The team prefers a clear figure; knowingly inexact. Revisit only if sellers complain about missed deadlines.
 

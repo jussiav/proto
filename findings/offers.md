@@ -15,7 +15,7 @@ unfinished and submitted ads, published ads, FAQ.
 ### OFF-02 · The referral-source question returns on every visit after closing it
 - **Status:** Open · **Type:** UX · **Severity:** Low
 - **Where:** Offers page, "Mitä kautta kuulit meistä?" (How did you hear about us?) modal
-- **Found:** 2026-10-22, PR 2546 preview test
+- **Found:** 2026-10-22, PR 2546 Design QA
 - **Evidence:** Closing with × and reloading brings it back each time (seen five times on the seed seller). Not yet checked whether that is by design until answered.
 - **Next step:** Check the intended rule (ask once, ask until answered, or ask again after N days).
 

@@ -3,8 +3,8 @@
 Issues, gaps and opportunities we have noticed in the product but left out of
 the work at hand. They come from three places:
 
-- **PR and environment testing**, e.g. a QA run on a preview environment that
-  turns up problems outside the PR's scope.
+- **Design QA of PRs and environments**, e.g. Design QA on a preview environment
+  that turns up problems outside the PR's scope.
 - **Design iteration**, e.g. something an initiative deliberately leaves out of
   its design spec.
 - **Reading the production codebase**, e.g. a defect or dead code found while
@@ -33,7 +33,7 @@ differently) are not listed here. They stay in `CLAUDE.md`.
 | Moment | What to do |
 |---|---|
 | An initiative starts or changes scope | Read the files for every area it touches. List the entries it could fix in the initiative's notes, and say which ones it takes on. |
-| A PR is tested | Add anything found outside the PR's scope. Add the PR's own findings too, as `Reported`, until they are confirmed fixed. |
+| A PR gets Design QA | Add anything found outside the PR's scope. Add the PR's own findings too, as `Reported`, until they are confirmed fixed. |
 | A new prod dump arrives | Re-check every `Open`, `Reported`, `Parked` and `Watching` entry whose evidence points at code. Update **Last checked**, and move fixed ones to `Fixed`. Add a line to the review log below. |
 | Design iteration leaves something out | Add it, with the reason it was left out. |
 | Something ships | Mark the entry `Fixed` with the dump it shipped in. Never delete entries; the history is part of the record. |
@@ -45,7 +45,7 @@ differently) are not listed here. They stay in `CLAUDE.md`.
 - **Status:** Open · **Type:** UX · **Severity:** Medium
 - **Where:** the surface and state a seller or advisor sees it in
 - **Found:** 2026-10-22, how it was found
-- **Evidence:** prod file / behaviour, or the test that showed it
+- **Evidence:** prod file / behaviour, or the Design QA that showed it
 - **Last checked:** prod dump 2026-10-15, still present
 - **Next step:** what fixing it would take, or what decision it waits on
 - **Touches:** initiatives or areas that could pick it up
@@ -84,7 +84,7 @@ the public `jussiav/proto` repository. Keep out:
 
 | Date | Trigger | Checked | Result |
 |---|---|---|---|
-| 2026-10-22 | Register created after the PR 2546 preview test | Seeded from the PR 2546 test, `CLAUDE.md` and earlier investigation notes. Code-based entries re-checked against prod dump 2026-10-15 | See each entry's **Last checked** |
+| 2026-10-22 | Register created after the PR 2546 Design QA | Seeded from the PR 2546 Design QA, `CLAUDE.md` and earlier investigation notes. Code-based entries re-checked against prod dump 2026-10-15 | See each entry's **Last checked** |
 | 2026-10-22 | Developer pointed out Mailpit on previews | ENV-02 | Rewritten: previews do send email, to Mailpit, but it loses mail on restart |
 | 2026-10-23 | Prod dump 2026-10-23 | Every code-based entry. Entries whose evidence files changed in this dump were re-read (DEC-03, DEC-05, DEC-15, BO-02, BO-06, EML-05); the rest point at unchanged files | DEC-05 fixed. BO-02 and EML-05 rewritten: the asking price no longer caps counter offers but still reaches dealers, in the UI as well as the email |
 | 2026-11-02 | Prod dump 2026-11-02 | The 2026-10-26 and 2026-10-29 dumps were never checked on their own, so this pass diffed 2026-10-23 → 2026-11-02 (11-02 itself only adds developer docs). Every code-based entry; entries whose evidence files changed were re-read (OFF-01, DEC-01, DEC-03, DEC-11, DEC-13, DEC-15, BO-01, BO-02, EML-05, ENV-06); entries without a date before (FUN-08, FUN-12, FUN-13 to FUN-18, DEC-04, DEC-10, DEC-12) got one | Nothing fixed. PR 2546 is not in a dump yet. BO-07 added (skip-review segments) and BO-01, BO-02 and EML-05 updated for it and the B2B reserve exception. DEC-16 added (counter-offer range errors still say "Pyyntihinta") |
