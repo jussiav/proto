@@ -431,10 +431,10 @@ company), not by habit.
 |---|---|---|
 | Customer fills in their car details | Myynti-ilmoitus / Täytä myynti-ilmoitus | Tarjouspyyntö / lomake / hakemus |
 | Customer submits their car | Myynti-ilmoitus / Julkaise myynti-ilmoitus | Jätä tarjouspyyntö / lähetä ilmoitus |
-| Review call | Hinta-arviopuhelu | (none listed) |
+| Review call | Hinta-arviopuhelu | Tarkastussoitto / Tarkastamme ilmoitustasi |
 | Car dealerships compete | Tarjouskilpailu | Huutokauppa / Tarjouskauppa |
-| Offer received on car | Tarjous / Ostotarjous | Auton hinta |
-| Accept offer | Hyväksy tarjous | Hyväksy osto / Myy auto |
+| Offer received on car | Tarjous / Ostotarjous | Hinta |
+| Accept offer | Hyväksy tarjous | Myy auto / Hyväksy osto |
 | Seller negotiates offer received | Vastatarjous | Neuvottelu |
 | Car dealership increase their offer | Vastatarjous | Neuvottelu |
 | Car dealership gives their final offer | Korotettu tarjous | Neuvottelu, viimeinen tarjous |
@@ -443,9 +443,10 @@ company), not by habit.
 | Price reached after auction | Hinta / Paras hinta | Pyyntihinta / Hintapyyntö / minimi hinta |
 | Price-estimation | Hinta-arvio | Auton hinta / Pyyntihinta / Hintapyyntö |
 
-The sheet as sent had the "not to be used" column one row low from the review
-call to accepting an offer; Jussi confirmed the shift (2026-11-05) and the rows
-above follow the B2B sheet's placement.
+The table above is Marketing's corrected sheet (2026-11-06), which replaced
+the first version: the review call gained its ruled-out terms and an offer now
+rules out "Hinta" rather than "Auton hinta". "Hinta" appears in both columns:
+correct for the price the auction reached, ruled out for an offer received.
 
 #### B2B (company seller)
 
