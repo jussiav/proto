@@ -62,16 +62,14 @@
     .phone-flag { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 15px; font-size: 16px; line-height: 1; }
     html[data-kc-arm="v1"] #marketing-control,
     html:not([data-kc-arm="v1"]) .kc-v1 { display: none !important; }
-    /* SwitchRow with highlightWhenOn off, recoloured to the brand kit only
-       (design-library/tokens.css): white row with a blue-200 border, track
-       AutoVex Blue on and blue-200 off, white knob. Prod's slate greys are not
-       in the kit. While saving the track keeps its colour: a pale "disabled"
-       track would read as off. Hand-written because the state changes after
-       first paint; knob 4px → 20px. */
-    .kc-row { background: #fff; border-color: #B9E0FF; cursor: pointer; }
-    .kc-track { background: #B9E0FF; cursor: pointer; }
+    /* The switch inside prod's SwitchRow, exactly: track bg-blue-600 on,
+       bg-slate-400 off, bg-slate-300 + cursor-not-allowed + opacity-90 when
+       disabled; knob translate-x-1 / translate-x-5. Hand-written because the
+       state changes after first paint. */
+    .kc-row { cursor: pointer; }
+    .kc-track { background: #94A3B8; cursor: pointer; }
     .kc-track[aria-checked="true"] { background: #0B6DFF; }
-    .kc-track:disabled { cursor: not-allowed; }
+    .kc-track:disabled { background: #CBD5E1; cursor: not-allowed; opacity: .9; }
     .kc-track .kc-knob { transform: translateX(4px); }
     .kc-track[aria-checked="true"] .kc-knob { transform: translateX(20px); }
     /* Proto-only stand-in for the seller's inbox, as on hinta-arvio.html. */
@@ -163,16 +161,17 @@
       <hr class="my-6 border-gray-100">
 
       <!-- Klaviyo consent v1: consent lives in Klaviyo only, so it leaves the
-           details form and saves on its own, the moment it is switched. The
-           heading follows UpdatePassword's section. The control is the dealer
-           negotiation form's SwitchRow, with no icon and no lime highlight; a
-           checkbox would ask for a save button. SwitchRow has no gap and lets the switch shrink, which
-           a short dealer label never shows: this long label squeezed the
-           switch from 48px to 38px, so the row adds gap-4 and the switch
-           shrink-0. -->
+           details form and saves on its own, the moment it is switched; a
+           checkbox would ask for a save button. The heading follows
+           UpdatePassword's section. The switch is the one inside prod's
+           SwitchRow (the dealer negotiation form's car-pickup switch), markup
+           and classes as they are, without SwitchRow's outlined row: prod has
+           no switch component of its own, and its standalone ToggleSwitch is a
+           different design. Label and switch sit side by side; gap-4 and
+           shrink-0 keep the long label from squeezing the switch. -->
       <section id="kc-section" class="kc-v1" aria-labelledby="kc-title">
         <h2 id="kc-title" class="text-2xl font-bold text-center my-6" data-i18n="profile.consentTitle">Markkinointiviestit</h2>
-        <div id="kc-field" class="kc-row flex items-center justify-between gap-4 rounded-md border px-4 py-1.5 transition select-none" role="button" tabindex="0" style="display:none">
+        <div id="kc-field" class="kc-row flex items-center justify-between gap-4 select-none" style="display:none">
           <div class="flex items-center gap-2 text-black">
             <span id="kc-label" class="text-base font-medium" data-i18n-html="profile.marketing">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span>
           </div>
@@ -328,8 +327,8 @@
         renderConsent();
       }, KC_MS);
     }
-    /* SwitchRow toggles from the whole row (click, Enter, Space) and from the
-       switch itself. The switch moves at once; while Klaviyo saves it is
+    /* Clicking the label or the switch toggles it; the switch is a button, so
+       Enter and Space work on it natively. The switch moves at once; while Klaviyo saves it is
        disabled, and a failed save moves it back. */
     function toggleConsent() {
       if (kcSwitch.disabled) return;
@@ -348,11 +347,6 @@
       }, KC_MS);
     }
     kcRow.addEventListener('click', toggleConsent);
-    kcRow.addEventListener('keydown', function (e) {
-      if (e.target !== kcRow || (e.key !== 'Enter' && e.key !== ' ')) return;
-      e.preventDefault();
-      toggleConsent();
-    });
     kcSwitch.addEventListener('click', function (e) { e.stopPropagation(); toggleConsent(); });
 
     /* A new email waits for its confirmation link (the developers' branch).

@@ -67,13 +67,14 @@
     .mock-toast { display: flex; gap: 10px; align-items: flex-start; width: 300px; max-width: 100%; padding: 15px 15px 15px 15px; border-radius: 3px; color: #fff; font-family: "DM Sans", sans-serif; font-size: 14px; line-height: 1.35; box-shadow: 0 0 12px #999; }
     .mock-toast--success { background: #51A351; }
     .mock-toast--error   { background: #BD362F; }
-    /* The switch row dealers use in the negotiation form, recoloured to the
-       brand kit, with no highlight: on and off. */
-    .mock-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 1px solid #B9E0FF; background: #fff; border-radius: 6px; padding: 6px 16px; }
-    .mock-switch { position: relative; display: inline-flex; flex-shrink: 0; align-items: center; width: 48px; height: 24px; border-radius: 9999px; background: #B9E0FF; }
+    /* The dealer negotiation form's car-pickup switch, exactly, without its
+       outlined row: on, off and saving. */
+    .mock-switch-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .mock-switch { position: relative; display: inline-flex; flex-shrink: 0; align-items: center; width: 48px; height: 24px; border-radius: 9999px; background: #94A3B8; }
     .mock-switch::after { content: ""; display: inline-block; width: 24px; height: 20px; border-radius: 9999px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.1), 0 1px 2px -1px rgba(0,0,0,.1); transform: translateX(4px); }
     .mock-switch-row.is-on .mock-switch { background: #0B6DFF; }
     .mock-switch-row.is-on .mock-switch::after { transform: translateX(20px); }
+    .mock-switch-row.is-saving .mock-switch { background: #CBD5E1; opacity: .9; }
     .mock-input { font-family: "DM Sans", sans-serif; font-size: 16px; line-height: 1.625; display: block; width: 100%; border: 1px solid #94A3B8; border-radius: 8px; padding: 14px 16px; background: #fff; color: #000; }
   </style>
 </head>
@@ -182,10 +183,10 @@
           <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What changes</p>
           <ul class="list-disc pl-5 space-y-1">
             <li><b>Its own section</b>, &ldquo;Markkinointiviestit&rdquo; (marketing emails), between the contact details and the password section. Same heading style and dividers as the password section; the label is today's checkbox label.</li>
-            <li><b>A switch, not a checkbox.</b> A switch takes effect at once, while a checkbox reads as something a save button confirms, and this section has none. It is the switch row dealers already use in the negotiation form (for car pickup), without its icon and without the lime highlight it gives the row when on. The whole row switches it, by click, Enter or Space.</li>
-            <li><b>Brand colours only</b>, from the AutoVex colour kit: a white row with a blue-200 border (#B9E0FF), a black label, the switch AutoVex Blue (#0B6DFF) when on and blue-200 when off, a white knob. The dealer's switch uses slate greys, which are not in the kit, so the two would differ until one switch serves both.</li>
-            <li><b>Two small additions to that switch row</b>, needed for a label this long: a 16px gap between the label and the switch, and a switch that never shrinks. Without them the label squeezes the switch from 48px to 38px. The dealer's short label never shows this.</li>
-            <li><b>Saved on its own, at once.</b> Switching saves straight to Klaviyo; &ldquo;Päivitä&rdquo; no longer carries the setting. The switch moves immediately and can't be switched again while it saves, keeping its colour (a pale &ldquo;disabled&rdquo; switch would read as off); a failed save moves it back.</li>
+            <li><b>A switch, not a checkbox.</b> A switch takes effect at once, while a checkbox reads as something a save button confirms, and this section has none. It is the switch dealers already use in the negotiation form (for car pickup), exactly as it looks there, without the outlined row around it and without that row's icon. There is no switch component of its own in the product to reuse. Clicking the label or the switch switches it, and Enter or Space on the switch.</li>
+            <li><b>The switch's own colours:</b> AutoVex Blue (#0B6DFF) when on, slate-400 (#94A3B8) when off, slate-300 (#CBD5E1) while it saves, a white knob. The label is black, with nothing drawn around the label and the switch.</li>
+            <li><b>Two small additions</b>, needed for a label this long: a 16px gap between the label and the switch, and a switch that never shrinks. Without them the label squeezes the switch from 48px to 38px. The dealer's short label never shows this.</li>
+            <li><b>Saved on its own, at once.</b> Switching saves straight to Klaviyo; &ldquo;Päivitä&rdquo; no longer carries the setting. The switch moves immediately and shows its disabled look while it saves, so it can't be switched again; a failed save moves it back.</li>
             <li><b>Shows what Klaviyo says.</b> The page asks Klaviyo when it opens. The switch is on only when the seller is subscribed; unsubscribed and never subscribed both show it off.</li>
             <li><b>If Klaviyo doesn't answer,</b> the switch is hidden and one line says the setting couldn't be fetched. A switch shown off would wrongly tell the seller they are not subscribed.</li>
             <li><b>Single opt-in is assumed.</b> With double opt-in, switching on only sends a confirmation email, and the section would need a &ldquo;waiting for confirmation&rdquo; state (open question 3).</li>
@@ -197,11 +198,12 @@
           <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-4">The section in its three states</p>
           <div class="flex flex-col gap-5">
             <div>
-              <p class="font-dm text-xs text-slate-500 mb-2">Ready: on (subscribed) and off</p>
+              <p class="font-dm text-xs text-slate-500 mb-2">Ready: on (subscribed), off, and saving</p>
               <div class="border border-slate-200 rounded-lg p-4 flex flex-col gap-3">
                 <p class="font-barlow text-2xl font-bold text-center mb-1">Markkinointiviestit</p>
                 <div class="mock-switch-row is-on"><span class="font-dm text-base font-medium text-black">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span><span class="mock-switch" aria-hidden="true"></span></div>
                 <div class="mock-switch-row"><span class="font-dm text-base font-medium text-black">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span><span class="mock-switch" aria-hidden="true"></span></div>
+                <div class="mock-switch-row is-on is-saving"><span class="font-dm text-base font-medium text-black">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span><span class="mock-switch" aria-hidden="true"></span></div>
               </div>
             </div>
             <div>
@@ -234,7 +236,7 @@
           <li>Switching on subscribes and switching off unsubscribes the seller in Klaviyo, at once, with no save button. Clicking anywhere on the row, or Enter or Space on it, switches it.</li>
           <li>The switch can't be switched again while it saves. A successful save shows &ldquo;Asetus tallennettu.&rdquo;; a failed one moves the switch back and shows the failed message.</li>
           <li>The switch keeps its full 48 &times; 24px size next to the long label, at every width.</li>
-          <li>Every colour in the row comes from the brand colour kit; the row has no highlight when on.</li>
+          <li>The switch looks exactly like the dealer's car-pickup switch, with no outline or background around the label and the switch.</li>
           <li>&ldquo;Päivitä&rdquo; saves the contact details without the marketing setting.</li>
           <li>An unsubscribe made from a Klaviyo email shows as off the next time the page opens.</li>
         </ul>

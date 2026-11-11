@@ -945,7 +945,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 | Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
-| Klaviyo consent | **Suggestion to the developers** (2026-11-11) — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent as a switch (prod's dealer-side switch row) in its own section, read from and saved to Klaviyo at once; the email field keeps the address in use and a line names the one waiting. Copy is the developers' draft (the after-save message) and Claude's (the rest) | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
+| Klaviyo consent | **Suggestion to the developers** (2026-11-11) — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent as a switch (prod's dealer-side car-pickup switch, exactly, without its outlined row) in its own section, read from and saved to Klaviyo at once; the email field keeps the address in use and a line names the one waiting. Copy is the developers' draft (the after-save message) and Claude's (the rest) | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
 
 **Completed initiatives:**
 
@@ -3801,27 +3801,29 @@ profile page**).
     `my-6 border-gray-100`), with prod's checkbox label;
   - **a switch, not a checkbox** (Jussi, 2026-11-11): a switch takes effect at
     once, a checkbox reads as something a save button confirms, and the
-    section has none. It is prod's `elements/SwitchRow.vue`, the dealer
-    negotiation form's car-pickup switch, transcribed with no icon (its
-    default is `car`; Jussi picks icons) and `highlightWhenOn` off (no lime
-    row when on, Jussi). **Brand colours only** (Jussi): prod's slate greys
-    are not in the kit (`design-library/tokens.css` BRAND COLORS + the blue
-    scale), so the row is white with a blue-200 border, the label black, the
-    track AutoVex Blue on and blue-200 off, and the track keeps its colour
-    while saving, since prod's pale disabled grey would read as off. The
-    dealer's switch keeps slate, so the two differ until one switch serves
-    both (DS-07). The other prod switch, `partials/ToggleSwitch.vue`
-    (dealer saved-search notifications), was passed over: no switch role, no
-    keyboard, off-token colours (findings DS-07). **Two additions** the long
-    label needs, flagged on the spec: `gap-4` on the row and `shrink-0` on
-    the switch, without which it squeezed from 48px to 38px. State classes are
-    hand-written (`.kc-row`, `.kc-track`, `.kc-knob`), since they change after
-    first paint;
+    section has none. **It is prod's switch exactly as it looks elsewhere**
+    (Jussi, after two detours): the button inside `elements/SwitchRow.vue`,
+    the dealer negotiation form's car-pickup switch, with its markup and
+    colours as they are (track `bg-blue-600` on, `bg-slate-400` off,
+    `bg-slate-300 opacity-90 cursor-not-allowed` disabled, white knob
+    `translate-x-1`/`translate-x-5`). Prod has no switch atom in `@app`, and
+    `SwitchRow` always draws an outlined row (`rounded-md border px-4 py-1.5`,
+    lime when on unless `highlightWhenOn` is off), which Jussi does not want,
+    so the row is left out: label left, switch right, nothing around them.
+    The other prod switch, `partials/ToggleSwitch.vue` (dealer saved-search
+    notifications), is a different design and has no switch role or keyboard
+    use (findings DS-07). **Do not recolour the switch** to the brand kit: tried
+    and reverted, Jussi wants the switch identical to the dealer's. Two
+    additions only: `gap-4` between label and switch and `shrink-0` on the
+    switch, since the long label squeezed it from 48px to 38px. The label is
+    black (brand kit) rather than `SwitchRow`'s `text-gray-900`. Clicking the
+    label or the switch toggles it; the switch is a button, so Enter and Space
+    work natively. State classes are hand-written (`.kc-track`, `.kc-knob`),
+    since they change after first paint;
   - read from Klaviyo when the page opens ("Haetaan asetusta…"), on only when
     subscribed (Klaviyo's unsubscribed and never-subscribed both show off);
-  - saved straight to Klaviyo the moment it is switched (row click, Enter,
-    Space, or the switch), the switch moving at once and disabled while it
-    saves, then toastr success "Asetus tallennettu." or, on failure, the switch
+  - saved straight to Klaviyo the moment it is switched, the switch moving at
+    once and disabled (prod's disabled look) while it saves, then toastr success "Asetus tallennettu." or, on failure, the switch
     moves back and an error toast says so;
   - when Klaviyo does not answer the read, the switch is hidden and one line
     says the setting could not be fetched. A switch shown off there would claim
