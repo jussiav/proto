@@ -125,8 +125,9 @@
               placeholder="matti@sahkoposti.fi" data-i18n-placeholder="profile.emailPlaceholder"
               class="text-base font-normal leading-relaxed block w-full border rounded-lg px-4 py-3.5 transition focus:outline-none focus:ring appearance-none disabled:bg-gray-100 disabled:border-gray-300 border-slate-400 bg-white" />
           </div>
-          <!-- Klaviyo consent v1: the address waiting for its confirmation link. -->
-          <p id="email-pending" class="kc-v1 mt-2 text-sm text-slate-700" aria-live="polite" style="display:none"></p>
+          <!-- Klaviyo consent v1: the address waiting for its confirmation link, in
+               the field-error style Input.vue uses (and the password errors here). -->
+          <p id="email-pending" class="kc-v1 text-red-500 text-sm leading-[16px] mt-1.5" aria-live="polite" style="display:none"></p>
         </label>
       </div>
 

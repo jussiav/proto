@@ -3816,8 +3816,11 @@ profile page**).
   "Päivitä" with a new address saves the name and phone, keeps the email field
   on the address in use, and toasts the developers' after-save message
   (`profile.emailPendingToast`, Esa's draft). A line under the field names the
-  address waiting (`profile.emailPendingNote`, the plan's decision 17 option
-  "show the pending address on the profile"); it survives a reload
+  address waiting and asks the seller to check their email
+  (`profile.emailPendingNote`, wording Jussi's; the plan's decision 17 option
+  "show the pending address on the profile"), in red at the field-error style
+  `Input.vue` uses (`text-red-500 text-sm leading-[16px] mt-1.5`, Jussi's call:
+  the address is not in use until confirmed); it survives a reload
   (`store.account.pendingEmail`). Saving another address replaces it. The
   confirmation email is a proto-only inbox toast (`#kc-toast`, hinta-arvio's
   pattern, shown in test mode too); "Avaa linkki" applies the address, moves
