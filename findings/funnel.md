@@ -155,3 +155,12 @@ editing an ad before review (PR 2546).
 - **Found:** 2026-09, transcribing card badges
 - **Evidence:** Untranslated literal 'Published'. Unreachable: the only path to it resolves within one state-machine step and never paints.
 - **Last checked:** prod dump 2026-11-05, still present
+
+### FUN-21 · A seller in review can't correct a wrong phone number before the call
+- **Status:** Open · **Type:** Opportunity
+- **Where:** Edit before review (PR 2546), contact step; the advisor's review call
+- **Found:** 2026-11-04, a developer's question before merging PR 2546
+- **Evidence:** PR 2546 locks name, phone, email and marketing permission during an edit (the design spec's open question, settled by locking). Opening the phone is not a small change: booking and the Reviewable Drafts count group a seller's in-review ads by the draft's phone number, so a changed number would split them into separate bookings and calls, and for a logged-in seller the contact step also rewrites the account's name and phone (FUN-11). Workarounds today: a logged-in seller can change the account phone in "Muokkaa profiilia", which is the number the advisor's call log shows (the draft form in Filament still shows the draft's number); an unverified seller can change their email on the waiting screen. A guest who has not verified has no way to fix a wrong phone. Email is the account's identity (the account is found by email at verification, and name and phone are copied from the draft then), so it stays locked regardless.
+- **Last checked:** prod dump 2026-11-02 (PR 2546 not in it yet)
+- **Next step:** If it comes up, open name and phone only, and decide how booking should treat ads whose number changed.
+- **Touches:** Seller edits before review, FUN-11, back office booking
