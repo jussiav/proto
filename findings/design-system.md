@@ -47,3 +47,12 @@ dealership sides. Before proposing a change here, follow the
 - **Found:** 2026-10-16, after the card moved to `AButton`
 - **Evidence:** The spec stubs `UiButton`, which the component no longer uses.
 - **Last checked:** prod dump 2026-11-11, still present
+
+### DS-07 · Two switch components, neither ready for a long label or a keyboard
+- **Status:** Open · **Type:** Accessibility · **Severity:** Low
+- **Where:** Dealer side: the car pickup switch in the negotiation form (`elements/SwitchRow.vue`) and the email-notification switch for saved searches (`partials/ToggleSwitch.vue`)
+- **Found:** 2026-11-11, choosing a switch for the Klaviyo consent setting on the seller's profile page
+- **Evidence:** `SwitchRow` puts a `role="switch"` button inside a `role="button"` row, so a screen reader meets two controls for one setting, and the switch has no accessible name of its own. Its row has no gap and the switch can shrink: a long label squeezes it from 48px to 38px. Its `disabled` prop is typed `Number`. `ToggleSwitch` is a clickable `div` with a hidden checkbox: no switch role, no keyboard use, and its colours (`#2196F3`, `#ccc`) are not AutoVex tokens. Neither lives in `resources/assets/app/`.
+- **Last checked:** prod dump 2026-11-11, still present
+- **Next step:** One switch atom in `@app` that both dealer surfaces and the profile page use, with a name, keyboard support, a gap and a fixed size.
+- **Touches:** Klaviyo consent (profile page), design system

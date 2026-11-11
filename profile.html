@@ -62,6 +62,16 @@
     .phone-flag { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 15px; font-size: 16px; line-height: 1; }
     html[data-kc-arm="v1"] #marketing-control,
     html:not([data-kc-arm="v1"]) .kc-v1 { display: none !important; }
+    /* SwitchRow's state classes, hand-written because they change after first
+       paint: row lime-100 / lime-500 when on (highlightWhenOn, its default),
+       track blue-600 on, slate-400 off, slate-300 disabled, knob 4px → 20px. */
+    .kc-row { background: #fff; border-color: #E2E8F0; cursor: pointer; }
+    .kc-row.is-on { background: #ECFCCB; border-color: #84CC16; }
+    .kc-track { background: #94A3B8; cursor: pointer; }
+    .kc-track[aria-checked="true"] { background: #0B6DFF; }
+    .kc-track:disabled { background: #CBD5E1; cursor: not-allowed; opacity: .9; }
+    .kc-track .kc-knob { transform: translateX(4px); }
+    .kc-track[aria-checked="true"] .kc-knob { transform: translateX(20px); }
     /* Proto-only stand-in for the seller's inbox, as on hinta-arvio.html. */
     #kc-toast { position: fixed; bottom: 24px; right: 24px; z-index: 8000; width: 320px; max-width: calc(100vw - 32px); background: rgba(255,255,255,.97); border-radius: 16px; box-shadow: 0 16px 56px rgba(0,0,0,.20), 0 4px 16px rgba(0,0,0,.10), 0 0 0 1.5px rgba(11,109,255,.12); padding: 14px 14px 14px 16px; display: none; flex-direction: column; gap: 6px; font-family: 'DM Sans', sans-serif; }
     #kc-toast.is-on { display: flex; }
@@ -151,14 +161,24 @@
       <hr class="my-6 border-gray-100">
 
       <!-- Klaviyo consent v1: consent lives in Klaviyo only, so it leaves the
-           details form and saves on its own. The heading and button-less shape
-           follow UpdatePassword's section; the checkbox is the same CheckBox. -->
+           details form and saves on its own, the moment it is switched. The
+           heading follows UpdatePassword's section. The control is the dealer
+           negotiation form's SwitchRow, with no icon; a checkbox would ask for
+           a save button. SwitchRow has no gap and lets the switch shrink, which
+           a short dealer label never shows: this long label squeezed the
+           switch from 48px to 38px, so the row adds gap-4 and the switch
+           shrink-0. -->
       <section id="kc-section" class="kc-v1" aria-labelledby="kc-title">
         <h2 id="kc-title" class="text-2xl font-bold text-center my-6" data-i18n="profile.consentTitle">Markkinointiviestit</h2>
-        <label id="kc-field" class="flex font-medium font-body" style="display:none">
-          <input id="kc-marketing" type="checkbox" class="flex-shrink-0 flex-grow-0" data-testid="marketing-permission-checkbox" />
-          <span class="inline-block ml-2 text-base leading-[21px]" data-i18n-html="profile.marketing">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span>
-        </label>
+        <div id="kc-field" class="kc-row flex items-center justify-between gap-4 rounded-md border px-4 py-1.5 transition select-none" role="button" tabindex="0" style="display:none">
+          <div class="flex items-center gap-2 text-gray-900">
+            <span id="kc-label" class="text-base font-medium" data-i18n-html="profile.marketing">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span>
+          </div>
+          <button id="kc-switch" type="button" role="switch" aria-checked="false" aria-labelledby="kc-label" data-testid="marketing-permission-switch"
+            class="kc-track relative inline-flex shrink-0 h-6 w-12 items-center rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-200">
+            <span class="kc-knob inline-block h-5 w-6 transform rounded-full bg-white shadow transition"></span>
+          </button>
+        </div>
         <p id="kc-status" class="text-sm text-slate-700" aria-live="polite"></p>
       </section>
       <hr class="kc-v1 my-6 border-gray-100">
@@ -265,11 +285,15 @@
        Klaviyo is the only store of marketing consent, so the page reads the
        person's subscription from Klaviyo when it opens and saves a change
        straight to Klaviyo's subscribe / unsubscribe. Klaviyo's three states
-       collapse to one box: ticked only when subscribed. Single opt-in is
+       collapse to one switch: on only when subscribed. Single opt-in is
        assumed; double opt-in would add a "waiting for confirmation" state. */
     var KC_V1 = document.documentElement.dataset.kcArm === 'v1';
     var KC_MS = 700;
-    var kcCb = el('kc-marketing');
+    var kcSwitch = el('kc-switch'), kcRow = el('kc-field');
+    function setSwitch(on) {
+      kcSwitch.setAttribute('aria-checked', on ? 'true' : 'false');
+      kcRow.classList.toggle('is-on', on);
+    }
     function klaviyo() {
       var s = getStore();
       if (!s.klaviyo) {
@@ -293,7 +317,7 @@
       status.textContent = kcState === 'loading' ? t('profile.consentLoading')
         : kcState === 'unavailable' ? t('profile.consentUnavailable') : '';
       status.style.display = status.textContent ? 'block' : 'none';
-      if (kcState === 'ready') kcCb.checked = klaviyo().status === 'subscribed';
+      if (kcState === 'ready') setSwitch(klaviyo().status === 'subscribed');
     }
     function readConsent() {
       kcState = 'loading';
@@ -303,20 +327,32 @@
         renderConsent();
       }, KC_MS);
     }
-    kcCb.addEventListener('change', function () {
-      var wanted = kcCb.checked;
-      kcCb.disabled = true;
+    /* SwitchRow toggles from the whole row (click, Enter, Space) and from the
+       switch itself. The switch moves at once; while Klaviyo saves it is
+       disabled, and a failed save moves it back. */
+    function toggleConsent() {
+      if (kcSwitch.disabled) return;
+      var wanted = kcSwitch.getAttribute('aria-checked') !== 'true';
+      setSwitch(wanted);
+      kcSwitch.disabled = true;
       setTimeout(function () {
-        kcCb.disabled = false;
+        kcSwitch.disabled = false;
         if (klaviyo().unavailable) {
-          kcCb.checked = !wanted;
+          setSwitch(!wanted);
           window.protoToastr(t('profile.consentSaveFailed'), 'error');
           return;
         }
         setKlaviyo({ status: wanted ? 'subscribed' : 'unsubscribed' });
         window.protoToastr(t('profile.consentSaved'), 'success');
       }, KC_MS);
+    }
+    kcRow.addEventListener('click', toggleConsent);
+    kcRow.addEventListener('keydown', function (e) {
+      if (e.target !== kcRow || (e.key !== 'Enter' && e.key !== ' ')) return;
+      e.preventDefault();
+      toggleConsent();
     });
+    kcSwitch.addEventListener('click', function (e) { e.stopPropagation(); toggleConsent(); });
 
     /* A new email waits for its confirmation link (the developers' branch).
        The field keeps showing the address in use; the line under it names

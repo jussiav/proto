@@ -945,7 +945,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 | Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
-| Klaviyo consent | **Suggestion to the developers** (2026-11-11) — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent in its own section, read from and saved to Klaviyo; the email field keeps the address in use and a line names the one waiting. Copy is the developers' draft (the after-save message) and Claude's (the rest) | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
+| Klaviyo consent | **Suggestion to the developers** (2026-11-11) — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent as a switch (prod's dealer-side switch row) in its own section, read from and saved to Klaviyo at once; the email field keeps the address in use and a line names the one waiting. Copy is the developers' draft (the after-save message) and Claude's (the rest) | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
 
 **Completed initiatives:**
 
@@ -3798,15 +3798,27 @@ profile page**).
   - moved out of the details form into its own section, "Markkinointiviestit"
     (`profile.consentTitle`), between the details and the password, shaped like
     the password section (h2 `text-2xl font-bold text-center my-6`, hr
-    `my-6 border-gray-100`), with prod's own checkbox and label;
-  - read from Klaviyo when the page opens ("Haetaan asetusta…"), ticked only
-    when subscribed (Klaviyo's unsubscribed and never-subscribed both show
-    unticked);
-  - saved straight to Klaviyo on change, the box disabled while it saves, then
-    toastr success "Asetus tallennettu." or, on failure, the box reverts and an
-    error toast says so;
-  - when Klaviyo does not answer the read, the box is hidden and one line says
-    the setting could not be fetched. Showing an unticked box there would claim
+    `my-6 border-gray-100`), with prod's checkbox label;
+  - **a switch, not a checkbox** (Jussi, 2026-11-11): a switch takes effect at
+    once, a checkbox reads as something a save button confirms, and the
+    section has none. It is prod's `elements/SwitchRow.vue`, the dealer
+    negotiation form's car-pickup switch, transcribed with no icon (its
+    default is `car`; Jussi picks icons) and `highlightWhenOn` at its default
+    (lime row when on). The other prod switch, `partials/ToggleSwitch.vue`
+    (dealer saved-search notifications), was passed over: no switch role, no
+    keyboard, off-token colours (findings DS-07). **Two additions** the long
+    label needs, flagged on the spec: `gap-4` on the row and `shrink-0` on
+    the switch, without which it squeezed from 48px to 38px. State classes are
+    hand-written (`.kc-row`, `.kc-track`, `.kc-knob`), since they change after
+    first paint;
+  - read from Klaviyo when the page opens ("Haetaan asetusta…"), on only when
+    subscribed (Klaviyo's unsubscribed and never-subscribed both show off);
+  - saved straight to Klaviyo the moment it is switched (row click, Enter,
+    Space, or the switch), the switch moving at once and disabled while it
+    saves, then toastr success "Asetus tallennettu." or, on failure, the switch
+    moves back and an error toast says so;
+  - when Klaviyo does not answer the read, the switch is hidden and one line
+    says the setting could not be fetched. A switch shown off there would claim
     the person is not subscribed.
   - "Päivitä" no longer sends `marketing_permission`.
   - **Single opt-in is assumed.** With double opt-in, ticking only sends a
