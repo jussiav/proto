@@ -945,7 +945,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 | Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
-| Klaviyo consent | **Suggestion to the developers** (2026-11-11) — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent as a switch (prod's dealer-side car-pickup switch, exactly, without its outlined row) in its own section, read from and saved to Klaviyo at once; the email field keeps the address in use and a line names the one waiting. Copy is the developers' draft (the after-save message) and Claude's (the rest) | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
+| Klaviyo consent | **Proposal sent to the team** (2026-11-11), ready to build if they agree; **copy approved by UX** (Jussi, 2026-11-11), ships as on the spec — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent as a switch (prod's dealer-side car-pickup switch, exactly, without its outlined row) in its own section, read from and saved to Klaviyo at once; the email field keeps the address in use and a line names the one waiting. | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
 
 **Completed initiatives:**
 
@@ -3780,7 +3780,7 @@ advisors; the page never says so. The initiative names that help
 - **Related:** findings DEC-09 (nothing says who buys the car). Timo (PM) has
   his own local prototype of the idea; not used as the base.
 
-## Klaviyo consent — `v1` (suggestion)
+## Klaviyo consent — `v1` (proposal sent, copy approved)
 
 Started 2026-11-11 from the developers' plan doc ("Klaviyo Consent and Data
 Retention Plan", by Esa, who is the same person as the doc's byline Ehsan) and
@@ -3861,9 +3861,15 @@ profile page**).
   transactional emails (offers, negotiations) untouched; that is being
   confirmed with the developers, since Jaakko's answer was that no Klaviyo
   flow is marked transactional.
-- **Copy:** `profile.consent*`, `profile.email*` in `translations.js`, Claude's
-  draft except `emailPendingToast` (Esa's) and `emailPendingNote` (Jussi's
-  wording); EN is a working translation.
+- **Copy:** `profile.consent*`, `profile.email*` in `translations.js`.
+  **Final, approved by UX (Jussi) on 2026-11-11**, with the confirmation
+  email's texts on the spec; it ships as written and the spec says so in
+  every status chip and above the strings table, so a developer's Claude does
+  not ask for copy confirmation. Origins: `emailPendingToast` and the email are
+  the developers' wording (the email body reworded by design),
+  `emailPendingNote` Jussi's, the rest Claude's. EN is a reading aid. Not yet
+  written and not covered by the approval: the expired or used link page and
+  any notice to the old address (open question 4).
 - **Spec page** `design-specs/klaviyo-consent.html` (2026-11-11), written so the
   developers miss no status message: one section per change (the setting, the
   email change, the confirmation email with the suggested body tweak as a

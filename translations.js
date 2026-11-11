@@ -54,8 +54,9 @@ window.TRANSLATIONS = {
       newPassword:          'Uusi salasana',
       passwordConfirmation: 'Salasana uudelleen',
       save:                 'Tallenna',
-      /* Klaviyo consent v1. emailPendingToast is the developers' draft
-         (Esa, Slack 2026-11-11); the rest is Claude's draft. */
+      /* Klaviyo consent v1. Final, approved by UX (Jussi) 2026-11-11, as on
+         design-specs/klaviyo-consent.html. emailPendingToast is the
+         developers' wording. */
       consentTitle:         'Markkinointiviestit',
       consentLoading:       'Haetaan asetusta…',
       consentUnavailable:   'Asetusta ei juuri nyt saatu haettua. Yritä hetken päästä uudelleen.',
