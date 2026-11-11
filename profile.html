@@ -62,14 +62,16 @@
     .phone-flag { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 15px; font-size: 16px; line-height: 1; }
     html[data-kc-arm="v1"] #marketing-control,
     html:not([data-kc-arm="v1"]) .kc-v1 { display: none !important; }
-    /* SwitchRow's state classes, hand-written because they change after first
-       paint: row lime-100 / lime-500 when on (highlightWhenOn, its default),
-       track blue-600 on, slate-400 off, slate-300 disabled, knob 4px → 20px. */
-    .kc-row { background: #fff; border-color: #E2E8F0; cursor: pointer; }
-    .kc-row.is-on { background: #ECFCCB; border-color: #84CC16; }
-    .kc-track { background: #94A3B8; cursor: pointer; }
+    /* SwitchRow with highlightWhenOn off, recoloured to the brand kit only
+       (design-library/tokens.css): white row with a blue-200 border, track
+       AutoVex Blue on and blue-200 off, white knob. Prod's slate greys are not
+       in the kit. While saving the track keeps its colour: a pale "disabled"
+       track would read as off. Hand-written because the state changes after
+       first paint; knob 4px → 20px. */
+    .kc-row { background: #fff; border-color: #B9E0FF; cursor: pointer; }
+    .kc-track { background: #B9E0FF; cursor: pointer; }
     .kc-track[aria-checked="true"] { background: #0B6DFF; }
-    .kc-track:disabled { background: #CBD5E1; cursor: not-allowed; opacity: .9; }
+    .kc-track:disabled { cursor: not-allowed; }
     .kc-track .kc-knob { transform: translateX(4px); }
     .kc-track[aria-checked="true"] .kc-knob { transform: translateX(20px); }
     /* Proto-only stand-in for the seller's inbox, as on hinta-arvio.html. */
@@ -163,15 +165,15 @@
       <!-- Klaviyo consent v1: consent lives in Klaviyo only, so it leaves the
            details form and saves on its own, the moment it is switched. The
            heading follows UpdatePassword's section. The control is the dealer
-           negotiation form's SwitchRow, with no icon; a checkbox would ask for
-           a save button. SwitchRow has no gap and lets the switch shrink, which
+           negotiation form's SwitchRow, with no icon and no lime highlight; a
+           checkbox would ask for a save button. SwitchRow has no gap and lets the switch shrink, which
            a short dealer label never shows: this long label squeezed the
            switch from 48px to 38px, so the row adds gap-4 and the switch
            shrink-0. -->
       <section id="kc-section" class="kc-v1" aria-labelledby="kc-title">
         <h2 id="kc-title" class="text-2xl font-bold text-center my-6" data-i18n="profile.consentTitle">Markkinointiviestit</h2>
         <div id="kc-field" class="kc-row flex items-center justify-between gap-4 rounded-md border px-4 py-1.5 transition select-none" role="button" tabindex="0" style="display:none">
-          <div class="flex items-center gap-2 text-gray-900">
+          <div class="flex items-center gap-2 text-black">
             <span id="kc-label" class="text-base font-medium" data-i18n-html="profile.marketing">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span>
           </div>
           <button id="kc-switch" type="button" role="switch" aria-checked="false" aria-labelledby="kc-label" data-testid="marketing-permission-switch"
@@ -292,7 +294,6 @@
     var kcSwitch = el('kc-switch'), kcRow = el('kc-field');
     function setSwitch(on) {
       kcSwitch.setAttribute('aria-checked', on ? 'true' : 'false');
-      kcRow.classList.toggle('is-on', on);
     }
     function klaviyo() {
       var s = getStore();

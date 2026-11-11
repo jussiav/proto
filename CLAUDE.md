@@ -3803,8 +3803,14 @@ profile page**).
     once, a checkbox reads as something a save button confirms, and the
     section has none. It is prod's `elements/SwitchRow.vue`, the dealer
     negotiation form's car-pickup switch, transcribed with no icon (its
-    default is `car`; Jussi picks icons) and `highlightWhenOn` at its default
-    (lime row when on). The other prod switch, `partials/ToggleSwitch.vue`
+    default is `car`; Jussi picks icons) and `highlightWhenOn` off (no lime
+    row when on, Jussi). **Brand colours only** (Jussi): prod's slate greys
+    are not in the kit (`design-library/tokens.css` BRAND COLORS + the blue
+    scale), so the row is white with a blue-200 border, the label black, the
+    track AutoVex Blue on and blue-200 off, and the track keeps its colour
+    while saving, since prod's pale disabled grey would read as off. The
+    dealer's switch keeps slate, so the two differ until one switch serves
+    both (DS-07). The other prod switch, `partials/ToggleSwitch.vue`
     (dealer saved-search notifications), was passed over: no switch role, no
     keyboard, off-token colours (findings DS-07). **Two additions** the long
     label needs, flagged on the spec: `gap-4` on the row and `shrink-0` on
