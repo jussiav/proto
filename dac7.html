@@ -55,7 +55,7 @@
 <body class="font-body bg-blue-50 min-h-screen">
 
   <!-- Fixed white nav -->
-  <div id="site-nav"></div>
+  <div id="site-nav" data-auth="required"></div>
   <script src="site-nav.js"></script>
 
   <main class="px-5 sm:px-8 py-14">
@@ -272,10 +272,7 @@
 
       var s = getStore();
 
-      // Update nav label with user's first name
-      var raw = ((s.contact || {}).kokoNimi || '').trim();
-      var firstName = raw ? raw.split(' ')[0] : null;
-      if (firstName) { document.getElementById('nav-login-label').textContent = firstName; }
+      if (window.siteNav) window.siteNav.sync();
 
       // Render car from localStorage
       var merkki = (s.details || {}).merkki || 'Toyota';

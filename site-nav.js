@@ -16,6 +16,21 @@
  *
  * Funnel pages (details/price/services/photos/contact/success) have no nav —
  * they simply omit the #site-nav element and this script.
+ *
+ * Account menu (prod MProfileMenu + MProfileSubMenu): logged out, the account
+ * icon + "Kirjaudu"; logged in, the icon + first name opens a popover from lg
+ * (992px) with the consumer role's three items from config/user-menu.php.
+ * Below lg prod shows a hamburger instead, and the CTA and the account menu
+ * live in a drawer: Header.astro's drawer on data-menu="marketing" pages,
+ * ONavigationBar's on the rest. One DOM tree, as prod's: the drawer is
+ * `lg:contents` on desktop, so its children sit in the nav row.
+ *
+ * data-auth="required" marks a page prod serves only to a logged-in seller
+ * (offers, decision, DAC7, profile): the account menu shows whatever
+ * store.loggedIn says, since those pages set or clear it for funnel reasons.
+ *
+ * window.siteNav.sync() re-reads the store and redraws the account menu;
+ * window.siteNav.setName(name) changes the shown first name only.
  */
 (function () {
   var mount = document.getElementById('site-nav');
@@ -42,6 +57,13 @@
      The CTA and profile link are NOT gated — prod's default #actions slot
      renders MMenuCTA + MProfileMenu on every one of those pages. */
   var showMenu = mount.dataset.menu === 'marketing';
+  var authRequired = mount.dataset.auth === 'required';
+
+  function T(key, fallback) {
+    if (typeof window.t !== 'function') return fallback;
+    var v = window.t(key);
+    return v && v !== key ? v : fallback;
+  }
 
   /* Prod order and labels (live autovex.fi). Only Tuki has a page in the proto;
      the rest keep href="#" rather than inventing routes. */
@@ -115,6 +137,61 @@
     document.head.appendChild(pgCss);
   }
 
+  /* Icons from prod's sprite (resources/assets/icons), path data verbatim.
+     account-filled is MProfileMenu's own icon at size 30px; x-bold closes the
+     drawer at UiIcon's default 1em. */
+  var ICON_ACCOUNT =
+    '<svg class="fill-current flex-shrink-0" width="30" height="30" viewBox="0 -960 960 960" aria-hidden="true">' +
+      '<path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z"/>' +
+    '</svg>';
+  var ICON_X =
+    '<svg width="1em" height="1em" viewBox="0 0 17 17" fill="currentColor" aria-hidden="true">' +
+      '<path d="M13.845 12.7175C13.9947 12.8672 14.0788 13.0702 14.0788 13.2819C14.0788 13.4936 13.9947 13.6967 13.845 13.8464C13.6953 13.9961 13.4923 14.0802 13.2806 14.0802C13.0688 14.0802 12.8658 13.9961 12.7161 13.8464L8.49997 9.62893L4.28251 13.8451C4.13281 13.9948 3.92977 14.0789 3.71806 14.0789C3.50635 14.0789 3.30331 13.9948 3.1536 13.8451C3.0039 13.6954 2.9198 13.4923 2.9198 13.2806C2.9198 13.0689 3.0039 12.8659 3.1536 12.7162L7.37106 8.50002L3.15493 4.28256C3.00523 4.13286 2.92113 3.92982 2.92113 3.71811C2.92113 3.5064 3.00523 3.30336 3.15493 3.15366C3.30463 3.00396 3.50767 2.91985 3.71939 2.91985C3.9311 2.91985 4.13414 3.00396 4.28384 3.15366L8.49997 7.37112L12.7174 3.15299C12.8671 3.00329 13.0702 2.91919 13.2819 2.91919C13.4936 2.91919 13.6966 3.00329 13.8463 3.15299C13.996 3.3027 14.0801 3.50574 14.0801 3.71745C14.0801 3.92916 13.996 4.1322 13.8463 4.2819L9.62888 8.50002L13.845 12.7175Z"/>' +
+    '</svg>';
+
+  /* AButton variant="nav-cta" size="lg", w-full in the drawer. Classes as the
+     live nav renders them (MMenuCTA + Header.astro's buttonClass). */
+  var CTA_CLASSES = 'inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 px-8 h-14 text-base leading-tight rounded-lg relative whitespace-nowrap font-dm w-full' +
+    ' shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' +
+    ' bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white' +
+    ' lg:bg-white lg:text-blue-600 lg:hover:bg-blue-50 lg:active:bg-blue-100';
+  var CTA_HTML = '<a id="nav-cta" href="index.html" class="' + CTA_CLASSES + '" data-i18n="nav.startAuction">' +
+    T('nav.startAuction', 'Aloita kilpailutus') + '</a>';
+
+  var CLOSE_BTN =
+    '<button id="drawer-menu-close" type="button" aria-controls="drawer-menu"' +
+    ' class="bg-transparent rounded-lg hover:bg-gray-100 w-9 h-9 flex items-center justify-center lg:hidden">' +
+      '<span class="sr-only" data-i18n="nav.close">' + T('nav.close', 'Sulje') + '</span>' + ICON_X +
+    '</button>';
+
+  /* The two drawers differ in prod, so each is transcribed from its own file.
+     The marketing close row carries lg:hidden where prod's has none: prod's
+     empty row takes no width, but this nav's gap-4 would add 16px for it. */
+  var ACTIONS_UL_CLASSES = 'flex flex-col lg:flex-row grow-0 gap-1 items-center py-4 lg:p-0';
+  var DRAWER_INNER = showMenu
+    ? '<div class="flex justify-end lg:hidden">' + CLOSE_BTN + '</div>' +
+      '<ul id="nav-links" class="flex-1 flex flex-col lg:flex-row items-center lg:h-full lg:justify-start lg:ml-16 font-dm text-base list-none">' +
+        MENU_HTML +
+      '</ul>' +
+      '<ul class="' + ACTIONS_UL_CLASSES + '">' +
+        '<div class="w-full lg:w-auto order-2 lg:order-1">' + CTA_HTML + '</div>' +
+        '<div id="nav-profile-slot" class="flex-initial w-full lg:w-auto order-1 lg:order-2 text-black lg:text-white"></div>' +
+      '</ul>'
+    : '<div class="flex relative flex-col justify-between min-h-full lg:contents">' +
+        '<a href="index.html" class="lg:hidden absolute top-4 left-4">' +
+          '<span class="sr-only">AutoVex</span>' +
+          '<img src="assets/logo-fi.svg" width="108" height="22" alt="AutoVex" class="-mt-1 block" />' +
+        '</a>' +
+        '<div class="absolute top-0 right-0 z-10 lg:hidden">' + CLOSE_BTN + '</div>' +
+        '<div class="grow p-4 pt-12 lg:pt-0 lg:contents"></div>' +
+        '<div class="grow-0 flex flex-col gap-y-2 p-4 lg:p-0 lg:contents">' +
+          '<ul class="' + ACTIONS_UL_CLASSES + '">' +
+            CTA_HTML.replace('class="', 'class="order-2 lg:order-1 lg:w-auto ') +
+            '<div id="nav-profile-slot" class="flex-initial w-full lg:w-auto order-1 lg:order-2"></div>' +
+          '</ul>' +
+        '</div>' +
+      '</div>';
+
   var NAV_HTML =
     /* Spacer — prod renders this as a sibling before the fixed header so page
        content starts below the nav. bg matches the nav for the blue variant. */
@@ -131,52 +208,259 @@
             ' class="w-[107px] h-[22px] flex-shrink-0 object-contain block" style="filter:brightness(0) invert(1);" />' +
           '</a>' +
         '</div>' +
-        /* prod ul: flex-1 ... lg:justify-start lg:ml-16, no gap class.
-           Hidden below lg because prod's mobile drawer is a separate follow-up. */
-        (showMenu
-          ? '<ul id="nav-links" class="hidden lg:flex flex-1 lg:flex-row items-center lg:h-full lg:justify-start lg:ml-16 font-dm text-base list-none">' +
-              MENU_HTML +
-            '</ul>'
-          : '') +
-        '<div class="flex-shrink-0 flex items-center gap-3.5 justify-end">' +
-          /* CTA classes verbatim from the live nav (MMenuCTA + AButton with
-             Header.astro's buttonClass): white on desktop, blue below lg. */
-          '<a id="nav-cta" href="index.html"' +
-          ' class="hidden lg:inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 px-8 h-14 text-base leading-tight rounded-lg relative whitespace-nowrap font-dm' +
-          ' shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)]' +
-          ' bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white' +
-          ' lg:bg-white lg:text-blue-600 lg:hover:bg-blue-50 lg:active:bg-blue-100"' +
-          ' data-i18n="nav.startAuction">Aloita kilpailutus</a>' +
-          '<a id="nav-login" href="#" class="flex flex-col items-center gap-0.5 px-1.5">' +
-            '<img id="nav-login-icon" src="assets/nav-user-white.svg" alt="" class="w-6 h-6" />' +
-            '<span id="nav-login-label" class="font-dm font-bold text-[11px] leading-[15px] text-white whitespace-nowrap" data-i18n="nav.login">Kirjaudu</span>' +
-          '</a>' +
+        /* AHamburgerMenu color="white" */
+        '<button id="drawer-menu-trigger" type="button" class="lg:hidden flex flex-col items-stretch justify-evenly h-12 w-12 p-3 text-white"' +
+        ' aria-controls="drawer-menu" aria-expanded="false" aria-label="' + T('nav.openMenu', 'Avaa valikko') + '" data-i18n-aria="nav.openMenu">' +
+          '<span class="h-0.5 bg-current rounded"></span>' +
+          '<span class="h-0.5 bg-current rounded"></span>' +
+          '<span class="h-0.5 bg-current rounded"></span>' +
+        '</button>' +
+        '<div id="drawer-menu" tabindex="-1" aria-hidden="true"' +
+        ' class="nav-drawer ' + (showMenu ? 'nav-drawer--marketing' : 'nav-drawer--app') + ' text-base text-black lg:contents">' +
+          DRAWER_INNER +
         '</div>' +
       '</nav>' +
     '</header>';
 
   mount.innerHTML = NAV_HTML;
 
-  /* ── Login state — first name when LOGGED IN ──
-     Gated on s.loggedIn, not merely on a stored name: in prod the app only
-     knows the email is verified because the seller arrived via the email link,
-     which logs them in. A filled-in contact step alone is not a session, so a
-     mid-funnel seller must still see "Kirjaudu".
+  /* Hand-written, not utilities: the drawer's off-canvas state and the
+     popover's display must hold on first paint and after every redraw, and
+     the Play CDN generates classes a tick after JS-built markup lands. */
+  var navCss = document.createElement('style');
+  navCss.textContent =
+    '@media (max-width:991.98px){' +
+      '#drawer-menu{position:fixed;top:0;bottom:0;right:0;max-width:100%;overflow-y:auto;background:#fff;transform:translateX(100%);transition:transform 150ms cubic-bezier(.4,0,.2,1)}' +
+      '#drawer-menu.nav-drawer--app{width:20rem;z-index:50}' +
+      '#drawer-menu.nav-drawer--marketing{width:24rem;z-index:40;display:flex;flex-direction:column;padding:.5rem}' +
+      '#drawer-menu.is-open{transform:none}' +
+    '}' +
+    '@media (min-width:992px){#drawer-menu{display:contents}#drawer-menu-trigger{display:none}}' +
+    '.nav-drawer-backdrop{position:fixed;inset:0;z-index:30;background:rgb(17 24 39 / .5)}' +
+    '#nav-profile-trigger{display:none}' +
+    '#profile-submenu{display:contents}' +
+    '#profile-submenu>ul{z-index:50;line-height:30px}' +
+    '@media (min-width:992px){' +
+      '#nav-profile-trigger{display:flex}' +
+      '#profile-submenu{display:none;position:absolute;top:0;left:0;margin:0}' +
+      '#nav-profile.is-open #profile-submenu{display:block}' +
+    '}';
+  document.head.appendChild(navCss);
 
-     Registered as a DOMContentLoaded listener so it fires AFTER i18n.js's
-     listener (i18n registers in <head>, we register here in body). This
-     guarantees our name overwrites the "Kirjaudu" i18n just applied. */
-  try {
-    var s = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
-    var raw = s.loggedIn ? ((s.contact || {}).kokoNimi || '').trim() : '';
-    var name = raw ? raw.split(' ')[0] : null;
-    if (name) {
-      document.addEventListener('DOMContentLoaded', function () {
-        var label = document.getElementById('nav-login-label');
-        if (label) label.textContent = name;
+  /* ── Account menu ── */
+  function readStore() {
+    try { return JSON.parse(localStorage.getItem('autovex_funnel') || '{}'); } catch (e) { return {}; }
+  }
+
+  /* prod's acronym: the name up to its first space. */
+  function firstName(name) {
+    return String(name || '').replace(/ .*/, '');
+  }
+
+  function session() {
+    var s = readStore();
+    return {
+      loggedIn: authRequired || !!s.loggedIn,
+      acronym: firstName((s.contact || {}).kokoNimi)
+    };
+  }
+
+  function esc(str) {
+    return String(str).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  /* MProfileMenu's hover for white text (textColor="lg:text-white"): a box
+     below lg, where the menu is on the white drawer, dimming from lg. */
+  var HOVER = 'hover:bg-blue-100 lg:hover:bg-transparent lg:hover:opacity-90';
+
+  /* MProfileSubMenu's ALink and UiButton. The logout string is UiButton's
+     ghost/lg cva merged with the class prop the way its useClassMerging does:
+     the prop's px-4 py-3 text-black hover:bg-gray-100 flex replace the cva's
+     own, and h-14 stays. */
+  var ITEM_LINK = 'px-4 py-3 rounded-lg hover:bg-gray-100 flex items-center justify-center lg:justify-start gap-2 cursor-pointer';
+  var ITEM_LOGOUT = 'flex justify-center lg:justify-start items-center transition cursor-pointer outline-offset-2 py-3 px-4 text-base leading-tight rounded-lg relative border-none h-14 bg-transparent hover:bg-gray-100 active:bg-blue-100 text-black active:text-blue-500 gap-2';
+
+  function profileHtml(sess) {
+    if (!sess.loggedIn) {
+      /* prod's login path; the proto has no login page. */
+      return '<div class="w-full">' +
+        '<a id="nav-login" href="#" class="group rounded-lg block min-w-[50px] w-full lg:w-auto ' + HOVER + '">' +
+          '<div class="flex flex-row lg:flex-col gap-x-2 items-center justify-center px-4 py-3 min-w-[50px] lg:text-white">' +
+            ICON_ACCOUNT +
+            '<span id="nav-login-label" class="text-md lg:text-xs font-semibold group-hover:underline" data-i18n="nav.login">' +
+              T('nav.login', 'Kirjaudu') + '</span>' +
+          '</div>' +
+        '</a>' +
+      '</div>';
+    }
+    var name = esc(sess.acronym);
+    return '<div class="w-full">' +
+      '<div id="nav-profile" class="w-full lg:w-auto">' +
+        '<button id="nav-profile-trigger" type="button" aria-expanded="false"' +
+        ' class="group hidden lg:flex flex-col items-center justify-center px-3 py-2 rounded-lg min-w-[50px] ' + HOVER + ' lg:text-white">' +
+          ICON_ACCOUNT +
+          '<span id="nav-login-label" class="text-xs font-semibold lg:text-white group-hover:underline">' + name + '</span>' +
+        '</button>' +
+        '<div id="profile-submenu" class="contents lg:block w-full lg:w-auto">' +
+          '<hr class="mb-3 w-full lg:hidden" />' +
+          '<ul class="flex flex-col flex-wrap w-full leading-[30px] z-[50] p-0 pb-4 lg:p-2 lg:shadow bg-white rounded-lg text-base text-center lg:text-left text-black">' +
+            '<li id="nav-profile-name" class="lg:hidden flex flex-col items-stretch relative px-4 py-2 text-xl text-black font-bold leading-normal">' + name + '</li>' +
+            '<li class="flex flex-col items-stretch relative">' +
+              '<a href="offers.html" class="' + ITEM_LINK + '" data-i18n="nav.offers">' + T('nav.offers', 'Omat tarjouspyynnöt') + '</a>' +
+            '</li>' +
+            '<li class="flex flex-col items-stretch relative">' +
+              '<a href="profile.html" class="' + ITEM_LINK + '" data-i18n="nav.editProfile">' + T('nav.editProfile', 'Muokkaa profiilia') + '</a>' +
+            '</li>' +
+            '<li class="flex flex-col items-stretch relative">' +
+              '<button id="nav-logout" type="button" class="' + ITEM_LOGOUT + '">' +
+                '<span class="inline-flex items-center justify-center" data-i18n="nav.logout">' + T('nav.logout', 'Kirjaudu ulos') + '</span>' +
+              '</button>' +
+            '</li>' +
+          '</ul>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  var header = document.getElementById('nav-bar');
+  var slot = document.getElementById('nav-profile-slot');
+
+  function subMenuOpen() {
+    var w = document.getElementById('nav-profile');
+    return !!(w && w.classList.contains('is-open'));
+  }
+
+  /* Popper (placement bottom, preventOverflow padding 8, as MProfileSubMenu
+     configures it): centred under the trigger, kept 8px inside the viewport,
+     translated rather than offset so the panel keeps its natural width. */
+  function placeSubMenu() {
+    var w = document.getElementById('nav-profile');
+    var panel = document.getElementById('profile-submenu');
+    if (!w || !panel || !subMenuOpen()) return;
+    var ref = w.getBoundingClientRect();
+    var box = header.getBoundingClientRect();
+    var width = panel.offsetWidth;
+    var vw = document.documentElement.clientWidth;
+    var x = ref.left + ref.width / 2 - width / 2;
+    x = Math.max(8, Math.min(x, vw - 8 - width));
+    panel.style.transform = 'translate(' + Math.round(x - box.left) + 'px,' + Math.round(ref.bottom - box.top) + 'px)';
+  }
+
+  function setSubMenu(open, refocus) {
+    var w = document.getElementById('nav-profile');
+    var trigger = document.getElementById('nav-profile-trigger');
+    if (!w || !trigger) return;
+    w.classList.toggle('is-open', open);
+    trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) trigger.setAttribute('aria-controls', 'profile-submenu');
+    else trigger.removeAttribute('aria-controls');
+    if (open) placeSubMenu();
+    if (!open && refocus) trigger.focus();
+  }
+
+  /* prod's logoutUser: the session ends and the browser goes to "/". */
+  function logout() {
+    var s = readStore();
+    delete s.loggedIn;
+    try { localStorage.setItem('autovex_funnel', JSON.stringify(s)); } catch (e) {}
+    window.location.href = 'index.html';
+  }
+
+  function bindProfile() {
+    var w = document.getElementById('nav-profile');
+    if (!w) return;
+    document.getElementById('nav-profile-trigger').addEventListener('click', function () {
+      setSubMenu(!subMenuOpen());
+    });
+    w.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && subMenuOpen()) setSubMenu(false, true);
+    });
+    document.getElementById('nav-logout').addEventListener('click', logout);
+  }
+
+  function sync() {
+    if (!slot) return;
+    slot.innerHTML = profileHtml(session());
+    bindProfile();
+  }
+
+  function setName(name) {
+    var label = document.getElementById('nav-login-label');
+    var item = document.getElementById('nav-profile-name');
+    if (!document.getElementById('nav-profile')) return;
+    var first = firstName(name);
+    if (label) label.textContent = first;
+    if (item) item.textContent = first;
+  }
+
+  sync();
+
+  /* onClickOutside, with the trigger's wrapper ignored. */
+  document.addEventListener('click', function (e) {
+    var w = document.getElementById('nav-profile');
+    if (w && subMenuOpen() && !w.contains(e.target)) setSubMenu(false);
+  });
+  window.addEventListener('resize', placeSubMenu);
+
+  /* Pages that set the session later in the parse (offers, decision) and
+     i18n.js's DOMContentLoaded pass both land before this redraw. */
+  document.addEventListener('DOMContentLoaded', sync);
+
+  window.siteNav = { sync: sync, setName: setName };
+
+  /* ── Drawer (Flowbite Drawer via RelativeBackdropDrawer) ──
+     placement right, backdrop appended to the header, body scroll locked
+     while open; Escape and a click on the backdrop close it. ONavigationBar
+     also closes it on any link click inside. */
+  (function () {
+    var drawer = document.getElementById('drawer-menu');
+    var trigger = document.getElementById('drawer-menu-trigger');
+    var closeBtn = document.getElementById('drawer-menu-close');
+    var backdrop = null;
+
+    function isOpen() { return drawer.classList.contains('is-open'); }
+
+    function show() {
+      drawer.classList.add('is-open');
+      drawer.removeAttribute('aria-hidden');
+      drawer.setAttribute('aria-modal', 'true');
+      drawer.setAttribute('role', 'dialog');
+      trigger.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+      backdrop = document.createElement('div');
+      backdrop.className = 'nav-drawer-backdrop';
+      backdrop.setAttribute('drawer-backdrop', '');
+      backdrop.addEventListener('click', hide);
+      header.appendChild(backdrop);
+    }
+
+    function hide() {
+      if (drawer.contains(document.activeElement)) document.activeElement.blur();
+      drawer.classList.remove('is-open');
+      drawer.setAttribute('aria-hidden', 'true');
+      drawer.removeAttribute('aria-modal');
+      drawer.removeAttribute('role');
+      trigger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+      if (backdrop) { backdrop.remove(); backdrop = null; }
+    }
+
+    trigger.addEventListener('click', function () { if (isOpen()) hide(); else show(); });
+    closeBtn.addEventListener('click', hide);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && isOpen()) hide();
+    });
+    if (!showMenu) {
+      drawer.addEventListener('click', function (e) {
+        if (e.target instanceof Element && e.target.closest('a')) hide();
       });
     }
-  } catch (e) {}
+    window.matchMedia('(min-width: 992px)').addEventListener('change', function (mq) {
+      if (mq.matches && isOpen()) hide();
+    });
+  }());
 
   /* ── Headroom scroll behaviour ──
      Port of headroom.js as prod configures it (offset 96): past the offset,

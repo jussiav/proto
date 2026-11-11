@@ -1515,16 +1515,11 @@
       }
     }
 
+    /* The account menu reads loggedIn: a filled contact step is not a
+       session. Prod only knows the email is verified because the seller came
+       back via the email link, which logs them in. */
     function syncNavLoginLabel() {
-      const store = getStore();
-      /* Gated on loggedIn, matching site-nav.js: a filled contact step is not a
-         session. Prod only knows the email is verified because the seller came
-         back via the email link, which logs them in. */
-      const raw = store.loggedIn ? ((store.contact || {}).kokoNimi || '').trim() : '';
-      const name = raw ? raw.split(' ')[0] : null;
-      const label = name || t('nav.login');
-      const navLabel = document.getElementById('nav-login-label');
-      if (navLabel) navLabel.textContent = label;
+      if (window.siteNav) window.siteNav.sync();
     }
 
     document.addEventListener('DOMContentLoaded', function() {

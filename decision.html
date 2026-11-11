@@ -429,7 +429,7 @@
 </head>
 <body class="font-body bg-blue-50 min-h-screen">
   <!-- Nav -->
-  <div id="site-nav"></div>
+  <div id="site-nav" data-auth="required"></div>
   <script src="site-nav.js"></script>
 
   <main class="max-w-[768px] mx-auto p-6 sm:py-14">
@@ -2925,15 +2925,7 @@
       var mainEl = document.getElementById('state-main');
       mainEl.classList.remove('hidden');
 
-      // Nav login state
-      (function () {
-        try {
-          var _s = JSON.parse(localStorage.getItem('autovex_funnel') || '{}');
-          var raw = ((_s.contact || {}).kokoNimi || '').trim();
-          var name = raw ? raw.split(' ')[0] : null;
-          if (name) { var el = document.getElementById('nav-login-label'); if (el) el.textContent = name; }
-        } catch (e) {}
-      })();
+      if (window.siteNav) window.siteNav.sync();
 
       // Car photo from localStorage (same key/logic as offers.html)
       var carPhoto = null;

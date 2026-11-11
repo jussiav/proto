@@ -1148,17 +1148,11 @@
           if (i === active) st.setAttribute('aria-current', 'step'); else st.removeAttribute('aria-current');
         });
       }
-      /* site-nav.js reads the login state once, before this page logs the
-         seller in, so the first name is written here after every change, as
-         index.html's syncNavLoginLabel does. */
+      /* The account menu is drawn before this page logs the seller in, so it
+         is redrawn after every change of session. */
       function syncNavLogin() {
-        var s = funnel();
-        var raw = s.loggedIn ? ((s.contact || {}).kokoNimi || '').trim() : '';
-        var label = el('nav-login-label');
-        if (label) label.textContent = raw ? raw.split(' ')[0] : t('nav.login');
+        if (window.siteNav) window.siteNav.sync();
       }
-      /* i18n.js rewrites the label to "Kirjaudu" on DOMContentLoaded, after this
-         script has run; this listener is registered later, so it runs last. */
       document.addEventListener('DOMContentLoaded', syncNavLogin);
       window.vtScenarioNow = function () {
         var s = document.body.getAttribute('data-stage');

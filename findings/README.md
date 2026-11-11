@@ -24,6 +24,7 @@ that next touches the same area.
 | [back-office.md](back-office.md) | Filament, review booking, review algorithm, experiments | `BO` |
 | [design-system.md](design-system.md) | Shared components, colour intents, accessibility | `DS` |
 | [environments.md](environments.md) | Preview and staging environments | `ENV` |
+| [account.md](account.md) | Account menu, profile page | `ACC` |
 
 Proto-only divergences from prod (things the prototype knowingly does
 differently) are not listed here. They stay in `CLAUDE.md`.

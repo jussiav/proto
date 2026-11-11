@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="fi" class="bg-blue-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="profile.pageTitle">Profiilin muokkaus – AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+          },
+        }
+      }
+    }
+  </script>
+  <!-- Prod scale tokens (fontSize 3xl+, screens, spacing). One shared
+       definition; must follow the config block above, which it merges into. -->
+  <script src="tw-tokens.js"></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
+  <script src="proto-mock.js"></script>
+  <script src="toastr.js"></script>
+  <style>
+    /* custom.scss */
+    .required:after { content: ' *'; color: #ef4444; }
+    .phone-flag { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 15px; font-size: 16px; line-height: 1; }
+  </style>
+</head>
+<body class="font-body bg-blue-50 min-h-screen">
+
+  <div id="site-nav" data-auth="required"></div>
+  <script src="site-nav.js"></script>
+
+  <!-- pages/user/edit/index.vue, consumer seller: UserDetails + UpdatePassword.
+       UserSettings, TwoFactorAuthentication, ComissionList and
+       FixedCommissionBanner are gated to company, admin, dealer and B2B
+       roles, so a consumer never sees them. -->
+  <main class="w-full flex justify-center mb-8">
+    <div class="flex flex-col justify-center max-w-screen-md w-full mt-8 p-8 md:p-12 lg:p-16 sm:rounded-2xl sm:shadow-md bg-white">
+      <header class="mb-8 sm:text-center">
+        <p id="profile-user-name" class="mb-2 text-sm leading-[16px] lg:text-base lg:leading-[16px] text-blue font-medium"></p>
+        <h2 class="text-5xl" data-i18n="profile.title">Profiilin muokkaus</h2>
+      </header>
+
+      <!-- UserDetails.vue -->
+      <div class="grid gap-x-4 md:grid-cols-2">
+        <label class="mb-4 block w-full">
+          <span class="mb-3 inline-block text-base leading-none font-medium lg:text-lg lg:leading-none" data-i18n="profile.fullName">Koko nimi</span>
+          <div>
+            <input id="user-name" type="text" autocomplete="name" data-testid="seller-name-input"
+              placeholder="Etunimi Sukunimi" data-i18n-placeholder="profile.fullNamePlaceholder"
+              class="text-base font-normal leading-relaxed block w-full border rounded-lg px-4 py-3.5 transition focus:outline-none focus:ring appearance-none disabled:bg-gray-100 disabled:border-gray-300 border-slate-400 bg-white" />
+          </div>
+        </label>
+
+        <!-- PhoneNumberInput.vue. Prod draws the flag with vue-country-flag-next's
+             sprite, which is not in the dump; an emoji flag stands in. -->
+        <label id="phone-root" class="mb-4 block w-full relative">
+          <span id="phone-label" class="mb-3 inline-block text-base leading-none font-medium" data-i18n="profile.telephone">Puhelinnumero</span>
+          <div class="relative w-full flex rounded-lg focus-within:ring">
+            <div class="relative">
+              <button id="phone-combo" type="button" role="combobox" aria-autocomplete="none" aria-haspopup="listbox"
+                aria-expanded="false" aria-controls="phone-listbox" aria-labelledby="phone-label phone-combo"
+                class="flex items-center h-14 px-4 bg-white rounded-l-lg text-md cursor-pointer border border-r-0 border-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 disabled:cursor-default disabled:bg-gray-100 disabled:border-gray-300">
+                <span id="phone-flag" class="phone-flag" aria-hidden="true"></span>
+                <span id="phone-code" class="ml-3 text-sm font-medium whitespace-nowrap"></span>
+                <span class="ml-3"><svg width="18" height="18" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></span>
+              </button>
+              <div id="phone-dropdown" class="absolute left-0 mt-1 w-64 bg-white border border-gray-300 rounded shadow-md z-10 max-h-72 overflow-auto" style="display:none">
+                <ul id="phone-listbox" role="listbox" aria-labelledby="phone-combo" class="py-1"></ul>
+              </div>
+            </div>
+            <input id="phone-input" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="tel-national" data-testid="phone-number-input"
+              placeholder="0401234567" data-i18n-placeholder="profile.phonePlaceholder"
+              class="w-full text-left h-14 rounded-r-lg border border-gray-500 p-4 text-black bg-white focus:outline-none disabled:bg-gray-100 disabled:border-gray-300" />
+          </div>
+        </label>
+
+        <label class="mb-4 block w-full md:col-span-2">
+          <span class="mb-3 inline-block text-base leading-none font-medium lg:text-lg lg:leading-none" data-i18n="profile.email">Sähköposti</span>
+          <div>
+            <input id="user-email" type="email" autocomplete="email" data-testid="email-input"
+              placeholder="matti@sahkoposti.fi" data-i18n-placeholder="profile.emailPlaceholder"
+              class="text-base font-normal leading-relaxed block w-full border rounded-lg px-4 py-3.5 transition focus:outline-none focus:ring appearance-none disabled:bg-gray-100 disabled:border-gray-300 border-slate-400 bg-white" />
+          </div>
+        </label>
+      </div>
+
+      <!-- CheckBox.vue ×2. The terms link goes to the accepted version's page
+           (/sopimusehdot/{n}) or /kayttoehdot in prod, in a new tab; the proto
+           has neither page. -->
+      <label class="flex font-medium font-body mt-4">
+        <input id="user-terms" type="checkbox" class="flex-shrink-0 flex-grow-0" data-testid="terms-conditions-checkbox" />
+        <span class="inline-block ml-2 text-base leading-[21px]" data-i18n-html="profile.terms">Hyväksyn <a href="#" class="text-blue underline">käyttöehdot</a> ja vakuutan, että autostani antamat tiedot ovat oikeat enkä ole jättänyt kertomatta autosta tietoja, jotka vaikuttavat sen kauppahintaan.</span>
+      </label>
+      <label class="flex font-medium font-body mt-4">
+        <input id="user-marketing" type="checkbox" class="flex-shrink-0 flex-grow-0" data-testid="marketing-permission-checkbox" />
+        <span class="inline-block ml-2 text-base leading-[21px]" data-i18n-html="profile.marketing">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span>
+      </label>
+
+      <button id="update-user" type="button" data-testid="update-user-button"
+        class="my-6 mx-auto inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 text-base leading-tight rounded-lg relative shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] px-8 h-14 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white active:text-blue-100">
+        <span class="inline-flex items-center justify-center" data-i18n="profile.update">Päivitä</span>
+      </button>
+
+      <hr class="my-6 border-gray-100">
+
+      <!-- UpdatePassword.vue -->
+      <h2 id="pw-title" class="text-2xl font-bold text-center my-6"></h2>
+      <form id="pw-form" class="w-full flex flex-col justify-center">
+        <input id="pw-username" type="email" name="email" autocomplete="username" class="hidden" />
+        <div id="pw-fields"></div>
+        <button id="pw-submit" type="submit" data-testid="update-password-button"
+          class="my-6 mx-auto inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 text-base leading-tight rounded-lg relative shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] px-8 h-14 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white active:text-blue-100">
+          <span id="pw-submit-label" class="inline-flex items-center justify-center"></span>
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+  <script src="layout.js"></script>
+
+  <script>
+  (function () {
+    var STORE_KEY = 'autovex_funnel';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch (e) { return {}; } }
+    function setStore(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch (e) {} }
+    function el(id) { return document.getElementById(id); }
+    function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+    /* ── Account state: world state, so a Scenario pick sets it and a save
+       changes it. A ?scenario= equal to the last pick keeps what saves did. */
+    var SCENARIOS = {
+      'default':                { hasPassword: false, termsPending: false },
+      'password':               { hasPassword: true,  termsPending: false },
+      'terms-pending':          { hasPassword: false, termsPending: true  },
+      'password-terms-pending': { hasPassword: true,  termsPending: true  }
+    };
+    function scenarioOf(a) {
+      return (a.hasPassword ? 'password' : '') + (a.hasPassword && a.termsPending ? '-' : '') + (a.termsPending ? 'terms-pending' : '') || 'default';
+    }
+    var store = getStore();
+    var account = store.account || { hasPassword: false, termsPending: false };
+    var picked = new URLSearchParams(window.location.search).get('scenario');
+    if (picked && SCENARIOS[picked] && picked !== account.scenario) {
+      account = { hasPassword: SCENARIOS[picked].hasPassword, termsPending: SCENARIOS[picked].termsPending, scenario: picked };
+    }
+    store.account = account;
+    store.loggedIn = true;
+    setStore(store);
+    function saveAccount() { var s = getStore(); s.account = account; setStore(s); }
+
+    /* What prod's user store holds for this page: GET /api/users with
+       passwordDetails, fetched once when the route is entered. */
+    var contact = store.contact || {};
+    var user = {
+      name: contact.kokoNimi || '',
+      telephone: contact.puhelin || '',
+      email: contact.sahkoposti || '',
+      marketing_permission: !!contact.markkinointi
+    };
+    var hasPassword = !!account.hasPassword;
+    var hasAcceptedLatestTerms = !account.termsPending;
+
+    /* ── UserDetails ── */
+    var nameIn = el('user-name'), emailIn = el('user-email');
+    var termsCb = el('user-terms'), marketingCb = el('user-marketing');
+
+    /* The inputs are v-model'd straight onto the store's user object, so the
+       header line, the nav's first name and the password form's hidden
+       username follow every keystroke, saved or not. */
+    function renderName() {
+      el('profile-user-name').textContent = user.name;
+      if (window.siteNav) window.siteNav.setName(user.name);
+    }
+    nameIn.value = user.name;
+    emailIn.value = user.email;
+    el('pw-username').value = user.email || user.name;
+    renderName();
+    nameIn.addEventListener('input', function () { user.name = nameIn.value.trim(); renderName(); });
+    emailIn.addEventListener('input', function () {
+      user.email = emailIn.value.trim();
+      el('pw-username').value = user.email || user.name;
+    });
+
+    termsCb.checked = hasAcceptedLatestTerms;
+    termsCb.disabled = hasAcceptedLatestTerms;
+    marketingCb.checked = user.marketing_permission;
+    marketingCb.addEventListener('change', function () { user.marketing_permission = marketingCb.checked; });
+
+    /* ── PhoneNumberInput ── */
+    var CODES = 'fi:358,se:46,dk:45,no:47,ee:372,lv:371,lt:370,is:354,ad:376,ae:971,af:93,ag:1,ai:1,al:355,am:374,an:599,ao:244,aq:672,ar:54,as:1,at:43,au:61,aw:297,az:994,ba:387,bb:1,bd:880,be:32,bf:226,bg:359,bh:973,bi:257,bj:229,bl:590,bm:1,bn:673,bo:591,br:55,bs:1,bt:975,bw:267,by:375,bz:501,ca:1,cc:61,cd:243,cf:236,cg:242,ch:41,ci:225,ck:682,cl:56,cm:237,cn:86,co:57,cr:506,cu:53,cv:238,cw:599,cx:61,cy:357,cz:420,de:49,dj:253,dm:1,do:1,dz:213,ec:593,eg:20,eh:212,er:291,es:34,et:251,fj:679,fk:500,fm:691,fo:298,fr:33,ga:241,gb:44,gd:1,ge:995,gg:44,gh:233,gi:350,gl:299,gm:220,gn:224,gq:240,gr:30,gt:502,gu:1,gw:245,gy:592,hk:852,hn:504,hr:385,ht:509,hu:36,id:62,ie:353,il:972,im:44,in:91,io:246,iq:964,ir:98,it:39,je:44,jm:1,jo:962,jp:81,ke:254,kg:996,kh:855,ki:686,km:269,kn:1,kp:850,kr:82,kw:965,ky:1,kz:7,la:856,lb:961,lc:1,li:423,lk:94,lr:231,ls:266,lu:352,ly:218,ma:212,mc:377,md:373,me:382,mf:1,mg:261,mh:692,mk:389,ml:223,mm:95,mn:976,mo:853,mp:1,mr:222,ms:1,mt:356,mu:230,mv:960,mw:265,mx:52,my:60,mz:258,nc:687,ne:227,ng:234,ni:505,nl:31,np:977,nr:674,nu:683,nz:64,om:968,pa:507,pe:51,pf:689,pg:675,ph:63,pk:92,pl:48,pm:508,pn:64,pr:1,ps:970,pt:351,pw:680,py:595,qa:974,re:262,ro:40,rs:381,ru:7,rw:250,sa:966,sb:677,sc:248,sd:249,sg:65,sh:290,si:386,sj:47,sk:421,sl:232,sm:378,sn:221,so:252,sr:597,ss:211,st:239,sv:503,sx:1,sy:963,sz:268,tc:1,td:235,tg:228,th:66,tj:992,tk:690,tl:670,tm:993,tn:216,to:676,tr:90,tt:1,tv:688,tw:886,tz:255,ua:380,ug:256,us:1,uy:598,uz:998,va:39,vc:1,ve:58,vg:1,vi:1,vn:84,vu:678,wf:681,ws:685,xk:383,ye:967,yt:262,za:27,zm:260,zw:263'
+      .split(',').map(function (p) { var kv = p.split(':'); return { country: kv[0], code: Number(kv[1]) }; });
+    var PRIORITY = ['fi', 'se', 'dk', 'no', 'ee', 'lv', 'lt', 'is'];
+    var SORTED = CODES.filter(function (c) { return PRIORITY.indexOf(c.country) !== -1; })
+      .sort(function (a, b) { return PRIORITY.indexOf(a.country) - PRIORITY.indexOf(b.country); })
+      .concat(CODES.filter(function (c) { return PRIORITY.indexOf(c.country) === -1; })
+        .sort(function (a, b) { return a.country.localeCompare(b.country); }));
+
+    function flag(cc) {
+      return String.fromCodePoint.apply(null, cc.toUpperCase().split('').map(function (ch) { return 0x1F1E6 + ch.charCodeAt(0) - 65; }));
+    }
+    var selected = SORTED[0];
+    var localNumber = '';
+    var activeIndex = -1;
+    var phoneIn = el('phone-input'), combo = el('phone-combo'), dropdown = el('phone-dropdown'), listbox = el('phone-listbox');
+
+    function digits(v) { return String(v || '').replace(/\D+/g, ''); }
+    function combined() {
+      var d = digits(localNumber).replace(/^0+/, '');
+      return d ? '+' + selected.code + d : '';
+    }
+    function parseCombined(value) {
+      var raw = String(value || '').trim();
+      if (raw.charAt(0) !== '+') { localNumber = digits(raw); return; }
+      var rest = raw.slice(1), match = null, local = rest;
+      SORTED.forEach(function (cc) {
+        var code = String(cc.code);
+        if (rest.indexOf(code) === 0 && (!match || code.length > String(match.code).length)) { match = cc; local = rest.slice(code.length); }
+      });
+      if (match) selected = match;
+      localNumber = digits(local);
+    }
+    function renderPhone() {
+      el('phone-flag').textContent = flag(selected.country);
+      el('phone-code').textContent = '+' + selected.code;
+      phoneIn.value = localNumber;
+      user.telephone = combined();
+    }
+    function renderList() {
+      listbox.innerHTML = SORTED.map(function (cc, i) {
+        return '<li id="phone-listbox-opt-' + i + '" role="option" aria-selected="' + (i === activeIndex) + '"' +
+          ' class="flex items-center px-3 py-2 cursor-pointer focus:outline-none ' + (i === activeIndex ? 'bg-gray-100' : 'hover:bg-gray-50') + '" data-i="' + i + '">' +
+          '<span class="phone-flag" aria-hidden="true">' + flag(cc.country) + '</span>' +
+          '<span class="ml-2 text-sm">+' + cc.code + '</span>' +
+          '<span class="ml-2 text-xs text-gray-600 uppercase tracking-wide">' + cc.country + '</span>' +
+        '</li>';
+      }).join('');
+      combo.setAttribute('aria-activedescendant', activeIndex >= 0 ? 'phone-listbox-opt-' + activeIndex : '');
+    }
+    function indexOfSelected() { return SORTED.indexOf(selected); }
+    function scrollActive() { var o = el('phone-listbox-opt-' + activeIndex); if (o) o.scrollIntoView({ block: 'nearest' }); }
+    function setOpen(open) {
+      dropdown.style.display = open ? '' : 'none';
+      combo.setAttribute('aria-expanded', String(open));
+      if (open) { activeIndex = Math.max(0, indexOfSelected()); renderList(); scrollActive(); }
+      else combo.removeAttribute('aria-activedescendant');
+    }
+    function isOpen() { return dropdown.style.display !== 'none'; }
+    function choose(cc) { selected = cc; renderPhone(); setOpen(false); combo.focus(); }
+    function move(delta) {
+      var max = SORTED.length;
+      var next = activeIndex < 0 ? 0 : activeIndex + delta;
+      if (next < 0) next = max - 1;
+      if (next >= max) next = 0;
+      activeIndex = next; renderList(); scrollActive();
+    }
+    var typeBuf = '', typeTimer = null;
+    function typeahead(ch) {
+      clearTimeout(typeTimer);
+      typeBuf += ch.toLowerCase();
+      var i = SORTED.findIndex(function (cc) { return ('+' + cc.code + ' ' + cc.country).indexOf(typeBuf) === 0; });
+      if (i >= 0) { activeIndex = i; renderList(); scrollActive(); }
+      typeTimer = setTimeout(function () { typeBuf = ''; }, 1000);
+    }
+    combo.addEventListener('click', function () { setOpen(!isOpen()); });
+    combo.addEventListener('keydown', function (e) {
+      switch (e.key) {
+        case 'ArrowDown': e.preventDefault(); if (isOpen()) move(1); else setOpen(true); break;
+        case 'ArrowUp': e.preventDefault(); if (isOpen()) move(-1); else setOpen(true); break;
+        case 'Enter': e.preventDefault(); if (isOpen() && activeIndex >= 0) choose(SORTED[activeIndex]); else setOpen(true); break;
+        case 'Escape': if (isOpen()) { e.preventDefault(); setOpen(false); } break;
+        default: if (e.key.length === 1 && /\S/.test(e.key)) typeahead(e.key);
+      }
+    });
+    listbox.addEventListener('mousemove', function (e) {
+      var li = e.target.closest('li[data-i]');
+      if (li && Number(li.dataset.i) !== activeIndex) { activeIndex = Number(li.dataset.i); renderList(); }
+    });
+    listbox.addEventListener('mousedown', function (e) {
+      var li = e.target.closest('li[data-i]');
+      if (!li) return;
+      e.preventDefault();
+      choose(SORTED[Number(li.dataset.i)]);
+    });
+    document.addEventListener('click', function (e) { if (isOpen() && !el('phone-root').contains(e.target)) setOpen(false); });
+    phoneIn.addEventListener('keydown', function (e) {
+      var nav = ['Backspace', 'Delete', 'Tab', 'Enter', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+      var shortcut = (e.ctrlKey || e.metaKey) && ['a', 'c', 'v', 'x', 'z', 'y'].indexOf(e.key.toLowerCase()) !== -1;
+      if (/^\d$/.test(e.key) || nav.indexOf(e.key) !== -1 || shortcut) return;
+      e.preventDefault();
+    });
+    phoneIn.addEventListener('input', function () {
+      var d = digits(phoneIn.value);
+      if (d !== phoneIn.value) phoneIn.value = d;
+      localNumber = d;
+      user.telephone = combined();
+    });
+    phoneIn.addEventListener('paste', function (e) {
+      var text = ((e.clipboardData && e.clipboardData.getData('text')) || '').trim();
+      if (!text) return;
+      e.preventDefault();
+      if (text.charAt(0) === '+') { parseCombined(text); renderPhone(); return; }
+      var d = digits(text);
+      var start = phoneIn.selectionStart == null ? localNumber.length : phoneIn.selectionStart;
+      var end = phoneIn.selectionEnd == null ? localNumber.length : phoneIn.selectionEnd;
+      localNumber = localNumber.slice(0, start) + d + localNumber.slice(end);
+      renderPhone();
+      phoneIn.setSelectionRange(start + d.length, start + d.length);
+    });
+    phoneIn.addEventListener('drop', function (e) { e.preventDefault(); });
+    parseCombined(user.telephone);
+    renderPhone();
+
+    /* ── Server responses, as prod's Laravel returns them ──
+       A 422 carries every message; its `message` is the first one plus
+       "(ja N muuta virhettä)", and that summary is what the toast shows.
+       Copy from resources/lang/fi (validation.php, fi.json). */
+    function summarize(messages) {
+      return messages[0] + (messages.length > 1 ? ' (ja ' + (messages.length - 1) + ' muuta virhettä)' : '');
+    }
+    function flatten(errors) {
+      return Object.keys(errors).reduce(function (all, k) { return all.concat(errors[k]); }, []);
+    }
+
+    /* libphonenumber's Finnish mobile pattern; other countries are only
+       length-checked, which is looser than prod's phone:INTERNATIONAL,mobile. */
+    function isMobile(tel) {
+      var m = /^\+(\d+)$/.exec(tel);
+      if (!m) return false;
+      if (selected.code === 358) return /^(?:4946\d{2,6}|(?:4[0-8]|50)\d{4,8})$/.test(digits(tel).slice(3));
+      return m[1].length >= 7 && m[1].length <= 15;
+    }
+
+    /* PATCH /user, UpdateUserFormRequest. An implicit rule (filled, accepted)
+       that fails ends that field's checks. An empty phone is swapped for the
+       saved one before validation, so it neither errors nor changes. */
+    function patchUser(body) {
+      var errors = {};
+      var saved = (getStore().contact || {}).puhelin || '';
+      var telephone = body.telephone || saved;
+      if (!body.name) errors.name = ['Kenttä Etu- ja sukunimi on pakollinen.'];
+      if (!telephone) errors.telephone = ['Kenttä Puhelinnumero on pakollinen.'];
+      else if (body.telephone && !isMobile(telephone)) errors.telephone = ['Tarkista puhelinnumero. Esimerkki: 0401234567'];
+      if (!body.email) errors.email = ['Kenttä Sähköposti on pakollinen.'];
+      else if (!/^[^\s@]+@[^\s@]+$/.test(body.email)) errors.email = ['Kentän Sähköposti arvo ei ole validi sähköpostiosoite.'];
+      if (!body.terms_conditions) errors.terms_conditions = ['Kenttä Käyttöehdot tulee hyväksyä.'];
+      if (Object.keys(errors).length) return { status: 422, errors: errors };
+      var s = getStore();
+      s.contact = s.contact || {};
+      s.contact.kokoNimi = body.name;
+      s.contact.puhelin = telephone;
+      s.contact.sahkoposti = body.email;
+      s.contact.markkinointi = !!body.marketing_permission;
+      setStore(s);
+      return { status: 200 };
+    }
+
+    /* Prod's handleResponse toasts `data.message`, and this endpoint answers
+       with an empty array, so a successful save shows nothing. Field errors
+       are not drawn either: getErrors reads a prop that is never passed. */
+    el('update-user').addEventListener('click', function () {
+      if (!hasAcceptedLatestTerms && termsCb.checked) {
+        hasAcceptedLatestTerms = true;
+        termsCb.disabled = true;
+        account.termsPending = false;
+        saveAccount();
+      }
+      var res = patchUser({
+        name: user.name,
+        telephone: user.telephone,
+        email: user.email,
+        terms_conditions: termsCb.checked,
+        marketing_permission: user.marketing_permission
+      });
+      if (res.status === 422) window.protoToastr(summarize(flatten(res.errors)), 'error');
+    });
+
+    /* ── UpdatePassword ── */
+    var pwErrors = null;
+    var pwForm = { current_password: '', password: '', password_confirmation: '' };
+    var ERR_P = 'text-red-500 text-sm leading-[16px] mt-1.5';
+    var IN_BASE = 'text-base font-normal leading-relaxed block w-full border rounded-lg px-4 py-3.5 transition focus:outline-none focus:ring appearance-none disabled:bg-gray-100 disabled:border-gray-300';
+
+    function pwInput(name, labelKey, fallback, autocomplete, required) {
+      var errs = (pwErrors && pwErrors[name]) || null;
+      var bad = !!(errs && errs.length);
+      return '<label class="mb-4 block w-full">' +
+        '<span class="mb-3 inline-block text-base leading-none font-medium lg:text-lg lg:leading-none' + (required ? ' required' : '') + '">' +
+          esc(window.t ? t(labelKey) : fallback) + '</span>' +
+        '<div><input type="password" name="' + name + '" autocomplete="' + autocomplete + '" data-pw="' + name + '"' +
+          ' class="' + IN_BASE + ' ' + (bad ? 'border-red-500 bg-red-500 bg-opacity-10' : 'border-slate-400 bg-white') + '" /></div>' +
+        (errs || []).map(function (m) { return '<p class="' + ERR_P + '">' + esc(m) + '</p>'; }).join('') +
+      '</label>';
+    }
+    function renderPassword() {
+      el('pw-title').textContent = t(hasPassword ? 'profile.updatePassword' : 'profile.addPassword');
+      el('pw-submit-label').textContent = t(hasPassword ? 'profile.update' : 'profile.save');
+      el('pw-fields').innerHTML =
+        (hasPassword ? pwInput('current_password', 'profile.currentPassword', 'Nykyinen salasana', 'current-password', true) : '') +
+        pwInput('password', 'profile.newPassword', 'Uusi salasana', 'new-password', hasPassword) +
+        pwInput('password_confirmation', 'profile.passwordConfirmation', 'Salasana uudelleen', 'new-password', hasPassword);
+      Array.prototype.forEach.call(el('pw-fields').querySelectorAll('[data-pw]'), function (inp) {
+        inp.value = pwForm[inp.dataset.pw];
+        inp.addEventListener('input', function () { pwForm[inp.dataset.pw] = inp.value; });
+      });
+    }
+
+    /* PUT /user/password/add or /update (Fortify UpdatesUserPasswords). The
+       proto keeps no password, so any current password is accepted.
+       Success answers with an empty body: no toast, the fields keep what was
+       typed, and the heading changes only when the page is next loaded. */
+    function putPassword(form) {
+      var errors = {};
+      if (hasPassword && !form.current_password) errors.current_password = ['Kenttä current password vaaditaan.'];
+      var pw = [];
+      if (!form.password) pw.push('Kentän Salasana arvon tulee olla tekstiä.');
+      if (form.password.length < 8) pw.push('Salasana: n on oltava vähintään 8 merkkiä.');
+      if ((form.password || null) !== (form.password_confirmation || null)) pw.push('Kentän Salasana vahvistus ei täsmää.');
+      if (pw.length) errors.password = pw;
+      if (hasPassword && !form.current_password) errors.current_password.push('Annettu salasana ei vastaa nykyistä salasanaasi.');
+      if (Object.keys(errors).length) return { status: 422, errors: errors };
+      account.hasPassword = true;
+      saveAccount();
+      return { status: 200 };
+    }
+
+    el('pw-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var res = putPassword(pwForm);
+      if (res.status === 422) {
+        pwErrors = res.errors;
+        window.protoToastr(summarize(flatten(res.errors)), 'error');
+      } else {
+        pwErrors = null;
+      }
+      renderPassword();
+    });
+
+    renderPassword();
+    document.addEventListener('av:langchange', renderPassword);
+
+    window.protoPage = {
+      scenarios: [
+        { id: 'default',                label: 'No password · terms accepted' },
+        { id: 'password',               label: 'Password set · terms accepted' },
+        { id: 'terms-pending',          label: 'No password · new terms to accept' },
+        { id: 'password-terms-pending', label: 'Password set · new terms to accept' }
+      ],
+      scenarioCurrent: function () { return scenarioOf(account); }
+    };
+  })();
+  </script>
+  <script src="proto-bar.js"></script>
+</body>
+</html>

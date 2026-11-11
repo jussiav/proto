@@ -107,6 +107,7 @@
     { href: 'offers.html',    label: 'Offers' },
     { href: 'decision.html',  label: 'Decision' },
     { href: 'dac7.html',      label: 'DAC7' },
+    { href: 'profile.html',   label: 'Profile (Muokkaa profiilia)' },
     { href: 'help.html',      label: 'Support' },
     { href: 'price-guess.html', label: 'Price guess' },
     { href: 'hinta-arvio.html', label: 'Price estimate (v4)' },

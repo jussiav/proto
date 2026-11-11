@@ -287,11 +287,11 @@ These rules apply to all new pages and components in this prototype, without exc
 
 12. **Nav bar — one shared definition, `site-nav.js`.** Never inline nav markup in a page and never re-add nav HTML to `layout.js`. A page opts in with `<div id="site-nav"></div>` followed immediately by `<script src="site-nav.js"></script>` (the script must come right after the mount so the nav exists before any inline page script that reads `#nav-login-label`).
 
-    Blue variant, matching prod `ONavigationBar.vue` with `color="blue"`: spacer `<div class="h-20 bg-av-blue">` then a single `fixed h-20 bg-av-blue z-50` header, inner `nav` at `max-w-[1440px] mx-auto px-6` (prod's `max-w-screen-xxl`; `screens.xxl = 1440px`). White logo, menu items pushed right with `ml-16`, "Aloita kilpailutus" CTA (`lg:` and up only) + account icon + "Kirjaudu" label on the right.
+    Blue variant, matching prod `ONavigationBar.vue` with `color="blue"`: spacer `<div class="h-20 bg-av-blue">` then a single `fixed h-20 bg-av-blue z-50` header, inner `nav` at `max-w-[1440px] mx-auto px-6` (prod's `max-w-screen-xxl`; `screens.xxl = 1440px`). White logo, menu items pushed right with `ml-16`, "Aloita kilpailutus" CTA + the account menu on the right from `lg`; below `lg` a hamburger opens a drawer holding the menu, the account menu and the CTA (see **Account menu and profile page** below).
 
     **Scroll = headroom.** One nav, no second white nav. Pinned within the top 96px; scrolling down past that unpins it (`translateY(-100%)`), scrolling up pins it back. `transition: transform 200ms linear`. Ported from prod's `useHeadRoom.js` (headroom.js, offset 96) + `sass/headroom.scss`.
 
-    **Funnel pages have no nav** (details/price/services/photos/contact/success) — they omit both the mount and the script. Currently on the nav: `index.html`, `help.html`, `dac7.html`, `decision.html`, `offers.html`.
+    **Funnel pages have no nav** (details/price/services/photos/contact/success) — they omit both the mount and the script. Currently on the nav: `index.html`, `help.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` (marketing), and `offers.html`, `decision.html`, `dac7.html`, `profile.html` (app pages, `data-auth="required"`).
 
     **Menu items only on marketing pages.** In prod, `ONavigationBar`'s `menuItems` prop defaults to `[]`, and only two consumers pass anything: `Header.astro` (marketing, from Contentful) and `offers/landing` — there only for B2B sellers (`isB2BSeller ? menuItems : []`). Every consumer-facing app page (`offers/decision`, `PersonalInformationPage`, `auth`, `not-verified`, `complete-profile`) passes none, so `MMenu`'s `v-if="menuItems.length"` renders nothing. A proto page opts in with `<div id="site-nav" data-menu="marketing">` — currently only `index.html` and `help.html`. The CTA and "Kirjaudu" are NOT gated: prod's default `#actions` slot renders `MMenuCTA` + `MProfileMenu` on all of those pages.
 
@@ -4181,6 +4181,117 @@ its email toast.
   funnel again and re-submits the contact step with the same address keeps
   their change, as prod does since the 2026-11-05 dump; a new address uses it
   up and sends a new verification email.
+
+## Account menu and profile page — `site-nav.js`, `profile.html`
+
+Built 2026-11-11 from the 2026-11-05 dump, as production has it today, ahead
+of planned changes to the profile page ("Profiilin muokkaus").
+
+**The menu is prod's `MProfileMenu` + `MProfileSubMenu`.** The items are not in
+the component: `UserApiController` adds `menu_items` from
+`config/user-menu.php` by role, and a consumer seller (`consumer`) gets three,
+labels from `app.menu.*`:
+
+| Item | Prod | Proto |
+|---|---|---|
+| Omat tarjouspyynnöt | `/offers` | `offers.html` (it remembers its last scenario) |
+| Muokkaa profiilia | `/user/edit` | `profile.html` |
+| Kirjaudu ulos | `userStore.logout`, then `/` | clears `loggedIn`, then `index.html` |
+
+- **From `lg` (992px)** the trigger is `account-filled` at 30px over the first
+  name (`text-xs font-semibold`), and the panel opens below it, centred and
+  kept 8px inside the viewport (Popper's `bottom` + `preventOverflow`, done by
+  hand as a translate). Click outside closes it; Escape closes it and returns
+  focus to the trigger. Logged out: the same icon over "Kirjaudu", linking to
+  prod's login page, which the proto does not have (`href="#"`).
+- **Below `lg` prod shows a hamburger**, and the CTA and account menu move into
+  a drawer from the right. Two drawers, transcribed separately:
+  `data-menu="marketing"` pages get `Header.astro`'s (`w-96 p-2`, close row,
+  menu, then the actions); the rest get `ONavigationBar`'s (`w-80`, blue logo
+  top left, close top right, actions pinned to the bottom, closes on any link
+  click). In both the account menu is always open: a rule, the first name at
+  `text-xl font-bold`, the three items centred, the CTA last. Backdrop
+  `bg-gray-900/50` inside the header, body scroll locked, Escape closes.
+- **One DOM tree, as prod's**: the drawer is `lg:contents` from 992px, so its
+  children sit in the nav row. Its off-canvas state and the popover's display
+  are hand-written CSS in `site-nav.js`, not utilities, so they hold on first
+  paint and after a redraw.
+- **The icon changed with it.** The proto's nav used a Figma-exported
+  `ph:user-circle` at 24px (and `NavUserIcon.vue` on `layout.js` pages); prod's
+  `MProfileMenu` draws `account-filled`, which is what it draws now.
+- **`data-auth="required"`** on the mount marks a page prod serves only to a
+  logged-in seller: offers, decision, DAC7, profile. There the menu shows
+  logged in whatever `store.loggedIn` says, because offers clears the flag for
+  its draft-only scenarios for funnel reasons. `profile.html` sets it, like
+  offers and decision.
+- **`window.siteNav.sync()`** redraws the account menu from the store; every
+  page that used to write `#nav-login-label` itself (offers, decision, DAC7,
+  index, hinta-arvio) calls it instead. `siteNav.setName(name)` changes the
+  shown first name only.
+- **Copy:** `nav.offers` / `editProfile` / `logout` / `openMenu` / `close`.
+  "Omat tarjouspyynnöt" uses "tarjouspyyntö", which the C2B table rules out;
+  it is prod's word and stays (findings ACC-07). Prod has no English; EN is a
+  working translation.
+- **Not transcribed:** the loading placeholder (`UserMenuPlaceholder`), and
+  the logo's target on app pages: prod links it to the user's home route
+  (`/offers` for a consumer), the proto keeps `index.html` everywhere.
+
+**`profile.html` is prod's `pages/user/edit` for a consumer**: `UserDetails`
+(Koko nimi, Puhelinnumero with the country picker, Sähköposti, the terms and
+marketing checkboxes, "Päivitä") and `UpdatePassword`. Everything else on that
+page is gated to company, admin, dealer or B2B roles. Card
+`max-w-screen-md p-8 md:p-12 lg:p-16 sm:rounded-2xl sm:shadow-md`, the full
+name in blue above a bare `h2 text-5xl` (40px Barlow through the element rule,
+36/46 leading), page `bg-blue-50`, prod's footer via `layout.js`.
+
+| Scenario | Password section | Terms checkbox |
+|---|---|---|
+| `default` | "Lisää salasana": two fields, "Tallenna" | checked, disabled |
+| `password` | "Päivitä salasana": three fields, all marked required, "Päivitä" | checked, disabled |
+| `terms-pending` | as `default` | unchecked, enabled |
+| `password-terms-pending` | as `password` | unchecked, enabled |
+
+`default` is the common case: `HandleEmailVerificationCallback` creates the
+seller's account with no password. State is `store.account`
+(`hasPassword`, `termsPending`, `scenario`); a `?scenario=` equal to the last
+pick keeps what saves changed, so a reload after adding a password shows
+"Päivitä salasana", as prod's refetch does.
+
+**Server responses are reproduced, because the page's whole feedback is in
+them.** A 422's `message` is the first error plus "(ja N muuta virhettä)", and
+that is the toast. An implicit rule that fails (`filled`, `required`,
+`accepted`) ends that field's checks. Copy from `resources/lang/fi`:
+
+| Save | Rule | Message |
+|---|---|---|
+| Päivitä | name empty | Kenttä Etu- ja sukunimi on pakollinen. |
+| Päivitä | phone not a mobile number | Tarkista puhelinnumero. Esimerkki: 0401234567 |
+| Päivitä | email empty / malformed | Kenttä Sähköposti on pakollinen. / Kentän Sähköposti arvo ei ole validi sähköpostiosoite. |
+| Päivitä | terms unticked | Kenttä Käyttöehdot tulee hyväksyä. |
+| Password | new password empty | Kentän Salasana arvon tulee olla tekstiä. + the length line |
+| Password | under 8 characters | Salasana: n on oltava vähintään 8 merkkiä. |
+| Password | confirmation differs | Kentän Salasana vahvistus ei täsmää. |
+| Password | current password empty | Kenttä current password vaaditaan. + Annettu salasana ei vastaa nykyistä salasanaasi. |
+
+Prod behaviour reproduced as found, each in the findings register: no toast or
+any other sign on a successful save of either form (ACC-01); field errors only
+under the password fields, never under the details (ACC-02); an emptied phone
+saves silently and keeps the old number (ACC-03); the heading stays "Lisää
+salasana" after adding one until reload (ACC-04); an unsaved invalid email
+blocks the password form without a word (ACC-05); and the name, the nav's first
+name and the hidden username follow every keystroke before saving (ACC-08).
+Ticking pending terms accepts them before the save, so they stay accepted even
+when the save then fails.
+
+**Divergences, all invisible or forced:** any non-empty current password is
+accepted (the proto keeps none, so "wrong current password" cannot be shown);
+phone validation is libphonenumber's Finnish mobile pattern, with other
+countries only length-checked; the flag is an emoji (prod's
+`vue-country-flag-next` sprite is not in the dump); the terms link goes
+nowhere (prod: `/sopimusehdot/{accepted version}` or `/kayttoehdot`, new tab);
+the email uniqueness check is not modelled; saves are instant, so the disabled
+state while a request runs never shows. Saved values go to `store.contact`,
+which the funnel's contact step also reads.
 
 ## Login state — `loggedIn`
 

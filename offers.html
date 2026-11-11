@@ -56,7 +56,7 @@
 <body class="font-body bg-blue-50 min-h-screen">
 
   <!-- Fixed white nav — ONavigationBar color="white", h-20 -->
-  <div id="site-nav"></div>
+  <div id="site-nav" data-auth="required"></div>
   <script src="site-nav.js"></script>
 
   <main class="max-w-[768px] mx-auto p-6 sm:py-14 grid gap-y-16">
@@ -220,11 +220,7 @@
 
     var s = getStore();
 
-    (function () {
-      var raw = ((s.contact || {}).kokoNimi || '').trim();
-      var name = raw ? raw.split(' ')[0] : null;
-      if (name) { var el = document.getElementById('nav-login-label'); if (el) el.textContent = name; }
-    })();
+    if (window.siteNav) window.siteNav.sync();
 
     var _photos = s.photos || {}, _photoMap = s.photoMap || {}, firstPhoto = null;
     ['ulkopuoli','sisatilat','huoltokirja','renkaat','naarmut','tuulilasi'].forEach(function(sec) {
