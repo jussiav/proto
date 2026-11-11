@@ -54,6 +54,18 @@ window.TRANSLATIONS = {
       newPassword:          'Uusi salasana',
       passwordConfirmation: 'Salasana uudelleen',
       save:                 'Tallenna',
+      /* Klaviyo consent v1. emailPendingToast is the developers' draft
+         (Esa, Slack 2026-11-11); the rest is Claude's draft. */
+      consentTitle:         'Markkinointiviestit',
+      consentLoading:       'Haetaan asetusta…',
+      consentUnavailable:   'Asetusta ei juuri nyt saatu haettua. Yritä hetken päästä uudelleen.',
+      consentSaved:         'Asetus tallennettu.',
+      consentSaveFailed:    'Asetusta ei saatu tallennettua. Yritä hetken päästä uudelleen.',
+      emailPendingToast:    'Lähetimme vahvistuslinkin osoitteeseen {email}. Sähköpostiosoitteesi vaihtuu, kun vahvistat uuden osoitteen.',
+      emailPendingNote:     'Uusi osoite {email} odottaa vahvistusta.',
+      emailChanged:         'Sähköpostiosoitteesi on vaihdettu.',
+      emailToastSubject:    'Vahvista uusi sähköpostiosoitteesi',
+      emailToastBtn:        'Avaa linkki',
     },
 
     hero: {
@@ -1113,6 +1125,16 @@ window.TRANSLATIONS = {
       newPassword:          'New password',
       passwordConfirmation: 'Password again',
       save:                 'Save',
+      consentTitle:         'Marketing emails',
+      consentLoading:       'Fetching your setting…',
+      consentUnavailable:   "We couldn't fetch your setting just now. Please try again in a moment.",
+      consentSaved:         'Setting saved.',
+      consentSaveFailed:    "We couldn't save your setting. Please try again in a moment.",
+      emailPendingToast:    'We sent a confirmation link to {email}. Your email address changes once you confirm the new address.',
+      emailPendingNote:     'Your new address {email} is waiting for confirmation.',
+      emailChanged:         'Your email address has been changed.',
+      emailToastSubject:    'Confirm your new email address',
+      emailToastBtn:        'Open the link',
     },
 
     hero: {

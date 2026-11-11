@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-11-06)
+## Reference Source Locations (updated 2026-11-11)
 
-- **Production codebase (read-only reference):** `../prod/current/`, a link to the newest dump in the sibling folder `../prod/`, OUTSIDE this repo (moved 2026-10-29 so every local prototype reads one shared copy). `current` → `autovex-2026-11-05-358560b7f364/` (previous, beside it: `autovex-2026-11-02-a17b66244b10/`, `autovex-2026-10-29-82636d6655b9/`, `autovex-2026-10-26-ead421f6c80b/`, `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b` and the 10-29 one as `autovex-autovex-82636d6655b9` and the 11-02 one as `autovex-autovex-a17b66244b10`; rename it to `autovex-<date>-<hash>` before using it. **A new dump** (downloaded by hand from Bitbucket for now) goes into `../prod/` beside the others: rename it, then repoint the link with `ln -sfn <folder> current` from inside `../prod/`. Older dumps stay there so a new one can be compared with the previous. Never push, nothing in the proto depends on it; `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case a dump is ever dropped in the old place.
+- **Production codebase (read-only reference):** `../prod/current/`, a link to the newest dump in the sibling folder `../prod/`, OUTSIDE this repo (moved 2026-10-29 so every local prototype reads one shared copy). `current` → `autovex-2026-11-11-dc54e9a95415/` (uploaded 2026-11-11; its code is from 2026-11-06) (previous, beside it: `autovex-2026-11-05-358560b7f364/`, `autovex-2026-11-02-a17b66244b10/`, `autovex-2026-10-29-82636d6655b9/`, `autovex-2026-10-26-ead421f6c80b/`, `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b` and the 10-29 one as `autovex-autovex-82636d6655b9` and the 11-02 one as `autovex-autovex-a17b66244b10` and the 11-11 one as `autovex-autovex-dc54e9a95415`; rename it to `autovex-<date>-<hash>` before using it. **The date is the upload date**, not the date of the code inside (the 11-02 dump holds code from 10-29): use the extraction time, `stat -f %Sc` on any file, since the files' modification times are the commit's. **Where dumps come from:** downloaded by hand from Bitbucket for now. The team is migrating to GitHub, and dumps will then come from there, either downloaded by hand or fetched by Claude. Keep using the hand-downloaded dump until Jussi says to start using GitHub (noted 2026-11-11). **A new dump** goes into `../prod/` beside the others: rename it, then repoint the link with `ln -sfn <folder> current` from inside `../prod/`. Older dumps stay there so a new one can be compared with the previous. Never push, nothing in the proto depends on it; `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case a dump is ever dropped in the old place.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside `../prod/current/`; `resources/astro/...` paths resolve inside the archive.
 
@@ -945,6 +945,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 | Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
+| Klaviyo consent | **Suggestion to the developers** (2026-11-11) — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent in its own section, read from and saved to Klaviyo; the email field keeps the address in use and a line names the one waiting. Copy is the developers' draft (the after-save message) and Claude's (the rest) | `klaviyo-consent` | `control` | `control` | `profile.html` | none |
 
 **Completed initiatives:**
 
@@ -3779,6 +3780,67 @@ advisors; the page never says so. The initiative names that help
 - **Related:** findings DEC-09 (nothing says who buys the car). Timo (PM) has
   his own local prototype of the idea; not used as the base.
 
+## Klaviyo consent — `v1` (suggestion)
+
+Started 2026-11-11 from the developers' plan doc ("Klaviyo Consent and Data
+Retention Plan", by Esa, who is the same person as the doc's byline Ehsan) and
+the Slack thread around it. Most of that plan is back end (deleting a person's
+Klaviyo profile at erasure, an export for marketing's cleanup, dropping the
+`marketing_permission` column, billing). Two parts reach the seller, both on
+`profile.html`, and `v1` is our best-knowledge version of them. Nothing in
+control changes: it is prod as of the 2026-11-11 dump (see **Account menu and
+profile page**).
+
+- **Consent (the plan's decision 2, open).** Jaakko's answer in Slack: link
+  Klaviyo's preference page, or, if that is not good enough, keep the checkbox
+  and integrate it with Klaviyo's API. Klaviyo's docs say a person's preference
+  page link exists only inside Klaviyo's own emails, so `v1` is the checkbox:
+  - moved out of the details form into its own section, "Markkinointiviestit"
+    (`profile.consentTitle`), between the details and the password, shaped like
+    the password section (h2 `text-2xl font-bold text-center my-6`, hr
+    `my-6 border-gray-100`), with prod's own checkbox and label;
+  - read from Klaviyo when the page opens ("Haetaan asetusta…"), ticked only
+    when subscribed (Klaviyo's unsubscribed and never-subscribed both show
+    unticked);
+  - saved straight to Klaviyo on change, the box disabled while it saves, then
+    toastr success "Asetus tallennettu." or, on failure, the box reverts and an
+    error toast says so;
+  - when Klaviyo does not answer the read, the box is hidden and one line says
+    the setting could not be fetched. Showing an unticked box there would claim
+    the person is not subscribed.
+  - "Päivitä" no longer sends `marketing_permission`.
+  - **Single opt-in is assumed.** With double opt-in, ticking only sends a
+    confirmation email and the page would need a waiting state; marketing has
+    not answered.
+- **Email change (the plan's decision 12, built on a branch, not in a dump).**
+  "Päivitä" with a new address saves the name and phone, keeps the email field
+  on the address in use, and toasts the developers' after-save message
+  (`profile.emailPendingToast`, Esa's draft). A line under the field names the
+  address waiting (`profile.emailPendingNote`, the plan's decision 17 option
+  "show the pending address on the profile"); it survives a reload
+  (`store.account.pendingEmail`). Saving another address replaces it. The
+  confirmation email is a proto-only inbox toast (`#kc-toast`, hinta-arvio's
+  pattern, shown in test mode too); "Avaa linkki" applies the address, moves
+  `store.draftEmail` with it (prod's copy onto the ads), and toasts
+  "Sähköpostiosoitteesi on vaihdettu." Klaviyo consent stays with the person
+  (the plan's phase 5 moves the profile to the new address).
+- **Events (v1 only):** "Klaviyo — marketing consent" sets the person's state
+  in Klaviyo (subscribed, unsubscribed from an email, never subscribed) or
+  makes Klaviyo stop and start answering; each action reads the setting again.
+  "Email change" opens the confirmation link. State is `store.klaviyo`
+  (`status`, `unavailable`), seeded from the funnel's box: the funnel
+  subscribes a ticked email and does nothing otherwise.
+- **Not built:** the complete-profile page (same checkbox, reached by a
+  logged-in user with no phone, which a verified seller always has), the
+  confirmation email itself and the notice to the old address (decision 17),
+  the page for an expired or replaced link, and anything about what an
+  unsubscribe stops. Jussi expects unsubscribing from marketing to leave
+  transactional emails (offers, negotiations) untouched; that is being
+  confirmed with the developers, since Jaakko's answer was that no Klaviyo
+  flow is marked transactional.
+- **Copy:** `profile.consent*`, `profile.email*` in `translations.js`, Claude's
+  draft except `emailPendingToast`; EN is a working translation.
+
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 
 **The decision page can be read in English, and the mechanism is opt-in per
@@ -4268,6 +4330,7 @@ that is the toast. An implicit rule that fails (`filled`, `required`,
 | Päivitä | phone not a mobile number | Tarkista puhelinnumero. Esimerkki: 0401234567 |
 | Päivitä | email empty / malformed | Kenttä Sähköposti on pakollinen. / Kentän Sähköposti arvo ei ole validi sähköpostiosoite. |
 | Päivitä | terms unticked | Kenttä Käyttöehdot tulee hyväksyä. |
+| Päivitä | email used by another account | Kentän Sähköposti arvo ei ole uniikki. + This email is already in use. (untranslated, appended last by `failedValidation`, so the toast always ends "(ja 1 muuta virhettä)" or more) |
 | Password | new password empty | Kentän Salasana arvon tulee olla tekstiä. + the length line |
 | Password | under 8 characters | Salasana: n on oltava vähintään 8 merkkiä. |
 | Password | confirmation differs | Kentän Salasana vahvistus ei täsmää. |
@@ -4283,13 +4346,27 @@ name and the hidden username follow every keystroke before saving (ACC-08).
 Ticking pending terms accepts them before the save, so they stay accepted even
 when the save then fails.
 
+**Changing the email (prod as of the 2026-11-11 dump).** "Päivitä" saves the
+new address at once, exactly like the name or phone: no confirmation step, no
+email to the new or the old address, no toast (ACC-01), and the seller stays
+verified (`email_verified_at` is untouched; Fortify's own profile action, which
+would clear it, is not enabled). `User::updated` then copies the email, phone
+and name onto **every one of the seller's ads**, so later auction emails go to
+the new address too; the proto mirrors that by moving `store.draftEmail` with
+it. The only refusal is an address another account already uses (the row
+above), which the proto reaches through **Events → Accounts — other users**
+(`?taken=a@x.fi,b@y.fi`); the seller's own saved address never counts, and
+case is ignored. Klaviyo is not told about the change. A version that applies
+the new address only after it is confirmed exists on a branch and is not in a
+dump yet; the planned Klaviyo consent initiative covers it.
+
 **Divergences, all invisible or forced:** any non-empty current password is
 accepted (the proto keeps none, so "wrong current password" cannot be shown);
 phone validation is libphonenumber's Finnish mobile pattern, with other
 countries only length-checked; the flag is an emoji (prod's
 `vue-country-flag-next` sprite is not in the dump); the terms link goes
 nowhere (prod: `/sopimusehdot/{accepted version}` or `/kayttoehdot`, new tab);
-the email uniqueness check is not modelled; saves are instant, so the disabled
+other accounts exist only as the `?taken=` list; saves are instant, so the disabled
 state while a request runs never shows. Saved values go to `store.contact`,
 which the funnel's contact step also reads.
 

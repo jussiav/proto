@@ -51,10 +51,21 @@
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
   <script src="toastr.js"></script>
+  <script>
+    /* Klaviyo consent arm, stamped before first paint so control never
+       flashes v1's section and v1 never flashes the old checkbox. */
+    document.documentElement.dataset.kcArm = window.protoVariant('klaviyo-consent', 'control');
+  </script>
   <style>
     /* custom.scss */
     .required:after { content: ' *'; color: #ef4444; }
     .phone-flag { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 15px; font-size: 16px; line-height: 1; }
+    html[data-kc-arm="v1"] #marketing-control,
+    html:not([data-kc-arm="v1"]) .kc-v1 { display: none !important; }
+    /* Proto-only stand-in for the seller's inbox, as on hinta-arvio.html. */
+    #kc-toast { position: fixed; bottom: 24px; right: 24px; z-index: 8000; width: 320px; max-width: calc(100vw - 32px); background: rgba(255,255,255,.97); border-radius: 16px; box-shadow: 0 16px 56px rgba(0,0,0,.20), 0 4px 16px rgba(0,0,0,.10), 0 0 0 1.5px rgba(11,109,255,.12); padding: 14px 14px 14px 16px; display: none; flex-direction: column; gap: 6px; font-family: 'DM Sans', sans-serif; }
+    #kc-toast.is-on { display: flex; }
+    body:has(#proto-bar) #kc-toast { bottom: 54px; }
   </style>
 </head>
 <body class="font-body bg-blue-50 min-h-screen">
@@ -114,6 +125,8 @@
               placeholder="matti@sahkoposti.fi" data-i18n-placeholder="profile.emailPlaceholder"
               class="text-base font-normal leading-relaxed block w-full border rounded-lg px-4 py-3.5 transition focus:outline-none focus:ring appearance-none disabled:bg-gray-100 disabled:border-gray-300 border-slate-400 bg-white" />
           </div>
+          <!-- Klaviyo consent v1: the address waiting for its confirmation link. -->
+          <p id="email-pending" class="kc-v1 mt-2 text-sm text-slate-700" aria-live="polite" style="display:none"></p>
         </label>
       </div>
 
@@ -124,7 +137,7 @@
         <input id="user-terms" type="checkbox" class="flex-shrink-0 flex-grow-0" data-testid="terms-conditions-checkbox" />
         <span class="inline-block ml-2 text-base leading-[21px]" data-i18n-html="profile.terms">Hyväksyn <a href="#" class="text-blue underline">käyttöehdot</a> ja vakuutan, että autostani antamat tiedot ovat oikeat enkä ole jättänyt kertomatta autosta tietoja, jotka vaikuttavat sen kauppahintaan.</span>
       </label>
-      <label class="flex font-medium font-body mt-4">
+      <label id="marketing-control" class="flex font-medium font-body mt-4">
         <input id="user-marketing" type="checkbox" class="flex-shrink-0 flex-grow-0" data-testid="marketing-permission-checkbox" />
         <span class="inline-block ml-2 text-base leading-[21px]" data-i18n-html="profile.marketing">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span>
       </label>
@@ -135,6 +148,19 @@
       </button>
 
       <hr class="my-6 border-gray-100">
+
+      <!-- Klaviyo consent v1: consent lives in Klaviyo only, so it leaves the
+           details form and saves on its own. The heading and button-less shape
+           follow UpdatePassword's section; the checkbox is the same CheckBox. -->
+      <section id="kc-section" class="kc-v1" aria-labelledby="kc-title">
+        <h2 id="kc-title" class="text-2xl font-bold text-center my-6" data-i18n="profile.consentTitle">Markkinointiviestit</h2>
+        <label id="kc-field" class="flex font-medium font-body" style="display:none">
+          <input id="kc-marketing" type="checkbox" class="flex-shrink-0 flex-grow-0" data-testid="marketing-permission-checkbox" />
+          <span class="inline-block ml-2 text-base leading-[21px]" data-i18n-html="profile.marketing">Haluan mielenkiintoista sisältöä ja auton myymiseen liittyviä vinkkejä AutoVexiltä sähköpostitse.</span>
+        </label>
+        <p id="kc-status" class="text-sm text-slate-700" aria-live="polite"></p>
+      </section>
+      <hr class="kc-v1 my-6 border-gray-100">
 
       <!-- UpdatePassword.vue -->
       <h2 id="pw-title" class="text-2xl font-bold text-center my-6"></h2>
@@ -148,6 +174,20 @@
       </form>
     </div>
   </main>
+
+  <!-- Klaviyo consent v1: the confirmation link's email, standing in for the
+       seller's inbox. Shown in test mode too, since the flow continues
+       through it. -->
+  <div id="kc-toast" role="dialog" aria-labelledby="kc-toast-title">
+    <div class="flex items-center gap-2">
+      <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-av-blue flex-shrink-0"><svg width="16" height="13" viewBox="0 0 16 13" fill="none" aria-hidden="true"><rect x="0.75" y="0.75" width="14.5" height="11.5" rx="2.25" stroke="white" stroke-width="1.5"/><path d="M1 2.5l7 4.5 7-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <span class="flex-1 text-[13px] font-bold text-slate-950">AutoVex</span>
+      <span class="text-xs text-slate-400" data-i18n="success.emailToastNow">nyt</span>
+    </div>
+    <p id="kc-toast-title" class="m-0 text-sm font-bold text-slate-900" data-i18n="success.emailToastTitle">Sinulla on 1 uusi sähköposti</p>
+    <p class="m-0 text-sm text-slate-600" data-i18n="profile.emailToastSubject">Vahvista uusi sähköpostiosoitteesi</p>
+    <button type="button" id="kc-toast-open" class="self-start mt-1 h-8 px-3.5 rounded-lg bg-av-blue text-white text-sm border-0 cursor-pointer hover:bg-[#0A59EB]" data-i18n="profile.emailToastBtn">Avaa linkki</button>
+  </div>
 
   <div id="site-footer"></div>
   <script src="layout.js"></script>
@@ -219,6 +259,106 @@
     termsCb.disabled = hasAcceptedLatestTerms;
     marketingCb.checked = user.marketing_permission;
     marketingCb.addEventListener('change', function () { user.marketing_permission = marketingCb.checked; });
+
+    /* ── Klaviyo consent v1 ──
+       Klaviyo is the only store of marketing consent, so the page reads the
+       person's subscription from Klaviyo when it opens and saves a change
+       straight to Klaviyo's subscribe / unsubscribe. Klaviyo's three states
+       collapse to one box: ticked only when subscribed. Single opt-in is
+       assumed; double opt-in would add a "waiting for confirmation" state. */
+    var KC_V1 = document.documentElement.dataset.kcArm === 'v1';
+    var KC_MS = 700;
+    var kcCb = el('kc-marketing');
+    function klaviyo() {
+      var s = getStore();
+      if (!s.klaviyo) {
+        /* The funnel's box subscribes the email when ticked and does nothing
+           otherwise, so that is the person's starting state in Klaviyo. */
+        s.klaviyo = { status: (s.contact || {}).markkinointi ? 'subscribed' : 'never', unavailable: false };
+        setStore(s);
+      }
+      return s.klaviyo;
+    }
+    function setKlaviyo(patch) {
+      var s = getStore();
+      s.klaviyo = Object.assign(klaviyo(), patch);
+      setStore(s);
+    }
+    var kcState = 'loading';
+    function renderConsent() {
+      if (!KC_V1) return;
+      el('kc-field').style.display = kcState === 'ready' ? 'flex' : 'none';
+      var status = el('kc-status');
+      status.textContent = kcState === 'loading' ? t('profile.consentLoading')
+        : kcState === 'unavailable' ? t('profile.consentUnavailable') : '';
+      status.style.display = status.textContent ? 'block' : 'none';
+      if (kcState === 'ready') kcCb.checked = klaviyo().status === 'subscribed';
+    }
+    function readConsent() {
+      kcState = 'loading';
+      renderConsent();
+      setTimeout(function () {
+        kcState = klaviyo().unavailable ? 'unavailable' : 'ready';
+        renderConsent();
+      }, KC_MS);
+    }
+    kcCb.addEventListener('change', function () {
+      var wanted = kcCb.checked;
+      kcCb.disabled = true;
+      setTimeout(function () {
+        kcCb.disabled = false;
+        if (klaviyo().unavailable) {
+          kcCb.checked = !wanted;
+          window.protoToastr(t('profile.consentSaveFailed'), 'error');
+          return;
+        }
+        setKlaviyo({ status: wanted ? 'subscribed' : 'unsubscribed' });
+        window.protoToastr(t('profile.consentSaved'), 'success');
+      }, KC_MS);
+    });
+
+    /* A new email waits for its confirmation link (the developers' branch).
+       The field keeps showing the address in use; the line under it names
+       the one waiting. A later change replaces it and sends a new link. */
+    function pendingEmail() { return (getStore().account || {}).pendingEmail || null; }
+    function renderPending() {
+      if (!KC_V1) return;
+      var p = el('email-pending'), addr = pendingEmail();
+      p.style.display = addr ? 'block' : 'none';
+      p.innerHTML = addr ? esc(t('profile.emailPendingNote')).replace('{email}', '<b>' + esc(addr) + '</b>') : '';
+    }
+    var inboxTimer = null;
+    function showInbox() {
+      clearTimeout(inboxTimer);
+      inboxTimer = setTimeout(function () { el('kc-toast').classList.add('is-on'); }, 1500);
+    }
+    function confirmEmail() {
+      var addr = pendingEmail();
+      clearTimeout(inboxTimer);
+      el('kc-toast').classList.remove('is-on');
+      if (!addr) return;
+      /* The change applies now, and prod's User::updated then copies it onto
+         the seller's ads. Klaviyo's profile moves to the new address with its
+         consent (the developers' phase 5). */
+      var s = getStore();
+      s.contact = s.contact || {};
+      s.contact.sahkoposti = addr;
+      if ('draftEmail' in s) s.draftEmail = addr;
+      setStore(s);
+      account.pendingEmail = null;
+      saveAccount();
+      user.email = addr;
+      emailIn.value = addr;
+      el('pw-username').value = addr;
+      renderPending();
+      window.protoToastr(t('profile.emailChanged'), 'success');
+    }
+    el('kc-toast-open').addEventListener('click', confirmEmail);
+    if (KC_V1) {
+      readConsent();
+      renderPending();
+      document.addEventListener('av:langchange', function () { renderConsent(); renderPending(); });
+    }
 
     /* ── PhoneNumberInput ── */
     var CODES = 'fi:358,se:46,dk:45,no:47,ee:372,lv:371,lt:370,is:354,ad:376,ae:971,af:93,ag:1,ai:1,al:355,am:374,an:599,ao:244,aq:672,ar:54,as:1,at:43,au:61,aw:297,az:994,ba:387,bb:1,bd:880,be:32,bf:226,bg:359,bh:973,bi:257,bj:229,bl:590,bm:1,bn:673,bo:591,br:55,bs:1,bt:975,bw:267,by:375,bz:501,ca:1,cc:61,cd:243,cf:236,cg:242,ch:41,ci:225,ck:682,cl:56,cm:237,cn:86,co:57,cr:506,cu:53,cv:238,cw:599,cx:61,cy:357,cz:420,de:49,dj:253,dm:1,do:1,dz:213,ec:593,eg:20,eh:212,er:291,es:34,et:251,fj:679,fk:500,fm:691,fo:298,fr:33,ga:241,gb:44,gd:1,ge:995,gg:44,gh:233,gi:350,gl:299,gm:220,gn:224,gq:240,gr:30,gt:502,gu:1,gw:245,gy:592,hk:852,hn:504,hr:385,ht:509,hu:36,id:62,ie:353,il:972,im:44,in:91,io:246,iq:964,ir:98,it:39,je:44,jm:1,jo:962,jp:81,ke:254,kg:996,kh:855,ki:686,km:269,kn:1,kp:850,kr:82,kw:965,ky:1,kz:7,la:856,lb:961,lc:1,li:423,lk:94,lr:231,ls:266,lu:352,ly:218,ma:212,mc:377,md:373,me:382,mf:1,mg:261,mh:692,mk:389,ml:223,mm:95,mn:976,mo:853,mp:1,mr:222,ms:1,mt:356,mu:230,mv:960,mw:265,mx:52,my:60,mz:258,nc:687,ne:227,ng:234,ni:505,nl:31,np:977,nr:674,nu:683,nz:64,om:968,pa:507,pe:51,pf:689,pg:675,ph:63,pk:92,pl:48,pm:508,pn:64,pr:1,ps:970,pt:351,pw:680,py:595,qa:974,re:262,ro:40,rs:381,ru:7,rw:250,sa:966,sb:677,sc:248,sd:249,sg:65,sh:290,si:386,sj:47,sk:421,sl:232,sm:378,sn:221,so:252,sr:597,ss:211,st:239,sv:503,sx:1,sy:963,sz:268,tc:1,td:235,tg:228,th:66,tj:992,tk:690,tl:670,tm:993,tn:216,to:676,tr:90,tt:1,tv:688,tw:886,tz:255,ua:380,ug:256,us:1,uy:598,uz:998,va:39,vc:1,ve:58,vg:1,vi:1,vn:84,vu:678,wf:681,ws:685,xk:383,ye:967,yt:262,za:27,zm:260,zw:263'
@@ -364,28 +504,58 @@
       return m[1].length >= 7 && m[1].length <= 15;
     }
 
+    /* Addresses that belong to other accounts, from the bar's Events field
+       (?taken=a@x.fi,b@y.fi). The proto has no other users to check against. */
+    var TAKEN = (new URLSearchParams(window.location.search).get('taken') || '')
+      .split(',').map(function (a) { return a.trim().toLowerCase(); }).filter(Boolean);
+
     /* PATCH /user, UpdateUserFormRequest. An implicit rule (filled, accepted)
        that fails ends that field's checks. An empty phone is swapped for the
-       saved one before validation, so it neither errors nor changes. */
+       saved one before validation, so it neither errors nor changes.
+       The email's `unique` rule skips the user's own row and compares without
+       case (MySQL collation). When it fails, failedValidation appends an
+       untranslated user_already_exists message after every other one, so the
+       toast always reads "(ja 1 muuta virhettä)" or more. */
     function patchUser(body) {
       var errors = {};
-      var saved = (getStore().contact || {}).puhelin || '';
+      var savedContact = getStore().contact || {};
+      var saved = savedContact.puhelin || '';
       var telephone = body.telephone || saved;
+      var taken = false;
       if (!body.name) errors.name = ['Kenttä Etu- ja sukunimi on pakollinen.'];
       if (!telephone) errors.telephone = ['Kenttä Puhelinnumero on pakollinen.'];
       else if (body.telephone && !isMobile(telephone)) errors.telephone = ['Tarkista puhelinnumero. Esimerkki: 0401234567'];
       if (!body.email) errors.email = ['Kenttä Sähköposti on pakollinen.'];
-      else if (!/^[^\s@]+@[^\s@]+$/.test(body.email)) errors.email = ['Kentän Sähköposti arvo ei ole validi sähköpostiosoite.'];
+      else {
+        var email = body.email.toLowerCase();
+        taken = TAKEN.indexOf(email) !== -1 && email !== String(savedContact.sahkoposti || '').toLowerCase();
+        var emailErrors = [];
+        if (!/^[^\s@]+@[^\s@]+$/.test(body.email)) emailErrors.push('Kentän Sähköposti arvo ei ole validi sähköpostiosoite.');
+        if (taken) emailErrors.push('Kentän Sähköposti arvo ei ole uniikki.');
+        if (emailErrors.length) errors.email = emailErrors;
+      }
       if (!body.terms_conditions) errors.terms_conditions = ['Kenttä Käyttöehdot tulee hyväksyä.'];
+      if (taken) errors.user_already_exists = ['This email is already in use.'];
       if (Object.keys(errors).length) return { status: 422, errors: errors };
+      /* Control: the new email applies at once, with no confirmation, nothing
+         sent to either address, and the seller stays verified. User::updated
+         then copies the email, phone and name onto every one of the seller's
+         ads. Klaviyo consent v1: a new email waits for its link instead, and
+         marketing_permission is no longer sent. */
+      var current = savedContact.sahkoposti || '';
+      var pending = KC_V1 && body.email.toLowerCase() !== current.toLowerCase() ? body.email : null;
       var s = getStore();
       s.contact = s.contact || {};
       s.contact.kokoNimi = body.name;
       s.contact.puhelin = telephone;
-      s.contact.sahkoposti = body.email;
-      s.contact.markkinointi = !!body.marketing_permission;
+      if (!pending) {
+        s.contact.sahkoposti = body.email;
+        if ('draftEmail' in s) s.draftEmail = body.email;
+      }
+      if (!KC_V1) s.contact.markkinointi = !!body.marketing_permission;
       setStore(s);
-      return { status: 200 };
+      if (pending) { account.pendingEmail = pending; saveAccount(); }
+      return { status: 200, pending: pending, current: current };
     }
 
     /* Prod's handleResponse toasts `data.message`, and this endpoint answers
@@ -405,7 +575,15 @@
         terms_conditions: termsCb.checked,
         marketing_permission: user.marketing_permission
       });
-      if (res.status === 422) window.protoToastr(summarize(flatten(res.errors)), 'error');
+      if (res.status === 422) { window.protoToastr(summarize(flatten(res.errors)), 'error'); return; }
+      if (res.pending) {
+        user.email = res.current;
+        emailIn.value = res.current;
+        el('pw-username').value = res.current || user.name;
+        renderPending();
+        window.protoToastr(t('profile.emailPendingToast').replace('{email}', res.pending), 'success');
+        showInbox();
+      }
     });
 
     /* ── UpdatePassword ── */
@@ -479,7 +657,34 @@
         { id: 'terms-pending',          label: 'No password · new terms to accept' },
         { id: 'password-terms-pending', label: 'Password set · new terms to accept' }
       ],
-      scenarioCurrent: function () { return scenarioOf(account); }
+      scenarioCurrent: function () { return scenarioOf(account); },
+      fieldsLabel: 'Accounts — other users',
+      fields: [
+        { key: 'taken', label: 'Emails already in use', placeholder: 'toinen@example.com', width: '220px' }
+      ],
+      initiatives: [ {
+        slug: 'klaviyo-consent',
+        default: 'control',
+        variants: [
+          { id: 'control', label: 'Control — consent saved in AutoVex, new email applies at once' },
+          { id: 'v1',      label: 'v1 — consent from Klaviyo, new email applies once confirmed' }
+        ]
+      } ],
+      /* What happens in Klaviyo and in the seller's inbox, v1 only. A change
+         made elsewhere shows when the page next reads Klaviyo, so each action
+         reads it again. */
+      actionSections: KC_V1 ? [
+        { label: 'Klaviyo — marketing consent', actions: [
+          { label: 'Subscribed', title: 'The person is subscribed in Klaviyo', run: function () { setKlaviyo({ status: 'subscribed' }); readConsent(); } },
+          { label: 'Unsubscribed from an email', title: 'The person used the unsubscribe link in a Klaviyo email', run: function () { setKlaviyo({ status: 'unsubscribed' }); readConsent(); } },
+          { label: 'Never subscribed', title: 'The funnel box was left unticked', run: function () { setKlaviyo({ status: 'never' }); readConsent(); } },
+          { label: 'Klaviyo not responding', title: 'Reading and saving the setting fail', run: function () { setKlaviyo({ unavailable: true }); readConsent(); } },
+          { label: 'Klaviyo responds again', title: 'Reading and saving work again', run: function () { setKlaviyo({ unavailable: false }); readConsent(); } }
+        ] },
+        { label: 'Email change', actions: [
+          { label: 'Open the confirmation link', title: 'Works while a new address is waiting for confirmation', run: confirmEmail }
+        ] }
+      ] : []
     };
   })();
   </script>
