@@ -203,12 +203,12 @@
       spec: null,
       prodArm: 'control'
     },
-    /* No spec page yet: v1 is a suggestion to the developers working on
-       Klaviyo as the only store of marketing consent, on profile.html. */
+    /* v1 is a suggestion to the developers working on Klaviyo as the only
+       store of marketing consent, on profile.html. */
     {
       slug: 'klaviyo-consent',
       name: 'Klaviyo consent',
-      spec: null,
+      spec: 'design-specs/klaviyo-consent.html',
       prodArm: 'control'
     }
   ];
