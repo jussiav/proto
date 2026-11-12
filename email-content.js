@@ -56,6 +56,19 @@
  * `initiative` field links the email to the spec page that owns the change, and
  * carries the reason it is a candidate even before copy exists.
  *
+ * An entry may instead carry `variants` — `{ <arm>: { label, insert } }` — for
+ * an initiative whose arm adds a block to the email rather than rewriting it.
+ * `insert` is a file of email HTML that replaces the body's `{{INSERT}}` token
+ * while that arm is on; the same file is the markup the spec hands over.
+ *
+ * ── Emails sent through Klaviyo ────────────────────────────────────────────
+ *
+ * An entry with `klaviyo` is an email Marketing sends from a Klaviyo flow on
+ * an event the code posts. Its subject, greeting and body are not in the code,
+ * so the body is a placeholder that says so, and only an initiative's insert
+ * is real markup. Listed so an initiative that adds to those emails has
+ * somewhere to show it.
+ *
  * ── Emails production does not send ────────────────────────────────────────
  *
  * An entry with `proposed` is an email a design initiative adds, which no dump
@@ -102,6 +115,34 @@
      seller email in the dump goes to route('user.offers'), the LIST. */
   function btn(label, target, route) {
     return { label: label, target: target, route: route || null };
+  }
+
+  /* A Klaviyo-sent email with OP routing's variant 3 insert. The decision
+     page shows the same block in the same states (op-routing.html#build). */
+  function klaviyoMail(o) {
+    return {
+      id: o.id,
+      klaviyo: { event: o.event },
+      group: 'Decision',
+      state: o.state,
+      trigger: o.cls + ' posts the Klaviyo event ' + o.event + '; Marketing\'s flow in Klaviyo sends the email',
+      timing: 'Set in the Klaviyo flow',
+      template: 'Klaviyo, not in the codebase',
+      ctaNone: 'not in the code; set in Klaviyo',
+      initiative: {
+        slug: 'op-routing',
+        spec: 'design-specs/op-routing.html#placement-email',
+        why: 'Variant 3 adds the OP coupon block after the email\'s own message, in the same states as the decision page (' + o.decision + ').'
+      },
+      variants: {
+        v3: { label: 'Variant 3 — OP coupon block after the message', insert: 'email-blocks/op-routing-v3.html' }
+      },
+      subject: '[subject set in Klaviyo] · ' + o.event,
+      body:
+        '<div class="em-klaviyo-ph"><b>Marketing\'s email, set in Klaviyo.</b> Its subject, greeting, message and button are not in the codebase.</div>' +
+        '{{INSERT}}' +
+        '<div class="em-klaviyo-ph">Sign-off and Klaviyo footer, with the unsubscribe link.</div>'
+    };
   }
 
   /* ── Blade-templated, seller-facing, Finnish ───────────────────────────────
@@ -368,6 +409,31 @@
         '{{BUTTON}}',
       cta: btn('Tutustu tarjoukseen tästä', 'decision.html?scenario=seen-offers', "route('user.offers.decision', $tenderRequest)")
     },
+
+    /* SENT THROUGH KLAVIYO. The code posts the event; Marketing's Klaviyo
+       flow sends the email, so nothing of it but the OP routing insert is in
+       this repository. */
+    klaviyoMail({
+      id: 'klaviyo-offer-accepted',
+      event: 'OfferAccepted',
+      cls: 'App\\Notifications\\OfferAcceptedSeller',
+      state: 'The seller accepted an offer',
+      decision: 'decision.html?scenario=accepted&op-routing=v3'
+    }),
+    klaviyoMail({
+      id: 'klaviyo-offer-rejected',
+      event: 'OfferRejected',
+      cls: 'App\\Notifications\\OfferRejectedSeller',
+      state: 'The seller rejected the offers',
+      decision: 'decision.html?scenario=all-rejected&op-routing=v3'
+    }),
+    klaviyoMail({
+      id: 'klaviyo-final-offer-rejected',
+      event: 'FinalOfferRejected',
+      cls: 'App\\Notifications\\FinalOfferRejectedSeller',
+      state: 'The seller rejected the final offer',
+      decision: 'decision.html?scenario=all-rejected&op-routing=v3'
+    }),
 
     {
       id: 'negotiation-dealer-replied-round-1',

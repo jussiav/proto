@@ -186,41 +186,6 @@ window.TRANSLATIONS = {
       disclaimer: 'AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.',
     },
 
-    /* OP routing, v1 only. Claude's draft, not approved; the offer and its
-       terms are unconfirmed with OP. */
-    opRouting: {
-      title:  'Tutustu sillä aikaa suosittelemaamme tarjoukseen',
-      discount: '\u221250\u00a0%',
-      offer:  'Uudelle autollesi vakuutus',
-      terms:  'Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.',
-      cta:    'Tutustu OP:ssa',
-      ctaV3:  'Laske vakuutustarjous OP:ssa',
-      newTab: '(avautuu uuteen välilehteen)',
-    },
-
-    /* OP routing, v2 only. Claude's draft; the code and expiry are placeholders
-       until OP confirms the campaign. */
-    opRouting2: {
-      status:     'Sinulla on 1 käyttämätön etu:',
-      reveal:     'Näytä AutoVex-edut',
-      modalTitle: 'Käyttämättömät AutoVex-edut',
-      expiry:     'Voimassa 31.12.2026 asti',
-      offer:      'Uudelle autollesi vakuutus',
-      discount:   '\u221250\u00a0%',
-      codeLabel:  'Etukoodi:',
-      code:       'AUTOVEX50',
-      copy:       'Kopioi koodi',
-      copied:     'Kopioitu leikepöydälle',
-      termsTitle: 'Edun ehdot',
-      terms1:     'Etu koskee henkilöauton uutta kaskovakuutusta.',
-      terms2:     'Saat kaskovakuutuksen ensimmäisen vakuutuskauden (vuoden) puoleen hintaan.',
-      terms3:     'Edun saat, kun keskität vakuutuksesi OP:n Pohjola Vakuutukseen.',
-      terms4:     'Syötä etukoodi, kun otat vakuutuksen OP:n verkkopalvelussa.',
-      cta:        'Laske hinta OP:ssa',
-      disclaimer: 'AutoVex toimii yhteistyössä OP:n kanssa erillisinä palveluina.',
-      close:      'Sulje',
-    },
-
     /* Price guess (initiative `price-guess`, not meant for the funnel). The
        teaser is the front page's v1 section, the rest is price-guess.html.
        Claude's draft, not approved; English is a working translation. */
@@ -1309,37 +1274,6 @@ window.TRANSLATIONS = {
       cta:        'To Huutokaupat.com',
       back:       'Back to front page',
       disclaimer: 'AutoVex works together with Huutokaupat.com as separate services.',
-    },
-
-    opRouting: {
-      title:  'Meanwhile, take a look at an offer we recommend',
-      discount: '\u221250\u00a0%',
-      offer:  'Insurance for your new car',
-      terms:  'Applies to the first insurance period of new comprehensive insurance.',
-      cta:    'Explore at OP',
-      ctaV3:  'Calculate an insurance quote at OP',
-      newTab: '(opens in a new tab)',
-    },
-
-    opRouting2: {
-      status:     'You have 1 unused perk:',
-      reveal:     'Show AutoVex perks',
-      modalTitle: 'Unused AutoVex perks',
-      expiry:     'Valid until 31 Dec 2026',
-      offer:      'Insurance for your new car',
-      discount:   '\u221250\u00a0%',
-      codeLabel:  'Perk code:',
-      code:       'AUTOVEX50',
-      copy:       'Copy code',
-      copied:     'Copied to clipboard',
-      termsTitle: 'Terms of the perk',
-      terms1:     'The perk applies to new comprehensive insurance for a passenger car.',
-      terms2:     'You get the first insurance period (one year) of comprehensive insurance at half price.',
-      terms3:     'You get the perk when you move your insurances to OP\'s Pohjola Insurance.',
-      terms4:     'Enter the perk code when you take out the insurance in OP\'s online service.',
-      cta:        'Calculate the price at OP',
-      disclaimer: 'AutoVex works together with OP as separate services.',
-      close:      'Close',
     },
 
     priceGuessTeaser: {

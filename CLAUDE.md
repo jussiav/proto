@@ -941,7 +941,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Similar cars | **Direction decided** (2026-10-28) — the table with highest offers (offers page 3 rows, decision page 3 → up to 20) and `v5` on the submit loader (one average figure); photo cards and accepted offers parked. History: **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers, `v4` (2026-10-28) on the submit loader only: a spinner turning into a green check above the heading, a few still grey cards scattered around it, 10 s; the table elsewhere; `v5` (2026-10-28) the same top with only an offer-range teaser card, moving on by itself; `v6` (2026-10-28) "Jatka" under the heading, a carousel of 1-4 cars along the bottom, 5 s, fits a phone without scrolling; latest first in three recency bands, grey caption labels, "Näytä aiemmat" (2026-10-27, matched to Jussi's Figma edits); table is the priority, cards a future alternative; what counts as similar is with Analytics; copy draft; on the decision page and a funnel submit loader too (2026-10-27) | `similar-cars` | `control` | `control` | `offers.html`, `decision.html`, `submit-loader.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
-| OP routing | **Draft** (2026-10-16) — `v1` OP car-insurance suggestion on the success page, verified sellers only; plain text + outlined OP button; `v2` (2026-10-19) the same offer as a time-limited perk with code + expiry, behind a reveal button that opens it in a modal; `v3` (2026-10-22) is `v1` in `v2`'s dashed coupon frame with OP's logo beside the heading and the filled orange button "Laske vakuutustarjous OP:ssa", straight to OP; offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html` | `design-specs/op-routing.html` |
+| OP routing | **`v3` only, in three placements** (2026-11-12): the dashed coupon block (OP logo beside the heading "Uudelle autollesi vakuutus −50 %", filled orange "Laske vakuutustarjous OP:ssa", straight to OP) on the success page (verified, in review or published), on the decision page after an offer is accepted or the offers rejected, and in the Klaviyo emails after those decisions. Pages run `vwo/op-routing-v3.js` (one VWO test, both URLs); emails get `email-blocks/op-routing-v3.html` in Klaviyo. `v1`/`v2` retired the same day. Offer wording unconfirmed with OP, logo/colour await OP's approval | `op-routing` | `control` | `control` | `success.html`, `decision.html`, `emails.html` | `design-specs/op-routing.html` |
 | Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | none |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 | Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
@@ -3036,11 +3036,65 @@ better, but changing it is out of scope (Jussi). **Kept as a deliberate
 divergence:** the proto's skip-photos placement; prod's "Lisään kuvat
 myöhemmin" link row under the tips is not reproduced.
 
-## OP routing — `v1`
+## OP routing — `v3` in three placements
 
 Started 2026-10-16. A pilot: suggest OP car insurance for the seller's next
 car while they wait, one button out to OP. Any business case
 and deal terms stay out of this repo.
+
+**Current state (2026-11-12, Jussi): only `v3`, in three placements.** `v1`
+and `v2` were deleted from the proto, translations and spec (their record is
+the history below and git; `opRouting.*` / `opRouting2.*` are gone from
+`translations.js`). The arm keeps its id `v3`; a remembered `v1`/`v2` is
+forgotten on load.
+
+- **One VWO snippet, `vwo/op-routing-v3.js`, is the implementation on both
+  pages,** loaded from `<head>` in `success.html` and `decision.html` for the
+  arm (seller protection's pattern). One VWO campaign targeting both URLs, so a
+  seller keeps one arm. Copy is hardcoded Finnish in the snippet; it does
+  nothing when `<html lang>` starts with `en`. Logo inlined as SVG.
+- **Success page hook:** the visible cream notice
+  (`div.border-orange-300.rounded-lg` containing `a[href*="offers"]`), which
+  prod draws only for a verified seller in review or published. Inserted as its
+  next sibling with `margin-top:32px`; the proto's column already has `gap-6`,
+  so `success.html` carries `body #av-op-v3.av-op-success { margin-top: 8px }`.
+  Measured 448×218 desktop, 270 at 375px, above the Hotjar survey.
+- **Decision page hook:** the hero `h2.text-3xl.font-bold.text-black` reading
+  exactly "Onneksi olkoon!" or "Tarjoukset hylätty" (prod's
+  `auction_hero.offer_accepted/offer_rejected.title`). Inserted as a
+  `<section>` after the "Tarvitsetko apua?" banner section when it directly
+  follows the offers, else after the offers. 448px, centred. Shows on
+  `accepted`, `deal-completed`, `all-rejected`, `deal-failed`; hidden on every
+  other scenario. Copy is identical to the success page by Jussi's ask; the
+  spec flags "sillä aikaa" and "Uudelle autollesi" as odd after rejecting.
+- **Emails are Klaviyo's, not the codebase's.** `OfferAcceptedSeller`,
+  `OfferRejectedSeller` and `FinalOfferRejectedSeller` only post Klaviyo events
+  (plus a Sinch SMS); Marketing's flow sends the email. So `email-content.js`
+  has three `klaviyo` entries (`klaviyo-offer-accepted`, `-offer-rejected`,
+  `-final-offer-rejected`, built by `klaviyoMail()`) whose body is a labelled
+  placeholder, and a new `variants: { v3: { label, insert } }` mechanism in
+  `emails.html` fetches `email-blocks/op-routing-v3.html` into the body's
+  `{{INSERT}}` while the arm is on (`OP_LOGO_URL` swapped for
+  `assets/op-logo-email.png`). Klaviyo-sent emails render without the Laravel
+  chrome, are counted separately in the inbox and carry a "Klaviyo · body not
+  in the code" chip.
+- **Email markup:** tables + inline styles, logo as a hosted PNG
+  (`assets/op-logo-email.png`, 160×160 transparent, shown at 40), uploaded to
+  Klaviyo's image library in place of `OP_LOGO_URL` (SVG is dropped by Gmail
+  and Outlook; an attachment shows as a file). Arrow as "→". The logo has
+  its own fixed 40px cell (gap on the heading cell) and min/max-width 40px:
+  with the gap inside the logo cell, a base `img{max-width:100%}` (Tailwind's
+  preflight in the email tool, and some mail clients) squeezed it to 28×40. Tested with
+  Klaviyo's own A/B split per flow email, so the email and page arms are not
+  linked (open question on the spec).
+- **Spec** is now a team part + build brief (seller protection's shape):
+  `bin/vwo-spec-sync.mjs` pastes both the snippet and the email file
+  (`data-src` takes any repo path). Live previews run
+  `design-specs/op-routing-preview.html?page=success-review|success-published|success-unverified|decision-accepted|decision-rejected|email&variant=v3`,
+  trimmed prod DOM, because the proto's success page markup differs from prod's.
+- **Not done:** Figma frames for the decision page and email placements.
+
+**History (v1/v2 retired 2026-11-12):**
 
 - **Partner routing is a family with Huutokaupat routing** (Jussi): both are
   AutoVex suggesting a third-party service without deterring the seller from

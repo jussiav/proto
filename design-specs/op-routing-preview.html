@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OP routing preview · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA', 100: '#D7EDFF', 200: '#B9E0FF', 300: '#88CFFF',
+              400: '#50B2FF', 500: '#2890FF', 600: '#0B6DFF', 700: '#0A59EB',
+              800: '#0F47BE', 900: '#134195', 950: '#11285A',
+            },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="../tw-tokens.js"></script>
+  <!-- ?page= picks a trimmed copy of a production screen; ?variant=v3 runs the
+       build snippet on it, exactly as VWO would. ?page=email shows the email
+       block from email-blocks/op-routing-v3.html instead. -->
+  <script>
+    var PAGE = new URLSearchParams(location.search).get('page') || 'success-review';
+    if (new URLSearchParams(location.search).get('variant') === 'v3' && PAGE !== 'email') {
+      document.write('<script src="../vwo/op-routing-v3.js"><\/script>');
+    }
+  </script>
+  <style>body { margin: 0; }</style>
+</head>
+<body class="font-body text-slate-900">
+  <div id="root"></div>
+  <script>
+    /* Trimmed copies of the production screens, with the same structure and
+       classes the snippet selects on: Review.vue and Success.vue for the funnel
+       success screen, C2BDecision.vue for the decision page. */
+    var NOTICE =
+      '<div class="text-start w-full bg-[rgb(250,234,218)] rounded-lg p-4 gap-2 items-center border-2 border-orange-300">' +
+        '<div class="flex flex-col">' +
+          '<span class="mb-2.5 text-xl text-slate-800 font-bold">Ota rennosti ja tarkkaile sähköpostiasi!</span>' +
+          '<span class="mb-4 text-base font-medium text-slate-600">Pidä sähköposti lähettyvillä, ettet vahingossa menetä parasta tarjousta autostasi.</span>' +
+          '<a href="/offers" class="text-slate-600 underline cursor-pointer font-medium">Näytä tarjouspyyntöni</a>' +
+        '</div>' +
+      '</div>';
+    function successScreen(title, badge, withNotice, survey) {
+      return '<div class="bg-white min-h-screen p-6 sm:py-14"><div class="flex flex-wrap flex-col items-center">' +
+        '<div class="mb-6 w-full max-w-md text-center">' +
+          '<h1 class="mb-8 text-3xl" data-testid="page-title">' + title + '</h1>' +
+          '<div class="w-fit mx-auto mb-8 flex items-center space-x-2 px-2 py-1 text-sm rounded border bg-slate-200 border-gray-300 text-gray-500">' + badge + '</div>' +
+          '<figure class="px-10 max-w-sm mx-auto mb-8"><div class="w-full h-32 rounded-lg bg-slate-100"></div></figure>' +
+          (withNotice ? NOTICE : '<div class="mt-2 mb-6 p-6 text-start border-2 border-blue rounded-xl text-base">Vahvista sähköpostisi jatkaaksesi</div>') +
+        '</div>' +
+        (survey ? '<div id="hotjar-survey" class="w-full max-w-md text-center text-xs text-slate-400 border border-dashed border-slate-300 rounded p-3">Hotjar rating survey</div>' : '') +
+      '</div></div>';
+    }
+    function decisionScreen(heroTitle, heroText, cardHtml) {
+      return '<div class="bg-blue-50 min-h-screen"><main class="max-w-[768px] mx-auto p-6 sm:py-14"><div class="grid gap-y-12 relative z-10">' +
+        '<section><div class="container mx-auto"><div class="grid items-start gap-y-7 md:grid-cols-2 md:gap-12">' +
+          '<div class="mb-auto col-span-1"><div class="flex flex-col rounded-lg max-w-3xl mx-auto items-center justify-center text-center"><div class="mb-4"><div class="p-1 bg-white rounded-full"><img src="../assets/scenario-ulkopuoli-2.jpg" alt="" class="rounded-full object-cover w-28 h-28 md:w-44 md:h-44"></div></div>' +
+          '<div class="px-4"><h2 class="text-3xl font-bold text-black mb-2 leading-snug">' + heroTitle + '</h2><p class="text-gray-600 text-base">' + heroText + '</p></div></div></div>' +
+          '<div class="w-full flex justify-center"><div class="w-full rounded-xl border-2 bg-white shadow-sm border-lime-400 p-5 text-center"><div class="text-5xl font-bold font-display text-slate-900">11&nbsp;500&nbsp;€</div><div class="mt-2 text-sm text-slate-600">' + cardHtml + '</div></div></div>' +
+        '</div></div></section>' +
+        '<section><div class="container mx-auto"><div><div class="font-body rounded-xl w-full outline outline-offset-[-2px] bg-slate-50 outline-blue-400 text-sm p-4"><h5 class="mb-2 leading-snug">Tarvitsetko apua?</h5><p class="text-sm leading-none">…</p></div></div></div></section>' +
+        '<section><h2 class="flex space-x-2.5 mb-5 items-center text-xl"><span class="text-blue-900 leading-3">Tarjouskilpailun tulos</span></h2><div class="container mx-auto"><div><div class="w-full p-5 bg-white rounded-xl text-sm text-slate-500">Auction result, unchanged by the test.</div></div></div></section>' +
+      '</div></main></div>';
+    }
+    var SCREENS = {
+      'success-review': function () { return successScreen('Hienoa! Ilmoitustasi tarkastetaan parhaillaan.', 'Tarkastus käynnissä', true, true); },
+      'success-published': function () { return successScreen('Jännittävää! Tarjouskilpailu on alkamassa.', 'Odotetaan tarjouksia', true, false); },
+      'success-unverified': function () { return successScreen('Tarjouspyyntösi on valmis! Yksi juttu vielä.', 'Tarkastus käynnissä', false, true); },
+      'decision-accepted': function () { return decisionScreen('Onneksi olkoon!', 'Autoliike ottaa sinuun yhteyttä mahdollisimman pian kaupan viimeistelyä varten.', 'Tarjous hyväksytty'); },
+      'decision-rejected': function () { return decisionScreen('Tarjoukset hylätty', 'Tarjoukset eivät olleet sinulle sopivia. Me ymmärrämme – parannellaan ilmoitusta yhdessä tai kokeillaan uudelleen paremmalla hetkellä.', 'Hylätty'); },
+      'email': function () {
+        return '<div class="bg-slate-100 min-h-screen py-6 px-3"><div class="mx-auto max-w-[600px] bg-white px-6 py-8">' +
+          '<div class="font-body text-sm text-slate-500 bg-slate-50 border border-dashed border-slate-300 rounded p-3">Marketing\'s email from Klaviyo: subject, greeting, message and button.</div>' +
+          '<div id="email-block"></div>' +
+          '<div class="mt-8 font-body text-sm text-slate-500 bg-slate-50 border border-dashed border-slate-300 rounded p-3">Sign-off and Klaviyo footer.</div>' +
+        '</div></div>';
+      }
+    };
+    document.getElementById('root').innerHTML = (SCREENS[PAGE] || SCREENS['success-review'])();
+    if (PAGE === 'email') {
+      fetch('../email-blocks/op-routing-v3.html').then(function (r) { return r.text(); }).then(function (html) {
+        document.getElementById('email-block').innerHTML = html.replace(/OP_LOGO_URL/g, '../assets/op-logo-email.png');
+      });
+    }
+  </script>
+</body>
+</html>

@@ -54,6 +54,14 @@
       if (arm === 'v1' || arm === 'v2' || arm === 'v3') document.write('<script src="vwo/seller-protection-' + arm + '.js"><\/script>');
     }());
   </script>
+  <!-- OP routing: the same, for its variant 3 (design-specs/op-routing.html#build). -->
+  <script>
+    (function () {
+      var arm = window.protoVariant('op-routing', 'control');
+      if (arm === 'v3') document.write('<script src="vwo/op-routing-v3.js"><\/script>');
+      else if (arm !== 'control') window.protoVariantSet('op-routing', null);
+    }());
+  </script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <style>
     /* NumberInput.vue's own <style> — the suffix (€) is drawn by the wrapper
@@ -4163,6 +4171,14 @@
             { id: 'v1',      label: 'Variant 1 — AutoVex-turva card under the offers' },
             { id: 'v2',      label: 'Variant 2 — AutoVex-turvattu row in each offer card, opens a modal' },
             { id: 'v3',      label: 'Variant 3 — variant 1’s card, body names what we help with' }
+          ]
+        },
+        {
+          slug:    'op-routing',
+          default: 'control',
+          variants: [
+            { id: 'control', label: 'Control — no insurance suggestion' },
+            { id: 'v3',      label: 'Variant 3 — OP coupon block, after accepting or rejecting (draft)' }
           ]
         }
       ],

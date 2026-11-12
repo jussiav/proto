@@ -116,6 +116,10 @@
     /* mail::subcopy — only on MailMessage-built emails. */
     .em-subcopy { border-top: 1px solid #EDEFF2; margin-top: 25px; padding-top: 25px; }
     .em-subcopy p { font-size: 12px; color: #74787E; margin: 0; }
+    /* A Klaviyo-sent email: the body is Marketing's and not in the code, so it
+       is drawn as a labelled placeholder around the initiative's real insert. */
+    .em-klaviyo-ph { font-family: "DM Sans", sans-serif; font-size: 13px; line-height: 1.5; color: #64748B; background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 6px; padding: 14px 16px; }
+    .em-klaviyo-ph + .em-klaviyo-ph, [data-insert] + .em-klaviyo-ph { margin-top: 32px; }
     .em-btn-row { text-align: center; margin: 28px 0; }
     .em-body a.em-btn, .em-btn {
       display: inline-block;
@@ -184,6 +188,8 @@
         approximation, since blade cannot be executed here — it gets replaced when a rendered export lands.
         Events the code sends to Klaviyo are listed but never rendered: whether Klaviyo sends an email
         or an SMS for one, and its copy, is set up in Klaviyo, not in the codebase.
+        Where an initiative adds a block to a Klaviyo email, that email is listed as
+        <b>Klaviyo · body not in the code</b>: a placeholder stands for Marketing's message and only the block is real.
         An email a design initiative adds, which production does not send yet, is marked
         <b>Not in production</b> and names its initiative and variant.
       </p>
@@ -277,7 +283,7 @@
          initiative — `armFor` forgets anything not named here. Hence also the
          `!== 'control'` tests below rather than `=== 'v1'`: an initiative whose
          second arm differs only elsewhere still shows its email override. */
-      var ARMS = ['control', 'v1', 'v2'];
+      var ARMS = ['control', 'v1', 'v2', 'v3'];
       function armFor(slug) {
         var a = window.protoVariant ? window.protoVariant(slug, 'control') : 'control';
         if (ARMS.indexOf(a) === -1) {
@@ -290,7 +296,10 @@
       /* An override exists only where an initiative has approved copy for it. */
       function armOf(v) {
         var ini = v.mail.initiative;
-        if (!ini || !v.v1) return null;
+        if (!ini) return null;
+        /* An arm that adds a block names itself; a v1 override answers any arm. */
+        if (v.mail.variants) return v.mail.variants[armFor(ini.slug)] || null;
+        if (!v.v1) return null;
         return armFor(ini.slug) !== 'control' ? v.v1 : null;
       }
       /* True when the arm is on but this email has nothing to swap for it. */
@@ -299,7 +308,23 @@
         return !!ini && !armOf(v) && armFor(ini.slug) !== 'control';
       }
       function armSubject(v) { var a = armOf(v); return (a && a.subject) || v.subject; }
-      function armBody(v)    { var a = armOf(v); return (a && a.body)    || v.body; }
+      function armBody(v) {
+        var a = armOf(v);
+        var body = (a && a.body) || v.body;
+        return body.replace('{{INSERT}}', a && a.insert ? '<div data-insert="' + a.insert + '"></div>' : '');
+      }
+      /* An insert is a file of email HTML, the same file the spec hands over,
+         so the tool cannot drift from it. OP_LOGO_URL stands for the hosted
+         logo, which the prototype serves from its own assets. */
+      function fillInserts(host) {
+        [].forEach.call(host.querySelectorAll('[data-insert]'), function (el) {
+          fetch(el.getAttribute('data-insert')).then(function (r) { return r.ok ? r.text() : ''; }).then(function (html) {
+            el.innerHTML = html.replace(/OP_LOGO_URL/g, 'assets/op-logo-email.png');
+          }).catch(function () {
+            el.textContent = 'The insert loads only when the prototype is served over http.';
+          });
+        });
+      }
       /* Change 7 of Enhanced negotiations is a link target, not copy — so an
          override may carry a cta and no body at all. */
       function armCta(v)     { var a = armOf(v); return (a && a.cta)     || v.cta; }
@@ -425,7 +450,8 @@
               (v.stateLabel ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-0.5">' + esc(v.stateLabel) + '</span>' : '') +
               (v.mail.proposed ? '<span class="inline-block mt-1 mr-1 font-dm text-xs font-medium bg-amber-50 text-amber-900 border border-dashed border-amber-500 rounded-full px-2 py-0.5">Not in production · ' +
                 esc(v.mail.proposed.name) + ' ' + esc(v.mail.proposed.arm) + '</span>' : '') +
-              (armOf(v) ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-green-100 text-green-800 rounded-full px-2 py-0.5">v1 differs' + (armOf(v).draft ? ' (draft)' : '') + '</span>' : '') +
+              (v.mail.klaviyo ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-slate-100 text-slate-700 border border-slate-300 rounded-full px-2 py-0.5">Klaviyo · body not in the code</span>' : '') +
+              (armOf(v) ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-green-100 text-green-800 rounded-full px-2 py-0.5">' + esc(armFor(v.mail.initiative.slug)) + (v.mail.variants ? ' adds a block' : ' differs') + (armOf(v).draft ? ' (draft)' : '') + '</span>' : '') +
               (ch ? '<span class="inline-block mt-1 mr-1 font-dm text-xs font-medium bg-white text-blue-900 border border-blue-300 rounded-full px-2 py-0.5">' +
                 ch.order + ' of ' + choiceMembers(ch.group).length + ' · ' + esc(ch.short) + '</span>' : '') +
               (!armOf(v) && v.mail.initiative && !ch
@@ -501,8 +527,10 @@
         });
 
         var proposedCount = VIEWS.filter(function (v) { return v.mail.proposed; }).length;
+        var klaviyoCount = VIEWS.filter(function (v) { return v.mail.klaviyo; }).length;
         document.getElementById('list-count').textContent =
-          (VIEWS.length - proposedCount) + ' in production' +
+          (VIEWS.length - proposedCount - klaviyoCount) + ' in production' +
+          (klaviyoCount ? ' · ' + klaviyoCount + ' sent from Klaviyo' : '') +
           (proposedCount ? ' · ' + proposedCount + ' not in production' : '') +
           ' · ' + DATA.klaviyo.length + ' Klaviyo events';
       }
@@ -552,7 +580,9 @@
         }
         document.getElementById('render-caveat').textContent = pr
           ? 'Not in production — copy from the ' + pr.name + ' design spec, approved by UX · chrome assumed, as the developers\' build is in no dump'
-          : 'Rendered email — chrome checked against rendered captures · copy verbatim from the dump';
+          : m.klaviyo
+            ? 'Sent from Klaviyo — the email itself is Marketing\'s and not in the code; only an initiative\'s insert is real markup'
+            : 'Rendered email — chrome checked against rendered captures · copy verbatim from the dump';
 
         var rows = '';
         if (pr) {
@@ -568,7 +598,9 @@
           ? esc(c.label) + ' → <a class="text-av-blue underline" href="' + c.target + '">' + esc(c.target) + '</a>' +
             (c.route ? '<br><code class="font-mono text-xs text-slate-500">' + esc(c.route) + '</code>' : '')
           : '<span class="text-slate-500">' + esc(m.ctaNone || 'none — the seller is asked to reply to the message') + '</span>');
-        rows += metaRow('Built as', pr ? esc(pr.builtAs) : m.shape === 'mailmessage'
+        rows += metaRow('Built as', pr ? esc(pr.builtAs) : m.klaviyo
+          ? 'Klaviyo flow on the event <code class="font-mono text-xs">' + esc(m.klaviyo.event) + '</code>, owned by Marketing. The code sends the event only'
+          : m.shape === 'mailmessage'
           ? 'MailMessage — greeting, lines, action; Laravel adds the salutation and a fallback-URL subcopy'
           : 'Blade template via ->markdown() — header, body, footer only');
         if (m.tags) rows += metaRow('Mailgun tags', m.tags.map(function (t) {
@@ -583,7 +615,7 @@
           rows += metaRow('Initiative', link + '<br><span class="text-slate-700">' + esc(m.initiative.why) + '</span>');
         }
         if (!pr) rows += metaRow('Arm', armOf(v)
-          ? '<b>' + esc(armFor(v.mail.initiative.slug)) + '</b> — showing the initiative\'s revised version' +
+          ? '<b>' + esc(armFor(v.mail.initiative.slug)) + '</b> — ' + (armOf(v).insert ? 'showing the initiative\'s block, from <code class="font-mono text-xs">' + esc(armOf(v).insert) + '</code>' : 'showing the initiative\'s revised version') +
             (armOf(v).draft ? ' <span class="text-amber-800">(placeholder copy, not approved)</span>' : '')
           : (armSelectedWithoutOverride(v)
               ? (v.unchanged
@@ -659,6 +691,12 @@
         var footer = '© ' + new Date().getFullYear() + ' AutoVex' +
           (v.mail.footer === 'rights' ? '. Kaikki oikeudet pidätetään.' : '');
 
+        if (v.mail.klaviyo) {
+          var host = document.getElementById('email-render');
+          host.innerHTML = '<div class="em-shell"><div class="em-shell-body"><div class="em-body">' + body + '</div></div></div>';
+          fillInserts(host);
+          return;
+        }
         document.getElementById('email-render').innerHTML =
           '<div class="em-shell">' +
             '<div class="em-header"><img src="https://images.autovex.fi/logo.png" alt="AutoVex" /></div>' +
@@ -683,7 +721,14 @@
            initiative, and an email with no revised copy is in exactly that
            position — so the row answers "does this email change?" at a glance
            instead of offering an arm that renders identically to control. */
-        initiatives: (active.v1 && active.mail.initiative) ? [
+        initiatives: active.mail.variants ? [
+          {
+            slug:    active.mail.initiative.slug,
+            default: 'control',
+            variants: [{ id: 'control', label: 'Control — production behaviour' }].concat(
+              Object.keys(active.mail.variants).map(function (id) { return { id: id, label: active.mail.variants[id].label }; }))
+          }
+        ] : (active.v1 && active.mail.initiative) ? [
           {
             slug:    active.mail.initiative.slug,
             default: 'control',
