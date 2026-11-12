@@ -92,7 +92,7 @@
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: draft &middot; variant 3 in 3 placements &middot; copy and offer unconfirmed with OP
+          Status: designs accepted by OP &middot; variant 3 in 3 placements
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">November 2026</span>
       </div>
@@ -207,22 +207,18 @@
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
-      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">Copy in the new placements</p>
+      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">To discuss with the team</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
-        <li><b>&ldquo;Sillä aikaa&rdquo; (meanwhile)</b> fits the success page and an accepted offer, where the seller waits for the dealership's call. After rejecting there is nothing to wait for.</li>
-        <li><b>&ldquo;Uudelle autollesi&rdquo; (for your new car)</b> assumes a next car. After rejecting, the seller usually keeps the car they have. The copy is the same in every placement for now, as asked.</li>
+        <li><b>The email and page arms are not linked, and that affects the results.</b> VWO and Klaviyo split sellers independently, so a seller can be in variant 3 on the pages and in control in the email, or the other way round. Neither test then has a clean control: a &ldquo;control&rdquo; seller may still have seen the block in the other channel. Options: link the two (the arm VWO stores on the seller's account passed to Klaviyo as a profile property, and the flow branched on it; needs the developers), or keep them separate and analyse sellers by what they were exposed to.</li>
+        <li><b>Which channel converts.</b> Besides whether the block works, we want to know whether the site or the email brings the leads. That needs each placement's clicks, and OP's leads, counted per channel (<a class="text-av-blue underline" href="#build-tracking">B5</a>).</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Marketing</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
-        <li><b>Are the three Klaviyo emails live,</b> and what do they say? The code only sends the events, so the block's place in each email is to be set against Marketing's template.</li>
-        <li><b>The email and page arms are not linked.</b> VWO and Klaviyo split sellers independently, so a seller can see the block on the page and not in the email, or the other way round. If the two should agree, the arm VWO stores on the seller's account could be passed to Klaviyo as a profile property and used to branch the flow; that needs the developers.</li>
+        <li><b>Are the three Klaviyo emails live,</b> and what do they say? The code only sends the events, so the block's place in each email is to be set against Marketing's template. Marketing may adapt the block's copy to its emails.</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With OP</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
-        <li><b>Which offer can we communicate, and how?</b> The &ldquo;&minus;50&nbsp;%&rdquo; offer and its terms line are drafts until OP confirms the wording and conditions.</li>
-        <li><b>How are leads attributed to AutoVex</b>, and what counts as a qualified lead? This decides what the button's link carries, and whether each placement needs its own link.</li>
-        <li><b>The logo and the button's colour</b> need OP's approval; they are taken from OP's public site.</li>
-        <li><b>Contrast of the orange button.</b> White 16px text on OP's orange is 3.4:1, below the 4.5:1 accessibility minimum for normal text (OP's own site uses the same pairing). Options: a darker orange agreed with OP, or a larger label.</li>
+        <li><b>How are leads attributed to AutoVex</b>, and what counts as a qualified lead? This decides what the button's link carries, including the per-placement parameters proposed in <a class="text-av-blue underline" href="#build-tracking">B5</a>.</li>
         <li><b>The target page.</b> OP's car insurance page for now; a direct link to the calculator, or a landing page of OP's, may convert better.</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Legal</p>
@@ -347,7 +343,7 @@
         <tr><td class="av-td text-slate-500 whitespace-nowrap">Button, screen readers only</td><td class="av-td"><span class="text-slate-900">(avautuu uuteen välilehteen)</span><div class="av-gloss">(opens in a new tab). Pages only; an email link opens however the mail client opens links.</div></td></tr>
         <tr><td class="av-td text-slate-500 whitespace-nowrap">Terms line</td><td class="av-td"><span class="text-slate-900">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</span><div class="av-gloss">Applies to the first insurance period of new comprehensive insurance.</div></td></tr>
       </tbody></table></div>
-      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">Draft copy, the same in every placement; the offer and its terms wait for OP's confirmation. The grey lines are English glosses for reading; do not render them. The copy is already in the build code and the email markup.</p>
+      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">OP has accepted the designs, including the logo and colours. The copy is the same in every placement; Marketing may adapt it inside its emails. The grey lines are English glosses for reading; do not render them. The copy is already in the build code and the email markup.</p>
       </div>
     </section>
 
@@ -503,13 +499,15 @@
 
     <section class="av-band av-band-build">
       <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B5 &mdash; Tracking</h3>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4" id="build-tracking">B5 &mdash; Tracking</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
         <li><b>Primary goal:</b> clicks on the OP button, a VWO click goal on <code>#av-op-v3 a.av-op-cta</code>. Report it per page (success page, decision page) by URL, and the decision page per state if VWO can split by the hero title.</li>
         <li><b>Denominator:</b> sellers who reached a state where the block shows, in both arms. Control has no block, so count control's eligible views with a VWO custom goal or segment on the same hooks (B2), or compare clicks per visitor of the targeted states.</li>
         <li><b>Guardrail, success page:</b> nothing the seller still does is on that screen; watch that the published and in-review screens' own link to the offers page keeps its click rate.</li>
         <li><b>Group membership is already recorded.</b> When VWO applies a variation for a logged-in seller, the app stores the arm on the seller's account. The decision page needs a login, and a verified seller on the success page is logged in.</li>
         <li><b>Leads at OP</b> are counted by OP; how they are attributed to AutoVex is open (part 1).</li>
+        <li><b>Channel attribution, site vs email.</b> Clicks are counted in two tools: VWO for the pages, Klaviyo for the emails. To see which channel actually converts, the click counts are not enough; OP's leads have to be split by where the click came from. Proposal, to agree with OP before the build: give each placement's link its own parameters, for example <code>utm_source=autovex</code>, <code>utm_medium=web</code> or <code>email</code>, <code>utm_campaign=op-routing</code>, and <code>utm_content=success-page</code>, <code>decision-page</code>, <code>email-offer-accepted</code>, <code>email-offers-rejected</code> or <code>email-final-offer-rejected</code>. They name the placement only, never the seller or the car. Until OP agrees, the build code and the email markup link to OP's page as it is.</li>
+        <li><b>Exposure across channels.</b> The page and email arms are split independently (part 1), so report results per channel and, where the data allows, by what each seller was exposed to (page only, email only, both, neither).</li>
       </ul>
       </div>
     </section>
@@ -584,7 +582,7 @@
         <li>Show the block anywhere else: not on the unverified, rejected or photos-missing success screens, not on the decision page while an offer can still be accepted, not for a B2B seller.</li>
         <li>Pass anything about the seller or the car to OP in the link.</li>
         <li>Change AutoVex's own content on these pages: the notice, the hero, the offer cards, the help banner, the auction result.</li>
-        <li>Rewrite the copy, colours or sizes in the build code or the email markup.</li>
+        <li>Rewrite the copy, colours or sizes in the build code, or the colours, sizes and layout of the email markup. In the emails, Marketing may adapt the copy to the email.</li>
         <li>Put the logo in an email as SVG, as a data URI or as an attachment.</li>
       </ul>
       </div>
