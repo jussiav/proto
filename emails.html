@@ -182,7 +182,8 @@
         Every transactional email the consumer seller can receive, in the order the journey sends them.
         Copy is transcribed verbatim from the production dump; the surrounding mail chrome is an
         approximation, since blade cannot be executed here — it gets replaced when a rendered export lands.
-        Marketing emails in Klaviyo are listed but never rendered: their copy is not in the codebase.
+        Events the code sends to Klaviyo are listed but never rendered: whether Klaviyo sends an email
+        or an SMS for one, and its copy, is set up in Klaviyo, not in the codebase.
         An email a design initiative adds, which production does not send yet, is marked
         <b>Not in production</b> and names its initiative and variant.
       </p>
@@ -469,19 +470,33 @@
         setTimeout(run, 150);
 
         /* Klaviyo — listed, never rendered. Leaving them out would read as
-           "no email is sent here", which is worse than an unrenderable row. */
-        var kHead = document.createElement('p');
-        kHead.className = 'px-4 pt-5 pb-1 font-dm text-xs font-bold uppercase tracking-wide text-slate-400';
-        kHead.textContent = 'Klaviyo — copy not in the codebase';
+           "no email is sent here", which is worse than an unrenderable row. Each
+           row is an event the code sends; whether an email follows is Klaviyo's. */
+        var kHead = document.createElement('div');
+        kHead.className = 'px-4 pt-5 pb-2';
+        kHead.innerHTML =
+          '<p class="font-dm text-xs font-bold uppercase tracking-wide text-slate-400">Klaviyo events — no copy in the codebase</p>' +
+          '<p class="font-dm text-xs text-slate-500 mt-1 leading-4">The code sends these events to Klaviyo in production, never for B2B. ' +
+          'Whether Klaviyo sends an email or an SMS for one, and whether that flow is live, is set up in Klaviyo by Marketing.</p>';
         host.appendChild(kHead);
 
+        var stage = null;
         DATA.klaviyo.forEach(function (k) {
+          if (k.stage !== stage) {
+            stage = k.stage;
+            var sh = document.createElement('p');
+            sh.className = 'px-4 pt-3 pb-1 font-dm text-[11px] font-medium uppercase tracking-wide text-slate-400';
+            sh.textContent = stage;
+            host.appendChild(sh);
+          }
           var row = document.createElement('div');
           row.className = 'px-4 py-2.5 border-b border-slate-100';
           row.innerHTML =
-            '<span class="block font-dm text-sm text-slate-500 leading-5">' + esc(k.cls) + '</span>' +
-            '<span class="block font-dm text-xs text-slate-400 mt-0.5">' + esc(k.state) + '</span>' +
-            '<code class="inline-block mt-1 font-mono text-[11px] text-slate-400">' + esc(k.event) + '</code>';
+            '<code class="block font-mono text-xs ' + (k.notSent ? 'text-slate-400 line-through' : 'text-slate-700') + '">' + esc(k.event) + '</code>' +
+            '<span class="block font-dm text-xs text-slate-500 mt-0.5">' + esc(k.state) + '</span>' +
+            (k.sms ? '<span class="block font-dm text-xs text-slate-500 mt-0.5"><b class="font-medium text-slate-600">Also an SMS</b> (Sinch, outside Klaviyo): ' + esc(k.sms) + '</span>' : '') +
+            (k.notSent ? '<span class="inline-block mt-1 font-dm text-xs bg-slate-200 text-slate-700 rounded-full px-2 py-0.5">Not sent: nothing in the code sends it</span>' : '') +
+            (k.cls !== k.event ? '<span class="block font-mono text-[11px] text-slate-400 mt-0.5">' + esc(k.cls) + '</span>' : '');
           host.appendChild(row);
         });
 
@@ -489,7 +504,7 @@
         document.getElementById('list-count').textContent =
           (VIEWS.length - proposedCount) + ' in production' +
           (proposedCount ? ' · ' + proposedCount + ' not in production' : '') +
-          ' · ' + DATA.klaviyo.length + ' in Klaviyo';
+          ' · ' + DATA.klaviyo.length + ' Klaviyo events';
       }
 
       /* ── Meta panel ───────────────────────────────────────────────────────── */

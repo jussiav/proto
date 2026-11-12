@@ -7377,10 +7377,25 @@ each carrying its `condition`, and the same template with different strings per
 state (email verification's new vs returning seller) becomes one entry with
 `states`.
 
-**Klaviyo emails are listed, never rendered.** Nineteen seller-facing events are
-`AbstractKlaviyoNotification` subclasses: the repo holds the event name and
-payload, the copy lives in Klaviyo and is owned by Marketing. Omitting them would
-read as "no email is sent here", which is worse than an unrenderable row.
+**Klaviyo events are listed, never rendered, and they are EVENTS, not emails.**
+Rebuilt from the 2026-11-11 dump on 2026-11-12: every notification class that
+posts an event to Klaviyo's API (`AbstractKlaviyoNotification` subclasses, plus
+the draft-stage classes using the `NotifiesViaKlaviyo` trait), **30 of them**,
+grouped by stage (Draft, Auction, Decision, Negotiation, After the sale,
+Account). Each row shows the event name actually sent (from
+`KlaviyoEventNameEnum`, CamelCase: `OfferAutoRejected`, not the old
+`offers_auto_rejected`), when it fires, the class where it differs, and any SMS
+the class sends itself through Sinch with its condition. All go to the car's
+owner (`LoginInfo` to any user); `KlaviyoChannel` sends only in production and
+skips B2B, so preview environments and Mailpit never show them. **What the code
+cannot tell:** whether Klaviyo turns an event into an email or an SMS, its copy,
+and whether that flow is live; that is Marketing's, in Klaviyo. One class,
+`TenderRequestDraftAutoRejected`, is marked **Not sent**: nothing in the dump
+sends it (only an analytics listener mentions it). The old list of 19 had
+snake_case names that are not what is sent, eight rows wrongly labelled "no
+EVENT_NAME constant", and missed 11 seller events, including the advisor's
+rejection (`TenderRequestDraftRejected`). Omitting them would read as "no email
+is sent here", which is worse than an unrenderable row.
 
 **Arms work as they do everywhere else, but the row is per EMAIL.** An email — or
 one of its `states` — may carry `v1` (`{ subject, body }`) beside the production

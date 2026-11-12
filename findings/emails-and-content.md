@@ -22,7 +22,7 @@ Klaviyo, outside it), CMS copy, and copy that reaches dealerships.
 - **Status:** Open · **Type:** UX
 - **Where:** The email a seller gets when an advisor rejects their ad
 - **Found:** 2026-09-30, Seller edits before review assessment
-- **Evidence:** Sent as a Klaviyo event, so the button target lives in Marketing's template, not in the codebase. Wherever it points, the seller lands on the funnel's saved-position behaviour (FUN-06).
+- **Evidence:** Sent as the Klaviyo event `TenderRequestDraftRejected`, so the button target lives in Marketing's template, not in the codebase. Wherever it points, the seller lands on the funnel's saved-position behaviour (FUN-06).
 - **Next step:** Ask Marketing for the link target. It should point at the edit entry, not the list.
 - **Touches:** Seller edits before review
 
@@ -46,7 +46,7 @@ Klaviyo, outside it), CMS copy, and copy that reaches dealerships.
 - **Status:** Open · **Type:** UX · **Severity:** Medium
 - **Where:** The three emails a consumer seller can get when their auction ends with offers. Only one is sent. The email tool shows them as one group: "Tarjouskilpailu on päättynyt. Katso saamasi tarjous!", "Tarjouskilpailu päättyi, katso tarjoukset autostasi [reg. no]!" and "[first name], tarjouskilpailusi on päättynyt! Siirry hyväksymään tarjous"
 - **Found:** 2026-11-12, re-checking the email tool against the 2026-11-11 dump
-- **Evidence:** The auction-ended notification compares the highest offer with the request's asking price. Under 90 % of it the seller gets "Mikäli olet tyytyväinen lopputulokseen, käythän hyväksymässä tarjouksen pian." From 90 % up they are told "sait autostasi mahtavan tarjouksen!", in two emails whose bodies are identical and whose subjects differ (just under, and at or above, the asking price). No screen after the price step shows the consumer seller their asking price any more (Asking price removal). For a reviewed car the advisor sets it in the review call, and an ad that publishes without one gets the price estimate in its place. So whether an offer is called "mahtava" rests on a number the seller may not know, or never gave
+- **Evidence:** The auction-ended notification compares the highest offer with the request's asking price. Under 90 % of it the seller gets "Mikäli olet tyytyväinen lopputulokseen, käythän hyväksymässä tarjouksen pian." From 90 % up they are told "sait autostasi mahtavan tarjouksen!", in two emails whose bodies are identical and whose subjects differ (just under, and at or above, the asking price). No screen after the price step shows the consumer seller their asking price any more (Asking price removal). For a reviewed car the advisor sets it in the review call, and an ad that publishes without one gets the price estimate in its place. So whether an offer is called "mahtava" rests on a number the seller may not know, or never gave. The text message that can go with a rejection (OfferRejected, OfferAutoRejected, FinalOfferRejected) uses the asking price too: it is sent only when the highest offer is at least 80 % of it
 - **Last checked:** prod dump 2026-11-11, present
 - **Next step:** Decide what picks the email when the asking price is not something the seller sees: one email for every auction with offers, or a reference the seller does see. A copy and logic change, with no proposal yet
 - **Touches:** Asking price removal, Informed decision (its result block judges the offer on the decision page by a different reference)

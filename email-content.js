@@ -12,10 +12,11 @@
  * records `template` and `langKeys` so re-checking against a newer dump is a
  * mechanical diff rather than a re-read.
  *
- * **Klaviyo-triggered** (`rendered: false`): the codebase holds only the event
- * name and payload — the copy and design live in Klaviyo, owned by Marketing.
- * They are listed so the journey has no invisible gaps, and deliberately not
- * rendered, because anything drawn here would be invented.
+ * **Sent to Klaviyo** (the `KLAVIYO` list): the codebase holds only an event
+ * name and its payload. Whether Klaviyo sends an email or an SMS for an event,
+ * and its copy, is set up in Klaviyo by Marketing. They are listed so the
+ * journey has no invisible gaps, and never rendered, because anything drawn
+ * here would be invented.
  *
  * ── Fidelity ───────────────────────────────────────────────────────────────
  *
@@ -583,29 +584,52 @@
     }
   };
 
-  /* ── Klaviyo-triggered — listed, never rendered ────────────────────────────
-     The codebase holds the event name and the payload; the copy lives in
-     Klaviyo. Seller-facing events only. */
+  /* ── Events sent to Klaviyo — listed, never rendered ──────────────────────
+     Every notification class in the 2026-11-11 dump that posts an event to
+     Klaviyo's API (KlaviyoChannel, or the NotifiesViaKlaviyo trait). All go to
+     the car's owner, LoginInfo to any user. They are sent in production only
+     and never for a B2B seller, so preview environments and Mailpit never show
+     them. The code holds the event name and its payload, nothing else: whether
+     Klaviyo turns an event into an email or an SMS, and with what copy, is set
+     up in Klaviyo by Marketing, and whether that flow is live is not in the
+     code either. `sms` is a text message the class sends itself through Sinch,
+     outside Klaviyo; `notSent` marks a class nothing in the dump sends. */
   var KLAVIYO = [
-    { event: 'negotiation_new',                cls: 'NewNegotiationSeller',              state: 'Seller sent a counter-offer' },
-    { event: 'negotiation_asking_price_final',  cls: 'NegotiationAskingPriceFinalSeller', state: 'Seller gave a final asking price' },
-    { event: 'offer_accepted',                 cls: 'OfferAcceptedSeller',               state: 'Seller accepted an offer' },
-    { event: 'offer_rejected',                 cls: 'OfferRejectedSeller',               state: 'Seller rejected an offer' },
-    { event: 'offers_auto_rejected',           cls: 'OffersAutoRejected',                state: 'Offers expired without an answer' },
-    { event: 'final_offer_initiated',          cls: 'FinalOfferInitiated',               state: 'Dealer started a final offer' },
-    { event: 'final_offer_rejected',           cls: 'FinalOfferRejectedSeller',          state: 'Final offer rejected' },
-    { event: 'delivery_date_set',              cls: 'DeliveryDateSetSeller',             state: 'Handover date agreed' },
-    { event: 'deal_completed_verification',    cls: 'DealCompletedVerificationSms',      state: 'Deal completed (SMS)' },
-    { event: 'failed_sale',                    cls: 'FailedSale',                        state: 'Sale fell through' },
-    { event: 'request_expired',                cls: 'RequestExpired',                    state: 'Request expired' },
-    { event: '(no EVENT_NAME constant)',       cls: 'CloseNegotiation',                  state: 'Negotiation closed — fires alongside the blade email above' },
-    { event: '(no EVENT_NAME constant)',       cls: 'NegotiationCallSeller',             state: 'Advisor should call the seller about a negotiation' },
-    { event: '(no EVENT_NAME constant)',       cls: 'NegotiationKeepOffer',              state: 'Seller keeps the current offer' },
-    { event: '(no EVENT_NAME constant)',       cls: 'NegotiationKeepOfferFinal',         state: 'Seller keeps the final offer' },
-    { event: '(no EVENT_NAME constant)',       cls: 'RequestStatus',                     state: 'Request status changed' },
-    { event: '(no EVENT_NAME constant)',       cls: 'TenderRequestSuccessfulNotification', state: 'Request created successfully' },
-    { event: '(no EVENT_NAME constant)',       cls: 'DeletedTenderRequest',              state: 'Request deleted' },
-    { event: '(no EVENT_NAME constant)',       cls: 'LoginInfoNotification',             state: 'Login details' }
+    { stage: 'Draft', event: 'NewTenderRequestDraft',                 cls: 'NewTenderRequestDraft',                 state: 'A draft was created with an email address, or the address was changed on the waiting screen' },
+    { stage: 'Draft', event: 'TenderRequestDraftUpdated',             cls: 'TenderRequestDraftUpdated',             state: 'The seller saved a funnel step' },
+    { stage: 'Draft', event: 'TenderRequestDraftEmailVerified',       cls: 'TenderRequestDraftEmailVerified',       state: 'The seller verified their email from the link' },
+    { stage: 'Draft', event: 'TenderRequestDraftMarkedForReview',     cls: 'TenderRequestDraftMarkedForReview',     state: 'The draft went to review when it was published (also posted to Slack)' },
+    { stage: 'Draft', event: 'TenderRequestDraftQueuedForPublishing', cls: 'TenderRequestDraftQueuedForPublishing', state: 'The draft waits for email verification before it publishes' },
+    { stage: 'Draft', event: 'TenderRequestDraftRejected',            cls: 'TenderRequestDraftRejected',            state: 'An advisor rejected the draft in the review' },
+    { stage: 'Draft', event: 'TenderRequestDraftAutoRejected',        cls: 'TenderRequestDraftAutoRejected',        state: 'A draft rejected automatically as unfit', notSent: true },
+    { stage: 'Draft', event: 'DeletedTenderRequestDraft',             cls: 'DeletedTenderRequestDraft',             state: 'The seller deleted a draft' },
+
+    { stage: 'Auction', event: 'TenderRequestNew',     cls: 'NewTenderRequest', state: 'The draft was published and the auction began' },
+    { stage: 'Auction', event: 'OfferNew',             cls: 'NewOffer',         state: 'A dealership made an offer' },
+    { stage: 'Auction', event: 'OfferUpdated',         cls: 'UpdatedOffer',     state: 'The highest offer rose during the auction' },
+    { stage: 'Auction', event: 'TenderRequestStatus',  cls: 'RequestStatus',    state: 'Daily at 06:00, to a live auction with no offers yet' },
+    { stage: 'Auction', event: 'TenderRequestExpired', cls: 'RequestExpired',   state: 'The request expired, leaving the active state', sms: 'if the seller has not seen the offers yet' },
+
+    { stage: 'Decision', event: 'OfferAccepted',                      cls: 'OfferAcceptedSeller',      state: 'The seller accepted an offer', sms: 'when the accepted-offer SMS setting is on' },
+    { stage: 'Decision', event: 'OfferRejected',                      cls: 'OfferRejectedSeller',      state: 'The seller rejected the offers', sms: 'when the highest offer is at least 80 % of the asking price, no offer is pending and the request is inactive' },
+    { stage: 'Decision', event: 'OfferAutoRejected',                  cls: 'OffersAutoRejected',       state: 'Offers expired without an answer, on a request with no negotiation', sms: 'same rule as OfferRejected' },
+    { stage: 'Decision', event: 'FinalOfferInitiatedByHighestBidder', cls: 'FinalOfferInitiated',      state: 'The highest bidder raised its offer as a final offer, alongside the "Mahtavia uutisia!" email', sms: 'always' },
+    { stage: 'Decision', event: 'FinalOfferRejected',                 cls: 'FinalOfferRejectedSeller', state: 'The seller rejected the final offer', sms: 'same rule as OfferRejected' },
+
+    { stage: 'Negotiation', event: 'NegotiationNew',              cls: 'NewNegotiationSeller',              state: 'The seller sent their first counter-offer' },
+    { stage: 'Negotiation', event: 'NegotiationAskingPriceFinal', cls: 'NegotiationAskingPriceFinalSeller', state: 'The seller sent their second, last counter-offer' },
+    { stage: 'Negotiation', event: 'NegotiationKeepOffer',        cls: 'NegotiationKeepOffer',              state: 'The dealership replied in the first round, raised or not, alongside the dealer-replied email' },
+    { stage: 'Negotiation', event: 'NegotiationKeepOfferFinal',   cls: 'NegotiationKeepOfferFinal',         state: 'The dealership replied in the second round, alongside the dealer-replied email' },
+    { stage: 'Negotiation', event: 'CloseNegotiation',            cls: 'CloseNegotiation',                  state: 'The dealership closed the negotiation, alongside the "Neuvottelu on päättynyt" email' },
+    { stage: 'Negotiation', event: 'CallSeller',                  cls: 'NegotiationCallSeller',             state: 'A dealership chose to phone the seller, unless it has already replied in a negotiation' },
+
+    { stage: 'After the sale', event: 'DeliveryDateSet',           cls: 'DeliveryDateSetSeller',               state: 'The handover date was agreed', sms: 'when the delivery-date SMS setting is on and the sale is neither completed nor failed' },
+    { stage: 'After the sale', event: 'DealCompletedVerification', cls: 'DealCompletedVerificationSms',        state: 'Scheduled after the agreed handover date, to confirm the sale', sms: 'when the deal-completed SMS setting is on' },
+    { stage: 'After the sale', event: 'TenderRequestSuccessful',   cls: 'TenderRequestSuccessfulNotification', state: 'The sale was completed' },
+    { stage: 'After the sale', event: 'FailedSale',                cls: 'FailedSale',                          state: 'The sale fell through', sms: 'when the failed-sale SMS setting is on' },
+    { stage: 'After the sale', event: 'DeletedRequest',            cls: 'DeletedTenderRequest',                state: 'The request was deleted' },
+
+    { stage: 'Account', event: 'LoginInfo', cls: 'LoginInfoNotification', state: 'Any user logged in' }
   ];
 
   window.EMAIL_CONTENT = {
