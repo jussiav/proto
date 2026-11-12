@@ -1,7 +1,8 @@
 # Account
 
-The logged-in seller's account surfaces: the account menu in the site nav and
-the profile page ("Profiilin muokkaus", `/user/edit`).
+The seller's account surfaces: the account menu in the site nav, the profile
+page ("Profiilin muokkaus", `/user/edit`), and logging in (`/login`, password
+reset).
 
 ### ACC-01 · Saving the profile gives no sign that it worked
 - **Status:** Open · **Type:** UX · **Severity:** Medium
@@ -74,3 +75,39 @@ the profile page ("Profiilin muokkaus", `/user/edit`).
 - **Last checked:** prod dump 2026-11-11, still present
 - **Next step:** Edit a copy of the user and write it back on a successful save.
 - **Touches:** the planned profile page changes
+
+### ACC-09 · The login code page asks about a link
+- **Status:** Open · **Type:** Copy · **Severity:** Low
+- **Where:** Login, the code step: "Etkö saanut linkkiä? Tarkista sähköpostiosoitteesi tai lähetä linkki uudelleen."
+- **Found:** 2026-11-12, transcribing the login page
+- **Evidence:** `auth.email_login.not_received` and `.resend` still say "linkki", from when the email carried a login link. The email now carries a 6-digit code and no link, and the step's own description says "kirjautumiskoodin".
+- **Last checked:** prod dump 2026-11-11, still present
+- **Next step:** "Etkö saanut koodia? … lähetä koodi uudelleen", or similar.
+- **Touches:** login
+
+### ACC-10 · The login page's text actions cannot be reached by keyboard
+- **Status:** Open · **Type:** Accessibility · **Severity:** Low
+- **Where:** Login: "Vaihda sähköposti.", "lähetä linkki uudelleen." and "tästä." (to the forgotten-password step)
+- **Found:** 2026-11-12, transcribing the login page
+- **Evidence:** All three are `<span>`s with a click handler (`EmailLogin.vue`, `LoginCodeChallenge.vue`, `PasswordLogin.vue`): no focus, no role, so a keyboard or screen reader user cannot change the address, ask for a new code or reach the password reset.
+- **Last checked:** prod dump 2026-11-11, still present
+- **Next step:** Make them buttons styled as links.
+- **Touches:** login
+
+### ACC-11 · A throttled password login gives no feedback
+- **Status:** Open · **Type:** UX · **Severity:** Low
+- **Where:** Login, password step, after five tries within a minute
+- **Found:** 2026-11-12, transcribing the login page
+- **Evidence:** The login route answers 429 with no `errors`, and `PasswordLogin.vue` only reacts when `errors` exists, so the button simply does nothing. The code step handles 429 and says "Liian monta yritystä. Kokeile hetken päästä uudestaan."
+- **Last checked:** prod dump 2026-11-11, still present
+- **Next step:** Handle 429 the way the code step does.
+- **Touches:** login
+
+### ACC-12 · Two login strings miss punctuation
+- **Status:** Open · **Type:** Copy · **Severity:** Low
+- **Where:** Login: "Jos unohdit salasanasi voit vaihtaa sen tästä." and the forgotten-password heading "Unohditko salasanasi"
+- **Found:** 2026-11-12, transcribing the login page
+- **Evidence:** `app.misc.forgot_password` needs a comma after the `jos` clause; `form.forgot_password.pretitle` is a question without a question mark.
+- **Last checked:** prod dump 2026-11-11, still present
+- **Next step:** "Jos unohdit salasanasi, voit vaihtaa sen tästä." and "Unohditko salasanasi?"
+- **Touches:** login

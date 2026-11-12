@@ -1778,34 +1778,9 @@
     /* Scenario drawer moved to the shared proto bar (proto-bar.js). */
   </script>
 
-  <!-- Footer — no link columns on offers/decision pages (matches Astro prototype) -->
-  <footer class="bg-av-blue flex flex-col items-center gap-[38px] pt-14 pb-14">
-    <div class="flex flex-col gap-3.5 w-full max-w-[1388px] px-5">
-
-      <!-- Legal strip -->
-      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
-        <div class="flex gap-3.5 font-body font-bold flex-wrap">
-          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit" data-i18n="footer.terms">Käyttöehdot</a>
-          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit" data-i18n="footer.privacy">Tietosuojakäytäntö</a>
-          <a href="#" class="hover:underline" style="text-decoration:none;color:inherit" data-i18n="footer.cookies">Evästekäytäntö</a>
-        </div>
-        <div class="flex items-center gap-4 font-body text-sm text-white">
-          <span data-i18n="footer.language">Kieli</span>
-          <select id="lang-selector" onchange="setLang(this.value)" class="bg-transparent border border-white/40 rounded px-2 py-0.5 text-white text-sm font-body cursor-pointer">
-            <option value="fi">Suomi</option>
-            <option value="en">English</option>
-          </select>
-          <span class="font-body font-normal" data-i18n="footer.copyright">© 2025 All rights reserved</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Large AutoVex wordmark -->
-    <div class="w-full max-w-[1388px] px-5">
-      <img src="assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
-    </div>
-  </footer>
+  <!-- The logged-in app's short footer (prod OFooter). -->
+  <div id="site-footer"></div>
+  <script src="app-footer.js"></script>
 
   <!-- AuctionStats — shared with decision.html, so per-page rather than layout.js -->
   <script src="vue-tests/dist/auction-stats.js"></script>

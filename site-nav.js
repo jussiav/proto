@@ -18,7 +18,7 @@
  * they simply omit the #site-nav element and this script.
  *
  * Account menu (prod MProfileMenu + MProfileSubMenu): logged out, the account
- * icon + "Kirjaudu"; logged in, the icon + first name opens a popover from lg
+ * icon + "Kirjaudu", linking to login.html (prod's /login); logged in, the icon + first name opens a popover from lg
  * (992px) with the consumer role's three items from config/user-menu.php.
  * Below lg prod shows a hamburger instead, and the CTA and the account menu
  * live in a drawer: Header.astro's drawer on data-menu="marketing" pages,
@@ -284,9 +284,9 @@
 
   function profileHtml(sess) {
     if (!sess.loggedIn) {
-      /* prod's login path; the proto has no login page. */
+      /* prod's /login, the proto's login.html. */
       return '<div class="w-full">' +
-        '<a id="nav-login" href="#" class="group rounded-lg block min-w-[50px] w-full lg:w-auto ' + HOVER + '">' +
+        '<a id="nav-login" href="login.html" class="group rounded-lg block min-w-[50px] w-full lg:w-auto ' + HOVER + '">' +
           '<div class="flex flex-row lg:flex-col gap-x-2 items-center justify-center px-4 py-3 min-w-[50px] lg:text-white">' +
             ICON_ACCOUNT +
             '<span id="nav-login-label" class="text-md lg:text-xs font-semibold group-hover:underline" data-i18n="nav.login">' +

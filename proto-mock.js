@@ -446,6 +446,13 @@
     BUILDERS['draft-complete']();
     applySeedDefaults();
   }
+  /* The login and password reset pages lead to pages that always have a car,
+     and seeding one there later would overwrite the login, so a fresh browser
+     gets the seed car here, not logged in. */
+  if ((page === 'login.html' || page === 'reset-password.html') && !readFunnel().hero) {
+    BUILDERS['draft-complete']();
+    applySeedDefaults();
+  }
 
   /* "Seller edits before review": ?booked=1 / ?booked=0 pins whether an advisor
      has booked the ad for its review call (store.reviewBooked), so a link

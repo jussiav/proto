@@ -108,6 +108,8 @@
     { href: 'decision.html',  label: 'Decision' },
     { href: 'dac7.html',      label: 'DAC7' },
     { href: 'profile.html',   label: 'Profile (Muokkaa profiilia)' },
+    { href: 'login.html',     label: 'Login (Kirjaudu sisään)' },
+    { href: 'reset-password.html', label: 'Password reset (Valitse uusi salasana)' },
     { href: 'help.html',      label: 'Support' },
     { href: 'price-guess.html', label: 'Price guess' },
     { href: 'hinta-arvio.html', label: 'Price estimate (v4)' },

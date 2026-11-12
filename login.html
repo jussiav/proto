@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="fi" class="bg-blue-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="login.pageTitle">AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-dark':      '#08234D',
+            'av-turquoise': '#00F0DC',
+            'av-sky':       '#DAF0F5',
+            'av-peach':     '#F5AB84',
+            'av-cream':     '#FAEADA',
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif', '"Apple Color Emoji"', '"Segoe UI Emoji"', '"Segoe UI Symbol"', '"Noto Color Emoji"'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="tw-tokens.js"></script>
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script src="proto-mode.js"></script>
+  <script src="proto-mock.js"></script>
+  <script src="toastr.js"></script>
+  <script>
+    /* The route is guest-only in prod: a logged-in seller never sees it. */
+    try { if ((JSON.parse(localStorage.getItem('autovex_funnel') || '{}') || {}).loggedIn) location.replace('offers.html'); } catch (e) {}
+  </script>
+  <style>
+    /* custom.scss */
+    .required:after { content: ' *'; color: #ef4444; }
+    /* Message.vue: its base carries bg-blue / border-blue and the type's colour
+       is added on top without class merging, so the type is hand-written here
+       to win regardless of utility order. */
+    .av-msg { background-color: rgb(11 109 255 / .1); border-color: #0B6DFF; }
+    .av-msg--error { background-color: rgb(239 68 68 / .1); border-color: #EF4444; }
+    .av-msg--success { background-color: rgb(34 197 94 / .1); border-color: #22C55E; }
+    .av-msg--error .av-msg-icon { color: #EF4444; }
+    .av-msg--success .av-msg-icon { color: #22C55E; }
+    /* Proto-only stand-in for the seller's inbox, as on hinta-arvio.html. */
+    #auth-inbox { position: fixed; bottom: 24px; right: 24px; z-index: 8000; width: 320px; max-width: calc(100vw - 32px); background: rgba(255,255,255,.97); border-radius: 16px; box-shadow: 0 16px 56px rgba(0,0,0,.20), 0 4px 16px rgba(0,0,0,.10), 0 0 0 1.5px rgba(11,109,255,.12); padding: 14px 14px 14px 16px; display: none; flex-direction: column; gap: 6px; font-family: 'DM Sans', sans-serif; }
+    #auth-inbox.is-on { display: flex; }
+    body:has(#proto-bar) #auth-inbox { bottom: 54px; }
+    /* The code as the email draws it: an h1 in #0B6DFF. Selecting it takes the
+       whole code, so it copies in one go. */
+    .auth-code { font-family: 'DM Sans', sans-serif; font-size: 32px; line-height: 1.1; font-weight: 700; color: #0B6DFF; letter-spacing: .06em; user-select: all; -webkit-user-select: all; cursor: text; }
+  </style>
+</head>
+<body class="font-body bg-blue-50">
+
+  <!-- resources/views/auth/login.blade.php: <div id="app" class="min-h-screen
+       sm:bg-[#FAEADA]">, then auth/index.vue inside it. -->
+  <div class="min-h-screen sm:bg-[#FAEADA]">
+    <div class="flex flex-col min-h-dvh">
+      <div id="site-nav"></div>
+      <script src="site-nav.js"></script>
+      <main class="flex-1 w-full flex justify-center items-center">
+        <div id="auth-card" class="max-w-lg w-full my-8 p-8 md:p-12 lg:p-16 sm:rounded-2xl sm:shadow-md bg-white"></div>
+      </main>
+      <div id="site-footer"></div>
+    </div>
+  </div>
+
+  <!-- The login code and password reset emails, standing in for the seller's
+       inbox. Shown in test mode too, since the flow continues through them. -->
+  <div id="auth-inbox" role="dialog" aria-labelledby="auth-inbox-title">
+    <div class="flex items-center gap-2">
+      <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-av-blue flex-shrink-0"><svg width="16" height="13" viewBox="0 0 16 13" fill="none" aria-hidden="true"><rect x="0.75" y="0.75" width="14.5" height="11.5" rx="2.25" stroke="white" stroke-width="1.5"/><path d="M1 2.5l7 4.5 7-4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <span class="flex-1 text-[13px] font-bold text-slate-950">AutoVex</span>
+      <span class="text-xs text-slate-400" data-i18n="success.emailToastNow">nyt</span>
+    </div>
+    <p id="auth-inbox-title" class="m-0 text-sm font-bold text-slate-900" data-i18n="success.emailToastTitle">Sinulla on 1 uusi sähköposti</p>
+    <p id="auth-inbox-subject" class="m-0 text-sm text-slate-600"></p>
+    <div id="auth-inbox-body"></div>
+  </div>
+
+  <script src="app-footer.js"></script>
+  <script>
+  (function () {
+    var STORE_KEY = 'autovex_funnel';
+    var HANDOFF_KEY = 'autovex_auth_handoff';
+    function getStore() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function setStore(d) { try { localStorage.setItem(STORE_KEY, JSON.stringify(d)); } catch (e) {} }
+    function el(id) { return document.getElementById(id); }
+    function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function T(key) { return window.t ? window.t(key) : key; }
+
+    /* ── The server, as prod's endpoints answer ──
+       POST /email-login (EmailLoginApiController), POST /login (Fortify with
+       the app's authenticateUsing), POST /forgot-password. Copy from
+       resources/lang/fi. State lives in the funnel store, so Reset clears it. */
+    var MSG_SENT = 'Olemme lähettäneet sähköpostiisi kirjautumiskoodin, jos antamallasi sähköpostiosoitteella on käyttäjätili. Tarkista myös roskapostikansio.';
+    var MSG_FAILED = 'Kirjautuminen epäonnistui.';
+    var MSG_TOO_MANY = 'Liian monta yritystä. Kokeile hetken päästä uudestaan.';
+    var MSG_RESET_SENT = 'Resetointilinkki lähetetty sähköpostitse!';
+    var CODE_MINUTES = 15, RESET_MINUTES = 60, RESET_THROTTLE_S = 60;
+
+    function auth() { return getStore().auth || {}; }
+    function saveAuth(a) { var s = getStore(); s.auth = a; setStore(s); }
+    /* Every address has an account in the proto (Jussi): any email gets a
+       code or a reset link, and any password logs it in. Prod sends nothing to
+       an address without an account and answers it the same way. */
+    function isAccount(email) { return /^[^\s@]+@[^\s@]+$/.test(String(email || '').trim()); }
+    /* Laravel's rate limiters: email-login 3 a minute per address, login 5 a
+       minute per address. A refused request does not count. */
+    function allow(key, email, limit) {
+      var a = auth(), now = Date.now();
+      a.hits = a.hits || {};
+      var k = key + '|' + String(email || '').trim().toLowerCase();
+      var list = (a.hits[k] || []).filter(function (ts) { return now - ts < 60000; });
+      var ok = list.length < limit;
+      if (ok) list.push(now);
+      a.hits[k] = list;
+      saveAuth(a);
+      return ok;
+    }
+
+    function sendEmailLoginCode(email) {
+      if (!allow('email-login', email, 3)) return { status: 429 };
+      if (isAccount(email)) {
+        /* str_pad(random_int(1, 999999), 6, '0', STR_PAD_LEFT); a new code
+           replaces the previous one. */
+        var code = String(Math.floor(Math.random() * 999999) + 1).padStart(6, '0');
+        var a = auth();
+        a.code = { email: email.trim(), value: code, expires: Date.now() + CODE_MINUTES * 60000, consumed: false };
+        saveAuth(a);
+        showCodeEmail(code);
+      }
+      return { status: 200, data: { message: MSG_SENT } };
+    }
+
+    function login(form) {
+      if (!allow('login', form.email, 5)) return { status: 429, data: { message: 'Too Many Attempts.' } };
+      if ('code' in form && !form.code) {
+        /* LoginRequest: password required_without:code, code required_without:password. */
+        var errors = {
+          password: ['Kenttä Salasana vaaditaan kun arvoa code ei ole annettu.'],
+          code: ['Kenttä code vaaditaan kun arvoa Salasana ei ole annettu.']
+        };
+        return { status: 422, data: { message: errors.password[0] + ' (ja 1 muuta virhettä)', errors: errors } };
+      }
+      var ok = false;
+      if ('code' in form) {
+        var c = auth().code;
+        ok = !!c && c.email.toLowerCase() === form.email.trim().toLowerCase() &&
+          !c.consumed && Date.now() < c.expires && c.value === form.code;
+        if (ok) { var a = auth(); a.code.consumed = true; saveAuth(a); }
+      } else {
+        ok = isAccount(form.email);
+      }
+      if (!ok) return { status: 422, data: { message: MSG_FAILED, errors: { email: [MSG_FAILED] } } };
+      /* Logged in as that address: it becomes the seller's email, as prod's
+         user record is the one the address belongs to. */
+      var s = getStore();
+      s.loggedIn = true;
+      s.contact = s.contact || {};
+      s.contact.sahkoposti = form.email.trim();
+      setStore(s);
+      return { status: 200, data: { role: 'consumer', two_factor: false, redirect_path: null } };
+    }
+
+    function resetPasswordLink(email) {
+      /* The controller ignores the broker's status: every address gets the same
+         answer. The broker sends nothing to an unknown address, nor within 60
+         seconds of the last link. */
+      var a = auth();
+      var recent = a.reset && a.reset.email.toLowerCase() === String(email).trim().toLowerCase() &&
+        Date.now() - a.reset.sent < RESET_THROTTLE_S * 1000;
+      if (isAccount(email) && !recent) {
+        var token = Array.from({ length: 4 }, function () { return Math.random().toString(16).slice(2, 10); }).join('');
+        a.reset = { token: token, email: email.trim(), sent: Date.now(), expires: Date.now() + RESET_MINUTES * 60000, used: false };
+        saveAuth(a);
+        showResetEmail(token);
+      }
+      return { status: 200, data: { message: MSG_RESET_SENT } };
+    }
+
+    /* ── The inbox ── */
+    var inboxTimer = null;
+    function showInbox(subject, bodyHtml) {
+      clearTimeout(inboxTimer);
+      el('auth-inbox').classList.remove('is-on');
+      inboxTimer = setTimeout(function () {
+        el('auth-inbox-subject').textContent = subject;
+        el('auth-inbox-body').innerHTML = bodyHtml;
+        el('auth-inbox').classList.add('is-on');
+        var open = el('auth-inbox-open');
+        if (open) open.addEventListener('click', function () { location.href = open.dataset.href; });
+      }, 1500);
+    }
+    /* mail/auth/email-login: the intro, then the code as a blue h1. The
+       template has no button, although the mail passes an action label. */
+    function showCodeEmail(code) {
+      showInbox(T('login.codeEmailSubject'),
+        '<p class="m-0 text-sm text-slate-900">' + esc(T('login.codeEmailIntro')) + '</p>' +
+        '<p class="m-0 mt-1 auth-code" id="auth-inbox-code">' + esc(code) + '</p>');
+    }
+    function showResetEmail(token) {
+      showInbox(T('login.resetEmailSubject'),
+        '<p class="m-0 text-sm text-slate-900">' + esc(T('login.resetEmailIntro')) + '</p>' +
+        '<button type="button" id="auth-inbox-open" data-href="reset-password.html?token=' + encodeURIComponent(token) + '" class="self-start mt-2 h-8 px-3.5 rounded-lg bg-av-blue text-white text-sm border-0 cursor-pointer hover:bg-[#0A59EB]">' + esc(T('login.resetEmailAction')) + '</button>');
+    }
+
+    /* ── The page: auth/index.vue switching its steps in place ── */
+    var params = new URLSearchParams(window.location.search);
+    var handoff = null;
+    /* A password reset hands the address over in memory in prod (authHandoff
+       store); sessionStorage carries it across this page load instead. */
+    try { handoff = JSON.parse(sessionStorage.getItem(HANDOFF_KEY) || 'null'); sessionStorage.removeItem(HANDOFF_KEY); } catch (e) {}
+    var PAGES = ['emailLogin', 'passwordLogin', 'forgotPassword', 'loginCodeChallenge'];
+    var page = (handoff && handoff.page) || params.get('page') || 'emailLogin';
+    if (PAGES.indexOf(page) === -1) page = 'emailLogin';
+    var email = (handoff && handoff.email) || (params.get('email') ? decodeURIComponent(params.get('email')) : '');
+    var errors = null, message = null, code = params.get('code') || '';
+    var card = el('auth-card');
+
+    var CHECK = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/></svg>';
+    var WARN = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"/></svg>';
+
+    /* Message.vue: one box per message, an array becomes one line each. */
+    function msgHtml(msg, type, extra) {
+      var body = Array.isArray(msg) ? '<div>' + msg.map(function (m) { return '<div>' + m + '</div>'; }).join('') + '</div>' : '<div>' + msg + '</div>';
+      return '<div class="av-msg av-msg--' + type + ' mb-4 flex items-start p-2 rounded-md border' + (extra ? ' ' + extra : '') + '">' +
+        '<div class="mr-1 w-6 h-6 flex items-center align-center"><i class="av-msg-icon flex items-center">' + (type === 'success' ? CHECK : WARN) + '</i></div>' +
+        body + '</div>';
+    }
+    function errorsHtml() {
+      if (!errors) return '';
+      return Object.keys(errors).map(function (k) { return msgHtml(errors[k], 'error'); }).join('');
+    }
+    var INPUT = 'text-base font-normal block w-full border rounded px-4 py-3.5 transition focus:outline-none focus:ring appearance-none';
+    var INPUT_OK = 'border-slate-800 bg-white', INPUT_BAD = 'border-red-500 bg-red-500 bg-opacity-10';
+    function inputCls() { return INPUT + ' ' + (errors ? INPUT_BAD : INPUT_OK); }
+    var LABEL = 'mb-2 inline-block text-base leading-none lg:text-lg lg:leading-none required';
+    /* Keeps password managers from treating the proto as a real login and
+       offering to save it (1Password, LastPass, Bitwarden, Dashlane). Prod's
+       autocomplete hints (email, current-password) are dropped for the same
+       reason; nothing visible changes. */
+    var NO_PM = ' autocomplete="off" data-1p-ignore data-lpignore="true" data-bwignore="true" data-form-type="other"';
+    /* UiButton: primary lg, and the default variant lg. */
+    var BTN_BASE = 'inline-flex justify-center items-center transition cursor-pointer outline-offset-2 py-1.5 text-base leading-tight rounded-lg relative px-8 h-14';
+    var BTN_PRIMARY = BTN_BASE + ' shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.20)] bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white active:text-blue-100';
+    var BTN_DEFAULT = BTN_BASE + ' border bg-white border-blue-400 hover:border-slate-400 hover:bg-blue-50 active:bg-blue-100 text-blue-600 active:text-blue-500';
+    var LINK = 'border-b border-blue text-blue cursor-pointer';
+    function header(titleKey) {
+      return '<header class="mb-8 sm:text-center"><h2 class="text-5xl">' + esc(T(titleKey)) + '</h2></header>';
+    }
+    function divider(py) {
+      return '<div class="relative flex ' + py + ' items-center"><div class="flex-grow border-t border-black"></div>' +
+        '<span class="flex-shrink mx-4 text-black">' + esc(T('login.or')) + '</span><div class="flex-grow border-t border-black"></div></div>';
+    }
+    function emailField(wrapCls) {
+      return '<div class="' + wrapCls + '"><label><span class="' + LABEL + '">' + esc(T('login.email')) + '</span>' +
+        '<input id="auth-email" type="email" class="' + inputCls() + '" inputmode="email" placeholder="' + esc(T('login.emailPlaceholder')) + '" required' + NO_PM + ' value="' + esc(email) + '"></label></div>';
+    }
+    function rememberBox(margin) {
+      return '<label class="flex ' + margin + '"><input class="flex-0 mt-0.5" type="checkbox" name="remember" checked>' +
+        '<span class="flex-1 inline-block mt-0.5 ml-2 text-base leading-[21px] font-normal">' + esc(T('login.remember')) + '</span></label>';
+    }
+
+    var TEMPLATES = {
+      emailLogin: function () {
+        return header('login.pretitle') +
+          '<form id="auth-form" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other">' + errorsHtml() +
+            '<div class="mb-4 flex flex-row flex-wrap -mx-2">' + emailField('w-full px-2') + '</div>' +
+            (message ? msgHtml(message, 'success') : '') +
+            '<button type="submit" class="' + BTN_PRIMARY + ' w-full mt-4">' + esc(T('login.submit')) + '</button>' +
+            divider('py-4') +
+            '<button type="button" data-go="passwordLogin" class="' + BTN_DEFAULT + ' w-full" data-testid="login-password-login-button">' + esc(T('login.passwordLoginButton')) + '</button>' +
+          '</form>';
+      },
+      loginCodeChallenge: function () {
+        var otp = '';
+        for (var i = 0; i < 6; i++) {
+          otp += '<input data-otp="' + i + '" class="w-12 h-14 text-center text-xl border border-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue" maxlength="1" type="text" inputmode="numeric"' + NO_PM + ' value="' + esc(code.charAt(i)) + '">';
+        }
+        return header('login.pretitle') +
+          '<form id="auth-form" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other">' + errorsHtml() +
+            '<p class="text-base mb-4"><span>' + T('login.description').replace('{email}', esc(email)) + '</span>' +
+              '<span class="' + LINK + ' ml-2" data-go="emailLogin">' + esc(T('login.changeUser')) + '.</span></p>' +
+            '<label class="flex justify-between">' + otp + '</label>' +
+            rememberBox('my-4') +
+            '<p class="text-base mt-4 mb-0">' + esc(T('login.notReceived')) + ' <span class="' + LINK + '" id="auth-resend">' + esc(T('login.resend')) + '.</span></p>' +
+            (message ? msgHtml(message, 'success', 'mt-4') : '') +
+            '<button type="submit" class="' + BTN_PRIMARY + ' w-full mt-4">' + esc(T('login.login')) + '</button>' +
+          '</form>' +
+          divider('py-4') +
+          '<button type="button" data-go="passwordLogin" class="' + BTN_DEFAULT + ' w-full">' + esc(T('login.passwordLoginButton')) + '</button>';
+      },
+      passwordLogin: function () {
+        return header('login.pretitle') +
+          '<form id="auth-form" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other">' + errorsHtml() +
+            '<div class="flex flex-row flex-wrap -mx-2">' +
+              emailField('mb-4 w-full px-2') +
+              '<div class="mb-4 w-full px-2"><label><span class="' + LABEL + '">' + esc(T('login.password')) + '</span>' +
+                '<input id="auth-password" type="password" class="' + inputCls() + '" required' + NO_PM + ' data-testid="login-password"></label></div>' +
+            '</div>' +
+            rememberBox('mb-4') +
+            '<p class="text-base">' + esc(T('login.forgotPassword')) + ' <span class="' + LINK + '" data-go="forgotPassword">' + esc(T('login.clickHere')) + '.</span></p>' +
+            '<button type="submit" class="' + BTN_PRIMARY + ' w-full mt-4" data-testid="login-submit">' + esc(T('login.login')) + '</button>' +
+            divider('py-2') +
+            '<button type="button" data-go="emailLogin" class="' + BTN_DEFAULT + ' w-full">' + esc(T('login.codeLoginButton')) + '</button>' +
+          '</form>';
+      },
+      forgotPassword: function () {
+        return header('login.forgotTitle') +
+          '<form id="auth-form" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other">' + errorsHtml() +
+            '<div class="flex flex-row flex-wrap -mx-2">' + emailField('mb-4 w-full px-2') + '</div>' +
+            (message ? msgHtml(message, 'success') : '') +
+            '<p class="mb-4 text-base">' + esc(T('login.forgotText')) + '</p>' +
+            '<button type="submit" class="' + BTN_PRIMARY + ' w-full mt-4">' + esc(T('login.forgotSubmit')) + '</button>' +
+          '</form>';
+      }
+    };
+
+    /* Each step is its own component in prod, so its errors and message start
+       empty; only the address travels between them. */
+    function go(next) {
+      page = next;
+      errors = null;
+      message = null;
+      render(true);
+    }
+
+    /* The watch on the form clears errors on any change, without touching the
+       success message. */
+    function clearErrors() {
+      if (!errors) return;
+      errors = null;
+      Array.prototype.forEach.call(card.querySelectorAll('.av-msg--error'), function (n) { n.remove(); });
+      Array.prototype.forEach.call(card.querySelectorAll('#auth-email, #auth-password'), function (n) {
+        n.className = INPUT + ' ' + INPUT_OK;
+      });
+    }
+
+    function render(focus) {
+      card.innerHTML = TEMPLATES[page]();
+      Array.prototype.forEach.call(card.querySelectorAll('[data-go]'), function (b) {
+        b.addEventListener('click', function () { go(b.dataset.go); });
+      });
+      var emailIn = el('auth-email');
+      if (emailIn) emailIn.addEventListener('input', function () { email = emailIn.value; clearErrors(); });
+      var pwIn = el('auth-password');
+      if (pwIn) pwIn.addEventListener('input', clearErrors);
+      Array.prototype.forEach.call(card.querySelectorAll('input[type="checkbox"]'), function (c) { c.addEventListener('change', clearErrors); });
+      if (page === 'loginCodeChallenge') bindOtp(focus);
+      var resend = el('auth-resend');
+      if (resend) resend.addEventListener('click', handleCodeSend);
+      el('auth-form').addEventListener('submit', function (e) { e.preventDefault(); SUBMIT[page](); });
+      if (focus) {
+        if (page === 'passwordLogin') (email ? pwIn : emailIn).focus();
+        else if (emailIn) emailIn.focus();
+      }
+      /* Steps change in place, as in prod, so keep the bar's Scenario select on
+         the step showing. */
+      var bar = document.getElementById('proto-bar');
+      if (bar) Array.prototype.forEach.call(bar.querySelectorAll('select'), function (sel) {
+        if (Array.prototype.some.call(sel.options, function (o) { return o.value === page; })) sel.value = page;
+      });
+    }
+
+    /* OtpInput.vue: digits only, one per box, forward on input, back on an
+       empty Backspace, arrows move, a paste fills from the box it lands in. */
+    function bindOtp(focus) {
+      var boxes = Array.prototype.slice.call(card.querySelectorAll('[data-otp]'));
+      function sync() { code = boxes.map(function (b) { return b.value; }).join(''); clearErrors(); }
+      function focusAt(i) { if (i >= 0 && i < boxes.length) { boxes[i].focus(); boxes[i].select(); } }
+      boxes.forEach(function (b, i) {
+        b.addEventListener('input', function () {
+          b.value = b.value.replace(/\D/g, '');
+          sync();
+          if (i < boxes.length - 1 && b.value !== '') focusAt(i + 1);
+        });
+        b.addEventListener('keydown', function (e) {
+          if (e.key === 'Backspace' && b.value === '') focusAt(i - 1);
+          else if (e.key === 'ArrowLeft') { e.preventDefault(); focusAt(i - 1); }
+          else if (e.key === 'ArrowRight') { e.preventDefault(); focusAt(i + 1); }
+        });
+        b.addEventListener('paste', function (e) {
+          e.preventDefault();
+          var data = ((e.clipboardData || window.clipboardData).getData('Text') || '').replace(/\D/g, '').slice(0, boxes.length - i);
+          for (var j = 0; j < data.length; j++) boxes[i + j].value = data[j];
+          sync();
+          boxes[Math.min(i + data.length, boxes.length - 1)].focus();
+        });
+      });
+      if (focus) boxes[code ? Math.max(code.length - 1, 0) : 0].focus();
+    }
+
+    function finishLogin(data) {
+      /* role consumer → /offers unless the server names a path (a DAC7 form
+         due, or the page that asked for a login). */
+      location.href = data.redirect_path || 'offers.html';
+    }
+    function tooMany() {
+      message = null;
+      errors = [MSG_TOO_MANY];
+      window.protoToastr(MSG_TOO_MANY, 'error');
+      render(false);
+    }
+    function handleCodeSend() {
+      var res = sendEmailLoginCode(email);
+      if (res.status === 429) return tooMany();
+      errors = null;
+      message = res.data.message;
+      render(false);
+    }
+
+    var SUBMIT = {
+      emailLogin: function () {
+        var emailIn = el('auth-email');
+        if (!emailIn.reportValidity()) return;
+        var res = sendEmailLoginCode(email);
+        if (res.status === 429) return tooMany();
+        go('loginCodeChallenge');
+      },
+      loginCodeChallenge: function () {
+        var res = login({ email: email, code: code, remember: true });
+        if (res.status === 200) return finishLogin(res.data);
+        if (res.status === 429) return tooMany();
+        errors = res.data.errors;
+        window.protoToastr(res.data.message, 'error');
+        render(false);
+      },
+      passwordLogin: function () {
+        var emailIn = el('auth-email'), pwIn = el('auth-password');
+        if (!emailIn.reportValidity() || !pwIn.reportValidity()) return;
+        var res = login({ email: email, password: pwIn.value, remember: true });
+        if (res.status === 200) return finishLogin(res.data);
+        /* A throttled login answers 429 with no errors, and this step only
+           reacts to errors: the button simply does nothing. */
+        if (res.status === 429) return;
+        errors = res.data.errors;
+        window.protoToastr(res.data.message, 'error');
+        var typed = pwIn.value;
+        render(false);
+        el('auth-password').value = typed;
+      },
+      forgotPassword: function () {
+        var emailIn = el('auth-email');
+        if (!emailIn.reportValidity()) return;
+        var res = resetPasswordLink(email);
+        errors = null;
+        message = res.data.message;
+        render(false);
+      }
+    };
+
+    render(true);
+    document.addEventListener('av:langchange', function () { render(false); });
+
+    window.protoPage = {
+      scenarios: [
+        { id: 'emailLogin',         label: 'Log in — send a login code' },
+        { id: 'loginCodeChallenge', label: 'Log in — enter the code' },
+        { id: 'passwordLogin',      label: 'Log in — password' },
+        { id: 'forgotPassword',     label: 'Forgot password' }
+      ],
+      scenarioParam: 'page',
+      scenarioCurrent: function () { return page; },
+      actionSections: [
+        { label: 'Login code', actions: [
+          { label: 'Code expires (15 min pass)', title: 'The latest code stops working', run: function () { var a = auth(); if (a.code) { a.code.expires = Date.now() - 1; saveAuth(a); } } },
+          { label: 'Show the last code email', title: 'Brings the inbox notice back', run: function () { var c = auth().code; if (c && !c.consumed) showCodeEmail(c.value); } }
+        ] },
+        { label: 'Password reset', actions: [
+          { label: 'Reset link expires (60 min pass)', title: 'The latest link stops working', run: function () { var a = auth(); if (a.reset) { a.reset.expires = Date.now() - 1; saveAuth(a); } } }
+        ] }
+      ]
+    };
+  })();
+  </script>
+  <script src="proto-bar.js"></script>
+</body>
+</html>

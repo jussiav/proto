@@ -291,7 +291,7 @@ These rules apply to all new pages and components in this prototype, without exc
 
     **Scroll = headroom.** One nav, no second white nav. Pinned within the top 96px; scrolling down past that unpins it (`translateY(-100%)`), scrolling up pins it back. `transition: transform 200ms linear`. Ported from prod's `useHeadRoom.js` (headroom.js, offset 96) + `sass/headroom.scss`.
 
-    **Funnel pages have no nav** (details/price/services/photos/contact/success) — they omit both the mount and the script. Currently on the nav: `index.html`, `help.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` (marketing), and `offers.html`, `decision.html`, `dac7.html`, `profile.html` (app pages, `data-auth="required"`).
+    **Funnel pages have no nav** (details/price/services/photos/contact/success) — they omit both the mount and the script. Currently on the nav: `index.html`, `help.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` (marketing), `offers.html`, `decision.html`, `dac7.html`, `profile.html` (app pages, `data-auth="required"`), and `login.html`, `reset-password.html` (guest pages, no menu, logged out).
 
     **Menu items only on marketing pages.** In prod, `ONavigationBar`'s `menuItems` prop defaults to `[]`, and only two consumers pass anything: `Header.astro` (marketing, from Contentful) and `offers/landing` — there only for B2B sellers (`isB2BSeller ? menuItems : []`). Every consumer-facing app page (`offers/decision`, `PersonalInformationPage`, `auth`, `not-verified`, `complete-profile`) passes none, so `MMenu`'s `v-if="menuItems.length"` renders nothing. A proto page opts in with `<div id="site-nav" data-menu="marketing">` — currently only `index.html` and `help.html`. The CTA and "Kirjaudu" are NOT gated: prod's default `#actions` slot renders `MMenuCTA` + `MProfileMenu` on all of those pages.
 
@@ -3923,12 +3923,9 @@ that registers nothing renders no control and pays nothing; verified on
 (`faq-content.js` carries both languages and the page re-renders it on
 `av:langchange`) and the nav (`site-nav.js` uses `data-i18n`).
 
-**A dead control was found and wired while doing this.** `decision.html` inlines
-its own footer rather than using `layout.js`, and that footer carried a
-`Suomi / English` select with **no id and no handler** — it read `fi` whatever
-the page was rendering. It now carries `lang-selector`, the id `i18n.js` already
-keeps in sync, and calls the same setter the bar does. Its three link labels had
-no `data-i18n` either, so they live in the dictionary.
+**The decision page has no language select in its footer any more** (2026-11-12):
+it uses the app's short footer (`app-footer.js`), which, like prod's, has
+none. The bar's **Language** row is the switch there.
 
 **ON MOVING THE OTHER PAGES' SELECTOR TO THE BAR — I partly disagree, and the
 split is by surface.** On the decision page a switcher is proto chrome: prod's
@@ -4341,7 +4338,7 @@ marketing checkboxes, "Päivitä") and `UpdatePassword`. Everything else on that
 page is gated to company, admin, dealer or B2B roles. Card
 `max-w-screen-md p-8 md:p-12 lg:p-16 sm:rounded-2xl sm:shadow-md`, the full
 name in blue above a bare `h2 text-5xl` (40px Barlow through the element rule,
-36/46 leading), page `bg-blue-50`, prod's footer via `layout.js`.
+36/46 leading), page `bg-blue-50`, the app's short footer (`app-footer.js`).
 
 | Scenario | Password section | Terms checkbox |
 |---|---|---|
@@ -4407,6 +4404,96 @@ other accounts exist only as the `?taken=` list; saves are instant, so the disab
 state while a request runs never shows. Saved values go to `store.contact`,
 which the funnel's contact step also reads.
 
+## Login, login code and password reset — `login.html`, `reset-password.html`
+
+Built 2026-11-12 from the 2026-11-11 dump: prod's `/login` (`auth/index.vue`
+switching four steps in place) and `/reset-password/{token}`
+(`pages/reset-password/index.vue`). The nav's logged-out "Kirjaudu" links to
+`login.html`. Both pages sit in prod's blade shell: `bg-blue-50`, cream
+`#FAEADA` from 620px, a centred card `max-w-lg p-8 md:p-12 lg:p-16
+sm:rounded-2xl sm:shadow-md bg-white`, the blue nav with no menu, and **the
+app's short footer** (below).
+
+| Step (`?page=`) | What it does |
+|---|---|
+| `emailLogin` (default) | "Kirjaudu sisään", email, "Lähetä kirjautumiskoodi" → `loginCodeChallenge`; "Tai"; "Kirjaudu salasanalla" |
+| `loginCodeChallenge` | "Tarkista sähköpostisi, … <strong>email</strong>" + "Vaihda sähköposti.", six code boxes (`OtpInput`), "Muista minut", "Etkö saanut linkkiä? … lähetä linkki uudelleen.", "Kirjaudu sisään"; "Tai"; "Kirjaudu salasanalla" |
+| `passwordLogin` | email, password, "Muista minut", "Jos unohdit salasanasi voit vaihtaa sen tästä.", "Kirjaudu sisään"; "Tai"; "Kirjaudu kirjautumiskoodilla" |
+| `forgotPassword` | "Unohditko salasanasi", email, the instruction, "Lähetä"; the success message stays and the form can be sent again |
+
+The address travels between steps; errors and messages start empty on each
+(each step is its own component in prod). `?email=` and `?page=` are prod's own
+query params, and the bar's Scenario row drives `?page=`.
+
+**The mock server answers as prod's endpoints do**, copy verbatim from
+`resources/lang/fi` (server messages are Finnish in the JS, UI strings in
+`translations.js` as `login.*`; prod has no English for any of it, EN is a
+reading aid):
+
+| Request | Answer |
+|---|---|
+| send code (`POST /email-login`) | "Olemme lähettäneet sähköpostiisi kirjautumiskoodin, jos …"; a code (6 digits, `random_int(1, 999999)` zero-padded, 15 min) to **any** address, replacing the last one; 4th send within a minute → 429 "Liian monta yritystä. Kokeile hetken päästä uudestaan." (message box + toast) |
+| log in (`POST /login`) | the correct, unexpired, unused, latest code for that address, or **any address with any password** → logged in as that address (it becomes `store.contact.sahkoposti`), `offers.html`; a wrong or old code → 422 "Kirjautuminen epäonnistui." (box + toast, inputs red); empty code → both `required_without` messages; 6th try within a minute → 429: the code step says too many attempts, **the password step does nothing** (prod's step reacts only to errors; ACC-11) |
+| forgot (`POST /forgot-password`) | "Resetointilinkki lähetetty sähköpostitse!"; a link (60 min) to any address, and none within 60 s of the last |
+| reset context (`GET /reset-password/{token}`) | valid → "Tilille m•••@domain"; unknown, used or expired → "Tämä palautuslinkki on vanhentunut tai jo käytetty." + legacy `Button` "Pyydä uusi linkki" → `forgotPassword` |
+| reset (`POST /reset-password`) | Fortify's rules: "Salasana: n on oltava vähintään 8 merkkiä.", "Kentän Salasana vahvistus ei täsmää." (one box, inputs red); success → link spent, `account.hasPassword` set, and `login.html` opens on `passwordLogin` with the address filled in |
+
+The address after a reset travels in memory in prod (`authHandoff` store),
+never in the URL; the proto uses sessionStorage (`autovex_auth_handoff`), read
+once. Codes, links and rate-limit hits are `store.auth`, so Reset clears them.
+
+**The emails are an inbox notice** (`#auth-inbox`, hinta-arvio's pattern, test
+mode too), after 1.5 s. The code email shows its subject "AutoVex – kirjautumiskoodi",
+"Tervetuloa! Tässä kirjautumiskoodisi:" and **the code** in blue
+(`#0B6DFF`, as the email's h1), selectable in one go so it can be copied and
+pasted into the boxes; **prod's email has no button either**
+(`mail/auth/email-login` ignores the action label it is passed). The reset
+email shows "Salasanan vaihto", "Hoidetaan sinulle uusi salasana!" and
+"Valitse salasana", which opens `reset-password.html?token=`. Neither is in the
+email tool yet.
+
+**Every address has an account in the proto** (Jussi, 2026-11-12: anyone
+may log in, also right after Reset, not only a seller whose email is verified).
+Prod sends a code or a reset link only to an address with an account and
+answers every address the same way; the proto sends to all. A fresh browser on
+either page gets the seed car (not logged in), because the offers page would
+otherwise seed one after the login and overwrite it. **Events** → "Login code"
+expires the code or shows its email again; "Password reset" expires the link.
+The reset page's Events opens a valid link.
+
+**Password managers are kept off both pages** (Jussi: 1Password offered to
+save the proto as a real login). Every field and form carries
+`autocomplete="off" data-1p-ignore data-lpignore="true" data-bwignore="true"
+data-form-type="other"`, which drops prod's `email` / `current-password` /
+`new-password` hints; nothing visible changes. Chrome's own password manager
+does not honour these; if it prompts too, the password fields would have to
+become masked text fields.
+
+**The app's short footer: `app-footer.js`** (`<div id="site-footer"></div>`
+then the script). Prod's Vue app uses `OFooter` and no page fills its links
+slot, so every app page shows only the wave crest, `MLegalFooter`
+(Käyttöehdot, Tietosuojakäytäntö, Evästekäytäntö, "© [year] All rights
+reserved", English in prod too) and the logo: no link columns, language select
+or "Updated" stamp. **Six proto pages use it, all checked against prod's
+`OFooter` consumers:** `offers.html` (`offers/landing`), `decision.html`,
+`dac7.html` (`PersonalInformationPage`), `profile.html` (`user/edit`),
+`login.html` (`auth`) and `reset-password.html`. offers, decision and DAC7 had
+inline footers without link columns but with a language select (offers,
+decision) and no crest; those are gone. The marketing pages keep `layout.js`'s
+footer. The crest (`assets/hero-wave.svg`, prod's own) takes the first opaque
+background above the footer, skipping fixed or absolute siblings such as the
+proto's inbox notices, measured after load, as `OFooter` does on mount. On
+offers and DAC7, which register no translation dictionary, EN is now reached
+only through a language chosen on another page or `?lang=en`; prod has no
+switch there either.
+
+**Divergences, all approximations:** a logged-in visitor of either page goes
+to `offers.html` (prod's guest rule redirects to `/dashboard`, a dealer route
+whose own rule sends a consumer on; the final stop was not traced); after
+login the proto always goes to `offers.html`, where prod first honours a DAC7
+form that is due or the page that asked for the login; "Muista minut" does
+nothing; the two-factor step exists in prod but a consumer cannot turn 2FA on.
+
 ## Login state — `loggedIn`
 
 One flag, `store.loggedIn`, means "email verified" AND "logged in", because in
@@ -4415,7 +4502,10 @@ the seller returned via the email link, which logs them in. Renamed from
 `emailVerified` for that reason.
 
 The nav's first name is gated on it (`site-nav.js`, and `index.html`'s own
-`syncNavLoginLabel`) — a filled-in contact step is not a session. `offers`,
+`syncNavLoginLabel`) — a filled-in contact step is not a session.
+
+Logging in on `login.html` sets it, as that address (see **Login, login code
+and password reset**). `offers`,
 `decision` and `dac7` are logged-in-only contexts and set the flag themselves as
 part of their scenario setup.
 
