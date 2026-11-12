@@ -4449,8 +4449,21 @@ mode too), after 1.5 s. The code email shows its subject "AutoVex – kirjautumi
 pasted into the boxes; **prod's email has no button either**
 (`mail/auth/email-login` ignores the action label it is passed). The reset
 email shows "Salasanan vaihto", "Hoidetaan sinulle uusi salasana!" and
-"Valitse salasana", which opens `reset-password.html?token=`. Neither is in the
-email tool yet.
+"Valitse salasana", which opens `reset-password.html?token=`.
+
+**Both are in the email tool too** (2026-11-12), in a **Login** group at the
+end of the list: `email-login-code` (prod's whole template, the code as a
+`[login code]` placeholder in the blue `<h1>`, the "Tarvitsetko neuvoja?" help
+lines, no button, and a `ctaNone` line in Details saying why) and
+`reset-password` (MailMessage: "Moikka!" from `email.hello` because no greeting
+is set, intro, bold button, outro, salutation, fallback-URL subcopy). Tags are
+`market:unknown` / `role:unknown`: any user gets them. Every MailMessage button
+is bold now (`vendor/notifications/email.blade.php` wraps the label in `<b>`),
+which also corrected `new-question`. The reset email's button opens
+`reset-password.html?newLink=1`, which makes a fresh valid link for the stored
+address and replaces the URL with its token, since a link written ahead of
+time carries no live token. A logged-in visitor still bounces to offers, as
+the guest rule does.
 
 **Every address has an account in the proto** (Jussi, 2026-11-12: anyone
 may log in, also right after Reset, not only a seller whose email is verified).

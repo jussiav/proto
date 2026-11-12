@@ -57,8 +57,9 @@
  *
  * ── Conditionals ───────────────────────────────────────────────────────────
  *
- * None of the eleven Finnish templates contains `@if` — every branch is in the
- * notification class. Two shapes follow from that:
+ * No Finnish template branches: every branch is in the notification class (the
+ * login-code template's two `@if`s guard values that are always passed). Two
+ * shapes follow from that:
  *   • Different template per state → separate entries (the four auction-ended
  *     emails), each carrying the `condition` that selects it.
  *   • Same template, different strings per state → one entry with `states`
@@ -164,6 +165,7 @@
       trigger: 'TenderQuestionApiController → $tenderRequest->user->notify(new NewQuestion(...))',
       timing: 'Immediately when the dealership asks',
       template: 'built from MailMessage — no blade template of its own',
+      ctaBold: true,
       langKeys: ['email.new_question.subject', 'email.new_question.greeting', 'email.new_question.intro', 'email.new_question.action', 'email.regards', 'email.subcopy'],
       note: 'Built with ->greeting()/->line()/->action(), so Laravel adds the salutation and the fallback-URL subcopy. Found from a 2024 .eml capture; it has no blade template, which is why reading resources/views/mail alone missed it.',
       subject: 'AutoVex – Autostasi on esitetty kysymys',
@@ -470,6 +472,52 @@
         '<p>Kirjaudu sisään seuraavan 30 päivän aikana, niin säilytät tiedot aiemmista ilmoituksistasi ja vastaanotat meiltä viestintää myös jatkossa.</p>' +
         '{{BUTTON}}',
       cta: btn('Kirjaudu profiiliisi', 'offers.html', "route('user.offers')")
+    },
+
+    /* The login page's two emails. Any user gets them, not only sellers: the
+       tags say market:unknown / role:unknown. Transcribed from the 2026-11-11
+       dump. */
+    {
+      id: 'email-login-code',
+      tags: ['type:email-login', 'market:unknown', 'role:unknown'],
+      rendered: true,
+      group: 'Login',
+      state: 'Seller asked for a login code on the login page',
+      trigger: 'App\\Mail\\EmailLoginCode, sent by User::sendLoginCode() from POST /email-login ("Lähetä kirjautumiskoodi" or "lähetä linkki uudelleen")',
+      timing: 'Immediately. The code is valid for 15 minutes, a new one replaces the last, and at most 3 can be sent a minute',
+      template: 'resources/views/mail/auth/email-login.blade.php',
+      langKeys: ['email.email_login.subject', 'email.email_login.intro', 'auction.need_help', 'auction.weekdays', 'legalities.personal_info.request_notification.contact_details'],
+      shape: 'markdown',
+      ctaNone: 'none: the seller types the code into the login page. The class passes email.email_login.action ("Kirjaudu sisään") to the template, which never prints it',
+      note: 'The code is the email\'s <h1>, written in #0B6DFF inline; the intro above it is an <h2>. Both @if guards in the template are always true, since the class always passes the intro and a code. Filament\'s transactional email preview shows it with the code 123456.',
+      subject: 'AutoVex – kirjautumiskoodi',
+      body:
+        '<h2>Tervetuloa! Tässä kirjautumiskoodisi:</h2>' +
+        '<h1 style="color:#0B6DFF"><var data-src="$attributes[\'code\'] (EmailLoginCode, 6 digits)">[login code]</var></h1>' +
+        '<h3>Tarvitsetko neuvoja?</h3>' +
+        '<p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p>',
+      cta: null
+    },
+
+    {
+      id: 'reset-password',
+      rendered: true,
+      shape: 'mailmessage',
+      group: 'Login',
+      state: 'Seller asked for a new password on the login page',
+      trigger: 'App\\Notifications\\ResetPassword, sent by User::sendPasswordResetNotification() from POST /forgot-password ("Unohditko salasanasi" → "Lähetä")',
+      timing: 'Immediately. The link is valid for 60 minutes, and a new one can be sent after 60 seconds',
+      template: 'built from MailMessage, rendered by resources/views/vendor/notifications/email.blade.php',
+      langKeys: ['email.reset_password.*', 'email.hello', 'email.regards', 'email.subcopy'],
+      ctaBold: true,
+      note: 'No greeting is set, so the template prints email.hello ("Moikka!") as the <h1>. The link carries only the token, never the address; the reset page looks the account up from it. Not in Filament\'s transactional email preview.',
+      subject: 'Salasanan vaihto',
+      body:
+        '<h1>Moikka!</h1>' +
+        '<p>Hoidetaan sinulle uusi salasana!</p>' +
+        '{{BUTTON}}' +
+        '<p>Jos et pyytänyt salasanan uusimista, sinun ei tarvitse tehdä mitään.</p>',
+      cta: btn('Valitse salasana', 'reset-password.html?newLink=1', "route('auth.password.reset', ['token' => $token])")
     }
   ];
 

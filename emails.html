@@ -126,8 +126,9 @@
       padding: 10px 18px;
       text-decoration: none;
     }
-    /* Bold only where the template wraps the label in <b> — the verification
-       email does, the <x-mail::button> ones do not. */
+    /* Bold only where the template wraps the label in <b>: the verification
+       email and every MailMessage-built one (vendor/notifications/email.blade.php)
+       do, the <x-mail::button> ones do not. */
     .em-btn.is-bold { font-weight: bold; }
     .em-footer {
       width: 570px;
@@ -477,7 +478,7 @@
         rows += metaRow('CTA', c
           ? esc(c.label) + ' → <a class="text-av-blue underline" href="' + c.target + '">' + esc(c.target) + '</a>' +
             (c.route ? '<br><code class="font-mono text-xs text-slate-500">' + esc(c.route) + '</code>' : '')
-          : '<span class="text-slate-500">none — the seller is asked to reply to the message</span>');
+          : '<span class="text-slate-500">' + esc(m.ctaNone || 'none — the seller is asked to reply to the message') + '</span>');
         rows += metaRow('Built as', m.shape === 'mailmessage'
           ? 'MailMessage — greeting, lines, action; Laravel adds the salutation and a fallback-URL subcopy'
           : 'Blade template via ->markdown() — header, body, footer only');
