@@ -350,7 +350,7 @@
     <section class="av-band av-band-build" id="build-code">
       <div class="av-container">
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B4 &mdash; Build code, variant 3</h3>
-      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 3's JavaScript in VWO. It adds its own CSS and inlines OP's logo as SVG, so it needs no hosted files. On the decision page it reuses <code>container mx-auto</code>, which every section of that page already has. Same file in the repository: <code>vwo/op-routing-v3.js</code>.</p>
+      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 3's JavaScript in VWO. It adds its own CSS and inlines OP's logo as SVG, so it needs no hosted files. The inline SVG is for the web pages only, where every browser shows it; the emails use the PNG in <a class="text-av-blue underline" href="#build-email">B6</a>. On the decision page it reuses <code>container mx-auto</code>, which every section of that page already has. Same file in the repository: <code>vwo/op-routing-v3.js</code>.</p>
       <p id="sync-code" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/op-routing-v3.js. Regenerate it before handing over.</p>
       <pre class="av-code" id="code-v3" data-src="vwo/op-routing-v3.js">/* OP routing, variant 3: VWO front-end test snippet. Adds AutoVex's OP car
  * insurance suggestion in two places, with the same block in both:
@@ -518,11 +518,22 @@
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-5">
         <li><b>Where:</b> Klaviyo, in the flow emails triggered by the events <code>OfferAccepted</code>, <code>OfferRejected</code> and <code>FinalOfferRejected</code>. Marketing owns those flows. Add the markup below as one HTML block after the email's own message and button, before the sign-off and the footer.</li>
         <li><b>A/B:</b> in each of the three flow emails, a Klaviyo A/B test with two versions, control (no block) and variant 3 (the block). Name the version &ldquo;Variant 3&rdquo;. Track clicks on the OP link; Klaviyo's click tracking rewrites the link, which still lands on OP's page.</li>
-        <li><b>The logo is a hosted PNG, not SVG and not an attachment.</b> Most mail clients do not show SVG (Gmail and Outlook drop it), and an embedded attachment shows up as a paperclip and is blocked or listed as a file by some clients. Upload <a class="text-av-blue underline" href="../assets/op-logo-email.png" download>op-logo-email.png</a> (160&times;160, transparent, shown at 40&times;40 so it stays sharp on high-density screens) to Klaviyo's image library and put its URL in place of <code>OP_LOGO_URL</code>. Klaviyo serves its library images over HTTPS from its own CDN, so nothing else needs hosting. The <code>alt="OP"</code> stands in when a client blocks images.</li>
+        <li><b>The logo is a hosted PNG, not SVG and not an attachment.</b> Most mail clients do not show SVG (Gmail and Outlook drop it), and an embedded attachment shows up as a paperclip and is blocked or listed as a file by some clients. Upload <a class="text-av-blue underline" href="#logo-file">op-logo-email.png</a> (below; 160&times;160, transparent, shown at 40&times;40 so it stays sharp on high-density screens) to Klaviyo's image library and put its URL in place of <code>OP_LOGO_URL</code>. Klaviyo serves its library images over HTTPS from its own CDN, so nothing else needs hosting. The <code>alt="OP"</code> stands in when a client blocks images.</li>
         <li><b>Built for email clients:</b> nested tables and inline styles only; no flexbox, no classes, no web fonts required. The heading and button fall back to Arial where Barlow and DM Sans are not available (most clients). The arrow is the character &ldquo;&rarr;&rdquo;, since the page's arrow is an SVG. The button is a table cell with the link filling it, so the whole 56px button is clickable. The logo sits in its own fixed 40px cell with the gap on the heading cell, and the image carries <code>min-width</code> and <code>max-width</code> of 40px, so a client or template that shrinks images to fit their cell (<code>max-width:100%</code>) cannot squeeze it out of round.</li>
         <li><b>Known differences by client:</b> Outlook on Windows draws square corners and may draw the dashed border as a thinner line; the layout and colours stay. In dark mode, clients that invert colours may darken the white frame; the orange button and the logo keep their colours.</li>
         <li><b>Width:</b> up to 448px, centred, full width on a phone.</li>
       </ul>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl mb-5 flex flex-col sm:flex-row sm:items-center gap-5" id="logo-file">
+        <div class="flex items-center gap-4 flex-shrink-0">
+          <img src="../assets/op-logo-email.png" width="80" height="80" alt="OP logo, PNG for email" class="block w-20 h-20 rounded border border-dashed border-slate-300 p-1" style="background:repeating-conic-gradient(#f1f5f9 0% 25%, #fff 0% 50%) 50% / 12px 12px;" />
+          <img src="../assets/op-logo-email.png" width="40" height="40" alt="" class="block w-10 h-10" />
+        </div>
+        <div class="font-dm text-sm leading-6 text-slate-800">
+          <p class="font-bold text-slate-900">Logo file for the emails: op-logo-email.png</p>
+          <p>PNG, 160&times;160 px, transparent background, 7&nbsp;kB. Shown at 40&times;40 in the email (right: actual size). Upload it to Klaviyo's image library and put the image's URL in place of <code>OP_LOGO_URL</code> in the markup below. This is the only file the emails need; the markup has no SVG.</p>
+          <p class="mt-2"><a class="inline-flex items-center gap-2 rounded-lg bg-av-blue text-white px-4 h-10 no-underline font-medium" href="../assets/op-logo-email.png" download="op-logo-email.png">Download op-logo-email.png</a></p>
+        </div>
+      </div>
       <p id="sync-email" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This markup differs from email-blocks/op-routing-v3.html. Regenerate it before handing over.</p>
       <pre class="av-code" id="code-email" data-src="email-blocks/op-routing-v3.html">&lt;!-- OP routing, variant 3: AutoVex's OP car insurance suggestion, for the
      seller emails that follow an accepted offer or rejected offers. Paste as
