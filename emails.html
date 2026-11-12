@@ -183,6 +183,8 @@
         Copy is transcribed verbatim from the production dump; the surrounding mail chrome is an
         approximation, since blade cannot be executed here — it gets replaced when a rendered export lands.
         Marketing emails in Klaviyo are listed but never rendered: their copy is not in the codebase.
+        An email a design initiative adds, which production does not send yet, is marked
+        <b>Not in production</b> and names its initiative and variant.
       </p>
     </div>
 
@@ -219,12 +221,13 @@
           <div class="px-5 py-4 border-b border-slate-200">
             <p id="meta-subject" class="font-dm font-bold text-lg leading-6 text-slate-900"></p>
             <p id="meta-line" class="font-dm text-sm text-slate-500 mt-1"></p>
+            <div id="meta-proposed" class="hidden mt-3"></div>
           </div>
           <!-- The mail shell is a fixed 570px, as the real one is, so on a phone
                it scrolls inside its own card rather than taking the page with it. -->
           <div id="email-render" class="bg-slate-50 py-8 px-4 overflow-x-auto"></div>
           <div class="px-5 py-2.5 border-t border-slate-200">
-            <p class="font-dm text-xs text-slate-500">Rendered email — chrome checked against rendered captures · copy verbatim from the dump</p>
+            <p id="render-caveat" class="font-dm text-xs text-slate-500">Rendered email — chrome checked against rendered captures · copy verbatim from the dump</p>
           </div>
         </div>
 
@@ -359,6 +362,11 @@
         return VIEWS[0];
       }
 
+      function choiceMembers(group) {
+        return DATA.emails.filter(function (m) { return m.choice && m.choice.group === group; })
+          .sort(function (a, b) { return a.choice.order - b.choice.order; });
+      }
+
       function esc(s) {
         return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
       }
@@ -381,7 +389,30 @@
           head.textContent = g.name;
           host.appendChild(head);
 
+          /* Members of a choice group (only one of them is sent) sit inside one
+             framed block that names the rule, so they read as alternatives
+             rather than as emails a seller gets one after another. */
+          var block = null;
           g.items.forEach(function (v) {
+            var ch = v.mail.choice;
+            var parent = host;
+            if (ch) {
+              if (!block || block.dataset.group !== ch.group) {
+                var cg = DATA.choices[ch.group];
+                block = document.createElement('div');
+                block.dataset.group = ch.group;
+                block.className = 'em-choice mx-3 my-2 rounded-lg border-2 border-dashed border-blue-300 bg-white overflow-hidden';
+                block.innerHTML =
+                  '<div class="px-3 py-2 bg-blue-50 border-b border-blue-200">' +
+                    '<p class="font-dm text-xs font-bold text-blue-900">' + esc(cg.title) + '</p>' +
+                    '<p class="font-dm text-xs text-blue-800 mt-0.5">' + esc(cg.rule) + '</p>' +
+                  '</div>';
+                host.appendChild(block);
+              }
+              parent = block;
+            } else {
+              block = null;
+            }
             var row = document.createElement('a');
             row.className = 'em-row block px-4 py-3 border-b border-slate-100 hover:bg-slate-50 transition-colors no-underline' +
               (v.key === active.key ? ' is-active' : '');
@@ -391,13 +422,17 @@
               '<span class="block font-dm font-medium text-sm text-slate-900 leading-5">' + esc(armSubject(v)) + '</span>' +
               '<span class="block font-dm text-xs text-slate-500 mt-0.5">' + esc(v.mail.state) + '</span>' +
               (v.stateLabel ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-blue-100 text-blue-800 rounded-full px-2 py-0.5">' + esc(v.stateLabel) + '</span>' : '') +
+              (v.mail.proposed ? '<span class="inline-block mt-1 mr-1 font-dm text-xs font-medium bg-amber-50 text-amber-900 border border-dashed border-amber-500 rounded-full px-2 py-0.5">Not in production · ' +
+                esc(v.mail.proposed.name) + ' ' + esc(v.mail.proposed.arm) + '</span>' : '') +
               (armOf(v) ? '<span class="inline-block mt-1 mr-1 font-dm text-xs bg-green-100 text-green-800 rounded-full px-2 py-0.5">v1 differs' + (armOf(v).draft ? ' (draft)' : '') + '</span>' : '') +
-              (!armOf(v) && v.mail.initiative
+              (ch ? '<span class="inline-block mt-1 mr-1 font-dm text-xs font-medium bg-white text-blue-900 border border-blue-300 rounded-full px-2 py-0.5">' +
+                ch.order + ' of ' + choiceMembers(ch.group).length + ' · ' + esc(ch.short) + '</span>' : '') +
+              (!armOf(v) && v.mail.initiative && !ch
                 ? (v.unchanged
                     ? '<span class="inline-block mt-1 font-dm text-xs bg-slate-200 text-slate-700 rounded-full px-2 py-0.5">unchanged</span>'
                     : '<span class="inline-block mt-1 font-dm text-xs bg-amber-100 text-amber-800 rounded-full px-2 py-0.5">candidate</span>')
                 : '');
-            host.appendChild(row);
+            parent.appendChild(row);
           });
         });
 
@@ -450,8 +485,11 @@
           host.appendChild(row);
         });
 
+        var proposedCount = VIEWS.filter(function (v) { return v.mail.proposed; }).length;
         document.getElementById('list-count').textContent =
-          VIEWS.length + ' rendered · ' + DATA.klaviyo.length + ' in Klaviyo';
+          (VIEWS.length - proposedCount) + ' in production' +
+          (proposedCount ? ' · ' + proposedCount + ' not in production' : '') +
+          ' · ' + DATA.klaviyo.length + ' in Klaviyo';
       }
 
       /* ── Meta panel ───────────────────────────────────────────────────────── */
@@ -467,9 +505,45 @@
         var m = v.mail;
         document.getElementById('meta-subject').textContent = armSubject(v);
         document.getElementById('meta-line').textContent =
-          DATA.from.name + ' <' + DATA.from.address + '> → ' + DATA.recipient;
+          DATA.from.name + ' <' + DATA.from.address + '> → ' + (m.recipient || DATA.recipient);
+
+        /* An email production does not send says so before anything else, on
+           the email itself, with the initiative and variant it belongs to. */
+        var pr = m.proposed;
+        var prBox = document.getElementById('meta-proposed');
+        var prLink = pr ? '<a class="underline" href="' + pr.spec + '">' + esc(pr.name) + '</a>, variant <b>' + esc(pr.arm) + '</b>' : '';
+        var ch = m.choice;
+        prBox.classList.toggle('hidden', !pr && !ch);
+        if (pr) {
+          prBox.innerHTML = '<div class="font-dm text-sm text-amber-900 bg-amber-50 border border-dashed border-amber-500 rounded-lg px-3 py-2">' +
+              '<b>Not in production.</b> Production does not send this email today. It belongs to ' + prLink + '.' +
+            '</div>';
+        } else if (ch) {
+          /* A member of a choice group says it is one of several, what picks
+             it, and links the alternatives. */
+          var cg = DATA.choices[ch.group];
+          var members = choiceMembers(ch.group);
+          var others = members.filter(function (x) { return x.id !== m.id; }).map(function (x) {
+            return '<a class="underline" href="emails.html?email=' + encodeURIComponent(x.id) + '">' + esc(x.subject) + '</a> (if ' + esc(x.choice.when) + ')';
+          });
+          prBox.innerHTML = '<div class="font-dm text-sm text-blue-900 bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg px-3 py-2">' +
+              '<b>' + ch.order + ' of ' + members.length + ': ' + esc(cg.title.charAt(0).toLowerCase() + cg.title.slice(1)) + '.</b> ' +
+              esc(cg.rule) + '. This one goes if <b>' + esc(ch.when) + '</b>. ' +
+              'The others: ' + others.join('; ') + '. ' +
+              'Open question in the findings register: ' + esc(cg.finding) + '.' +
+            '</div>';
+        } else {
+          prBox.innerHTML = '';
+        }
+        document.getElementById('render-caveat').textContent = pr
+          ? 'Not in production — copy from the ' + pr.name + ' design spec, approved by UX · chrome assumed, as the developers\' build is in no dump'
+          : 'Rendered email — chrome checked against rendered captures · copy verbatim from the dump';
 
         var rows = '';
+        if (pr) {
+          rows += metaRow('In production', '<b class="text-amber-900">No.</b> Belongs to ' + prLink +
+            '<br><span class="text-slate-700">' + esc(pr.status) + '</span>');
+        }
         rows += metaRow('Seller state', esc(m.state));
         if (v.condition) rows += metaRow('Sent when', '<code class="font-mono text-xs">' + esc(v.condition) + '</code>');
         rows += metaRow('Trigger', esc(m.trigger), true);
@@ -479,7 +553,7 @@
           ? esc(c.label) + ' → <a class="text-av-blue underline" href="' + c.target + '">' + esc(c.target) + '</a>' +
             (c.route ? '<br><code class="font-mono text-xs text-slate-500">' + esc(c.route) + '</code>' : '')
           : '<span class="text-slate-500">' + esc(m.ctaNone || 'none — the seller is asked to reply to the message') + '</span>');
-        rows += metaRow('Built as', m.shape === 'mailmessage'
+        rows += metaRow('Built as', pr ? esc(pr.builtAs) : m.shape === 'mailmessage'
           ? 'MailMessage — greeting, lines, action; Laravel adds the salutation and a fallback-URL subcopy'
           : 'Blade template via ->markdown() — header, body, footer only');
         if (m.tags) rows += metaRow('Mailgun tags', m.tags.map(function (t) {
@@ -493,7 +567,7 @@
             : '<span class="text-slate-500">not yet assigned to an initiative</span>';
           rows += metaRow('Initiative', link + '<br><span class="text-slate-700">' + esc(m.initiative.why) + '</span>');
         }
-        rows += metaRow('Arm', armOf(v)
+        if (!pr) rows += metaRow('Arm', armOf(v)
           ? '<b>' + esc(armFor(v.mail.initiative.slug)) + '</b> — showing the initiative\'s revised version' +
             (armOf(v).draft ? ' <span class="text-amber-800">(placeholder copy, not approved)</span>' : '')
           : (armSelectedWithoutOverride(v)

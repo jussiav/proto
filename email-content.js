@@ -55,6 +55,15 @@
  * `initiative` field links the email to the spec page that owns the change, and
  * carries the reason it is a candidate even before copy exists.
  *
+ * ── Emails production does not send ────────────────────────────────────────
+ *
+ * An entry with `proposed` is an email a design initiative adds, which no dump
+ * contains. Its copy comes from the initiative's spec, not the dump, and
+ * `proposed` names the initiative, its arm, the spec section and how far it
+ * has got. `emails.html` marks it "Not in production" in the list, on the
+ * email and in Details, and always renders it: there is no production version
+ * to compare it with.
+ *
  * ── Conditionals ───────────────────────────────────────────────────────────
  *
  * No Finnish template branches: every branch is in the notification class (the
@@ -103,7 +112,7 @@
       rendered: true,
       group: 'Draft created',
       state: 'Draft created, email not yet verified',
-      trigger: 'App\\Mail\\TenderRequestDraftCreated — sent when the draft is created with an email address',
+      trigger: 'App\\Mail\\TenderRequestDraftCreated — sent when the draft is created with an email address (CreateDraft), when a contact-step save changes the address (UpdateDraft), when the seller changes it on the waiting screen (UpdateEmail) or asks for it again (ResendEmailVerificationLink), and from Filament\'s draft pages',
       timing: 'Immediately',
       template: 'resources/views/mail/tender-form/email-verification.blade.php',
       langKeys: ['email.email_verification.*'],
@@ -178,7 +187,6 @@
 
     {
       id: 'draft-add-images',
-      tags: ['type:draft-add-images', 'market:c2b', 'role:seller'],
       rendered: true,
       group: 'Review',
       state: 'Draft rejected for missing images (only reachable for a reviewed car)',
@@ -186,7 +194,7 @@
       timing: 'When the advisor sends it, during or after the review call',
       template: 'resources/views/mail/transactional/finland/draft-add-images.blade.php',
       langKeys: ['email.transactional.draft_add_images.subject'],
-      note: 'Advisor-triggered, so it exists only for cars that get reviewed at all. It also assumes the seller has already had the call ("asiantuntijamme kanssa käymäsi puhelun mukaisesti").',
+      note: 'Advisor-triggered, so it exists only for cars that get reviewed at all. It also assumes the seller has already had the call ("asiantuntijamme kanssa käymäsi puhelun mukaisesti"). The only transactional email whose class sets no Mailgun tags.',
       subject: '[first name], lisää vielä puuttuvat kuvat',
       body:
         '<h1>Hei <var data-src="$draft-&gt;user?-&gt;firstName() ?? $draft-&gt;firstName()">[first name]</var>, tarjouspyyntösi kaipaa vielä lisäkuvia!</h1>' +
@@ -223,7 +231,7 @@
       group: 'Auction ended',
       state: 'Auction ended, no offers',
       condition: 'offers.count() === 0',
-      trigger: 'AuctionEnded event → Transactional\\AuctionEnded (C2B branch)',
+      trigger: 'AuctionEnded event → NotifySellerAboutAuctionEnded → Transactional\\AuctionEnded (C2B branch)',
       timing: 'When the auction ends',
       template: 'resources/views/mail/transactional/finland/auction-ended-no-offers.blade.php',
       langKeys: ['email.transactional.auction_ended_no_offers.subject'],
@@ -251,13 +259,14 @@
       initiative: {
         slug: 'asking-price-removal',
         spec: 'design-specs/asking-price-removal.html',
-        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. No copy change is proposed — the open question is which email gets sent once there is no asking price to compare against.'
+        why: 'The choice between this email and its two siblings reads the asking price, which no screen after the price step shows the consumer seller any more. No copy change is proposed yet; the open question is findings EML-06.'
       },
       rendered: true,
       group: 'Auction ended',
       state: 'Auction ended, best offer well below the asking price',
+      choice: { group: 'auction-ended-offers', order: 1, short: 'offer under 90 % of asking price', when: 'the highest offer is under 90 % of the asking price' },
       condition: 'highestOffer < asking_price × 0.9',
-      trigger: 'AuctionEnded event → Transactional\\AuctionEnded (C2B branch)',
+      trigger: 'AuctionEnded event → NotifySellerAboutAuctionEnded → Transactional\\AuctionEnded (C2B branch)',
       timing: 'When the auction ends',
       template: 'resources/views/mail/transactional/finland/auction-ended-low-offers.blade.php',
       langKeys: ['email.transactional.auction_ended_low_offers.subject'],
@@ -279,13 +288,14 @@
       initiative: {
         slug: 'asking-price-removal',
         spec: 'design-specs/asking-price-removal.html',
-        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. No copy change is proposed — the open question is which email gets sent once there is no asking price to compare against.'
+        why: 'The choice between this email and its two siblings reads the asking price, which no screen after the price step shows the consumer seller any more. No copy change is proposed yet; the open question is findings EML-06.'
       },
       rendered: true,
       group: 'Auction ended',
       state: 'Auction ended, best offer just under the asking price',
+      choice: { group: 'auction-ended-offers', order: 2, short: 'offer at least 90 %, below asking price', when: 'the highest offer is at least 90 % of the asking price but below it' },
       condition: 'asking_price × 0.9 ≤ highestOffer < asking_price',
-      trigger: 'AuctionEnded event → Transactional\\AuctionEnded (C2B branch)',
+      trigger: 'AuctionEnded event → NotifySellerAboutAuctionEnded → Transactional\\AuctionEnded (C2B branch)',
       timing: 'When the auction ends',
       template: 'resources/views/mail/transactional/finland/auction-ended-good-offers.blade.php',
       langKeys: ['email.transactional.auction_ended_good_offers.subject'],
@@ -310,13 +320,14 @@
       initiative: {
         slug: 'asking-price-removal',
         spec: 'design-specs/asking-price-removal.html',
-        why: 'Selected by comparing the highest offer against asking_price, so removing the asking price changes which of the four auction-ended emails a seller receives. No copy change is proposed — the open question is which email gets sent once there is no asking price to compare against.'
+        why: 'The choice between this email and its two siblings reads the asking price, which no screen after the price step shows the consumer seller any more. No copy change is proposed yet; the open question is findings EML-06.'
       },
       rendered: true,
       group: 'Auction ended',
       state: 'Auction ended, best offer at or above the asking price',
+      choice: { group: 'auction-ended-offers', order: 3, short: 'offer at or above asking price', when: 'the highest offer is at or above the asking price' },
       condition: 'highestOffer ≥ asking_price',
-      trigger: 'AuctionEnded event → Transactional\\AuctionEnded (C2B branch)',
+      trigger: 'AuctionEnded event → NotifySellerAboutAuctionEnded → Transactional\\AuctionEnded (C2B branch)',
       timing: 'When the auction ends',
       template: 'resources/views/mail/transactional/finland/auction-ended-great-offers.blade.php',
       langKeys: ['email.transactional.auction_ended_great_offers.subject'],
@@ -337,6 +348,7 @@
 
     {
       id: 'delayed-negotiation-email',
+      tags: ['type:delayed-negotiation-email', 'market:c2b', 'role:seller'],
       rendered: true,
       group: 'Decision',
       state: 'Auction ended with offers, seller has not answered and has started no negotiation',
@@ -358,6 +370,7 @@
 
     {
       id: 'negotiation-dealer-replied-round-1',
+      tags: ['type:negotiation-dealer-replied-round-1', 'market:c2b', 'role:seller'],
       rendered: true,
       group: 'Counter-offer',
       state: 'Dealer answered the seller\'s first counter-offer',
@@ -378,6 +391,7 @@
 
     {
       id: 'negotiation-dealer-replied-round-2',
+      tags: ['type:negotiation-dealer-replied-round-2', 'market:c2b', 'role:seller'],
       rendered: true,
       group: 'Counter-offer',
       state: 'Dealer answered the second counter-offer — no more counters allowed',
@@ -398,6 +412,7 @@
 
     {
       id: 'final-offer-sent',
+      tags: ['type:final-offer-sent', 'market:c2b', 'role:seller'],
       rendered: true,
       group: 'Counter-offer',
       state: 'Dealer raised its offer as a final offer',
@@ -417,6 +432,7 @@
 
     {
       id: 'negotiation-closed',
+      tags: ['type:negotiation-closed-email', 'type:negotiation-closed', 'market:c2b', 'role:seller'],
       rendered: true,
       group: 'Counter-offer',
       state: 'Negotiation closed, an offer is waiting for the seller',
@@ -436,6 +452,7 @@
 
     {
       id: 'personal-info-request',
+      tags: ['type:personal-information-required', 'market:c2b', 'role:seller'],
       rendered: true,
       group: 'After the sale',
       state: 'Deal completed, DAC7 details not yet submitted',
@@ -443,17 +460,21 @@
       timing: 'Sent up to three times, or until the details are filled in',
       template: 'resources/views/mail/legalities/personal-info-request.blade.php',
       langKeys: ['legalities.personal_info.request_notification.*'],
-      note: 'Its own standalone HTML template, not the shared mail layout.',
+      ctaBold: true,
+      subcopy: true,
+      footer: 'rights',
+      note: 'Its own standalone HTML template, not the shared mail layout. It writes in by hand what the layout would add: the sign-off, the help lines and the fallback-URL subcopy, and its footer is email.footer ("Kaikki oikeudet pidätetään."). The link is signed and valid for two weeks.',
       subject: 'Muistutus tietojen täydentämisestä',
       body:
-        '<h1>Moi <var data-src="$tenderRequest-&gt;user-&gt;firstName()">[first name]</var>, ja onnea autokaupoista!</h1>' +
+        '<h1>Moi <var data-src="Arr::first(explode(\' \', $this-&gt;user-&gt;name))">[first name]</var>, ja onnea autokaupoista!</h1>' +
         '<p>Huomasimme, ettet ole vielä toimittanut meille tietojasi lakisääteiseen DAC7-raportointiin liittyen. AutoVex on lain mukaan vastuussa ilmoittamaan tietoja asiakkaidensa myynneistä veroviranomaisille.</p>' +
         '<p>Tietojen täyttäminen lomakkeelle on helppoa ja turvallista. Tietojasi käsitellään AutoVexin tietosuojakäytännön mukaisesti.</p>' +
         '<p>Lisätietoja DAC7-raportoinnista saat <a href="https://www.vero.fi/syventavat-vero-ohjeet/ohje-hakusivu/209369/raportoivan-alustaoperaattorin-tiedonantovelvollisuus-dac7/">Suomen Verohallinnon</a> verkkosivuilta.</p>' +
         '{{BUTTON}}' +
-        '<p class="em-small">Velvoitteesta johtuen, tämä sähköposti lähetetään sinulle kolme kertaa tai kunnes tiedot on täytetty.</p>' +
-        '<p class="em-small">Olemme apunasi osoitteessa tiimi@autovex.fi (arkisin 10-16)</p>',
-      cta: btn('Täytä tietosi tästä', 'dac7.html', "route('user.personal-information')")
+        '<p>Velvoitteesta johtuen, tämä sähköposti lähetetään sinulle kolme kertaa tai kunnes tiedot on täytetty.</p>' +
+        '<p>' + SHARED.regards + '</p>' +
+        '<div class="em-help"><p class="em-help-title"><b>Tarvitsetko neuvoja?</b></p><p>Olemme apunasi osoitteessa tiimi@autovex.fi (ark. 10-16)</p></div>',
+      cta: btn('Täytä tietosi tästä', 'dac7.html', "URL::temporarySignedRoute('tender-requests.personal-information', now()->addWeeks(2), …)")
     },
 
     {
@@ -467,11 +488,11 @@
       langKeys: ['email.user_inactivity_warning.*'],
       subject: 'Profiilisi poistetaan pian – kirjaudu säilyttääksesi tietosi',
       body:
-        '<h1>Moi <var data-src="$tenderRequest-&gt;user-&gt;firstName()">[first name]</var>!</h1>' +
+        '<h1>Moi <var data-src="$user-&gt;firstName()">[first name]</var>!</h1>' +
         '<p>AutoVex-profiilisi on ollut pitkään käyttämättä. Poistamme profiilin ja siihen liittyvät tiedot pian, ellet kirjaudu sisään.</p>' +
         '<p>Kirjaudu sisään seuraavan 30 päivän aikana, niin säilytät tiedot aiemmista ilmoituksistasi ja vastaanotat meiltä viestintää myös jatkossa.</p>' +
         '{{BUTTON}}',
-      cta: btn('Kirjaudu profiiliisi', 'offers.html', "route('user.offers')")
+      cta: btn('Kirjaudu profiiliisi', 'offers.html', "$user->loginAsQRRoute('offers'), a signed link that logs the seller in")
     },
 
     /* The login page's two emails. Any user gets them, not only sellers: the
@@ -518,8 +539,49 @@
         '{{BUTTON}}' +
         '<p>Jos et pyytänyt salasanan uusimista, sinun ei tarvitse tehdä mitään.</p>',
       cta: btn('Valitse salasana', 'reset-password.html?newLink=1', "route('auth.password.reset', ['token' => $token])")
+    },
+
+    /* NOT IN PRODUCTION. The Klaviyo consent initiative's v1 adds it: the
+       developers built it on a branch that is in no dump yet, and the copy is
+       the design spec's, approved by UX on 2026-11-11. */
+    {
+      id: 'email-change-confirmation',
+      rendered: true,
+      proposed: {
+        slug: 'klaviyo-consent',
+        name: 'Klaviyo consent',
+        arm: 'v1',
+        spec: 'design-specs/klaviyo-consent.html#c3',
+        status: 'Proposal sent to the team, ready to build if they agree. Copy approved by UX on 11 November 2026',
+        builtAs: 'Not known: the developers\' branch is not in a dump. Shown with exactly the parts the spec lists (greeting, body, button, closing line). If it is built like the reset email, Laravel also adds the salutation and the fallback-URL subcopy'
+      },
+      group: 'Profile',
+      recipient: '[new email address]',
+      state: 'Seller saved a new email address on the profile page',
+      trigger: 'Saving a new address with "Päivitä" on Profiilin muokkaus. In production today the address changes at once and no email is sent',
+      timing: 'Immediately. The link is valid for [minutes] minutes (not decided yet); saving another address sends a new link that replaces it',
+      template: 'not in the production dump',
+      note: 'Goes to the new address only; a notice to the old address is an open question on the spec. The button opens the profile page in v1 and confirms the address waiting there. With nothing waiting, the link would be used or replaced, and that page is not designed yet.',
+      subject: 'Vahvista uusi sähköpostiosoitteesi',
+      body:
+        '<h1>Hei!</h1>' +
+        '<p>Pyysit vaihtamaan AutoVex-profiilisi sähköpostiosoitteeksi tämän osoitteen. Vahvista se alla olevasta painikkeesta. Linkki on voimassa <var data-src="link lifetime, set by the developers">[minutes]</var> minuuttia.</p>' +
+        '{{BUTTON}}' +
+        '<p>Jos et pyytänyt vaihtoa, sinun ei tarvitse tehdä mitään. Profiilisi sähköpostiosoite ei muutu.</p>',
+      cta: btn('Vahvista sähköpostiosoite', 'profile.html?klaviyo-consent=v1&emailConfirm=1', 'the confirmation link (not in the dump)')
     }
   ];
+
+  /* Emails of which only one is sent, chosen by a rule. Each member carries
+     `choice: { group, order, short, when }`; the tool frames the members as one block
+     in the list and names the rule on each of them. */
+  var CHOICES = {
+    'auction-ended-offers': {
+      title: 'Only one of these three is sent',
+      rule: 'Picked by comparing the highest offer with the seller\'s asking price',
+      finding: 'EML-06'
+    }
+  };
 
   /* ── Klaviyo-triggered — listed, never rendered ────────────────────────────
      The codebase holds the event name and the payload; the copy lives in
@@ -551,11 +613,12 @@
     shared: SHARED,
     from: FROM,
     emails: EMAILS,
+    choices: CHOICES,
     klaviyo: KLAVIYO,
     /* Where the copy came from, shown on the page so nobody mistakes the shell
        for a rendered export. */
     source: {
-      dump: 'prod/autovex-2026-08-26-1ee95731e59f',
+      dump: 'prod/autovex-2026-11-11-dc54e9a95415',
       lang: 'resources/lang/fi/email.php',
       views: 'resources/views/mail/',
       preview: 'app/Filament/Pages/TransactionalEmails.php'

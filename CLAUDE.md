@@ -3855,7 +3855,7 @@ profile page**).
   subscribes a ticked email and does nothing otherwise.
 - **Not built:** the complete-profile page (same checkbox, reached by a
   logged-in user with no phone, which a verified seller always has), the
-  confirmation email itself and the notice to the old address (decision 17),
+  notice to the old address (decision 17),
   the page for an expired or replaced link, and anything about what an
   unsubscribe stops. Jussi expects unsubscribing from marketing to leave
   transactional emails (offers, negotiations) untouched; that is being
@@ -7392,11 +7392,57 @@ page gives when it takes no part in an initiative. Offering an arm that renders
 identically to control reads as "the change is in and it looks the same", which
 is worse than no arm at all. An `initiative` field links an email to the spec page that
 owns the change and carries the reason it is a candidate before any copy exists.
-The three `auction-ended-*` emails carry one with **no copy proposal**: which of
-the four a seller receives is computed from `asking_price`, so they are
-Asking-price removal's open question, not a wording change. They pointed at a
-`slug: null` placeholder saying that initiative had no spec page — it does now,
-so they link `design-specs/asking-price-removal.html`.
+The three `auction-ended-*` emails with offers carry one with **no copy
+proposal**: which of them a seller receives is computed from `asking_price`, so
+they link `design-specs/asking-price-removal.html` and findings **EML-06**.
+
+**Emails of which only one is sent are framed as one group** (2026-11-12,
+Jussi: they used to carry an amber `candidate` chip, which read as "a design
+candidate"). A member carries `choice: { group, order, short, when }` and
+`EMAIL_CONTENT.choices[group]` holds the group's `title`, `rule` and `finding`.
+The list draws the members inside one dashed blue block headed "Only one of
+these three is sent · Picked by comparing the highest offer with the seller's
+asking price", each row chipped "1 of 3 · offer under 90 % of asking price" (and
+so on); the `candidate` chip is suppressed for them. The open email gets a
+dashed blue notice under its subject: which of the three it is, the rule, the
+condition that sends it, links to the other two with theirs, and the findings
+entry. The only group today is `auction-ended-offers`; the no-offers email stays
+outside it, since offer count, not the asking price, picks it.
+
+**Re-checked against the 2026-11-11 dump on 2026-11-12, email by email.**
+The copy of every production email matched, and no seller email was missing:
+every other mail class in the dump goes to dealerships (OfferAccepted,
+OfferOutbid, NewAnswer, NegotiationPendingReminder, NegotiationAskingPriceFinal,
+the dealer summary and the deadline reminder). What did not match, now fixed:
+the **DAC7 reminder** was missing the template's sign-off, its "Tarvitsetko
+neuvoja?" heading, the fallback-URL subcopy and the bold button, and showed
+"(arkisin 10-16)" where prod prints "(ark. 10-16)"; its footer is
+`email.footer` and its link a signed route valid for two weeks. The
+**inactivity warning's** button is a signed login link
+(`$user->loginAsQRRoute('offers')`), not `route('user.offers')`. Six emails
+gained the Mailgun tags their classes set, and `draft-add-images` lost the tags
+it showed, since `DraftNeedMoreImages` sets none. The verification email's
+trigger now lists all five places that send it. `source.dump` points at the
+11-11 dump.
+
+**An email production does not send is marked, never mixed in.** An entry with
+`proposed` (`{ slug, name, arm, spec, status, builtAs }`) is an email a design
+initiative adds and no dump contains; its copy is the spec's. The tool marks it
+**Not in production** with its initiative and variant in three places: a dashed
+amber chip on the list row, a dashed amber banner under the subject, and an
+**In production: No** row first in Details. The caveat strip under the email
+says the copy is the spec's and the chrome assumed, "Built as" takes `builtAs`,
+the Arm row is dropped, the inbox count splits "in production" from "not in
+production", and an entry may name its own `recipient`. It always renders: there
+is no production version to switch to. The first one is Klaviyo consent `v1`'s
+**"Vahvista uusi sähköpostiosoitteesi"** (2026-11-12, group **Profile**), to the
+new address, with the parts the spec lists (greeting "Hei!", body, button,
+closing line) and no Laravel salutation or subcopy, since how the developers
+build it is not in a dump. Its button opens
+`profile.html?klaviyo-consent=v1&emailConfirm=1`, which confirms the address
+waiting there (the same thing the inbox notice's "Avaa linkki" does) and drops
+`emailConfirm` from the address; with nothing waiting it does nothing, since
+the used or replaced link page is not designed.
 
 The tool is dev-only: reachable from the bar's **Go to** row, absent from every
 seller-facing nav, and replaced by a short notice in `?mode=test`.

@@ -41,3 +41,12 @@ Klaviyo, outside it), CMS copy, and copy that reaches dealerships.
 - **Last checked:** prod dump 2026-11-11, still present. The B2B gate gained an exception in the 2026-10-26 dump: behind a feature flag, the highest bidder sees a B2B reserve once the auction has ended below it. C2B is unchanged
 - **Next step:** Handed to the team 2026-09-24; no change requested yet.
 - **Touches:** Asking price removal, dealership squad work
+
+### EML-06 · Which auction-ended email a seller gets depends on an asking price they no longer see
+- **Status:** Open · **Type:** UX · **Severity:** Medium
+- **Where:** The three emails a consumer seller can get when their auction ends with offers. Only one is sent. The email tool shows them as one group: "Tarjouskilpailu on päättynyt. Katso saamasi tarjous!", "Tarjouskilpailu päättyi, katso tarjoukset autostasi [reg. no]!" and "[first name], tarjouskilpailusi on päättynyt! Siirry hyväksymään tarjous"
+- **Found:** 2026-11-12, re-checking the email tool against the 2026-11-11 dump
+- **Evidence:** The auction-ended notification compares the highest offer with the request's asking price. Under 90 % of it the seller gets "Mikäli olet tyytyväinen lopputulokseen, käythän hyväksymässä tarjouksen pian." From 90 % up they are told "sait autostasi mahtavan tarjouksen!", in two emails whose bodies are identical and whose subjects differ (just under, and at or above, the asking price). No screen after the price step shows the consumer seller their asking price any more (Asking price removal). For a reviewed car the advisor sets it in the review call, and an ad that publishes without one gets the price estimate in its place. So whether an offer is called "mahtava" rests on a number the seller may not know, or never gave
+- **Last checked:** prod dump 2026-11-11, present
+- **Next step:** Decide what picks the email when the asking price is not something the seller sees: one email for every auction with offers, or a reference the seller does see. A copy and logic change, with no proposal yet
+- **Touches:** Asking price removal, Informed decision (its result block judges the offer on the decision page by a different reference)

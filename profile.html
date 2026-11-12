@@ -390,6 +390,14 @@
       readConsent();
       renderPending();
       document.addEventListener('av:langchange', function () { renderConsent(); renderPending(); });
+      /* The confirmation email's button, from the email tool. With no address
+         waiting, the link is used or replaced; that page is not designed yet. */
+      var linkParams = new URLSearchParams(window.location.search);
+      if (linkParams.get('emailConfirm') === '1') {
+        linkParams.delete('emailConfirm');
+        history.replaceState(null, '', location.pathname + (linkParams.toString() ? '?' + linkParams : '') + location.hash);
+        confirmEmail();
+      }
     }
 
     /* ── PhoneNumberInput ── */
