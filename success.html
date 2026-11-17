@@ -56,8 +56,9 @@
   <script>
     (function () {
       var arm = window.protoVariant('op-routing', 'control');
-      if (arm === 'v3') document.write('<script src="vwo/op-routing-v3.js"><\/script>');
+      if (arm === 'v3' || arm === 'v4') document.write('<script src="vwo/op-routing-' + arm + '.js"><\/script>');
       else if (arm !== 'control') window.protoVariantSet('op-routing', null);
+      if (arm === 'v4') document.write('<link rel="stylesheet" href="op-chevin-local.css">');
     }());
   </script>
   <script src="proto-mock.js"></script>
@@ -354,7 +355,8 @@
           default: 'control',
           variants: [
             { id: 'control', label: 'Control — no insurance suggestion' },
-            { id: 'v3',      label: 'Variant 3 — OP coupon block (draft)' }
+            { id: 'v3',      label: 'Variant 3 — OP coupon block (draft)' },
+            { id: 'v4',      label: 'Variant 4 — OP’s own banner (OP’s copy)' }
           ]
         }
       ],
@@ -1118,7 +1120,7 @@
     /* The OP routing snippet sets 32px above its block, prod's distance from
        the notice. This column already puts 24px between its children, so the
        prototype takes 8px back to land on the same 32px. */
-    body #av-op-v3.av-op-success { margin-top: 8px; }
+    body #av-op-v3.av-op-success, body #av-op-v4.av-op-success { margin-top: 8px; }
     .hj-survey {
       width: 320px; max-width: 100%; box-sizing: border-box;
       padding: 16px 20px 20px; background: #fff; border-radius: 6px;

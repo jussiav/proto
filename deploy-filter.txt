@@ -18,3 +18,4 @@
 + /vue-tests/dist/***
 - /vue-tests/*
 - node_modules/
+- /local-fonts/

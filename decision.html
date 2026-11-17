@@ -54,12 +54,13 @@
       if (arm === 'v1' || arm === 'v2' || arm === 'v3') document.write('<script src="vwo/seller-protection-' + arm + '.js"><\/script>');
     }());
   </script>
-  <!-- OP routing: the same, for its variant 3 (design-specs/op-routing.html#build). -->
+  <!-- OP routing: the same, for its variants 3 and 4 (design-specs/op-routing.html#build). -->
   <script>
     (function () {
       var arm = window.protoVariant('op-routing', 'control');
-      if (arm === 'v3') document.write('<script src="vwo/op-routing-v3.js"><\/script>');
+      if (arm === 'v3' || arm === 'v4') document.write('<script src="vwo/op-routing-' + arm + '.js"><\/script>');
       else if (arm !== 'control') window.protoVariantSet('op-routing', null);
+      if (arm === 'v4') document.write('<link rel="stylesheet" href="op-chevin-local.css">');
     }());
   </script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
@@ -4178,7 +4179,8 @@
           default: 'control',
           variants: [
             { id: 'control', label: 'Control — no insurance suggestion' },
-            { id: 'v3',      label: 'Variant 3 — OP coupon block, after accepting or rejecting (draft)' }
+            { id: 'v3',      label: 'Variant 3 — OP coupon block, after accepting or rejecting (draft)' },
+            { id: 'v4',      label: 'Variant 4 — OP’s own banner, after accepting or rejecting (OP’s copy)' }
           ]
         }
       ],

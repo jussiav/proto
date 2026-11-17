@@ -14,7 +14,9 @@
  */
 (function () {
   var ID = 'av-op-v3';
-  var OP_URL = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle';
+  // OP's links, one per placement; the cmpid parameter is OP's own tracking.
+  var URL_SUCCESS = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tp_in.ha_jn_autonvakuutukset';
+  var URL_DECISION = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tar_hy.ha_jn_autonvakuutukset';
 
   // The decision page hero titles of the two states, verbatim from
   // auction.auction_hero.offer_accepted.title / .offer_rejected.title.
@@ -48,8 +50,8 @@
   // The production sprite's arrow-right.
   var ARROW = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg>';
 
-  var CARD =
-    '<div class="av-op-card">' +
+  function card(url) {
+    return '<div class="av-op-card">' +
       '<div class="av-op-head">' +
         '<p class="av-op-intro">Tutustu sillä aikaa suosittelemaamme tarjoukseen</p>' +
         '<div class="av-op-row">' + LOGO +
@@ -57,12 +59,13 @@
         '</div>' +
       '</div>' +
       '<div class="av-op-actions">' +
-        '<a class="av-op-cta" href="' + OP_URL + '" target="_blank" rel="noopener">' +
+        '<a class="av-op-cta" href="' + url + '" target="_blank" rel="noopener">' +
           '<span>Laske vakuutustarjous OP:ssa</span><span class="av-op-sr">(avautuu uuteen välilehteen)</span>' + ARROW +
         '</a>' +
         '<p class="av-op-terms">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</p>' +
       '</div>' +
     '</div>';
+  }
 
   function visible(el) {
     return !!el && el.getClientRects().length > 0;
@@ -120,9 +123,9 @@
     // Finnish only, like the copy.
     if (/^en/i.test(document.documentElement.lang || '')) return remove();
     var anchor = successAnchor();
-    if (anchor) return place(anchor, 'div', 'av-op-success', CARD);
+    if (anchor) return place(anchor, 'div', 'av-op-success', card(URL_SUCCESS));
     anchor = decisionAnchor();
-    if (anchor) return place(anchor, 'section', '', '<div class="container mx-auto">' + CARD + '</div>');
+    if (anchor) return place(anchor, 'section', '', '<div class="container mx-auto">' + card(URL_DECISION) + '</div>');
     remove();
   }
 

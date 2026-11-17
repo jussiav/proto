@@ -85,14 +85,14 @@
       <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
            class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
       <div class="flex flex-col gap-4">
-        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; success page, decision page, emails</p>
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; success page, decision page</p>
         <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">OP routing</h1>
         <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A pilot: AutoVex suggests car insurance from OP at moments when the seller has nothing left to do with us. One block, one button out to OP's insurance page, and no change to the selling flow.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-info-100 text-info-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Status: designs accepted by OP &middot; variant 3 in 3 placements
+          Status: in discussion &middot; 2 variants, 2 placements
         </span>
         <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">November 2026</span>
       </div>
@@ -106,12 +106,13 @@
 
     <section class="av-band av-band-grey">
       <div class="av-container">
-      <p class="font-dm text-xs font-bold uppercase tracking-widest text-av-blue mb-2">Part 1 &middot; for the team</p>
+      <p class="font-dm text-xs font-bold uppercase tracking-widest text-av-blue mb-2">Part 1 &middot; for the team and OP</p>
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Summary</h2>
       <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>A seller selling their car will soon need insurance for the next one.</b> We suggest OP's car insurance where the seller has nothing left to do with AutoVex, and send them to OP's own page for a quote.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>One design, variant 3, in three placements.</b> The same block goes on the success page after submitting, on the decision page after the seller accepted an offer or the offers were rejected, and in the emails that follow those two decisions. Variants 1 and 2 are retired; variant 3 keeps its name so earlier links and results still match.</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>How it is built.</b> The two pages run as one VWO front-end test with two arms, control and variant 3 (<a class="text-av-blue underline" href="#build">part 2</a>). The emails are sent from Klaviyo, so the block goes into Marketing's Klaviyo emails as an HTML block, tested with Klaviyo's own A/B split (<a class="text-av-blue underline" href="#build-email">B6</a>).</p>
-      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl"><b>It must not cost the selling flow anything.</b> The block appears only where no action is asked of the seller, below AutoVex's own message on the page, and never replaces or delays a step.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Two placements:</b> the success page after submitting the listing, and the decision page after the seller has accepted an offer or the offers were rejected.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Two designs:</b> variant 3, AutoVex's own block, whose design OP has accepted, and variant 4, OP's own banner built as HTML, which is still being discussed. Both run on the two pages as one VWO front-end test (<a class="text-av-blue underline" href="#build">part 2</a>).</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl mb-3"><b>Emails are not part of this initiative.</b> Marketing handles any email placement.</p>
+      <p class="font-dm text-base leading-7 text-slate-800 max-w-3xl"><b>It must not cost the selling flow anything.</b> The block appears only where nothing is asked of the seller, below AutoVex's own message on the page, and never replaces or delays a step.</p>
       </div>
     </section>
 
@@ -120,112 +121,103 @@
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Change log</h2>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
         <table class="w-full font-dm text-sm text-left">
-          <thead><tr class="border-b border-slate-200"><th class="av-th">#</th><th class="av-th">Placement</th><th class="av-th">Where</th><th class="av-th">Shown when</th><th class="av-th">Built as</th></tr></thead>
+          <thead><tr class="border-b border-slate-200"><th class="av-th">#</th><th class="av-th">Design</th><th class="av-th">Where</th><th class="av-th">Shown when</th><th class="av-th">Status</th></tr></thead>
           <tbody class="divide-y divide-slate-100 text-slate-800">
-            <tr><td class="av-td font-bold">1</td><td class="av-td"><a class="text-av-blue underline font-medium" href="#placement-success">Success page</a></td><td class="av-td">Funnel, after submitting</td><td class="av-td text-slate-600">Email verified, and the ad is in review or published</td><td class="av-td">VWO front-end test</td></tr>
-            <tr><td class="av-td font-bold">2</td><td class="av-td"><a class="text-av-blue underline font-medium" href="#placement-decision">Decision page</a></td><td class="av-td">The car's decision page</td><td class="av-td text-slate-600">An offer accepted, or the offers rejected</td><td class="av-td">The same VWO test</td></tr>
-            <tr><td class="av-td font-bold">3</td><td class="av-td"><a class="text-av-blue underline font-medium" href="#placement-email">Emails</a></td><td class="av-td">Klaviyo emails to the seller</td><td class="av-td text-slate-600">After an offer accepted, offers rejected, a final offer rejected</td><td class="av-td">HTML block in Klaviyo, Klaviyo A/B split</td></tr>
+            <tr><td class="av-td font-bold">3</td><td class="av-td"><a class="text-av-blue underline font-medium" href="#v3">Variant 3: AutoVex's OP coupon block</a></td><td class="av-td">Success page, decision page</td><td class="av-td text-slate-600" rowspan="2">Success page: email verified, in review or published. Decision page: an offer accepted, or the offers rejected</td><td class="av-td"><span class="bg-success-100 text-success-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">Design accepted by OP</span></td></tr>
+            <tr><td class="av-td font-bold">4</td><td class="av-td"><a class="text-av-blue underline font-medium" href="#v4">Variant 4: OP's own banner</a></td><td class="av-td">Success page, decision page</td><td class="av-td"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap">In discussion</span></td></tr>
           </tbody>
         </table>
       </div>
+      <p class="font-dm text-xs text-slate-500 mt-3 max-w-3xl">Variants 1 and 2 were retired; the numbering is kept so earlier links and notes still match.</p>
       </div>
     </section>
 
-    <section class="av-band av-band-grey" id="block">
+    <section class="av-band av-band-grey" id="v3">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">The block</h2>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Variant 3 &mdash; AutoVex's OP coupon block</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-success-100 text-success-800 font-bold rounded-full px-3 py-1">Design accepted by OP</span></div>
       <div class="grid lg:grid-cols-2 gap-5 items-start">
         <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
           <ul class="list-disc pl-5 space-y-1">
             <li><b>AutoVex speaks first.</b> &ldquo;Tutustu sillä aikaa suosittelemaamme tarjoukseen&rdquo; (meanwhile, take a look at an offer we recommend) introduces the offer as ours.</li>
             <li><b>The offer is the heading</b>, with OP's round logo beside it: &ldquo;Uudelle autollesi vakuutus &minus;50&nbsp;%&rdquo;.</li>
-            <li><b>One button, filled with OP's orange</b>, 56px tall: &ldquo;Laske vakuutustarjous OP:ssa&rdquo; (calculate an insurance quote at OP). &ldquo;OP:ssa&rdquo; says the click leaves AutoVex. It opens OP's car insurance page in a new tab; the AutoVex page stays open.</li>
+            <li><b>One button, filled with OP's orange</b>, 56px tall: &ldquo;Laske vakuutustarjous OP:ssa&rdquo; (calculate an insurance quote at OP). It opens OP's car insurance page in a new tab; the AutoVex page stays open.</li>
             <li><b>The terms line</b> under the button: the offer covers the first insurance period of new comprehensive insurance.</li>
             <li><b>A coupon frame:</b> 2px dashed light grey border, 12px corners, white fill, 20px padding, at most 448px wide.</li>
-            <li><b>Shared with Huutokaupat routing:</b> AutoVex's voice, the partner button as the only exit, never deterring the seller from what they still do with us. The frame and OP's mark off the button are this variant's deliberate departures.</li>
+            <li><b>AutoVex's fonts</b> (Barlow, DM Sans); nothing to license.</li>
           </ul>
         </div>
         <div>
-          <iframe class="av-frame" src="op-routing-preview.html?variant=v3&amp;page=success-review" height="560" title="The block on the success page" loading="lazy"></iframe>
+          <iframe class="av-frame" src="op-routing-preview.html?variant=v3&amp;page=success-review" height="560" title="Variant 3 on the success page" loading="lazy"></iframe>
           <p class="font-dm text-xs text-slate-500 mt-2">Runs the build code on a trimmed copy of production's success screen. 218px tall on desktop, 270px at 375px.</p>
         </div>
       </div>
       </div>
     </section>
 
-    <section class="av-band av-band-grey" id="placement-success">
+    <section class="av-band av-band-grey" id="v4">
       <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">1 &mdash; Success page</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Funnel success page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Email verified: in review, or published</span></div>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Variant 4 &mdash; OP's own banner</h2>
+      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1">In discussion</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Which copy to use</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">OP's approval pending</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Font licence undecided</span></div>
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>OP's banner, built as HTML</b> from OP's 600&times;400 design, so it is sharp, accessible and works at every width.</li>
+            <li><b>OP's copy, word for word:</b> &ldquo;Muista vakuuttaa uusi autosi&rdquo;, the offer line, the button &ldquo;Laske hinta ja osta&rdquo; and OP's full disclaimer.</li>
+            <li><b>OP's look:</b> text grey <code>#484848</code>, a pill button in OP's orange <code>#EE5A00</code>, and the Pohjola Vakuutus logo (grey text, OP symbol on the right) from brand.op.fi.</li>
+            <li><b>OP's typeface, OP Chevin Pro</b> (Light for text, DemiBold for the button). Its licence does not let AutoVex serve the font from a website without a web-font licence, so the public prototype and these previews show it in Arial; the shared design looks like OP's only where the font is installed.</li>
+            <li><b>At most 448px wide</b>, the success page column's width, on both pages, so it never outgrows the page. OP's 600px proportions are kept and scaled down; text has a floor so it stays readable on a phone, and below 440px the logo moves above the disclaimer.</li>
+            <li><b>A 1px light grey border</b> with square corners, so the white banner reads as its own block on the white success page.</li>
+            <li><b>The disclaimer is 10px</b>, below AutoVex's own minimum: an exception for OP's small print in this banner.</li>
+          </ul>
+        </div>
+        <div>
+          <iframe class="av-frame" src="op-routing-preview.html?variant=v4&amp;page=success-review" height="640" title="Variant 4 on the success page" loading="lazy"></iframe>
+          <p class="font-dm text-xs text-slate-500 mt-2">Runs the build code on a trimmed copy of production's success screen. 448&times;331px on desktop, about 345px tall at 375px.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="placements">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Placements</h2>
+      <p class="font-dm text-sm font-bold text-slate-900 mb-2" id="placement-success">1 &mdash; Success page</p>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-3">
+        <li><b>When:</b> only where the seller has nothing left to do: the email is verified, and the listing is in review or published.</li>
+        <li><b>Never</b> while email verification is pending (that is the seller's task), on a rejected listing, or when the photos are missing.</li>
         <li><b>Where:</b> 32px under the cream &ldquo;Ota rennosti ja tarkkaile sähköpostiasi!&rdquo; notice, in the 448px left column. In review, the Hotjar rating survey stays last, under the block.</li>
-        <li><b>When:</b> only where the seller has nothing left to do: the email is verified, and the ad is in review or published.</li>
-        <li><b>Never</b> while email verification is pending (that is the seller's task), on a rejected ad, or when the photos are missing.</li>
       </ul>
-      <p class="font-dm text-sm mt-4"><a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-verified&amp;op-routing=v3" target="_blank" rel="noopener">See it in review</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=published&amp;op-routing=v3" target="_blank" rel="noopener">see it published</a> &middot; <a class="text-av-blue underline font-medium" href="../success.html?scenario=in-review-unverified&amp;op-routing=v3" target="_blank" rel="noopener">unverified (nothing shown)</a></p>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey" id="placement-decision">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">2 &mdash; Decision page</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Decision page</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Offer accepted &middot; offers rejected</span></div>
-      <div class="grid lg:grid-cols-2 gap-5 items-start">
-        <div class="font-dm text-sm leading-6 text-slate-800">
-          <ul class="list-disc pl-5 space-y-1.5">
-            <li><b>When:</b> the seller has accepted an offer (the page says &ldquo;Onneksi olkoon!&rdquo;), or the offers were rejected (&ldquo;Tarjoukset hylätty&rdquo;), including a rejected final offer. The decision is made, so nothing is asked of the seller any more.</li>
-            <li><b>Not</b> while an offer can still be accepted, on a first visit before &ldquo;Katso tulokset&rdquo;, with no offers, or when the offers expired.</li>
-            <li><b>Where:</b> as its own section directly under the &ldquo;Tarvitsetko apua?&rdquo; banner, so AutoVex's own help comes first and the auction result follows. The page puts 48px between sections. The block keeps its 448px width, centred.</li>
-            <li><b>Starting with these two states.</b> Other decision page states may follow later.</li>
-          </ul>
-          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=accepted&amp;op-routing=v3" target="_blank" rel="noopener">See it after accepting</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=all-rejected&amp;op-routing=v3" target="_blank" rel="noopener">see it after rejecting</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;op-routing=v3" target="_blank" rel="noopener">offers open (nothing shown)</a></p>
-        </div>
-        <iframe class="av-frame" src="op-routing-preview.html?variant=v3&amp;page=decision-accepted" height="720" title="The block on the decision page" loading="lazy"></iframe>
-      </div>
-      </div>
-    </section>
-
-    <section class="av-band av-band-grey" id="placement-email">
-      <div class="av-container">
-      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">3 &mdash; Emails</h2>
-      <div class="flex flex-wrap gap-2 mb-4 font-dm text-xs"><span class="bg-slate-800 text-white font-medium rounded-full px-3 py-1">Klaviyo emails</span><span class="border border-slate-300 text-slate-600 rounded-full px-3 py-1">Offer accepted &middot; offers rejected &middot; final offer rejected</span></div>
-      <div class="grid lg:grid-cols-2 gap-5 items-start">
-        <div class="font-dm text-sm leading-6 text-slate-800">
-          <ul class="list-disc pl-5 space-y-1.5">
-            <li><b>These emails are Klaviyo's, not the codebase's.</b> When the seller accepts or rejects, the code sends an event to Klaviyo (<code>OfferAccepted</code>, <code>OfferRejected</code>, <code>FinalOfferRejected</code>), and Marketing's flow in Klaviyo sends the email. The emails' own copy is not in the code.</li>
-            <li><b>The same three states as the decision page.</b> A seller who sees the block on the page after deciding gets it in the email about the same decision.</li>
-            <li><b>Where in the email:</b> after the email's own message and button, before the sign-off and the footer, 32px below the content above it.</li>
-            <li><b>Same design,</b> built as email HTML: tables and inline styles, the logo as a hosted image, the arrow as a character. Markup and logo in <a class="text-av-blue underline" href="#build-email">B6</a>.</li>
-          </ul>
-          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../emails.html?email=klaviyo-offer-accepted&amp;op-routing=v3" target="_blank" rel="noopener">In the email tool: offer accepted</a> &middot; <a class="text-av-blue underline font-medium" href="../emails.html?email=klaviyo-offer-rejected&amp;op-routing=v3" target="_blank" rel="noopener">offers rejected</a> &middot; <a class="text-av-blue underline font-medium" href="../emails.html?email=klaviyo-final-offer-rejected&amp;op-routing=v3" target="_blank" rel="noopener">final offer rejected</a>. The tool's Variants row switches between control and variant 3.</p>
-        </div>
-        <iframe class="av-frame" src="op-routing-preview.html?page=email" height="540" title="The block in an email" loading="lazy"></iframe>
-      </div>
+      <p class="font-dm text-sm mb-6">Variant 3: <a class="text-av-blue underline" href="../success.html?scenario=in-review-verified&amp;op-routing=v3" target="_blank" rel="noopener">in review</a> &middot; <a class="text-av-blue underline" href="../success.html?scenario=published&amp;op-routing=v3" target="_blank" rel="noopener">published</a>. Variant 4: <a class="text-av-blue underline" href="../success.html?scenario=in-review-verified&amp;op-routing=v4" target="_blank" rel="noopener">in review</a> &middot; <a class="text-av-blue underline" href="../success.html?scenario=published&amp;op-routing=v4" target="_blank" rel="noopener">published</a>.</p>
+      <p class="font-dm text-sm font-bold text-slate-900 mb-2" id="placement-decision">2 &mdash; Decision page</p>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-3">
+        <li><b>When:</b> the seller has accepted an offer (the page says &ldquo;Onneksi olkoon!&rdquo;), or the offers were rejected (&ldquo;Tarjoukset hylätty&rdquo;), including a rejected final offer. The decision is made, so nothing is asked of the seller any more.</li>
+        <li><b>Not</b> while an offer can still be accepted, on a first visit before &ldquo;Katso tulokset&rdquo;, with no offers, or when the offers expired.</li>
+        <li><b>Where:</b> as its own section directly under the &ldquo;Tarvitsetko apua?&rdquo; banner, so AutoVex's own help comes first and the auction result follows. Centred, at most 448px wide.</li>
+        <li><b>Starting with these two states.</b> Other decision page states may follow later.</li>
+      </ul>
+      <p class="font-dm text-sm">Variant 3: <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v3" target="_blank" rel="noopener">after accepting</a> &middot; <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v3" target="_blank" rel="noopener">after rejecting</a>. Variant 4: <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v4" target="_blank" rel="noopener">after accepting</a> &middot; <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v4" target="_blank" rel="noopener">after rejecting</a>.</p>
       </div>
     </section>
 
     <section class="av-band av-band-grey">
       <div class="av-container">
       <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
-      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">To discuss with the team</p>
+      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">To discuss with the team and OP</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
-        <li><b>The email and page arms are not linked, and that affects the results.</b> VWO and Klaviyo split sellers independently, so a seller can be in variant 3 on the pages and in control in the email, or the other way round. Neither test then has a clean control: a &ldquo;control&rdquo; seller may still have seen the block in the other channel. Options: link the two (the arm VWO stores on the seller's account passed to Klaviyo as a profile property, and the flow branched on it; needs the developers), or keep them separate and analyse sellers by what they were exposed to.</li>
-        <li><b>Which channel converts.</b> Besides whether the block works, we want to know whether the site or the email brings the leads. That needs each placement's clicks, and OP's leads, counted per channel (<a class="text-av-blue underline" href="#build-tracking">B5</a>).</li>
-      </ul>
-      <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Marketing</p>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
-        <li><b>Are the three Klaviyo emails live,</b> and what do they say? The code only sends the events, so the block's place in each email is to be set against Marketing's template. Marketing may adapt the block's copy to its emails.</li>
+        <li><b>Which copy to use.</b> Variant 3 leads with AutoVex's recommendation and names the seller's next car; variant 4 is OP's own wording and names the condition (moving insurances to Pohjola Vakuutus). The two are compared in <a class="text-av-blue underline" href="#build-copy">B3</a>.</li>
+        <li><b>Which arms go into the test:</b> control and variant 3, control and variant 4, or all three.</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With OP</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
-        <li><b>How are leads attributed to AutoVex</b>, and what counts as a qualified lead? This decides what the button's link carries, including the per-placement parameters proposed in <a class="text-av-blue underline" href="#build-tracking">B5</a>.</li>
-        <li><b>The target page.</b> OP's car insurance page for now; a direct link to the calculator, or a landing page of OP's, may convert better.</li>
+        <li><b>Approval of variant 4</b> as built here: OP's banner at AutoVex's column width, with a border, a responsive layout and the logo above the disclaimer on a phone.</li>
+        <li><b>The OP Chevin Pro web-font licence.</b> The font's licence (G-Type) does not allow serving it from a website without a web-font licence. Variant 4 needs OP to confirm that AutoVex may load it on autovex.fi, under OP's licence or a licence of AutoVex's own. Without it, the banner shows in Arial.</li>
+        <li><b>The target page.</b> OP's car insurance page with OP's tracking code, one link per placement (<a class="text-av-blue underline" href="#build-tracking">B7</a>).</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Legal</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl">
-        <li><b>What, if anything, the link may carry to OP.</b> Today it carries nothing about the seller. Any identifier or car data passed for attribution needs a legal basis and may need consent.</li>
-        <li><b>Does the block need a marketing label?</b> It reads as AutoVex's own suggestion. Consumer law requires marketing to be recognisable as marketing and to show on whose behalf it is made; whether OP's name and logo are enough, or a label such as &ldquo;Mainos&rdquo; or &ldquo;Yhteistyössä OP&rdquo; is needed, is for Legal.</li>
-        <li><b>In the emails:</b> the three emails are sent after a decision about a sale. Whether a partner offer in them makes them marketing emails, needing the seller's marketing consent, is for Legal.</li>
+        <li><b>What the link carries to OP.</b> Only OP's campaign code naming the placement; nothing about the seller or the car.</li>
+        <li><b>Does the block need a marketing label?</b> Consumer law requires marketing to be recognisable as marketing and to show on whose behalf it is made; whether OP's name and logo are enough, or a label such as &ldquo;Mainos&rdquo; or &ldquo;Yhteistyössä OP&rdquo; is needed, is for Legal.</li>
       </ul>
       </div>
     </section>
@@ -233,8 +225,9 @@
     <section class="av-band av-band-build" id="build">
       <div class="av-container">
       <p class="font-dm text-xs font-bold uppercase tracking-widest text-av-blue mb-2">Part 2 &middot; build brief</p>
-      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Build the VWO test and the email block</h2>
-      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl">Everything needed to build is in this part. The build code (B4) and the email markup (B6) are the source of truth: use them as written. The previews in part 1, the prototype and the email tool run exactly this code and markup.</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Build the VWO test</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-4">Everything needed to build is in this part. The build code (B4, B5) is the source of truth: use it as written. The previews in part 1 and the prototype run exactly this code.</p>
+      <div class="bg-warning-50 border border-warning-200 rounded-lg p-4 max-w-3xl font-dm text-sm leading-6 text-warning-900"><b>Variant 4 is in discussion.</b> Do not build it until the copy, OP's approval and the font licence are settled. Variant 3 can be built now.</div>
       </div>
     </section>
 
@@ -242,11 +235,10 @@
       <div class="av-container">
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B1 &mdash; What to build</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
-        <li><b>One VWO front-end test, two arms.</b> Control: the pages as they are. Variant 3: the <a class="text-av-blue underline" href="#build-code">build code</a> as its JavaScript. Name the VWO variation &ldquo;Variant 3&rdquo; so results map to this page.</li>
-        <li><b>One campaign targeting both URLs</b> (B2), with the same snippet, so a seller stays in the same arm from the success page to the decision page. The snippet finds which page it is on by itself.</li>
-        <li><b>No backend, Vue or stylesheet changes</b> in the codebase. Nothing is stored and nothing about the seller is sent to OP.</li>
-        <li><b>Finnish only,</b> like the copy. The snippet does nothing when the page's language is English.</li>
-        <li><b>The emails are separate:</b> an HTML block Marketing adds to three Klaviyo emails, tested with Klaviyo's A/B split (<a class="text-av-blue underline" href="#build-email">B6</a>). VWO does not reach email.</li>
+        <li><b>One VWO front-end test.</b> Control: the pages as they are. Variant 3: the <a class="text-av-blue underline" href="#build-code">variant 3 snippet</a>. Variant 4, once agreed: the <a class="text-av-blue underline" href="#build-code-v4">variant 4 snippet</a>. Each snippet is the variant's whole JavaScript and stands alone. Name the VWO variations &ldquo;Variant 3&rdquo; and &ldquo;Variant 4&rdquo; so results map to this page.</li>
+        <li><b>One campaign targeting both URLs</b> (B2), with the same snippet per variation, so a seller stays in the same arm from the success page to the decision page. Each snippet finds which page it is on by itself.</li>
+        <li><b>No backend, Vue or stylesheet changes</b> in the codebase, except variant 4's web font (B6). Nothing is stored and nothing about the seller is sent to OP.</li>
+        <li><b>Finnish only,</b> like the copy. The snippets do nothing when the page's language is English.</li>
       </ul>
       </div>
     </section>
@@ -254,6 +246,7 @@
     <section class="av-band av-band-build" id="build-where">
       <div class="av-container">
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B2 &mdash; Where it goes</h3>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl mb-4">The same for both variants. The state tables link variant 3; change <code>op-routing=v3</code> to <code>v4</code> in the address for variant 4.</p>
       <p class="font-dm text-sm font-bold text-slate-900 mb-2">Success page</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-4">
         <li><b>URL:</b> the consumer funnel, <code>https://autovex.fi/tarjouspyynto*</code>. Exclude the B2B funnel (<code>/tarjouspyynto-b2b*</code>). The success screen is a step of that single-page app, not a URL of its own; the snippet watches the DOM.</li>
@@ -335,23 +328,26 @@
     <section class="av-band av-band-build" id="build-copy">
       <div class="av-container">
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B3 &mdash; Copy</h3>
-      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl"><table class="w-full font-dm text-sm text-left"><tbody class="divide-y divide-slate-100">
-        <tr><td class="av-td text-slate-500 whitespace-nowrap">Intro</td><td class="av-td"><span class="text-slate-900">Tutustu sillä aikaa suosittelemaamme tarjoukseen</span><div class="av-gloss">Meanwhile, take a look at an offer we recommend</div></td></tr>
-        <tr><td class="av-td text-slate-500 whitespace-nowrap">Heading</td><td class="av-td"><span class="text-slate-900">Uudelle autollesi vakuutus &minus;50&nbsp;%</span><div class="av-gloss">Insurance for your new car &minus;50&nbsp;%. A non-breaking space before &ldquo;&minus;50&rdquo; and before &ldquo;%&rdquo;, so the figure never wraps alone; the minus is U+2212.</div></td></tr>
-        <tr><td class="av-td text-slate-500 whitespace-nowrap">Logo alt text</td><td class="av-td"><span class="text-slate-900">OP</span></td></tr>
-        <tr><td class="av-td text-slate-500 whitespace-nowrap">Button</td><td class="av-td"><span class="text-slate-900">Laske vakuutustarjous OP:ssa</span><div class="av-gloss">Calculate an insurance quote at OP</div></td></tr>
-        <tr><td class="av-td text-slate-500 whitespace-nowrap">Button, screen readers only</td><td class="av-td"><span class="text-slate-900">(avautuu uuteen välilehteen)</span><div class="av-gloss">(opens in a new tab). Pages only; an email link opens however the mail client opens links.</div></td></tr>
-        <tr><td class="av-td text-slate-500 whitespace-nowrap">Terms line</td><td class="av-td"><span class="text-slate-900">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</span><div class="av-gloss">Applies to the first insurance period of new comprehensive insurance.</div></td></tr>
-      </tbody></table></div>
-      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">OP has accepted the designs, including the logo and colours. The copy is the same in every placement; Marketing may adapt it inside its emails. The grey lines are English glosses for reading; do not render them. The copy is already in the build code and the email markup.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-4xl"><table class="w-full font-dm text-sm text-left">
+        <thead><tr class="border-b border-slate-200"><th class="av-th">Part</th><th class="av-th">Variant 3</th><th class="av-th">Variant 4 (OP's copy)</th></tr></thead>
+        <tbody class="divide-y divide-slate-100">
+        <tr><td class="av-td text-slate-500 whitespace-nowrap">Intro</td><td class="av-td"><span class="text-slate-900">Tutustu sillä aikaa suosittelemaamme tarjoukseen</span><div class="av-gloss">Meanwhile, take a look at an offer we recommend</div></td><td class="av-td text-slate-400">&mdash;</td></tr>
+        <tr><td class="av-td text-slate-500 whitespace-nowrap">Heading</td><td class="av-td"><span class="text-slate-900">Uudelle autollesi vakuutus &minus;50&nbsp;%</span><div class="av-gloss">Insurance for your new car &minus;50&nbsp;%</div></td><td class="av-td"><span class="text-slate-900">Muista vakuuttaa uusi autosi</span><div class="av-gloss">Remember to insure your new car</div></td></tr>
+        <tr><td class="av-td text-slate-500 whitespace-nowrap">Offer</td><td class="av-td text-slate-400">in the heading</td><td class="av-td"><span class="text-slate-900">Saat kaskon vuodeksi -50&nbsp;%, kun keskität vakuutuksesi Pohjola Vakuutukseen.</span><div class="av-gloss">You get comprehensive insurance at &minus;50&nbsp;% for a year when you move your insurances to Pohjola Insurance.</div></td></tr>
+        <tr><td class="av-td text-slate-500 whitespace-nowrap">Button</td><td class="av-td"><span class="text-slate-900">Laske vakuutustarjous OP:ssa</span><div class="av-gloss">Calculate an insurance quote at OP</div></td><td class="av-td"><span class="text-slate-900">Laske hinta ja osta</span><div class="av-gloss">Calculate the price and buy</div></td></tr>
+        <tr><td class="av-td text-slate-500 whitespace-nowrap">Button, screen readers only</td><td class="av-td" colspan="2"><span class="text-slate-900">(avautuu uuteen välilehteen)</span><div class="av-gloss">(opens in a new tab)</div></td></tr>
+        <tr><td class="av-td text-slate-500 whitespace-nowrap">Small print</td><td class="av-td"><span class="text-slate-900">Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.</span><div class="av-gloss">Applies to the first insurance period of new comprehensive insurance.</div></td><td class="av-td"><span class="text-slate-900">Etu koskee henkilöauton uusia kaskoja ensimmäisen vakuutuskauden ajan ja on voimassa 31.12.2026 saakka. Vakuutuksen myöntää Pohjola Vakuutus Oy.</span><div class="av-gloss">The offer covers new comprehensive insurance for a passenger car for the first insurance period and is valid until 31 Dec 2026. The insurance is granted by Pohjola Insurance Ltd.</div></td></tr>
+        <tr><td class="av-td text-slate-500 whitespace-nowrap">Logo alt text</td><td class="av-td">OP</td><td class="av-td">Pohjola Vakuutus</td></tr>
+        </tbody></table></div>
+      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">The grey lines are English glosses for reading; do not render them. The copy is already in the build code. Which of the two to use is still open (part 1). Variant 4's &ldquo;-50&nbsp;%&rdquo; uses a non-breaking hyphen and space so it never splits across lines.</p>
       </div>
     </section>
 
     <section class="av-band av-band-build" id="build-code">
       <div class="av-container">
       <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B4 &mdash; Build code, variant 3</h3>
-      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 3's JavaScript in VWO. It adds its own CSS and inlines OP's logo as SVG, so it needs no hosted files. The inline SVG is for the web pages only, where every browser shows it; the emails use the PNG in <a class="text-av-blue underline" href="#build-email">B6</a>. On the decision page it reuses <code>container mx-auto</code>, which every section of that page already has. Same file in the repository: <code>vwo/op-routing-v3.js</code>.</p>
-      <p id="sync-code" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/op-routing-v3.js. Regenerate it before handing over.</p>
+      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Paste as variant 3's JavaScript in VWO. It adds its own CSS and inlines OP's logo as SVG, so it needs no hosted files. On the decision page it reuses <code>container mx-auto</code>, which every section of that page already has. Same file in the repository: <code>vwo/op-routing-v3.js</code>.</p>
+      <p id="sync-v3" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/op-routing-v3.js. Regenerate it before handing over.</p>
       <pre class="av-code" id="code-v3" data-src="vwo/op-routing-v3.js">/* OP routing, variant 3: VWO front-end test snippet. Adds AutoVex's OP car
  * insurance suggestion in two places, with the same block in both:
  *
@@ -368,7 +364,9 @@
  */
 (function () {
   var ID = 'av-op-v3';
-  var OP_URL = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle';
+  // OP's links, one per placement; the cmpid parameter is OP's own tracking.
+  var URL_SUCCESS = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tp_in.ha_jn_autonvakuutukset';
+  var URL_DECISION = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tar_hy.ha_jn_autonvakuutukset';
 
   // The decision page hero titles of the two states, verbatim from
   // auction.auction_hero.offer_accepted.title / .offer_rejected.title.
@@ -402,8 +400,8 @@
   // The production sprite's arrow-right.
   var ARROW = '&lt;svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"&gt;&lt;path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/&gt;&lt;/svg&gt;';
 
-  var CARD =
-    '&lt;div class="av-op-card"&gt;' +
+  function card(url) {
+    return '&lt;div class="av-op-card"&gt;' +
       '&lt;div class="av-op-head"&gt;' +
         '&lt;p class="av-op-intro"&gt;Tutustu sillä aikaa suosittelemaamme tarjoukseen&lt;/p&gt;' +
         '&lt;div class="av-op-row"&gt;' + LOGO +
@@ -411,12 +409,13 @@
         '&lt;/div&gt;' +
       '&lt;/div&gt;' +
       '&lt;div class="av-op-actions"&gt;' +
-        '&lt;a class="av-op-cta" href="' + OP_URL + '" target="_blank" rel="noopener"&gt;' +
+        '&lt;a class="av-op-cta" href="' + url + '" target="_blank" rel="noopener"&gt;' +
           '&lt;span&gt;Laske vakuutustarjous OP:ssa&lt;/span&gt;&lt;span class="av-op-sr"&gt;(avautuu uuteen välilehteen)&lt;/span&gt;' + ARROW +
         '&lt;/a&gt;' +
         '&lt;p class="av-op-terms"&gt;Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.&lt;/p&gt;' +
       '&lt;/div&gt;' +
     '&lt;/div&gt;';
+  }
 
   function visible(el) {
     return !!el &amp;&amp; el.getClientRects().length &gt; 0;
@@ -474,9 +473,9 @@
     // Finnish only, like the copy.
     if (/^en/i.test(document.documentElement.lang || '')) return remove();
     var anchor = successAnchor();
-    if (anchor) return place(anchor, 'div', 'av-op-success', CARD);
+    if (anchor) return place(anchor, 'div', 'av-op-success', card(URL_SUCCESS));
     anchor = decisionAnchor();
-    if (anchor) return place(anchor, 'section', '', '&lt;div class="container mx-auto"&gt;' + CARD + '&lt;/div&gt;');
+    if (anchor) return place(anchor, 'section', '', '&lt;div class="container mx-auto"&gt;' + card(URL_DECISION) + '&lt;/div&gt;');
     remove();
   }
 
@@ -497,130 +496,245 @@
       </div>
     </section>
 
+    <section class="av-band av-band-build" id="build-code-v4">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B5 &mdash; Build code, variant 4 (in discussion)</h3>
+      <p class="font-dm text-sm text-slate-800 mb-4 max-w-3xl">Variant 4's JavaScript, once agreed. It adds its own CSS and inlines the Pohjola Vakuutus logo as SVG. Its text is set in OP Chevin Pro, which the snippet does not load (B6). Same file in the repository: <code>vwo/op-routing-v4.js</code>.</p>
+      <p id="sync-v4" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This code differs from vwo/op-routing-v4.js. Regenerate it before handing over.</p>
+      <pre class="av-code" id="code-v4" data-src="vwo/op-routing-v4.js">/* OP routing, variant 4: VWO front-end test snippet. OP's own banner, "Muista
+ * vakuuttaa uusi autosi", built as HTML, in the same two places as variant 3:
+ *
+ *   1. Funnel success screen (autovex.fi/tarjouspyynto…): for a seller whose
+ *      email is verified, while the ad is in review or published. Directly
+ *      under the cream "Katso ilmoitukseni" notice. Links with OP's tracking
+ *      code for that placement (URL_SUCCESS).
+ *   2. Decision page (autovex.fi/decision/&lt;id&gt;): after the seller accepted an
+ *      offer ("Onneksi olkoon!") or the offers were rejected ("Tarjoukset
+ *      hylätty"). Under the "Tarvitsetko apua?" banner when it follows the
+ *      offers, otherwise directly under the offers. Links with OP's tracking
+ *      code for that placement (URL_DECISION).
+ *
+ * Text is set in OP Chevin Pro, which this snippet does not load: the page
+ * has to provide the web font under OP's licence, otherwise Arial is used.
+ *
+ * Source of truth: design-specs/op-routing.html#build. The prototype's
+ * success and decision pages run this exact file for the arm.
+ */
+(function () {
+  var ID = 'av-op-v4';
+  var URL_SUCCESS = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tp_in.ha_jn_autonvakuutukset';
+  var URL_DECISION = 'https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tar_hy.ha_jn_autonvakuutukset';
+
+  // The decision page hero titles of the two states, verbatim from
+  // auction.auction_hero.offer_accepted.title / .offer_rejected.title.
+  var DECISION_TITLES = ['Onneksi olkoon!', 'Tarjoukset hylätty'];
+
+  // OP's banner is drawn at 600 px wide; here it is at most 448 px (the
+  // success page's column) so it never outgrows the page. Sizes scale with its own
+  // width (1cqw = 1 % of it) and stop at a floor so text stays readable on a
+  // phone; the disclaimer is a fixed 10 px, OP's own small print.
+  var FONT = '"OP Chevin Pro",Arial,Helvetica,sans-serif';
+  var CSS = [
+    '#av-op-v4{display:block}',
+    '#av-op-v4 .av-op-banner{box-sizing:border-box;container-type:inline-size;width:100%;max-width:448px;margin:0 auto;background:#fff;border:1px solid #E2E8F0;color:#484848;font-family:' + FONT + ';text-align:center}',
+    '#av-op-v4 .av-op-inner{display:flex;flex-direction:column;align-items:center;padding:max(32px,11cqw) max(16px,5cqw) max(20px,4.67cqw)}',
+    '#av-op-v4 .av-op-title{margin:0;font-family:' + FONT + ';font-weight:300;font-size:max(24px,7.5cqw);line-height:1.15;letter-spacing:0;color:#484848;text-wrap:balance}',
+    '#av-op-v4 .av-op-text{margin:max(10px,3.17cqw) 0 0;font-family:' + FONT + ';font-weight:300;font-size:max(18px,5cqw);line-height:1.1;color:#484848;text-wrap:balance}',
+    '#av-op-v4 a.av-op-cta{box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;margin-top:max(20px,4cqw);min-width:max(200px,36.67cqw);height:max(48px,8.33cqw);padding:0 max(24px,5cqw);border-radius:9999px;background:#EE5A00;color:#fff;font-family:' + FONT + ';font-weight:600;font-size:max(16px,3.17cqw);line-height:1.2;text-decoration:none;transition:opacity .15s}',
+    '#av-op-v4 a.av-op-cta:hover{opacity:.94;color:#fff;text-decoration:none}',
+    '#av-op-v4 a.av-op-cta:focus-visible{outline:2px solid #484848;outline-offset:2px}',
+    '#av-op-v4 .av-op-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}',
+    '#av-op-v4 .av-op-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;width:100%;margin-top:max(28px,7.5cqw);text-align:left}',
+    '#av-op-v4 .av-op-legal{margin:0;max-width:46%;font-family:' + FONT + ';font-weight:300;font-size:10px;line-height:14px;color:#484848}',
+    '#av-op-v4 .av-op-logo{display:block;flex-shrink:0;width:auto;height:max(34px,8.33cqw)}',
+    // Too narrow for small print beside the logo: logo first, text under it.
+    '@container (max-width:439px){#av-op-v4 .av-op-foot{flex-direction:column;align-items:center;text-align:center}#av-op-v4 .av-op-legal{max-width:none;order:2}}',
+    // On the success screen the block follows the notice inside the 448px column.
+    '#av-op-v4.av-op-success{width:100%;margin-top:32px}'
+  ].join('');
+
+  // The Pohjola Vakuutus logo with the OP symbol on the right, grey text
+  // (Pohjola_Vakuutus_RGB_oikea_harmaa.svg from brand.op.fi, Latausoikotiet).
+  var LOGO =
+    '&lt;svg class="av-op-logo" viewBox="0 0 421.26 84.8" role="img" aria-label="Pohjola Vakuutus"&gt;' +
+    '&lt;path fill="#FF6A10" d="M378.87,84.8c23.42,0,42.4-18.98,42.4-42.4S402.28,0,378.87,0c-23.42,0-42.4,18.98-42.4,42.4 S355.45,84.8,378.87,84.8"/&gt;' +
+    '&lt;path fill="#FFFFFF" d="M412.13,42.4c0-10.36-8.4-18.77-18.77-18.77c-3.78,0-7.29,1.12-10.24,3.04V9.13h-8.53v17.54 c-2.94-1.92-6.46-3.04-10.24-3.04c-10.36,0-18.77,8.4-18.77,18.77c0,10.36,8.4,18.77,18.77,18.77c3.78,0,7.29-1.12,10.24-3.04 v17.54h8.53V58.12c2.94,1.92,6.46,3.04,10.24,3.04C403.73,61.16,412.13,52.76,412.13,42.4 M374.6,42.4 c0,5.65-4.58,10.24-10.24,10.24c-5.65,0-10.24-4.58-10.24-10.24c0-5.65,4.58-10.24,10.24-10.24 C370.02,32.16,374.6,36.75,374.6,42.4 M403.6,42.4c0,5.65-4.58,10.24-10.24,10.24c-5.65,0-10.24-4.58-10.24-10.24 c0-5.65,4.58-10.24,10.24-10.24C399.02,32.16,403.6,36.75,403.6,42.4"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M13.13,45.43H4.38v14.03c0,0.97-0.72,1.69-1.69,1.69C1.77,61.15,1,60.43,1,59.46V25.05 c0-0.92,0.77-1.69,1.69-1.69h9.83c8.75,0,11.88,5.07,11.88,9.83v2.61C24.4,41.44,20.2,45.43,13.13,45.43z M21.02,33.24 c0-3.02-1.89-6.71-8.65-6.71H4.38v15.77h8.65c5.48,0,7.99-2.97,7.99-6.55V33.24z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M35.1,60.99c-7.12,0-9.93-4.71-9.93-10.44v-5.17c0-5.79,2.82-10.44,9.93-10.44s9.93,4.66,9.93,10.44v5.17 C45.03,56.28,42.21,60.99,35.1,60.99z M41.8,45.38c0-4.45-1.95-7.37-6.71-7.37c-4.81,0-6.71,2.92-6.71,7.37v5.17 c0,4.45,1.89,7.37,6.71,7.37c4.76,0,6.71-2.92,6.71-7.37V45.38z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M66.33,60.99c-0.87,0-1.64-0.72-1.64-1.64V44.3c0-3.79-1.02-6.25-5.43-6.25c-3.48,0-5.94,1.48-7.17,3.79 v17.51c0,0.92-0.77,1.64-1.64,1.64c-0.92,0-1.64-0.72-1.64-1.64v-34.1c0-0.92,0.72-1.64,1.64-1.64c0.87,0,1.64,0.72,1.64,1.64 v12.49c1.69-1.79,4.2-2.82,7.63-2.82c6.5,0,8.24,4.04,8.24,9.16v15.26C67.96,60.28,67.25,60.99,66.33,60.99z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M68.47,70.06c-0.97,0-1.48-0.72-1.48-1.48c0-0.77,0.51-1.43,1.48-1.48c2.87-0.05,4.35-1.28,4.35-5.89V36.57 c0-0.92,0.77-1.64,1.64-1.64c0.97,0,1.64,0.72,1.64,1.64V61.1C76.1,67.14,73.59,70.06,68.47,70.06z M74.46,24.34 c1.23,0,2.2,0.97,2.2,2.2s-0.97,2.15-2.2,2.15s-2.2-0.92-2.2-2.15S73.23,24.34,74.46,24.34z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M90.13,60.99c-7.12,0-9.93-4.71-9.93-10.44v-5.17c0-5.79,2.82-10.44,9.93-10.44s9.93,4.66,9.93,10.44v5.17 C100.06,56.28,97.25,60.99,90.13,60.99z M96.84,45.38c0-4.45-1.95-7.37-6.71-7.37c-4.81,0-6.71,2.92-6.71,7.37v5.17 c0,4.45,1.89,7.37,6.71,7.37c4.76,0,6.71-2.92,6.71-7.37V45.38z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M108.1,60.99c-0.61,0-1.74-0.41-2.46-1.08c-1.18-1.08-1.64-2.61-1.64-4.15V25.26c0-0.92,0.72-1.64,1.59-1.64 c0.92,0,1.64,0.72,1.64,1.64V54.9c0,2.25,0.56,2.87,1.69,3.33c0.56,0.26,0.77,0.72,0.77,1.28 C109.68,60.48,109.02,60.99,108.1,60.99z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M130.57,60.99c-0.82,0-1.54-0.31-2.15-0.82c-0.56-0.51-0.97-1.28-1.23-2.05c-1.84,2.36-4.92,2.87-7.17,2.87 c-6.45,0-8.86-3.38-8.86-7.32v-0.41c0-3.99,2.56-7.22,9.11-7.22h6.45v-1.43c0-4.61-1.13-6.86-5.99-6.86 c-1.84,0-3.07,0.26-4.1,0.67c-1.18,0.51-1.69,0.92-2.3,0.92c-0.77,0-1.38-0.61-1.38-1.38c0-0.87,0.87-1.54,2.2-2.1 c1.69-0.67,3.74-0.92,5.73-0.92c7.22,0,9.06,3.64,9.06,9.88V54.9c0,2.2,0.36,2.87,1.48,3.33c0.56,0.26,0.82,0.72,0.82,1.28 C132.26,60.48,131.54,60.99,130.57,60.99z M126.73,48.76h-6.25c-4.86,0-6.09,2.25-6.09,4.56v0.36c0,2.36,1.23,4.56,5.99,4.56 c3.99,0,6.35-2,6.35-6.09V48.76z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M159.5,59.51c-0.41,1.18-1.02,1.64-1.89,1.64c-0.97,0-1.59-0.46-2.05-1.64 c-4.51-12.24-8.29-23.65-11.47-34.46c-0.41-1.28,0.61-2.15,1.64-2.15c0.67,0,1.33,0.41,1.59,1.28c2.87,9.73,6.3,20.33,10.39,31.33 c4.05-11.06,7.63-21.66,10.5-31.49c0.26-0.77,0.87-1.13,1.49-1.13c0.97,0,1.89,0.82,1.54,2C168.05,35.7,164.05,47.22,159.5,59.51z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M189.91,60.99c-0.82,0-1.54-0.31-2.15-0.82c-0.56-0.51-0.97-1.28-1.23-2.05c-1.84,2.36-4.92,2.87-7.17,2.87 c-6.45,0-8.86-3.38-8.86-7.32v-0.41c0-3.99,2.56-7.22,9.11-7.22h6.45v-1.43c0-4.61-1.13-6.86-5.99-6.86 c-1.84,0-3.07,0.26-4.1,0.67c-1.18,0.51-1.69,0.92-2.3,0.92c-0.77,0-1.38-0.61-1.38-1.38c0-0.87,0.87-1.54,2.2-2.1 c1.69-0.67,3.74-0.92,5.73-0.92c7.22,0,9.06,3.64,9.06,9.88V54.9c0,2.2,0.36,2.87,1.48,3.33c0.56,0.26,0.82,0.72,0.82,1.28 C191.6,60.48,190.88,60.99,189.91,60.99z M186.07,48.76h-6.25c-4.86,0-6.09,2.25-6.09,4.56v0.36c0,2.36,1.23,4.56,5.99,4.56 c3.99,0,6.35-2,6.35-6.09V48.76z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M211.51,60.99c-0.51,0-1.08-0.26-1.38-0.92c-2.25-4.35-5.12-8.7-8.04-12.59l-3.94,4.04v7.83 c0,0.92-0.77,1.64-1.64,1.64c-0.92,0-1.64-0.72-1.64-1.64v-34.1c0-0.92,0.72-1.64,1.64-1.64c0.87,0,1.64,0.72,1.64,1.64v22.17 l11.78-12.08c0.61-0.56,1.53-0.56,2.15,0c0.56,0.56,0.56,1.54-0.05,2.1l-7.63,7.78c3.12,4.15,6.19,8.81,8.6,13.47 C213.61,59.97,212.59,60.99,211.51,60.99z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M235.73,60.99c-0.66,0-1.79-0.41-2.46-1.08c-0.66-0.61-1.07-1.33-1.28-2.1c-1.74,2-4.35,3.17-8.04,3.17 c-6.45,0-8.29-4.1-8.29-9.22V36.57c0-0.97,0.77-1.64,1.64-1.64c0.92,0,1.64,0.67,1.64,1.64v15c0,3.89,1.07,6.25,5.48,6.25 c3.69,0,5.99-1.59,7.17-4.04v-17.2c0-0.97,0.72-1.64,1.64-1.64c0.92,0,1.64,0.72,1.64,1.64V54.9c0,2.25,0.51,2.87,1.64,3.33 c0.56,0.26,0.87,0.72,0.87,1.28C237.36,60.48,236.6,60.99,235.73,60.99z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M259.84,60.99c-0.67,0-1.79-0.41-2.46-1.08c-0.67-0.61-1.08-1.33-1.28-2.1c-1.74,2-4.35,3.17-8.04,3.17 c-6.45,0-8.29-4.1-8.29-9.22V36.57c0-0.97,0.77-1.64,1.64-1.64c0.92,0,1.64,0.67,1.64,1.64v15c0,3.89,1.08,6.25,5.48,6.25 c3.69,0,5.99-1.59,7.17-4.04v-17.2c0-0.97,0.72-1.64,1.64-1.64c0.92,0,1.64,0.72,1.64,1.64V54.9c0,2.25,0.51,2.87,1.64,3.33 c0.56,0.26,0.87,0.72,0.87,1.28C261.48,60.48,260.71,60.99,259.84,60.99z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M274.94,60.69h-1.28c-6.96,0-8.4-4.25-8.4-10.7V38.16h-1.79c-0.82,0-1.48-0.67-1.48-1.48 c0-0.82,0.66-1.43,1.48-1.43h1.79v-6.2c0-0.92,0.72-1.64,1.64-1.64c0.92,0,1.64,0.72,1.64,1.64v6.2h5.12 c0.82,0,1.48,0.61,1.48,1.43c0,0.82-0.66,1.48-1.48,1.48h-5.12v11.83c0,5.53,0.87,7.63,5.32,7.63h1.07c0.87,0,1.54,0.72,1.54,1.54 C276.47,60.02,275.81,60.69,274.94,60.69z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M298.13,60.99c-0.66,0-1.79-0.41-2.46-1.08c-0.66-0.61-1.07-1.33-1.28-2.1c-1.74,2-4.35,3.17-8.04,3.17 c-6.45,0-8.29-4.1-8.29-9.22V36.57c0-0.97,0.77-1.64,1.64-1.64c0.92,0,1.64,0.67,1.64,1.64v15c0,3.89,1.07,6.25,5.48,6.25 c3.69,0,5.99-1.59,7.17-4.04v-17.2c0-0.97,0.72-1.64,1.64-1.64c0.92,0,1.64,0.72,1.64,1.64V54.9c0,2.25,0.51,2.87,1.64,3.33 c0.56,0.26,0.87,0.72,0.87,1.28C299.77,60.48,299,60.99,298.13,60.99z"/&gt;' +
+    '&lt;path fill="#6E6E6E" d="M309.85,60.99c-3.17,0-5.17-0.36-7.17-1.13c-0.87-0.31-1.13-1.23-0.82-1.95c0.26-0.77,1.07-1.18,1.89-0.82 c1.69,0.61,3.28,0.97,6.14,0.97c4.3,0,6.09-1.89,6.09-4.61c0-3.53-3.64-3.79-7.27-4.56c-3.48-0.77-6.86-1.89-6.86-6.71 c0-4.61,3.53-7.27,8.4-7.27c2.66,0,4.45,0.26,6.35,1.08c0.87,0.31,1.13,1.23,0.82,2c-0.31,0.67-1.07,1.13-1.89,0.77 c-1.69-0.67-3.07-0.97-5.22-0.97c-3.48,0-5.32,1.79-5.32,4.3c0,3.17,3.23,3.64,6.61,4.3c3.74,0.77,7.58,1.74,7.58,6.96 C319.17,58.33,315.48,60.99,309.85,60.99z"/&gt;' +
+    '&lt;/svg&gt;';
+
+  function banner(url) {
+    return '&lt;div class="av-op-banner"&gt;&lt;div class="av-op-inner"&gt;' +
+      '&lt;h2 class="av-op-title"&gt;Muista vakuuttaa uusi autosi&lt;/h2&gt;' +
+      '&lt;p class="av-op-text"&gt;Saat kaskon vuodeksi ‑50 %, kun keskität vakuutuksesi Pohjola Vakuutukseen.&lt;/p&gt;' +
+      '&lt;a class="av-op-cta" href="' + url + '" target="_blank" rel="noopener"&gt;' +
+        'Laske hinta ja osta&lt;span class="av-op-sr"&gt; (avautuu uuteen välilehteen)&lt;/span&gt;' +
+      '&lt;/a&gt;' +
+      '&lt;div class="av-op-foot"&gt;' +
+        '&lt;p class="av-op-legal"&gt;Etu koskee henkilöauton uusia kaskoja ensimmäisen vakuutuskauden ajan ja on voimassa 31.12.2026 saakka. Vakuutuksen myöntää Pohjola Vakuutus Oy.&lt;/p&gt;' +
+        LOGO +
+      '&lt;/div&gt;' +
+    '&lt;/div&gt;&lt;/div&gt;';
+  }
+
+  function visible(el) {
+    return !!el &amp;&amp; el.getClientRects().length &gt; 0;
+  }
+
+  // Funnel success screen. The cream notice with the link to the offers page
+  // ("Katso ilmoitukseni") is drawn only for a verified seller whose ad is in
+  // review (Review.vue) or published (Success.vue). The unverified, rejected
+  // and photos-missing screens have no such notice.
+  function successAnchor() {
+    var notices = document.querySelectorAll('div.border-orange-300.rounded-lg');
+    for (var i = 0; i &lt; notices.length; i++) {
+      if (visible(notices[i]) &amp;&amp; notices[i].querySelector('a[href*="offers"]')) return notices[i];
+    }
+    return null;
+  }
+
+  // Decision page. The hero's own title names the state; the snippet reads
+  // nothing else about the auction.
+  function decisionAnchor() {
+    var titles = document.querySelectorAll('h2.text-3xl.font-bold.text-black');
+    var hero = null;
+    for (var i = 0; i &lt; titles.length; i++) {
+      if (DECISION_TITLES.indexOf(titles[i].textContent.trim()) !== -1 &amp;&amp; visible(titles[i])) { hero = titles[i]; break; }
+    }
+    if (!hero) return null;
+    var offers = hero.closest('section');
+    if (!offers) return null;
+    var next = offers.nextElementSibling;
+    while (next &amp;&amp; next.id !== ID &amp;&amp; !visible(next)) next = next.nextElementSibling;
+    if (next &amp;&amp; next.id === ID) next = null;
+    // The "Tarvitsetko apua?" banner, when the page puts it right after the
+    // offers (accepted, or every offer rejected).
+    if (next &amp;&amp; next.tagName === 'SECTION' &amp;&amp; next.querySelector('h5')) return next;
+    return offers;
+  }
+
+  function injectCss() {
+    if (document.getElementById(ID + '-style')) return;
+    var style = document.createElement('style');
+    style.id = ID + '-style';
+    style.textContent = CSS;
+    document.head.appendChild(style);
+  }
+
+  function place(anchor, tag, cls, inner) {
+    var existing = document.getElementById(ID);
+    if (existing &amp;&amp; existing.previousElementSibling === anchor) return;
+    if (existing) existing.remove();
+    injectCss();
+    anchor.insertAdjacentHTML('afterend', '&lt;' + tag + ' id="' + ID + '"' + (cls ? ' class="' + cls + '"' : '') + '&gt;' + inner + '&lt;/' + tag + '&gt;');
+  }
+
+  function remove() {
+    var existing = document.getElementById(ID);
+    if (existing) existing.remove();
+  }
+
+  function sync() {
+    // Finnish only, like the copy.
+    if (/^en/i.test(document.documentElement.lang || '')) return remove();
+    var anchor = successAnchor();
+    if (anchor) return place(anchor, 'div', 'av-op-success', banner(URL_SUCCESS));
+    anchor = decisionAnchor();
+    if (anchor) return place(anchor, 'section', '', '&lt;div class="container mx-auto"&gt;' + banner(URL_DECISION) + '&lt;/div&gt;');
+    remove();
+  }
+
+  // Both pages are single-page apps that mount after load and re-render on
+  // every action, so sync whenever the DOM changes. sync is idempotent.
+  function start() {
+    sync();
+    new MutationObserver(sync).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  }
+  if (document.body) start();
+  else document.addEventListener('DOMContentLoaded', start);
+}());</pre>
+      </div>
+    </section>
+
     <section class="av-band av-band-build">
       <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4" id="build-tracking">B5 &mdash; Tracking</h3>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B6 &mdash; Fonts and logo</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
-        <li><b>Primary goal:</b> clicks on the OP button, a VWO click goal on <code>#av-op-v3 a.av-op-cta</code>. Report it per page (success page, decision page) by URL, and the decision page per state if VWO can split by the hero title.</li>
-        <li><b>Denominator:</b> sellers who reached a state where the block shows, in both arms. Control has no block, so count control's eligible views with a VWO custom goal or segment on the same hooks (B2), or compare clicks per visitor of the targeted states.</li>
-        <li><b>Guardrail, success page:</b> nothing the seller still does is on that screen; watch that the published and in-review screens' own link to the offers page keeps its click rate.</li>
+        <li><b>Variant 3</b> uses the page's own fonts (Barlow, DM Sans) and an inline SVG of OP's round logo. Nothing else to provide.</li>
+        <li><b>Variant 4's logo</b> is inline SVG in the snippet, from OP's file <code>Pohjola_Vakuutus_RGB_oikea_harmaa.svg</code> (brand.op.fi, Latausoikotiet, Pohjola Vakuutus logos). The same file is in the repository as <code>assets/pohjola-vakuutus-logo.svg</code>.</li>
+        <li><b>Variant 4's typeface is OP Chevin Pro</b>, weights 300 (Light, the text) and 600 (DemiBold, the button), under the family name <code>"OP Chevin Pro"</code>. The page has to load it with <code>@font-face</code> from AutoVex's own server; without it the snippet falls back to Arial.</li>
+        <li><b>Do not host the font until the licence is settled.</b> The web fonts come from OP's brand package, and their licence (G-Type) forbids redistributing them or serving them from a web server without a web-font licence.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4" id="build-tracking">B7 &mdash; Links and tracking</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>OP's links, one per placement, in both variants</b> and already in the build code. The <code>cmpid</code> parameter is OP's own campaign tracking:
+          <ul class="list-[circle] pl-5 mt-1 space-y-1">
+            <li>Success page: <code>https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tp_in.ha_jn_autonvakuutukset</code></li>
+            <li>Decision page: <code>https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle?cmpid=.havaku.1.banner.autovex.partner.mn_tak_huom_tar_hy.ha_jn_autonvakuutukset</code></li>
+          </ul>
+        </li>
+        <li><b>Primary goal:</b> clicks on the OP button, a VWO click goal on <code>#av-op-v3 a.av-op-cta</code> and <code>#av-op-v4 a.av-op-cta</code>. Report it per page by URL.</li>
+        <li><b>Denominator:</b> sellers who reached a state where the block shows, in every arm. Control has no block, so count control's eligible views with a VWO custom goal or segment on the same hooks (B2).</li>
+        <li><b>Leads and purchases</b> are counted by OP through <code>cmpid</code>.</li>
         <li><b>Group membership is already recorded.</b> When VWO applies a variation for a logged-in seller, the app stores the arm on the seller's account. The decision page needs a login, and a verified seller on the success page is logged in.</li>
-        <li><b>Leads at OP</b> are counted by OP; how they are attributed to AutoVex is open (part 1).</li>
-        <li><b>Channel attribution, site vs email.</b> Clicks are counted in two tools: VWO for the pages, Klaviyo for the emails. To see which channel actually converts, the click counts are not enough; OP's leads have to be split by where the click came from. Proposal, to agree with OP before the build: give each placement's link its own parameters, for example <code>utm_source=autovex</code>, <code>utm_medium=web</code> or <code>email</code>, <code>utm_campaign=op-routing</code>, and <code>utm_content=success-page</code>, <code>decision-page</code>, <code>email-offer-accepted</code>, <code>email-offers-rejected</code> or <code>email-final-offer-rejected</code>. They name the placement only, never the seller or the car. Until OP agrees, the build code and the email markup link to OP's page as it is.</li>
-        <li><b>Exposure across channels.</b> The page and email arms are split independently (part 1), so report results per channel and, where the data allows, by what each seller was exposed to (page only, email only, both, neither).</li>
       </ul>
-      </div>
-    </section>
-
-    <section class="av-band av-band-build" id="build-email">
-      <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B6 &mdash; The email block</h3>
-      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-5">
-        <li><b>Where:</b> Klaviyo, in the flow emails triggered by the events <code>OfferAccepted</code>, <code>OfferRejected</code> and <code>FinalOfferRejected</code>. Marketing owns those flows. Add the markup below as one HTML block after the email's own message and button, before the sign-off and the footer.</li>
-        <li><b>A/B:</b> in each of the three flow emails, a Klaviyo A/B test with two versions, control (no block) and variant 3 (the block). Name the version &ldquo;Variant 3&rdquo;. Track clicks on the OP link; Klaviyo's click tracking rewrites the link, which still lands on OP's page.</li>
-        <li><b>The logo is a hosted PNG, not SVG and not an attachment.</b> Most mail clients do not show SVG (Gmail and Outlook drop it), and an embedded attachment shows up as a paperclip and is blocked or listed as a file by some clients. Upload <a class="text-av-blue underline" href="#logo-file">op-logo-email.png</a> (below; 160&times;160, transparent, shown at 40&times;40 so it stays sharp on high-density screens) to Klaviyo's image library and put its URL in place of <code>OP_LOGO_URL</code>. Klaviyo serves its library images over HTTPS from its own CDN, so nothing else needs hosting. The <code>alt="OP"</code> stands in when a client blocks images.</li>
-        <li><b>Built for email clients:</b> nested tables and inline styles only; no flexbox, no classes, no web fonts required. The heading and button fall back to Arial where Barlow and DM Sans are not available (most clients). The arrow is the character &ldquo;&rarr;&rdquo;, since the page's arrow is an SVG. The button is a table cell with the link filling it, so the whole 56px button is clickable. The logo sits in its own fixed 40px cell with the gap on the heading cell, and the image carries <code>min-width</code> and <code>max-width</code> of 40px, so a client or template that shrinks images to fit their cell (<code>max-width:100%</code>) cannot squeeze it out of round.</li>
-        <li><b>Known differences by client:</b> Outlook on Windows draws square corners and may draw the dashed border as a thinner line; the layout and colours stay. In dark mode, clients that invert colours may darken the white frame; the orange button and the logo keep their colours.</li>
-        <li><b>Width:</b> up to 448px, centred, full width on a phone.</li>
-      </ul>
-      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl mb-5 flex flex-col sm:flex-row sm:items-center gap-5" id="logo-file">
-        <div class="flex items-center gap-4 flex-shrink-0">
-          <img src="../assets/op-logo-email.png" width="80" height="80" alt="OP logo, PNG for email" class="block w-20 h-20 rounded border border-dashed border-slate-300 p-1" style="background:repeating-conic-gradient(#f1f5f9 0% 25%, #fff 0% 50%) 50% / 12px 12px;" />
-          <img src="../assets/op-logo-email.png" width="40" height="40" alt="" class="block w-10 h-10" />
-        </div>
-        <div class="font-dm text-sm leading-6 text-slate-800">
-          <p class="font-bold text-slate-900">Logo file for the emails: op-logo-email.png</p>
-          <p>PNG, 160&times;160 px, transparent background, 7&nbsp;kB. Shown at 40&times;40 in the email (right: actual size). Upload it to Klaviyo's image library and put the image's URL in place of <code>OP_LOGO_URL</code> in the markup below. This is the only file the emails need; the markup has no SVG.</p>
-          <p class="mt-2"><a class="inline-flex items-center gap-2 rounded-lg bg-av-blue text-white px-4 h-10 no-underline font-medium" href="../assets/op-logo-email.png" download="op-logo-email.png">Download op-logo-email.png</a></p>
-        </div>
-      </div>
-      <p id="sync-email" class="hidden font-dm text-sm font-bold text-red-700 mb-3">This markup differs from email-blocks/op-routing-v3.html. Regenerate it before handing over.</p>
-      <pre class="av-code" id="code-email" data-src="email-blocks/op-routing-v3.html">&lt;!-- OP routing, variant 3: AutoVex's OP car insurance suggestion, for the
-     seller emails that follow an accepted offer or rejected offers. Paste as
-     one HTML block after the email's own message and button, before the
-     sign-off and the footer. Replace OP_LOGO_URL with the URL of the hosted
-     PNG (see design-specs/op-routing.html#build-email). --&gt;
-&lt;table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;"&gt;
-  &lt;tr&gt;
-    &lt;td align="center" style="padding:32px 0 0 0;"&gt;
-      &lt;table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:448px;border-collapse:separate;"&gt;
-        &lt;tr&gt;
-          &lt;td style="padding:20px;background-color:#ffffff;border:2px dashed #CBD5E1;border-radius:12px;"&gt;
-            &lt;table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:collapse;"&gt;
-              &lt;tr&gt;
-                &lt;td align="center" style="padding:0 0 10px 0;font-family:'DM Sans',Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:400;color:#000000;text-align:center;"&gt;Tutustu sillä aikaa suosittelemaamme tarjoukseen&lt;/td&gt;
-              &lt;/tr&gt;
-              &lt;tr&gt;
-                &lt;td align="center" style="padding:0 0 20px 0;"&gt;
-                  &lt;table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto;border-collapse:collapse;"&gt;
-                    &lt;tr&gt;
-                      &lt;td valign="middle" width="40" style="width:40px;min-width:40px;padding:0;"&gt;&lt;img src="OP_LOGO_URL" width="40" height="40" alt="OP" style="display:block;width:40px;min-width:40px;max-width:40px;height:40px;border:0;outline:none;text-decoration:none;"&gt;&lt;/td&gt;
-                      &lt;td valign="middle" style="padding:0 0 0 12px;font-family:Barlow,Arial,Helvetica,sans-serif;font-size:24px;line-height:26px;font-weight:700;color:#0F172A;text-align:left;"&gt;Uudelle autollesi vakuutus&amp;nbsp;&amp;#8722;50&amp;nbsp;%&lt;/td&gt;
-                    &lt;/tr&gt;
-                  &lt;/table&gt;
-                &lt;/td&gt;
-              &lt;/tr&gt;
-              &lt;tr&gt;
-                &lt;td style="padding:0 0 8px 0;"&gt;
-                  &lt;table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="width:100%;border-collapse:separate;"&gt;
-                    &lt;tr&gt;
-                      &lt;td align="center" bgcolor="#EE5A00" style="background-color:#EE5A00;border-radius:8px;"&gt;
-                        &lt;a href="https://www.op.fi/henkiloasiakkaat/vakuutukset/ajoneuvovakuutus/autovakuutus-henkiloautolle" target="_blank" style="display:block;padding:18px 32px;font-family:'DM Sans',Arial,Helvetica,sans-serif;font-size:16px;line-height:20px;font-weight:400;color:#ffffff;text-align:center;text-decoration:none;border-radius:8px;"&gt;Laske vakuutustarjous OP:ssa&amp;nbsp;&amp;#8594;&lt;/a&gt;
-                      &lt;/td&gt;
-                    &lt;/tr&gt;
-                  &lt;/table&gt;
-                &lt;/td&gt;
-              &lt;/tr&gt;
-              &lt;tr&gt;
-                &lt;td align="center" style="font-family:'DM Sans',Arial,Helvetica,sans-serif;font-size:14px;line-height:20px;font-weight:400;color:#475569;text-align:center;"&gt;Koskee uusien kaskovakuutusten ensimmäistä vakuutusjaksoa.&lt;/td&gt;
-              &lt;/tr&gt;
-            &lt;/table&gt;
-          &lt;/td&gt;
-        &lt;/tr&gt;
-      &lt;/table&gt;
-    &lt;/td&gt;
-  &lt;/tr&gt;
-&lt;/table&gt;</pre>
-      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">Same file in the repository: <code>email-blocks/op-routing-v3.html</code>. The prototype's email tool renders this exact file, with the logo from the prototype's own assets.</p>
       </div>
     </section>
 
     <section class="av-band av-band-build">
       <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B7 &mdash; Do not</h3>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B8 &mdash; Do not</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
-        <li>Build variants 1 or 2: they are retired.</li>
+        <li>Build variant 4 before the copy, OP's approval and the font licence are settled.</li>
         <li>Show the block anywhere else: not on the unverified, rejected or photos-missing success screens, not on the decision page while an offer can still be accepted, not for a B2B seller.</li>
-        <li>Pass anything about the seller or the car to OP in the link.</li>
+        <li>Pass anything about the seller or the car to OP in the link, or change OP's <code>cmpid</code> values.</li>
         <li>Change AutoVex's own content on these pages: the notice, the hero, the offer cards, the help banner, the auction result.</li>
-        <li>Rewrite the copy, colours or sizes in the build code, or the colours, sizes and layout of the email markup. In the emails, Marketing may adapt the copy to the email.</li>
-        <li>Put the logo in an email as SVG, as a data URI or as an attachment.</li>
+        <li>Rewrite the build code's copy, colours or sizes.</li>
+        <li>Host OP Chevin Pro without a web-font licence.</li>
       </ul>
       </div>
     </section>
 
     <section class="av-band av-band-build">
       <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B8 &mdash; Acceptance criteria</h3>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B9 &mdash; Acceptance criteria</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
         <li><b>Control:</b> the pages are unchanged.</li>
-        <li><b>Success page, variant 3:</b> every state in the <a class="text-av-blue underline" href="#build-where">B2 table</a> matches its Shown/Hidden column. The block is 32px under the notice, 448px wide, above the Hotjar survey in review.</li>
-        <li><b>Decision page, variant 3:</b> every state in the B2 table matches. The block appears under the help banner once the seller accepts or rejects, without a reload.</li>
-        <li>The button opens OP's car insurance page in a new tab, with no step in between; the AutoVex page stays open.</li>
+        <li><b>Success page:</b> every state in the <a class="text-av-blue underline" href="#build-where">B2 table</a> matches its Shown/Hidden column. The block is 32px under the notice, at most 448px wide, above the Hotjar survey in review.</li>
+        <li><b>Decision page:</b> every state in the B2 table matches. The block appears under the help banner once the seller accepts or rejects, without a reload, at most 448px wide and centred.</li>
+        <li>The button opens OP's page with the placement's own link (B7) in a new tab; the AutoVex page stays open.</li>
+        <li><b>Variant 4:</b> set in OP Chevin Pro where the font is provided, Arial otherwise; the disclaimer is 10px; below 440px of banner width the logo sits above the disclaimer.</li>
         <li>Re-renders never duplicate the block. No console errors. No horizontal scroll at 360px.</li>
-        <li><b>Emails:</b> the variant 3 version of each of the three Klaviyo emails shows the block after the message, with the logo, in Gmail (web and app), Apple Mail and Outlook; the link reaches OP's page.</li>
-        <li>The goals in B5 record in VWO and the click counts in Klaviyo, per arm.</li>
+        <li>The goals in B7 record in VWO per arm.</li>
       </ul>
       </div>
     </section>
 
     <section class="av-band av-band-build">
       <div class="av-container">
-      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B9 &mdash; Check against the prototype</h3>
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B10 &mdash; Check against the prototype</h3>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
-        <li>The prototype runs this exact build code: <a class="text-av-blue underline" href="../success.html?scenario=in-review-verified&amp;op-routing=v3" target="_blank" rel="noopener">success page in review</a>, <a class="text-av-blue underline" href="../success.html?scenario=published&amp;op-routing=v3" target="_blank" rel="noopener">published</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v3" target="_blank" rel="noopener">decision page after accepting</a>, <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v3" target="_blank" rel="noopener">after rejecting</a>.</li>
-        <li>On production's own markup: <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=success-review" target="_blank" rel="noopener">success screen in review</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=success-published" target="_blank" rel="noopener">published</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=success-unverified" target="_blank" rel="noopener">unverified (nothing shown)</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=decision-accepted" target="_blank" rel="noopener">decision accepted</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=decision-rejected" target="_blank" rel="noopener">decision rejected</a>.</li>
-        <li>The emails: the email tool's <a class="text-av-blue underline" href="../emails.html?email=klaviyo-offer-accepted&amp;op-routing=v3" target="_blank" rel="noopener">offer accepted</a>, <a class="text-av-blue underline" href="../emails.html?email=klaviyo-offer-rejected&amp;op-routing=v3" target="_blank" rel="noopener">offers rejected</a> and <a class="text-av-blue underline" href="../emails.html?email=klaviyo-final-offer-rejected&amp;op-routing=v3" target="_blank" rel="noopener">final offer rejected</a>.</li>
+        <li>The prototype runs this exact build code, variant 3: <a class="text-av-blue underline" href="../success.html?scenario=in-review-verified&amp;op-routing=v3" target="_blank" rel="noopener">success page in review</a>, <a class="text-av-blue underline" href="../success.html?scenario=published&amp;op-routing=v3" target="_blank" rel="noopener">published</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v3" target="_blank" rel="noopener">decision page after accepting</a>, <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v3" target="_blank" rel="noopener">after rejecting</a>. Variant 4: <a class="text-av-blue underline" href="../success.html?scenario=in-review-verified&amp;op-routing=v4" target="_blank" rel="noopener">success page in review</a>, <a class="text-av-blue underline" href="../success.html?scenario=published&amp;op-routing=v4" target="_blank" rel="noopener">published</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v4" target="_blank" rel="noopener">decision page after accepting</a>, <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v4" target="_blank" rel="noopener">after rejecting</a>.</li>
+        <li>On production's own markup, variant 3: <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=success-review" target="_blank" rel="noopener">success in review</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=success-unverified" target="_blank" rel="noopener">unverified (nothing shown)</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=decision-accepted" target="_blank" rel="noopener">decision accepted</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=decision-rejected" target="_blank" rel="noopener">decision rejected</a>. Variant 4: <a class="text-av-blue underline" href="op-routing-preview.html?variant=v4&amp;page=success-review" target="_blank" rel="noopener">success in review</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v4&amp;page=decision-accepted" target="_blank" rel="noopener">decision accepted</a>.</li>
+        <li>The public prototype shows variant 4 in Arial, since the font is not served there.</li>
         <li>The live result must match: same position, sizes, colours and copy.</li>
       </ul>
       </div>
@@ -647,7 +761,7 @@
   <script>
     // The code blocks above are pasted from their files by bin/vwo-spec-sync.mjs.
     // When this page is served, flag a block that no longer matches its file.
-    [['code-v3', 'sync-code', '../vwo/op-routing-v3.js'], ['code-email', 'sync-email', '../email-blocks/op-routing-v3.html']].forEach(function (b) {
+    [['code-v3', 'sync-v3', '../vwo/op-routing-v3.js'], ['code-v4', 'sync-v4', '../vwo/op-routing-v4.js']].forEach(function (b) {
       fetch(b[2]).then(function (r) { return r.ok ? r.text() : null; }).then(function (text) {
         if (text === null) return;
         if (text.trim() !== document.getElementById(b[0]).textContent.trim()) {

@@ -13,3 +13,7 @@ smoke-test-failure.png
 usertest/node_modules/
 usertest/.run/
 _site/
+
+# Licensed OP Chevin web fonts (G-Type EULA forbids redistribution and
+# web-server use without a webfont licence): local only, never committed.
+local-fonts/

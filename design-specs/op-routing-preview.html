@@ -29,14 +29,15 @@
     }
   </script>
   <script src="../tw-tokens.js"></script>
-  <!-- ?page= picks a trimmed copy of a production screen; ?variant=v3 runs the
-       build snippet on it, exactly as VWO would. ?page=email shows the email
-       block from email-blocks/op-routing-v3.html instead. -->
+  <!-- ?page= picks a trimmed copy of a production screen; ?variant=v3 or v4
+       runs that build snippet on it, exactly as VWO would. -->
   <script>
     var PAGE = new URLSearchParams(location.search).get('page') || 'success-review';
-    if (new URLSearchParams(location.search).get('variant') === 'v3' && PAGE !== 'email') {
-      document.write('<script src="../vwo/op-routing-v3.js"><\/script>');
+    var VARIANT = new URLSearchParams(location.search).get('variant');
+    if (VARIANT === 'v3' || VARIANT === 'v4') {
+      document.write('<script src="../vwo/op-routing-' + VARIANT + '.js"><\/script>');
     }
+    if (VARIANT === 'v4') document.write('<link rel="stylesheet" href="../op-chevin-local.css">');
   </script>
   <style>body { margin: 0; }</style>
 </head>
@@ -81,21 +82,17 @@
       'success-published': function () { return successScreen('Jännittävää! Tarjouskilpailu on alkamassa.', 'Odotetaan tarjouksia', true, false); },
       'success-unverified': function () { return successScreen('Tarjouspyyntösi on valmis! Yksi juttu vielä.', 'Tarkastus käynnissä', false, true); },
       'decision-accepted': function () { return decisionScreen('Onneksi olkoon!', 'Autoliike ottaa sinuun yhteyttä mahdollisimman pian kaupan viimeistelyä varten.', 'Tarjous hyväksytty'); },
-      'decision-rejected': function () { return decisionScreen('Tarjoukset hylätty', 'Tarjoukset eivät olleet sinulle sopivia. Me ymmärrämme – parannellaan ilmoitusta yhdessä tai kokeillaan uudelleen paremmalla hetkellä.', 'Hylätty'); },
-      'email': function () {
-        return '<div class="bg-slate-100 min-h-screen py-6 px-3"><div class="mx-auto max-w-[600px] bg-white px-6 py-8">' +
-          '<div class="font-body text-sm text-slate-500 bg-slate-50 border border-dashed border-slate-300 rounded p-3">Marketing\'s email from Klaviyo: subject, greeting, message and button.</div>' +
-          '<div id="email-block"></div>' +
-          '<div class="mt-8 font-body text-sm text-slate-500 bg-slate-50 border border-dashed border-slate-300 rounded p-3">Sign-off and Klaviyo footer.</div>' +
-        '</div></div>';
-      }
+      'decision-rejected': function () { return decisionScreen('Tarjoukset hylätty', 'Tarjoukset eivät olleet sinulle sopivia. Me ymmärrämme – parannellaan ilmoitusta yhdessä tai kokeillaan uudelleen paremmalla hetkellä.', 'Hylätty'); }
     };
     document.getElementById('root').innerHTML = (SCREENS[PAGE] || SCREENS['success-review'])();
-    if (PAGE === 'email') {
-      fetch('../email-blocks/op-routing-v3.html').then(function (r) { return r.text(); }).then(function (html) {
-        document.getElementById('email-block').innerHTML = html.replace(/OP_LOGO_URL/g, '../assets/op-logo-email.png');
-      });
-    }
+    // Bring the block into view inside this frame only (scrollIntoView would
+    // also scroll the spec page that embeds it).
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        var el = document.querySelector('#av-op-v3, #av-op-v4');
+        if (el) window.scrollTo(0, Math.max(0, el.getBoundingClientRect().top + window.scrollY - 24));
+      }, 300);
+    });
   </script>
 </body>
 </html>
