@@ -193,7 +193,9 @@
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-3">
         <li><b>When:</b> the seller has accepted an offer (the page says &ldquo;Onneksi olkoon!&rdquo;), or the offers were rejected (&ldquo;Tarjoukset hylätty&rdquo;), including a rejected final offer. The decision is made, so nothing is asked of the seller any more.</li>
         <li><b>Not</b> while an offer can still be accepted, on a first visit before &ldquo;Katso tulokset&rdquo;, with no offers, or when the offers expired.</li>
-        <li><b>Where:</b> as its own section directly under the &ldquo;Tarvitsetko apua?&rdquo; banner, so AutoVex's own help comes first and the auction result follows. Centred, at most 448px wide.</li>
+        <li><b>Where, variant 3:</b> as its own section directly under the &ldquo;Tarvitsetko apua?&rdquo; banner, so AutoVex's own help comes first and the auction result follows.</li>
+        <li><b>Where, variant 4:</b> as its own section directly above &ldquo;Usein kysytyt kysymykset&rdquo; (the FAQ), after the auction result, so OP's banner comes after everything AutoVex says about the auction.</li>
+        <li>Both centred, at most 448px wide.</li>
         <li><b>Starting with these two states.</b> Other decision page states may follow later.</li>
       </ul>
       <p class="font-dm text-sm">Variant 3: <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v3" target="_blank" rel="noopener">after accepting</a> &middot; <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v3" target="_blank" rel="noopener">after rejecting</a>. Variant 4: <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v4" target="_blank" rel="noopener">after accepting</a> &middot; <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v4" target="_blank" rel="noopener">after rejecting</a>.</p>
@@ -287,7 +289,9 @@
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-4">
         <li><b>URL:</b> <code>https://autovex.fi/decision/&lt;tender request id&gt;</code> (route <code>user.offers.decision</code>; logged-in sellers). Target <code>/decision/*</code>.</li>
         <li><b>Hook:</b> the hero title, <code>h2.text-3xl.font-bold.text-black</code>, reading exactly &ldquo;Onneksi olkoon!&rdquo; (an offer accepted) or &ldquo;Tarjoukset hylätty&rdquo; (offers rejected, including a rejected final offer). The page picks that title from the auction's state, so the snippet reads nothing else. The B2B page has other titles and gets nothing.</li>
-        <li><b>Insertion point:</b> a new <code>&lt;section&gt;</code> after the &ldquo;Tarvitsetko apua?&rdquo; banner's section when that banner directly follows the offers (it does in both states), otherwise directly after the offers' section. The page grid puts 48px between sections.</li>
+        <li><b>Insertion point, variant 3:</b> a new <code>&lt;section&gt;</code> after the &ldquo;Tarvitsetko apua?&rdquo; banner's section when that banner directly follows the offers (it does in both states), otherwise directly after the offers' section.</li>
+        <li><b>Insertion point, variant 4:</b> a new <code>&lt;section&gt;</code> directly before the FAQ section, the <code>&lt;section&gt;</code> whose <code>&lt;h2&gt;</code> reads &ldquo;Usein kysytyt kysymykset&rdquo; (the page's last).</li>
+        <li>The page grid puts 48px between sections.</li>
         <li><b>The page re-renders after every action,</b> so the block appears when the seller accepts or rejects, without a reload. Never insert twice.</li>
       </ul>
       <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl mb-6"><table class="w-full font-dm text-sm text-left">
@@ -321,7 +325,8 @@
     &lt;section&gt;&lt;!-- OBannerHelperCard --&gt;&lt;h5&gt;Tarvitsetko apua?&lt;/h5&gt; …&lt;/section&gt;
     &lt;!-- variant 3: insert the section here --&gt;
     &lt;section&gt;… Tarjouskilpailun tulos …&lt;/section&gt;
-    &lt;section&gt;… Usein kysytyt kysymykset …&lt;/section&gt;</pre></div>
+    &lt;!-- variant 4: insert the section here --&gt;
+    &lt;section&gt;&lt;h2&gt;… Usein kysytyt kysymykset&lt;/h2&gt; …&lt;/section&gt;</pre></div>
       </div>
     </section>
 
@@ -510,9 +515,9 @@
  *      code for that placement (URL_SUCCESS).
  *   2. Decision page (autovex.fi/decision/&lt;id&gt;): after the seller accepted an
  *      offer ("Onneksi olkoon!") or the offers were rejected ("Tarjoukset
- *      hylätty"). Under the "Tarvitsetko apua?" banner when it follows the
- *      offers, otherwise directly under the offers. Links with OP's tracking
- *      code for that placement (URL_DECISION).
+ *      hylätty"). Directly above the "Usein kysytyt kysymykset" (FAQ)
+ *      section, the page's last. Links with OP's tracking code for that
+ *      placement (URL_DECISION).
  *
  * Text is set in OP Chevin Pro, which this snippet does not load: the page
  * has to provide the web font under OP's licence, otherwise Arial is used.
@@ -607,7 +612,9 @@
   }
 
   // Decision page. The hero's own title names the state; the snippet reads
-  // nothing else about the auction.
+  // nothing else about the auction. The block goes directly above the FAQ
+  // section, found by its title.
+  var FAQ_TITLE = 'Usein kysytyt kysymykset';
   function decisionAnchor() {
     var titles = document.querySelectorAll('h2.text-3xl.font-bold.text-black');
     var hero = null;
@@ -615,15 +622,12 @@
       if (DECISION_TITLES.indexOf(titles[i].textContent.trim()) !== -1 &amp;&amp; visible(titles[i])) { hero = titles[i]; break; }
     }
     if (!hero) return null;
-    var offers = hero.closest('section');
-    if (!offers) return null;
-    var next = offers.nextElementSibling;
-    while (next &amp;&amp; next.id !== ID &amp;&amp; !visible(next)) next = next.nextElementSibling;
-    if (next &amp;&amp; next.id === ID) next = null;
-    // The "Tarvitsetko apua?" banner, when the page puts it right after the
-    // offers (accepted, or every offer rejected).
-    if (next &amp;&amp; next.tagName === 'SECTION' &amp;&amp; next.querySelector('h5')) return next;
-    return offers;
+    var sections = document.querySelectorAll('section');
+    for (var j = 0; j &lt; sections.length; j++) {
+      var h = sections[j].querySelector('h2');
+      if (h &amp;&amp; h.textContent.trim() === FAQ_TITLE &amp;&amp; visible(sections[j])) return sections[j];
+    }
+    return null;
   }
 
   function injectCss() {
@@ -634,12 +638,13 @@
     document.head.appendChild(style);
   }
 
-  function place(anchor, tag, cls, inner) {
+  // where: 'afterend' (after the anchor) or 'beforebegin' (before it).
+  function place(anchor, where, tag, cls, inner) {
     var existing = document.getElementById(ID);
-    if (existing &amp;&amp; existing.previousElementSibling === anchor) return;
+    if (existing &amp;&amp; (where === 'afterend' ? existing.previousElementSibling : existing.nextElementSibling) === anchor) return;
     if (existing) existing.remove();
     injectCss();
-    anchor.insertAdjacentHTML('afterend', '&lt;' + tag + ' id="' + ID + '"' + (cls ? ' class="' + cls + '"' : '') + '&gt;' + inner + '&lt;/' + tag + '&gt;');
+    anchor.insertAdjacentHTML(where, '&lt;' + tag + ' id="' + ID + '"' + (cls ? ' class="' + cls + '"' : '') + '&gt;' + inner + '&lt;/' + tag + '&gt;');
   }
 
   function remove() {
@@ -651,9 +656,9 @@
     // Finnish only, like the copy.
     if (/^en/i.test(document.documentElement.lang || '')) return remove();
     var anchor = successAnchor();
-    if (anchor) return place(anchor, 'div', 'av-op-success', banner(URL_SUCCESS));
+    if (anchor) return place(anchor, 'afterend', 'div', 'av-op-success', banner(URL_SUCCESS));
     anchor = decisionAnchor();
-    if (anchor) return place(anchor, 'section', '', '&lt;div class="container mx-auto"&gt;' + banner(URL_DECISION) + '&lt;/div&gt;');
+    if (anchor) return place(anchor, 'beforebegin', 'section', '', '&lt;div class="container mx-auto"&gt;' + banner(URL_DECISION) + '&lt;/div&gt;');
     remove();
   }
 
@@ -720,7 +725,7 @@
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
         <li><b>Control:</b> the pages are unchanged.</li>
         <li><b>Success page:</b> every state in the <a class="text-av-blue underline" href="#build-where">B2 table</a> matches its Shown/Hidden column. The block is 32px under the notice, at most 448px wide, above the Hotjar survey in review.</li>
-        <li><b>Decision page:</b> every state in the B2 table matches. The block appears under the help banner once the seller accepts or rejects, without a reload, at most 448px wide and centred.</li>
+        <li><b>Decision page:</b> every state in the B2 table matches. The block appears once the seller accepts or rejects, without a reload: variant 3 under the help banner, variant 4 directly above the FAQ. At most 448px wide and centred.</li>
         <li>The button opens OP's page with the placement's own link (B7) in a new tab; the AutoVex page stays open.</li>
         <li><b>Variant 4:</b> set in OP Chevin Pro where the font is provided, Arial otherwise; the disclaimer is 10px; below 440px of banner width the logo sits above the disclaimer.</li>
         <li>Re-renders never duplicate the block. No console errors. No horizontal scroll at 360px.</li>

@@ -3071,8 +3071,10 @@ git; `opRouting.*` / `opRouting2.*` are gone from `translations.js`).
 - **Decision page hook:** the hero `h2.text-3xl.font-bold.text-black` reading
   exactly "Onneksi olkoon!" or "Tarjoukset hylätty" (prod's
   `auction_hero.offer_accepted/offer_rejected.title`). Inserted as a
-  `<section>` after the "Tarvitsetko apua?" banner section when it directly
-  follows the offers, else after the offers. Centred, at most 448px. Shows on
+  `<section>`: `v3` after the "Tarvitsetko apua?" banner section when it
+  directly follows the offers, else after the offers; `v4` directly before the
+  FAQ section (its `h2` reads "Usein kysytyt kysymykset"), after the auction
+  result (Jussi, 2026-11-17). Centred, at most 448px. Shows on
   `accepted`, `deal-completed`, `all-rejected`, `deal-failed`; hidden on every
   other scenario.
 - **`v3`:** the dashed coupon block, 448×218 desktop, 270 at 375px. OP

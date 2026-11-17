@@ -7,9 +7,9 @@
  *      code for that placement (URL_SUCCESS).
  *   2. Decision page (autovex.fi/decision/<id>): after the seller accepted an
  *      offer ("Onneksi olkoon!") or the offers were rejected ("Tarjoukset
- *      hylätty"). Under the "Tarvitsetko apua?" banner when it follows the
- *      offers, otherwise directly under the offers. Links with OP's tracking
- *      code for that placement (URL_DECISION).
+ *      hylätty"). Directly above the "Usein kysytyt kysymykset" (FAQ)
+ *      section, the page's last. Links with OP's tracking code for that
+ *      placement (URL_DECISION).
  *
  * Text is set in OP Chevin Pro, which this snippet does not load: the page
  * has to provide the web font under OP's licence, otherwise Arial is used.
@@ -104,7 +104,9 @@
   }
 
   // Decision page. The hero's own title names the state; the snippet reads
-  // nothing else about the auction.
+  // nothing else about the auction. The block goes directly above the FAQ
+  // section, found by its title.
+  var FAQ_TITLE = 'Usein kysytyt kysymykset';
   function decisionAnchor() {
     var titles = document.querySelectorAll('h2.text-3xl.font-bold.text-black');
     var hero = null;
@@ -112,15 +114,12 @@
       if (DECISION_TITLES.indexOf(titles[i].textContent.trim()) !== -1 && visible(titles[i])) { hero = titles[i]; break; }
     }
     if (!hero) return null;
-    var offers = hero.closest('section');
-    if (!offers) return null;
-    var next = offers.nextElementSibling;
-    while (next && next.id !== ID && !visible(next)) next = next.nextElementSibling;
-    if (next && next.id === ID) next = null;
-    // The "Tarvitsetko apua?" banner, when the page puts it right after the
-    // offers (accepted, or every offer rejected).
-    if (next && next.tagName === 'SECTION' && next.querySelector('h5')) return next;
-    return offers;
+    var sections = document.querySelectorAll('section');
+    for (var j = 0; j < sections.length; j++) {
+      var h = sections[j].querySelector('h2');
+      if (h && h.textContent.trim() === FAQ_TITLE && visible(sections[j])) return sections[j];
+    }
+    return null;
   }
 
   function injectCss() {
@@ -131,12 +130,13 @@
     document.head.appendChild(style);
   }
 
-  function place(anchor, tag, cls, inner) {
+  // where: 'afterend' (after the anchor) or 'beforebegin' (before it).
+  function place(anchor, where, tag, cls, inner) {
     var existing = document.getElementById(ID);
-    if (existing && existing.previousElementSibling === anchor) return;
+    if (existing && (where === 'afterend' ? existing.previousElementSibling : existing.nextElementSibling) === anchor) return;
     if (existing) existing.remove();
     injectCss();
-    anchor.insertAdjacentHTML('afterend', '<' + tag + ' id="' + ID + '"' + (cls ? ' class="' + cls + '"' : '') + '>' + inner + '</' + tag + '>');
+    anchor.insertAdjacentHTML(where, '<' + tag + ' id="' + ID + '"' + (cls ? ' class="' + cls + '"' : '') + '>' + inner + '</' + tag + '>');
   }
 
   function remove() {
@@ -148,9 +148,9 @@
     // Finnish only, like the copy.
     if (/^en/i.test(document.documentElement.lang || '')) return remove();
     var anchor = successAnchor();
-    if (anchor) return place(anchor, 'div', 'av-op-success', banner(URL_SUCCESS));
+    if (anchor) return place(anchor, 'afterend', 'div', 'av-op-success', banner(URL_SUCCESS));
     anchor = decisionAnchor();
-    if (anchor) return place(anchor, 'section', '', '<div class="container mx-auto">' + banner(URL_DECISION) + '</div>');
+    if (anchor) return place(anchor, 'beforebegin', 'section', '', '<div class="container mx-auto">' + banner(URL_DECISION) + '</div>');
     remove();
   }
 
