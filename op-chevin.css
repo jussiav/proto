@@ -1,0 +1,9 @@
+/* OP Chevin Pro for OP routing's variant 4, loaded from op.fi's own servers.
+   op.fi serves these files with "access-control-allow-origin: *", so the
+   browser accepts them on another site; nothing of the font is in this
+   repository. Whether AutoVex may load them this way in production is OP's
+   call (design-specs/op-routing.html, open questions). op.fi publishes Thin,
+   Light, Medium and DemiBold only; the banner uses Light and DemiBold. */
+@font-face { font-family: "OP Chevin Pro"; font-weight: 300; font-style: normal; font-display: swap; src: url("https://www.op.fi/static/@op/opux-static/v3/fonts/chevin-light.woff2") format("woff2"); }
+@font-face { font-family: "OP Chevin Pro"; font-weight: 500; font-style: normal; font-display: swap; src: url("https://www.op.fi/static/@op/opux-static/v3/fonts/chevin-medium.woff2") format("woff2"); }
+@font-face { font-family: "OP Chevin Pro"; font-weight: 600; font-style: normal; font-display: swap; src: url("https://www.op.fi/static/@op/opux-static/v3/fonts/chevin-demibold.woff2") format("woff2"); }

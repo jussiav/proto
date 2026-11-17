@@ -3094,19 +3094,22 @@ git; `opRouting.*` / `opRouting2.*` are gone from `translations.js`).
   on desktop. Below a 440px banner width the logo sits above the disclaimer,
   centred. "-50 %" uses U+2011 and a no-break space. Hover is `v3`'s opacity
   .94, not a picked colour.
-- **`v4`'s typeface is OP Chevin Pro (Light 300, DemiBold 600), and its
-  licence is the open question.** The web fonts came from OP's
-  `op_chevin_fonts.zip` (brand.op.fi). Their G-Type EULA forbids
-  redistribution and serving from a web server without a web-font licence, so
-  the woff2 files sit in **`local-fonts/op-chevin/`, gitignored and in
-  `deploy-filter.txt`**, loaded only by `op-chevin-local.css` (committed,
-  referencing the local files) when the arm is `v4`. Jussi's Mac shows Chevin;
-  the public proto and the spec's previews show Arial. The snippet only names
-  the family; production must load it under a licence. Never commit or push
-  the font files. `local-fonts/_ref/op-banner.png` is OP's PNG, kept locally
-  for overlay checks.
+- **`v4`'s typeface is OP Chevin Pro (Light 300, DemiBold 600), loaded from
+  op.fi** (2026-11-17, Jussi's ask). `op-chevin.css` points `@font-face` at
+  `https://www.op.fi/static/@op/opux-static/v3/fonts/chevin-{light,medium,demibold}.woff2`;
+  op.fi serves them with `access-control-allow-origin: *`, and they measure
+  the same as the brand package's web fonts (canvas widths within 0.1 %).
+  op.fi has no regular, bold or extrabold file. Loaded only when the arm is
+  `v4`. **Never commit the font files themselves**: the brand package's G-Type
+  EULA forbids redistribution and serving from a web server without a
+  web-font licence, which is why Jussi's request to upload them to GitHub was
+  declined and the op.fi link used instead. The package's copies stay in
+  gitignored `local-fonts/` (no longer referenced), with OP's PNG in
+  `local-fonts/_ref/op-banner.png` for overlay checks. Whether production may
+  load the font from op.fi is OP's call (spec open question).
 - **Status of `v4`: in discussion** (Jussi, 2026-11-17): which copy to use
-  (ours or OP's), OP's approval of the HTML build, and the font licence. The
+  (ours or OP's), OP's approval of the HTML build, and the font (OP's go-ahead
+  to load it in production). The
   spec's build brief says not to build `v4` until those are settled.
 - **Spec** `design-specs/op-routing.html`: part 1 (summary, change log, a
   section per variant with a live preview, placements, open questions for the

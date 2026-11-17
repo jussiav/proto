@@ -165,7 +165,7 @@
             <li><b>OP's banner, built as HTML</b> from OP's 600&times;400 design, so it is sharp, accessible and works at every width.</li>
             <li><b>OP's copy, word for word:</b> &ldquo;Muista vakuuttaa uusi autosi&rdquo;, the offer line, the button &ldquo;Laske hinta ja osta&rdquo; and OP's full disclaimer.</li>
             <li><b>OP's look:</b> text grey <code>#484848</code>, a pill button in OP's orange <code>#EE5A00</code>, and the Pohjola Vakuutus logo (grey text, OP symbol on the right) from brand.op.fi.</li>
-            <li><b>OP's typeface, OP Chevin Pro</b> (Light for text, DemiBold for the button). Its licence does not let AutoVex serve the font from a website without a web-font licence, so the public prototype and these previews show it in Arial; the shared design looks like OP's only where the font is installed.</li>
+            <li><b>OP's typeface, OP Chevin Pro</b> (Light for text, DemiBold for the button). The prototype and these previews load it from op.fi's own servers, so nothing of the font is hosted by AutoVex. Whether production may load it the same way, or needs a licence of its own, is OP's call.</li>
             <li><b>At most 448px wide</b>, the success page column's width, on both pages, so it never outgrows the page. OP's 600px proportions are kept and scaled down; text has a floor so it stays readable on a phone, and below 440px the logo moves above the disclaimer.</li>
             <li><b>A 1px light grey border</b> with square corners, so the white banner reads as its own block on the white success page.</li>
             <li><b>The disclaimer is 10px</b>, below AutoVex's own minimum: an exception for OP's small print in this banner.</li>
@@ -211,7 +211,7 @@
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With OP</p>
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-2 max-w-3xl mb-6">
         <li><b>Approval of variant 4</b> as built here: OP's banner at AutoVex's column width, with a border, a responsive layout and the logo above the disclaimer on a phone.</li>
-        <li><b>The OP Chevin Pro web-font licence.</b> The font's licence (G-Type) does not allow serving it from a website without a web-font licence. Variant 4 needs OP to confirm that AutoVex may load it on autovex.fi, under OP's licence or a licence of AutoVex's own. Without it, the banner shows in Arial.</li>
+        <li><b>The OP Chevin Pro web font.</b> The prototype loads it from op.fi's own servers (op.fi allows other sites to load these files). Production needs OP to confirm that autovex.fi may do the same, or a licence to host it: the brand package's licence (G-Type) forbids redistributing the font or serving it from a web server without a web-font licence. Without the font, the banner shows in Arial.</li>
         <li><b>The target page.</b> OP's car insurance page with OP's tracking code, one link per placement (<a class="text-av-blue underline" href="#build-tracking">B7</a>).</li>
       </ul>
       <p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">With Legal</p>
@@ -675,8 +675,9 @@
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
         <li><b>Variant 3</b> uses the page's own fonts (Barlow, DM Sans) and an inline SVG of OP's round logo. Nothing else to provide.</li>
         <li><b>Variant 4's logo</b> is inline SVG in the snippet, from OP's file <code>Pohjola_Vakuutus_RGB_oikea_harmaa.svg</code> (brand.op.fi, Latausoikotiet, Pohjola Vakuutus logos). The same file is in the repository as <code>assets/pohjola-vakuutus-logo.svg</code>.</li>
-        <li><b>Variant 4's typeface is OP Chevin Pro</b>, weights 300 (Light, the text) and 600 (DemiBold, the button), under the family name <code>"OP Chevin Pro"</code>. The page has to load it with <code>@font-face</code> from AutoVex's own server; without it the snippet falls back to Arial.</li>
-        <li><b>Do not host the font until the licence is settled.</b> The web fonts come from OP's brand package, and their licence (G-Type) forbids redistributing them or serving them from a web server without a web-font licence.</li>
+        <li><b>Variant 4's typeface is OP Chevin Pro</b>, weights 300 (Light, the text) and 600 (DemiBold, the button), under the family name <code>"OP Chevin Pro"</code>. The snippet only names the family; the page loads the font with <code>@font-face</code>, and without it the snippet falls back to Arial.</li>
+        <li><b>The prototype loads the font from op.fi</b> (<code>op-chevin.css</code>): <code>https://www.op.fi/static/@op/opux-static/v3/fonts/chevin-light.woff2</code> and <code>chevin-demibold.woff2</code>, which op.fi serves with <code>access-control-allow-origin: *</code>. They render the same as the brand package's web fonts.</li>
+        <li><b>Production: only once OP agrees,</b> either to load the font from op.fi in the same way or to host it under a web-font licence. The brand package's licence (G-Type) forbids redistributing the font or serving it from a web server without one, so do not copy the files to AutoVex's servers.</li>
       </ul>
       </div>
     </section>
@@ -708,7 +709,7 @@
         <li>Pass anything about the seller or the car to OP in the link, or change OP's <code>cmpid</code> values.</li>
         <li>Change AutoVex's own content on these pages: the notice, the hero, the offer cards, the help banner, the auction result.</li>
         <li>Rewrite the build code's copy, colours or sizes.</li>
-        <li>Host OP Chevin Pro without a web-font licence.</li>
+        <li>Load OP Chevin Pro in production before OP agrees, or copy its files to AutoVex's servers without a web-font licence.</li>
       </ul>
       </div>
     </section>
@@ -734,7 +735,7 @@
       <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
         <li>The prototype runs this exact build code, variant 3: <a class="text-av-blue underline" href="../success.html?scenario=in-review-verified&amp;op-routing=v3" target="_blank" rel="noopener">success page in review</a>, <a class="text-av-blue underline" href="../success.html?scenario=published&amp;op-routing=v3" target="_blank" rel="noopener">published</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v3" target="_blank" rel="noopener">decision page after accepting</a>, <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v3" target="_blank" rel="noopener">after rejecting</a>. Variant 4: <a class="text-av-blue underline" href="../success.html?scenario=in-review-verified&amp;op-routing=v4" target="_blank" rel="noopener">success page in review</a>, <a class="text-av-blue underline" href="../success.html?scenario=published&amp;op-routing=v4" target="_blank" rel="noopener">published</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;op-routing=v4" target="_blank" rel="noopener">decision page after accepting</a>, <a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;op-routing=v4" target="_blank" rel="noopener">after rejecting</a>.</li>
         <li>On production's own markup, variant 3: <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=success-review" target="_blank" rel="noopener">success in review</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=success-unverified" target="_blank" rel="noopener">unverified (nothing shown)</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=decision-accepted" target="_blank" rel="noopener">decision accepted</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v3&amp;page=decision-rejected" target="_blank" rel="noopener">decision rejected</a>. Variant 4: <a class="text-av-blue underline" href="op-routing-preview.html?variant=v4&amp;page=success-review" target="_blank" rel="noopener">success in review</a>, <a class="text-av-blue underline" href="op-routing-preview.html?variant=v4&amp;page=decision-accepted" target="_blank" rel="noopener">decision accepted</a>.</li>
-        <li>The public prototype shows variant 4 in Arial, since the font is not served there.</li>
+        <li>The prototype loads variant 4's font from op.fi; if op.fi is unreachable it falls back to Arial.</li>
         <li>The live result must match: same position, sizes, colours and copy.</li>
       </ul>
       </div>
