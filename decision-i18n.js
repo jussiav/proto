@@ -37,6 +37,30 @@ window.DECISION_I18N = {
     /* Sections */
     'Tarjouskilpailun tulos':             'Auction result',
     'Tarjouskilpailun tiedot':            'Auction details',
+
+    /* Informed decision v6 — the Nettiauto comparison and its warm-up note */
+    'Tarjouksesi vs. Nettiauton pyyntihinta': 'Your offer vs. a Nettiauto asking price',
+    'Nettiautossa näkyvä':                'The',
+    'pyyntihinta':                        'asking price',
+    'ei ole sama asia kuin saamasi tarjous.': 'shown on Nettiauto is not the same thing as the offer you received.',
+    'AutoVex-tarjouksesi on kilpailutettu summa, jonka autoliike on valmis maksamaan sinulle autostasi.':
+      'Your AutoVex offer is an amount set by competition, which the dealership is ready to pay you for your car.',
+    'Pyyntihintaan sisältyvät autoliikkeen kulut, kate ja tinkimisvara.':
+      'An asking price includes the dealership’s costs, margin and room for haggling.',
+    'Esimerkki pyyntihinnasta: 15 000 €': 'An example asking price: €15,000',
+    'n. 3 000 €':                         'approx. €3,000',
+    '12 000 €':                           '€12,000',
+    'Sisäänosto:':                        'Purchase:',
+    'maksetaan myyjälle':                 'paid to the seller',
+    'Kulut, kate ja tinkimisvara:':       'Costs, margin and room for haggling:',
+    'sisällytetään pyyntihintaan':        'included in the asking price',
+    '*Esimerkkilaskelma. Luvut eivät liity autoosi.': '*An example calculation. The figures are not about your car.',
+    'Autosi kävi läpi tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.':
+      'Your car went through the auction and reached a network of hundreds of dealerships.',
+    'Vertailetko tarjouksia Nettiauton hintoihin?': 'Comparing your offers to Nettiauto prices?',
+    'Saamasi tarjous on summa, jonka autoliike on valmis maksamaan autostasi. Nettiauton pyyntihinta ei ole sama kuin myyjälle maksettu summa.':
+      'Your offer is the amount the dealership is ready to pay for your car. A Nettiauto asking price is not the same as the amount paid to the seller.',
+
     'Tarjous vai pyyntihinta?':            'An offer or an asking price?',
     'Nettiauton hinta vs. tarjouksesi':    'A Nettiauto price vs. your offer',
     'Mietitkö vielä?':                    'Still weighing it up?',

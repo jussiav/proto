@@ -935,7 +935,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Seller intent | **In production A/B test** | `seller-intent` | `control` | `control` | `price.html` | `design-specs/seller-intent.html` |
 | Asking price removal | Live | `asking-price-removal` | `control` | `control` | `decision.html` | `design-specs/asking-price-removal.html` |
 | Enhanced success page | Live | `enhanced-success-page` | `control` | `control` | `success.html` | `design-specs/enhanced-success-page.html` |
-| Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1` | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
+| Informed decision | **Change 1 ready for dev** (2026-10-08), copy approved by Marketing — only the `Tarjouskilpailun tulos` block, shown alone as **`v5`** (rest of the page prod: prod warm-up, no Enhanced negotiations forcing; the Asana ticket links it). `v1`–`v4` keep the out-of-scope Nettiauto / triage / warm-up designs as reference, since the price-comparison concern is A/B tested separately as VWO front-end tests (not in the codebase). Fair-offer sellers only; `v1`–`v4` also render Enhanced negotiations `v1`. **`v6` in design** (2026-11-18): the PM's Nettiauto comparison content in page styling, for every seller who can still reject; once ready, the other variants go from the proto and spec | `informed-decision` | `control` | `control` | `decision.html` | `design-specs/informed-decision.html` |
 | Seller edits before review | **Agreed, with the devs for technical assessment** (2026-10-05) — changes 1 and 2 (seller side) in `v1`; one open question (contact details mid-edit) | `seller-edits-before-review` | `control` | `control` | `offers.html` (+ funnel via `funnel-guard.js`) | `design-specs/seller-edits-before-review.html` |
 | Huutokaupat routing | **Decided: `v6`** (2026-10-12) — to ship as a VWO A/B test, ~99 % variant / 1 % control; control mirrors prod's 280 000 bug | `huutokaupat-routing` | `control` | `control` | `index.html` | `design-specs/huutokaupat-routing.html` |
 | Similar cars | **Direction decided** (2026-10-28) — the table with highest offers (offers page 3 rows, decision page 3 → up to 20) and `v5` on the submit loader (one average figure); photo cards and accepted offers parked. History: **Ideation** (2026-10-08) — `v1` table, `v2` photo cards, `v3` photo cards with accepted offers, `v4` (2026-10-28) on the submit loader only: a spinner turning into a green check above the heading, a few still grey cards scattered around it, 10 s; the table elsewhere; `v5` (2026-10-28) the same top with only an offer-range teaser card, moving on by itself; `v6` (2026-10-28) "Jatka" under the heading, a carousel of 1-4 cars along the bottom, 5 s, fits a phone without scrolling; latest first in three recency bands, grey caption labels, "Näytä aiemmat" (2026-10-27, matched to Jussi's Figma edits); table is the priority, cards a future alternative; what counts as similar is with Analytics; copy draft; on the decision page and a funnel submit loader too (2026-10-27) | `similar-cars` | `control` | `control` | `offers.html`, `decision.html`, `submit-loader.html` (block is `similar-cars.js`, host-agnostic) | `design-specs/similar-cars.html` |
@@ -5075,6 +5075,68 @@ of `Muutama neuvo` is block 2.
 Finnish once the shape is agreed, so there is no point spending on wording that
 will be replaced.
 
+### `v6` — the Nettiauto comparison, the PM's content in page styling (2026-11-18)
+
+The PM's VWO test (September 2026, cancelled early because analytics could not
+measure it yet; the Confluence page is the brief) is being taken up again. `v6`
+carries its CONTENT (question title, resale-price explanation, an illustrative
+example calculation 12 000 € + n. 3 000 € = n. 15 000 €, two check rows, a
+warm-up note) in the decision page's own styling. Jussi's calls, 2026-11-18:
+
+- **Figures kept.** The example calculation stays, footnoted as not about the
+  seller's car. This overrides the "no figures" rule `v1`–`v4` were built on, for
+  this arm only. The bar is blue-600 + slate-300, not green: green means accept
+  on this page and the figures are not the seller's money.
+- **Own section, `section-nettiauto-v6`, directly after the insights card**, not
+  inside it as the PM's was: the 11/2026 result-block test replaces that card,
+  so a box inside it breaks if both run.
+- **Audience: everyone who can still reject**, as the PM's test. The gate is the
+  bottom banner itself (`bannerCopy === BANNER_COPY.decline` and the banner not
+  hidden), so it hides while the seller waits for a dealer's reply. No
+  `fair_offer` check, and `ID_V6` is kept out of `ID_ANY` so it never switches
+  on the result block. A fair-offer gate in a VWO snippet would need the
+  threshold, which cannot live in this repo.
+- **Warm-up:** `#warmup-nt6`, a white `shadow-md` card under the warm-up card on
+  the four price tiers; the card's message drops `koko`. The note's body is
+  14px at every width, a step below the card's own 16px message so it does not
+  compete (Jussi). Below md the illustration is hidden (Jussi agreed) and the
+  note's title is 18px: measured, even a 120px illustration left the note
+  ~160px below a 375×667 fold. Applied before AutoVex exclusive's warm-up
+  thanks, so that copy still wins.
+- **Layout = Seller protection's card:** two equal halves from 768px (text +
+  `check-bold` rows left, example on a slate-100 panel right), stacked below.
+  The text column is top-aligned with the panel's top edge (Jussi; aligning it
+  to the panel's caption was tried and dropped). Body 16px, check rows 14px.
+  Heading icon `ph-bold-info`, check icon `check-bold`, both Jussi's picks from
+  the sprite. Styles are `.nt6-*`, hand-written. The total lives in the panel's
+  caption (`Esimerkki pyyntihinnasta: 15 000 €`); the `=` sum line was removed.
+  Section title: `Tarjouksesi vs. Nettiauton pyyntihinta`.
+- **Copy follows the C2B terminology table, and Jussi iterates it**: an offer is
+  never `hinta`; the dealer's listing is never `ilmoitus`. **A dealer's listing
+  price is `pyyntihinta`, not `jälleenmyyntihinta`** (Jussi, 2026-11-18): it
+  says the price is open to negotiation rather than a final sale price. The
+  example's first part is `Sisäänosto`. `Tiesitkö?` dropped; no PM-original diff
+  is kept anywhere (Jussi: not needed).
+- **The spec is the VWO build brief now** (2026-11-18, Jussi):
+  `design-specs/informed-decision.html` is part 1 (summary, design with replicas,
+  state table, open questions), part 2 (build a VWO front-end A/B test,
+  production vs. variant 6: B1 what, B2 where and when with prod's trimmed DOM,
+  B3 copy, B4 behaviour, B5 markup and CSS, B6 tracking, B7 do not, B8
+  acceptance, B9 prototype) and part 3, a grey **"Not part of the next step"**
+  band holding the old v1–v5 sections verbatim as collapsed `<details>`. No
+  changelog. Part 2 carries reference markup and CSS, not a `vwo/*.js` snippet:
+  the proto draws v6 from `decision.html`, so **a v6 edit there must be copied
+  into B3 and B5 by hand**. The page was rebuilt with a one-off script, so edit
+  it directly from now on.
+- **Prod hooks the brief relies on** (2026-11-11 dump): the auction-details
+  `<section>` by its `<h2>` text (`Tarjouskilpailun tiedot`, or `tulos` if the
+  result-block test renamed it); the red `<button>` "Hylkää tarjouskilpailu";
+  the warm-up card's `img[src*="excellent_auction"]` and its message `<p>`;
+  consumer-only via SP's distance-row hook, because **the B2B decision page has
+  the same insights section and red button**. Prod styles bare `p`/`h3`/`ul`,
+  so the brief's CSS sets every element's own size, leading and margin.
+- **The proto keeps `v1`–`v5` switchable** until Jussi says to clean them up.
+
 ### `v3` — the Nettiauto bar (2026-09-28)
 
 **`v1`'s argument in a different grammar.** `v1` walks a SEQUENCE — offer →
@@ -6817,9 +6879,12 @@ advisor's estimate from the review call, or any later corrected value.
 **THE SECTION TITLE WAS CHANGED, AND THIS OPEN QUESTION IS CLOSED**
 (2026-09-18). Prod's `Tarjouskilpailun tiedot` described a record of what
 happened; the block is an argument about what it meant, so the title undersold
-it. It is `Tarjouskilpailun tulos` now. The rename is NOT arm-gated — `control`
-shows it too — so it is a production copy change to carry into the ticket rather
-than part of the arm.
+it. It is `Tarjouskilpailun tulos` now. **Since 2026-11-18 the rename IS
+arm-gated**: `#insights-title` reads `tulos` only where the result block renders
+(`idShow` and at least `VERDICT_MIN_BIDDERS` bidders) and prod's `tiedot`
+(`auction.auction_insights`) everywhere else, `control` and `v6` included. It had
+been shown in `control` too, which broke the mirror-prod rule; the 11/2026 VWO
+test brief also changes the title only in its variant.
 
 **Heights, desktop / 375px:** advice **194 / 194** collapsed, reminders
 **264 / 524**, options **259 / 543**, auction details **457 / 535**. The three

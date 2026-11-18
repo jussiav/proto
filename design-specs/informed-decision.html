@@ -100,6 +100,31 @@
       .verdict-topline { flex-direction: row-reverse; align-items: flex-start; gap: .75rem; }
       .verdict-topline > h3 { flex: 1 1 auto; min-width: 0; }
     }
+
+    /* Build brief, archive and the variant 6 replicas. */
+    .av-band-build   { background: #eef2f7; }
+    .av-band-archive { background: #e5e7eb; }
+    .av-gloss { font-family: "DM Sans", sans-serif; font-size: 0.875rem; line-height: 1.6; color: #64748B; margin: 0.25rem 0 0; }
+    .av-code { background: #0f172a; color: #e2e8f0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; line-height: 1.6; padding: 1rem 1.25rem; border-radius: 0.5rem; overflow-x: auto; white-space: pre; margin: 0; }
+    .av-archive-item > summary { cursor: pointer; list-style: none; }
+    .av-archive-item > summary::-webkit-details-marker { display: none; }
+    .av-archive-item[open] > summary .av-caret { transform: rotate(180deg); }
+    .nt6-grid { display: grid; gap: 20px; }
+    .nt6-text { display: flex; flex-direction: column; gap: 16px; }
+    @media (min-width: 768px) { .nt6-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
+    .nt6-checks { display: grid; gap: 8px; }
+    .nt6-checks li { display: flex; align-items: flex-start; gap: 8px; }
+    .nt6-checks svg { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; color: #0B6DFF; }
+    .nt6-example { display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 8px; background: #F1F5F9; }
+    .nt6-bar { display: flex; height: 36px; border-radius: 6px; overflow: hidden; }
+    .nt6-seg { display: flex; align-items: center; justify-content: center; padding: 0 10px; white-space: nowrap; }
+    .nt6-seg--offer { flex: 1 1 auto; background: #0B6DFF; color: #fff; }
+    .nt6-seg--costs { flex: 0 0 auto; min-width: 25%; background: #CBD5E1; color: #1E293B; }
+    .nt6-legend { display: grid; gap: 6px; }
+    .nt6-legend li { display: flex; align-items: flex-start; gap: 8px; }
+    .nt6-key { width: 12px; height: 12px; margin-top: 4px; flex-shrink: 0; border-radius: 2px; }
+    .nt6-key--offer { background: #0B6DFF; }
+    .nt6-key--costs { background: #CBD5E1; box-shadow: inset 0 0 0 1px #94A3B8; }
   </style>
 </head>
 <body class="font-body text-slate-900" style="background:#f5f5f5">
@@ -110,17 +135,17 @@
       <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
            class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
       <div class="flex flex-col gap-4">
-        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Ideation &middot; decision page</p>
-        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Informed decision</h1>
-        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">A seller with a good offer in hand still hesitates. This initiative rebuilds the decision page&rsquo;s <b class="text-white">Tarjouskilpailun tulos</b> block so it reads the auction result back as an answer: <i>&ldquo;Paras hinta autostasi on nyt selvill&auml;!&rdquo;</i> That block is the only part ready for development.</p>
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">VWO A/B test &middot; decision page</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Informed decision: your offer vs. a Nettiauto asking price</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">Some sellers compare their offer with prices on Nettiauto. Those are dealerships&rsquo; <b class="text-white">asking prices</b>, not what a seller was paid. Variant 6 explains the difference on the decision page, with an example calculation, and is built as a <b class="text-white">VWO front-end A/B test</b> against production.</p>
       </div>
       <div class="flex flex-wrap gap-2 font-dm text-xs">
         <span class="bg-warning-100 text-warning-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
           <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
-          Ready for dev: change 1 only &middot; copy approved
+          Next step: VWO A/B test &middot; production vs. variant 6
         </span>
-        <span class="bg-white/90 text-slate-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">Changes 2 and 3: out of scope</span>
-        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">September 2026</span>
+        <span class="bg-white/90 text-slate-800 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">Variants 1&ndash;5: earlier work, not in this test</span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">November 2026</span>
       </div>
     </div>
     <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -130,9 +155,414 @@
 
   <main>
 
-    <!-- Read this first -->
     <section class="av-band av-band-grey">
-      <div class="av-container flex flex-col gap-6">
+      <div class="av-container">
+      <div class="bg-white rounded-lg border-2 border-av-blue p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+        <p class="text-xs font-bold uppercase tracking-wide text-av-blue mb-2">How to read this page</p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><b>For the team:</b> part 1 (<a class="text-av-blue underline" href="#summary">summary</a>, <a class="text-av-blue underline" href="#design">the design</a>, <a class="text-av-blue underline" href="#who">who sees it</a>, <a class="text-av-blue underline" href="#questions">open questions</a>).</li>
+          <li><b>To build the test</b> (a developer, or Claude Code pointed at this page): <a class="text-av-blue underline" href="#build">part 2, the build brief</a>. <b>Build it as a VWO front-end A/B test</b>, production against variant 6, with no change to the codebase. Build only from part 2; part 1 is context.</li>
+          <li><b>Not part of this test:</b> <a class="text-av-blue underline" href="#archive">part 3, earlier work</a> (variants 1&ndash;5 and the reasoning behind them). Kept for reference only. Do not build from it.</li>
+        </ul>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="summary">
+      <div class="av-container">
+      <p class="font-dm text-xs font-bold uppercase tracking-widest text-slate-500 mb-2">Part 1 &middot; for the team</p>
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Summary</h2>
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">What it is</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>When an auction ends, some sellers compare their offer with prices on Nettiauto.</b> Those are dealerships&rsquo; asking prices, which include the dealership&rsquo;s costs, margin and room for haggling. They are not what a seller was paid for a car.</li>
+            <li><b>Variant 6 explains the difference at the moment of decision:</b> a section on the decision page with an example calculation, and a short note under the warm-up card a first-time visitor sees.</li>
+            <li><b>It is a VWO front-end A/B test:</b> production against variant 6. Nothing in the codebase changes.</li>
+            <li><b>Shown to every seller who can still reject the auction</b>, whatever their offer. There is no fair-offer condition.</li>
+          </ul>
+          <p class="mt-4"><a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;informed-decision=v6" target="_blank" rel="noopener">Variant 6 in the prototype</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=new-offers&amp;informed-decision=v6" target="_blank" rel="noopener">its warm-up</a> &middot; <a class="text-av-blue underline font-medium" href="../decision.html?scenario=seen-offers&amp;informed-decision=control" target="_blank" rel="noopener">production</a></p>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Hypothesis</p>
+          <p>Explaining the difference between a Nettiauto asking price and an AutoVex offer, where the seller decides, reduces the disappointment that comes from comparing the two, and so increases offer acceptance.</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3 mt-4">Antithesis</p>
+          <p>Naming Nettiauto may send sellers who would not have compared to go and compare, which could lower acceptance.</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3 mt-4">Background</p>
+          <p>A first version of this test ran in VWO in September 2026, as light-blue info boxes inside the auction-details card. It was stopped early because its results could not yet be measured reliably. This version keeps that test&rsquo;s content and gives it the decision page&rsquo;s own styling: a section of its own, like the other sections on the page.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="design">
+      <div class="av-container flex flex-col gap-8">
+        <div class="max-w-3xl">
+          <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">The design</h2>
+          <ul class="font-dm text-base leading-6 text-slate-700 list-disc pl-5 space-y-2">
+            <li><b>Decision page:</b> a section of its own directly after the auction-details section, with production&rsquo;s section heading (icon <code class="font-mono text-sm">ph-bold-info</code>) over a white card, the same family as the auction details, Similar cars and Seller protection blocks. Because it is its own section, it works beside either version of the auction-details card.</li>
+            <li><b>Card:</b> from 768px two equal halves, as the Seller protection card: the text and two check rows on the left, top-aligned; the example on a slate panel on the right. Below 768px the halves stack, text first.</li>
+            <li><b>Example:</b> an illustrative asking price of 15&nbsp;000&nbsp;&euro; as a bar: the purchase part in blue, costs, margin and room for haggling in grey. Blue, not the page&rsquo;s accept green, because the figures are not the seller&rsquo;s money; the footnote says they are not about the seller&rsquo;s car.</li>
+            <li><b>Warm-up screen:</b> a note card under the &ldquo;Hyvä tarjouskilpailu takana!&rdquo; card, and the card&rsquo;s message drops <i>koko</i> to give the note room. Below 768px the card drops its illustration, so the card and the note fit on one 375&times;667 screen.</li>
+            <li><b>Copy</b> follows the C2B terminology table: an offer is never called <i>hinta</i>, and a dealership&rsquo;s listing price is <i>pyyntihinta</i>, which says it is open to negotiation rather than a final sale price.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-barlow font-bold text-xl mb-3">Decision page section</h3>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-4 max-w-3xl">The prototype&rsquo;s markup at the width it renders on the decision page.</p>
+          <div class="rounded-xl p-6 max-w-3xl" style="background:#EEF6FA">
+            <section>
+              <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+                <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/></svg>
+                <span class="text-blue-900 leading-[24px]">Tarjouksesi vs. Nettiauton pyyntihinta</span>
+              </h2>
+              <div class="w-full p-5 bg-white rounded-xl">
+                <div class="nt6-grid">
+                  <div class="nt6-text">
+                    <p class="font-dm text-base text-slate-700">Nettiautossa näkyvä <b class="text-slate-900">pyyntihinta</b> ei ole sama asia kuin saamasi tarjous.</p>
+                    <ul class="nt6-checks font-dm text-sm text-slate-700">
+                      <li><svg viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span>AutoVex-tarjouksesi on kilpailutettu summa, jonka autoliike on valmis maksamaan sinulle autostasi.</span></li>
+                      <li><svg viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg><span>Pyyntihintaan sisältyvät autoliikkeen kulut, kate ja tinkimisvara.</span></li>
+                    </ul>
+                  </div>
+                  <div class="nt6-example font-dm">
+                    <p class="text-sm font-bold text-slate-800">Esimerkki pyyntihinnasta: 15&nbsp;000&nbsp;€</p>
+                    <p class="nt6-bar text-sm font-bold"><span class="nt6-seg nt6-seg--offer">12&nbsp;000&nbsp;€</span><span class="sr-only"> + </span><span class="nt6-seg nt6-seg--costs">n.&nbsp;3&nbsp;000&nbsp;€</span></p>
+                    <ul class="nt6-legend text-sm text-slate-700">
+                      <li><span class="nt6-key nt6-key--offer" aria-hidden="true"></span><span><b class="text-slate-900">Sisäänosto:</b> maksetaan myyjälle</span></li>
+                      <li><span class="nt6-key nt6-key--costs" aria-hidden="true"></span><span><b class="text-slate-900">Kulut, kate ja tinkimisvara:</b> sisällytetään pyyntihintaan</span></li>
+                    </ul>
+                    <p class="text-xs text-slate-600">*Esimerkkilaskelma. Luvut eivät liity autoosi.</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3 max-w-3xl">EN &mdash; <i>Your offer vs. a Nettiauto asking price. The asking price shown on Nettiauto is not the same thing as the offer you received. Your AutoVex offer is an amount set by competition, which the dealership is ready to pay you for your car. An asking price includes the dealership&rsquo;s costs, margin and room for haggling. An example asking price: &euro;15,000 = &euro;12,000 purchase (paid to the seller) + approx. &euro;3,000 costs, margin and room for haggling (included in the asking price). *An example calculation. The figures are not about your car.</i> A reading aid, not copy.</p>
+        </div>
+        <div>
+          <h3 class="font-barlow font-bold text-xl mb-3">Warm-up screen</h3>
+          <p class="font-dm text-base leading-6 text-slate-700 mb-4 max-w-3xl">Production&rsquo;s warm-up card with variant 6&rsquo;s message, and the note under it. Desktop width; below 768px the illustration is hidden.</p>
+          <div class="rounded-xl p-6 max-w-3xl" style="background:#EEF6FA">
+            <div class="relative bg-white px-4 pt-4 pb-[20px] shadow-md rounded-xl">
+              <div class="w-full flex flex-col md:flex-row items-center md:items-stretch md:gap-4">
+                <div class="w-full md:w-1/2 h-[270px] md:h-full px-5 md:px-0 flex justify-center items-center mb-6 md:mb-0 py-4">
+                  <img src="../assets/excellent_auction.png" alt="" class="max-h-full object-contain" />
+                </div>
+                <div class="w-full md:w-1/2 flex flex-col items-center justify-center text-center px-2.5">
+                  <div class="inline-flex items-center space-x-2 px-2 py-1 text-xs rounded border bg-lime-50 border-lime-400"><span class="text-lime-700">Tarjouskilpailu on päättynyt</span></div>
+                  <h2 class="font-display text-3xl font-bold mt-2" style="font-size:28px;line-height:36px;color:#000">Hyvä tarjouskilpailu takana!</h2>
+                  <p class="text-black text-base px-2.5 mb-6 mt-1">Autosi kävi läpi tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.</p>
+                  <span class="w-full md:w-auto inline-flex items-center justify-center px-6 h-12 rounded-lg bg-blue-600 text-white text-base font-medium">Katso tulokset</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 p-5 bg-white rounded-xl shadow-md">
+              <div class="flex items-start gap-3">
+                <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0 mt-1" aria-hidden="true"><path d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/></svg>
+                <div class="flex-1 min-w-0">
+                  <h3 class="font-display text-xl font-bold leading-snug text-black">Vertailetko tarjouksia Nettiauton hintoihin?</h3>
+                  <p class="font-dm text-sm text-slate-700 mt-1">Saamasi tarjous on summa, jonka autoliike on valmis maksamaan autostasi. Nettiauton pyyntihinta ei ole sama kuin myyjälle maksettu summa.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="font-dm text-xs text-slate-500 mt-3 max-w-3xl">EN &mdash; card: <i>Your car went through the auction and reached a network of hundreds of dealerships.</i> Note: <i>Comparing your offers to Nettiauto prices? Your offer is the amount the dealership is ready to pay for your car. A Nettiauto asking price is not the same as the amount paid to the seller.</i></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="who">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Who sees it</h2>
+      <p class="font-dm text-base leading-6 text-slate-700 mb-4 max-w-3xl"><b>The section shows whenever the red &ldquo;Hylkää tarjouskilpailu&rdquo; button is on the page</b>, which is what the first version of this test keyed on. <b>The warm-up note shows on the &ldquo;Hyvä tarjouskilpailu takana!&rdquo; card</b>, the one a first-time visitor with offers sees. Consumer sellers only. Each state links to the prototype.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-4xl"><table class="w-full font-dm text-sm text-left">
+        <thead><tr class="border-b border-slate-200"><th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-slate-500">Decision page state</th><th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-slate-500">Warm-up note</th><th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-slate-500">Section</th><th class="px-4 py-3 text-xs font-medium uppercase tracking-wide text-slate-500">Why</th></tr></thead>
+        <tbody class="divide-y divide-slate-100">
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=new-offers&amp;informed-decision=v6" target="_blank" rel="noopener">First visit, offers waiting</a></td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-success-100 text-success-800">Shown</span></td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-success-100 text-success-800">Shown</span></td><td class="px-4 py-3 align-top text-slate-700">Shown on the warm-up card (&ldquo;Hyvä tarjouskilpailu takana!&rdquo;); the section appears after &ldquo;Katso tulokset&rdquo;.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=seen-offers&amp;informed-decision=v6" target="_blank" rel="noopener">Offers seen, waiting for a decision</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-success-100 text-success-800">Shown</span></td><td class="px-4 py-3 align-top text-slate-700">The red &ldquo;Hylkää tarjouskilpailu&rdquo; button is on the page.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=final-offer&amp;informed-decision=v6" target="_blank" rel="noopener">Final offer</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-success-100 text-success-800">Shown</span></td><td class="px-4 py-3 align-top text-slate-700">The final offer can still be accepted or rejected.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=dealer-replied&amp;informed-decision=v6" target="_blank" rel="noopener">Dealership replied to the counter offer</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-success-100 text-success-800">Shown</span></td><td class="px-4 py-3 align-top text-slate-700">The red button is back once the dealership has replied.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=negotiation-stopped&amp;informed-decision=v6" target="_blank" rel="noopener">Dealership closed the negotiation</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-success-100 text-success-800">Shown</span></td><td class="px-4 py-3 align-top text-slate-700">The standing offer can still be accepted or rejected.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=counter-offer-sent&amp;informed-decision=v6" target="_blank" rel="noopener">Counter offer sent, waiting for the dealership</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">Production hides the red button while it waits for the dealership.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=no-offers&amp;informed-decision=v6" target="_blank" rel="noopener">No offers</a></td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">No red button. The warm-up card is a different one.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=offers-expired-unseen&amp;informed-decision=v6" target="_blank" rel="noopener">Offers expired</a></td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">No red button. The warm-up card is a different one.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=offers-auto-rejected&amp;informed-decision=v6" target="_blank" rel="noopener">Offers expired and rejected automatically</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">No red button.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=all-rejected&amp;informed-decision=v6" target="_blank" rel="noopener">Seller rejected all offers</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">No red button.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=deal-failed&amp;informed-decision=v6" target="_blank" rel="noopener">Ended without a deal</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">No red button.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;informed-decision=v6" target="_blank" rel="noopener">Offer accepted</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">No red button.</td></tr>
+        <tr><td class="px-4 py-3 align-top text-slate-900"><a class="text-av-blue underline" href="../decision.html?scenario=deal-completed&amp;informed-decision=v6" target="_blank" rel="noopener">Deal completed</a></td><td class="px-4 py-3 align-top whitespace-nowrap">&mdash;</td><td class="px-4 py-3 align-top whitespace-nowrap"><span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-bold bg-slate-100 text-slate-600">Hidden</span></td><td class="px-4 py-3 align-top text-slate-700">No red button.</td></tr>
+        </tbody></table></div>
+      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">&mdash; means the seller has no warm-up screen in that state.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="questions">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <ol class="font-dm text-base leading-6 text-slate-700 list-decimal pl-5 space-y-3 max-w-3xl">
+        <li><b>Running beside the auction-result test.</b> The redesigned auction-details block (variant 5 in part 3) has a VWO test of its own. Both change the decision page. Variant 6 works beside either version of that block; decide in VWO whether the two tests run at the same time in mutually exclusive groups, or one after the other, so their results do not mix.</li>
+        <li><b>Traffic split</b> between production and variant 6.</li>
+        <li><b>Naming Nettiauto in seller-facing copy.</b> The September test named it too. Confirm it still has the go-ahead.</li>
+      </ol>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build" id="build">
+      <div class="av-container">
+      <p class="font-dm text-xs font-bold uppercase tracking-widest text-av-blue mb-2">Part 2 &middot; build brief</p>
+      <h2 class="font-barlow font-bold text-black text-3xl md:text-4xl leading-tight mb-4">Build a VWO front-end A/B test</h2>
+      <p class="font-dm text-sm leading-6 text-slate-800 max-w-3xl">Everything needed to build the test is in this part. <b>Build it in VWO as custom JavaScript and CSS, not in the codebase.</b> The markup and CSS in B5 are the design: use them as written. Part 3 of this page is not part of this test.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B1 &mdash; What to build</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>One VWO front-end A/B test, two arms.</b> Control: the page as it is. Variant 6: the two changes below, as one variation&rsquo;s custom JavaScript and CSS. Name the variation &ldquo;Variant 6&rdquo; so results map to this page.</li>
+        <li><b>Change 1, decision page:</b> a new section after the auction-details section (B2, B5).</li>
+        <li><b>Change 2, warm-up screen:</b> a note under the warm-up card, the card&rsquo;s message shortened, and below 768px the card&rsquo;s illustration hidden (B2, B5).</li>
+        <li><b>No backend, Vue or stylesheet changes</b> in the codebase. Nothing is stored. No fair-offer or price condition: the variant never reads the seller&rsquo;s offer.</li>
+        <li><b>One page:</b> the consumer seller&rsquo;s decision page. Finnish only: do nothing when the page&rsquo;s <code>&lt;html lang&gt;</code> starts with <code>en</code>.</li>
+        <li><b>Audience:</b> every visitor of that page. The variant acts only when the hooks in B2 match, so a B2B seller on the same URL sees nothing.</li>
+        <li><b>Variants 1&ndash;5</b> in part 3 are not part of this test.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B2 &mdash; Where it goes and when</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl mb-5">
+        <li><b>URL:</b> <code>https://autovex.fi/decision/&lt;tender request id&gt;</code> (route <code>user.offers.decision</code>; logged-in sellers). Target <code>/decision/*</code>.</li>
+        <li><b>The page is a single-page app.</b> It mounts after load, swaps the warm-up for the offers when the seller presses &ldquo;Katso tulokset&rdquo;, and re-renders after every action. Watch the DOM (a <code>MutationObserver</code> on <code>body</code>), keep both elements in step, never insert twice, and remove an element when its condition stops holding.</li>
+        <li><b>Consumer seller only:</b> act only when at least one consumer offer card is on the page, found by its distance row (&ldquo;15 km (Helsinki)&rdquo;): <code>div.rounded-b-lg div.flex.text-xs.text-left.mb-4</code>. The B2B decision page has the same auction-details section and red button but no such row. The warm-up is consumer-only already.</li>
+        <li><b>Change 1, when:</b> a <code>&lt;button&gt;</code> whose trimmed text is exactly &ldquo;Hylkää tarjouskilpailu&rdquo; is on the page. Production renders it while a decision is open and hides it after accepting or rejecting, with no or expired offers, and while the seller waits for a dealership&rsquo;s reply to a counter offer. Do not read the auction or offer status; this one rule is the condition.</li>
+        <li><b>Change 1, where:</b> as the next sibling of the auction-details <code>&lt;section&gt;</code>: the <code>&lt;section&gt;</code> whose <code>&lt;h2&gt;</code> text is &ldquo;Tarjouskilpailun tiedot&rdquo;, or &ldquo;Tarjouskilpailun tulos&rdquo; when the auction-result test has renamed it. The page grid puts 48px between sections.</li>
+        <li><b>Change 2, when and where:</b> the warm-up card whose <code>&lt;img&gt;</code> <code>src</code> contains <code>excellent_auction</code> (production&rsquo;s &ldquo;Hyvä tarjouskilpailu takana!&rdquo; card; the other warm-up cards use other images). Insert the note as the next sibling of that card, inside the warm-up wrapper; it goes away with the wrapper when the seller presses &ldquo;Katso tulokset&rdquo;. Add <code>av-nt6-media</code> to the image&rsquo;s parent <code>&lt;div&gt;</code>, add <code>av-nt6-msg</code> to the card&rsquo;s message <code>&lt;p&gt;</code> and set its text (B4).</li>
+      </ul>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-3xl"><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Production DOM of the decision page (C2BDecision.vue, WarmUpCard.vue, Section.vue), trimmed</p><pre class="av-code">&lt;main class="max-w-[768px] mx-auto p-6 sm:py-14"&gt;
+
+  &lt;!-- First visit (offers not seen yet): the warm-up --&gt;
+  &lt;div class="flex flex-col justify-center md:h-[700px] my-auto"&gt;             &lt;- warm-up wrapper
+    &lt;div class="relative bg-white px-4 pt-4 pb-[20px] shadow-md rounded-xl h-auto"&gt;   &lt;- warm-up card
+      &lt;div class="w-full flex flex-col md:flex-row items-center md:items-stretch md:gap-4"&gt;
+        &lt;div class="w-full md:w-1/2 h-[270px] md:h-full px-5 md:px-0 … py-4"&gt;  &lt;- add av-nt6-media
+          &lt;img src="…excellent_auction….png" alt="Auction results"&gt;       &lt;- the card to act on
+        &lt;/div&gt;
+        &lt;div class="w-full md:w-1/2 flex flex-col items-center justify-center text-center px-2.5"&gt;
+          &lt;!-- badge: Tarjouskilpailu on päättynyt --&gt;
+          &lt;h2 class="text-3xl font-bold mt-2 lg:leading-6"&gt;Hyvä tarjouskilpailu takana!&lt;/h2&gt;
+          &lt;p class="text-black text-base px-2.5 mb-16 md:mb-6 mt-1"&gt;Autosi kävi läpi koko …&lt;/p&gt;   &lt;- add av-nt6-msg, set text
+          &lt;button …&gt;Katso tulokset&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;!-- variant 6: insert #av-nt6-warmup here --&gt;
+  &lt;/div&gt;
+
+  &lt;!-- After "Katso tulokset", or on a return visit --&gt;
+  &lt;div class="grid gap-y-12 relative z-10"&gt;
+    &lt;section&gt;… hero and offer cards …&lt;/section&gt;
+    &lt;section&gt;                                                             &lt;- auction details
+      &lt;h2 class="flex space-x-2.5 mb-5 items-center text-xl"&gt;
+        &lt;svg …/&gt;&lt;span class="text-blue-900 leading-3"&gt;Tarjouskilpailun tiedot&lt;/span&gt;
+      &lt;/h2&gt;
+      …
+    &lt;/section&gt;
+    &lt;!-- variant 6: insert section#av-nt6 here --&gt;
+    &lt;section&gt;&lt;!-- help banner --&gt; … &lt;button …&gt;Hylkää tarjouskilpailu&lt;/button&gt; …&lt;/section&gt;
+    &lt;section&gt;… Usein kysytyt kysymykset …&lt;/section&gt;
+  &lt;/div&gt;
+&lt;/main&gt;</pre></div>
+      <p class="font-dm text-sm leading-6 text-slate-800 mt-5 max-w-3xl">The <a class="text-av-blue underline" href="#who">state table in part 1</a> is a consequence of these rules, not a second condition. Each row links to the prototype.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build" id="build-copy">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B3 &mdash; Copy</h3>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto max-w-3xl"><table class="w-full font-dm text-sm text-left"><tbody class="divide-y divide-slate-100">
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Section title</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Tarjouksesi vs. Nettiauton pyyntihinta</span><div class="av-gloss">Your offer vs. a Nettiauto asking price</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Body</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Nettiautossa näkyvä <b>pyyntihinta</b> ei ole sama asia kuin saamasi tarjous.</span><div class="av-gloss">The asking price shown on Nettiauto is not the same thing as the offer you received. (&ldquo;pyyntihinta&rdquo; in bold)</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Check 1</td><td class="px-4 py-3 align-top"><span class="text-slate-900">AutoVex-tarjouksesi on kilpailutettu summa, jonka autoliike on valmis maksamaan sinulle autostasi.</span><div class="av-gloss">Your AutoVex offer is an amount set by competition, which the dealership is ready to pay you for your car.</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Check 2</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Pyyntihintaan sisältyvät autoliikkeen kulut, kate ja tinkimisvara.</span><div class="av-gloss">An asking price includes the dealership&rsquo;s costs, margin and room for haggling.</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Example caption</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Esimerkki pyyntihinnasta: 15&nbsp;000&nbsp;€</span><div class="av-gloss">An example asking price: €15,000</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Bar, blue part</td><td class="px-4 py-3 align-top"><span class="text-slate-900">12&nbsp;000&nbsp;€</span><div class="av-gloss">€12,000</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Bar, grey part</td><td class="px-4 py-3 align-top"><span class="text-slate-900">n.&nbsp;3&nbsp;000&nbsp;€</span><div class="av-gloss">approx. €3,000</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Legend 1</td><td class="px-4 py-3 align-top"><span class="text-slate-900"><b>Sisäänosto:</b> maksetaan myyjälle</span><div class="av-gloss">Purchase: paid to the seller (&ldquo;Sisäänosto:&rdquo; in bold)</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Legend 2</td><td class="px-4 py-3 align-top"><span class="text-slate-900"><b>Kulut, kate ja tinkimisvara:</b> sisällytetään pyyntihintaan</span><div class="av-gloss">Costs, margin and room for haggling: included in the asking price (label in bold)</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Footnote</td><td class="px-4 py-3 align-top"><span class="text-slate-900">*Esimerkkilaskelma. Luvut eivät liity autoosi.</span><div class="av-gloss">*An example calculation. The figures are not about your car.</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Warm-up card message (replaces production&rsquo;s)</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Autosi kävi läpi tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.</span><div class="av-gloss">Your car went through the auction and reached a network of hundreds of dealerships. (Production says &ldquo;koko tarjouskilpailun&rdquo;; &ldquo;koko&rdquo; goes.)</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Warm-up note title</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Vertailetko tarjouksia Nettiauton hintoihin?</span><div class="av-gloss">Comparing your offers to Nettiauto prices?</div></td></tr>
+        <tr><td class="px-4 py-3 text-slate-500 align-top">Warm-up note body</td><td class="px-4 py-3 align-top"><span class="text-slate-900">Saamasi tarjous on summa, jonka autoliike on valmis maksamaan autostasi. Nettiauton pyyntihinta ei ole sama kuin myyjälle maksettu summa.</span><div class="av-gloss">Your offer is the amount the dealership is ready to pay for your car. A Nettiauto asking price is not the same as the amount paid to the seller.</div></td></tr>
+      </tbody></table></div>
+      <p class="font-dm text-sm text-slate-600 mt-3 max-w-3xl">Copy from UX, 18 November 2026. Use it exactly as written. The grey lines are English glosses for reading; do not render them. Euro amounts use a non-breaking space before &euro; and inside the number.</p>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B4 &mdash; Behaviour</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>Decision page section:</b> inserted while the B2 condition holds, removed when it stops (for example after the seller accepts, rejects or sends a counter offer), and put back when it holds again (for example when the dealership replies). Static: it reads nothing from the page or the store.</li>
+        <li><b>Warm-up:</b> the card&rsquo;s message <code>&lt;p&gt;</code> text becomes &ldquo;Autosi kävi läpi tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.&rdquo;; the note is inserted under the card. Below 768px the illustration is hidden and the gap under the message is 16px instead of production&rsquo;s 64px.</li>
+        <li><b>No interaction:</b> nothing in either element is clickable.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build" id="build-markup">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B5 &mdash; Markup and CSS</h3>
+      <p class="font-dm text-sm leading-6 text-slate-800 mb-4 max-w-3xl">Inject the CSS once as a <code>&lt;style&gt;</code> element and the markup as described in B2. Icons are production&rsquo;s own sprite icons, inlined: <code>ph-bold-info</code> (section heading and note) and <code>check-bold</code> (check rows), from <code>resources/assets/icons/</code>.</p>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-4xl mb-5"><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Markup</p><pre class="av-code">&lt;!-- 1. Decision page: insert as the next sibling of the auction-details &lt;section&gt;.
+     The heading and the white card reuse production's own Section markup and
+     classes, so they match the sections around it exactly. --&gt;
+&lt;section id="av-nt6"&gt;
+  &lt;h2 class="flex space-x-2.5 mb-5 items-center text-xl"&gt;
+    &lt;svg class="av-nt6-icon" viewBox="0 0 256 256" aria-hidden="true"&gt;&lt;path d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/&gt;&lt;/svg&gt;
+    &lt;span class="text-blue-900 leading-3"&gt;Tarjouksesi vs. Nettiauton pyyntihinta&lt;/span&gt;
+  &lt;/h2&gt;
+  &lt;div class="container mx-auto"&gt;&lt;div&gt;
+    &lt;div class="w-full p-5 bg-white rounded-xl"&gt;
+      &lt;div class="av-nt6-grid"&gt;
+        &lt;div class="av-nt6-text"&gt;
+          &lt;p class="av-nt6-body"&gt;Nettiautossa näkyvä &lt;b&gt;pyyntihinta&lt;/b&gt; ei ole sama asia kuin saamasi tarjous.&lt;/p&gt;
+          &lt;ul class="av-nt6-checks"&gt;
+            &lt;li&gt;&lt;svg viewBox="0 0 17 17" aria-hidden="true"&gt;&lt;path d="CHECK_PATH"/&gt;&lt;/svg&gt;&lt;span&gt;AutoVex-tarjouksesi on kilpailutettu summa, jonka autoliike on valmis maksamaan sinulle autostasi.&lt;/span&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;svg viewBox="0 0 17 17" aria-hidden="true"&gt;&lt;path d="CHECK_PATH"/&gt;&lt;/svg&gt;&lt;span&gt;Pyyntihintaan sisältyvät autoliikkeen kulut, kate ja tinkimisvara.&lt;/span&gt;&lt;/li&gt;
+          &lt;/ul&gt;
+        &lt;/div&gt;
+        &lt;div class="av-nt6-example"&gt;
+          &lt;p class="av-nt6-caption"&gt;Esimerkki pyyntihinnasta: 15 000 €&lt;/p&gt;
+          &lt;p class="av-nt6-bar"&gt;&lt;span class="av-nt6-seg av-nt6-seg--offer"&gt;12 000 €&lt;/span&gt;&lt;span class="av-nt6-sr"&gt; + &lt;/span&gt;&lt;span class="av-nt6-seg av-nt6-seg--costs"&gt;n. 3 000 €&lt;/span&gt;&lt;/p&gt;
+          &lt;ul class="av-nt6-legend"&gt;
+            &lt;li&gt;&lt;span class="av-nt6-key av-nt6-key--offer" aria-hidden="true"&gt;&lt;/span&gt;&lt;span&gt;&lt;b&gt;Sisäänosto:&lt;/b&gt; maksetaan myyjälle&lt;/span&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;span class="av-nt6-key av-nt6-key--costs" aria-hidden="true"&gt;&lt;/span&gt;&lt;span&gt;&lt;b&gt;Kulut, kate ja tinkimisvara:&lt;/b&gt; sisällytetään pyyntihintaan&lt;/span&gt;&lt;/li&gt;
+          &lt;/ul&gt;
+          &lt;p class="av-nt6-footnote"&gt;*Esimerkkilaskelma. Luvut eivät liity autoosi.&lt;/p&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;&lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- 2. Warm-up: insert as the next sibling of the warm-up card, inside the
+     warm-up wrapper. Also add class av-nt6-media to the image's parent &lt;div&gt;
+     and av-nt6-msg to the card's message &lt;p&gt;, and set that &lt;p&gt;'s text. --&gt;
+&lt;div id="av-nt6-warmup"&gt;
+  &lt;svg class="av-nt6-icon av-nt6-wicon" viewBox="0 0 256 256" aria-hidden="true"&gt;&lt;path d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/&gt;&lt;/svg&gt;
+  &lt;div&gt;
+    &lt;h3 class="av-nt6-wtitle"&gt;Vertailetko tarjouksia Nettiauton hintoihin?&lt;/h3&gt;
+    &lt;p class="av-nt6-wbody"&gt;Saamasi tarjous on summa, jonka autoliike on valmis maksamaan autostasi. Nettiauton pyyntihinta ei ole sama kuin myyjälle maksettu summa.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- CHECK_PATH, check-bold.svg from production's icon sprite:
+M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z --&gt;</pre></div>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 max-w-4xl"><p class="font-dm text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">CSS</p><pre class="av-code">/* Production styles the bare &lt;p&gt;, &lt;h3&gt;, &lt;ul&gt; and &lt;b&gt; elements (size, margin,
+   leading), so every element below sets its own. Fonts are production's own:
+   Barlow and DM Sans are already loaded on the page. */
+#av-nt6 .av-nt6-icon { width: 1.25em; height: 1.25em; flex-shrink: 0; fill: currentColor; color: #2890FF; }
+#av-nt6 .av-nt6-grid { display: grid; gap: 20px; }
+#av-nt6 .av-nt6-text { display: flex; flex-direction: column; gap: 16px; }
+#av-nt6 .av-nt6-body { margin: 0; font-family: "DM Sans", sans-serif; font-size: 16px; line-height: 24px; font-weight: 400; color: #334155; }
+#av-nt6 .av-nt6-body b { font-weight: 700; color: #0F172A; }
+#av-nt6 .av-nt6-checks { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; font-family: "DM Sans", sans-serif; font-size: 14px; line-height: 20px; color: #334155; }
+#av-nt6 .av-nt6-checks li { display: flex; align-items: flex-start; gap: 8px; margin: 0; }
+#av-nt6 .av-nt6-checks svg { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; fill: currentColor; color: #0B6DFF; }
+#av-nt6 .av-nt6-example { display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 8px; background: #F1F5F9; font-family: "DM Sans", sans-serif; }
+#av-nt6 .av-nt6-caption { margin: 0; font-size: 14px; line-height: 20px; font-weight: 700; color: #1E293B; }
+#av-nt6 .av-nt6-bar { display: flex; height: 36px; margin: 0; border-radius: 6px; overflow: hidden; font-size: 14px; line-height: 20px; font-weight: 700; }
+#av-nt6 .av-nt6-seg { display: flex; align-items: center; justify-content: center; padding: 0 10px; white-space: nowrap; }
+#av-nt6 .av-nt6-seg--offer { flex: 1 1 auto; background: #0B6DFF; color: #FFFFFF; }   /* 4.52:1 */
+#av-nt6 .av-nt6-seg--costs { flex: 0 0 auto; min-width: 25%; background: #CBD5E1; color: #1E293B; }
+#av-nt6 .av-nt6-legend { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 14px; line-height: 20px; color: #334155; }
+#av-nt6 .av-nt6-legend li { display: flex; align-items: flex-start; gap: 8px; margin: 0; }
+#av-nt6 .av-nt6-legend b { font-weight: 700; color: #0F172A; }
+#av-nt6 .av-nt6-key { width: 12px; height: 12px; margin-top: 4px; flex-shrink: 0; border-radius: 2px; }
+#av-nt6 .av-nt6-key--offer { background: #0B6DFF; }
+#av-nt6 .av-nt6-key--costs { background: #CBD5E1; box-shadow: inset 0 0 0 1px #94A3B8; }
+#av-nt6 .av-nt6-footnote { margin: 0; font-size: 12px; line-height: 16px; color: #475569; }
+#av-nt6 .av-nt6-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (min-width: 768px) { #av-nt6 .av-nt6-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
+
+#av-nt6-warmup { display: flex; align-items: flex-start; gap: 12px; margin-top: 16px; padding: 20px; border-radius: 12px; background: #FFFFFF; box-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1); text-align: left; }
+#av-nt6-warmup .av-nt6-wicon { width: 20px; height: 20px; margin-top: 4px; flex-shrink: 0; fill: currentColor; color: #2890FF; }
+#av-nt6-warmup .av-nt6-wtitle { margin: 0; font-family: Barlow, sans-serif; font-size: 20px; line-height: 27.5px; font-weight: 700; color: #000000; }
+#av-nt6-warmup .av-nt6-wbody { margin: 4px 0 0; font-family: "DM Sans", sans-serif; font-size: 14px; line-height: 20px; font-weight: 400; color: #334155; }
+@media (max-width: 767px) {
+  .av-nt6-media { display: none !important; }     /* the warm-up illustration */
+  .av-nt6-msg { margin-bottom: 16px !important; } /* production: 64px below 768px */
+  #av-nt6-warmup .av-nt6-wtitle { font-size: 18px; line-height: 24px; }
+}</pre></div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B6 &mdash; Tracking</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>Primary goal, both arms:</b> offer accepted. The app already sends the VWO custom event <code>offerAccepted</code> when the seller confirms acceptance; use it.</li>
+        <li><b>Secondary goals, both arms:</b> <code>allOffersRejected</code> (the seller rejects the auction) and <code>sendNegotiation</code> (a counter offer is sent). Both are already sent by the app.</li>
+        <li><b>The variant sends no events of its own.</b></li>
+        <li><b>Group membership is already recorded.</b> When VWO applies an A/B variation for a logged-in seller, the app stores the seller&rsquo;s arm on their account and keeps them in it on other devices. The decision page needs a login, so every seller in this test is covered. Nothing to build.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B7 &mdash; Do not</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li>Build any of variants 1&ndash;5 from part 3.</li>
+        <li>Change the codebase, or put the block inside the auction-details card.</li>
+        <li>Add a fair-offer or price condition, or put the seller&rsquo;s own offer into the example.</li>
+        <li>Colour the bar green: green means accept on this page.</li>
+        <li>Show anything on another page, for a B2B seller, on a warm-up card other than &ldquo;Hyvä tarjouskilpailu takana!&rdquo;, or while the red button is not on the page.</li>
+        <li>Change the hero, the offer cards, the auction details, the help banner or the FAQ.</li>
+        <li>Store anything, or rewrite the copy, colours or sizes in B3 and B5.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B8 &mdash; Acceptance criteria</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li><b>Control:</b> the page is unchanged.</li>
+        <li><b>Variant 6, decision page:</b> the section sits 48px under the auction-details section whenever the red &ldquo;Hylkää tarjouskilpailu&rdquo; button is on the page, and only then. Every row of the <a class="text-av-blue underline" href="#who">state table</a> matches its Section column. It goes and comes back with the button without a reload, and never appears twice.</li>
+        <li><b>Variant 6, layout:</b> two equal halves 24px apart from 768px, text top-aligned with the panel; stacked below 768px, text first. Heading, icon and card match the sections around it.</li>
+        <li><b>Variant 6, warm-up:</b> on the &ldquo;Hyvä tarjouskilpailu takana!&rdquo; card only, the message reads as in B3 and the note sits 16px under the card. At 375&times;667 the illustration is hidden and the card and the note fit on one screen.</li>
+        <li>Copy, colours and sizes match B3 and B5. No console errors and no horizontal scroll at 360px.</li>
+        <li>The goals in B6 record in VWO for both arms.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-build">
+      <div class="av-container">
+      <h3 class="font-barlow font-bold text-black text-2xl leading-tight mb-4">B9 &mdash; Check against the prototype</h3>
+      <ul class="font-dm text-sm leading-6 text-slate-800 list-disc pl-5 space-y-1.5 max-w-3xl">
+        <li>The prototype draws variant 6 with the same markup and values: <a class="text-av-blue underline" href="../decision.html?scenario=seen-offers&amp;informed-decision=v6" target="_blank" rel="noopener">decision page</a>, <a class="text-av-blue underline" href="../decision.html?scenario=new-offers&amp;informed-decision=v6" target="_blank" rel="noopener">warm-up</a>, <a class="text-av-blue underline" href="../decision.html?scenario=counter-offer-sent&amp;informed-decision=v6" target="_blank" rel="noopener">waiting for the dealership (nothing shown)</a>, <a class="text-av-blue underline" href="../decision.html?scenario=accepted&amp;informed-decision=v6" target="_blank" rel="noopener">accepted (nothing shown)</a>.</li>
+        <li>The live result on production must match: same position, sizes, colours and copy.</li>
+      </ul>
+      </div>
+    </section>
+
+    <section class="av-band av-band-archive" id="archive">
+      <div class="av-container flex flex-col gap-4">
+        <p class="font-dm text-xs font-bold uppercase tracking-widest text-slate-500">Part 3 &middot; earlier work</p>
+        <h2 class="font-barlow font-bold text-slate-800 text-2xl md:text-3xl leading-tight">Not part of the next step</h2>
+        <div class="rounded-lg border-2 border-slate-400 bg-white p-5 max-w-3xl font-dm text-sm leading-6 text-slate-800">
+          <p class="font-bold mb-1">Do not build from this part.</p>
+          <p>These are the variants that came before variant 6 (variants 1&ndash;5 in the prototype) and the reasoning behind them, kept for comparison. They describe the state of the initiative before November 2026; where they say something is ready for development or out of scope, that was true then. The auction-result block (change 1, variant 5) has a VWO test of its own and is not part of this test.</p>
+        </div>
+      <details class="av-archive-item bg-white/70 rounded-lg border border-slate-300 p-5">
+        <summary class="flex items-start justify-between gap-4"><span class="font-barlow font-bold text-xl text-slate-800">Where the initiative stood before variant 6<span class="block font-dm text-sm font-normal text-slate-600 mt-1">Variant 5 marked ready for development; changes 2 and 3 out of scope at the time.</span></span><svg class="av-caret flex-shrink-0 mt-1 text-slate-500 transition-transform" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></summary>
+        <div class="av-container flex flex-col gap-6">
 
         <div class="rounded-xl border-2 border-success-200 bg-success-50 p-6 max-w-3xl">
           <h2 class="font-barlow font-bold text-2xl text-success-900 mb-3">What is ready for development</h2>
@@ -172,11 +602,10 @@
           <p class="font-dm text-base leading-6 text-slate-700 mt-3">Add <code class="font-mono text-sm">&amp;fair=0</code> &mdash; or set <b>Fair offer</b> to <code class="font-mono text-sm">0</code> in the bar&rsquo;s Events &mdash; to see what a seller outside the audience gets, which is production unchanged.</p>
         </div>
       </div>
-    </section>
-
-    <!-- Who sees it -->
-    <section class="av-band" style="background:#fff">
-      <div class="av-container flex flex-col gap-8">
+      </details>
+      <details class="av-archive-item bg-white/70 rounded-lg border border-slate-300 p-5">
+        <summary class="flex items-start justify-between gap-4"><span class="font-barlow font-bold text-xl text-slate-800">Who saw changes 1 and 2: the fair-offer gate<span class="block font-dm text-sm font-normal text-slate-600 mt-1">The audience rule for variants 1&ndash;5.</span></span><svg class="av-caret flex-shrink-0 mt-1 text-slate-500 transition-transform" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></summary>
+        <div class="flex flex-col gap-8 pt-6">
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-3">Who sees it</h2>
           <p class="font-dm text-base leading-6 text-slate-700 mb-3">Both blocks share one condition, so they can never appear apart. A seller sees them when the auction has ended and a decision is still open &mdash; not on an accepted, rejected or expired auction &mdash; <b>and the offer clears the team&rsquo;s fair-offer bar.</b></p>
@@ -189,11 +618,10 @@
           <p class="font-dm text-base leading-6 text-slate-800">The definition of a fair offer is a separate discussion and is not repeated here. The front end already identifies one in production, so this asks for <b>a boolean on the request</b> rather than a threshold the page computes. The prototype does the same &mdash; its scenarios carry the flag and nothing in it calculates one.</p>
         </div>
       </div>
-    </section>
-
-    <!-- Block 1 -->
-    <section class="av-band av-band-grey">
-      <div class="av-container flex flex-col gap-8">
+      </details>
+      <details class="av-archive-item bg-white/70 rounded-lg border border-slate-300 p-5">
+        <summary class="flex items-start justify-between gap-4"><span class="font-barlow font-bold text-xl text-slate-800">Change 1 &mdash; The auction result, as an answer (variant 5)<span class="block font-dm text-sm font-normal text-slate-600 mt-1">Has a VWO test of its own; not part of this test.</span></span><svg class="av-caret flex-shrink-0 mt-1 text-slate-500 transition-transform" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></summary>
+        <div class="flex flex-col gap-8 pt-6">
         <div class="max-w-3xl">
           <h2 id="change-1" class="font-barlow font-bold text-3xl mb-3">1 &mdash; The auction result, as an answer</h2>
           <p class="mb-4"><span class="inline-flex items-center rounded-full bg-success-100 text-success-800 font-dm text-xs font-bold px-3 py-1">Ready for dev &middot; copy approved by Marketing</span></p>
@@ -232,11 +660,10 @@
           <p class="font-dm text-xs text-slate-500 mt-3 max-w-3xl">EN &mdash; heading: <i>The result of the auction.</i> <i>&ldquo;We recommend accepting / The best price for your car is now known! 25 dealerships studied your car and competed over it. The competition raised the price to &euro;11,500. We consider it a good market price and recommend accepting the offer.&rdquo;</i> The figures are <i>Dealerships</i> and <i>Raises</i>. A reading aid, not copy.</p>
         </div>
       </div>
-    </section>
-
-    <!-- Block 2 -->
-    <section class="av-band" style="background:#fff">
-      <div class="av-container flex flex-col gap-8">
+      </details>
+      <details class="av-archive-item bg-white/70 rounded-lg border border-slate-300 p-5">
+        <summary class="flex items-start justify-between gap-4"><span class="font-barlow font-bold text-xl text-slate-800">Change 2 &mdash; Tarjous vai pyyntihinta? (variants 1&ndash;4)<span class="block font-dm text-sm font-normal text-slate-600 mt-1">The earlier price-comparison designs, without figures.</span></span><svg class="av-caret flex-shrink-0 mt-1 text-slate-500 transition-transform" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></summary>
+        <div class="flex flex-col gap-8 pt-6">
         <div class="max-w-3xl">
           <h2 id="change-2" class="font-barlow font-bold text-3xl mb-3">2 &mdash; Tarjous vai pyyntihinta?</h2>
           <div class="rounded-lg border-2 border-warning-300 bg-warning-50 p-4 mb-4">
@@ -297,12 +724,10 @@
           </ul>
         </div>
       </div>
-    </section>
-
-
-    <!-- Block 3 -->
-    <section class="av-band av-band-grey">
-      <div class="av-container flex flex-col gap-8">
+      </details>
+      <details class="av-archive-item bg-white/70 rounded-lg border border-slate-300 p-5">
+        <summary class="flex items-start justify-between gap-4"><span class="font-barlow font-bold text-xl text-slate-800">Change 3 &mdash; The warm-up screen goes<span class="block font-dm text-sm font-normal text-slate-600 mt-1">Removing the warm-up; not part of this test.</span></span><svg class="av-caret flex-shrink-0 mt-1 text-slate-500 transition-transform" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></summary>
+        <div class="flex flex-col gap-8 pt-6">
         <div class="max-w-3xl">
           <h2 id="change-3" class="font-barlow font-bold text-3xl mb-3">3 &mdash; The warm-up screen goes</h2>
           <div class="rounded-lg border-2 border-warning-300 bg-warning-50 p-4 mb-4">
@@ -344,11 +769,10 @@
           <p class="font-dm text-base leading-6 text-slate-700">The screen is the one moment the seller is given nothing to do but read. Removing it trades that for a page that says more and says it in context &mdash; but it also removes a deliberate pause before a decision, and an A/B will not separate the two blocks from the missing screen unless we want it to. <b>Worth agreeing whether the removal travels with this arm or gets tested on its own.</b></p>
         </div>
       </div>
-    </section>
-
-    <!-- Open questions -->
-    <section class="av-band" style="background:#fff">
-      <div class="av-container flex flex-col gap-8">
+      </details>
+      <details class="av-archive-item bg-white/70 rounded-lg border border-slate-300 p-5">
+        <summary class="flex items-start justify-between gap-4"><span class="font-barlow font-bold text-xl text-slate-800">Open questions from that round</span><svg class="av-caret flex-shrink-0 mt-1 text-slate-500 transition-transform" width="20" height="20" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 101.66l-80 80a8 8 0 0 1-11.32 0l-80-80A8 8 0 0 1 53.66 90.34L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg></summary>
+        <div class="flex flex-col gap-8 pt-6">
         <div class="max-w-3xl">
           <h2 class="font-barlow font-bold text-3xl mb-4">Open questions</h2>
           <ol class="font-dm text-base leading-6 text-slate-700 list-decimal pl-5 space-y-3">
@@ -359,18 +783,20 @@
           </ol>
         </div>
       </div>
+      </details>
+      </div>
     </section>
 
   </main>
   <!-- Footer — same structure as the prototype's site footer (layout.js). -->
   <footer class="bg-av-blue overflow-hidden">
     <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#e5e7eb"/>
     </svg>
     <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
     <div class="av-container flex flex-col gap-3.5">
       <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
-        <span class="font-dm font-bold">Informed decision · change 1 ready for dev · Variant 5</span>
+        <span class="font-dm font-bold">Informed decision · Variant 6 · VWO A/B test</span>
         <span class="font-dm font-normal">© 2026 All rights reserved</span>
       </div>
     </div>
@@ -379,5 +805,16 @@
     </div>
     </div>
   </footer>
+  <script>
+    // Opens the archived section a link points into, since it starts collapsed.
+    function openTarget() {
+      var id = location.hash.slice(1);
+      var el = id && document.getElementById(id);
+      var d = el && el.closest('details');
+      if (d) { d.open = true; el.scrollIntoView(); }
+    }
+    window.addEventListener('hashchange', openTarget);
+    openTarget();
+  </script>
 </body>
 </html>

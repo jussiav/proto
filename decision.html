@@ -434,6 +434,37 @@
        So the answer moved inside the <details> and the mechanism disappeared.
        The cost is no open/close animation — which is exactly what the FAQ
        delivers today anyway, since its animation never runs. */
+
+    /* Informed decision v6. Hand-written because the block is injected by JS
+       and the Play CDN generates utilities a tick after it renders. The grid
+       and the slate panel are Seller protection's card (vwo/seller-protection-v3.js). */
+    .nt6-grid { display: grid; gap: 20px; }
+    .nt6-text { display: flex; flex-direction: column; gap: 16px; }
+    @media (min-width: 768px) { .nt6-grid { grid-template-columns: 1fr 1fr; gap: 24px; } }
+    .nt6-checks { display: grid; gap: 8px; }
+    .nt6-checks li { display: flex; align-items: flex-start; gap: 8px; }
+    .nt6-checks svg { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; color: #0B6DFF; }
+    .nt6-example { display: flex; flex-direction: column; gap: 12px; padding: 20px; border-radius: 8px; background: #F1F5F9; }
+    .nt6-bar { display: flex; height: 36px; border-radius: 6px; overflow: hidden; }
+    .nt6-seg { display: flex; align-items: center; justify-content: center; padding: 0 10px; white-space: nowrap; }
+    /* Blue, not the page's accept green: the example's figures are not the
+       seller's money. White on blue-600 is 4.52:1. */
+    .nt6-seg--offer { flex: 1 1 auto; background: #0B6DFF; color: #fff; }
+    .nt6-seg--costs { flex: 0 0 auto; min-width: 25%; background: #CBD5E1; color: #1E293B; }
+    .nt6-legend { display: grid; gap: 6px; }
+    .nt6-legend li { display: flex; align-items: flex-start; gap: 8px; }
+    .nt6-key { width: 12px; height: 12px; margin-top: 4px; flex-shrink: 0; border-radius: 2px; }
+    .nt6-key--offer { background: #0B6DFF; }
+    .nt6-key--costs { background: #CBD5E1; box-shadow: inset 0 0 0 1px #94A3B8; }
+
+    /* The PM's test fitted the warm-up card and the note on one 375x667
+       screen. Measured: with prod's illustration kept even at 120px the note
+       ends ~160px below the fold, so below md v6 drops the illustration. */
+    @media (max-width: 767px) {
+      #state-warmup[data-nt6] #warmup-media { display: none; }
+      #state-warmup[data-nt6] #warmup-message { margin-bottom: 16px; }
+      #warmup-nt6 h3 { font-size: 18px; line-height: 24px; }
+    }
   </style>
 </head>
 <body class="font-body bg-blue-50 min-h-screen">
@@ -449,7 +480,7 @@
         <div class="w-full flex flex-col md:flex-row items-center md:items-stretch md:gap-4">
 
           <!-- Image half -->
-          <div class="w-full md:w-1/2 h-[270px] md:h-full px-5 md:px-0 flex justify-center items-center mb-6 md:mb-0 py-4">
+          <div id="warmup-media" class="w-full md:w-1/2 h-[270px] md:h-full px-5 md:px-0 flex justify-center items-center mb-6 md:mb-0 py-4">
             <img id="warmup-img" src="" alt="Tarjouskaupan tulokset" class="max-h-full object-contain" />
           </div>
 
@@ -488,6 +519,18 @@
 
         </div>
       </div>
+
+      <!-- Informed decision v6: the Nettiauto note under the warm-up card. -->
+      <div id="warmup-nt6" class="hidden mt-4 p-5 bg-white rounded-xl shadow-md">
+        <div class="flex items-start gap-3">
+          <!-- ph-bold-info -->
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0 mt-1" aria-hidden="true"><path d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/></svg>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-display text-xl font-bold leading-snug text-black">Vertailetko tarjouksia Nettiauton hintoihin?</h3>
+            <p class="font-dm text-sm text-slate-700 mt-1">Saamasi tarjous on summa, jonka autoliike on valmis maksamaan autostasi. Nettiauton pyyntihinta ei ole sama kuin myyjälle maksettu summa.</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- MAIN STATE -->
@@ -510,10 +553,24 @@
       <section id="section-insights" class="hidden">
         <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
           <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="m199 125.31-49.89-18.38L130.69 57a19.92 19.92 0 0 0-37.38 0l-18.38 49.93L25 125.31a19.92 19.92 0 0 0 0 37.38l49.89 18.38L93.31 231a19.92 19.92 0 0 0 37.38 0l18.38-49.89L199 162.69a19.92 19.92 0 0 0 0-37.38m-60 33.9a19.89 19.89 0 0 0-11.8 11.8L112 212.28 96.79 171A19.89 19.89 0 0 0 85 159.21L43.72 144 85 128.79A19.89 19.89 0 0 0 96.79 117L112 75.72 127.21 117a19.89 19.89 0 0 0 11.8 11.8l41.27 15.2ZM140 40a12 12 0 0 1 12-12h12V16a12 12 0 0 1 24 0v12h12a12 12 0 0 1 0 24h-12v12a12 12 0 0 1-24 0V52h-12a12 12 0 0 1-12-12m112 48a12 12 0 0 1-12 12h-4v4a12 12 0 0 1-24 0v-4h-4a12 12 0 0 1 0-24h4v-4a12 12 0 0 1 24 0v4h4a12 12 0 0 1 12 12"/></svg>
-          <span class="text-blue-900 leading-[24px]">Tarjouskilpailun tulos</span>
+          <span id="insights-title" class="text-blue-900 leading-[24px]">Tarjouskilpailun tiedot</span>
         </h2>
         <div class="w-full p-5 bg-white rounded-xl">
           <div id="insights-content"></div>
+        </div>
+      </section>
+
+      <!-- Informed decision v6: the Nettiauto comparison, the PM's content in
+           the page's own section and card. Its own section, so it works beside
+           either version of the auction card above. -->
+      <section id="section-nettiauto-v6" class="hidden">
+        <h2 class="font-display font-bold flex space-x-2.5 mb-5 items-center text-xl">
+          <!-- ph-bold-info -->
+          <svg width="20" height="20" viewBox="0 0 256 256" fill="currentColor" class="text-blue-500 flex-shrink-0" aria-hidden="true"><path d="M108,84a16,16,0,1,1,16,16A16,16,0,0,1,108,84Zm128,44A108,108,0,1,1,128,20,108.12,108.12,0,0,1,236,128Zm-24,0a84,84,0,1,0-84,84A84.09,84.09,0,0,0,212,128Zm-72,36.68V132a20,20,0,0,0-20-20,12,12,0,0,0-4,23.32V168a20,20,0,0,0,20,20,12,12,0,0,0,4-23.32Z"/></svg>
+          <span class="text-blue-900 leading-[24px]">Tarjouksesi vs. Nettiauton pyyntihinta</span>
+        </h2>
+        <div class="w-full p-5 bg-white rounded-xl">
+          <div id="nettiauto-v6-content"></div>
         </div>
       </section>
 
@@ -655,7 +712,7 @@
        The result block's copy is approved by Marketing (2026-10-08); the
        price-comparison and triage copy is placeholder and out of scope.
        Spec: design-specs/informed-decision.html */
-    var ID_ARMS = ['control', 'v1', 'v2', 'v3', 'v4', 'v5'];
+    var ID_ARMS = ['control', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'];
     var ID_ARM = (function () {
       var arm = window.protoVariant('informed-decision', 'control');
       if (ID_ARMS.indexOf(arm) === -1) { window.protoVariantSet('informed-decision', null); return 'control'; }
@@ -686,6 +743,11 @@
        ticket carries. */
     var ID_V5 = ID_ARM === 'v5';
     var ID_ANY = ID_V1 || ID_V2 || ID_V3 || ID_V4 || ID_V5;
+    /* v6 is the Nettiauto comparison alone (the PM's 09/2026 test content in
+       the page's styling), with the rest of the page as prod. It is left out of
+       ID_ANY because that flag switches on the result block and the fair-offer
+       gate, and v6 shows to every seller who can still reject. */
+    var ID_V6 = ID_ARM === 'v6';
 
     /* "Similar cars" (design-specs/similar-cars.html): the offers page's arms,
        here for this decision's car alone. v1 table, v2 photo cards with
@@ -2232,6 +2294,35 @@
       return html;
     }
 
+    /* Informed decision v6. Static on purpose: the example's figures are the
+       PM's illustration and say so in the footnote, so nothing here reads the
+       seller's offer. */
+    function buildNettiautoV6() {
+      var CHECK = '<svg viewBox="0 0 17 17" fill="currentColor" aria-hidden="true"><path d="M15.4388 5.34502L6.93876 13.845C6.86473 13.9193 6.77676 13.9783 6.6799 14.0185C6.58303 14.0587 6.47919 14.0794 6.37431 14.0794C6.26943 14.0794 6.16558 14.0587 6.06872 14.0185C5.97186 13.9783 5.88389 13.9193 5.80985 13.845L2.0911 10.1263C2.01698 10.0522 1.95818 9.96415 1.91806 9.8673C1.87795 9.77045 1.8573 9.66665 1.8573 9.56182C1.8573 9.45699 1.87795 9.35319 1.91806 9.25634C1.95818 9.15949 2.01698 9.07149 2.0911 8.99737C2.16523 8.92324 2.25323 8.86444 2.35008 8.82433C2.44693 8.78421 2.55073 8.76356 2.65556 8.76356C2.76039 8.76356 2.86419 8.78421 2.96104 8.82433C3.05789 8.86444 3.14589 8.92324 3.22001 8.99737L6.37497 12.1523L14.3112 4.21745C14.4609 4.06774 14.6639 3.98364 14.8756 3.98364C15.0873 3.98364 15.2904 4.06774 15.4401 4.21745C15.5898 4.36715 15.6739 4.57019 15.6739 4.7819C15.6739 4.99361 15.5898 5.19665 15.4401 5.34635L15.4388 5.34502Z"/></svg>';
+      return '<div class="nt6-grid">'
+        +    '<div class="nt6-text">'
+        +      '<p class="font-dm text-base text-slate-700">Nettiautossa näkyvä <b class="text-slate-900">pyyntihinta</b> ei ole sama asia kuin saamasi tarjous.</p>'
+        +      '<ul class="nt6-checks font-dm text-sm text-slate-700">'
+        +        '<li>' + CHECK + '<span>AutoVex-tarjouksesi on kilpailutettu summa, jonka autoliike on valmis maksamaan sinulle autostasi.</span></li>'
+        +        '<li>' + CHECK + '<span>Pyyntihintaan sisältyvät autoliikkeen kulut, kate ja tinkimisvara.</span></li>'
+        +      '</ul>'
+        +    '</div>'
+        +    '<div class="nt6-example font-dm">'
+        +      '<p class="text-sm font-bold text-slate-800">Esimerkki pyyntihinnasta: 15 000 €</p>'
+        +      '<p class="nt6-bar text-sm font-bold">'
+        +        '<span class="nt6-seg nt6-seg--offer">12 000 €</span>'
+        +        '<span class="sr-only"> + </span>'
+        +        '<span class="nt6-seg nt6-seg--costs">n. 3 000 €</span>'
+        +      '</p>'
+        +      '<ul class="nt6-legend text-sm text-slate-700">'
+        +        '<li><span class="nt6-key nt6-key--offer" aria-hidden="true"></span><span><b class="text-slate-900">Sisäänosto:</b> maksetaan myyjälle</span></li>'
+        +        '<li><span class="nt6-key nt6-key--costs" aria-hidden="true"></span><span><b class="text-slate-900">Kulut, kate ja tinkimisvara:</b> sisällytetään pyyntihintaan</span></li>'
+        +      '</ul>'
+        +      '<p class="text-xs text-slate-600">*Esimerkkilaskelma. Luvut eivät liity autoosi.</p>'
+        +    '</div>'
+        +  '</div>';
+    }
+
     function buildBelief() {
       /* THIS REPLACED THE `Näin vertaat tarjoustasi` EQUATION (2026-09-18), and
          it came out of the ideation set rather than from another pass at the
@@ -2859,6 +2950,13 @@
           if (armWc.cta)     wc.cta     = armWc.cta;
           if (armWc.note)    wc.note    = armWc.note;
         }
+        /* v6 drops "koko" from prod's message, as the PM's test did, to give
+           the note under the card room on a phone. Applied before AutoVex
+           exclusive's thanks so that initiative's copy still wins. */
+        var nt6Warmup = ID_V6 && base === WARMUP_AUCTION_ENDED;
+        if (nt6Warmup) wc.message = 'Autosi kävi läpi tarjouskilpailun ja tavoitti satojen autoliikkeiden verkoston.';
+        document.getElementById('warmup-nt6').classList.toggle('hidden', !nt6Warmup);
+        warmupEl.toggleAttribute('data-nt6', nt6Warmup);
         /* Only prod's offers-waiting card (the four price tiers share it). */
         if (AE_YES && !armWc && base === WARMUP_AUCTION_ENDED) {
           wc.heading = AE_WARMUP.heading;
@@ -3096,6 +3194,18 @@
       var idShow = ID_ANY && DECISION_OPEN.indexOf(pas) !== -1 && offers.length > 0
         && req.fair_offer === true;
 
+      /* The PM's test keyed on the red "Hylkää tarjouskilpailu" button being on
+         screen, so v6 follows the bottom banner rather than DECISION_OPEN: the
+         banner is hidden while the seller waits for a dealer's reply. */
+      var nt6Sec = document.getElementById('section-nettiauto-v6');
+      var rejectAllShown = bannerCopy === BANNER_COPY.decline && !bannerBotSec.classList.contains('hidden');
+      if (ID_V6 && rejectAllShown && offers.length > 0) {
+        document.getElementById('nettiauto-v6-content').innerHTML = buildNettiautoV6();
+        nt6Sec.classList.remove('hidden');
+      } else {
+        nt6Sec.classList.add('hidden');
+      }
+
       var beliefSec = document.getElementById('section-belief');
       if (idShow && ID_V1) {
         document.getElementById('belief-content').innerHTML =
@@ -3136,6 +3246,11 @@
       var insightsSec = document.getElementById('section-insights');
       if (req.insights_data && req.insights_data.length > 0) {
         document.getElementById('insights-content').innerHTML = buildInsights(req, offers, idShow);
+        /* Prod's title (`auction.auction_insights`) stays wherever prod's block
+           renders; "tulos" belongs to the result block that replaces it, which
+           is buildInsights' own `verdictRow` condition. */
+        var resultBlock = idShow && (auctionCounts(req).bidders || 0) >= VERDICT_MIN_BIDDERS;
+        document.getElementById('insights-title').textContent = resultBlock ? 'Tarjouskilpailun tulos' : 'Tarjouskilpailun tiedot';
         insightsSec.classList.remove('hidden');
       } else {
         insightsSec.classList.add('hidden');
@@ -4140,7 +4255,8 @@
             { id: 'v2',      label: 'Variant 2 — triage: seller names the doubt, counter-offer moves in' },
             { id: 'v3',      label: 'Variant 3 — Nettiauto bar: the price stated as its parts' },
             { id: 'v4',      label: 'Variant 4 — side by side: your offer against a listing price' },
-            { id: 'v5',      label: 'Variant 5 — ready for dev: auction result block only' }
+            { id: 'v5',      label: 'Variant 5 — ready for dev: auction result block only' },
+            { id: 'v6',      label: 'Variant 6 — Nettiauto comparison: example calculation, page styling' }
           ]
         },
         {
