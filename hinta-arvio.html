@@ -794,16 +794,28 @@
                the way into the funnel and how a sale works. The car card stays
                in the cream column, where the email step showed it. -->
           <div data-phase-show="estimate" class="flex-col gap-8">
-            <div class="flex flex-col gap-1">
-              <h2 class="m-0 font-dm font-medium text-base leading-6 text-slate-700" data-i18n="estimateSignup.estimateLabel">Autosi hinta-arvio</h2>
-              <!-- Below 768px the car card sits after this column, so the car is named here -->
-              <p id="vt5-carline" class="md:hidden m-0 font-dm text-sm leading-5 text-slate-600"></p>
-              <p class="m-0 font-barlow font-bold text-slate-900 text-[56px] leading-[60px] lg:text-[72px] lg:leading-[76px] tabular-nums"><span id="vt5-amount"></span><sup class="text-2xl align-super">*</sup></p>
-              <p class="m-0 mt-2 font-dm text-xs leading-4 text-slate-500">* <span data-i18n="estimateSignup.footnote">Arvio perustuu AutoVexin markkinatietoihin.</span></p>
-              <p id="vt5-sent" class="m-0 mt-2 font-dm text-sm leading-5 text-slate-700"></p>
+            <!-- The estimate as the decision page's offer card (C2BOfferCard):
+                 the blue theme's border and ribbon, the line above the figure
+                 (the car, where an offer names its delivery), the figure
+                 centred, a help line under it and the grey footer. -->
+            <div class="w-full rounded-xl border-2 border-blue-500 bg-white shadow-sm">
+              <div class="flex">
+                <div class="inline-flex items-center px-2 py-1 rounded-tl-lg border bg-blue border-blue">
+                  <h2 class="m-0 font-dm font-bold text-sm leading-5 text-white" data-i18n="estimateSignup.estimateLabel">Autosi hinta-arvio</h2>
+                </div>
+                <span class="flex items-end text-white bg-blue" aria-hidden="true"><svg width="11" height="32" viewBox="0 0 11 32" fill="none"><path d="M0 16L11 32V0L0 16Z" fill="currentColor"/></svg></span>
+              </div>
+              <div class="flex flex-col gap-1 px-5 pt-3 pb-5">
+                <p id="vt5-carline" class="m-0 font-dm font-bold text-xs leading-tight text-blue-600 text-center"></p>
+                <p class="m-0 font-barlow font-bold text-slate-900 text-[56px] leading-[64px] text-center tabular-nums" id="vt5-amount"></p>
+                <p class="m-0 mt-1 font-dm text-xs leading-4 text-slate-700 text-left" data-i18n="estimateSignup.footnote">Arvio perustuu AutoVexin markkinatietoihin.</p>
+              </div>
+              <div id="vt5-sent-row" class="px-5 py-3 rounded-b-lg bg-slate-100">
+                <p id="vt5-sent" class="m-0 font-dm text-xs leading-4 text-slate-600"></p>
+              </div>
             </div>
             <div class="flex flex-col gap-3">
-              <h3 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="estimateSignup.ctaTitle">Valmis myymään? Anna autoliikkeiden kilpailla autostasi.</h3>
+              <h3 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-[30px]" data-i18n="estimateSignup.ctaTitle">Valmis myymään? Anna autoliikkeiden kilpailla autostasi.</h3>
               <p class="m-0 font-dm text-sm leading-5 text-slate-700" data-i18n="estimateSignup.ctaBody">Sadat autoliikkeet ympäri Suomen voivat tehdä autostasi tarjouksen. Myynti-ilmoituksen tekeminen on maksutonta, ja päätät itse, hyväksytkö tarjouksen.</p>
               <a href="details.html" data-go class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors no-underline"><span data-i18n="valueTracker.auctionCta">Aloita kilpailutus</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
               <p class="m-0 font-dm text-xs leading-4 text-slate-500" data-i18n="valueTracker.ctaNote">Autosi tiedot siirtyvät mukana.</p>
@@ -1567,6 +1579,7 @@
         el('vt5-amount').textContent = euros(estimateValue());
         el('vt5-carline').textContent = [[vt.car.merkki, vt.car.malli].filter(Boolean).join(' '), vt.plate].filter(Boolean).join(' · ');
         var sent = el('vt5-sent');
+        el('vt5-sent-row').classList.toggle('hidden', !(mailSent() && vt.email));
         sent.textContent = '';
         if (mailSent() && vt.email) {
           var parts = T5('sentLine').split('{email}');

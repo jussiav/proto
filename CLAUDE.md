@@ -3744,18 +3744,25 @@ arm. `v4` is unchanged and still the page default.
   the same words as Santa's.
 - **Estimate page** (`data-phase="estimate"`), funnel layout, not the
   logged-in blue-50, and **kept light** (Jussi, 2026-11-19: it was too busy):
-  only the figure is large (Barlow bold 56px, 72px from `lg`); everything
-  else is a step down. "Autosi hinta-arvio", the figure with the footnote,
-  "Lähetimme arvion osoitteeseen [email]." (left out when consent is optional
-  and unticked), then "Valmis myymään? Anna autoliikkeiden kilpailla
-  autostasi." with the page's **only** "Aloita kilpailutus", into the funnel
+  only the figure is large; everything else is a step down. **The estimate
+  is drawn as the decision page's offer card** (Jussi, 2026-11-19, the
+  page's focus): C2BOfferCard's blue theme (`border-2 border-blue-500`, the
+  blue ribbon with its notch) reading "Autosi hinta-arvio", the car in the
+  line where an offer names its delivery, the figure centred (Barlow bold
+  56px, the offer card's own is 40px), the footnote as the help line, and the
+  grey footer with "Lähetimme arvion osoitteeseen [email]." (the footer goes
+  when consent is optional and unticked). No ribbon icon. Then "Valmis
+  myymään? Anna autoliikkeiden kilpailla autostasi." at the 1-2-3 header's
+  size (24/30, equally important) with the page's **only** "Aloita
+  kilpailutus", into the funnel
   (`goToFunnel`, plus the email and consent into the contact step), then the
   front page's 1-2-3 ("Näin löydämme autollesi ostajan" at its own size, the
   rest a step smaller, its phone layout's step icons). The **cream column**
   holds the car card (where the email step showed it; its button reads
   "Arvioi toinen auto") and "Mikä vaikuttaa autosi arvoon?" at text-xl with
-  `faq5A` as its intro and both lists in one white card. Below 768px the car is named
-  under the label (`#vt5-carline`), since the card then sits after the column.
+  `faq5A` as its intro and both lists in one white card. The offer card's
+  top line (`#vt5-carline`) names the car at every width, which matters
+  below 768px, where the car card sits after the column.
   The figure is `v4`'s value model at this month, to the 10 €.
 - **Welcome email** (`#vt5-inbox`): a phone frame 1.4 s after the estimate
   page opens, right-bottom from 768px, over a scrim below; × or Escape
