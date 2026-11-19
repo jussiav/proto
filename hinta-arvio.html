@@ -801,14 +801,20 @@
             <div class="w-full rounded-xl border-2 border-blue-500 bg-white shadow-sm">
               <div class="flex">
                 <div class="inline-flex items-center px-2 py-1 rounded-tl-lg border bg-blue border-blue">
-                  <h2 class="m-0 font-dm font-bold text-sm leading-5 text-white" data-i18n="estimateSignup.estimateLabel">Autosi hinta-arvio</h2>
+                  <h2 class="m-0 font-dm font-bold text-sm leading-5 text-white" data-i18n="estimateSignup.brandName">AutoVex-arvio</h2>
                 </div>
                 <span class="flex items-end text-white bg-blue" aria-hidden="true"><svg width="11" height="32" viewBox="0 0 11 32" fill="none"><path d="M0 16L11 32V0L0 16Z" fill="currentColor"/></svg></span>
               </div>
               <div class="flex flex-col gap-1 px-5 pt-3 pb-5">
                 <p id="vt5-carline" class="m-0 font-dm font-bold text-xs leading-tight text-blue-600 text-center"></p>
                 <p class="m-0 font-barlow font-bold text-slate-900 text-[56px] leading-[64px] text-center tabular-nums" id="vt5-amount"></p>
-                <p class="m-0 mt-1 font-dm text-xs leading-4 text-slate-700 text-left" data-i18n="estimateSignup.footnote">Arvio perustuu AutoVexin markkinatietoihin.</p>
+                <!-- The two inputs that move the figure most, so the estimate
+                     reads as true for this mileage on this day -->
+                <dl class="m-0 mt-2 grid grid-cols-2 divide-x divide-slate-200 border border-slate-200 rounded-lg text-center">
+                  <div class="px-3 py-2 flex flex-col gap-0.5"><dt class="font-dm text-xs leading-4 text-slate-500" data-i18n="estimateSignup.factKm">Ajokilometrit</dt><dd id="vt5-km" class="m-0 font-dm font-bold text-sm leading-5 text-slate-900 tabular-nums"></dd></div>
+                  <div class="px-3 py-2 flex flex-col gap-0.5"><dt class="font-dm text-xs leading-4 text-slate-500" data-i18n="estimateSignup.factDate">Arvioitu</dt><dd id="vt5-date" class="m-0 font-dm font-bold text-sm leading-5 text-slate-900 tabular-nums"></dd></div>
+                </dl>
+                <p class="m-0 mt-2 font-dm text-xs leading-4 text-slate-700 text-left" data-i18n="estimateSignup.footnote">Arvio muuttuu ajan ja ajokilometrien myötä.</p>
               </div>
               <div id="vt5-sent-row" class="px-5 py-3 rounded-b-lg bg-slate-100">
                 <p id="vt5-sent" class="m-0 font-dm text-xs leading-4 text-slate-600"></p>
@@ -1467,7 +1473,7 @@
         }
         inPlate.value = plate;
         if (plate !== vt.plate || km !== vt.km) { vt.months = 0; vt.period = 24; }
-        vt.plate = plate; vt.km = km; vt.car = lookupCar(); vt.tracked = false;
+        vt.plate = plate; vt.km = km; vt.car = lookupCar(); vt.tracked = false; delete vt.estimatedAt;
         save();
         var loading = el('vt-loading');
         loading.classList.remove('hidden'); loading.classList.add('flex');
@@ -1496,7 +1502,7 @@
         if (err) return;
         vt.email = v; save();
         if (V5) {
-          vt.consent = inConsent5.checked; save();
+          vt.consent = inConsent5.checked; vt.estimatedAt = new Date().toISOString(); save();
           setStage('flow', 'estimate');
           showInbox(false);
           return;
@@ -1575,8 +1581,16 @@
       /* Whether an email goes out at all is open when consent is optional
          and the box was left unticked. */
       function mailSent() { return !CONSENT_OPTIONAL || !!vt.consent; }
+      /* The day the estimate was made, kept with it: the figure is true for
+         that day and that mileage. */
+      function estimateDate() {
+        var d = vt.estimatedAt ? new Date(vt.estimatedAt) : new Date();
+        return d.toLocaleDateString(lang() === 'fi' ? 'fi-FI' : 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
+      }
       function renderEstimate() {
         el('vt5-amount').textContent = euros(estimateValue());
+        el('vt5-km').textContent = group(vt.km) + ' km';
+        el('vt5-date').textContent = estimateDate();
         el('vt5-carline').textContent = [[vt.car.merkki, vt.car.malli].filter(Boolean).join(' '), vt.plate].filter(Boolean).join(' · ');
         var sent = el('vt5-sent');
         el('vt5-sent-row').classList.toggle('hidden', !(mailSent() && vt.email));
@@ -1622,7 +1636,8 @@
                 window.buildRegBadge(vt.plate) +
                 '<div class="flex flex-col"><span class="text-sm font-bold text-slate-900">' + esc([vt.car.merkki, vt.car.malli].filter(Boolean).join(' ')) + '</span>' +
                 '<span class="text-xs text-slate-500">' + esc(meta) + '</span></div>' +
-                '<span class="font-barlow font-bold text-[32px] leading-9 text-slate-900 tabular-nums">' + esc(euros(estimateValue())) + '</span>' +
+                '<div class="flex flex-col"><span class="text-xs font-bold text-blue-600">' + esc(T5('brandName')) + ' · ' + esc(estimateDate()) + '</span>' +
+                '<span class="font-barlow font-bold text-[32px] leading-9 text-slate-900 tabular-nums">' + esc(euros(estimateValue())) + '</span></div>' +
               '</div>' +
               '<p class="m-0 text-xs leading-4 text-slate-500">' + esc(T5('footnote')) + '</p>' +
               '<p class="m-0 pt-2 font-barlow font-bold text-lg leading-6 text-slate-900">' + esc(T5('mailSellTitle')) + '</p>' +
@@ -1654,6 +1669,7 @@
           ensureCar();
           if (!vt.email) vt.email = DEFAULT_EMAIL;
           if (vt.consent == null) vt.consent = true;
+          if (!vt.estimatedAt) vt.estimatedAt = new Date().toISOString();
           save();
           setStage('flow', 'estimate');
         }
@@ -1804,6 +1820,7 @@
         ensureCar();
         if (scenario === 'estimate' || scenario === 'estimate-email') {
           if (!vt.email) vt.email = DEFAULT_EMAIL;
+          if (!vt.estimatedAt) vt.estimatedAt = new Date().toISOString();
           if (vt.consent == null) vt.consent = true;
         }
         save();

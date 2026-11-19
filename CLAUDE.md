@@ -3747,11 +3747,18 @@ arm. `v4` is unchanged and still the page default.
   only the figure is large; everything else is a step down. **The estimate
   is drawn as the decision page's offer card** (Jussi, 2026-11-19, the
   page's focus): C2BOfferCard's blue theme (`border-2 border-blue-500`, the
-  blue ribbon with its notch) reading "Autosi hinta-arvio", the car in the
+  blue ribbon with its notch) reading **"AutoVex-arvio"**, the car in the
   line where an offer names its delivery, the figure centred (Barlow bold
-  56px, the offer card's own is 40px), the footnote as the help line, and the
-  grey footer with "Lähetimme arvion osoitteeseen [email]." (the footer goes
-  when consent is optional and unticked). No ribbon icon. Then "Valmis
+  56px, the offer card's own is 40px), then a framed two-cell row
+  "Ajokilometrit" · "Arvioitu" (the date the estimate was made,
+  `vt.estimatedAt`, cleared by a new car), the footnote as the help line
+  ("Arvio muuttuu ajan ja ajokilometrien myötä." first), and the grey footer
+  with "Lähetimme arvion osoitteeseen [email]." (the footer goes when consent
+  is optional and unticked). No ribbon icon. **"AutoVex-arvio" is the
+  estimate's brand name** (Jussi, 2026-11-19), hyphenated as Finnish writes a
+  brand compound (AutoVex-turva). It labels the estimate itself, on this card
+  and in the welcome email with its date; the thing is still called
+  "hinta-arvio" everywhere else, the landing and its search terms included. Then "Valmis
   myymään? Anna autoliikkeiden kilpailla autostasi." at the 1-2-3 header's
   size (24/30, equally important) with the page's **only** "Aloita
   kilpailutus", into the funnel
