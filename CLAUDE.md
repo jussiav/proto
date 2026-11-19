@@ -3714,33 +3714,47 @@ once, with no login, no email verification and no contact step. Same file,
 arm-only part carries `data-arm="v4"` or `data-arm="v5"`, hidden for the other
 arm. `v4` is unchanged and still the page default.
 
+- **The estimate's basis is said openly** (Jussi, 2026-11-19): "AutoVexin
+  markkinatietoihin", led by offers dealerships make and sellers accept, plus
+  "esimerkiksi" model, age and mileage, and "Kehitämme arviota jatkuvasti".
+  It invites trust without naming one data source, so the method can move to
+  other data, an algorithm or AI without a copy change. Used in the how
+  section, FAQ 2, the footnote, the welcome email and the meta description
+  (`estimateSignup.footnote`, `howBody1`, `howBody2`, `faq2A`,
+  `metaDescription`; the JSON-LD follows). Keep new copy about the basis this
+  open.
 - **Landing**, in Jussi's order: hero (subtitle without tracking) · "Näin auton
-  hinta-arvio lasketaan" · "Mikä vaikuttaa autosi arvoon?" · FAQ (answers 1,
-  3 and 4 rewritten without tracking; the JSON-LD FAQ follows them) · a new
+  hinta-arvio lasketaan" (no button in `v5`) · "Mikä vaikuttaa autosi
+  arvoon?" · FAQ (answers 1–4 rewritten; the JSON-LD FAQ follows them) · a new
   cream section for a seller ready to sell now: "Valmis myymään autosi?", the
   auction page's "Miksi AutoVex?" list, the Google rating and "Aloita
   kilpailutus" to `index.html`, as the nav CTA. The order is CSS `order` on
   `.vt-sec-*`, so the DOM keeps `v4`'s order. Arvioi/Seuraa/Myy, the three
   feature cards and the stats section are `v4` only.
 - **Email step**: `v4`'s funnel layout and steps minus "Tiedot" (Auto ·
-  Sähköposti · Hinta-arvio), "Anna sähköpostisi, niin näet autosi
-  hinta-arvion.", the email field, then the funnel contact step's marketing
-  checkbox (`contact.marketingLabel`), "Näytä arvio", and "Lähetämme arvion
-  myös sähköpostiisi." The checkbox is **required by default**, Legal's
+  Sähköposti · Hinta-arvio), "Anna sähköpostisi, niin lähetämme sinulle
+  hinta-arvion autostasi.", the email field, then the funnel contact step's
+  marketing checkbox (`contact.marketingLabel`) and "Lähetä arvio". **The
+  copy promises the email, never the page** (Jussi, 2026-11-19): a seller
+  told they will see the estimate on screen may type a made-up address, and
+  we need the real one. The checkbox is **required by default**, Legal's
   current reading that the estimate needs consent (to be confirmed); **Events
   → Marketing consent** switches it to optional (`?consent=optional`, world
   state, kept across scenario picks). Error: `estimateSignup.consentError`,
   the same words as Santa's.
 - **Estimate page** (`data-phase="estimate"`), funnel layout, not the
-  logged-in blue-50: "Autosi hinta-arvio", the figure (Barlow bold 56px, 72px
-  from `lg`) with the footnote, "Lähetimme arvion myös osoitteeseen [email]."
-  (left out when consent is optional and unticked), then "Valmis myymään? Anna
-  autoliikkeiden kilpailla autostasi." with "Aloita kilpailutus" into the
-  funnel (`goToFunnel`, plus the email and consent into the contact step),
-  then the front page's 1-2-3 ("Näin löydämme autollesi ostajan", its phone
-  layout's step icons) with a second "Aloita kilpailutus". The **cream column**
-  holds the car card (where the email step showed it) and "Mikä vaikuttaa
-  autosi arvoon?" with `faq5A` as its intro. Below 768px the car is named
+  logged-in blue-50, and **kept light** (Jussi, 2026-11-19: it was too busy):
+  only the figure is large (Barlow bold 56px, 72px from `lg`); everything
+  else is a step down. "Autosi hinta-arvio", the figure with the footnote,
+  "Lähetimme arvion osoitteeseen [email]." (left out when consent is optional
+  and unticked), then "Valmis myymään? Anna autoliikkeiden kilpailla
+  autostasi." with the page's **only** "Aloita kilpailutus", into the funnel
+  (`goToFunnel`, plus the email and consent into the contact step), then the
+  front page's 1-2-3 ("Näin löydämme autollesi ostajan" at its own size, the
+  rest a step smaller, its phone layout's step icons). The **cream column**
+  holds the car card (where the email step showed it; its button reads
+  "Arvioi toinen auto") and "Mikä vaikuttaa autosi arvoon?" at text-xl with
+  `faq5A` as its intro and both lists in one white card. Below 768px the car is named
   under the label (`#vt5-carline`), since the card then sits after the column.
   The figure is `v4`'s value model at this month, to the 10 €.
 - **Welcome email** (`#vt5-inbox`): a phone frame 1.4 s after the estimate
@@ -3755,7 +3769,9 @@ arm. `v4` is unchanged and still the page default.
   question. **No welcome email exists in Klaviyo** (checked 2026-11-18: every
   live flow belongs to the sales funnel, no list triggers a flow), so
   Marketing builds it.
-- **Not modelled, open:** what a seller without consent receives; whether the
+- **Not modelled, open:** how several cars per email address are handled
+  ("Arvioi toinen auto" invites it; if that gets too complicated, the button
+  goes); what a seller without consent receives; whether the
   car enters the regular flow (a draft) once the email is given, a product
   question; which tool makes the estimate; the front page shows no teaser for
   `v5` (Marketing sends search traffic straight to the page).

@@ -517,11 +517,19 @@ window.TRANSLATIONS = {
        sign-up, no tracker. Claude's draft; shared copy stays in valueTracker. */
     estimateSignup: {
       subtitle:      'Katso autosi hinta-arvio rekisterinumerolla ja ajokilometreillä.',
-      emailSub:      'Anna sähköpostisi, niin näet autosi hinta-arvion.',
-      emailNote:     'Lähetämme arvion myös sähköpostiisi.',
+      emailSub:      'Anna sähköpostisi, niin lähetämme sinulle hinta-arvion autostasi.',
+      emailBtn:      'Lähetä arvio',
       consentError:  'Hyväksy sähköpostiviestit jatkaaksesi.',
       estimateLabel: 'Autosi hinta-arvio',
-      sentLine:      'Lähetimme arvion myös osoitteeseen {email}.',
+      sentLine:      'Lähetimme arvion osoitteeseen {email}.',
+      anotherCar:    'Arvioi toinen auto',
+      /* The estimate's basis, said openly: AutoVex market data led by
+         offers, so the method can change without the copy. */
+      metaDescription: 'Katso autosi hinta-arvio ilmaiseksi rekisterinumerolla ja ajokilometreillä. Arvio perustuu AutoVexin markkinatietoihin, kuten autoliikkeiden tarjouksiin.',
+      footnote:      'Arvio perustuu AutoVexin markkinatietoihin, kuten autoliikkeiden tekemiin ja myyjien hyväksymiin tarjouksiin. Se ei huomioi auton kuntoa tai lisävarusteita.',
+      howBody1:      'Arvio perustuu AutoVexin markkinatietoihin. Tärkeimpiä niistä ovat tarjoukset, joita autoliikkeet tekevät ja myyjät hyväksyvät AutoVexissä joka päivä. Huomioimme myös esimerkiksi auton mallin, iän ja ajokilometrit.',
+      howBody2:      'Kehitämme arviota jatkuvasti, jotta se olisi mahdollisimman tarkka. Arvio ei kuitenkaan näe auton kuntoa tai lisävarusteita, joten oikean hinnan kertovat autoliikkeet tarjouskilpailussa.',
+      faq2A:         'AutoVexin markkinatietoihin, ennen kaikkea autoliikkeiden tekemiin ja myyjien hyväksymiin tarjouksiin samanlaisista autoista. Huomioimme myös autosi iän ja ajokilometrit, ja kehitämme arviota jatkuvasti.',
       ctaTitle:      'Valmis myymään? Anna autoliikkeiden kilpailla autostasi.',
       ctaBody:       'Sadat autoliikkeet ympäri Suomen voivat tehdä autostasi tarjouksen. Myynti-ilmoituksen tekeminen on maksutonta, ja päätät itse, hyväksytkö tarjouksen.',
       promoTitle:    'Valmis myymään autosi?',
@@ -1618,11 +1626,16 @@ window.TRANSLATIONS = {
 
     estimateSignup: {
       subtitle:      'See your car\'s price estimate by registration number and mileage.',
-      emailSub:      'Enter your email to see your car\'s price estimate.',
-      emailNote:     'We\'ll also email you the estimate.',
+      emailSub:      'Enter your email and we\'ll send you a price estimate for your car.',
+      emailBtn:      'Send the estimate',
       consentError:  'Accept the emails to continue.',
       estimateLabel: 'Your car\'s price estimate',
-      sentLine:      'We also sent the estimate to {email}.',
+      sentLine:      'We sent the estimate to {email}.',
+      anotherCar:    'Value another car',
+      footnote:      'The estimate is based on AutoVex market data, such as offers made by dealerships and accepted by sellers. It does not take the car\'s condition or extras into account.',
+      howBody1:      'The estimate is based on AutoVex market data. The most important part of it is the offers dealerships make and sellers accept on AutoVex every day. We also take into account things like the car\'s model, age and mileage.',
+      howBody2:      'We keep developing the estimate to make it as accurate as possible. It cannot see the car\'s condition or extras, though, so dealerships tell you the real price in an auction.',
+      faq2A:         'AutoVex market data, above all offers dealerships have made and sellers have accepted for similar cars. We also take your car\'s age and mileage into account, and we keep developing the estimate.',
       ctaTitle:      'Ready to sell? Let dealerships compete for your car.',
       ctaBody:       'Hundreds of dealerships across Finland can make an offer for your car. Creating a listing is free, and you decide whether to accept an offer.',
       promoTitle:    'Ready to sell your car?',
