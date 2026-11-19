@@ -163,6 +163,7 @@
   //   cardClass     extra classes on the card root (default: prod's shadow-sm)
   //   ctaFullWidth  keep CTAs full-width instead of prod's right-aligned row
   //   ctaSlot       raw markup replacing the CTA row (prod's #actions slot)
+  //   plateSuffix   raw markup right after the plate badge, in its row
   //   afterPlate    raw markup between the plate row and the make and model
   //
   // Returns an HTML string. Callers own their own event wiring.
@@ -199,7 +200,7 @@
 
     return '' +
       '<div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">' +
-        plateBadge + statusBadge +
+        plateBadge + (props.plateSuffix || '') + statusBadge +
       '</div>' +
       (props.afterPlate || '') +
       '<div class="space-y-3">' +

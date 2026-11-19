@@ -185,15 +185,15 @@
       spec: 'design-specs/seller-protection.html',
       prodArm: 'control'
     },
-    /* No spec page: an ideation piece. v1 and v2 are price-guess.html,
-       v3 (the Christmas campaign) is santa.html, v4 and v5 (replacements
-       for prod's /hinta-arvio: a value tracker, then an email sign-up) are
-       hinta-arvio.html; each page forwards to the others when the arm
-       belongs there. */
+    /* v1 and v2 are price-guess.html, v3 (the Christmas campaign) is
+       santa.html, v4 and v5 (replacements for prod's /hinta-arvio: a value
+       tracker, then an email sign-up) are hinta-arvio.html; each page
+       forwards to the others when the arm belongs there. The spec page
+       describes v5 and keeps the others collapsed. */
     {
       slug: 'price-guess',
       name: 'Price guess',
-      spec: null,
+      spec: 'design-specs/price-guess.html',
       prodArm: 'control'
     },
     /* No spec page: seasonal decoration on the front page hero, one arm per

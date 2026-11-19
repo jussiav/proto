@@ -325,6 +325,9 @@
        card's content */
     .vt5-est-details { width: 100%; display: flex; flex-direction: column; gap: 12px; }
     .vt5-est-details > div:first-child { justify-content: center; }
+    /* The plate row spreads a status badge to the far end in the car card;
+       here it holds the plate and the mileage, which stay together */
+    .vt5-side-details > div:first-child { justify-content: flex-start; }
     .vt5-est-details .flex-col { align-items: center; }
     .vt5-est-details .flex-wrap { justify-content: center; }
     .vt5-est-value { width: 100%; margin: 0; font: 700 56px/64px Barlow, sans-serif; color: #0F172A; font-variant-numeric: tabular-nums; }
@@ -1328,16 +1331,22 @@
          prod's no-photo placeholder. */
       /* v5: the car card's details alone. A car looked up from its plate
          never has a photo, and one email is for one car for now. */
+      /* The mileage sits beside the plate: the two things the seller typed.
+         Year, drive and fuel stay in the pills with make, model and trim, the
+         things the lookup found. The mileage borrows the plate badge's own
+         box so the pair reads as one. */
       function carDetailsProps() {
         var p = carCardProps();
         delete p.secondaryCta;
+        p.plateSuffix = '<div class="py-1 px-1.5 border border-slate-200 rounded-md bg-white font-dm text-xs sm:text-sm text-slate-800 whitespace-nowrap">' + esc(p.mileage) + '</div>';
+        delete p.mileage;
         return p;
       }
       function renderSideCard() {
         var box = el('vt-car-side');
         if (V5) {
           box.classList.remove('av-card-shell');
-          box.innerHTML = '<div class="bg-white rounded-xl shadow-sm p-5 flex flex-col space-y-5">' + window.buildCarDetails(carDetailsProps()) + '</div>';
+          box.innerHTML = '<div class="vt5-side-details bg-white rounded-xl shadow-sm p-5 flex flex-col space-y-5">' + window.buildCarDetails(carDetailsProps()) + '</div>';
           return;
         }
         box.classList.add('av-card-shell');
