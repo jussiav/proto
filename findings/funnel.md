@@ -164,3 +164,12 @@ editing an ad before review (PR 2546).
 - **Last checked:** prod dump 2026-11-11 (PR 2546 not in it yet)
 - **Next step:** If it comes up, open name and phone only, and decide how booking should treat ads whose number changed.
 - **Touches:** Seller edits before review, FUN-11, back office booking
+
+### FUN-22 · Blocked duplicate-ad page says "ilmoitus" where the C2B term is "myynti-ilmoitus"
+- **Status:** Open · **Type:** Copy · **Severity:** Low
+- **Where:** The page "Autostasi on jo tehty ilmoitus!" shown when a seller saves a step on a draft whose plate is already held (PR 39, double ad guard)
+- **Found:** 2026-11-16, PR 39 test run on its preview (scenarios B1 to B3)
+- **Evidence:** The body says "yksi ilmoitus" and "aiempaa ilmoitustasi". Marketing's C2B terminology names the seller's listing "myynti-ilmoitus". The headline stays as it is (UX decision). Corrected body: "Samasta autosta voi olla vain yksi myynti-ilmoitus kerrallaan. Pääset jatkamaan aiempaa myynti-ilmoitustasi linkistä, jonka lähetimme sähköpostiisi. Jos viestiä ei löydy, katso myös roskapostista. Jos tarvitset apua, ota yhteyttä asiakaspalveluumme."
+- **Last checked:** PR 39 preview, 2026-11-16 (not in a prod dump yet)
+- **Next step:** Send to the PR 39 developer with the test-run findings page; mark `Reported` once sent.
+- **Touches:** Duplicate ad guard, copy terminology
