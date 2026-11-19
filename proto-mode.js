@@ -186,9 +186,10 @@
       prodArm: 'control'
     },
     /* No spec page: an ideation piece. v1 and v2 are price-guess.html,
-       v3 (the Christmas campaign) is santa.html, v4 (a replacement for
-       prod's /hinta-arvio) is hinta-arvio.html; each page forwards to the
-       others when the arm belongs there. */
+       v3 (the Christmas campaign) is santa.html, v4 and v5 (replacements
+       for prod's /hinta-arvio: a value tracker, then an email sign-up) are
+       hinta-arvio.html; each page forwards to the others when the arm
+       belongs there. */
     {
       slug: 'price-guess',
       name: 'Price guess',

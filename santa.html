@@ -56,7 +56,7 @@
        price-guess.html, v4 to hinta-arvio.html. */
     (function () {
       var arm = window.protoVariant('price-guess', 'v3');
-      var to = arm === 'v1' || arm === 'v2' ? 'price-guess.html' : arm === 'v4' ? 'hinta-arvio.html' : null;
+      var to = arm === 'v1' || arm === 'v2' ? 'price-guess.html' : arm === 'v4' || arm === 'v5' ? 'hinta-arvio.html' : null;
       if (to) window.location.replace(to + window.location.search + window.location.hash);
     })();
   </script>
@@ -445,7 +445,8 @@
             { id: 'v1', label: 'Variant 1 — price guess (lottery)' },
             { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' },
             { id: 'v3', label: 'Variant 3 — Kirje Joulupukille (Christmas)' },
-            { id: 'v4', label: 'Variant 4 — Hinta-arvio (hinta-arvio.html)' }
+            { id: 'v4', label: 'Variant 4 — Hinta-arvio (hinta-arvio.html)' },
+            { id: 'v5', label: 'Variant 5 — Hinta-arvio by email (hinta-arvio.html)' }
           ]
         }
       ]

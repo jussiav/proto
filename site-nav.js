@@ -93,7 +93,7 @@
   if ((!pgArm || pgArm === 'control') && onSanta) pgArm = 'v3';
   if (showMenu && (pgArm === 'v1' || pgArm === 'v2' || pgArm === 'v3')) {
     /* v3 is the Christmas campaign: its own page, a red sign, snowflakes.
-       v4 has no item: hinta-arvio.html is a landing for search traffic. */
+       v4 and v5 have no item: hinta-arvio.html is a landing for search traffic. */
     var xmas = pgArm === 'v3';
     var pgKey = xmas ? 'priceSanta.navLabel' : pgArm === 'v2' ? 'priceEstimate.sign' : 'priceGuess.sign';
     var pgLabel = xmas ? 'Kirje Pukille' : pgArm === 'v2' ? 'Arviokone' : 'Hinta-arvaus';

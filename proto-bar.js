@@ -112,7 +112,7 @@
     { href: 'reset-password.html', label: 'Password reset (Valitse uusi salasana)' },
     { href: 'help.html',      label: 'Support' },
     { href: 'price-guess.html', label: 'Price guess' },
-    { href: 'hinta-arvio.html', label: 'Price estimate (v4)' },
+    { href: 'hinta-arvio.html', label: 'Price estimate (v4, v5)' },
     { href: 'emails.html',    label: 'Transactional emails' },
     { href: 'components.html', label: 'Component gallery' }
   ];
