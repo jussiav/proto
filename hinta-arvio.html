@@ -281,6 +281,10 @@
     #app-footer { display: none; }
     body[data-stage="account"] #app-footer { display: block; }
     body[data-stage="account"] > footer:not(#app-footer) { display: none; }
+    /* The FAQ's opening body: prod's grid-rows 0fr to 1fr with the details
+       as its peer, hand-written as the markup is built by JS. */
+    .vt6-faq-body { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .15s ease-in-out, opacity .15s ease-in-out; }
+    details[open] + .vt6-faq-body { grid-template-rows: 1fr; opacity: 1; }
 
     /* The estimate page shares the email step's funnel layout; the cream
        column switches with the phase. */
@@ -1143,18 +1147,31 @@
          cards. Section icons are left out until picked. -->
     <div data-stages="account">
       <div class="max-w-[768px] mx-auto p-6 sm:py-14 flex flex-col gap-y-16">
-        <section>
-          <h1 class="m-0 mb-5 font-barlow font-bold text-xl leading-[24px] text-blue-900" data-i18n="estimateAccount.pageTitle">Autosi hinta-arvio</h1>
+        <!-- The decision page with one offer (#offers-grid): its hero on the
+             left, with the no-photo car a looked-up car always has, and the
+             estimate card at an offer card's width on the right. Stacked
+             below md. -->
+        <div class="grid items-start gap-y-7 md:grid-cols-2 md:gap-12">
+          <div class="mb-auto flex flex-col rounded-lg items-center justify-center text-center">
+            <div class="mb-4"><div class="p-1 rounded-full bg-blue-300"><svg width="160" height="160" viewBox="0 0 256 256" fill="white" class="rounded-full object-cover w-28 h-28 md:w-44 md:h-44" aria-hidden="true"><path d="M240 104h-10.8l-27.78-62.5A16 16 0 0 0 186.8 32H69.2a16 16 0 0 0-14.62 9.5L26.8 104H16a8 8 0 0 0 0 16h8v80a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-16h96v16a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-80h8a8 8 0 0 0 0-16ZM69.2 48h117.6l24.89 56H44.31ZM216 200h-24v-24a8 8 0 0 0-8-8H72a8 8 0 0 0-8 8v24H40v-80h176Z"/></svg></div></div>
+            <div class="px-4">
+              <h1 class="m-0 font-barlow text-3xl font-bold text-black mb-2 leading-snug" data-i18n="estimateAccount.heroTitle">Autosi hinta-arvio on valmis!</h1>
+              <p class="m-0 font-dm text-gray-600 text-base" data-i18n="estimateAccount.heroBody">AutoVex-arvio on maksuton, eikä se sido sinua mihinkään.</p>
+            </div>
+          </div>
           <!-- The estimate card, drawn by estimateCard('page'); the estimate
                email draws the same card -->
           <div id="vt6-estimate"></div>
-        </section>
+        </div>
         <section>
           <h2 class="m-0 mb-5 font-barlow font-bold text-xl leading-[24px] text-blue-900" data-i18n="estimateSignup.ctaTitle">Valmis myymään? Anna autoliikkeiden kilpailla autostasi.</h2>
-          <div class="p-5 bg-white rounded-xl flex flex-col gap-4">
+          <!-- Two columns from md: what happens on the left, the way in on the right -->
+          <div class="p-5 bg-white rounded-xl grid gap-4 md:grid-cols-2 md:gap-8 md:items-center">
             <p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="estimateSignup.ctaBody">Sadat autoliikkeet ympäri Suomen voivat tehdä autostasi tarjouksen. Myynti-ilmoituksen tekeminen on maksutonta, ja päätät itse, hyväksytkö tarjouksen.</p>
-            <a href="details.html" data-go class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors no-underline"><span data-i18n="valueTracker.auctionCta">Aloita kilpailutus</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
-            <p class="m-0 font-dm text-xs leading-4 text-slate-500" data-i18n="valueTracker.ctaNote">Autosi tiedot siirtyvät mukana.</p>
+            <div class="flex flex-col gap-2">
+              <a href="details.html" data-go class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors no-underline"><span data-i18n="valueTracker.auctionCta">Aloita kilpailutus</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+              <p class="m-0 font-dm text-xs leading-4 text-slate-500" data-i18n="valueTracker.ctaNote">Autosi tiedot siirtyvät mukana.</p>
+            </div>
           </div>
         </section>
         <section>
@@ -1174,6 +1191,17 @@
             <p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="valueTracker.faq5A">Arvio ei näe autosi kuntoa, varusteita eikä huoltohistoriaa. Autoliikkeet tekevät tarjouksensa ilmoituksesi perusteella, joten tulos voi olla arviota suurempi tai pienempi.</p>
             <div id="vt6-factors" class="grid sm:grid-cols-2 gap-5"></div>
           </div>
+        </section>
+        <!-- The offers page's FAQ (prod's MAccordion), with the estimate's
+             own questions: the landing's, less the two this page already
+             answers (contact details, why the auction can differ). -->
+        <section>
+          <h2 class="m-0 mb-5 font-barlow font-bold text-xl leading-[24px] text-blue-900" data-i18n="estimateAccount.faqTitle">Usein kysytyt kysymykset</h2>
+          <div id="vt6-faq" class="flex flex-col space-y-2.5"></div>
+          <p class="m-0 mt-8 flex flex-wrap justify-center items-center gap-x-1.5 gap-y-1 font-dm text-sm leading-tight text-slate-700 text-center">
+            <span data-i18n="faq.moreQuestion">Muuta kysyttävää?</span>
+            <a href="help.html" class="inline-flex items-center hover:underline text-blue-600 active:text-blue-500" data-i18n="faq.moreLink">Vieraile tukisivulla</a>
+          </p>
         </section>
       </div>
     </div>
@@ -1847,7 +1875,8 @@
 
       /* ── v6: the estimate page, once verified ─────────────────────────── */
       function openAccount() {
-        vt.estimatedAt = new Date().toISOString(); save();
+        vt.estimatedAt = new Date().toISOString();
+        vt.value = estimateValue(); vt.account = true; delete vt.heroDismissed; save();
         setStage('account');
         showInbox(false);
       }
@@ -1856,9 +1885,34 @@
         el('vt6-estimate').innerHTML = estimateCard('page');
         var box = el('vt6-factors');
         if (!box.childElementCount) box.innerHTML = el('vt-factor-lists').innerHTML;
+        renderAccountFaq();
         /* The footer's crest takes the page's blue, as OFooter's does. */
         var wave = el('app-footer-wave');
         if (wave) wave.style.backgroundColor = '#EEF6FA';
+      }
+      /* The offers page's accordion (buildFaqs in offers.html): details +
+         a sibling that opens with it, carets down and up. */
+      var CARET_DOWN = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="m213.66 101.66-80 80a8 8 0 0 1-11.32 0l-80-80a8 8 0 0 1 11.32-11.32L128 164.69l74.34-74.35a8 8 0 0 1 11.32 11.32Z"/></svg>';
+      var CARET_UP = '<svg width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66 165.66a8 8 0 0 1-11.32 0L128 91.31l-74.34 74.35a8 8 0 0 1-11.32-11.32l80-80a8 8 0 0 1 11.32 0l80 80a8 8 0 0 1 0 11.32Z"/></svg>';
+      function renderAccountFaq() {
+        var items = [
+          [T6('faq1Q'), T6('faq1A')],
+          [T6('faq6Q'), T6('faq6A')],
+          [T('faq2Q'), T5('faq2A')],
+          [T('faq4Q'), T5('faq4A')]
+        ];
+        el('vt6-faq').innerHTML = items.map(function (qa) {
+          return '<div class="w-full bg-white p-3 rounded-md">' +
+            '<details class="group peer"><summary class="block cursor-pointer [&::-webkit-details-marker]:hidden">' +
+              '<div class="flex items-center justify-between gap-1">' +
+                '<span class="inline-flex flex-1 leading-snug font-dm text-sm text-gray-700 group-open:font-bold">' + esc(qa[0]) + '</span>' +
+                '<span class="inline-flex text-slate-500 group-open:hidden ml-2 flex-shrink-0">' + CARET_DOWN + '</span>' +
+                '<span class="hidden text-slate-500 group-open:inline-flex ml-2 flex-shrink-0">' + CARET_UP + '</span>' +
+              '</div>' +
+            '</summary></details>' +
+            '<div class="vt6-faq-body"><div class="overflow-hidden"><p class="m-0 pt-4 font-dm text-sm text-gray-600">' + esc(qa[1]) + '</p></div></div>' +
+          '</div>';
+        }).join('');
       }
       /* A scenario that opens the estimate directly stands for a seller who
          has verified: logged in, with the seed seller's details. */
@@ -1868,6 +1922,7 @@
         if (!vt.contact) vt.contact = { name: DEFAULT_NAME, phone: DEFAULT_PHONE, terms: true };
         if (vt.consent == null) vt.consent = true;
         if (!vt.estimatedAt) vt.estimatedAt = new Date().toISOString();
+        vt.value = estimateValue(); vt.account = true;
         save();
         var s = funnel();
         if (!s.loggedIn || !(s.contact && s.contact.kokoNimi)) {

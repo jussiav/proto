@@ -477,6 +477,15 @@
               <img src="assets/0fa6d12d-3af3-4995-bbcb-4f2aff63f3d7.svg" class="w-5 h-5 flex-shrink-0" alt="" />
               <span id="progress-km" class="font-dm text-slate-600 text-base"></span>
             </div>
+
+            <!-- Price guess v6: a car with an AutoVex-arvio and no ad yet -->
+            <div id="progress-estimate" class="hidden items-end justify-between gap-3 pt-3 border-t border-slate-200">
+              <div class="flex flex-col gap-0.5">
+                <span class="font-dm font-medium text-sm text-slate-900" data-i18n="estimateSignup.brandName">AutoVex-arvio</span>
+                <span id="progress-estimate-date" class="font-dm text-xs text-slate-500"></span>
+              </div>
+              <span id="progress-estimate-value" class="font-barlow font-bold text-2xl leading-7 text-slate-900 tabular-nums"></span>
+            </div>
           </div>
 
           <!-- Jatka button -->
@@ -1476,13 +1485,22 @@
           headline = t('heroStates.auctionEnded');
         }
         destination = 'offers.html';
-      } else if (store.loggedIn) {
+      } else if (store.loggedIn && (store.successVisited || !store.funnelPosition)) {
         headline = t('heroStates.underReview');
         destination = 'success.html';
       } else {
+        /* A seller can be logged in before submitting: price guess v6 makes
+           the account before the ad. Their unsent draft resumes where the
+           funnel last recorded them. */
         headline = t('heroStates.launchingCar');
-        destination = store.successVisited ? 'success.html' : getFurthestStep(store);
+        destination = store.successVisited ? 'success.html' : store.loggedIn ? store.funnelPosition : getFurthestStep(store);
       }
+      heroMode = 'progress';
+      hideEstimateRow();
+      /* The car the seller has an estimate for keeps it on the card until
+         its ad is sent. */
+      const est = estimateForHero(store);
+      if (est && !store.successVisited && String(est.plate).toUpperCase() === plate.toUpperCase()) fillEstimateRow(est);
       document.getElementById('hero-headline-progress-text').textContent = headline;
       btn.innerHTML = t('btn.continue') + ' <img src="assets/a44d8089-da10-4a28-9c28-b4aa199b97bc.svg" class="w-6 h-6" alt="" />';
       btn.onclick = function() { window.location.href = destination; };
@@ -1497,7 +1515,70 @@
       document.getElementById('hero-progress-card').classList.add('flex');
     }
 
+    /* ── Price guess v6: the car a logged-in seller has an estimate for ──
+       hinta-arvio.html keeps the estimate in its own store. While the seller
+       has no ad, the hero shows that car, its AutoVex-arvio, and the way into
+       the funnel with the car already found. */
+    const VT_KEY = 'autovex_value_tracker';
+    const VEHICLE_FIELDS = ['merkki', 'malli', 'mallitarkennus', 'vuosimalli', 'polttoaine', 'vetotapa', 'vaihteisto'];
+    let heroMode = 'input';
+    function getVt() { try { return JSON.parse(localStorage.getItem(VT_KEY) || '{}') || {}; } catch (e) { return {}; } }
+    function groupDigits(n) { return String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+    function estimateForHero(store) {
+      if (document.documentElement.getAttribute('data-price-guess-arm') !== 'v6') return null;
+      const vt = getVt();
+      if (!store.loggedIn || !vt.account || !vt.plate || !vt.value || vt.heroDismissed) return null;
+      return vt;
+    }
+    function hideEstimateRow() {
+      const row = document.getElementById('progress-estimate');
+      row.classList.add('hidden'); row.classList.remove('flex');
+    }
+    function fillEstimateRow(vt) {
+      const lang = (window.getLang && window.getLang()) || 'fi';
+      document.getElementById('progress-estimate-date').textContent =
+        new Date(vt.estimatedAt || Date.now()).toLocaleDateString(lang === 'fi' ? 'fi-FI' : 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
+      document.getElementById('progress-estimate-value').textContent = groupDigits(vt.value) + ' €';
+      const row = document.getElementById('progress-estimate');
+      row.classList.remove('hidden'); row.classList.add('flex');
+    }
+    function showEstimateState(vt) {
+      const car = vt.car || {};
+      document.getElementById('progress-plate').textContent = String(vt.plate).toUpperCase();
+      document.getElementById('progress-carname').textContent = [car.merkki, car.malli].filter(Boolean).join(' ') || vt.plate;
+      document.getElementById('progress-km').textContent = formatKm(vt.km);
+      fillEstimateRow(vt);
+
+      document.getElementById('hero-headline-progress-text').textContent = t('heroStates.launchingCar');
+      const btn = document.querySelector('#hero-progress-card button');
+      btn.innerHTML = t('valueTracker.auctionCta') + ' <img src="assets/a44d8089-da10-4a28-9c28-b4aa199b97bc.svg" class="w-6 h-6" alt="" />';
+      btn.onclick = function () { startFromEstimate(vt); };
+
+      document.getElementById('hero-headline-default').classList.add('hidden');
+      document.getElementById('hero-headline-default').classList.remove('flex');
+      document.getElementById('hero-headline-progress').classList.remove('hidden');
+      document.getElementById('hero-headline-progress').classList.add('flex');
+      document.getElementById('hero-form').classList.add('hidden');
+      document.getElementById('hero-progress-card').classList.remove('hidden');
+      document.getElementById('hero-progress-card').classList.add('flex');
+      heroMode = 'estimate';
+    }
+    /* hinta-arvio.html's goToFunnel: the car and the account's details go
+       with the seller, and the equipment step skips its lookup screen. */
+    function startFromEstimate(vt) {
+      const prev = getStore();
+      const km = groupDigits(vt.km);
+      const s = { hero: { plate: vt.plate, km: km }, details: {} };
+      if (prev.loggedIn) s.loggedIn = prev.loggedIn;
+      s.contact = Object.assign({}, prev.contact || {});
+      VEHICLE_FIELDS.forEach(function (k) { s.details[k] = (vt.car || {})[k] || ''; });
+      if (prev.details && prev.details.sijainti) s.details.sijainti = prev.details.sijainti;
+      setStore(s);
+      window.location.href = 'details.html?' + new URLSearchParams({ plate: vt.plate, km: km, from: 'price-guess' });
+    }
+
     function showInputState() {
+      heroMode = 'input';
       document.getElementById('hero-headline-default').classList.remove('hidden');
       document.getElementById('hero-headline-default').classList.add('flex');
       document.getElementById('hero-headline-progress').classList.add('hidden');
@@ -1510,8 +1591,11 @@
 
     function checkHeroState() {
       const store = getStore();
+      const vt = estimateForHero(store);
       if (store.hero && store.hero.plate && store.hero.km) {
         showProgressState(store);
+      } else if (vt) {
+        showEstimateState(vt);
       } else {
         showInputState();
       }
@@ -1527,6 +1611,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       checkHeroState();
       syncNavLoginLabel();
+      document.addEventListener('av:langchange', function () { if (heroMode !== 'input') checkHeroState(); });
 
       /* Prod caps mileage at country_config('max_driven_distance'), 280 000 km
          for Finland. LandingPageForm.vue shows form.tender.driven_more_than_max
@@ -1772,6 +1857,14 @@
 
       document.getElementById('reset-hero').addEventListener('click', function(e) {
         e.preventDefault();
+        /* An estimate is not an ad, so nothing is deleted: the hero just
+           stops showing that car on this device. */
+        if (heroMode === 'estimate') {
+          const vt = getVt(); vt.heroDismissed = true;
+          try { localStorage.setItem(VT_KEY, JSON.stringify(vt)); } catch (err) {}
+          showInputState();
+          return;
+        }
         window.confirmDeleteAd(function () {
           try { localStorage.removeItem('autovex_decision'); } catch(e) {}
           try { localStorage.removeItem('autovex_offers'); } catch(e) {}
