@@ -58,7 +58,7 @@
        Stamped before body parsing, so control never paints it. */
     (function () {
       var arm = window.protoVariant('price-guess', 'control');
-      if (['control', 'v1', 'v2', 'v3', 'v4', 'v5'].indexOf(arm) === -1) { window.protoVariantSet('price-guess', null); arm = 'control'; }
+      if (['control', 'v1', 'v2', 'v3', 'v4', 'v5', 'v6'].indexOf(arm) === -1) { window.protoVariantSet('price-guess', null); arm = 'control'; }
       document.documentElement.setAttribute('data-price-guess-arm', arm);
       /* v3's teaser addresses its envelope by hand, in the campaign's font */
       if (arm === 'v3') {
@@ -332,7 +332,8 @@
             { id: 'v2',      label: 'Variant 2 — Arviokone: the same section as an estimate machine' },
             { id: 'v3',      label: 'Variant 3 — Kirje Joulupukille: Christmas campaign, links to santa.html' },
             { id: 'v4',      label: 'Variant 4 — Hinta-arvio: section links to hinta-arvio.html' },
-            { id: 'v5',      label: 'Variant 5 — Hinta-arvio as an email sign-up: no front page section' }
+            { id: 'v5',      label: 'Variant 5 — Hinta-arvio as an email sign-up: no front page section' },
+            { id: 'v6',      label: 'Variant 6 — Hinta-arvio with a verified account: no front page section' }
           ]
         },
         {

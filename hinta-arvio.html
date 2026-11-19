@@ -143,14 +143,14 @@
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
   <script>
-    /* This page is the price-guess initiative's v4 and v5, both replacing
-       prod's /hinta-arvio. The other arms have pages of their own. The arm is
-       stamped here so neither arm's parts paint for the other. */
+    /* This page is the price-guess initiative's v4, v5 and v6, each
+       replacing prod's /hinta-arvio. The other arms have pages of their own.
+       The arm is stamped here so no arm's parts paint for another. */
     (function () {
       var arm = window.protoVariant('price-guess', 'v4');
       var to = arm === 'v1' || arm === 'v2' ? 'price-guess.html' : arm === 'v3' ? 'santa.html' : null;
       if (to) window.location.replace(to + window.location.search + window.location.hash);
-      document.documentElement.setAttribute('data-ha-arm', arm === 'v5' ? 'v5' : 'v4');
+      document.documentElement.setAttribute('data-ha-arm', arm === 'v5' || arm === 'v6' ? arm : 'v4');
       /* v5 world state: whether marketing consent is required to see the
          estimate (Legal's current reading) or optional. */
       var consent = new URLSearchParams(window.location.search).get('consent');
@@ -252,18 +252,35 @@
     #vt-toast.is-on { display: flex; animation: vt-in .3s ease both; }
     body:has(#proto-bar) #vt-toast { bottom: 54px; }
 
-    /* v5: an email sign-up with no tracker. Each arm's parts carry data-arm. */
-    html[data-ha-arm="v4"] [data-arm="v5"],
-    html[data-ha-arm="v5"] [data-arm="v4"] { display: none !important; }
+    /* Each arm's parts carry data-arm, a list of the arms that show them:
+       v5 is an email sign-up with no tracker, v6 the same landing with an
+       account the seller verifies. */
+    html[data-ha-arm="v4"] [data-arm]:not([data-arm~="v4"]),
+    html[data-ha-arm="v5"] [data-arm]:not([data-arm~="v5"]),
+    html[data-ha-arm="v6"] [data-arm]:not([data-arm~="v6"]) { display: none !important; }
 
-    /* v5's landing order: hero, how the estimate is calculated, what affects
-       the value, FAQ, then the full service for a seller ready to sell. */
-    html[data-ha-arm="v5"] body[data-stage="landing"] .vt-landing { display: flex; flex-direction: column; }
-    html[data-ha-arm="v5"] .vt-sec-hero    { order: 1; }
-    html[data-ha-arm="v5"] .vt-sec-how     { order: 2; }
-    html[data-ha-arm="v5"] .vt-sec-factors { order: 3; }
-    html[data-ha-arm="v5"] .vt-sec-faq     { order: 4; }
-    html[data-ha-arm="v5"] .vt-sec-promo   { order: 5; }
+    /* v5's and v6's landing order: hero, how the estimate is calculated,
+       what affects the value, FAQ, then the full service for a seller ready
+       to sell. */
+    html[data-ha-arm="v5"] body[data-stage="landing"] .vt-landing,
+    html[data-ha-arm="v6"] body[data-stage="landing"] .vt-landing { display: flex; flex-direction: column; }
+    html[data-ha-arm="v5"] .vt-sec-hero,    html[data-ha-arm="v6"] .vt-sec-hero    { order: 1; }
+    html[data-ha-arm="v5"] .vt-sec-how,     html[data-ha-arm="v6"] .vt-sec-how     { order: 2; }
+    html[data-ha-arm="v5"] .vt-sec-factors, html[data-ha-arm="v6"] .vt-sec-factors { order: 3; }
+    html[data-ha-arm="v5"] .vt-sec-faq,     html[data-ha-arm="v6"] .vt-sec-faq     { order: 4; }
+    html[data-ha-arm="v5"] .vt-sec-promo,   html[data-ha-arm="v6"] .vt-sec-promo   { order: 5; }
+
+    /* v6: the contact step, then the estimate on the logged-in pages' blue
+       (offers, decision): their 768px column, no marketing menu, and the
+       app's short footer. */
+    #vt-flow[data-phase="contact"] [data-phase-show~="contact"] { display: flex; }
+    body[data-phase="contact"] [data-aside-show~="contact"] { display: flex; }
+    body[data-stage="account"] [data-stages~="account"] { display: block; }
+    body[data-stage="account"] { background-color: #EEF6FA; }
+    body[data-stage="account"] #nav-links { visibility: hidden; }
+    #app-footer { display: none; }
+    body[data-stage="account"] #app-footer { display: block; }
+    body[data-stage="account"] > footer:not(#app-footer) { display: none; }
 
     /* The estimate page shares the email step's funnel layout; the cream
        column switches with the phase. */
@@ -352,6 +369,7 @@
   <script>
     (function () {
       var V5 = document.documentElement.getAttribute('data-ha-arm') === 'v5';
+      var V6 = document.documentElement.getAttribute('data-ha-arm') === 'v6';
       var consentOptional = document.documentElement.getAttribute('data-consent') === 'optional';
       function setConsent(mode) {
         var u = new URL(window.location.href);
@@ -359,7 +377,16 @@
         window.location.href = u.toString();
       }
       window.protoPage = {
-        scenarios: V5 ? [
+        scenarios: V6 ? [
+          { group: 'Price estimate with an account', items: [
+            { id: 'landing',        label: 'Landing' },
+            { id: 'not-found',      label: 'Car not found' },
+            { id: 'contact',        label: 'Contact details' },
+            { id: 'email-sent',     label: 'Verification link sent' },
+            { id: 'estimate',       label: 'Price estimate (logged in)' },
+            { id: 'estimate-email', label: 'Price estimate + estimate email' }
+          ] }
+        ] : V5 ? [
           { group: 'Price estimate by email', items: [
             { id: 'landing',        label: 'Landing' },
             { id: 'not-found',      label: 'Car not found' },
@@ -388,12 +415,18 @@
               { id: 'v2', label: 'Variant 2 — Arviokone (estimate machine)' },
               { id: 'v3', label: 'Variant 3 — Kirje Joulupukille (Christmas)' },
               { id: 'v4', label: 'Variant 4 — your car’s value (tracker)' },
-              { id: 'v5', label: 'Variant 5 — estimate by email, no tracker' }
+              { id: 'v5', label: 'Variant 5 — estimate by email, no tracker' },
+              { id: 'v6', label: 'Variant 6 — estimate after a verified account' }
             ]
           }
         ]
       };
-      if (V5) {
+      if (V6) {
+        window.protoPage.actionsLabel = 'Inbox';
+        window.protoPage.actions = [
+          { label: 'Estimate email arrives', title: 'Shows the estimate email in the phone frame again', run: function () { if (window.vt5ShowInbox) window.vt5ShowInbox(true); } }
+        ];
+      } else if (V5) {
         window.protoPage.actionsLabel = 'Marketing consent — ' + (consentOptional ? 'optional now' : 'required now');
         window.protoPage.actions = [
           { label: 'Required to see the estimate', title: 'Legal’s current reading: no estimate without marketing consent', run: function () { setConsent('required'); } },
@@ -420,9 +453,11 @@
       <section class="vt-sec-hero flex flex-col items-center overflow-hidden" style="background: linear-gradient(to bottom, #0B6DFF 26%, #0050C8 60%);">
         <div class="flex flex-col items-center gap-14 pt-12 pb-10 px-10 w-full max-w-[1366px] max-md:px-5 max-md:gap-8 max-md:pt-10 max-md:pb-8">
           <div class="flex flex-col items-center gap-5 text-center w-full">
-            <h1 class="font-barlow font-bold text-white w-full text-4xl leading-10 md:text-6xl md:leading-tight" data-i18n="valueTracker.title">Hinta-arvio autostasi - ilmaiseksi</h1>
+            <h1 data-arm="v4 v5" class="font-barlow font-bold text-white w-full text-4xl leading-10 md:text-6xl md:leading-tight" data-i18n="valueTracker.title">Hinta-arvio autostasi - ilmaiseksi</h1>
+            <h1 data-arm="v6" class="font-barlow font-bold text-white w-full text-4xl leading-10 md:text-6xl md:leading-tight" data-i18n="estimateAccount.title">Maksuton hinta-arvio autostasi</h1>
             <p data-arm="v4" class="font-dm font-medium text-slate-200 w-full max-w-[640px] text-xl leading-6" data-i18n="valueTracker.subtitle">Katso autosi hinta-arvio rekisterinumerolla, seuraa autosi arvoa ja myy, kun aika on sinulle sopiva.</p>
             <p data-arm="v5" class="font-dm font-medium text-slate-200 w-full max-w-[640px] text-xl leading-6" data-i18n="estimateSignup.subtitle">Katso autosi hinta-arvio rekisterinumerolla ja ajokilometreillä.</p>
+            <p data-arm="v6" class="font-dm font-medium text-slate-200 w-full max-w-[640px] text-xl leading-6" data-i18n="estimateAccount.subtitle">Katso autosi AutoVex-arvio rekisterinumerolla ja ajokilometreillä.</p>
           </div>
           <div class="flex flex-col items-center gap-4 w-full">
           <form id="ha-car-form" class="flex flex-col gap-1.5 w-[336px] flex-shrink-0 max-md:w-full max-md:max-w-sm" style="scroll-margin-top: 96px;" novalidate>
@@ -608,8 +643,9 @@
           <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-tight md:text-5xl" data-i18n="valueTracker.howTitle">Näin auton hinta-arvio lasketaan</h2>
           <p data-arm="v4" class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="valueTracker.howBody1">Arvio perustuu tarjouksiin, joita autoliikkeet tekevät AutoVexissä joka päivä.</p>
           <p data-arm="v4" class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="valueTracker.howBody2">Tarvitset vain rekisterinumeron ja ajokilometrit.</p>
-          <p data-arm="v5" class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="estimateSignup.howBody1">Arvio perustuu AutoVexin markkinadataan.</p>
+          <p data-arm="v5 v6" class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="estimateSignup.howBody1">Arvio perustuu AutoVexin markkinadataan.</p>
           <p data-arm="v5" class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="estimateSignup.howBody2">Kehitämme arviota jatkuvasti, jotta se olisi mahdollisimman tarkka.</p>
+          <p data-arm="v6" class="m-0 font-dm text-lg leading-7 text-slate-700" data-i18n="estimateAccount.howBody2">AutoVex-arvio on maksuton. AutoVexissä on myyty jo yli 80 000 autoa, ja kehitämme arviota jatkuvasti, jotta se olisi mahdollisimman tarkka.</p>
           <a data-arm="v4" href="#" data-how-cta class="self-start inline-flex items-center justify-center h-14 px-8 bg-av-blue text-white font-dm text-base rounded-lg hover:bg-[#0A59EB] transition-colors max-sm:self-stretch"></a>
         </div>
       </section>
@@ -620,14 +656,16 @@
           <h2 class="m-0 font-barlow font-bold text-black text-center text-3xl leading-tight md:text-5xl" data-i18n="valueTracker.faqTitle">Usein kysyttyä auton hinta-arviosta</h2>
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden">
             <div id="vt-faq" class="divide-y divide-slate-100">
-              <div class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a1"><span data-i18n="valueTracker.faq1Q">Maksaako arvio jotain?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
-                <div class="faq-body" id="vt-faq-a1"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq1A">Ei. Arvio ja sen seuraaminen ovat maksuttomia.</p><p data-arm="v5" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq1A">Ei. Arvio on maksuton.</p></div></div></div>
+              <div class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a1"><span data-arm="v4 v5" data-i18n="valueTracker.faq1Q">Maksaako arvio jotain?</span><span data-arm="v6" data-i18n="estimateAccount.faq1Q">Maksaako AutoVex-arvio jotain?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
+                <div class="faq-body" id="vt-faq-a1"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq1A">Ei. Arvio ja sen seuraaminen ovat maksuttomia.</p><p data-arm="v5" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq1A">Ei. Arvio on maksuton.</p><p data-arm="v6" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateAccount.faq1A">Ei. AutoVex-arvio on maksuton.</p></div></div></div>
+              <div data-arm="v6" class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a6"><span data-i18n="estimateAccount.faq6Q">Mistä tunnistan aidon AutoVex-arvion?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
+                <div class="faq-body" id="vt-faq-a6"><div><p class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateAccount.faq6A">AutoVex-arvio on aina maksuton. Saat sen vain osoitteesta autovex.fi, ja lähetämme sen sähköpostiisi osoitteesta tiimi@autovex.fi.</p></div></div></div>
               <div class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a2"><span data-i18n="valueTracker.faq2Q">Mihin auton hinta-arvio perustuu?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
-                <div class="faq-body" id="vt-faq-a2"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq2A">Tarjouksiin, joita autoliikkeet ovat tehneet AutoVexissä samanlaisista autoista, sekä autosi ikään ja ajokilometreihin.</p><p data-arm="v5" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq2A">AutoVexin markkinadataan.</p></div></div></div>
-              <div class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a3"><span data-arm="v4" data-i18n="valueTracker.faq3Q">Kuinka usein arvio päivittyy?</span><span data-arm="v5" data-i18n="estimateSignup.faq3Q">Miksi tarvitsette sähköpostiosoitteeni?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
-                <div class="faq-body" id="vt-faq-a3"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq3A">Päivitämme arvion kerran kuukaudessa ja lähetämme sen sinulle sähköpostilla. Voit katsoa sen myös milloin tahansa kirjautumalla.</p><p data-arm="v5" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq3A">Lähetämme hinta-arvion sähköpostiisi ja jatkossa vinkkejä auton myyntiin. Voit perua tilauksen milloin tahansa.</p></div></div></div>
+                <div class="faq-body" id="vt-faq-a2"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq2A">Tarjouksiin, joita autoliikkeet ovat tehneet AutoVexissä samanlaisista autoista, sekä autosi ikään ja ajokilometreihin.</p><p data-arm="v5 v6" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq2A">AutoVexin markkinadataan.</p></div></div></div>
+              <div class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a3"><span data-arm="v4" data-i18n="valueTracker.faq3Q">Kuinka usein arvio päivittyy?</span><span data-arm="v5" data-i18n="estimateSignup.faq3Q">Miksi tarvitsette sähköpostiosoitteeni?</span><span data-arm="v6" data-i18n="estimateAccount.faq3Q">Miksi tarvitsette yhteystietoni?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
+                <div class="faq-body" id="vt-faq-a3"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq3A">Päivitämme arvion kerran kuukaudessa ja lähetämme sen sinulle sähköpostilla. Voit katsoa sen myös milloin tahansa kirjautumalla.</p><p data-arm="v5" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq3A">Lähetämme hinta-arvion sähköpostiisi ja jatkossa vinkkejä auton myyntiin. Voit perua tilauksen milloin tahansa.</p><p data-arm="v6" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateAccount.faq3A">Luomme niillä sinulle AutoVex-tilin, jolla näet autosi hinta-arvion. Lähetämme arvion myös sähköpostiisi. Markkinointiviestejä lähetämme vain, jos annat siihen luvan.</p></div></div></div>
               <div class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a4"><span data-i18n="valueTracker.faq4Q">Pitääkö minun myydä autoni?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
-                <div class="faq-body" id="vt-faq-a4"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq4A">Ei. Arvion katsominen ja seuraaminen eivät sido sinua mihinkään. Kun haluat myydä, voit laittaa autosi tarjouskilpailuun.</p><p data-arm="v5" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq4A">Ei. Arvion katsominen ei sido sinua mihinkään. Kun haluat myydä, voit laittaa autosi tarjouskilpailuun.</p></div></div></div>
+                <div class="faq-body" id="vt-faq-a4"><div><p data-arm="v4" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq4A">Ei. Arvion katsominen ja seuraaminen eivät sido sinua mihinkään. Kun haluat myydä, voit laittaa autosi tarjouskilpailuun.</p><p data-arm="v5 v6" class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="estimateSignup.faq4A">Ei. Arvion katsominen ei sido sinua mihinkään. Kun haluat myydä, voit laittaa autosi tarjouskilpailuun.</p></div></div></div>
               <div class="faq-item"><button type="button" class="faq-trigger w-full flex items-center justify-between gap-4 px-6 py-4 text-left font-dm font-medium text-sm md:text-base text-slate-900 bg-transparent border-0 cursor-pointer hover:bg-slate-50 transition-colors" aria-expanded="false" aria-controls="vt-faq-a5"><span data-i18n="valueTracker.faq5Q">Miksi tarjouskilpailun tulos voi poiketa arviosta?</span><svg class="faq-caret w-4 h-4 text-slate-500 flex-shrink-0" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"/></svg></button>
                 <div class="faq-body" id="vt-faq-a5"><div><p class="m-0 px-6 pb-5 font-dm text-slate-700 text-sm md:text-base leading-5" data-i18n="valueTracker.faq5A">Arvio ei näe autosi kuntoa, varusteita eikä huoltohistoriaa. Autoliikkeet tekevät tarjouksensa ilmoituksesi perusteella, joten tulos voi olla arviota suurempi tai pienempi.</p></div></div></div>
             </div>
@@ -638,7 +676,7 @@
       <!-- v5: the full service, for a seller ready to sell now. Its list is
            the auction page's "Miksi AutoVex?"; the button opens the front
            page, as the nav's "Aloita kilpailutus" does. -->
-      <section data-arm="v5" class="vt-sec-promo flex flex-col items-center px-10 py-16 max-md:px-5 max-md:py-12">
+      <section data-arm="v5 v6" class="vt-sec-promo flex flex-col items-center px-10 py-16 max-md:px-5 max-md:py-12">
         <div class="grid lg:grid-cols-2 gap-10 lg:gap-16 w-full max-w-[1100px] bg-av-cream rounded-3xl p-10 max-md:p-6 items-center">
           <div class="flex flex-col gap-5">
             <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-tight md:text-5xl" data-i18n="estimateSignup.promoTitle">Valmis myymään autosi?</h2>
@@ -707,7 +745,7 @@
                   <div class="vt-s-active w-7 h-7 rounded-full border-2 border-av-blue items-center justify-center"><img src="assets/step-default-active-inner.svg" class="w-[22px] h-[22px] block" alt="" /></div>
                   <img class="vt-s-locked w-7 h-7" src="assets/step-default.svg" alt="" />
                 </div>
-                <span class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="valueTracker.stepEmail">Sähköposti</span>
+                <span data-arm="v4 v5" class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="valueTracker.stepEmail">Sähköposti</span><span data-arm="v6" class="font-dm text-xs leading-[14px] text-[#080808] text-center" data-i18n="estimateAccount.stepContact">Yhteystiedot</span>
               </div>
               <div data-arm="v4" class="flex-none w-4 self-start"><img src="assets/step-spacer.svg" class="w-full h-7" alt="" /></div>
               <div data-arm="v4" class="vt-step flex flex-col items-center gap-2 flex-1 min-w-0" data-vt-step="2" data-state="locked">
@@ -767,6 +805,56 @@
             <p data-arm="v4" class="m-0 font-dm text-sm text-slate-600" data-i18n="valueTracker.emailNote">Lähetämme sinulle kirjautumislinkin. Salasanaa ei tarvita.</p>
           </form>
 
+          <!-- v6: the ad creation funnel's contact step (contact.html, prod's
+               PersonalInfo.vue): name, phone, email, the terms and the
+               optional marketing consent. Submitting creates the account and
+               sends the verification link; the link leads to the estimate. -->
+          <form id="vt6-contact-form" data-phase-show="contact" class="flex-col gap-6" novalidate>
+            <div class="flex flex-col gap-4">
+              <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="details.title">Löysimme autosi tiedot!</h2>
+              <p class="m-0 font-dm text-base leading-5 text-black" data-i18n="estimateAccount.contactSub">Täytä yhteystietosi, niin näet autosi hinta-arvion.</p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="vt6-name" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="contact.nameLabel">Koko nimi</span> <span class="text-red-500 font-medium">*</span></label>
+              <input id="vt6-name" type="text" autocomplete="name" placeholder="Etunimi Sukunimi" data-i18n-placeholder="contact.namePlaceholder" aria-describedby="vt6-name-error" class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg bg-white font-dm text-base text-slate-900 placeholder:text-slate-300" />
+              <p id="vt6-name-error" class="hidden av-error-msg" role="alert"></p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="vt6-phone" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="contact.phoneLabel">Puhelinnumero</span> <span class="text-red-500 font-medium">*</span></label>
+              <div class="flex w-full">
+                <div class="h-14 w-[75px] flex-shrink-0 border border-gray-500 rounded-l-lg bg-white flex items-center justify-between px-3">
+                  <span class="text-base leading-5">🇫🇮</span>
+                  <img src="assets/9841766b-6fb0-4c94-a37b-c9d847a3f0c2.svg" class="w-4 h-4" alt="" />
+                </div>
+                <input id="vt6-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+358401234567" data-i18n-placeholder="contact.phonePlaceholder" aria-describedby="vt6-phone-error"
+                       class="vt-field flex-1 min-w-0 h-14 border-t border-r border-b border-gray-500 rounded-r-lg bg-white px-4 font-dm text-base text-slate-900 placeholder:text-slate-300" />
+              </div>
+              <p id="vt6-phone-error" class="hidden av-error-msg" role="alert"></p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <label for="vt6-email" class="flex items-center gap-1 font-dm font-medium text-base leading-none text-slate-900"><span data-i18n="contact.emailLabel">Sähköposti</span> <span class="text-red-500 font-medium">*</span></label>
+              <input id="vt6-email" type="email" inputmode="email" autocomplete="email" placeholder="Sähköpostiosoitteesi" data-i18n-placeholder="contact.emailPlaceholder" aria-describedby="vt6-email-error" class="vt-field w-full h-14 px-4 border border-gray-500 rounded-lg bg-white font-dm text-base text-slate-900 placeholder:text-slate-300" />
+              <p id="vt6-email-error" class="hidden av-error-msg" role="alert"></p>
+            </div>
+            <div class="flex flex-col gap-3.5">
+              <div class="flex flex-col gap-1">
+                <label class="flex items-start gap-2.5 cursor-pointer">
+                  <input id="vt6-terms" type="checkbox" class="av-checkbox mt-0.5" aria-describedby="vt6-terms-error" />
+                  <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n-html="contact.termsLabel">Hyväksyn AutoVexin <a href="#" class="text-av-blue underline hover:text-av-blue-dark">käyttöehdot</a> <span class="text-red-500">*</span></span>
+                </label>
+                <p id="vt6-terms-error" class="hidden av-error-msg" role="alert"></p>
+              </div>
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input id="vt6-consent" type="checkbox" class="av-checkbox mt-0.5" />
+                <span class="font-dm font-medium text-base leading-5 text-slate-900" data-i18n="contact.marketingLabel">Haluan vastaanottaa mielenkiintoista sisältöä ja vinkkejä auton myyntiin sähköpostitse.</span>
+              </label>
+            </div>
+            <div class="flex flex-col gap-3">
+              <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.emailBtn">Jatka</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
+              <p class="m-0 font-dm text-sm leading-5 text-slate-600" data-i18n="estimateAccount.contactNote">AutoVex-arvio on maksuton. Lähetämme sähköpostiisi vahvistuslinkin, josta pääset suoraan arvioon.</p>
+            </div>
+          </form>
+
           <!-- Link sent: the success page's unverified state (success.html,
                prod's Review.vue / PublishQueue.vue): centred headline and
                subtext, the verify-email illustration, then the blue-bordered
@@ -775,7 +863,7 @@
           <div data-phase-show="sent" class="flex-col items-center gap-6">
             <div class="flex flex-col gap-2.5 w-full text-center items-center">
               <h2 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-[26px]" data-i18n="valueTracker.sentTitle">Tarkista sähköpostisi</h2>
-              <p class="m-0 font-dm text-base leading-5 text-black" data-i18n="valueTracker.sentBody">Vahvista nyt sähköpostiosoitteesi, niin näet autosi arvon.</p>
+              <p data-arm="v4 v5" class="m-0 font-dm text-base leading-5 text-black" data-i18n="valueTracker.sentBody">Vahvista nyt sähköpostiosoitteesi, niin näet autosi arvon.</p><p data-arm="v6" class="m-0 font-dm text-base leading-5 text-black" data-i18n="estimateAccount.sentBody">Vahvista sähköpostiosoitteesi, niin näet autosi hinta-arvion.</p>
             </div>
             <div class="w-full flex items-center justify-center">
               <img src="assets/success-verify-email-illustration.png" alt="" class="w-[288px] h-auto object-contain" />
@@ -791,7 +879,7 @@
                 </span>
               </div>
               <div class="text-lg font-semibold mb-2" data-i18n="success.emailCardTitle">Vahvista sähköpostisi jatkaaksesi</div>
-              <span data-i18n="valueTracker.sentCardBody">Olemme lähettäneet sinulle vahvistuslinkin. Seuraa sitä nähdäksesi autosi arvon.</span>
+              <span data-arm="v4 v5" data-i18n="valueTracker.sentCardBody">Olemme lähettäneet sinulle vahvistuslinkin. Seuraa sitä nähdäksesi autosi arvon.</span><span data-arm="v6" data-i18n="estimateAccount.sentCardBody">Olemme lähettäneet sinulle vahvistuslinkin. Avaa se, niin näet autosi AutoVex-arvion.</span>
               <div class="font-semibold mt-8 mb-4" data-i18n="success.emailCardNoEmail">Etkö saanut sähköpostia?</div>
               <button id="vt-resend" type="button" class="flex gap-x-2 mt-4 text-slate-600 underline cursor-pointer bg-transparent border-0 p-0 font-dm text-base">
                 <span data-i18n="success.emailCardResend">Lähetä vahvistusviesti uudelleen</span>
@@ -881,7 +969,7 @@
                funnel has "Erinomainen aika myydä" -->
           <aside class="w-full lg:w-[calc(50%-3rem)] lg:m-6 bg-av-cream rounded-xl p-8 flex flex-col md:sticky md:top-8 md:h-[calc(100vh-4rem)] md:overflow-y-auto max-md:max-w-full max-md:w-full max-md:h-auto max-md:rounded-none max-md:px-5 max-md:py-8">
             <!-- Centred as contact.html centres its car card -->
-            <div data-aside-show="email sent details" class="flex-1 flex-col justify-center gap-6">
+            <div data-aside-show="email contact sent details" class="flex-1 flex-col justify-center gap-6">
             <div id="vt-car-side" class="w-full"></div>
             <div class="bg-white rounded-xl p-5 flex items-center gap-5 shadow-[0px_2px_4px_-2px_rgba(0,0,0,0.1),0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
               <span class="flex items-center justify-center w-[67px] h-[67px] rounded-xl bg-blue-50 text-av-blue flex-shrink-0"><svg class="w-9 h-9" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M232,208a8,8,0,0,1-8,8H32a8,8,0,0,1-8-8V48a8,8,0,0,1,16,0v94.37L90.73,98a8,8,0,0,1,10.07-.38l58.81,44.11L218.73,90a8,8,0,1,1,10.54,12l-64,56a8,8,0,0,1-10.07.38L96.39,114.29,40,163.63V200H224A8,8,0,0,1,232,208Z"/></svg></span>
@@ -899,7 +987,7 @@
                 <p class="m-0 font-dm text-sm leading-5 text-slate-700" data-i18n="valueTracker.faq5A">Arvio ei näe autosi kuntoa, varusteita eikä huoltohistoriaa. Autoliikkeet tekevät tarjouksensa ilmoituksesi perusteella, joten tulos voi olla arviota suurempi tai pienempi.</p>
               </div>
               <!-- Both lists in one card, so the column carries one box under the car -->
-              <div class="bg-white rounded-xl p-5 grid sm:grid-cols-2 gap-5 shadow-sm">
+              <div id="vt-factor-lists" class="bg-white rounded-xl p-5 grid sm:grid-cols-2 gap-5 shadow-sm">
                 <div class="flex flex-col gap-3">
                   <h3 class="m-0 flex items-center gap-2 font-barlow font-bold text-slate-900 text-base leading-6"><span class="flex items-center justify-center w-7 h-7 rounded-md bg-red-50 text-red-600 flex-shrink-0"><svg class="w-4 h-2.5" viewBox="0 0 20 12" fill="currentColor" aria-hidden="true"><path d="M14 12L16.29 9.71L11.41 4.83L7.41 8.83L0 1.41L1.41 0L7.41 6L11.41 2L17.71 8.29L20 6V12H14Z"/></svg></span><span data-i18n="valueTracker.factorsDown">Arvoa laskevat</span></h3>
                   <ul class="m-0 p-0 list-none flex flex-col gap-1.5 font-dm text-sm leading-5 text-slate-700"><li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down1">Auton ikä</span></li><li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down2">Ajokilometrit</span></li><li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down3">Puutteellinen huoltohistoria</span></li><li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down4">Kolarihistoria</span></li><li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down5">Omistajien määrä</span></li><li class="flex items-center gap-2"><span class="w-1 h-1 rounded-full bg-slate-400 flex-shrink-0"></span><span data-i18n="valueTracker.down6">Heikko kysyntä</span></li></ul>
@@ -1049,6 +1137,47 @@
 
     </div>
 
+    <!-- ── v6: the estimate, once the seller has verified their email ────
+         The logged-in pages' look (offers.html, decision.html): blue-50
+         behind a 768px column, sections under prod's Section titles, white
+         cards. Section icons are left out until picked. -->
+    <div data-stages="account">
+      <div class="max-w-[768px] mx-auto p-6 sm:py-14 flex flex-col gap-y-16">
+        <section>
+          <h1 class="m-0 mb-5 font-barlow font-bold text-xl leading-[24px] text-blue-900" data-i18n="estimateAccount.pageTitle">Autosi hinta-arvio</h1>
+          <!-- The estimate card, drawn by estimateCard('page'); the estimate
+               email draws the same card -->
+          <div id="vt6-estimate"></div>
+        </section>
+        <section>
+          <h2 class="m-0 mb-5 font-barlow font-bold text-xl leading-[24px] text-blue-900" data-i18n="estimateSignup.ctaTitle">Valmis myymään? Anna autoliikkeiden kilpailla autostasi.</h2>
+          <div class="p-5 bg-white rounded-xl flex flex-col gap-4">
+            <p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="estimateSignup.ctaBody">Sadat autoliikkeet ympäri Suomen voivat tehdä autostasi tarjouksen. Myynti-ilmoituksen tekeminen on maksutonta, ja päätät itse, hyväksytkö tarjouksen.</p>
+            <a href="details.html" data-go class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors no-underline"><span data-i18n="valueTracker.auctionCta">Aloita kilpailutus</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></a>
+            <p class="m-0 font-dm text-xs leading-4 text-slate-500" data-i18n="valueTracker.ctaNote">Autosi tiedot siirtyvät mukana.</p>
+          </div>
+        </section>
+        <section>
+          <h2 class="m-0 mb-5 font-barlow font-bold text-xl leading-[24px] text-blue-900" data-i18n="howItWorks.title">Näin löydämme autollesi ostajan</h2>
+          <div class="p-5 bg-white rounded-xl flex flex-col gap-5">
+            <p class="m-0 font-dm text-slate-600 text-base leading-6" data-i18n="howItWorks.subtitle">Fiksuin tapa myydä auto on antaa AutoVexin kilpailuttaa autoliikkeet puolestasi.</p>
+            <ol class="m-0 p-0 list-none flex flex-col gap-5">
+              <li class="flex items-start gap-3"><span class="w-9 h-9 flex items-center justify-center flex-shrink-0"><img src="assets/2d92ffd7-0618-47a9-bb1f-6320eff4486b.svg" class="w-9 h-9 object-contain" alt="" /></span><div class="flex flex-col gap-1"><h3 class="m-0 font-barlow font-bold text-slate-900 text-lg leading-6" data-i18n="howItWorks.step1Title">Luo myynti-ilmoitus</h3><p class="m-0 font-dm text-slate-700 text-sm leading-5" data-i18n="howItWorks.step1Body">Kerro meille autostasi. Auton perustietojen lisäksi tarvitset vain 5 kuvaa ja huoltokirjan.</p></div></li>
+              <li class="flex items-start gap-3"><span class="w-9 h-9 flex items-center justify-center flex-shrink-0"><img src="assets/36a4dbe5-c235-4155-a3f3-591b836a4a91.svg" class="w-8 h-8 object-contain" alt="" /></span><div class="flex flex-col gap-1"><h3 class="m-0 font-barlow font-bold text-slate-900 text-lg leading-6" data-i18n="howItWorks.step2Title">Autoliikkeet kilpailevat</h3><p class="m-0 font-dm text-slate-700 text-sm leading-5" data-i18n="howItWorks.step2Body">Ilmoituksesi näkyy sadoille autoliikkeille, jotka kilpailevat autostasi tarjouksilla.</p></div></li>
+              <li class="flex items-start gap-3"><span class="w-9 h-9 flex items-center justify-center flex-shrink-0"><img src="assets/39f4c5d2-9444-4083-9edb-f64290306c8a.svg" class="w-8 h-8 object-contain" alt="" /></span><div class="flex flex-col gap-1"><h3 class="m-0 font-barlow font-bold text-slate-900 text-lg leading-6" data-i18n="howItWorks.step3Title">Päätä itse myynnistä</h3><p class="m-0 font-dm text-slate-700 text-sm leading-5" data-i18n="howItWorks.step3Body">Hyväksy tarjous, tee vastatarjous tai jätä myymättä. Tarjouksen hyväksyttyäsi autoliike on sinuun yhteydessä.</p></div></li>
+            </ol>
+          </div>
+        </section>
+        <section>
+          <h2 class="m-0 mb-5 font-barlow font-bold text-xl leading-[24px] text-blue-900" data-i18n="valueTracker.factorsTitle">Mikä vaikuttaa autosi arvoon?</h2>
+          <div class="p-5 bg-white rounded-xl flex flex-col gap-5">
+            <p class="m-0 font-dm text-base leading-6 text-slate-700" data-i18n="valueTracker.faq5A">Arvio ei näe autosi kuntoa, varusteita eikä huoltohistoriaa. Autoliikkeet tekevät tarjouksensa ilmoituksesi perusteella, joten tulos voi olla arviota suurempi tai pienempi.</p>
+            <div id="vt6-factors" class="grid sm:grid-cols-2 gap-5"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
     <div data-stages="landing" data-arm="v4">
   <section class="stats-map-section relative flex flex-col items-center py-16 md:py-28 px-5 md:px-10 overflow-hidden bg-white"
            style="background-image: url('assets/stats-finland-map.png');
@@ -1119,13 +1248,13 @@
       <span class="text-xs text-slate-400" data-i18n="success.emailToastNow">nyt</span>
     </div>
     <p id="vt-toast-title" class="m-0 text-sm font-bold text-slate-900" data-i18n="success.emailToastTitle">Sinulla on 1 uusi sähköposti</p>
-    <p class="m-0 text-sm text-slate-600" data-i18n="valueTracker.toastSubject">Kirjaudu ja katso autosi arvo</p>
+    <p data-arm="v4 v5" class="m-0 text-sm text-slate-600" data-i18n="valueTracker.toastSubject">Kirjaudu ja katso autosi arvo</p><p data-arm="v6" class="m-0 text-sm text-slate-600" data-i18n="estimateAccount.toastSubject">Vahvista sähköpostisi ja katso autosi AutoVex-arvio</p>
     <button type="button" id="vt-toast-open" class="self-start mt-1 h-8 px-3.5 rounded-lg bg-av-blue text-white text-sm border-0 cursor-pointer hover:bg-[#0A59EB]" data-i18n="valueTracker.toastBtn">Avaa linkki</button>
   </div>
 
-  <!-- v5: the welcome email in a phone, standing in for the seller's inbox.
-       The mail itself is drawn by renderMail(). -->
-  <div id="vt5-inbox" data-arm="v5" role="dialog" aria-labelledby="vt5-mail-subject">
+  <!-- v5's welcome email and v6's estimate email in a phone, standing in
+       for the seller's inbox. The mail itself is drawn by renderMail(). -->
+  <div id="vt5-inbox" data-arm="v5 v6" role="dialog" aria-labelledby="vt5-mail-subject">
     <div class="relative">
       <button type="button" id="vt5-close" class="vt5-close" aria-label="Sulje" data-i18n-aria="estimateSignup.inboxClose">×</button>
       <div class="vt5-phone">
@@ -1140,6 +1269,11 @@
     <p id="vt5-caption" class="vt5-caption" data-proto-dev></p>
   </div>
 
+  <!-- v6's estimate page is a logged-in page, so it takes the app's short
+       footer (app-footer.js); every other stage keeps layout.js's. The app
+       footer mounts first, as both look for #site-footer. -->
+  <div id="site-footer"></div>
+  <script src="app-footer.js"></script>
   <div id="site-footer"></div>
   <script src="layout.js"></script>
   <script src="vehicle-card.js"></script>
@@ -1169,9 +1303,17 @@
       var V5 = document.documentElement.getAttribute('data-ha-arm') === 'v5';
       var CONSENT_OPTIONAL = document.documentElement.getAttribute('data-consent') === 'optional';
       var MAIL_MS = 1400;
+      /* v6: v5's landing and estimate, but the seller fills in the funnel's
+         contact step and verifies their email first. Marketing consent is
+         optional; the estimate email is transactional and goes to everyone
+         who verified, and only a seller who ticked the box joins Klaviyo. */
+      var V6 = document.documentElement.getAttribute('data-ha-arm') === 'v6';
+      var SIGNUP = V5 || V6;
+      var DEFAULT_PHONE = '0401234567';
 
       function T(k) { return t('valueTracker.' + k); }
       function T5(k) { return t('estimateSignup.' + k); }
+      function T6(k) { return t('estimateAccount.' + k); }
       function fill(str, map) { return str.replace(/\{(\w+)\}/g, function (m, k) { return map[k] != null ? map[k] : m; }); }
       function read(key) { try { return JSON.parse(localStorage.getItem(key) || '{}') || {}; } catch (e) { return {}; } }
       function write(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
@@ -1344,7 +1486,7 @@
       }
       function renderSideCard() {
         var box = el('vt-car-side');
-        if (V5) {
+        if (SIGNUP) {
           box.classList.remove('av-card-shell');
           box.innerHTML = '<div class="vt5-side-details bg-white rounded-xl shadow-sm p-5 flex flex-col space-y-5">' + window.buildCarDetails(carDetailsProps()) + '</div>';
           return;
@@ -1412,7 +1554,7 @@
         var flowPhase = stage === 'flow' ? el('vt-flow').getAttribute('data-phase') : '';
         document.body.setAttribute('data-phase', flowPhase);
         if (stage !== 'flow' || phase !== 'sent') hideToast();
-        if (flowPhase !== 'estimate') hideInbox();
+        if (flowPhase !== 'estimate' && stage !== 'account') hideInbox();
         calcTimers.forEach(clearTimeout); calcTimers = [];
         window.scrollTo(0, 0);
         renderHowCta();
@@ -1420,6 +1562,7 @@
           ensureCar(); renderSideCard(); renderDemand(); renderSteps();
           if (flowPhase === 'details') fillDetails();
           if (flowPhase === 'email' && V5) fillEmailStep();
+          if (flowPhase === 'contact') fillContact();
           if (flowPhase === 'estimate') renderEstimate();
           if (flowPhase === 'notfound') renderNotFound();
         }
@@ -1427,6 +1570,7 @@
         if (stage === 'tracker') renderTracker();
         if (stage === 'auction') renderAuction();
         if (stage === 'calc') startCalc();
+        if (stage === 'account') renderAccount();
         syncScenario();
         syncNavLogin();
       }
@@ -1466,6 +1610,7 @@
           return p === 'sent' ? 'email-sent' : p === 'notfound' ? 'not-found' : p;
         }
         if (s === 'landing' || !s) return 'landing';
+        if (s === 'account') return el('vt5-inbox').classList.contains('is-on') ? 'estimate-email' : 'estimate';
         return { landing: 'landing', tracker: 'tracker', calc: 'calculating', auction: 'auction' }[s];
       };
 
@@ -1530,7 +1675,7 @@
            keeps the lookup as it came; v4 fills any gap from the seed car. */
         var raw = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult && window.PROTO_MOCK.lookupResult()) || {};
         var found = !!(raw.merkki && raw.malli);
-        if (V5) {
+        if (SIGNUP) {
           vt.car = {};
           VEHICLE_FIELDS.forEach(function (k) { if (raw[k]) vt.car[k] = raw[k]; });
         } else {
@@ -1542,7 +1687,18 @@
         loading.classList.remove('hidden'); loading.classList.add('flex');
         setTimeout(function () {
           loading.classList.add('hidden'); loading.classList.remove('flex');
-          if (V5) setStage('flow', found ? 'email' : 'notfound');
+          if (V6) {
+            /* A seller already logged in has an account and a verified
+               address, so the estimate follows at once. */
+            if (!found) setStage('flow', 'notfound');
+            else if (loggedIn()) {
+              var c = funnel().contact || {};
+              vt.email = c.sahkoposti || vt.email || DEFAULT_EMAIL;
+              vt.consent = !!c.markkinointi;
+              openAccount();
+            } else setStage('flow', 'contact');
+          }
+          else if (V5) setStage('flow', found ? 'email' : 'notfound');
           else if (loggedIn()) setStage('flow', 'details'); else setStage('flow', 'email');
         }, REDUCED ? 600 : LOOKUP_MS);
       });
@@ -1598,13 +1754,28 @@
         hideToast();
         toastTimer = setTimeout(function () { el('vt-toast').classList.add('is-on'); }, REDUCED ? 200 : TOAST_MS);
       });
-      function changeEmail() { inEmail.value = vt.email || ''; setStage('flow', 'email'); inEmail.focus(); }
+      function changeEmail() {
+        if (V6) { setStage('flow', 'contact'); in6Email.focus(); in6Email.select(); return; }
+        inEmail.value = vt.email || ''; setStage('flow', 'email'); inEmail.focus();
+      }
       el('vt-change-email').addEventListener('click', changeEmail);
       el('vt-email-pencil').addEventListener('click', changeEmail);
       /* Opening the link logs the seller in, as prod's email-link login does. */
       el('vt-toast-open').addEventListener('click', function () {
         var s = funnel();
         s.loggedIn = true;
+        if (V6) {
+          /* Verifying creates the account with what the contact step asked
+             for, as the funnel's verification link does. */
+          var c = vt.contact || {};
+          s.contact = Object.assign({}, s.contact || {}, {
+            kokoNimi: c.name || DEFAULT_NAME, puhelin: c.phone || DEFAULT_PHONE,
+            sahkoposti: vt.email || DEFAULT_EMAIL, kayttoehdot: true, markkinointi: !!vt.consent
+          });
+          write(FUNNEL_KEY, s);
+          openAccount();
+          return;
+        }
         s.contact = Object.assign({}, s.contact || {}, { sahkoposti: vt.email || DEFAULT_EMAIL });
         write(FUNNEL_KEY, s);
         setStage('flow', 'details');
@@ -1642,6 +1813,71 @@
         vt.tracked = true; save();
         setStage('tracker');
       });
+
+      /* ── v6: the contact step ────────────────────────────────────────── */
+      var in6Name = el('vt6-name'), in6Phone = el('vt6-phone'), in6Email = el('vt6-email'), in6Terms = el('vt6-terms'), in6Consent = el('vt6-consent');
+      function fillContact() {
+        var c = vt.contact || {};
+        if (!in6Name.value) in6Name.value = c.name || '';
+        if (!in6Phone.value) in6Phone.value = c.phone || '';
+        if (!in6Email.value) in6Email.value = vt.email || '';
+        in6Terms.checked = !!c.terms;
+        in6Consent.checked = !!vt.consent;
+      }
+      [[in6Name, 'vt6-name-error'], [in6Phone, 'vt6-phone-error'], [in6Email, 'vt6-email-error']].forEach(function (pair) {
+        pair[0].addEventListener('input', function () { el(pair[1]).classList.add('hidden'); pair[0].removeAttribute('aria-invalid'); });
+      });
+      in6Terms.addEventListener('change', function () { el('vt6-terms-error').classList.add('hidden'); in6Terms.removeAttribute('aria-invalid'); });
+      /* contact.html's rules and messages: every field required, the email
+         well formed, the terms accepted; the marketing box optional. */
+      el('vt6-contact-form').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var name = in6Name.value.trim(), phone = in6Phone.value.trim(), email = in6Email.value.trim(), bad = null;
+        if (!name) { fieldErr(in6Name, 'vt6-name-error', t('contact.nameError')); bad = bad || in6Name; }
+        if (!phone) { fieldErr(in6Phone, 'vt6-phone-error', t('contact.phoneError')); bad = bad || in6Phone; }
+        if (!email || !EMAIL_RE.test(email)) { fieldErr(in6Email, 'vt6-email-error', t(email ? 'contact.emailInvalidError' : 'contact.emailEmptyError')); bad = bad || in6Email; }
+        if (!in6Terms.checked) { fieldErr(in6Terms, 'vt6-terms-error', t('contact.termsError')); bad = bad || in6Terms; }
+        if (bad) { bad.focus(); return; }
+        vt.contact = { name: name, phone: phone, terms: true };
+        vt.email = email;
+        vt.consent = in6Consent.checked;
+        save();
+        showSent();
+      });
+
+      /* ── v6: the estimate page, once verified ─────────────────────────── */
+      function openAccount() {
+        vt.estimatedAt = new Date().toISOString(); save();
+        setStage('account');
+        showInbox(false);
+      }
+      function renderAccount() {
+        ensureCar();
+        el('vt6-estimate').innerHTML = estimateCard('page');
+        var box = el('vt6-factors');
+        if (!box.childElementCount) box.innerHTML = el('vt-factor-lists').innerHTML;
+        /* The footer's crest takes the page's blue, as OFooter's does. */
+        var wave = el('app-footer-wave');
+        if (wave) wave.style.backgroundColor = '#EEF6FA';
+      }
+      /* A scenario that opens the estimate directly stands for a seller who
+         has verified: logged in, with the seed seller's details. */
+      function seedAccount() {
+        ensureCar();
+        if (!vt.email) vt.email = DEFAULT_EMAIL;
+        if (!vt.contact) vt.contact = { name: DEFAULT_NAME, phone: DEFAULT_PHONE, terms: true };
+        if (vt.consent == null) vt.consent = true;
+        if (!vt.estimatedAt) vt.estimatedAt = new Date().toISOString();
+        save();
+        var s = funnel();
+        if (!s.loggedIn || !(s.contact && s.contact.kokoNimi)) {
+          s.loggedIn = true;
+          s.contact = Object.assign({}, s.contact || {}, {
+            kokoNimi: vt.contact.name, puhelin: vt.contact.phone, sahkoposti: vt.email, kayttoehdot: true, markkinointi: !!vt.consent
+          });
+          write(FUNNEL_KEY, s);
+        }
+      }
 
       /* ── v5: the estimate page and the welcome email ─────────────────── */
       /* The same value model as the tracker, at this month. */
@@ -1689,6 +1925,7 @@
       function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
       function renderMail() {
         var box = el('vt5-mail'), cap = el('vt5-caption');
+        if (V6) { renderAccountMail(box, cap); return; }
         if (!mailSent()) {
           box.innerHTML = '<div class="vt5-empty"></div>';
           box.firstChild.textContent = T5('inboxEmpty');
@@ -1719,6 +1956,33 @@
             '<p class="m-0 pt-4 text-[11px] leading-4 text-slate-500 text-center">' + esc(T5('mailUnsubLead')) + ' <span class="underline">' + esc(T5('mailUnsub')) + '</span></p>' +
           '</div>';
       }
+      /* v6: the estimate as a transactional email, sent to every seller
+         who verified, from the address the service's own emails come from.
+         No marketing content and no unsubscribe link. */
+      function renderAccountMail(box, cap) {
+        cap.textContent = 'Transactional email, sent to everyone who verified. ' +
+          (vt.consent ? 'Marketing consent given: the seller joins Klaviyo.' : 'No marketing consent: the seller is not added to Klaviyo.');
+        box.innerHTML =
+          '<div class="vt5-msg-head">' +
+            '<span class="vt5-avatar" aria-hidden="true">A</span>' +
+            '<div class="flex-1 min-w-0 flex flex-col gap-0.5">' +
+              '<div class="flex items-baseline justify-between gap-2"><span class="min-w-0 truncate text-[13px] font-bold text-slate-900">AutoVex <span class="font-normal text-slate-500">tiimi@autovex.fi</span></span><span class="text-xs text-slate-400 flex-shrink-0">' + esc(t('success.emailToastNow')) + '</span></div>' +
+              '<p id="vt5-mail-subject" class="m-0 text-[13px] leading-[18px] font-semibold text-slate-900">' + esc(T6('mailSubject')) + '</p>' +
+              '<p class="m-0 text-xs text-slate-500 truncate">' + esc(vt.email || DEFAULT_EMAIL) + '</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="vt5-body">' +
+            '<div class="flex justify-center pb-4"><img src="assets/logo-fi.svg" width="96" height="20" alt="AutoVex" /></div>' +
+            '<div class="vt5-card">' +
+              '<p class="m-0 font-barlow font-bold text-[22px] leading-[26px] text-slate-900">' + esc(T6('mailTitle')) + '</p>' +
+              estimateCard('mail') +
+              '<p class="m-0 pt-2 font-barlow font-bold text-lg leading-6 text-slate-900">' + esc(T5('mailSellTitle')) + '</p>' +
+              '<p class="m-0 text-sm leading-5 text-slate-700">' + esc(T5('ctaBody')) + '</p>' +
+              '<a href="details.html" data-go class="w-full h-11 rounded-lg bg-av-blue text-white text-sm flex items-center justify-center no-underline">' + esc(T('auctionCta')) + '</a>' +
+            '</div>' +
+            '<p class="m-0 pt-4 text-[11px] leading-4 text-slate-500 text-center">' + esc(T6('mailFooter')) + '</p>' +
+          '</div>';
+      }
       function showInbox(now) {
         clearTimeout(mailTimer);
         ensureCar();
@@ -1736,6 +2000,11 @@
         if (was) syncScenario();
       }
       window.vt5ShowInbox = function () {
+        if (V6) {
+          if (document.body.getAttribute('data-stage') !== 'account') { seedAccount(); setStage('account'); }
+          showInbox(true);
+          return;
+        }
         if (!(document.body.getAttribute('data-stage') === 'flow' && el('vt-flow').getAttribute('data-phase') === 'estimate')) {
           ensureCar();
           if (!vt.email) vt.email = DEFAULT_EMAIL;
@@ -1835,14 +2104,22 @@
         });
       });
 
-      /* v5 describes the estimate's basis openly and answers the FAQ without
-         tracking, so the page's description and FAQ markup for search follow
-         it, in Finnish whatever the page language. */
+      /* v5 and v6 describe the estimate's basis openly and answer the FAQ
+         without tracking, so the page's description and FAQ markup for
+         search follow them, in Finnish whatever the page language. */
       function rewriteFaqSchema() {
         var ld = document.querySelector('script[type="application/ld+json"]');
         var fi = (window.TRANSLATIONS && window.TRANSLATIONS.fi) || {};
-        var a = fi.valueTracker || {}, b = fi.estimateSignup || {};
+        var a = fi.valueTracker || {}, b = fi.estimateSignup || {}, c = fi.estimateAccount || {};
         if (!ld || !a.faq1Q || !b.faq1A) return;
+        /* v6 leads with the free AutoVex-arvio in its title and answers. */
+        if (V6) {
+          b = Object.assign({}, b, { metaDescription: c.metaDescription });
+          if (c.docTitle) document.title = c.docTitle;
+        }
+        var faq = V6
+          ? [[c.faq1Q, c.faq1A], [c.faq6Q, c.faq6A], [a.faq2Q, b.faq2A], [c.faq3Q, c.faq3A], [a.faq4Q, b.faq4A], [a.faq5Q, a.faq5A]]
+          : [[a.faq1Q, b.faq1A], [a.faq2Q, b.faq2A], [b.faq3Q, b.faq3A], [a.faq4Q, b.faq4A], [a.faq5Q, a.faq5A]];
         var meta = document.querySelector('meta[name="description"]');
         if (meta && b.metaDescription) meta.setAttribute('content', b.metaDescription);
         try {
@@ -1850,7 +2127,7 @@
           data['@graph'].forEach(function (node) {
             if (node['@type'] === 'WebPage' && b.metaDescription) node.description = b.metaDescription;
             if (node['@type'] !== 'FAQPage') return;
-            node.mainEntity = [[a.faq1Q, b.faq1A], [a.faq2Q, b.faq2A], [b.faq3Q, b.faq3A], [a.faq4Q, b.faq4A], [a.faq5Q, a.faq5A]].map(function (qa) {
+            node.mainEntity = faq.map(function (qa) {
               return { '@type': 'Question', name: qa[0], acceptedAnswer: { '@type': 'Answer', text: qa[1] } };
             });
           });
@@ -1879,6 +2156,7 @@
         if (s === 'tracker' || s === 'calc' || s === 'auction') renderStrip();
         if (s === 'tracker') renderTracker();
         if (s === 'auction') renderAuction();
+        if (s === 'account') renderAccount();
         if (s === 'calc') { el('vt-calc-car').textContent = carName(); document.querySelector('[data-calc="1"] span').textContent = fill(T('calc1'), { make: vt.car.merkki }); }
       });
 
@@ -1886,8 +2164,18 @@
       buildFaq();
       el('vt-feat-badge').innerHTML = window.buildRegBadge(DEFAULT_PLATE);
       var scenario = params.get('scenario');
-      if (V5) rewriteFaqSchema();
-      if (V5 && scenario && scenario !== 'landing') {
+      if (SIGNUP) rewriteFaqSchema();
+      if (V6 && scenario && scenario !== 'landing') {
+        ensureCar(); save();
+        if (scenario === 'contact') setStage('flow', 'contact');
+        else if (scenario === 'not-found') setStage('flow', 'notfound');
+        else if (scenario === 'email-sent') { if (!vt.email) { vt.email = DEFAULT_EMAIL; save(); } showSent(); }
+        else if (scenario === 'estimate') { seedAccount(); setStage('account'); }
+        else if (scenario === 'estimate-email') { seedAccount(); setStage('account'); showInbox(true); }
+        else setStage('landing');
+      } else if (V6) {
+        setStage('landing');
+      } else if (V5 && scenario && scenario !== 'landing') {
         ensureCar();
         if (scenario === 'estimate' || scenario === 'estimate-email') {
           if (!vt.email) vt.email = DEFAULT_EMAIL;

@@ -942,7 +942,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | AutoVex exclusive | **`v2` chosen** (2026-10-19) — painted-door test, required yes/no on the contact step + thanks on the decision page; `v1`/`v3` concluded no-go and removed; copy is Claude's draft, Jussi iterates | `autovex-exclusive` | `control` | `control` | `contact.html`, `decision.html` | `design-specs/autovex-exclusive.html` |
 | Informed ad creation | **Draft** (2026-10-15) — `v1` "what the ad needs" panel under the details step's subtitle, in prod's `ContextHelp` (the photo tips' component); copy is Claude's draft, Jussi iterates | `informed-ad-creation` | `control` | `control` | `details.html` | `design-specs/informed-ad-creation.html` |
 | OP routing | **In discussion** (2026-11-17): two designs, two placements, one VWO test across both pages. `v3` AutoVex's dashed coupon block (OP accepted the design) and `v4` OP's own banner "Muista vakuuttaa uusi autosi" built as HTML (which copy to use, OP's approval and the OP Chevin web-font licence are open). Both on the success page (verified, in review or published) and on the decision page after an offer is accepted or the offers rejected, linking OP's per-placement `cmpid` URLs. Emails removed: Marketing handles them. `v1`/`v2` retired 2026-11-12 | `op-routing` | `control` | `control` | `success.html`, `decision.html` | `design-specs/op-routing.html` |
-| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft. `v5` (2026-11-18) is the same page as an email sign-up, from Marketing's review of `v4`: no tracker, the estimate shown after the email step (marketing consent there) and in a mocked welcome email; copy is Claude's draft | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | `design-specs/price-guess.html` (v5; v1–v4 collapsed) |
+| Price guess | **Ideation** (2026-10-20) — not meant for the funnel. `v1` adds a front-page section linking to `price-guess.html`, a slot-machine "hinta-arvaus" that lands on a deliberately cheap number, then "Haluatko tietää autosi oikean arvon?" into the funnel with the car already found. `v2` (2026-10-21) is the same design as **Arviokone**, an estimate machine, after the team found "guess" offered no value to someone looking for an estimate. `v3` (2026-10-21) is a Christmas campaign on its own page, **Kirje Joulupukille**: the wish is a letter, Santa replies with the estimate; copy is Claude's draft. `v4` (rebuilt 2026-10-23) replaces prod's `/hinta-arvio` on its own page, `hinta-arvio.html`: a **car value tracker** modelled on Motorway's, value + history after an email-link login, then an estimated auction result into the funnel; copy is Claude's draft. `v5` (2026-11-18) is the same page as an email sign-up, from Marketing's review of `v4`: no tracker, the estimate shown after the email step (marketing consent there) and in a mocked welcome email; copy is Claude's draft. `v6` (2026-11-19) is `v5` after Legal's ruling that marketing consent cannot be a condition of the service: the funnel's contact step (name, phone, email, terms, optional consent), a verification link, then the estimate on the logged-in pages' blue and as a transactional email; only consenters join Klaviyo; copy is Claude's draft, built on the free, authentic **AutoVex-arvio** | `price-guess` | `control` | `control` | `index.html`, `price-guess.html`, `santa.html`, `hinta-arvio.html` | `design-specs/price-guess.html` (v5; v1–v4 collapsed; v6 not yet) |
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 | Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
 | Klaviyo consent | **Proposal sent to the team** (2026-11-11), ready to build if they agree; **copy approved by UX** (Jussi, 2026-11-11), ships as on the spec — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent as a switch (prod's dealer-side car-pickup switch, exactly, without its outlined row) in its own section, read from and saved to Klaviyo at once; the email field keeps the address in use and a line names the one waiting. | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
@@ -3710,9 +3710,10 @@ Jussi's brief: an AutoVex version of Motorway's Car Value Tracker
 `v4` without the tracker, after Marketing's review (Jussi, 2026-11-18): the
 page turns a search visitor into an email subscriber and shows the estimate
 once, with no login, no email verification and no contact step. Same file,
-`hinta-arvio.html`; `<head>` stamps `html[data-ha-arm="v4"|"v5"]` and every
-arm-only part carries `data-arm="v4"` or `data-arm="v5"`, hidden for the other
-arm. `v4` is unchanged and still the page default.
+`hinta-arvio.html`; `<head>` stamps `html[data-ha-arm="v4"|"v5"|"v6"]` and
+every arm-only part carries `data-arm` with the list of arms that show it
+(`data-arm="v5 v6"` for a part `v6` shares), hidden for the others. `v4` is
+unchanged and still the page default.
 
 - **The estimate's basis is said openly** (Jussi, 2026-11-19): "AutoVexin
   markkinadataan" (Jussi's word), led by offers dealerships make and sellers accept, plus
@@ -3816,13 +3817,71 @@ arm. `v4` is unchanged and still the page default.
   question; which tool makes the estimate; the front page shows no teaser for
   `v5` (Marketing sends search traffic straight to the page).
 - Copy `estimateSignup.*`, Claude's draft; shared strings stay in
-  `valueTracker.*`. The bar's Go to reads "Price estimate (v4, v5)".
+  `valueTracker.*`. The bar's Go to reads "Price estimate (v4, v5, v6)".
 - **Spec page** `design-specs/price-guess.html` (2026-11-19): `v5` only, in
   the review-no-review shape (summary, flow, one section per screen with
   Where/Scenario chips and a prototype link, behaviour, every string FI +
   EN, open questions), with a static copy of the estimate card; `v1`–`v4`
   are collapsed `<details>` in a grey band at the end. Its copy tables are
   static: change them by hand with `translations.js` (the sync rule).
+
+### Price guess `v6` — hinta-arvio with a verified account (2026-11-19)
+
+`v5`'s landing and estimate, rebuilt after **Legal's ruling** (Jussi,
+2026-11-19): marketing consent cannot be a condition of the full service, and
+"marketing" email (the estimate by email included) may go only to a seller who
+is logged in or has consented. So every seller who wants the estimate becomes
+a user of the platform first. `v5` is unchanged.
+
+- **Flow:** hero → loading → **contact step** (`data-phase="contact"`, funnel
+  layout, steps Auto · Yhteystiedot · Hinta-arvio): the ad creation funnel's
+  contact step transcribed (`contact.html`, prod's `PersonalInfo.vue`): Koko
+  nimi, Puhelinnumero (country box), Sähköposti, the terms (required) and the
+  marketing box (**optional**, no Events toggle), with contact.html's rules and
+  `contact.*` messages, under "Löysimme autosi tiedot!". Then `v4`'s link-sent
+  screen (the success page's unverified state) with `v6` copy and the inbox
+  toast; "Avaa linkki" logs the seller in with what the contact step asked
+  (`kokoNimi`, `puhelin`, `sahkoposti`, `kayttoehdot`, `markkinointi`), which
+  is the account. A car not found gets `v5`'s not-found screen; a seller
+  **already logged in** skips the contact step and goes straight to the
+  estimate (Claude's default, 2026-11-19).
+- **Estimate page** (`data-stage="account"`): the logged-in pages' look,
+  `offers.html`'s `main` (blue-50, 768px column, `gap-y-16`) with prod's
+  Section titles (Barlow 20/24 blue-900) and white `p-5 rounded-xl` cards:
+  "Autosi hinta-arvio" + `v5`'s estimate card, the "Valmis myymään?" card with
+  the one "Aloita kilpailutus", the 1-2-3, and "Mikä vaikuttaa autosi
+  arvoon?" (its two lists cloned from the cream column's
+  `#vt-factor-lists`). **No section icons yet**: Jussi picks them. The nav's
+  marketing menu is hidden (`#nav-links`, visibility) and the page takes the
+  **app's short footer** (`app-footer.js`, mounted before `layout.js`'s since
+  both look for `#site-footer`; its crest is set to blue-50 on entering the
+  stage).
+- **Estimate email** (`#vt5-inbox`, `renderAccountMail`): **transactional**,
+  to everyone who verified, sender "AutoVex tiimi@autovex.fi", subject
+  "Autosi AutoVex-arvio", the estimate card, the "Kun haluat myydä" block, and
+  a footer line that it is free and why it was sent. No marketing lines, no
+  unsubscribe. The dev caption says whether the seller joins Klaviyo
+  (consent ticked) or not.
+- **Trust copy** (Jussi, 2026-11-19): build on the free, authentic
+  **AutoVex-arvio**, not on any warning angle, and say "maksuton" (one term; no "ilmaiseksi" in `v6`). H1 "Maksuton
+  hinta-arvio autostasi", subtitle names the AutoVex-arvio, the how section
+  adds "AutoVex-arvio on maksuton" and the 80 000 sold cars (prod's figure),
+  FAQ 1 asks about the AutoVex-arvio, a new FAQ "Mistä tunnistan aidon
+  AutoVex-arvion?" (always free, only at autovex.fi, sent from
+  tiimi@autovex.fi), FAQ 3 explains the account, and the contact step's note
+  says the estimate is free. Page title, meta description and the FAQ
+  JSON-LD follow (`rewriteFaqSchema`).
+- **Before launch, for a human:** "aina maksuton" is a customer-facing
+  commitment (CEO/Legal); the sender address the estimate email uses; why the
+  phone number is needed for an estimate (FAQ 3 does not say); what the offers
+  page shows a seller who has only an estimate (the account menu links there);
+  whether a returning seller lands on the estimate again (today: the landing).
+- Copy `estimateAccount.*` (FI + EN), Claude's draft; shared strings stay in
+  `estimateSignup.*`, `valueTracker.*` and `contact.*`. Scenarios: landing,
+  not-found, contact, email-sent, estimate, estimate-email; Events → Inbox →
+  "Estimate email arrives".
+- **Not in the spec page yet**: `design-specs/price-guess.html` describes
+  `v5`.
 
 ## Hero theme — `v1` Syksy (ideation)
 
