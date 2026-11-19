@@ -3741,36 +3741,58 @@ arm. `v4` is unchanged and still the page default.
   current reading that the estimate needs consent (to be confirmed); **Events
   → Marketing consent** switches it to optional (`?consent=optional`, world
   state, kept across scenario picks). Error: `estimateSignup.consentError`,
-  the same words as Santa's.
+  the same words as Santa's. The illustration is the success page's new-email
+  one (`success-verify-email-illustration.png`, 220px), not the funnel's
+  "car found" picture, which promises more car questions this flow never
+  asks. The cream column shows the car as the car card's details alone in a
+  white card (`buildCarDetails`, no photo placeholder, no button: a looked-up
+  car never has a photo), then the demand card.
+- **Car not found** (`data-phase="notfound"`, scenario `not-found`): when the
+  lookup finds no make and model, the loading screen leads here instead of
+  the email step, since no estimate can be promised. One centred column, no
+  steps or cream column: "Emme löytäneet autoasi", why, "Hakemasi tiedot"
+  (the plate as the reg plate badge and the mileage) and "Yritä uudelleen",
+  back to the hero with both fields filled and the plate selected. A partial
+  lookup (make and model found) still gets an estimate, with only the details
+  that were found; `v5` never fills gaps from the seed car as `v4` does. To
+  reach it organically: Seed car → Car details → Not found, then the hero.
 - **Estimate page** (`data-phase="estimate"`), funnel layout, not the
   logged-in blue-50, and **kept light** (Jussi, 2026-11-19: it was too busy):
   only the figure is large; everything else is a step down. **The estimate
   is drawn as the decision page's offer card** (Jussi, 2026-11-19, the
-  page's focus): C2BOfferCard's blue theme (`border-2 border-blue-500`, the
-  blue ribbon with its notch) reading **"AutoVex-arvio"** with the date the
-  estimate was made at the row's right end (`vt.estimatedAt`, cleared by a
-  new car), the car and its mileage ("Volkswagen Amarok · LRX-345 · 148 000
-  km") in the line where an offer names its delivery, the figure centred (Barlow bold
-  56px, the offer card's own is 40px), the footnote as the help line
-  ("Arvio muuttuu ajan ja ajokilometrien myötä." first), and the grey footer
-  with "Lähetimme arvion osoitteeseen [email]." (the footer goes when consent
-  is optional and unticked). No ribbon icon. **"AutoVex-arvio" is the
-  estimate's brand name** (Jussi, 2026-11-19), hyphenated as Finnish writes a
-  brand compound (AutoVex-turva). It labels the estimate itself, on this card
-  and in the welcome email with its date; the thing is still called
-  "hinta-arvio" everywhere else, the landing and its search terms included. Then "Valmis
+  page's focus), **meant to read as AutoVex's deliverable to the seller**, a
+  seal of approval without a seal icon. One design for the page and the
+  welcome email, `estimateCard('page' | 'mail')`, styled by hand-written
+  `.vt5-est-*` rules (JS-built, so no late JIT utilities). From the top:
+  C2BOfferCard's blue theme (2px blue-500 border, the blue ribbon with its
+  notch) reading **"AutoVex-arvio"**, with the date the estimate was made at
+  the row's right end (`vt.estimatedAt`, cleared by a new car); **the car as
+  the car card shows it** (Jussi, 2026-11-19: components we already build,
+  no unique design), via `buildCarDetails` from `vehicle-card.js`, centred by
+  `.vt5-est-details`: the reg plate badge, **then the figure** (Barlow bold
+  56px, passed in the `afterPlate` slot), then make and model, specification
+  and the year · mileage · drive · fuel pills. The grey footer holds the
+  footnote ("Arvio muuttuu ajan ja ajokilometrien myötä." first), slate-600
+  on slate-100, 6.9:1. The page and the email draw the same card; the email
+  runs smaller (figure 36px). "Lähetimme arvion osoitteeseen …" is gone. No
+  ribbon icon. `buildCarDetails` is the car card's body details, extracted
+  so `buildCarCard` renders exactly as before (checked string for string);
+  `afterPlate` is a proto-only slot no other caller passes.
+  **"AutoVex-arvio" is the estimate's brand name** (Jussi, 2026-11-19),
+  hyphenated as Finnish writes a brand compound (AutoVex-turva). It labels
+  the estimate itself, on this card; the thing is still called "hinta-arvio"
+  everywhere else, the landing and its search terms included. Then "Valmis
   myymään? Anna autoliikkeiden kilpailla autostasi." at the 1-2-3 header's
   size (24/30, equally important) with the page's **only** "Aloita
   kilpailutus", into the funnel
   (`goToFunnel`, plus the email and consent into the contact step), then the
   front page's 1-2-3 ("Näin löydämme autollesi ostajan" at its own size, the
   rest a step smaller, its phone layout's step icons). The **cream column**
-  holds the car card (where the email step showed it; its button reads
-  "Arvioi toinen auto") and "Mikä vaikuttaa autosi arvoon?" at text-xl with
-  `faq5A` as its intro and both lists in one white card. The offer card's
-  top line (`#vt5-carline`) names the car at every width, which matters
-  below 768px, where the car card sits after the column.
-  The figure is `v4`'s value model at this month, to the 10 €.
+  holds only "Mikä vaikuttaa autosi arvoon?" at 24/30, like the page's other
+  two section titles, with `faq5A` as its
+  intro and both lists in one white card; the car card left it once the
+  estimate card carried the car. The figure is `v4`'s value model at this
+  month, to the 10 €.
 - **Welcome email** (`#vt5-inbox`): a phone frame 1.4 s after the estimate
   page opens, right-bottom from 768px, over a scrim below; × or Escape
   closes it, Events → Inbox → "Welcome email arrives" brings it back, and the
@@ -3784,8 +3806,8 @@ arm. `v4` is unchanged and still the page default.
   live flow belongs to the sales funnel, no list triggers a flow), so
   Marketing builds it.
 - **Not modelled, open:** how several cars per email address are handled
-  ("Arvioi toinen auto" invites it; if that gets too complicated, the button
-  goes); what a seller without consent receives; whether the
+  (no "Arvioi toinen auto" button in `v5` since 2026-11-19; one could come
+  back once that is settled); what a seller without consent receives; whether the
   car enters the regular flow (a draft) once the email is given, a product
   question; which tool makes the estimate; the front page shows no teaser for
   `v5` (Marketing sends search traffic straight to the page).

@@ -163,15 +163,15 @@
   //   cardClass     extra classes on the card root (default: prod's shadow-sm)
   //   ctaFullWidth  keep CTAs full-width instead of prod's right-aligned row
   //   ctaSlot       raw markup replacing the CTA row (prod's #actions slot)
+  //   afterPlate    raw markup between the plate row and the make and model
   //
   // Returns an HTML string. Callers own their own event wiring.
-  function buildCarCard(props) {
+  //
+  // buildCarDetails(props) is the card body's details on their own: plate
+  // and status, make and model, specification, pills. For surfaces that show
+  // the car without the card's photo or buttons.
+  function buildCarDetails(props) {
     props = props || {};
-
-    var mediaInner = props.image
-      ? '<img src="' + esc(props.image) + '" class="absolute inset-0 w-full h-full object-cover" alt="" />'
-      // No photo — prod renders a plain bg-blue-300 with the white ph-car-simple icon.
-      : '<img src="assets/ph-car-simple-white.svg" class="relative z-10 w-[70px] h-[70px] opacity-60" alt="" />';
 
     var plateBadge = buildRegBadge(props.registrationNumber);
 
@@ -196,6 +196,35 @@
       .map(function (v) {
         return '<span class="px-1.5 py-0.5 font-dm text-xs text-slate-500 rounded border border-slate-200">' + esc(v) + '</span>';
       }).join('');
+
+    return '' +
+      '<div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">' +
+        plateBadge + statusBadge +
+      '</div>' +
+      (props.afterPlate || '') +
+      '<div class="space-y-3">' +
+        '<div class="flex flex-col">' +
+          '<span class="font-dm text-base font-bold text-slate-900">' + (name || '\u2013') + '</span>' +
+          (props.modelSpecification
+            ? '<span class="font-dm text-sm text-slate-500 text-wrap">' + esc(props.modelSpecification) + '</span>'
+            : '') +
+        '</div>' +
+        '<div class="flex flex-wrap self-stretch gap-1.5 items-center">' + pills + '</div>' +
+        (props.supportingText
+          ? '<p class="font-dm text-sm text-slate-500 italic">' + esc(props.supportingText) + '</p>'
+          : '') +
+      '</div>';
+  }
+
+  window.buildCarDetails = buildCarDetails;
+
+  function buildCarCard(props) {
+    props = props || {};
+
+    var mediaInner = props.image
+      ? '<img src="' + esc(props.image) + '" class="absolute inset-0 w-full h-full object-cover" alt="" />'
+      // No photo — prod renders a plain bg-blue-300 with the white ph-car-simple icon.
+      : '<img src="assets/ph-car-simple-white.svg" class="relative z-10 w-[70px] h-[70px] opacity-60" alt="" />';
 
     // CTAs. prod's CarCard renders UiButton secondary (primary action) and ghost
     // (secondary action), or an #actions slot. Descriptors are
@@ -230,21 +259,7 @@
           mediaInner + (props.mediaBottom || '') +
         '</div>' +
         '<div class="av-card__body p-5 flex flex-col justify-between space-y-5">' +
-          '<div class="w-full flex space-x-2 justify-between items-center text-nowrap overflow-auto">' +
-            plateBadge + statusBadge +
-          '</div>' +
-          '<div class="space-y-3">' +
-            '<div class="flex flex-col">' +
-              '<span class="font-dm text-base font-bold text-slate-900">' + (name || '\u2013') + '</span>' +
-              (props.modelSpecification
-                ? '<span class="font-dm text-sm text-slate-500 text-wrap">' + esc(props.modelSpecification) + '</span>'
-                : '') +
-            '</div>' +
-            '<div class="flex flex-wrap self-stretch gap-1.5 items-center">' + pills + '</div>' +
-            (props.supportingText
-              ? '<p class="font-dm text-sm text-slate-500 italic">' + esc(props.supportingText) + '</p>'
-              : '') +
-          '</div>' +
+          buildCarDetails(props) +
           ctaRow +
         '</div>' +
       '</div>';

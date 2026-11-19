@@ -274,6 +274,10 @@
     body[data-phase="details"] [data-aside-show~="details"],
     body[data-phase="estimate"] [data-aside-show~="estimate"] { display: flex; }
     html[data-consent="optional"] .vt5-consent-req { display: none; }
+    #vt-flow[data-phase="notfound"] [data-phase-show~="notfound"] { display: flex; }
+    body[data-phase="notfound"] .funnel-steps,
+    body[data-phase="notfound"] aside { display: none; }
+    body[data-phase="notfound"] #vt-flow { width: 100%; }
 
     /* The welcome email, standing in for the seller's inbox: a phone beside
        the page from 768px, over it with a scrim below. Shown in both modes,
@@ -306,6 +310,32 @@
     @media (min-width: 768px) { .vt5-caption { color: #334155; background: rgba(255,255,255,.92); padding: 4px 8px; border-radius: 6px; } }
     .vt5-close { position: absolute; top: -10px; right: -10px; width: 32px; height: 32px; border-radius: 9999px; border: 0; background: #fff; color: #0F172A; box-shadow: 0 2px 8px rgba(0,0,0,.25); cursor: pointer; font: 400 20px/1 'DM Sans', sans-serif; }
 
+    /* v5: the estimate card, one design for the page and the welcome email.
+       The decision page's offer card (blue theme) as AutoVex's deliverable:
+       the ribbon names the issuer, the date sits opposite it, the car and
+       its two factors say whose estimate it is, then the value. */
+    .vt5-est { background: #fff; border: 2px solid #2890FF; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,0,0,.05); font-family: 'DM Sans', sans-serif; }
+    .vt5-est-top { display: flex; }
+    .vt5-est-ribbon { display: inline-flex; align-items: center; padding: 4px 8px; background: #0B6DFF; }
+    .vt5-est-brand { margin: 0; font: 700 14px/20px 'DM Sans', sans-serif; color: #fff; }
+    .vt5-est-notch { display: flex; align-items: flex-end; background: #0B6DFF; color: #fff; }
+    .vt5-est-date { margin-left: auto; align-self: center; padding-right: 16px; font-size: 14px; line-height: 20px; color: #64748B; font-variant-numeric: tabular-nums; }
+    .vt5-est-body { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 18px 20px 20px; }
+    /* The car card's own details (buildCarDetails), centred like the offer
+       card's content */
+    .vt5-est-details { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+    .vt5-est-details > div:first-child { justify-content: center; }
+    .vt5-est-details .flex-col { align-items: center; }
+    .vt5-est-details .flex-wrap { justify-content: center; }
+    .vt5-est-value { width: 100%; margin: 0; font: 700 56px/64px Barlow, sans-serif; color: #0F172A; font-variant-numeric: tabular-nums; }
+    /* The note in the grey footer: slate-600 on slate-100 is 6.9:1 (AA) */
+    .vt5-est-foot { margin: 0; padding: 12px 20px; background: #F1F5F9; font-size: 12px; line-height: 16px; color: #475569; }
+    .vt5-est--mail .vt5-est-brand { font-size: 12px; line-height: 16px; }
+    .vt5-est--mail .vt5-est-date { padding-right: 12px; font-size: 12px; }
+    .vt5-est--mail .vt5-est-body { padding: 14px 10px 16px; }
+    .vt5-est--mail .vt5-est-value { font-size: 36px; line-height: 40px; }
+    .vt5-est--mail .vt5-est-foot { padding: 10px 12px; font-size: 11px; line-height: 15px; }
+
     @media (prefers-reduced-motion: reduce) {
       .vt-in, #vt-toast.is-on, #vt5-inbox.is-on { animation: none !important; }
       .vt-progress span { transition-duration: .01s !important; }
@@ -329,6 +359,7 @@
         scenarios: V5 ? [
           { group: 'Price estimate by email', items: [
             { id: 'landing',        label: 'Landing' },
+            { id: 'not-found',      label: 'Car not found' },
             { id: 'email',          label: 'Email and marketing consent' },
             { id: 'estimate',       label: 'Price estimate' },
             { id: 'estimate-email', label: 'Price estimate + welcome email' }
@@ -704,8 +735,14 @@
               <p data-arm="v5" class="m-0 font-dm text-base leading-5 text-black" data-i18n="estimateSignup.emailSub">Anna sähköpostisi, niin lähetämme sinulle hinta-arvion autostasi.</p>
             </div>
             <!-- The funnel's "Löysimme autosi tiedot!" car (details.html), same size -->
-            <div class="w-[280px] max-w-full self-center">
+            <div data-arm="v4" class="w-[280px] max-w-full self-center">
               <img src="assets/29d3f580-8fc5-4a3c-ba51-074dffa0efaa.png" class="w-full h-auto block" alt="" />
+            </div>
+            <!-- v5 asks for nothing more about the car, so not the funnel's
+                 picture: the success page's new-email illustration, as the
+                 estimate is sent by email -->
+            <div data-arm="v5" class="w-[220px] max-w-full self-center">
+              <img src="assets/success-verify-email-illustration.png" class="w-full h-auto block" alt="" />
             </div>
             <div class="flex flex-col gap-2">
               <label for="vt-email" class="font-dm font-medium text-base leading-none text-slate-900" data-i18n="valueTracker.emailLabel">Sähköposti</label>
@@ -790,32 +827,31 @@
             </label>
             <button type="submit" class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center gap-2 shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors"><span data-i18n="valueTracker.detailsBtn">Näytä arvio</span><svg class="w-6 h-6" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z" clip-rule="evenodd"/></svg></button>
           </form>
+          <!-- v5: the lookup found no car, so nothing can be promised: no
+               email is asked for. The details searched with, and a way back
+               to correct them. -->
+          <div data-phase-show="notfound" class="flex-col gap-6">
+            <div class="flex flex-col gap-4">
+              <h2 class="m-0 font-barlow font-bold text-slate-900 text-3xl leading-[36px] lg:text-5xl lg:leading-[48px]" data-i18n="estimateSignup.notFoundTitle">Emme löytäneet autoasi</h2>
+              <p class="m-0 font-dm text-base leading-5 text-black" data-i18n="estimateSignup.notFoundBody">Emme löytäneet autoa näillä tiedoilla, joten emme voi tehdä sille hinta-arviota. Tarkista rekisterinumero ja yritä uudelleen.</p>
+            </div>
+            <div class="bg-white rounded-xl border border-slate-200 p-5 flex flex-col gap-4">
+              <p class="m-0 font-dm font-medium text-base leading-none text-slate-900" data-i18n="estimateSignup.notFoundDetails">Hakemasi tiedot</p>
+              <dl class="m-0 flex flex-col gap-3 font-dm text-sm text-slate-700">
+                <div class="flex items-center justify-between gap-4"><dt data-i18n="estimateSignup.notFoundPlate">Rekisterinumero</dt><dd id="vt5-nf-plate" class="m-0"></dd></div>
+                <div class="flex items-center justify-between gap-4"><dt data-i18n="estimateSignup.notFoundKm">Ajokilometrit</dt><dd id="vt5-nf-km" class="m-0 font-bold text-slate-900 tabular-nums"></dd></div>
+              </dl>
+            </div>
+            <button type="button" id="vt5-retry" class="w-full h-14 bg-av-blue text-white font-dm text-base rounded-lg flex items-center justify-center shadow-[inset_0px_1px_2px_1px_rgba(255,255,255,0.2)] hover:bg-[#0A59EB] transition-colors" data-i18n="estimateSignup.notFoundRetry">Yritä uudelleen</button>
+          </div>
+
           <!-- v5: the estimate, in the funnel's layout. The figure leads, then
                the way into the funnel and how a sale works. The car card stays
                in the cream column, where the email step showed it. -->
           <div data-phase-show="estimate" class="flex-col gap-8">
-            <!-- The estimate as the decision page's offer card (C2BOfferCard):
-                 the blue theme's border and ribbon, the line above the figure
-                 (the car, where an offer names its delivery), the figure
-                 centred, a help line under it and the grey footer. -->
-            <div class="w-full rounded-xl border-2 border-blue-500 bg-white shadow-sm">
-              <div class="flex">
-                <div class="inline-flex items-center px-2 py-1 rounded-tl-lg border bg-blue border-blue">
-                  <h2 class="m-0 font-dm font-bold text-sm leading-5 text-white" data-i18n="estimateSignup.brandName">AutoVex-arvio</h2>
-                </div>
-                <span class="flex items-end text-white bg-blue" aria-hidden="true"><svg width="11" height="32" viewBox="0 0 11 32" fill="none"><path d="M0 16L11 32V0L0 16Z" fill="currentColor"/></svg></span>
-                <!-- The day the estimate was made: the figure is true for that day -->
-                <time id="vt5-date" class="ml-auto self-center pr-4 font-dm text-sm leading-5 text-slate-500 tabular-nums"></time>
-              </div>
-              <div class="flex flex-col gap-1 px-5 pt-3 pb-5">
-                <p id="vt5-carline" class="m-0 font-dm font-bold text-xs leading-tight text-blue-600 text-center"></p>
-                <p class="m-0 font-barlow font-bold text-slate-900 text-[56px] leading-[64px] text-center tabular-nums" id="vt5-amount"></p>
-                <p class="m-0 mt-2 font-dm text-xs leading-4 text-slate-700 text-left" data-i18n="estimateSignup.footnote">Arvio muuttuu ajan ja ajokilometrien myötä.</p>
-              </div>
-              <div id="vt5-sent-row" class="px-5 py-3 rounded-b-lg bg-slate-100">
-                <p id="vt5-sent" class="m-0 font-dm text-xs leading-4 text-slate-600"></p>
-              </div>
-            </div>
+            <!-- The estimate card, drawn by estimateCard('page'); the welcome
+                 email draws the same card -->
+            <div id="vt5-estimate"></div>
             <div class="flex flex-col gap-3">
               <h3 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-[30px]" data-i18n="estimateSignup.ctaTitle">Valmis myymään? Anna autoliikkeiden kilpailla autostasi.</h3>
               <p class="m-0 font-dm text-sm leading-5 text-slate-700" data-i18n="estimateSignup.ctaBody">Sadat autoliikkeet ympäri Suomen voivat tehdä autostasi tarjouksen. Myynti-ilmoituksen tekeminen on maksutonta, ja päätät itse, hyväksytkö tarjouksen.</p>
@@ -855,9 +891,8 @@
             <!-- v5 estimate: the car, then the landing's "Mikä vaikuttaa autosi
                  arvoon?" -->
             <div data-aside-show="estimate" class="flex-1 flex-col justify-center gap-5">
-              <div id="vt5-car" class="w-full"></div>
               <div class="flex flex-col gap-2">
-                <h2 class="m-0 font-barlow font-bold text-slate-900 text-xl leading-7" data-i18n="valueTracker.factorsTitle">Mikä vaikuttaa autosi arvoon?</h2>
+                <h2 class="m-0 font-barlow font-bold text-slate-900 text-2xl leading-[30px]" data-i18n="valueTracker.factorsTitle">Mikä vaikuttaa autosi arvoon?</h2>
                 <p class="m-0 font-dm text-sm leading-5 text-slate-700" data-i18n="valueTracker.faq5A">Arvio ei näe autosi kuntoa, varusteita eikä huoltohistoriaa. Autoliikkeet tekevät tarjouksensa ilmoituksesi perusteella, joten tulos voi olla arviota suurempi tai pienempi.</p>
               </div>
               <!-- Both lists in one card, so the column carries one box under the car -->
@@ -1262,7 +1297,7 @@
           mileage: group(vt.km) + ' km',
           driveType: vt.car.vetotapa,
           fuelType: vt.car.polttoaine,
-          secondaryCta: { text: V5 ? T5('anotherCar') : T('changeCar'), attrs: 'data-vt-change-car' }
+          secondaryCta: { text: T('changeCar'), attrs: 'data-vt-change-car' }
         };
       }
       /* A small header naming the car the value or estimate below belongs to:
@@ -1291,8 +1326,20 @@
       }
       /* The mini-funnel's sidebar shows it as the ad creation funnel does, with
          prod's no-photo placeholder. */
+      /* v5: the car card's details alone. A car looked up from its plate
+         never has a photo, and one email is for one car for now. */
+      function carDetailsProps() {
+        var p = carCardProps();
+        delete p.secondaryCta;
+        return p;
+      }
       function renderSideCard() {
         var box = el('vt-car-side');
+        if (V5) {
+          box.classList.remove('av-card-shell');
+          box.innerHTML = '<div class="bg-white rounded-xl shadow-sm p-5 flex flex-col space-y-5">' + window.buildCarDetails(carDetailsProps()) + '</div>';
+          return;
+        }
         box.classList.add('av-card-shell');
         box.innerHTML = window.buildCarCard(carCardProps());
       }
@@ -1365,6 +1412,7 @@
           if (flowPhase === 'details') fillDetails();
           if (flowPhase === 'email' && V5) fillEmailStep();
           if (flowPhase === 'estimate') renderEstimate();
+          if (flowPhase === 'notfound') renderNotFound();
         }
         if (stage === 'tracker' || stage === 'calc' || stage === 'auction') renderStrip();
         if (stage === 'tracker') renderTracker();
@@ -1406,7 +1454,7 @@
         if (s === 'flow') {
           var p = el('vt-flow').getAttribute('data-phase');
           if (p === 'estimate' && el('vt5-inbox').classList.contains('is-on')) return 'estimate-email';
-          return p === 'sent' ? 'email-sent' : p;
+          return p === 'sent' ? 'email-sent' : p === 'notfound' ? 'not-found' : p;
         }
         if (s === 'landing' || !s) return 'landing';
         return { landing: 'landing', tracker: 'tracker', calc: 'calculating', auction: 'auction' }[s];
@@ -1469,13 +1517,23 @@
         }
         inPlate.value = plate;
         if (plate !== vt.plate || km !== vt.km) { vt.months = 0; vt.period = 24; }
-        vt.plate = plate; vt.km = km; vt.car = lookupCar(); vt.tracked = false; delete vt.estimatedAt;
+        /* v5 promises an estimate only for a car the lookup found, so it
+           keeps the lookup as it came; v4 fills any gap from the seed car. */
+        var raw = (window.PROTO_MOCK && window.PROTO_MOCK.lookupResult && window.PROTO_MOCK.lookupResult()) || {};
+        var found = !!(raw.merkki && raw.malli);
+        if (V5) {
+          vt.car = {};
+          VEHICLE_FIELDS.forEach(function (k) { if (raw[k]) vt.car[k] = raw[k]; });
+        } else {
+          vt.car = lookupCar();
+        }
+        vt.plate = plate; vt.km = km; vt.tracked = false; delete vt.estimatedAt;
         save();
         var loading = el('vt-loading');
         loading.classList.remove('hidden'); loading.classList.add('flex');
         setTimeout(function () {
           loading.classList.add('hidden'); loading.classList.remove('flex');
-          if (V5) setStage('flow', 'email');
+          if (V5) setStage('flow', found ? 'email' : 'notfound');
           else if (loggedIn()) setStage('flow', 'details'); else setStage('flow', 'email');
         }, REDUCED ? 600 : LOOKUP_MS);
       });
@@ -1504,6 +1562,13 @@
           return;
         }
         showSent();
+      });
+      el('vt5-retry').addEventListener('click', function () {
+        setStage('landing');
+        inPlate.value = vt.plate || '';
+        inKm.value = vt.km ? group(vt.km) : '';
+        inPlate.focus();
+        inPlate.select();
       });
       var inConsent5 = el('vt5-consent');
       inConsent5.addEventListener('change', function () { el('vt5-consent-error').classList.add('hidden'); inConsent5.removeAttribute('aria-invalid'); });
@@ -1583,25 +1648,33 @@
         var d = vt.estimatedAt ? new Date(vt.estimatedAt) : new Date();
         return d.toLocaleDateString(lang() === 'fi' ? 'fi-FI' : 'en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' });
       }
+      /* One estimate card for the page and the welcome email: the plate,
+         the value, then the rest of the car as the car card shows it, and
+         what moves the value in the grey footer. On the page the ribbon is
+         the heading. */
+      function estimateCard(variant) {
+        var mail = variant === 'mail';
+        var tag = mail ? 'p' : 'h2';
+        var props = carDetailsProps();
+        props.afterPlate = '<p class="vt5-est-value">' + esc(euros(estimateValue())) + '</p>';
+        return '<div class="vt5-est' + (mail ? ' vt5-est--mail' : '') + '">' +
+          '<div class="vt5-est-top">' +
+            '<div class="vt5-est-ribbon"><' + tag + ' class="vt5-est-brand">' + esc(T5('brandName')) + '</' + tag + '></div>' +
+            '<span class="vt5-est-notch" aria-hidden="true"><svg width="11" height="32" viewBox="0 0 11 32" fill="none"><path d="M0 16L11 32V0L0 16Z" fill="currentColor"/></svg></span>' +
+            '<time class="vt5-est-date" datetime="' + (vt.estimatedAt || new Date().toISOString()).slice(0, 10) + '">' + esc(estimateDate()) + '</time>' +
+          '</div>' +
+          '<div class="vt5-est-body">' +
+            '<div class="vt5-est-details">' + window.buildCarDetails(props) + '</div>' +
+          '</div>' +
+          '<p class="vt5-est-foot">' + esc(T5('footnote')) + '</p>' +
+        '</div>';
+      }
       function renderEstimate() {
-        el('vt5-amount').textContent = euros(estimateValue());
-        var dateEl = el('vt5-date');
-        dateEl.textContent = estimateDate();
-        dateEl.setAttribute('datetime', (vt.estimatedAt || new Date().toISOString()).slice(0, 10));
-        el('vt5-carline').textContent = [[vt.car.merkki, vt.car.malli].filter(Boolean).join(' '), vt.plate, group(vt.km) + ' km'].filter(Boolean).join(' · ');
-        var sent = el('vt5-sent');
-        el('vt5-sent-row').classList.toggle('hidden', !(mailSent() && vt.email));
-        sent.textContent = '';
-        if (mailSent() && vt.email) {
-          var parts = T5('sentLine').split('{email}');
-          sent.appendChild(document.createTextNode(parts[0]));
-          var b = document.createElement('b'); b.className = 'font-medium text-slate-900'; b.textContent = vt.email;
-          sent.appendChild(b);
-          sent.appendChild(document.createTextNode(parts[1] || ''));
-        }
-        var box = el('vt5-car');
-        box.classList.add('av-card-shell');
-        box.innerHTML = window.buildCarCard(carCardProps());
+        el('vt5-estimate').innerHTML = estimateCard('page');
+      }
+      function renderNotFound() {
+        el('vt5-nf-plate').innerHTML = window.buildRegBadge(vt.plate);
+        el('vt5-nf-km').textContent = group(vt.km) + ' km';
       }
       var mailTimer = null;
       function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -1614,7 +1687,6 @@
           return;
         }
         cap.textContent = 'Welcome email: a proposal. Marketing writes and builds the real one in Klaviyo.';
-        var meta = [vt.car.vuosimalli, group(vt.km) + ' km'].filter(Boolean).join(' · ');
         box.innerHTML =
           '<div class="vt5-msg-head">' +
             '<span class="vt5-avatar" aria-hidden="true">A</span>' +
@@ -1629,14 +1701,7 @@
             '<div class="vt5-card">' +
               '<p class="m-0 font-barlow font-bold text-[22px] leading-[26px] text-slate-900">' + esc(T5('mailTitle')) + '</p>' +
               '<p class="m-0 text-sm leading-5 text-slate-700">' + esc(T5('mailLead')) + '</p>' +
-              '<div class="border border-slate-200 rounded-lg p-3 flex flex-col items-start gap-2">' +
-                window.buildRegBadge(vt.plate) +
-                '<div class="flex flex-col"><span class="text-sm font-bold text-slate-900">' + esc([vt.car.merkki, vt.car.malli].filter(Boolean).join(' ')) + '</span>' +
-                '<span class="text-xs text-slate-500">' + esc(meta) + '</span></div>' +
-                '<div class="flex flex-col"><span class="text-xs font-bold text-blue-600">' + esc(T5('brandName')) + ' · ' + esc(estimateDate()) + '</span>' +
-                '<span class="font-barlow font-bold text-[32px] leading-9 text-slate-900 tabular-nums">' + esc(euros(estimateValue())) + '</span></div>' +
-              '</div>' +
-              '<p class="m-0 text-xs leading-4 text-slate-500">' + esc(T5('footnote')) + '</p>' +
+              estimateCard('mail') +
               '<p class="m-0 pt-2 font-barlow font-bold text-lg leading-6 text-slate-900">' + esc(T5('mailSellTitle')) + '</p>' +
               '<p class="m-0 text-sm leading-5 text-slate-700">' + esc(T5('ctaBody')) + '</p>' +
               '<a href="details.html" data-go class="w-full h-11 rounded-lg bg-av-blue text-white text-sm flex items-center justify-center no-underline">' + esc(T('auctionCta')) + '</a>' +
@@ -1822,6 +1887,7 @@
         }
         save();
         if (scenario === 'email') setStage('flow', 'email');
+        else if (scenario === 'not-found') setStage('flow', 'notfound');
         else if (scenario === 'estimate') setStage('flow', 'estimate');
         else if (scenario === 'estimate-email') { setStage('flow', 'estimate'); showInbox(true); }
         else setStage('landing');
