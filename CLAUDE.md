@@ -3715,7 +3715,7 @@ arm-only part carries `data-arm="v4"` or `data-arm="v5"`, hidden for the other
 arm. `v4` is unchanged and still the page default.
 
 - **The estimate's basis is said openly** (Jussi, 2026-11-19): "AutoVexin
-  markkinatietoihin", led by offers dealerships make and sellers accept, plus
+  markkinadataan" (Jussi's word), led by offers dealerships make and sellers accept, plus
   "esimerkiksi" model, age and mileage, and "Kehitämme arviota jatkuvasti".
   It invites trust without naming one data source, so the method can move to
   other data, an algorithm or AI without a copy change. Used in the how
@@ -3747,11 +3747,11 @@ arm. `v4` is unchanged and still the page default.
   only the figure is large; everything else is a step down. **The estimate
   is drawn as the decision page's offer card** (Jussi, 2026-11-19, the
   page's focus): C2BOfferCard's blue theme (`border-2 border-blue-500`, the
-  blue ribbon with its notch) reading **"AutoVex-arvio"**, the car in the
-  line where an offer names its delivery, the figure centred (Barlow bold
-  56px, the offer card's own is 40px), then a framed two-cell row
-  "Ajokilometrit" · "Arvioitu" (the date the estimate was made,
-  `vt.estimatedAt`, cleared by a new car), the footnote as the help line
+  blue ribbon with its notch) reading **"AutoVex-arvio"** with the date the
+  estimate was made at the row's right end (`vt.estimatedAt`, cleared by a
+  new car), the car and its mileage ("Volkswagen Amarok · LRX-345 · 148 000
+  km") in the line where an offer names its delivery, the figure centred (Barlow bold
+  56px, the offer card's own is 40px), the footnote as the help line
   ("Arvio muuttuu ajan ja ajokilometrien myötä." first), and the grey footer
   with "Lähetimme arvion osoitteeseen [email]." (the footer goes when consent
   is optional and unticked). No ribbon icon. **"AutoVex-arvio" is the

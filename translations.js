@@ -529,11 +529,11 @@ window.TRANSLATIONS = {
       anotherCar:    'Arvioi toinen auto',
       /* The estimate's basis, said openly: AutoVex market data led by
          offers, so the method can change without the copy. */
-      metaDescription: 'Katso autosi hinta-arvio ilmaiseksi rekisterinumerolla ja ajokilometreillä. Arvio perustuu AutoVexin markkinatietoihin, kuten autoliikkeiden tarjouksiin.',
-      footnote:      'Arvio muuttuu ajan ja ajokilometrien myötä. Se perustuu AutoVexin markkinatietoihin, kuten autoliikkeiden tekemiin ja myyjien hyväksymiin tarjouksiin, eikä huomioi auton kuntoa tai lisävarusteita.',
-      howBody1:      'Arvio perustuu AutoVexin markkinatietoihin. Tärkeimpiä niistä ovat tarjoukset, joita autoliikkeet tekevät ja myyjät hyväksyvät AutoVexissä joka päivä. Huomioimme myös esimerkiksi auton mallin, iän ja ajokilometrit.',
+      metaDescription: 'Katso autosi hinta-arvio ilmaiseksi rekisterinumerolla ja ajokilometreillä. Arvio perustuu AutoVexin markkinadataan, kuten autoliikkeiden tarjouksiin.',
+      footnote:      'Arvio muuttuu ajan ja ajokilometrien myötä. Se perustuu AutoVexin markkinadataan, kuten autoliikkeiden tekemiin ja myyjien hyväksymiin tarjouksiin, eikä huomioi auton kuntoa tai lisävarusteita.',
+      howBody1:      'Arvio perustuu AutoVexin markkinadataan. Tärkeimmän osan siitä muodostavat tarjoukset, joita autoliikkeet tekevät ja myyjät hyväksyvät AutoVexissä joka päivä. Huomioimme myös esimerkiksi auton mallin, iän ja ajokilometrit.',
       howBody2:      'Kehitämme arviota jatkuvasti, jotta se olisi mahdollisimman tarkka. Arvio ei kuitenkaan näe auton kuntoa tai lisävarusteita, joten oikean hinnan kertovat autoliikkeet tarjouskilpailussa.',
-      faq2A:         'AutoVexin markkinatietoihin, ennen kaikkea autoliikkeiden tekemiin ja myyjien hyväksymiin tarjouksiin samanlaisista autoista. Huomioimme myös autosi iän ja ajokilometrit, ja kehitämme arviota jatkuvasti.',
+      faq2A:         'AutoVexin markkinadataan, ennen kaikkea autoliikkeiden tekemiin ja myyjien hyväksymiin tarjouksiin samanlaisista autoista. Huomioimme myös autosi iän ja ajokilometrit, ja kehitämme arviota jatkuvasti.',
       ctaTitle:      'Valmis myymään? Anna autoliikkeiden kilpailla autostasi.',
       ctaBody:       'Sadat autoliikkeet ympäri Suomen voivat tehdä autostasi tarjouksen. Myynti-ilmoituksen tekeminen on maksutonta, ja päätät itse, hyväksytkö tarjouksen.',
       promoTitle:    'Valmis myymään autosi?',
