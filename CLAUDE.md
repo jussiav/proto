@@ -946,6 +946,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 | Hero theme | **Ideation** (2026-10-22) — seasonal decoration on the front page hero, all of it inside the hero section. `v1` **Syksy**: ruska leaves falling (birch, aspen, Norway maple), a birch on the left (from 992px) and a rowan branch with berries top right (from 1200px); narrower heroes get drooping birch twigs and a rowan sprig in the top corners instead. Fly agarics, chanterelles, lingonberries and fallen leaves in the bottom corners at every width. No copy | `hero-theme` | `control` | `control` | `index.html` (drawn by `hero-theme.js`) | none |
 | Seller protection | **`v1` vs `v3` to a production A/B test** (2026-11-05, Jussi) — build brief assumes control + `v1` + `v3` as one VWO front-end test; `v2` kept for a later test. `v3` is `v1` with Jussi's body copy naming what the help covers. `v1` a plain white "AutoVex-turva" card under the offer cards in two halves: a slate logo panel (shield + name + "Ilmaiseksi sinulle") left, the text right. `v2` an "AutoVex-turvattu" row (v1's shield) in each acceptable offer card that opens a modal: what the service is, five topics we help with, a link to the "Tarvitsetko apua?" banner, and "Ilmaiseksi sinulle" last. Copy is Claude's draft | `seller-protection` | `control` | `control` | `decision.html` (runs `vwo/seller-protection-v1.js` / `-v2.js` / `-v3.js`) | `design-specs/seller-protection.html` |
 | Klaviyo consent | **Proposal sent to the team** (2026-11-11), ready to build if they agree; **copy approved by UX** (Jussi, 2026-11-11), ships as on the spec — Klaviyo becomes the only store of marketing consent and a new email applies only once confirmed; both are the developers' plan, `v1` is our best-knowledge version of the profile page for it. Consent as a switch (prod's dealer-side car-pickup switch, exactly, without its outlined row) in its own section, read from and saved to Klaviyo at once; the email field keeps the address in use and a line names the one waiting. | `klaviyo-consent` | `control` | `control` | `profile.html` | `design-specs/klaviyo-consent.html` |
+| Refused link page | **Draft for discussion** (2026-11-20) — a page for every refused email link, which lands on the empty ad form in prod. Three versions, as in Jaakko's build (log in to continue, new confirmation email, new ad), picked by the ad's state; copy is Claude's draft | `refused-link` | `v1` (the only arm) | `control` (no page in prod) | `refused-link.html` | `design-specs/refused-link.html` |
 
 **Completed initiatives:**
 
@@ -4172,6 +4173,52 @@ profile page**).
   message and string** with where it shows, an EN gloss and its source. Its
   copy is static, so a copy change in `translations.js` must be made in the
   spec's tables by hand too (the sync rule).
+
+## Refused link page — `v1` (draft for discussion)
+
+Started 2026-11-20. Email links are being tied to the address they were sent
+to; a refused link (and an expired one, already today) lands on the empty ad
+form with no explanation. `refused-link.html` is one page with a version per
+situation, for the developers, PM and customer service in that Slack thread.
+**Do not push this before the link change ships**: `origin` still pushes to
+the public `jussiav/proto`, and the page and spec describe that change.
+
+- **Design:** Huutokaupat routing v6's shell (logo on top, message centred,
+  `max-w-md`, the 56px primary, its "Takaisin etusivulle" back link), with
+  prod's `Notification.vue` theme `important_warning` (`border-orange-300
+  bg-orange-100`, white plate face) instead of `danger`'s red. Its colours are
+  hand-written (`.rl-card`) since the card is script-filled. No new icons; the
+  limit message is login.html's `Message.vue` error box.
+- **Three versions, picked by the ad, not by why the link failed** (Jussi,
+  2026-11-20: as few pages as possible, every situation covered, the copy
+  needn't say why in detail nor mention the link change). `login` (the ad has
+  an account; `email-change` is the same version with its own first lines),
+  `resend` (no account, ad still open; states `resend-sent`,
+  `resend-limit`), `new-ad` (the ad is gone: expired, deleted, not found,
+  deleted account, no email). A first pass had six versions and a reason line
+  per cause; it is gone.
+- **Copy rules from Jussi's review:** no line restating the error ("Linkki ei
+  enää toimi"): the page already looks like one. The notice says roughly why
+  in two short lines ("Linkki on vanhentunut" / "Linkit ovat voimassa
+  rajoitetun ajan."); the heading, text and button say how to continue.
+  "Myynti-ilmoituksesi on tallessa." wherever the ad still exists. A sentence
+  about sending an email must not read as if one was already sent.
+- **Send button: open, Jaakko's.** His build asks the seller to go back to the
+  ad; that works only on the device the ad was filled in on. Events → New
+  confirmation email → No send button (`?send=0`) shows that version.
+- **Plate and mileage: optional, Jaakko's call.** Their value: the seller sees
+  the ad is stored. The server loads the ad before it checks the link, so they
+  exist unless the ad is gone; they'd travel in the session, never the URL.
+  Shown by default; Events → Plate and mileage → Hide (`?car=hide`).
+- **Resend works:** the button sends (inbox notice after 1.5 s, its button to
+  `success.html?emailVerified=1`), the sent state turns the button into a text
+  link, and the fourth press shows the limit (3 per ad in 10 min, from the
+  open resend-limit change).
+- `?embed=1` hides the bar and the inbox, for the spec's iframes.
+- Copy `refusedLink.*`, Claude's draft. Prod's own strings reused: the resend
+  label, "Kirjaudu sisään", the login rate-limit message, the duplicate-ad
+  screen's spam and support sentences, the verification email's subject and
+  button. The spec's strings table is static (the sync rule).
 
 ## FI/EN on a page that hardcodes its copy — `proto-i18n.js`
 

@@ -185,6 +185,39 @@ window.TRANSLATIONS = {
       back:       'Takaisin etusivulle',
       disclaimer: 'AutoVex toimii yhteistyössä Huutokaupat.comin kanssa erillisinä palveluina.',
     },
+    /* Refused link page (initiative `refused-link`). Claude's draft, not
+       approved. Prod's own wording: loginCta, resendCta (the waiting screen's
+       resend), sentSpam and help/helpLink (the duplicate-ad screen), tooMany
+       (the login rate limit), inboxSubject and inboxOpen (the verification
+       email). */
+    refusedLink: {
+      noticeLinkTitle: 'Linkki on vanhentunut',
+      noticeLinkText:  'Linkit ovat voimassa rajoitetun ajan.',
+      noticeAdTitle:   'Myynti-ilmoitus on vanhentunut',
+      noticeAdText:    'Julkaisemattomat myynti-ilmoitukset ovat voimassa rajoitetun ajan.',
+      adSafe:          'Myynti-ilmoituksesi on tallessa.',
+      emailUnchanged:  'Sähköpostiosoitteesi ei vaihtunut.',
+      loginTitle:      'Kirjaudu sisään jatkaaksesi',
+      loginBody:       'Kirjaudu sisään sähköpostiosoitteellasi. Lähetämme sinulle kirjautumiskoodin, joten salasanaa ei tarvita.',
+      emailChangeBody: 'Kirjaudu sisään ja vaihda osoite profiilissasi uudelleen.',
+      loginCta:        'Kirjaudu sisään',
+      resendTitle:     'Pyydä uusi vahvistusviesti',
+      resendBody:      'Uusi viesti lähtee myynti-ilmoituksessa olevaan sähköpostiosoitteeseen, kun painat painiketta.',
+      resendCta:       'Lähetä vahvistusviesti uudelleen',
+      fromAdBody:      'Avaa myynti-ilmoituksesi etusivulta samalla laitteella, jolla täytit sen, ja pyydä sieltä uusi vahvistusviesti.',
+      fromAdCta:       'Siirry etusivulle',
+      sentTitle:       'Vahvistusviesti on lähetetty',
+      sentBody:        'Avaa viesti ja jatka sen linkistä.',
+      sentSpam:        'Jos viestiä ei löydy, katso myös roskapostista.',
+      tooMany:         'Liian monta yritystä. Kokeile hetken päästä uudestaan.',
+      newAdTitle:      'Täytä uusi myynti-ilmoitus',
+      newAdBody:       'Voit täyttää uuden myynti-ilmoituksen samasta autosta etusivulla.',
+      newAdCta:        'Täytä uusi myynti-ilmoitus',
+      help:            'Jos tarvitset apua, ota yhteyttä {link}.',
+      helpLink:        'asiakaspalveluumme',
+      inboxSubject:    'Vahvista sähköpostiosoitteesi ja jatka auton myyntiä',
+      inboxOpen:       'Vahvista sähköposti tästä',
+    },
 
     /* Price guess (initiative `price-guess`, not meant for the funnel). The
        teaser is the front page's v1 section, the rest is price-guess.html.
@@ -1347,6 +1380,35 @@ window.TRANSLATIONS = {
       cta:        'To Huutokaupat.com',
       back:       'Back to front page',
       disclaimer: 'AutoVex works together with Huutokaupat.com as separate services.',
+    },
+
+    refusedLink: {
+      noticeLinkTitle: 'The link has expired',
+      noticeLinkText:  'Links are valid for a limited time.',
+      noticeAdTitle:   'The ad has expired',
+      noticeAdText:    'Unpublished ads are valid for a limited time.',
+      adSafe:          'Your ad is saved.',
+      emailUnchanged:  'Your email address did not change.',
+      loginTitle:      'Log in to continue',
+      loginBody:       'Log in with your email address. We’ll send you a login code, so you don’t need a password.',
+      emailChangeBody: 'Log in and change the address on your profile again.',
+      loginCta:        'Log in',
+      resendTitle:     'Ask for a new confirmation email',
+      resendBody:      'The new email goes to the address on the ad when you press the button.',
+      resendCta:       'Resend confirmation email',
+      fromAdBody:      'Open your ad from the front page on the same device you filled it in on, and ask for a new confirmation email there.',
+      fromAdCta:       'Go to the front page',
+      sentTitle:       'Confirmation email sent',
+      sentBody:        'Open the email and continue from its link.',
+      sentSpam:        'If you can’t find it, check your spam folder too.',
+      tooMany:         'Too many attempts. Please try again in a moment.',
+      newAdTitle:      'Fill in a new ad',
+      newAdBody:       'You can fill in a new ad for the same car on the front page.',
+      newAdCta:        'Fill in a new ad',
+      help:            'If you need help, contact {link}.',
+      helpLink:        'our customer service',
+      inboxSubject:    'Confirm your email address and continue selling your car',
+      inboxOpen:       'Confirm your email here',
     },
 
     priceGuessTeaser: {

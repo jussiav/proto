@@ -212,6 +212,14 @@
       name: 'Klaviyo consent',
       spec: 'design-specs/klaviyo-consent.html',
       prodArm: 'control'
+    },
+    /* A page production does not have: a refused email link lands on the
+       empty ad form there, so there is no control arm to switch to. */
+    {
+      slug: 'refused-link',
+      name: 'Refused link page',
+      spec: 'design-specs/refused-link.html',
+      prodArm: 'control'
     }
   ];
 

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Refused link page · AutoVex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            blue: {
+              DEFAULT: '#0B6DFF',
+              50:  '#EEF6FA',
+              100: '#D7EDFF',
+              200: '#B9E0FF',
+              300: '#88CFFF',
+              400: '#50B2FF',
+              500: '#2890FF',
+              600: '#0B6DFF',
+              700: '#0A59EB',
+              800: '#0F47BE',
+              900: '#134195',
+              950: '#11285A',
+            },
+            'av-blue':      '#0B6DFF',
+            'av-blue-dark': '#0050C8',
+            'av-dark':      '#08234D',
+            'av-cream':     '#FAEADA',
+            warning: { 50: '#FFFBEB', 100: '#FEF3C7', 200: '#FDE68A', 300: '#FCD34D', 700: '#B45309', 800: '#92400E', 900: '#78350F' },
+            success: { 50: '#F7FEE7', 100: '#ECFCCB', 200: '#D9F99D', 700: '#4D7C0F', 800: '#3F6212', 900: '#365314' },
+            info:    { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+          },
+          fontFamily: {
+            display: ['Barlow', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            body:    ['"DM Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            barlow:  ['Barlow', 'sans-serif'],
+            dm:      ['"DM Sans"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .av-hero  { background: linear-gradient(to bottom, #0B6DFF 12%, #0050C8 62%); }
+    .av-hero-title  { text-shadow: 0 2px 14px rgba(8, 35, 77, 0.35); }
+    .av-arc      { display: block; width: 100%; height: 42px; }
+    .av-arc-down { filter: drop-shadow(0 -6px 14px rgba(8, 35, 77, 0.30)); }
+    .av-arc-up   { filter: drop-shadow(0 6px 14px rgba(8, 35, 77, 0.18)); }
+    .av-arc-flip { transform: rotate(180deg); }
+    .av-container  { width: 100%; max-width: 1366px; margin: 0 auto; padding-left: 2.5rem; padding-right: 2.5rem; }
+    @media (max-width: 767px) { .av-container { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    .av-band       { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+    .av-band-grey  { background: linear-gradient(to bottom, #fdfdfd, #f5f5f5 58%); }
+    .av-band + .av-band { border-top: 1px solid #EDEFF3; }
+    code { overflow-wrap: anywhere; }
+    .rl-frame { display: block; width: 375px; max-width: 100%; height: 820px; border: 1px solid #E2E8F0; border-radius: 12px; background: #fff; }
+    .rl-gloss { color: #64748B; }
+  </style>
+</head>
+<body class="font-body text-slate-900" style="background:#f5f5f5">
+
+  <header class="av-hero overflow-hidden">
+    <div class="av-container pt-12 pb-10 max-md:pt-10 flex flex-col gap-8">
+      <img src="../assets/3052c32b-59c9-4847-a303-88ace8a9bed7.svg" alt="AutoVex"
+           class="w-[107px] h-[22px] flex-shrink-0 object-contain" style="filter:brightness(0) invert(1);" />
+      <div class="flex flex-col gap-4">
+        <p class="font-dm text-sm font-bold uppercase tracking-widest text-white">Design initiative &middot; email links</p>
+        <h1 class="av-hero-title font-barlow font-bold text-white text-4xl leading-10 md:text-5xl md:leading-tight">Refused link page</h1>
+        <p class="font-dm font-medium text-slate-200 text-xl leading-6 max-w-2xl">When a link in one of our emails no longer works, the seller lands today on an empty ad form with no explanation. This page replaces that with three versions, the same three as the current build: log in to continue, ask for a new confirmation email, and fill in a new ad. Every refused link lands on one of them. Each says roughly why, and above all how to continue.</p>
+      </div>
+      <div class="flex flex-wrap gap-2 font-dm text-xs">
+        <span class="bg-warning-100 text-warning-900 font-bold rounded-full px-3 py-1 inline-flex items-center gap-1.5 shadow-lg">
+          <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor" aria-hidden="true"><circle cx="4" cy="4" r="4"/></svg>
+          Status: draft for discussion &middot; copy is a draft
+        </span>
+        <span class="border border-white/60 text-white font-medium rounded-full px-3 py-1">November 2026</span>
+      </div>
+    </div>
+    <svg class="av-arc av-arc-down" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#fdfdfd"/>
+    </svg>
+  </header>
+
+  <main>
+
+    <section class="av-band av-band-grey">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Summary</h2>
+      <div class="grid lg:grid-cols-2 gap-5 items-start">
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">How the page works</p>
+          <ul class="list-disc pl-5 space-y-1">
+            <li><b>The version depends on the ad, not on why the link failed.</b> An ad with an account: log in. An ad without one that can still be continued: a new confirmation email. An ad that is gone: a new ad. That covers every refused link with three versions; <a class="text-av-blue underline" href="#when">which version, when</a> lists the situations.</li>
+            <li><b>An orange notice says roughly why,</b> in two short lines: the link has expired, or the ad has expired. It doesn't explain the link change itself: from the seller's side, an old link is simply expired.</li>
+            <li><b>The heading, text and button say how to continue.</b> Where the ad still exists, the text starts with &ldquo;Myynti-ilmoituksesi on tallessa.&rdquo;, so the seller knows nothing was lost.</li>
+            <li>Every version ends with production's support sentence, linking the support page.</li>
+            <li>Built on the page that stops a seller whose car has too much mileage (Huutokaupat routing), with the ads page's orange notification instead of its red one: this is something to act on, not a stop.</li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800">
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3">Trying it in the prototype</p>
+          <p><a class="text-av-blue underline font-medium" href="../refused-link.html" target="_blank" rel="noopener">Open the page</a>. The prototype bar's <b>Scenario</b> menu has each version and its states. <b>Events</b> shows or hides the plate and mileage, and switches the send button on this page on or off.</p>
+          <p class="mt-3">&ldquo;Lähetä vahvistusviesti uudelleen&rdquo; works: pressing it shows the sent state and, after a moment, the confirmation email in the corner, whose button continues to the waiting screen as confirmed. The fourth press shows the limit message.</p>
+          <p class="text-xs font-medium uppercase tracking-wide text-slate-500 mb-3 mt-4">Copy</p>
+          <p>Finnish is design's draft, with an English gloss as a reading aid. Where a string already exists in production it is reused word for word; the <a class="text-av-blue underline" href="#copy">strings table</a> says which.</p>
+        </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="when">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-2">Which version, when</h2>
+      <p class="font-dm text-sm text-slate-600 mb-4 max-w-3xl">Checked in this order; the first that applies decides. &ldquo;Has an account&rdquo; means the ad is tied to a seller account that still exists: someone confirmed the ad's email address, or the seller was logged in when they started the ad.</p>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">#</th>
+              <th class="px-4 py-3 font-medium">Situation</th>
+              <th class="px-4 py-3 font-medium">Version</th>
+              <th class="px-4 py-3 font-medium">Covers</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 align-top">
+            <tr><td class="px-4 py-3">0</td><td class="px-4 py-3">The visitor is already logged in as the ad's owner</td><td class="px-4 py-3"><b>No page.</b> Open the ad as a working link would.</td><td class="px-4 py-3 text-slate-600">&ndash;</td></tr>
+            <tr><td class="px-4 py-3">1</td><td class="px-4 py-3">The ad is gone: expired, deleted, or the link is too damaged to say which ad it is. Also an ad whose address belongs to a deleted account, or that has no email address</td><td class="px-4 py-3"><a class="text-av-blue underline" href="#v-newad">Fill in a new ad</a></td><td class="px-4 py-3 text-slate-600">Rare apart from expired ads. The support sentence is the way on for the deleted-account and no-email cases.</td></tr>
+            <tr><td class="px-4 py-3">2</td><td class="px-4 py-3">The ad has an account</td><td class="px-4 py-3"><a class="text-av-blue underline" href="#v-login">Log in to continue</a></td><td class="px-4 py-3 text-slate-600">Links sent before the change, links to an address that has since changed (for example on the profile), expired links. Also the profile's email-change link, with its own first line.</td></tr>
+            <tr><td class="px-4 py-3">3</td><td class="px-4 py-3">No account, and the ad can still be continued: in review, waiting for email confirmation, or rejected in the review call</td><td class="px-4 py-3"><a class="text-av-blue underline" href="#v-resend">Ask for a new confirmation email</a></td><td class="px-4 py-3 text-slate-600">The same three reasons as row 2.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="versions">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-2">The versions</h2>
+      <p class="font-dm text-sm text-slate-600 mb-6 max-w-3xl">Each preview is the prototype page at phone width, with the plate and mileage shown. Every version has the same parts: the logo (to the front page), the orange notice, a heading and text, the action and the support sentence.</p>
+
+      <div class="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+
+        <div id="v-login" class="flex flex-col gap-3">
+          <h3 class="font-barlow font-bold text-xl text-black m-0">1 &middot; Log in to continue</h3>
+          <p class="font-dm text-sm text-slate-700 m-0"><b>When:</b> the ad has an account. <b>Action:</b> the login page, which sends a login code to the account's address. For the profile's email-change link the text instead starts &ldquo;Sähköpostiosoitteesi ei vaihtunut.&rdquo; and asks to change the address again on the profile.</p>
+          <iframe class="rl-frame" loading="lazy" title="Log in to continue" src="../refused-link.html?embed=1&amp;scenario=login"></iframe>
+          <p class="font-dm text-xs text-slate-500 m-0"><a class="text-av-blue underline" href="../refused-link.html?scenario=login" target="_blank" rel="noopener">Open</a> &middot; <a class="text-av-blue underline" href="../refused-link.html?scenario=email-change" target="_blank" rel="noopener">email-change link</a></p>
+        </div>
+
+        <div id="v-resend" class="flex flex-col gap-3">
+          <h3 class="font-barlow font-bold text-xl text-black m-0">2 &middot; Ask for a new confirmation email</h3>
+          <p class="font-dm text-sm text-slate-700 m-0"><b>When:</b> no account, the ad can still be continued. <b>Action, as proposed:</b> the waiting screen's own &ldquo;Lähetä vahvistusviesti uudelleen&rdquo;, here on the page. The text says the email goes out when the button is pressed, to the address on the ad, which the page never shows. See open question 1.</p>
+          <iframe class="rl-frame" loading="lazy" title="Ask for a new confirmation email" src="../refused-link.html?embed=1&amp;scenario=resend"></iframe>
+          <p class="font-dm text-xs text-slate-500 m-0"><a class="text-av-blue underline" href="../refused-link.html?scenario=resend" target="_blank" rel="noopener">Open</a> &middot; <a class="text-av-blue underline" href="../refused-link.html?scenario=resend&amp;send=0" target="_blank" rel="noopener">without a send button</a></p>
+        </div>
+
+        <div id="v-newad" class="flex flex-col gap-3">
+          <h3 class="font-barlow font-bold text-xl text-black m-0">3 &middot; Fill in a new ad</h3>
+          <p class="font-dm text-sm text-slate-700 m-0"><b>When:</b> the ad is gone. <b>Action:</b> the front page's form; an expired ad doesn't block a new ad for the same car. &ldquo;Takaisin etusivulle&rdquo; is left out, since the button already goes there. The plate and mileage are there only when the ad expired, not when it was deleted or not found.</p>
+          <iframe class="rl-frame" loading="lazy" title="Fill in a new ad" src="../refused-link.html?embed=1&amp;scenario=new-ad"></iframe>
+          <p class="font-dm text-xs text-slate-500 m-0"><a class="text-av-blue underline" href="../refused-link.html?scenario=new-ad" target="_blank" rel="noopener">Open</a></p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h3 class="font-barlow font-bold text-xl text-black m-0">2 &middot; after sending</h3>
+          <p class="font-dm text-sm text-slate-700 m-0">The heading says it went, the text says what to do with it. The button becomes a text link, so sending again stays possible without being the main thing on the page.</p>
+          <iframe class="rl-frame" loading="lazy" title="After sending" src="../refused-link.html?embed=1&amp;scenario=resend-sent"></iframe>
+          <p class="font-dm text-xs text-slate-500 m-0"><a class="text-av-blue underline" href="../refused-link.html?scenario=resend-sent" target="_blank" rel="noopener">Open</a></p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h3 class="font-barlow font-bold text-xl text-black m-0">2 &middot; too many sends</h3>
+          <p class="font-dm text-sm text-slate-700 m-0">Three per ad in ten minutes, ten per address in an hour. The login page's own rate-limit message, in its error box, above the button.</p>
+          <iframe class="rl-frame" loading="lazy" title="Too many sends" src="../refused-link.html?embed=1&amp;scenario=resend-limit"></iframe>
+          <p class="font-dm text-xs text-slate-500 m-0"><a class="text-av-blue underline" href="../refused-link.html?scenario=resend-limit" target="_blank" rel="noopener">Open</a></p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <h3 class="font-barlow font-bold text-xl text-black m-0">2 &middot; without a send button</h3>
+          <p class="font-dm text-sm text-slate-700 m-0">If the page can't send, the seller asks for the email from the ad itself. That only works on the device they filled the ad in on, since the way back to an unconfirmed ad is stored in that browser; the text has to say so.</p>
+          <iframe class="rl-frame" loading="lazy" title="Without a send button" src="../refused-link.html?embed=1&amp;scenario=resend&amp;send=0"></iframe>
+          <p class="font-dm text-xs text-slate-500 m-0"><a class="text-av-blue underline" href="../refused-link.html?scenario=resend&amp;send=0" target="_blank" rel="noopener">Open</a></p>
+        </div>
+
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="car">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Plate and mileage: optional</h2>
+      <div class="bg-white rounded-lg border border-slate-200 p-5 font-dm text-sm leading-6 text-slate-800 max-w-3xl space-y-3">
+        <p><b>Why they help:</b> seeing their own car's plate and mileage tells the seller at a glance that the ad is still stored and not lost. The page reads fine without them.</p>
+        <p><b>Whether they fit is Jaakko's call.</b> What we know from the code: the server loads the ad from the link before it checks the link, so plate and mileage are at hand whenever the ad still exists and the link isn't damaged. Today's refusal is a plain redirect that passes nothing on, so they would have to be handed to the page in the session, never in the address: a registration number in a URL ends up in logs and analytics. Whether to show an ad's details to someone holding a refused link is part of that call.</p>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="with">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">What has to change with it</h2>
+      <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2 max-w-3xl">
+        <li><b>The duplicate-ad screen.</b> When a seller starts a second ad for a car that is already in review or waiting for confirmation, the screen says &ldquo;Pääset jatkamaan aiempaa myynti-ilmoitustasi linkistä, jonka lähetimme sähköpostiisi.&rdquo; <span class="rl-gloss">(You can continue your earlier ad from the link we sent to your email.)</span> For a seller whose link is refused, that screen and this page send them to each other. The duplicate-ad screen needs the same &ldquo;send a new confirmation email&rdquo; action, or text that points to it.</li>
+        <li><b>Send limits before a send button goes live.</b> Anyone who has an ad's id can ask for a confirmation email for it, and the resend has no limit of its own today. The limits this page shows (three per ad in ten minutes, ten per address in an hour) are in a change that is still open.</li>
+        <li><b>A deleted ad.</b> A link to a deleted ad ends on a &ldquo;not found&rdquo; page before the link is checked at all. To reach version 3, that case has to come here too.</li>
+        <li><b>The email-change link.</b> In the change being built for it, a refused link ends on an error page; it should come here as version 1.</li>
+        <li><b>Customer service.</b> Briefed before the release on the three versions, and that the support page is the way on for an ad whose account was deleted.</li>
+      </ol>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="copy">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Every string on the page</h2>
+      <div class="bg-white rounded-lg border border-slate-200 overflow-x-auto">
+        <table class="w-full font-dm text-sm text-left">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500">
+              <th class="px-4 py-3 font-medium">Where</th>
+              <th class="px-4 py-3 font-medium">Finnish</th>
+              <th class="px-4 py-3 font-medium">English (reading aid)</th>
+              <th class="px-4 py-3 font-medium">Source</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 align-top">
+            <tr><td class="px-4 py-3">Notice, versions 1 and 2</td><td class="px-4 py-3"><b>Linkki on vanhentunut</b><br>Linkit ovat voimassa rajoitetun ajan.</td><td class="px-4 py-3 text-slate-600"><b>The link has expired</b><br>Links are valid for a limited time.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">Notice, version 3</td><td class="px-4 py-3"><b>Myynti-ilmoitus on vanhentunut</b><br>Julkaisemattomat myynti-ilmoitukset ovat voimassa rajoitetun ajan.</td><td class="px-4 py-3 text-slate-600"><b>The ad has expired</b><br>Unpublished ads are valid for a limited time.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">Versions 1 and 2, first line of the text</td><td class="px-4 py-3">Myynti-ilmoituksesi on tallessa.</td><td class="px-4 py-3 text-slate-600">Your ad is saved.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">1: heading</td><td class="px-4 py-3">Kirjaudu sisään jatkaaksesi</td><td class="px-4 py-3 text-slate-600">Log in to continue</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">1: text</td><td class="px-4 py-3">Kirjaudu sisään sähköpostiosoitteellasi. Lähetämme sinulle kirjautumiskoodin, joten salasanaa ei tarvita.</td><td class="px-4 py-3 text-slate-600">Log in with your email address. We&rsquo;ll send you a login code, so you don&rsquo;t need a password.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">1: text, email-change link</td><td class="px-4 py-3">Sähköpostiosoitteesi ei vaihtunut.<br>Kirjaudu sisään ja vaihda osoite profiilissasi uudelleen.</td><td class="px-4 py-3 text-slate-600">Your email address did not change.<br>Log in and change the address on your profile again.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">1: button</td><td class="px-4 py-3">Kirjaudu sisään</td><td class="px-4 py-3 text-slate-600">Log in</td><td class="px-4 py-3 text-slate-600">Production (login page)</td></tr>
+            <tr><td class="px-4 py-3">2: heading</td><td class="px-4 py-3">Pyydä uusi vahvistusviesti</td><td class="px-4 py-3 text-slate-600">Ask for a new confirmation email</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">2: text</td><td class="px-4 py-3">Uusi viesti lähtee myynti-ilmoituksessa olevaan sähköpostiosoitteeseen, kun painat painiketta.</td><td class="px-4 py-3 text-slate-600">The new email goes to the address on the ad when you press the button.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">2: button, and the text link after sending</td><td class="px-4 py-3">Lähetä vahvistusviesti uudelleen</td><td class="px-4 py-3 text-slate-600">Resend confirmation email</td><td class="px-4 py-3 text-slate-600">Production (waiting screen)</td></tr>
+            <tr><td class="px-4 py-3">2 after sending: heading</td><td class="px-4 py-3">Vahvistusviesti on lähetetty</td><td class="px-4 py-3 text-slate-600">Confirmation email sent</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">2 after sending: text</td><td class="px-4 py-3">Avaa viesti ja jatka sen linkistä.</td><td class="px-4 py-3 text-slate-600">Open the email and continue from its link.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">2 after sending: second line</td><td class="px-4 py-3">Jos viestiä ei löydy, katso myös roskapostista.</td><td class="px-4 py-3 text-slate-600">If you can&rsquo;t find it, check your spam folder too.</td><td class="px-4 py-3 text-slate-600">Production (duplicate-ad screen)</td></tr>
+            <tr><td class="px-4 py-3">2 too many: error box</td><td class="px-4 py-3">Liian monta yritystä. Kokeile hetken päästä uudestaan.</td><td class="px-4 py-3 text-slate-600">Too many attempts. Please try again in a moment.</td><td class="px-4 py-3 text-slate-600">Production (login page)</td></tr>
+            <tr><td class="px-4 py-3">2 without a send button: text</td><td class="px-4 py-3">Avaa myynti-ilmoituksesi etusivulta samalla laitteella, jolla täytit sen, ja pyydä sieltä uusi vahvistusviesti.</td><td class="px-4 py-3 text-slate-600">Open your ad from the front page on the same device you filled it in on, and ask for a new confirmation email there.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">2 without a send button: button</td><td class="px-4 py-3">Siirry etusivulle</td><td class="px-4 py-3 text-slate-600">Go to the front page</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">3: heading and button</td><td class="px-4 py-3">Täytä uusi myynti-ilmoitus</td><td class="px-4 py-3 text-slate-600">Fill in a new ad</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">3: text</td><td class="px-4 py-3">Voit täyttää uuden myynti-ilmoituksen samasta autosta etusivulla.</td><td class="px-4 py-3 text-slate-600">You can fill in a new ad for the same car on the front page.</td><td class="px-4 py-3 text-slate-600">Draft</td></tr>
+            <tr><td class="px-4 py-3">Versions 1 and 2: link under the action</td><td class="px-4 py-3">Takaisin etusivulle</td><td class="px-4 py-3 text-slate-600">Back to front page</td><td class="px-4 py-3 text-slate-600">Huutokaupat routing page</td></tr>
+            <tr><td class="px-4 py-3">Every version: last line, linking the support page</td><td class="px-4 py-3">Jos tarvitset apua, ota yhteyttä <u>asiakaspalveluumme</u>.</td><td class="px-4 py-3 text-slate-600">If you need help, contact <u>our customer service</u>.</td><td class="px-4 py-3 text-slate-600">Production (duplicate-ad screen)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </section>
+
+    <section class="av-band av-band-grey" id="open">
+      <div class="av-container">
+      <h2 class="font-barlow font-bold text-black text-2xl md:text-3xl leading-tight mb-3">Open questions</h2>
+      <ol class="font-dm text-sm leading-6 text-slate-800 list-decimal pl-5 space-y-2 max-w-3xl">
+        <li><b>Send button on the page (Jaakko).</b> Is sending a new confirmation email from this page planned or feasible? Design proposes it, because the alternative, asking for it from the ad, only works on the device the ad was filled in on. The copy differs between the two (see version 2 and &ldquo;without a send button&rdquo;); the version with the button must not suggest an email was already sent.</li>
+        <li><b>Plate and mileage (Jaakko).</b> Can the page show them? See <a class="text-av-blue underline" href="#car">plate and mileage</a>.</li>
+        <li><b>&ldquo;Has an account&rdquo;.</b> Is the line between versions 1 and 2 in the current build the one described in <a class="text-av-blue underline" href="#when">which version, when</a>?</li>
+        <li><b>Already logged in.</b> Open the ad directly (row 0) instead of showing the page?</li>
+        <li><b>After logging in,</b> the seller lands on their ads page, not on the ad the email was about. Should the login return them to it?</li>
+        <li><b>Deleted accounts.</b> The address of a deleted account can't confirm a new ad until that night's anonymisation clears it. Intended? Until it is decided, version 3's support sentence is the way on.</li>
+        <li><b>Email change.</b> Fine with the Klaviyo consent work that its refused link lands on version 1?</li>
+        <li><b>Copy.</b> All Finnish here is a draft; UX iterates it once the versions are agreed.</li>
+      </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-av-blue overflow-hidden">
+    <svg class="av-arc av-arc-up av-arc-flip" viewBox="0 0 407 42" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M407 42L236.756 21.9189C215.047 19.3604 191.953 19.3604 170.244 21.9189L0 42" fill="#f5f5f5"/>
+    </svg>
+    <div class="flex flex-col items-center gap-[38px] pt-10 pb-14">
+    <div class="av-container flex flex-col gap-3.5">
+      <div class="flex flex-col gap-3 px-4 py-1.5 text-sm text-white md:flex-row md:items-center md:justify-between md:gap-2">
+        <span class="font-dm font-bold">Refused link page</span>
+        <span class="font-dm font-normal">© 2026 All rights reserved</span>
+      </div>
+    </div>
+    <div class="av-container">
+      <img src="../assets/a58f6f26-6867-4bc8-ac6a-42028691bfe2.svg" alt="AutoVex" class="w-full h-auto block" />
+    </div>
+    </div>
+  </footer>
+</body>
+</html>

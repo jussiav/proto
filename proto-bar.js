@@ -110,6 +110,7 @@
     { href: 'profile.html',   label: 'Profile (Muokkaa profiilia)' },
     { href: 'login.html',     label: 'Login (Kirjaudu sisään)' },
     { href: 'reset-password.html', label: 'Password reset (Valitse uusi salasana)' },
+    { href: 'refused-link.html', label: 'Refused link page (Linkki ei enää toimi)' },
     { href: 'help.html',      label: 'Support' },
     { href: 'price-guess.html', label: 'Price guess' },
     { href: 'hinta-arvio.html', label: 'Price estimate (v4, v5, v6)' },
