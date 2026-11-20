@@ -121,6 +121,7 @@
   <script src="i18n.js"></script>
   <script src="proto-mode.js"></script>
   <script src="proto-mock.js"></script>
+  <script src="duplicate-info.js"></script>
   <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
@@ -230,7 +231,10 @@
       const korjauksetEmpty = !(sv.korjaukset && sv.korjaukset.trim());
       const bannerVisible = document.getElementById('tiedot-banner')?.style.display !== 'none' && document.getElementById('tiedot-banner')?.style.display !== '';
       const tiedotEmpty = bannerVisible && _tiedotState !== 'no' && _tiedotState !== 'unavailable';
-      if (!missingIdx.length && !korjauksetEmpty && !tiedotEmpty) { setStore({...getStore(), servicesLeft: true}); window.location = 'photos.html'; return; }
+      if (!missingIdx.length && !korjauksetEmpty && !tiedotEmpty) {
+        if (window.DuplicateInfo && DuplicateInfo.blockOnSave()) return;
+        setStore({...getStore(), servicesLeft: true}); window.location = 'photos.html'; return;
+      }
 
       // Inline error on tiedot options
       if (tiedotEmpty) {

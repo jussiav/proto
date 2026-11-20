@@ -469,6 +469,8 @@
     if (forced) linkParams.set('review', forced === 'review' ? 'yes' : 'no');
     var forcedLk = window.PROTO_MOCK && window.PROTO_MOCK.forcedLookup && window.PROTO_MOCK.forcedLookup();
     if (forcedLk) linkParams.set('lookup', forcedLk);
+    var forcedDup = window.PROTO_MOCK && window.PROTO_MOCK.plateHeld && window.PROTO_MOCK.plateHeld();
+    if (forcedDup) linkParams.set('duplicate', forcedDup);
     var testLink = ROOT + 'index.html?' + linkParams.toString();
 
     var tSec = document.createElement('div');
@@ -482,6 +484,7 @@
       'Variants: ' + (linkArms.length
         ? linkArms.map(function (x) { return x.reg.name + ' ' + x.arm; }).join(', ')
         : 'none — production'),
+      'Same car elsewhere: ' + (forcedDup === 'review' ? 'another ad in review' : forcedDup === 'auction' ? 'car on auction' : 'none, plate free'),
       'Car details: ' + (forcedLk === 'partial' ? 'lookup returns partial details' : forcedLk === 'not-found' ? 'lookup finds nothing' : 'lookup finds everything'),
       'Review: ' + (forced === 'review' ? 'forced to review' : forced === 'no-review' ? 'forced to no review' : 'from the car the participant enters')
     ].forEach(function (line) {
@@ -895,7 +898,7 @@
       var exceptions = window.PROTO_MOCK.EXCEPTIONS || [];
       var fs0 = window.PROTO_MOCK.readFunnel ? window.PROTO_MOCK.readFunnel() : {};
       var hasCar = !!fs0.hero;
-      var NEUTRAL = { details: '', review: '', photos: 'complete', exclusive: '', loggedin: 'no' };
+      var NEUTRAL = { duplicate: '', details: '', review: '', photos: 'complete', exclusive: '', loggedin: 'no' };
       var setRows = exceptions.filter(function (ex) {
         return ex.type !== 'number' && (hasCar || !ex.needsCar) && ex.key in NEUTRAL && ex.get(fs0) !== NEUTRAL[ex.key];
       });

@@ -116,6 +116,7 @@
     document.documentElement.dataset.intentArm = SELLER_INTENT_ARM;
   </script>
   <script src="proto-mock.js"></script>
+  <script src="duplicate-info.js"></script>
   <script src="funnel-guard.js"></script>
 </head>
 <body class="font-dm bg-white min-h-screen">
@@ -511,6 +512,7 @@
       }) === 'review';
 
       setStore(s);
+      if (window.DuplicateInfo && DuplicateInfo.blockOnSave(s)) return;
       window.location = 'contact.html';
     }
 

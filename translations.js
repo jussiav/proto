@@ -118,6 +118,11 @@ window.TRANSLATIONS = {
          form.tender.driven_more_than_max (280 000 km = Finland's
          max_driven_distance in config/country/finland.php). */
       mileageMaxError:    'Valitettavasti kauttamme voi myydä vain alle 280 000 km ajettuja autoja',
+      /* Prod: validation.registration_number_already_on_auction, verbatim
+         (no comma after "Tarkistathan" in prod). Shown when the plate is on
+         auction, or another consumer ad for it is in review or waiting for
+         email verification. */
+      plateDuplicateError: 'Auton lisääminen ei onnistunut. Tarkistathan ettei autostasi ole jo tehty tarjouspyyntöä.',
       newRequest:         'Tee uusi tarjouspyyntö',
     },
 
@@ -174,6 +179,16 @@ window.TRANSLATIONS = {
 
     /* Huutokaupat routing, v1 only. Not approved: `body`, `cta` and
        `disclaimer` are Jussi's wording, the rest is draft. */
+    /* The funnel's duplicate-ad page (prod: steps/DuplicateInfo.vue). Title and
+       body are tenderform.duplicate_info.*, the button app.error_pages.back_button.
+       The body's link is prod's /tuki, the proto's help.html. */
+    duplicate: {
+      title: 'Autostasi on jo tehty ilmoitus!',
+      body:  'Samasta autosta voi olla vain yksi myynti-ilmoitus kerrallaan. Pääset jatkamaan aiempaa myynti-ilmoitustasi linkistä, jonka lähetimme sähköpostiisi. Jos viestiä ei löydy, katso myös roskapostista. Jos tarvitset apua, ota yhteyttä <a href="help.html" target="_blank">asiakaspalveluumme</a>.',
+      back:  'Palaa etusivulle',
+      plateLabel: 'Rekisterinumero',
+    },
+
     huutokaupat: {
       sorry:      'Pahoittelut!',
       limit:      'Valitettavasti kauttamme voi myydä tällä hetkellä vain alle 280 000 km ajettuja autoja.',
@@ -1291,6 +1306,8 @@ window.TRANSLATIONS = {
       /* Prod has no EN string for form.tender.driven_more_than_max — only
          FI and SV — so this is a proto rendering of the FI copy. */
       mileageMaxError:    'Unfortunately only cars driven under 280 000 km can be sold through our service',
+      /* Prod's own EN for validation.registration_number_already_on_auction. */
+      plateDuplicateError: 'Adding a car was not successful. Please check that your car has not already been requested for an offer.',
       newRequest:         'Start a new request',
     },
 
@@ -1368,6 +1385,14 @@ window.TRANSLATIONS = {
       recent7:      'Within the last 7 days',
       recent30:     'Within the last month',
       older:        'More than a month ago',
+    },
+
+    /* Prod has no EN for tenderform.duplicate_info or app.error_pages; working translation. */
+    duplicate: {
+      title: 'An ad has already been made for your car!',
+      body:  'There can only be one sales ad for the same car at a time. You can continue your earlier sales ad from the link we sent to your email. If you cannot find the message, check your spam folder too. If you need help, contact <a href="help.html" target="_blank">our customer service</a>.',
+      back:  'Back to the front page',
+      plateLabel: 'Registration number',
     },
 
     huutokaupat: {

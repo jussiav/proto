@@ -408,6 +408,7 @@
               <div class="w-9 flex-shrink-0" aria-hidden="true"></div>
             </div>
             <p id="plate-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.plateError">Tarkista rekisterinumero – esim. ABC-123</p>
+            <p id="plate-duplicate-error" class="hidden av-error-msg px-1" style="margin-top:0" data-i18n="hero.plateDuplicateError">Auton lisääminen ei onnistunut. Tarkistathan ettei autostasi ole jo tehty tarjouspyyntöä.</p>
           </div>
 
           <!-- KM input -->
@@ -1592,7 +1593,9 @@
     function checkHeroState() {
       const store = getStore();
       const vt = estimateForHero(store);
-      if (store.hero && store.hero.plate && store.hero.km) {
+      /* A draft blocked as a duplicate is unreachable: prod drops the browser's
+         pointer to it (duplicate-info.js), so the hero offers the form again. */
+      if (store.hero && store.hero.plate && store.hero.km && !store.duplicateBlocked) {
         showProgressState(store);
       } else if (vt) {
         showEstimateState(vt);
@@ -1647,7 +1650,8 @@
       /* Prod's offers-page "Ei hyväksyttyjä tarjouksia" tag (solid red,
          prohibit icon) is the product's own end-of-journey state, so the
          mileage tag borrows its look. The apology follows prod's Swedish
-         auto-rejection screen (AutoRejectionInfo.vue); the sentence after it is
+         auto-rejection screen (AutoRejectionInfo.vue, deleted from prod since;
+         read it in an older snapshot); the sentence after it is
          the form error reworded, so it has its own key and
          hero.mileageMaxError stays prod's. */
       const HK_ICON_PROHIBIT = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor" aria-hidden="true"><path d="M7 1.094A5.906 5.906 0 1 0 12.906 7 5.913 5.913 0 0 0 7 1.094ZM11.594 7c0 .992-.32 1.957-.916 2.75L4.25 3.322A4.594 4.594 0 0 1 11.594 7ZM2.406 7a4.572 4.572 0 0 1 .916-2.75l6.428 6.428A4.593 4.593 0 0 1 2.406 7Z"/></svg>';
@@ -1822,8 +1826,30 @@
         });
       })();
 
+      /* The server's answer to creating a draft whose plate is on auction or
+         already submitted by another consumer ad (the Seed car row "Same car
+         elsewhere"). Prod shows it under the plate field until the next
+         submit. */
+      function showPlateDuplicateError() {
+        document.getElementById('plate-error').classList.add('hidden');
+        document.getElementById('plate-duplicate-error').classList.remove('hidden');
+        const wrapper = document.getElementById('plate-wrapper');
+        wrapper.style.outline = '2px solid rgba(239,68,68,0.85)';
+        wrapper.style.outlineOffset = '-2px';
+        scrollAndPulse(document.getElementById('plate-field'));
+      }
+      function clearPlateDuplicateError() {
+        const el = document.getElementById('plate-duplicate-error');
+        if (el.classList.contains('hidden')) return;
+        el.classList.add('hidden');
+        const wrapper = document.getElementById('plate-wrapper');
+        wrapper.style.outline = '';
+        wrapper.style.outlineOffset = '';
+      }
+
       document.getElementById('hero-form').addEventListener('submit', function(e) {
         e.preventDefault();
+        clearPlateDuplicateError();
         var plate   = normalizePlate(document.getElementById('plate').value.trim());
         const kmRaw = document.getElementById('mileage').value.replace(/\D/g, '').trim();
 
@@ -1848,8 +1874,14 @@
           return;
         }
 
+        if (window.PROTO_MOCK && window.PROTO_MOCK.plateHeld && window.PROTO_MOCK.plateHeld()) {
+          showPlateDuplicateError();
+          return;
+        }
+
         const km = kmRaw.replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
         const s = getStore();
+        delete s.duplicateBlocked;
         s.hero = { plate, km };
         setStore(s);
         window.location.href = 'details.html?' + new URLSearchParams({ plate, km });

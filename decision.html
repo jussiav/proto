@@ -1965,12 +1965,16 @@
        MThumbnailWithInlineText.vue for the text half and MButtonWithSubText.vue
        + MSubTextWithIcon.vue for the action half.
 
-       TWO configurations reach the consumer decision page and both are prod's,
-       picked by whether the status declares banner copy of its own:
+       THREE configurations reach the consumer decision page, all prod's,
+       picked by the `variant` the status declares (`actionable` when it
+       declares none):
 
-       - `actionable` + DEFAULT intent, a phone icon on the button. Used by the
-         four statuses that carry their own wording — no offers, expired,
-         accepted, rejected. Its action section is `lg:hidden`, so from 992px
+       - `default` + DEFAULT intent, no action section at any width: TEXT ONLY.
+         Declared by no offers, whose wording points to the support email
+         address and has no button (`textOnly`).
+       - `actionable` + DEFAULT intent, a phone icon on the button. Used by
+         expired, accepted and rejected, which carry their own wording and
+         declare no variant. Its action section is `lg:hidden`, so from 992px
          the banner is TEXT ONLY and the number written into the sentence is
          the seller's only way to call.
        - `actionable-inline` + DESTRUCTIVE intent, a warning line under the
@@ -2006,8 +2010,9 @@
        `decline`, so those four banners carry an empty `mt-3` div — 12px of
        dead space under the button. */
     function buildBannerHelper(opts) {
-      // opts: { title, message, btnText, btnHref, btnSubText, destructive, dataAction }
+      // opts: { title, message, btnText, btnHref, btnSubText, destructive, dataAction, textOnly }
       var dest = !!opts.destructive;
+      var textOnly = !!opts.textOnly;
 
       // OCard's own cva, then the card cva, then the page's `text-sm`
       var cardCls = 'font-body rounded-xl justify-center items-center overflow-hidden'
@@ -2038,16 +2043,8 @@
       var attr = (opts.btnHref ? ' href="' + opts.btnHref + '"' : '')
                + (opts.dataAction ? ' data-action="' + opts.dataAction + '"' : '');
 
-      return '<div class="' + cardCls + '">' +
-        // MThumbnailWithInlineText with no thumbnail — text only, `ps-0`
-        '<div class="self-stretch inline-flex justify-start items-center p-4">' +
-          '<div class="flex items-stretch overflow-hidden">' +
-            '<div class="flex-1 content-center ps-0">' +
-              '<h5 class="mb-2 leading-snug">' + opts.title + '</h5>' +
-              '<p class="text-sm leading-none">' + opts.message + '</p>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
+      // the `default` variant renders no action section at all
+      var actionHtml = textOnly ? '' :
         '<div class="' + actCls + '">' +
           '<' + tag + attr + ' class="' + btnCls + '">' +
             '<span class="inline-flex items-center justify-center">' +
@@ -2061,7 +2058,19 @@
               '<div class="flex-1">' + (opts.btnSubText || '') + '</div>' +
             '</div>' +
           '</div>' +
+        '</div>';
+
+      return '<div class="' + cardCls + '">' +
+        // MThumbnailWithInlineText with no thumbnail — text only, `ps-0`
+        '<div class="self-stretch inline-flex justify-start items-center p-4">' +
+          '<div class="flex items-stretch overflow-hidden">' +
+            '<div class="flex-1 content-center ps-0">' +
+              '<h5 class="mb-2 leading-snug">' + opts.title + '</h5>' +
+              '<p class="text-sm leading-none">' + opts.message + '</p>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
+        actionHtml +
       '</div>';
     }
 
@@ -2996,20 +3005,21 @@
       var bannerBotEl  = document.getElementById('banner-bottom-content');
 
       /* Five wordings, one per `banner_helper.card.*` + `.button.*` block,
-         verbatim. Note the TWO phone numbers: `helper`, `accepted` and
-         `decline` carry +358 40 040 7002 while `expired` and `rejected` carry
-         +358 44 901 5285.
+         verbatim. Four of them give a phone number, and there are TWO numbers:
+         `accepted` and `decline` carry +358 40 040 7002 while `expired` and
+         `rejected` carry +358 44 901 5285. `helper` (no offers) gives the
+         support email address instead and has no button at all.
 
-         `destructive` is not a separate choice. In prod exactly those statuses
-         that declare no wording of their own declare a `variant`, so the four
-         named wordings always arrive with the default configuration and the
-         `decline` fallback always arrives destructive. */
+         The configuration follows the status's own `variant`, defaulting to
+         `actionable`: no offers declares `default` (text only), the statuses
+         with no wording of their own declare `actionable-inline` +
+         `destructive` and fall through to `decline`, and expired, accepted and
+         rejected declare none. */
       var BANNER_COPY = {
         helper: {
-          title:   'Me voimme auttaa!',
-          message: 'Älä vielä luovu myynnistä. Tiimimme voi kääntää tilanteen ja löytää autolle ostajan. Soita <a class="text-blue" href="tel:+358 40 040 7002">+358 40 040 7002</a> (arkisin klo 10–16)',
-          btnText: 'Soita meille',
-          btnHref: 'tel:+358 40 040 7002',
+          title:    'Etkö saanut toivomiasi tarjouksia?',
+          message:  'Jos haluat julkaista myynti-ilmoituksesi vielä kerran ja kokeilla tarjouskilpailua uudestaan, lähetä meille sähköpostia osoitteeseen <a class="text-blue" href="mailto:tiimi@autovex.fi">tiimi@autovex.fi</a>',
+          textOnly: true,
         },
         expired: {
           title:   'Me voimme auttaa!',

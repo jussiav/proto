@@ -2,9 +2,9 @@
 
 All project context lives in `/docs/`. Read the relevant files before making decisions.
 
-## Reference Source Locations (updated 2026-11-11)
+## Reference Source Locations (updated 2026-11-20)
 
-- **Production codebase (read-only reference):** `../prod/current/`, a link to the newest dump in the sibling folder `../prod/`, OUTSIDE this repo (moved 2026-10-29 so every local prototype reads one shared copy). `current` → `autovex-2026-11-11-dc54e9a95415/` (uploaded 2026-11-11; its code is from 2026-11-06) (previous, beside it: `autovex-2026-11-05-358560b7f364/`, `autovex-2026-11-02-a17b66244b10/`, `autovex-2026-10-29-82636d6655b9/`, `autovex-2026-10-26-ead421f6c80b/`, `autovex-2026-10-23-e5397b1844cf/`, `autovex-2026-10-15-37e1d26ca1cc/`, `autovex-2026-10-12-0248626d1afa/`, `autovex-2026-10-07-25320dd885e6/`, `autovex-2026-10-05-8ba5fbef5f7a/`, `autovex-2026-09-30-d0e39db1a975/`, `autovex-2026-09-24-760241d9dd71/`, `autovex-2026-09-16-d1ea5398cdb4/`, `autovex-2026-09-07-fdd3a0224ef9/`, `autovex-2026-08-31-3064d348fba0/`, `autovex-2026-08-26-1ee95731e59f/`, `autovex-2026-08-20-99ed8bef6330/`, `autovex-2026-08-14-435a41f68ebc/`). **A dump can arrive with a malformed name** — the 09-16 one unpacked as `autovex-autovex-d1ea5398cdb4` and the 09-30 one as `autovex-autovex-d0e39db1a975` the 10-05 one as `autovex-autovex-8ba5fbef5f7a` and the 10-07 one as `autovex-autovex-25320dd885e6` and the 10-15 one as `autovex-autovex-37e1d26ca1cc` and the 10-23 one as `autovex-autovex-e5397b1844cf` and the 10-26 one as `autovex-autovex-ead421f6c80b` and the 10-29 one as `autovex-autovex-82636d6655b9` and the 11-02 one as `autovex-autovex-a17b66244b10` and the 11-11 one as `autovex-autovex-dc54e9a95415`; rename it to `autovex-<date>-<hash>` before using it. **The date is the upload date**, not the date of the code inside (the 11-02 dump holds code from 10-29): use the extraction time, `stat -f %Sc` on any file, since the files' modification times are the commit's. **Where dumps come from:** downloaded by hand from Bitbucket for now. The team is migrating to GitHub, and dumps will then come from there, either downloaded by hand or fetched by Claude. Keep using the hand-downloaded dump until Jussi says to start using GitHub (noted 2026-11-11). **A new dump** goes into `../prod/` beside the others: rename it, then repoint the link with `ln -sfn <folder> current` from inside `../prod/`. Older dumps stay there so a new one can be compared with the previous. Never push, nothing in the proto depends on it; `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case a dump is ever dropped in the old place.
+- **Production codebase (read-only reference):** `../prod/current/`, a snapshot of the private repo `alltvex/autovex` taken from GitHub, OUTSIDE this repo (since 2026-11-20; ZIP dumps from Bitbucket before that). `current` is the newest successful production deploy from master, and the folder name says when it went live: `autovex-<live date>-<commit>`. `node ../prod/bin/prod-update.mjs --status` says which snapshot it is and how far behind live; the command without options updates it and writes a private change report to `../prod/reports/`. Guide: `../prod/README.md`. **Older versions** come back with `--at <commit>`; the ZIP dumps' names (`autovex-2026-08-14-435a41f68ebc` … `autovex-2026-11-11-dc54e9a95415`) end in their commit, so each one can be rebuilt exactly. In those old names the date is the download date, not the date of the code. **`prod-watch.json`** in this repo lists which prod files each page, initiative and spec transcribes; the report sorts every change by it, so keep it current when a page or initiative starts depending on a prod file. Never copy a report or a PR title into this repo: it is mirrored publicly. Never push or edit a snapshot; nothing in the proto depends on it at run time. `Prod-codebase/` stays in `.gitignore` and `deploy-filter.txt` in case code is ever dropped in the old place.
 - **Astro reference app (retired):** the Astro dev server (`localhost:4321`) no longer runs — its production copy was removed 2026-08-13. The custom proto pages/components (offers.astro, decision/, tarjouspyynto/, mocks) are archived at `../_archive-astro-proto/resources/astro/` — read the `.astro` source for structure and scenario mock data.
 - All `resources/assets/js/...` paths in this file resolve inside `../prod/current/`; `resources/astro/...` paths resolve inside the archive.
 
@@ -498,9 +498,10 @@ statuses and review log; one file per area (`FUN`, `OFF`, `DEC`, `EML`, `BO`,
   touches), and say which entries the initiative takes on.
 - **Add to it** whenever something real is found outside the current scope,
   including a PR's own Design QA findings (as `Reported` until fixed).
-- **Re-check it** against every new prod dump: code-based `Open`, `Reported`,
-  `Parked` and `Watching` entries get a new **Last checked**; fixed ones move to
-  `Fixed` with the dump date. Never renumber or delete entries.
+- **Re-check it** against every new prod snapshot (`../prod/current`): code-based
+  `Open`, `Reported`, `Parked` and `Watching` entries get a new **Last checked**;
+  fixed ones move to `Fixed` with the snapshot's date. Never renumber or delete
+  entries.
 - **Proto-only divergences stay in this file**, not in the register.
 - **It is tracked and mirrored publicly**, so the same exclusions as everywhere
   else apply: no security findings, no confidential figures or undecided A/B
@@ -533,7 +534,8 @@ outcome override, not mileage; the proto never models the real criteria) ·
 Photos (Complete / Missing) · Price question (follows Review, amount) ·
 AutoVex exclusive (— / Yes / No; picking Yes or No turns v2 on, other
 variants untouched) · Logged in (No / Yes). Car details (Found / Partial /
-Not found) was added first in the list on 2026-10-20. Each exception is one entry
+Not found) was added first in the list on 2026-10-20, and Same car elsewhere
+(— / review / auction, the duplicate-ad guard) before it on 2026-11-20. Each exception is one entry
 in a list in `proto-mock.js` with a URL param, applied at load in test mode
 too. A variant-only answer names its initiative + arm and switches it on.
 
@@ -952,7 +954,7 @@ sub-heading to **5** so it appears in the change log as work with no owner.
 
 | Initiative | Outcome | Spec |
 |---|---|---|
-| Delivery distance A/B test | **Variant 1 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders what ships (Jussi, 2026-10-19, initiative closed): V1's plain km field (no default, `50–500` placeholder) with the label **"Kuinka kauas voit tarvittaessa toimittaa auton?"** and V2's info line (`deliveryImpactNote`, black like prod's inherited text). `deliveryRangeNoteCurrent` is gone from `translations.js`; the spec's tested-arm demos inline their old copy. Registry entry and `?delivery=` are gone. **V2 was recorded as the winner on 2026-10-12 by mistake and corrected 2026-10-16**; the −/+ stepper survives only on the spec's retired V2 demo. **Rollout confirmed in the 2026-10-23 dump**: label and info line match prod's `maximum_distance` / `maximum_distance_tip` word for word. The same pass aligned the field to prod's `EquipmentInfo.vue`: a 64px input (`h-16 py-4`), the field 16px under the question and the info line 8px under it, the "Arvo korjattiin välille 50–500 km." notice in slate-500 and only when a value is pulled into range (snapping to 10 km stays silent), and an empty field at Jatka marked on the input itself (red border, `bg-red-500/10`) with prod's "Pakollinen tieto" (`err.mandatoryInformation`). Prod also validates 50–500 server-side now. All three arms are restorable from the git tag `delivery-distance-arms` | `design-specs/delivery-distance.html` |
+| Delivery distance A/B test | **Variant 1 promoted, October 2026** (VWO `105_combi`): +9 % relative (not percentage points) average offer acceptance rate on the decision page, breakdown not analysed yet. `details.html` renders what ships (Jussi, 2026-10-19, initiative closed): V1's plain km field (no default, `50–500` placeholder) with the label **"Kuinka kauas voit tarvittaessa toimittaa auton?"** and V2's info line (`deliveryImpactNote`, black like prod's inherited text). `deliveryRangeNoteCurrent` is gone from `translations.js`; the spec's tested-arm demos inline their old copy. Registry entry and `?delivery=` are gone. **V2 was recorded as the winner on 2026-10-12 by mistake and corrected 2026-10-16**; the −/+ stepper survives only on the spec's retired V2 demo. **Rollout confirmed in the 2026-10-23 dump**: label and info line match prod's `maximum_distance` / `maximum_distance_tip` word for word. The same pass aligned the field to prod's `EquipmentInfo.vue`: a 64px input (`h-16 py-4`), the field 16px under the question and the info line 8px under it, the "Arvo korjattiin välille 50–500 km." notice in slate-500 and only when a value is pulled into range (snapping to 10 km stays silent), and an empty field at Jatka marked on the input itself (red border, `bg-red-500/10`) with prod's "Pakollinen tieto" (`err.mandatoryInformation`). Prod also validates 50–500 server-side now; since the 2026-11-20 snapshot the server also accepts 0 km for pickup-only ads, which the seller's field never offers. All three arms are restorable from the git tag `delivery-distance-arms` | `design-specs/delivery-distance.html` |
 | Enhanced negotiations | **All 18 changes shipped, October 2026** (1–8 and 17 by the 2026-10-07 dump, 9–16 and 18 in the 2026-10-15 dump, from PRs 2526 and 2543). No arms remain — `decision.html` and the email tool render the shipped design unasked, and the registry entry is gone. The `v1`-only message placeholder was dropped, not shipped | `design-specs/enhanced-negotiations.html` |
 | Review/No review | **Changes 1–3 shipped, September 2026**; change 4 closed as no change; change 5 still with the PM, Marketing-owned. No arms remain — `price.html` and `contact.html` render the shipped design unasked, and the registry entry is gone | `design-specs/review-no-review.html` |
 
@@ -978,6 +980,13 @@ to a discarded one dates a comment badly:
 | `92_combi` label-less estimate field | **discarded** | Gone from the enum. Its behaviour is plain prod now, so `translations.js` and `price.html` describe the label-less field without naming the test |
 | `89_combi` delayed negotiation CTA | live, **to be revisited later** | Sends a nudge email to a seller with offers and no negotiation. Overlaps Enhanced negotiations; deliberately not reconciled yet |
 | `73_combi`, `91_combi` | registered, no consumer | Cleanup only |
+
+**Seller arms reach the dealer side since the 2026-11-20 snapshot.** The dealer's
+request page publishes the seller's stored VWO arms (`*_combi`, the draft's first,
+then the user's) as `window.autovexSellerVwoExperiments` and the
+`autovex:seller-vwo-experiments` event, so a dealer-side VWO test can follow the
+seller's arm. Relevant to AutoVex exclusive's buyer-side visibility. No new
+experiment was registered in that snapshot.
 
 **Never cite a VWO number in a proto comment to explain prod behaviour that is
 now unconditional.** A discarded test's number makes a true statement read as
@@ -2540,7 +2549,7 @@ which matches the copy's "alle 280 000 km". The funnel's first step and
 - Copy (`huutokaupat.*`, 9 keys) is Jussi's / the team's; English is a working
   translation.
 
-**Prod precedent:** `steps/AutoRejectionInfo.vue` is a Sweden-only screen for
+**Prod precedent:** `steps/AutoRejectionInfo.vue` (deleted from prod in the 2026-11-20 snapshot; read it in `../prod/autovex-2026-11-11-dc54e9a95415`) is a Sweden-only screen for
 unfit cars that recommends Blocket ("Beklagar!" + reasons). The apology wording
 comes from it; it was never built for Finland. Sketched in Figma at `7339:54`.
 
@@ -4896,6 +4905,35 @@ applies to any logged-in seller, including one starting a new draft. A seller
 editing from the waiting screen (funnel success) before verifying is not logged
 in and still sees the email field, as in prod.
 
+## Duplicate-ad guard — `duplicate-info.js`
+
+Shipped in the 2026-11-20 snapshot (findings FUN-22 fixed there). Prod refuses a
+second consumer ad for the same car, at three points:
+
+| When | Plate state | What the seller sees |
+|---|---|---|
+| Creating the ad on the front page | on auction, or another consumer ad in review or waiting for email verification | inline error under the plate field, `validation.registration_number_already_on_auction` "Auton lisääminen ei onnistunut. Tarkistathan ettei autostasi ole jo tehty tarjouspyyntöä." (no comma after "Tarkistathan" in prod; "tarjouspyyntö" is prod's word) |
+| A step's save | another ad in review or waiting (step saves do not send the plate, so "on auction" passes) | full page `DuplicateInfo.vue`: "Autostasi on jo tehty ilmoitus!", the plate badge, the body, "Palaa etusivulle" |
+| Publish | either | the same page |
+
+The page is final: prod drops the browser's pointer to the draft, so it cannot
+be reached again. On desktop the cream column stays empty; on a phone it is
+hidden. `PublishDraft` also deletes the same owner's other open drafts for the
+plate on publish (server side, nothing to show).
+
+**Proto:** the plate's state is the Seed car row **Same car elsewhere**
+(`?duplicate=review|auction`, `PROTO_MOCK.plateHeld()`). The front page shows
+the inline error; every step's Jatka calls `DuplicateInfo.blockOnSave()` (the
+contact step and a missing-photos re-submit `blockOnPublish()`), which marks
+`store.duplicateBlocked` and turns the page into the duplicate state. A reload
+keeps it while the plate is taken and lifts it once the row is cleared (prod's
+reload behaviour is not known; open question). A blocked draft makes the front
+page offer the form again. `success.html?scenario=duplicate-blocked` shows the
+page without touching the store. Copy `hero.plateDuplicateError` (prod's own
+English) and `duplicate.*` (working English; prod has none). Styles are
+hand-written for the usual reason (script-built markup), prod classes kept on
+the elements.
+
 ## Funnel entry by draft status — `funnel-guard.js`
 
 **Steps save as the seller types.** Since the 2026-11-05 dump prod autosaves the
@@ -5187,6 +5225,7 @@ each, in funnel order:
 
 | Row | Param | Values | Writes |
 |---|---|---|---|
+| Same car elsewhere | `duplicate` | — none / review / auction | world state for the duplicate-ad guard in `autovex_proto_duplicate`: another consumer ad for the plate is in review or awaiting email verification, or the car is on auction. Seeds no car (the front page form is where the plate is typed); cleared by Seed car, Reset and `fresh=1`; carried by Copy test link. See **Duplicate-ad guard** |
 | Car details | `lookup` | found (empty) / partial / not-found | the GT-X lookup outcome in `autovex_proto_lookup` (used by the details step's next fresh lookup, cleared by Seed car, Reset and `fresh=1`); on an existing car, the seven vehicle fields are rewritten to that outcome and every other answer is kept |
 | Review | `review` | — from the car / yes / no | forced outcome in `autovex_proto_review` (survives a new draft, cleared by Reset) + `store.reviewable`; no review also sets an asking price (12 000 if none) |
 | Photos | `photos` | complete / missing | all scenario photos, or two exterior ones (below the minimum → publish refused) |
@@ -7292,23 +7331,32 @@ Checked across all five dumps back to 2026-08-14: no version of that file has
 ever passed an image. The proto's `kasper.png` came from the retired Astro
 prototype's own `expert` mock, a different component; the asset is deleted.
 
-**Two configurations reach a consumer seller, and which one arrives is decided
-by whether the status declares banner copy of its own.** In
-`c2bPostAuctionMessages.js` exactly the statuses with no `card`/`button` block
-declare a `variant`, and the ones with copy declare none — so the flag is not a
-separate choice:
+**Three configurations reach a consumer seller, picked by the `variant` the
+status declares (`actionable` when it declares none).** Until the 2026-11-20
+snapshot exactly the statuses with no `card`/`button` block declared one, so
+the flag was not a separate choice. Since that snapshot **no offers declares
+`default`**: text only at every width, no button, and its wording gives the
+support email instead of a phone number (`banner_helper.card.helper`:
+"Etkö saanut toivomiasi tarjouksia?" / "Jos haluat julkaista
+myynti-ilmoituksesi vielä kerran ja kokeilla tarjouskilpailua uudestaan,
+lähetä meille sähköpostia osoitteeseen tiimi@autovex.fi"). The proto follows
+it (`BANNER_COPY.helper.textOnly`); findings DEC-11 and DEC-12 were narrowed
+to match:
 
 | Configuration | Statuses | Frame | Action section | Button |
 |---|---|---|---|---|
-| `actionable` + `default` | no offers, expired, accepted, rejected — the four with their own wording | `bg-slate-50 outline-blue-400`, block | `bg-blue-100`, **`lg:hidden`** | primary blue, phone icon |
+| `default` | no offers | `bg-slate-50 outline-blue-400`, block | none | none |
+| `actionable` + `default` | expired, accepted, rejected — three with their own wording | `bg-slate-50 outline-blue-400`, block | `bg-blue-100`, **`lg:hidden`** | primary blue, phone icon |
 | `actionable-inline` + `destructive` | the four price tiers, `final_offer`, `negotiation_stopped`, `offers_pending_action` — all falling through to `decline` | `bg-orange-50 outline-orange-400`, `lg:flex lg:flex-row lg:justify-between` | `bg-orange-100`, always visible | secondary red, warning line under it |
 
-**So from 992px the four default-intent banners are TEXT ONLY** — the action
+**So from 992px the three `actionable` banners are TEXT ONLY** — the action
 section is `lg:hidden` and the number written into the sentence is the seller's
 only way to call. Easy to miss when reviewing on a desktop.
 
-**Five wordings, two phone numbers.** `helper`, `accepted` and `decline` carry
-+358 40 040 7002; `expired` and `rejected` carry +358 44 901 5285.
+**Five wordings: four give a phone number, one the email.** `accepted` and
+`decline` carry +358 40 040 7002; `expired` and `rejected` carry
++358 44 901 5285; `helper` (no offers) gives tiimi@autovex.fi since the
+2026-11-20 snapshot (it carried +358 40 040 7002 before).
 
 Details that were wrong in the proto and are worth not re-inventing:
 
@@ -7854,6 +7902,8 @@ dashed blue notice under its subject: which of the three it is, the rule, the
 condition that sends it, links to the other two with theirs, and the findings
 entry. The only group today is `auction-ended-offers`; the no-offers email stays
 outside it, since offer count, not the asking price, picks it.
+
+**Re-checked against the 2026-11-20 snapshot (2026-11-20): no consumer-seller email, template or Klaviyo event changed.** Business Squad's new B2B emails in that snapshot are out of this tool's scope; `prod-watch.json` leaves them out and business-proto watches them. The tool now says "production code" where it said "dump".
 
 **Re-checked against the 2026-11-11 dump on 2026-11-12, email by email.**
 The copy of every production email matched, and no seller email was missing:

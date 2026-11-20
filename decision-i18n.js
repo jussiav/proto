@@ -264,6 +264,9 @@ window.DECISION_I18N = {
 
     /* The support banner */
     'Asiantuntijamme auttavat mielellään! Soita numeroon': 'Our experts are happy to help. Call',
+    'Etkö saanut toivomiasi tarjouksia?':    'Didn\'t get the offers you hoped for?',
+    'Jos haluat julkaista myynti-ilmoituksesi vielä kerran ja kokeilla tarjouskilpailua uudestaan, lähetä meille sähköpostia osoitteeseen':
+                                             'If you\'d like to publish your listing once more and try the auction again, email us at',
     'Vieraile tukisivulla':                  'Visit the support page',
     '(arkisin klo 10–16)':                   '(weekdays 10–16)'
   }

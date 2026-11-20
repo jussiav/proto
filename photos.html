@@ -112,6 +112,7 @@
     document.documentElement.dataset.filesArm = FILES_ARM;
   </script>
   <script src="proto-mock.js"></script>
+  <script src="duplicate-info.js"></script>
   <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
@@ -615,6 +616,7 @@
     function confirmSkipPhotos() {
       closeSkipModal();
       if (window.FunnelGuard && FunnelGuard.rejection() === 'missing-images') { submitMissingImages(); return; }
+      if (window.DuplicateInfo && DuplicateInfo.blockOnSave()) return;
       window.location.href = 'price.html';
     }
 
@@ -630,6 +632,7 @@
     function submitMissingImages() {
       const s = getStore();
       s.reviewable = false;
+      if (window.DuplicateInfo && DuplicateInfo.blockOnPublish(s)) return;
       if (!s.askingPrice) { setStore(s); window.location = 'price.html'; return; }
       FunnelGuard.recordPublishAttempt(s);
       setStore(s);
@@ -649,6 +652,7 @@
         return;
       }
       if (window.FunnelGuard && FunnelGuard.rejection() === 'missing-images') { submitMissingImages(); return; }
+      if (window.DuplicateInfo && DuplicateInfo.blockOnSave()) return;
       const from = new URLSearchParams(window.location.search).get('from');
       window.location = from === 'success' ? 'success.html' : 'price.html';
     }

@@ -136,6 +136,7 @@
     };
   </script>
   <script src="proto-mock.js"></script>
+  <script src="duplicate-info.js"></script>
   <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
@@ -356,6 +357,8 @@
           s.draftEmail = email;
         }
       }
+      /* An edit before review only saves; every other submit publishes. */
+      if (window.DuplicateInfo && (FunnelGuard.reviewEdit(s) ? DuplicateInfo.blockOnSave(s) : DuplicateInfo.blockOnPublish(s))) return;
       if (FunnelGuard.reviewEdit(s)) {
         const back = FunnelGuard.finishReviewEdit(s);
         setStore(s);

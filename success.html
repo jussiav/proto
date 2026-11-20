@@ -62,6 +62,7 @@
     }());
   </script>
   <script src="proto-mock.js"></script>
+  <script src="duplicate-info.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
 <body class="font-dm bg-white min-h-screen">
@@ -367,7 +368,10 @@
            not a draft-status branch like the rest: prod's publish step REFUSED to
            publish, so the draft is still open and there is no listing yet. */
         { group: 'Publish blocked', items: [
-          { id: 'photos-missing',          label: 'Photos missing — publish refused' }
+          { id: 'photos-missing',          label: 'Photos missing — publish refused' },
+          /* Drawn by duplicate-info.js. Organically: Seed car → Same car elsewhere,
+             then Jatka on any funnel step. */
+          { id: 'duplicate-blocked',       label: 'Same car already submitted — duplicate page' }
         ]},
         { group: 'Rejected in the review call', items: [
           { id: 'rejected',                label: 'Rejected — other reason' },
@@ -1037,6 +1041,8 @@
     function showEmailToast() {
       var toast = document.getElementById('email-toast');
       if (!toast) return;
+      // The duplicate page ends the draft: nothing is sent at that point.
+      if (window.DuplicateInfo && window.DuplicateInfo.isBlocked()) return;
       if (emailToastTimer) { clearTimeout(emailToastTimer); emailToastTimer = null; }
       // Reset
       toast.style.animation = 'none';

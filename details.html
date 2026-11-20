@@ -147,6 +147,7 @@
     };
   </script>
   <script src="proto-mock.js"></script>
+  <script src="duplicate-info.js"></script>
   <script src="funnel-guard.js"></script>
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
   <script>
@@ -303,7 +304,10 @@
       ];
       const missingRadio = radioGroups.filter(g => !g.skip && !g.val);
 
-      if (!missing.length && !missingRadio.length) { setStore({...getStore(), detailsLeft: true}); window.location = 'services.html'; return; }
+      if (!missing.length && !missingRadio.length) {
+        if (window.DuplicateInfo && DuplicateInfo.blockOnSave()) return;
+        setStore({...getStore(), detailsLeft: true}); window.location = 'services.html'; return;
+      }
 
       // Ensure the editable fields panel is open (needed for merkki/malli/vetotapa errors)
       if (missing.length || missingRadio.some(g => g.name === 'vetotapa' || g.name === 'vaihteisto')) {

@@ -1,0 +1,619 @@
+{
+  "project": "c2b-proto (Claude-Figma)",
+  "about": "Which production files each proto page, shared script, initiative and spec transcribes. Read by ../prod/bin/prod-update.mjs to sort every prod change by what it affects here. Paths are globs relative to the prod repo root. Add an entry when a page or initiative starts depending on a prod file; never put report content or PR titles in this file (the repo is mirrored publicly).",
+  "entries": [
+    {
+      "id": "Front page and hero form",
+      "kind": "page",
+      "proto": [
+        "index.html",
+        "hero-theme.js"
+      ],
+      "paths": [
+        "resources/astro/pages/index.astro",
+        "resources/astro/components/**",
+        "resources/astro/layouts/**",
+        "resources/assets/js/tenderRequestDraftForm/LandingPageForm*.vue"
+      ]
+    },
+    {
+      "id": "Funnel: shared shell, state machine, fields",
+      "kind": "page",
+      "proto": [
+        "details.html",
+        "services.html",
+        "photos.html",
+        "price.html",
+        "contact.html",
+        "success.html",
+        "funnel-guard.js",
+        "proto-mock.js"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/*.{vue,js,ts}",
+        "resources/assets/js/tenderRequestDraftForm/useTenderFormMachine/**",
+        "resources/assets/js/tenderRequestDraftForm/components/*.vue",
+        "resources/assets/js/tenderRequestDraftForm/fields/**",
+        "resources/lang/fi/tenderform.php",
+        "app/Http/Resources/TenderRequestDraftResource.php",
+        "app/Actions/TenderRequestDraft/UpdateDraft.php"
+      ],
+      "exclude": [
+        "resources/assets/js/tenderRequestDraftForm/LandingPageForm*.vue"
+      ]
+    },
+    {
+      "id": "Equipment step (details.html)",
+      "kind": "page",
+      "proto": [
+        "details.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/EquipmentInfo.vue",
+        "resources/assets/js/tenderRequestDraftForm/steps/VehicleInfoRetrieval.vue",
+        "resources/assets/js/tenderRequestDraftForm/steps/components/RetrievedVehicleInfo*.vue",
+        "resources/assets/js/tenderRequestDraftForm/components/VehicleMetrics.vue",
+        "app/Http/Controllers/Api/TenderRequestDraft/RetrieveVehicleInformation.php",
+        "resources/lang/fi/metrics.php"
+      ]
+    },
+    {
+      "id": "Service step (services.html)",
+      "kind": "page",
+      "proto": [
+        "services.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/ServiceInfo.vue"
+      ]
+    },
+    {
+      "id": "Photos step (photos.html)",
+      "kind": "page",
+      "proto": [
+        "photos.html",
+        "context-help.js"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/ImageSections.vue",
+        "resources/assets/js/tenderRequestDraftForm/components/ContextHelp.vue",
+        "resources/assets/js/components/elements/ImageUpload.vue",
+        "resources/assets/js/components/elements/ImagePreview.vue"
+      ]
+    },
+    {
+      "id": "Price step (price.html)",
+      "kind": "page",
+      "proto": [
+        "price.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/PriceInfo.vue",
+        "resources/assets/js/tenderRequestDraftForm/components/WhatHappensNext.vue",
+        "resources/assets/js/tenderRequestDraftForm/components/Sidebar.vue"
+      ]
+    },
+    {
+      "id": "Contact step (contact.html)",
+      "kind": "page",
+      "proto": [
+        "contact.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/PersonalInfo.vue",
+        "resources/assets/js/components/elements/PhoneNumberInput.vue"
+      ]
+    },
+    {
+      "id": "Duplicate-ad guard",
+      "kind": "page",
+      "proto": [
+        "duplicate-info.js",
+        "index.html",
+        "details.html",
+        "services.html",
+        "photos.html",
+        "price.html",
+        "contact.html",
+        "success.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/DuplicateInfo.vue",
+        "app/Rules/RegistrationNumberAlready{OnAuction,Submitted}.php",
+        "app/Http/Responses/DuplicateTenderRequestDraftError.php",
+        "app/Http/Requests/{Store,Update}TenderRequestDraftRequest.php",
+        "app/Validators/Marketplace/C2BDraftRules.php",
+        "app/Http/Controllers/Api/PublishedTenderRequestDraftController.php",
+        "app/Actions/TenderRequestDraft/DeleteDuplicateDrafts.php"
+      ]
+    },
+    {
+      "id": "End of the funnel (success.html)",
+      "kind": "page",
+      "proto": [
+        "success.html",
+        "vehicle-card.js",
+        "submit-loader.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/{Review,PublishQueue,Success,Publish}.vue",
+        "resources/assets/js/tenderRequestDraftForm/components/{Preview,Sidebar,WhatHappensNext}.vue",
+        "app/Http/Controllers/Api/TenderRequestDraft/UpdateEmail.php",
+        "app/Http/Controllers/VerifyTenderRequestDraftEmailController.php",
+        "app/Actions/TenderRequestDraft/HandleEmailVerificationCallback.php",
+        "app/Actions/TenderRequestDraft/PublishDraft*.php"
+      ]
+    },
+    {
+      "id": "Offers page (offers.html)",
+      "kind": "page",
+      "proto": [
+        "offers.html",
+        "vehicle-card.js",
+        "toastr.js"
+      ],
+      "paths": [
+        "resources/assets/js/pages/offers/landing/**",
+        "resources/assets/js/pages/offers/components/{CarCard,CarDetailsCard,Timer,Section,Notification}.vue",
+        "resources/assets/js/pages/offers/components/Notifications/**",
+        "resources/assets/js/pages/offers/views/EditRequest.vue",
+        "resources/lang/fi/app.php",
+        "resources/lang/fi/faq.php"
+      ]
+    },
+    {
+      "id": "Decision page (decision.html)",
+      "kind": "page",
+      "proto": [
+        "decision.html",
+        "decision-i18n.js",
+        "rating-icons.js",
+        "faq-content.js"
+      ],
+      "paths": [
+        "resources/assets/js/pages/offers/decision/**",
+        "resources/assets/js/pages/offers/components/*.vue",
+        "resources/assets/js/pages/offers/components/decision/**",
+        "resources/assets/js/composables/decisionPage/**",
+        "resources/assets/js/composables/{usePostAuctionMessaging,c2bPostAuctionMessages,usePostAuctionStatus}.js",
+        "resources/assets/js/components/partials/negotiations/**",
+        "resources/assets/js/components/partials/{Reveal,StarRating,StarRatingButton}.vue",
+        "resources/assets/js/components/ui/organisms/BannerHelperCard/**",
+        "resources/assets/app/components/molecules/MNegotiationBubble/**",
+        "resources/lang/fi/{auction,negotiation,tender,call-seller}.php",
+        "resources/assets/js/components/ui/molecules/{MThumbnailWithInlineText,MButtonWithSubText,MSubTextWithIcon}.vue"
+      ],
+      "exclude": [
+        "resources/assets/js/pages/offers/components/{CarCard,CarDetailsCard,Timer,Section,Notification}.vue",
+        "resources/assets/js/pages/offers/components/{B2BRejectConfirm,DealerRejectConfirm}.vue",
+        "resources/assets/js/pages/offers/components/decision/B2B*"
+      ]
+    },
+    {
+      "id": "Negotiation, offers and auction rules (server side)",
+      "kind": "rules",
+      "proto": [
+        "decision.html"
+      ],
+      "paths": [
+        "app/Actions/Negotiation/**",
+        "app/Actions/TenderOffer/**",
+        "app/Actions/TenderRequest/RejectAllOffers.php",
+        "app/Rules/DealerNegotiationMessageAmount.php",
+        "app/Console/Commands/AutoCloseNegotiations.php",
+        "app/Http/Resources/SellerTenderOfferResource.php",
+        "app/Http/Controllers/Api/AuctionResultController.php",
+        "app/Http/Requests/*Negotiation*.php"
+      ]
+    },
+    {
+      "id": "Review segment and publish routing",
+      "kind": "rules",
+      "proto": [
+        "price.html",
+        "success.html"
+      ],
+      "note": "CLAUDE.md section 'Review segment - will this seller be called?'",
+      "paths": [
+        "app/Actions/TenderRequestDraft/EvaluateDraftForReview/**",
+        "app/Services/ReviewQualification/**",
+        "app/Settings/{TenderRequestReviewSettings,ReviewAlgorithmSettings,TenderRequestSkipReviewSettings}.php",
+        "config/review-qualification.php"
+      ]
+    },
+    {
+      "id": "DAC7 form (dac7.html)",
+      "kind": "page",
+      "proto": [
+        "dac7.html"
+      ],
+      "paths": [
+        "resources/assets/js/pages/offers/PersonalInformationPage.vue",
+        "resources/assets/js/pages/offers/components/legalities/**",
+        "resources/lang/fi/legalities.php"
+      ]
+    },
+    {
+      "id": "Profile page and account menu",
+      "kind": "page",
+      "proto": [
+        "profile.html",
+        "site-nav.js"
+      ],
+      "paths": [
+        "resources/assets/js/pages/user/edit/**",
+        "resources/assets/app/components/molecules/{MProfileMenu,MProfileSubMenu}/**",
+        "config/user-menu.php",
+        "app/Http/Controllers/Api/UserApiController.php"
+      ]
+    },
+    {
+      "id": "Login and password reset",
+      "kind": "page",
+      "proto": [
+        "login.html",
+        "reset-password.html"
+      ],
+      "paths": [
+        "resources/assets/js/auth/**",
+        "resources/assets/js/pages/reset-password/**",
+        "app/Actions/Fortify/**",
+        "resources/lang/fi/{auth,passwords}.php"
+      ]
+    },
+    {
+      "id": "Price estimate page (hinta-arvio.html)",
+      "kind": "page",
+      "proto": [
+        "hinta-arvio.html"
+      ],
+      "paths": [
+        "resources/assets/js/pages/price-estimation/**",
+        "app/Http/Controllers/PriceEstimateController.php",
+        "app/Http/Controllers/Api/PriceEstimateApiController.php"
+      ]
+    },
+    {
+      "id": "Nav bar and footers",
+      "kind": "shared",
+      "proto": [
+        "site-nav.js",
+        "app-footer.js",
+        "layout.js"
+      ],
+      "paths": [
+        "resources/assets/app/components/organisms/{ONavigationBar,OFooter,OFooterLinkGroup}/**",
+        "resources/assets/app/components/molecules/{MLegalFooter,MMenu,MMenuCTA}/**",
+        "resources/assets/js/composables/useHeadRoom.js",
+        "resources/astro/layouts/Header.astro",
+        "resources/astro/components/Footer.astro"
+      ]
+    },
+    {
+      "id": "Transactional emails and Klaviyo events",
+      "kind": "emails",
+      "proto": [
+        "emails.html",
+        "email-content.js"
+      ],
+      "paths": [
+        "resources/views/mail/**",
+        "resources/views/vendor/mail/**",
+        "resources/views/vendor/notifications/**",
+        "app/Notifications/**",
+        "app/Mail/**",
+        "app/Klaviyo/**",
+        "resources/lang/fi/{email,notification,klaviyo,sms-messages}.php"
+      ],
+      "exclude": [
+        "app/Notifications/B2B*/**",
+        "resources/views/mail/transactional/*/b2b/**"
+      ],
+      "note": "Consumer-seller emails only; Business Squad's B2B emails are excluded here and watched by business-proto."
+    },
+    {
+      "id": "Design system: buttons, badges, tabs, tokens, icons",
+      "kind": "design-system",
+      "proto": [
+        "design-library/",
+        "tw-tokens.js",
+        "vue-tests/",
+        "accept-button-lab.html"
+      ],
+      "note": "Rules 1, 5, 10 and 13 in CLAUDE.md. Icons: the sprite every page draws from.",
+      "paths": [
+        "resources/assets/app/components/atoms/**",
+        "resources/assets/js/components/ui/{UiButton,UiBadge,UiIcon}.vue",
+        "resources/assets/js/components/elements/Button.vue",
+        "tailwind.config.js",
+        "resources/assets/sass/**",
+        "resources/assets/icons/**",
+        "docs/frontend-components/**"
+      ]
+    },
+    {
+      "id": "VWO experiments",
+      "kind": "rules",
+      "proto": [
+        "CLAUDE.md experiment table",
+        "vwo/"
+      ],
+      "paths": [
+        "app/Enums/VwoExperiment.php",
+        "resources/assets/app/composables/useVwo*",
+        "resources/assets/js/composables/useVwo*",
+        "app/Services/VwoService.php",
+        "app/Http/Resources/TenderRequestResource.php",
+        "resources/assets/app/composables/useSellerVwoExperiments.ts"
+      ]
+    },
+    {
+      "id": "Per-country values",
+      "kind": "rules",
+      "proto": [
+        "decision.html",
+        "success.html"
+      ],
+      "paths": [
+        "config/country/finland.php"
+      ]
+    },
+    {
+      "id": "All Finnish copy",
+      "kind": "copy",
+      "proto": [
+        "translations.js",
+        "decision.html (inline Finnish)",
+        "email-content.js"
+      ],
+      "note": "Every lang change lands here too, so nothing in resources/lang/fi goes unseen. Transcriptions keep prod's word; new copy follows the terminology tables.",
+      "paths": [
+        "resources/lang/fi/**"
+      ]
+    },
+    {
+      "id": "Initiative: Seller intent (VWO 104_combi)",
+      "kind": "initiative",
+      "proto": [
+        "price.html"
+      ],
+      "specs": [
+        "design-specs/seller-intent.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/PriceInfo.vue",
+        "app/Enums/VwoExperiment.php"
+      ]
+    },
+    {
+      "id": "Initiative: Informed decision (VWO snippet v6)",
+      "kind": "initiative",
+      "proto": [
+        "decision.html",
+        "vwo/informed-decision-v6.js"
+      ],
+      "specs": [
+        "design-specs/informed-decision.html",
+        "design-specs/informed-decision-preview.html"
+      ],
+      "note": "The snippet finds prod's DOM by headings, button labels and image names: re-check its hooks when these change.",
+      "paths": [
+        "resources/assets/js/pages/offers/decision/C2BDecision.vue",
+        "resources/assets/js/pages/offers/components/{AuctionInsights,Timer,Section}.vue",
+        "resources/assets/js/pages/offers/components/decision/C2BOfferCard.vue",
+        "resources/assets/js/composables/c2bPostAuctionMessages.js"
+      ]
+    },
+    {
+      "id": "Initiative: Seller protection (VWO snippets v1, v3)",
+      "kind": "initiative",
+      "proto": [
+        "decision.html",
+        "vwo/seller-protection-v1.js",
+        "vwo/seller-protection-v2.js",
+        "vwo/seller-protection-v3.js"
+      ],
+      "specs": [
+        "design-specs/seller-protection.html",
+        "design-specs/seller-protection-preview.html"
+      ],
+      "note": "Snippet hooks: the card's distance row, the 'Hyväksy' button text, the 'Tarvitsetko apua?' h5.",
+      "paths": [
+        "resources/assets/js/pages/offers/decision/C2BDecision.vue",
+        "resources/assets/js/pages/offers/components/decision/C2BOfferCard.vue",
+        "resources/assets/js/components/ui/organisms/BannerHelperCard/**"
+      ]
+    },
+    {
+      "id": "Initiative: OP routing (VWO snippets v3, v4)",
+      "kind": "initiative",
+      "proto": [
+        "success.html",
+        "decision.html",
+        "vwo/op-routing-v3.js",
+        "vwo/op-routing-v4.js"
+      ],
+      "specs": [
+        "design-specs/op-routing.html",
+        "design-specs/op-routing-preview.html"
+      ],
+      "note": "Snippet hooks: the success page's cream notice and the decision hero titles.",
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/{Review,Success}.vue",
+        "resources/assets/js/pages/offers/decision/C2BDecision.vue",
+        "resources/assets/js/composables/c2bPostAuctionMessages.js"
+      ]
+    },
+    {
+      "id": "Initiative: Klaviyo consent",
+      "kind": "initiative",
+      "proto": [
+        "profile.html"
+      ],
+      "specs": [
+        "design-specs/klaviyo-consent.html"
+      ],
+      "paths": [
+        "resources/assets/js/pages/user/edit/**",
+        "app/Klaviyo/**",
+        "app/Actions/Fortify/UpdatesUserProfileInformation.php"
+      ]
+    },
+    {
+      "id": "Initiative: Seller edits before review",
+      "kind": "initiative",
+      "proto": [
+        "offers.html",
+        "success.html",
+        "funnel-guard.js"
+      ],
+      "specs": [
+        "design-specs/seller-edits-before-review.html"
+      ],
+      "paths": [
+        "app/Actions/TenderRequestDraft/UpdateDraft.php",
+        "resources/assets/js/pages/offers/views/EditRequest.vue",
+        "app/Filament/**/BookAction.php"
+      ]
+    },
+    {
+      "id": "Initiative: Similar cars",
+      "kind": "initiative",
+      "proto": [
+        "offers.html",
+        "decision.html",
+        "submit-loader.html",
+        "similar-cars.js"
+      ],
+      "specs": [
+        "design-specs/similar-cars.html"
+      ],
+      "paths": [
+        "resources/assets/js/pages/offers/landing/**",
+        "resources/assets/js/components/ui/organisms/OProductCard*.vue"
+      ]
+    },
+    {
+      "id": "Initiative: AutoVex exclusive",
+      "kind": "initiative",
+      "proto": [
+        "contact.html",
+        "decision.html"
+      ],
+      "specs": [
+        "design-specs/autovex-exclusive.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/PersonalInfo.vue",
+        "resources/assets/js/pages/offers/decision/C2BDecision.vue"
+      ]
+    },
+    {
+      "id": "Initiative: Informed ad creation",
+      "kind": "initiative",
+      "proto": [
+        "details.html"
+      ],
+      "specs": [
+        "design-specs/informed-ad-creation.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/EquipmentInfo.vue",
+        "resources/assets/js/tenderRequestDraftForm/components/ContextHelp.vue"
+      ]
+    },
+    {
+      "id": "Initiative: Huutokaupat routing",
+      "kind": "initiative",
+      "proto": [
+        "index.html"
+      ],
+      "specs": [
+        "design-specs/huutokaupat-routing.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/LandingPageForm.vue",
+        "app/Http/Requests/*TenderRequestDraft*.php"
+      ]
+    },
+    {
+      "id": "Initiative: Price guess / estimate (hinta-arvio)",
+      "kind": "initiative",
+      "proto": [
+        "hinta-arvio.html",
+        "price-guess.html",
+        "santa.html"
+      ],
+      "specs": [
+        "design-specs/price-guess.html"
+      ],
+      "paths": [
+        "resources/assets/js/pages/price-estimation/**",
+        "app/Http/Controllers/PriceEstimateController.php",
+        "app/Http/Controllers/Api/PriceEstimateApiController.php"
+      ]
+    },
+    {
+      "id": "Initiative: Asking price removal",
+      "kind": "initiative",
+      "proto": [
+        "decision.html",
+        "offers.html",
+        "vue-tests/"
+      ],
+      "specs": [
+        "design-specs/asking-price-removal.html"
+      ],
+      "paths": [
+        "resources/assets/js/pages/offers/components/{AuctionInsights,Timer}.vue",
+        "resources/assets/js/pages/offers/decision/B2BDecision.vue",
+        "app/Actions/Negotiation/ResolveCounterofferCeiling.php"
+      ]
+    },
+    {
+      "id": "Initiative: Enhanced success page",
+      "kind": "initiative",
+      "proto": [
+        "success.html"
+      ],
+      "specs": [
+        "design-specs/enhanced-success-page.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/Publish.vue",
+        "resources/assets/js/tenderRequestDraftForm/components/Sidebar.vue"
+      ]
+    },
+    {
+      "id": "Initiative: Seller file upload",
+      "kind": "initiative",
+      "proto": [
+        "photos.html",
+        "vehicle-card.js"
+      ],
+      "specs": [
+        "design-specs/seller-file-upload.html"
+      ],
+      "paths": [
+        "resources/assets/js/tenderRequestDraftForm/steps/ImageSections.vue",
+        "resources/assets/js/components/elements/ImageUpload.vue",
+        "resources/assets/js/pages/offers/components/CarDetailsCard.vue"
+      ]
+    },
+    {
+      "id": "Initiative: Refused link page",
+      "kind": "initiative",
+      "proto": [
+        "refused-link.html"
+      ],
+      "specs": [
+        "design-specs/refused-link.html"
+      ],
+      "paths": [
+        "app/Http/Controllers/VerifyTenderRequestDraftEmailController.php",
+        "app/Actions/TenderRequestDraft/HandleEmailVerificationCallback.php",
+        "routes/web.php"
+      ]
+    }
+  ]
+}

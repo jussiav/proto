@@ -234,6 +234,11 @@
      switches that arm on. */
   var REVIEW_KEY = 'autovex_proto_review';     // 'review' | 'no-review'
   var LOOKUP_KEY = 'autovex_proto_lookup';     // 'partial' | 'not-found'; absent = found
+  /* World state for the duplicate-ad guard: another consumer ad for the same
+     plate is in review or waiting for email verification ('review'), or the
+     plate is on auction ('auction'). Its own key, like the forced review, so it
+     survives the seller starting a new draft. See duplicate-info.js. */
+  var DUPLICATE_KEY = 'autovex_proto_duplicate'; // 'review' | 'auction'; absent = plate free
   var NO_REVIEW_PRICE = '12000';
 
   function readFunnel() {
@@ -241,6 +246,12 @@
   }
   function forcedReview() {
     try { return localStorage.getItem(REVIEW_KEY); } catch (e) { return null; }
+  }
+  function plateHeld() {
+    try {
+      var v = localStorage.getItem(DUPLICATE_KEY);
+      return v === 'review' || v === 'auction' ? v : null;
+    } catch (e) { return null; }
   }
   function photosComplete(s) {
     var ph = s.photos || {};
@@ -267,6 +278,21 @@
   }
 
   var EXCEPTIONS = [
+    /* Not something the seller entered: whether the plate they type is already
+       taken. Set before a car exists too, and it seeds none (noSeed), since the
+       front page's form is where the plate is typed. */
+    { key: 'duplicate', param: 'duplicate', label: 'Same car elsewhere', noSeed: true,
+      options: [ { id: '', label: '— none, plate free' },
+                 { id: 'review', label: 'Another ad in review or awaiting email verification' },
+                 { id: 'auction', label: 'Car on auction' } ],
+      get: function () { return plateHeld() || ''; },
+      set: function (s, v) {
+        try {
+          if (v === 'review' || v === 'auction') localStorage.setItem(DUPLICATE_KEY, v);
+          else localStorage.removeItem(DUPLICATE_KEY);
+        } catch (e) {}
+        if (!v) delete s.duplicateBlocked;
+      } },
     { key: 'details', param: 'lookup', label: 'Car details',
       options: [ { id: '', label: 'Found — lookup returned everything' },
                  { id: 'partial', label: 'Partial — some fields missing' },
@@ -388,6 +414,7 @@
     forcedLookup: forcedLookup,
     readFunnel: readFunnel,
     forcedReview: forcedReview,
+    plateHeld: plateHeld,
     answerArm: answerArm,
     /* Set one exception from the bar. Seeds the car first when there is none,
        so any row works straight after Reset. */
@@ -395,7 +422,7 @@
       var ex = findException(key);
       if (!ex) return false;
       var s = readFunnel();
-      if (!s.hero) { BUILDERS['draft-complete'](); applySeedDefaults(); s = readFunnel(); }
+      if (!s.hero && !ex.noSeed) { BUILDERS['draft-complete'](); applySeedDefaults(); s = readFunnel(); }
       ex.set(s, value);
       write(FUNNEL_KEY, s);
       return true;
@@ -406,8 +433,9 @@
       if (!b) return false;
       b();
       if (name === 'draft-complete') {
-        /* A seeded car is a complete one, so the lookup outcome resets too. */
-        try { localStorage.removeItem(LOOKUP_KEY); } catch (e) {}
+        /* A seeded car is a complete one that can enter the auction, so the
+           lookup outcome and a taken plate reset too. */
+        try { localStorage.removeItem(LOOKUP_KEY); localStorage.removeItem(DUPLICATE_KEY); } catch (e) {}
         applySeedDefaults();
       }
       return true;
@@ -420,7 +448,7 @@
     car: function () { BUILDERS['draft-complete'](); applySeedDefaults(); },
     clear: function () {
       BUILDERS['empty']();
-      try { localStorage.removeItem(REVIEW_KEY); localStorage.removeItem(LOOKUP_KEY); } catch (e) {}
+      try { localStorage.removeItem(REVIEW_KEY); localStorage.removeItem(LOOKUP_KEY); localStorage.removeItem(DUPLICATE_KEY); } catch (e) {}
     }
   };
 

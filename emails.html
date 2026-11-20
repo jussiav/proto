@@ -180,7 +180,7 @@
       </div>
       <p class="font-dm text-sm leading-6 text-slate-600 max-w-3xl">
         Every transactional email the consumer seller can receive, in the order the journey sends them.
-        Copy is transcribed verbatim from the production dump; the surrounding mail chrome is an
+        Copy is transcribed verbatim from production code; the surrounding mail chrome is an
         approximation, since blade cannot be executed here — it gets replaced when a rendered export lands.
         Events the code sends to Klaviyo are listed but never rendered: whether Klaviyo sends an email
         or an SMS for one, and its copy, is set up in Klaviyo, not in the codebase.
@@ -228,7 +228,7 @@
                it scrolls inside its own card rather than taking the page with it. -->
           <div id="email-render" class="bg-slate-50 py-8 px-4 overflow-x-auto"></div>
           <div class="px-5 py-2.5 border-t border-slate-200">
-            <p id="render-caveat" class="font-dm text-xs text-slate-500">Rendered email — chrome checked against rendered captures · copy verbatim from the dump</p>
+            <p id="render-caveat" class="font-dm text-xs text-slate-500">Rendered email — chrome checked against rendered captures · copy verbatim from production code</p>
           </div>
         </div>
 
@@ -551,8 +551,8 @@
           prBox.innerHTML = '';
         }
         document.getElementById('render-caveat').textContent = pr
-          ? 'Not in production — copy from the ' + pr.name + ' design spec, approved by UX · chrome assumed, as the developers\' build is in no dump'
-          : 'Rendered email — chrome checked against rendered captures · copy verbatim from the dump';
+          ? 'Not in production — copy from the ' + pr.name + ' design spec, approved by UX · chrome assumed, as the developers\' build is not in production code yet'
+          : 'Rendered email — chrome checked against rendered captures · copy verbatim from production code';
 
         var rows = '';
         if (pr) {

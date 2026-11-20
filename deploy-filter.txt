@@ -3,6 +3,7 @@
 - .*
 - *.md
 - /access-codes.json
+- /prod-watch.json
 - /deploy-filter.txt
 - /bin/
 - /usertest/

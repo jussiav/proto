@@ -1,5 +1,5 @@
 /**
- * Transactional email content — transcribed from the production dump.
+ * Transactional email content — transcribed from production code (../prod/current).
  *
  * Scope, as agreed: Finnish, C2B, seller-facing. Sweden, B2B and every
  * dealer-facing email are out (different team owns those).
@@ -9,7 +9,7 @@
  * **Blade-templated** (`rendered: true`): body, subject, sender and trigger all
  * live in the codebase, so the copy here is verbatim from
  * `resources/views/mail/...` plus `resources/lang/fi/email.php`. Each entry
- * records `template` and `langKeys` so re-checking against a newer dump is a
+ * records `template` and `langKeys` so re-checking against a newer snapshot is a
  * mechanical diff rather than a re-read.
  *
  * **Sent to Klaviyo** (the `KLAVIYO` list): the codebase holds only an event
@@ -58,8 +58,8 @@
  *
  * ── Emails production does not send ────────────────────────────────────────
  *
- * An entry with `proposed` is an email a design initiative adds, which no dump
- * contains. Its copy comes from the initiative's spec, not the dump, and
+ * An entry with `proposed` is an email a design initiative adds, which production
+ * code does not contain. Its copy comes from the initiative's spec, not prod, and
  * `proposed` names the initiative, its arm, the spec section and how far it
  * has got. `emails.html` marks it "Not in production" in the list, on the
  * email and in Details, and always renders it: there is no production version
@@ -99,7 +99,7 @@
   /* `route` is the prod route the button actually points at. Recorded because
      change 7 of Enhanced negotiations is exactly a route swap, and without it a
      proto target of `decision.html` would read as prod behaviour — every FI
-     seller email in the dump goes to route('user.offers'), the LIST. */
+     seller email in prod goes to route('user.offers'), the LIST. */
   function btn(label, target, route) {
     return { label: label, target: target, route: route || null };
   }
@@ -498,7 +498,7 @@
 
     /* The login page's two emails. Any user gets them, not only sellers: the
        tags say market:unknown / role:unknown. Transcribed from the 2026-11-11
-       dump. */
+       dump, unchanged in the 2026-11-20 snapshot. */
     {
       id: 'email-login-code',
       tags: ['type:email-login', 'market:unknown', 'role:unknown'],
@@ -543,7 +543,7 @@
     },
 
     /* NOT IN PRODUCTION. The Klaviyo consent initiative's v1 adds it: the
-       developers built it on a branch that is in no dump yet, and the copy is
+       developers built it on a branch that is not in production code yet, and the copy is
        the design spec's, approved by UX on 2026-11-11. */
     {
       id: 'email-change-confirmation',
@@ -554,14 +554,14 @@
         arm: 'v1',
         spec: 'design-specs/klaviyo-consent.html#c3',
         status: 'Proposal sent to the team, ready to build if they agree. Copy approved by UX on 11 November 2026',
-        builtAs: 'Not known: the developers\' branch is not in a dump. Shown with exactly the parts the spec lists (greeting, body, button, closing line). If it is built like the reset email, Laravel also adds the salutation and the fallback-URL subcopy'
+        builtAs: 'Not known: the developers\' branch is not in production code yet. Shown with exactly the parts the spec lists (greeting, body, button, closing line). If it is built like the reset email, Laravel also adds the salutation and the fallback-URL subcopy'
       },
       group: 'Profile',
       recipient: '[new email address]',
       state: 'Seller saved a new email address on the profile page',
       trigger: 'Saving a new address with "Päivitä" on Profiilin muokkaus. In production today the address changes at once and no email is sent',
       timing: 'Immediately. The link is valid for [minutes] minutes (not decided yet); saving another address sends a new link that replaces it',
-      template: 'not in the production dump',
+      template: 'not in production code',
       note: 'Goes to the new address only; a notice to the old address is an open question on the spec. The button opens the profile page in v1 and confirms the address waiting there. With nothing waiting, the link would be used or replaced, and that page is not designed yet.',
       subject: 'Vahvista uusi sähköpostiosoitteesi',
       body:
@@ -569,7 +569,7 @@
         '<p>Pyysit vaihtamaan AutoVex-profiilisi sähköpostiosoitteeksi tämän osoitteen. Vahvista se alla olevasta painikkeesta. Linkki on voimassa <var data-src="link lifetime, set by the developers">[minutes]</var> minuuttia.</p>' +
         '{{BUTTON}}' +
         '<p>Jos et pyytänyt vaihtoa, sinun ei tarvitse tehdä mitään. Profiilisi sähköpostiosoite ei muutu.</p>',
-      cta: btn('Vahvista sähköpostiosoite', 'profile.html?klaviyo-consent=v1&emailConfirm=1', 'the confirmation link (not in the dump)')
+      cta: btn('Vahvista sähköpostiosoite', 'profile.html?klaviyo-consent=v1&emailConfirm=1', 'the confirmation link (not in production code)')
     }
   ];
 
@@ -585,7 +585,7 @@
   };
 
   /* ── Events sent to Klaviyo — listed, never rendered ──────────────────────
-     Every notification class in the 2026-11-11 dump that posts an event to
+     Every notification class in the 2026-11-20 prod snapshot that posts an event to
      Klaviyo's API (KlaviyoChannel, or the NotifiesViaKlaviyo trait). All go to
      the car's owner, LoginInfo to any user. They are sent in production only
      and never for a B2B seller, so preview environments and Mailpit never show
@@ -593,7 +593,7 @@
      Klaviyo turns an event into an email or an SMS, and with what copy, is set
      up in Klaviyo by Marketing, and whether that flow is live is not in the
      code either. `sms` is a text message the class sends itself through Sinch,
-     outside Klaviyo; `notSent` marks a class nothing in the dump sends. */
+     outside Klaviyo; `notSent` marks a class nothing in prod sends. */
   var KLAVIYO = [
     { stage: 'Draft', event: 'NewTenderRequestDraft',                 cls: 'NewTenderRequestDraft',                 state: 'A draft was created with an email address, or the address was changed on the waiting screen' },
     { stage: 'Draft', event: 'TenderRequestDraftUpdated',             cls: 'TenderRequestDraftUpdated',             state: 'The seller saved a funnel step' },
@@ -642,7 +642,7 @@
     /* Where the copy came from, shown on the page so nobody mistakes the shell
        for a rendered export. */
     source: {
-      dump: 'prod/autovex-2026-11-11-dc54e9a95415',
+      snapshot: 'prod/autovex-2026-11-20-307f09b5a817',
       lang: 'resources/lang/fi/email.php',
       views: 'resources/views/mail/',
       preview: 'app/Filament/Pages/TransactionalEmails.php'
