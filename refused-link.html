@@ -157,6 +157,17 @@
 
     function store() { try { return JSON.parse(localStorage.getItem('autovex_funnel') || '{}') || {}; } catch (e) { return {}; } }
 
+    /* The address on the ad, masked the way Jaakko proposed (ja****@au****):
+       the first two letters of the name and of the domain. The page is open
+       to anyone holding the link, so the full address never shows. */
+    function maskedEmail() {
+      var s = store();
+      var address = s.draftEmail || (s.contact && s.contact.sahkoposti) || 'matti.meikalainen@example.fi';
+      var at = address.indexOf('@');
+      if (at < 1) return '****';
+      return address.slice(0, Math.min(2, at)) + '****@' + address.slice(at + 1, at + 3) + '****';
+    }
+
     function kmLabel(raw) {
       var n = parseInt(String(raw || '').replace(/\D/g, ''), 10);
       return isNaN(n) ? '' : n.toLocaleString('fi-FI') + ' km';
@@ -239,7 +250,9 @@
 
       el('rl-title').textContent = T(title);
       document.title = T(title) + ' – AutoVex';
-      el('rl-body').innerHTML = body.map(function (k) { return '<p class="m-0">' + esc(T(k)) + '</p>'; }).join('');
+      el('rl-body').innerHTML = body.map(function (k) {
+        return '<p class="m-0">' + esc(T(k)).replace('{email}', '<strong>' + esc(maskedEmail()) + '</strong>') + '</p>';
+      }).join('');
       el('rl-help').innerHTML = esc(T('help')).replace('{link}',
         '<a class="text-slate-600 underline" href="help.html">' + esc(T('helpLink')) + '</a>');
 

@@ -4206,6 +4206,11 @@ the public `jussiav/proto`, and the page and spec describe that change.
 - **Send button: open, Jaakko's.** His build asks the seller to go back to the
   ad; that works only on the device the ad was filled in on. Events → New
   confirmation email → No send button (`?send=0`) shows that version.
+- **Masked address in version 2's text** (Jaakko's ask, 2026-11-20; Jussi:
+  in the body copy, not on the button): before and after sending, the text
+  names where the email goes, `ma****@ex****` (first two letters of the name
+  and of the domain, `maskedEmail()`), bold as the login page bolds the
+  address it sent a code to. Read from the store's ad email.
 - **Plate and mileage: optional, Jaakko's call.** Their value: the seller sees
   the ad is stored. The server loads the ad before it checks the link, so they
   exist unless the ad is gone; they'd travel in the session, never the URL.
